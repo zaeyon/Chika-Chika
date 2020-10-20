@@ -61,5 +61,7 @@
 	<string>For user to register photos </string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>For user take and save photos</string>
+	<key>NMFClientId</key>
+	<string>htnc7h3vi5</string>
 </dict>
 </plist>

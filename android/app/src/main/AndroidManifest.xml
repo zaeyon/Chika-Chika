@@ -25,6 +25,9 @@
         </intent-filter>
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+       <meta-data
+           android:name="com.naver.maps.map.CLIENT_ID"
+           android:value="htnc7h3vi5"/>
     </application>
 
 </manifest>

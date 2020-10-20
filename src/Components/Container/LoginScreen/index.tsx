@@ -33,15 +33,12 @@ const HeaderBar = Styled.View`
 `;
 
 const HeaderLeftContainer = Styled.View`
+padding: 7px 15px 13px 16px;
+align-items: center;
+justify-content: center;
 `;
 
-const BackButtonContainer = Styled.View`
- padding: 7px 15px 13px 16px;
- align-items: center;
- justify-content: center;
-`;
-
-const BackButton = Styled.Image`
+const HeaderBackIcon = Styled.Image`
  width: ${wp('6.4%')}px;
  height: ${wp('6.4%')}px;
 `;
@@ -357,9 +354,9 @@ const LoginScreen = ({navigation}: Props) => {
       <HeaderBar>
         <HeaderLeftContainer>
           <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
-            <BackButtonContainer>
-          <BackButton source={require('~/Assets/Images/HeaderBar/ic_back.png')} />
-          </BackButtonContainer>
+            <HeaderLeftContainer>
+          <HeaderBackIcon source={require('~/Assets/Images/HeaderBar/ic_back.png')} />
+          </HeaderLeftContainer>
           </TouchableWithoutFeedback>
         </HeaderLeftContainer>
           <HeaderTitleText>이메일로 로그인</HeaderTitleText>

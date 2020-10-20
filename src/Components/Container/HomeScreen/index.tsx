@@ -47,6 +47,9 @@ const ReviewListContainer = Styled.View`
 padding-bottom: ${isIphoneX() ? hp("11%") : hp("8%")}
 `;
 
+const NearDentistText = Styled.Text`
+`;
+
 const TEST_REVIEW_DATA = [
     {
         user: {
@@ -152,6 +155,10 @@ interface Props {
 
 const HomeScreen = ({navigation}: Props) => {
 
+    const moveToNearDentistMap = () => {
+        navigation.navigate("NearDentistMap");
+    }
+
     const renderReviewItem = ({item, index}: any) => {
         return (
             <ReviewItem
@@ -168,16 +175,19 @@ const HomeScreen = ({navigation}: Props) => {
             treatInfoCount={item.getInfo}
             likeCount={item.like}/>
         )
-
     }
+
     return (
         <Container>
             <HeaderBar>
                 <HeaderLeftContainer>
                 </HeaderLeftContainer>
                 <HeaderTitleText>Home</HeaderTitleText>
+                <TouchableWithoutFeedback onPress={() => moveToNearDentistMap()}>
                 <HeaderRightContainer>
+                    <NearDentistText>내 주변</NearDentistText>
                 </HeaderRightContainer>
+                </TouchableWithoutFeedback>
             </HeaderBar>
             <ReviewListContainer>
                 <FlatList
