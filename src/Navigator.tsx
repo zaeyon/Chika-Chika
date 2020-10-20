@@ -19,6 +19,7 @@ import BasicInputScreen from './Components/Container/SignUpScreen/BasicInputScre
 
 // Home Stack Screee 
 import HomeScreen from '~/Components/Container/HomeScreen';
+import NearDentistMap from '~/Components/Container/NearDentistMap';
 
 // Review Stack Screen
 import ReviewDetailScreen from '~/Components/Container/ReviewDetailScreen';
@@ -36,6 +37,7 @@ import AnotherProfileScreen from '~/Components/Container/AnotherProfileScreen';
 
 // Setting Stack Screen
 import SettingScreen from '~/Components/Container/SettingScreen';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -102,6 +104,9 @@ function HomeStackScreen() {
             <HomeStack.Screen
             name="AnotherProfileStackScreen"
             component={AnotherProfileStackScreen}/>
+            <HomeStack.Screen
+            name="NearDentistMap"
+            component={NearDentistMap}/>
         </HomeStack.Navigator>
     )
 }
@@ -161,7 +166,7 @@ function BottomTab() {
     ? routeName.state.routes[routeName.state.index].name
     : '';
 
-    if(routeName.name === 'ReviewStackScreen') {
+    if(routeName.name === 'ReviewStackScreen' || routeName.name === "NearDentistMap") {
       return false;
     }
 

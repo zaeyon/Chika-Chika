@@ -12,7 +12,8 @@ target 'chikaApp' do
     inherit! :complete
     # Pods for testing
   end
-
+  
+  pod 'NMapsMap'
   # Enables Flipper.
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
