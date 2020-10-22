@@ -23,6 +23,7 @@ import NearDentistMap from '~/Components/Container/NearDentistMap';
 
 // Review Stack Screen
 import ReviewDetailScreen from '~/Components/Container/ReviewDetailScreen';
+import FullImagesScreen from '~/Components/Container/FullImagesScreen';
 
 // Review Upload Stack Screen
 import ReviewUploadScreen from '~/Components/Container/ReviewUploadScreen';
@@ -76,6 +77,9 @@ function ReviewStackScreen() {
       <ReviewStack.Screen
       name="ReviewDetailScreen"
       component={ReviewDetailScreen}/>
+      <ReviewStack.Screen
+      name="FullImagesScreen"
+      component={FullImagesScreen}/>
     </ReviewStack.Navigator>
   )
 }

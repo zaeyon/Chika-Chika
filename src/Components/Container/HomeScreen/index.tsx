@@ -44,7 +44,7 @@ padding: 7px 16px 13px 15px;
 `;
 
 const ReviewListContainer = Styled.View`
-padding-bottom: ${isIphoneX() ? hp("11%") : hp("8%")}
+padding-bottom: ${isIphoneX() ? hp("11%") : hp("15%")}
 `;
 
 const NearDentistText = Styled.Text`
