@@ -39,6 +39,9 @@ import AnotherProfileScreen from '~/Components/Container/AnotherProfileScreen';
 // Setting Stack Screen
 import SettingScreen from '~/Components/Container/SettingScreen';
 
+// Community Stack Screen
+import CommunityScreen from '~/Components/Container/CommunityScreen';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -49,6 +52,7 @@ const MyProfileStack = createStackNavigator();
 const ReviewStack = createStackNavigator();
 const AnotherProfileStack = createStackNavigator();
 const SettingStack = createStackNavigator();
+const CommunityStack = createStackNavigator();
 
 function AuthStackScreen() {
     return (
@@ -158,6 +162,17 @@ function SettingStackScreen() {
   )
 }
 
+function CommunityStackScreen() {
+  return (
+    <CommunityStack.Navigator
+    headerMode="none">
+      <CommunityStack.Screen
+      name="CommunityScreen"
+      component={CommunityScreen}/>
+    </CommunityStack.Navigator>
+  )
+}
+
 
 function BottomTab() {
 
@@ -217,6 +232,17 @@ function BottomTab() {
         tabBarVisible: false,
       }}
       />
+      <Tab.Screen
+      name="Community"
+      component={CommunityStackScreen}
+      options={{
+        tabBarIcon: ({focused}: {focused: boolean}) => (
+          <Image
+          source={
+            require('~/Assets/Images/BottomTab/ic_community_outline.png')
+          }/>
+        )
+      }}/>
       <Tab.Screen 
       name="Profile" 
       component={MyProfileStackScreen}
