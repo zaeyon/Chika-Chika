@@ -16,6 +16,7 @@ import UnauthorizedScreen from '~/Components/Container/UnauthorizedScreen';
 import LoginScreen from '~/Components/Container/LoginScreen';
 import ProfileInputScreen from '~/Components/Container/SignUpScreen/ProfileInputScreen';
 import BasicInputScreen from './Components/Container/SignUpScreen/BasicInputScreen';
+import VerifyPhoneNumberScreen from '~/Components/Container/VerifyPhoneNumberScreen';
 
 // Home Stack Screee 
 import HomeScreen from '~/Components/Container/HomeScreen';
@@ -70,6 +71,9 @@ function AuthStackScreen() {
             <AuthStack.Screen
             name="ProfileInputScreen"
             component={ProfileInputScreen}/>
+            <AuthStack.Screen
+            name="VerifyPhoneNumberScreen"
+            component={VerifyPhoneNumberScreen}/>
         </AuthStack.Navigator>
     )
 }

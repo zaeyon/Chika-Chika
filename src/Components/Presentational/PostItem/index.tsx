@@ -7,12 +7,11 @@ import {
 } from 'react-native-responsive-screen';
 
 const Container = Styled.View`
-width: ${wp('68.2%')}px;
-height: ${wp('46.9%')}px;
+width: ${wp('100%')};
+height: ${wp('64%')};
 background-color: #ffffff;
-border-radius: 8px;
-border-width: 1px;
-border-color: #E0E0E0;
+border-bottom-width: 2px;
+border-color: #e5e5e5;
 padding-top: 16px;
 padding-left: 16px;
 padding-right: 16px;
@@ -115,7 +114,7 @@ interface Props {
     commentCount: number
 }
 
-const PostCardItem = ({profileImageUri, nickname, category, createdAt, tagList, description, likeCount, commentCount}: Props) => {
+const PostItem = ({profileImageUri, nickname, category, createdAt, tagList, description, likeCount, commentCount}: Props) => {
 
     const renderTagItem = ({item, index}: any) => {
         return (
@@ -171,7 +170,7 @@ const PostCardItem = ({profileImageUri, nickname, category, createdAt, tagList, 
     )
 }
 
-export default PostCardItem
+export default PostItem
 
 
 
