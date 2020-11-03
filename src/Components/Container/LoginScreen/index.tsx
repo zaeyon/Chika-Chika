@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import Styled from 'styled-components/native';
 import {Text, TouchableWithoutFeedback, StyleSheet, Alert, ActivityIndicator} from 'react-native';
 import axios from 'axios';
@@ -9,7 +9,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import AboveKeyboard from 'react-native-above-keyboard';
 
 const Input = Styled.TextInput`
 position: relative;
@@ -36,17 +36,19 @@ const HeaderLeftContainer = Styled.View`
 padding: 7px 15px 13px 16px;
 align-items: center;
 justify-content: center;
+background-color: #ffffff;
 `;
 
 const HeaderBackIcon = Styled.Image`
  width: ${wp('6.4%')}px;
  height: ${wp('6.4%')}px;
+ background-color: #ffffff;
 `;
 
 const HeaderTitleText = Styled.Text`
 font-weight: 600;
 font-size: 18px;
-color: #1D1E1F;
+color: #000000;
 `;
 
 const HeaderRightContainer = Styled.View`
@@ -54,119 +56,66 @@ padding: 7px 16px 13px 15px;
  align-items: center;
  justify-content: center;
  flex-direction: row;
+ background-color: #ffffff;
 `;
 
 const HeaderEmptyContainer = Styled.View`
  width: ${wp('6.4%')}px;
  height: ${wp('6.4%')}px;
-`;
-
-
-const ButtonText = Styled.Text`
- font-size: 20px;
- color: #338EFC;
-`;
-
-const FormContainer = Styled.View`
-  width: 100%;
-`;
-
-const Logo = Styled.Text`
-  color: #292929;
-  font-size: 40px
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 40px;
-`;
-
-const PasswordReset = Styled.Text`
-  width: 100%;
-  color: #3796EF;
-  text-align: center;
-  margin-bottom: 24px;
-`;
-
-const SignupText = Styled.Text`
-  color: #929292;
-  text-align: center;
-`;
-
-const SignupLink = Styled.Text`
-  color: #3796EF;
-`;
-
-const Footer = Styled.View`
-  width: 100%;
-  border-top-width: 1px;
-  border-color: #D3D3D3;
-  padding: 8px;
-`;
-
-const Copyright = Styled.Text`
-  color: #929292;
-  text-align: center;
+ background-color: #ffffff;
 `;
 
 const BodyContainer = Styled.View`
- background-color: #ffffff;
- padding-top: 10px;
+ padding-top: 16px;
  padding-left: 16px;
  padding-right: 16px;
- padding-bottom: 10px;
+ flex: 1;
 `;
 
 const ItemContainer = Styled.View`
-`;
-
-const ItemLabelText = Styled.Text`
- font-weight: 600;
- font-size: 16px;
- color: #1D1E1F;
 `;
 
 const ItemTextInput = Styled.TextInput`
 width: ${wp('91.46%')}px;
 color: #000000;
 height: 50px;
-border-radius: 10px;
-background-color: #FAFAFA;
-margin-top: 10px;
+border-radius: 8px;
+background-color: #F0F0F0;
 padding-left: 10px;
 padding-right: 10px;
 border-width: 1.5px;
-border-color: #FAFAFA;
+border-color: #F0F0F0;
+font-size: 17px;
 `;
 
 const DisabledLoginButton = Styled.View`
-margin-top: 37px;
 width: ${wp('91.46%')}px;
 height: 50px;
-background-color: #ECECEE;
-border-radius: 10px;
+background-color: #c5c5c5;
+border-radius: 8px;
 justify-content: center;
 align-items: center;
 `;
 
 const DisabledLoginText = Styled.Text`
-font-weight: 600;
-font-size: 18px;
-color: #8E9199;
+font-weight: bold;
+font-size: 16px;
+color: #ffffff;
 `;
 
 
 const AbledLoginButton = Styled.View`
-margin-top: 37px;
 width: ${wp('91.46%')}px;
 height: 50px;
 background-color: #267DFF;
-border-radius: 10px;
+border-radius: 8px;
 justify-content: center;
 align-items: center;
 `;
 
 const AbledLoginText = Styled.Text`
-font-weight: 600;
-font-size: 18px;
+font-weight: bold;
+font-size: 16px;
 color: #FFFFFF;
 `;
 
@@ -202,218 +151,293 @@ const LoadingContainer = Styled.View`
  background-color: #00000030;
 `;
 
+const VerifyText = Styled.Text`
+font-size: 17px;
+color: #0075FF;
+`;
+
+const TimeLimitText = Styled.Text`
+font-size: 17px;
+color: #0075FF;
+`;
+
+const VerifyTextContainer = Styled.View`
+height: 50px;
+position: absolute;
+left: ${wp('73.46%')}px;
+padding-right: 10px;
+padding-left: 20px;
+align-items: center;
+justify-content: center;
+`;
+
+const TimeLimitTextContainer = Styled.View`
+height: 50px;
+position: absolute;
+justify-content: center;
+padding-right: 10px;
+padding-left: 16px;
+left: ${wp('73.46%')}px;
+`;
+
+const FinishButtonContainer = Styled.View`
+width: ${wp('100%')};
+padding-left: ${wp('4.2%')};
+position:absolute;
+bottom: -20px;
+background-color : #707070;
+`;
+
 interface Props {
     navigation: any,
     route: any,
 }
 
+var limitTime = 300;
+var timeout: any;
+
 const LoginScreen = ({navigation}: Props) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [validEmail, setValidEmail] = useState<boolean>(false);
-  const [emailInputState, setEmailInputState] = useState<string>("noInput");
-  const [emailInputFocus, setEmailInputFocus] = useState<boolean>(false);
-  const [passwordInputFocus, setPasswordInputFocus] = useState<boolean>(false);
+  const [number, setNumber] = useState('');
+  const [authCode, setAuthCode] = useState<string>('');
+  const [validNumber, setValidNumber] = useState<boolean>(false);
+  const [numberInputState, setNumberInputState] = useState<string>("noInput");
+  const [numberInputFocus, setNumberInputFocus] = useState<boolean>(false);
+  const [authCodeInputFocus, setAuthCodeInputFocus] = useState<boolean>(false);
+  const [formattedNumber, setFormattedNumber] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [visibleAuthCodeInput, setVisibleAuthCodeInput] = useState<boolean>(false);
+
+  const [limitMin, setLimitMin] = useState<number>(String(limitTime/60));
+  const [limitSec, setLimitSec] = useState<string>("0"+String(limitTime%60));
+
   const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
-  let submitingEmail:any;
+
+  const numberInputRef = useRef(null);
+  const authCodeInputRef = useRef(null);
+
+  let submitingNumber:any;
   let submitingPassword:any;
 
-  function checkEmail(str: string) {
+  function checkNumber(str: string) {
     var regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
     var blank_pattern = /[\s]/g;
     if (blank_pattern.test(str) === true) {
       console.log('공백 포함');
-      setValidEmail(false);
+      setValidNumber(false);
     } else if (!regExp.test(str)) {
       console.log('올바른 이메일 형식 아님');
-      setValidEmail(false);
+      setValidNumber(false);
     } else {
-      setValidEmail(true);
+      setValidNumber(true);
     }
   }
+  
 
-  const onChangeEmailInput = (text: string) => {
-    setEmailInputState("inputing");
-    setEmail(text);
+  const onChangeNumberInput = (text: string) => {
+    /*
+    setNumberInputState("inputing");
+    setNumber(text);
+    var numberArray = text.split("");
+    console.log("numberArray", numberArray);
+
+    // inputing number
+    if(numberArray.length === 4) {
+      numberArray.splice(3, 0, " ", "-", " ");
+      console.log("하이픈 추가", numberArray)
+      setFormattedNumber(numberArray.join(''))
+    } else {
+      setFormattedNumber(text)
+    }
+    */
   }
 
-  const moveToFindPassword = () => {
-    navigation.navigate("SettingStack" , {
-      screen: 'VerifyEmailScreen'
-    });
+ const onKeyPressNumberInput = (event: any) => {
+   var numberArray = formattedNumber.split("")
+   console.log("numberArray", numberArray);
+   console.log("event.nativeEvent", event.nativeEvent.key)
+
+   if(numberArray.length === 17 && event.nativeEvent.key !== "Backspace") {
+     return
+   }
+
+   if(!isNaN(event.nativeEvent.key)) {
+    // 입력값 숫자
+    numberArray.push(event.nativeEvent.key)
+    setFormattedNumber(numberArray.join(''))
+
+    if(numberArray.length === 4) {
+      numberArray.splice(3, 0, " ", "-", " ");
+      console.log("하이폰 추가", numberArray)
+      setFormattedNumber(numberArray.join(''))
+    } else if(numberArray.length === 11) {
+      numberArray.splice(10, 0, " ", "-", " ");
+      console.log("하이폰 추가", numberArray)
+      setFormattedNumber(numberArray.join(''))
+    }
+    
+  } else if(event.nativeEvent.key === "Backspace") {
+    // 입력값 Backspace 
+    
+    numberArray.pop()
+    setFormattedNumber(numberArray.join(''))
+
+    if(numberArray.length === 13) {
+      numberArray.splice(10, 3);
+      console.log("하이폰 제거", numberArray)
+      setFormattedNumber(numberArray.join(''))
+    } else if(numberArray.length === 6) {
+      numberArray.splice(3, 3);
+      console.log("하이폰 제거", numberArray)
+      setFormattedNumber(numberArray.join(''))
+    }
+  }
+}
+
+  const startTimeout = () => {
+      timeout = setInterval(function() {
+      console.log("시간제한 시작", limitTime)
+      setLimitMin((parseInt(String(limitTime/60))))
+      if(String(limitTime%60).length == 1) {
+        setLimitSec("0"+String(limitTime%60))
+      } else {
+        setLimitSec(String(limitTime%60))
+      }
+
+      limitTime = limitTime - 1
+
+
+      if(limitTime < 0) {
+        clearInterval(timeout);
+      }
+    }, 1000)
   }
 
-  const onFocusEmailInput = () => {
-    setEmailInputFocus(true);
+
+
+  const onFocusNumberInput = () => {
+    setNumberInputFocus(true);
   }
 
-  const onUnfocusEmailInput = (text:string) => {
-    setEmailInputFocus(false);
-    checkEmail(text);
+  const onUnfocusNumberInput = (text:string) => {
+    setNumberInputFocus(false);
+    checkNumber(text);
   }
 
-  const onFocusPasswordInput = () => {
-    setPasswordInputFocus(true);
+  const onFocusAuthCodeInput = () => {
+    setAuthCodeInputFocus(true);
   }
 
-  const onUnfocusPasswordInput = (text:string) => {
-    setPasswordInputFocus(false);
+  const onUnfocusAuthCodeInput = (text:string) => {
+    setAuthCodeInputFocus(false);
   }
 
   const clickLoginButton = () => {
-    setLoading(true)
-    var regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
-    var blank_pattern = /[\s]/g;
-
-    if(blank_pattern.test(email) === true || !regExp.test(email)) {
-      console.log("올바른 이메일 형식 아님")
-      setEmailInputState("unvalid");
-    } else {
-    submitingEmail = email;
-    submitingPassword = password;
-    console.log('로그인 요청!! email', submitingEmail);
-    console.log('로그인 요청!! password', submitingPassword);
-
+    
     dispatch(
       allActions.userActions.setUser({
-          email: submitingEmail,
+          number: submitingNumber,
       })
     )
-    /*
-    Login(submitingEmail, submitingPassword, currentUser.fcmToken)
-    .then(function(response) {
-      setLoading(false)
-      console.log('로그인성공 유저 정보@@', response.data.user);
-      console.log("로그인성공 user.id", response.data.user.id);
-      console.log("유저스크랩정보", response.data.user.scraps[0].Posts);
-      if(response.status === 200) {
-        dispatch(
-          allActions.userActions.setUser({
-            email: submitingEmail,
-            profileImage: response.data.user.thumbnailImg,
-            nickname: response.data.user.nickname,
-            description: response.data.user.description,
-            userId: response.data.user.id,
-          })
-        )
-        
-        dispatch(
-          allActions.userActions.setLikeFeeds(response.data.user.LikePosts)
-        )
-        dispatch(
-          allActions.userActions.setScrapFeeds(response.data.user.scraps[0].Posts)
-        )
-        
-        dispatch(
-          allActions.keywordAction.setInputedKeywordList([])
-        )
-      }
-      GETRecentSearch(0, 20)
-      .then(function(response) {
-        console.log("GETRecentSearch response", response);
-        dispatch(
-          allActions.searchAction.setUserRecentSearch(response)
-        )
-      })
-      .catch(function(error) {
-        console.log("GETRecentSearch error", error);
-      })
-    })
-    .catch(function (error) {
-      setLoading(false)
-      console.log("error: ", error);
-      if(error.data.message === "You are not a member") {
-        Alert.alert('등록되지 않은 계정입니다.', '', [
-          {
-            text: "확인",
-            onPress: () => 0,
-          },
-        ])
-      } else if(error.data.message === "Not correct password.") {
-        Alert.alert('비밀번호가 일치하지 않습니다.', '', [
-          {
-            text: "확인",
-            onPress: () => 0,
-          },
-        ])
-      }
-    })
-    */
-  };
+  }
+
+ const clickSendAuthCode = () => {
+   if(formattedNumber.split("").length === 17) {
+    var tmpNumber = formattedNumber.split(" - ");
+    console.log("tmpNumber", tmpNumber.join(""));
+    setNumber(tmpNumber.join(""));
+    setVisibleAuthCodeInput(true)
+    startTimeout()
+   }
+ }
+
+ const goBack = () => {
+   navigation.goBack()
+   clearInterval(timeout)
+   
+   limitTime = 300;
+
  }
 
 
 
-
-    
-
   return (
     <Container>
       <HeaderBar>
-        <HeaderLeftContainer>
-          <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
+          <TouchableWithoutFeedback onPress={() => goBack()}>
             <HeaderLeftContainer>
           <HeaderBackIcon source={require('~/Assets/Images/HeaderBar/ic_back.png')} />
           </HeaderLeftContainer>
           </TouchableWithoutFeedback>
-        </HeaderLeftContainer>
-          <HeaderTitleText>이메일로 로그인</HeaderTitleText>
+          <HeaderTitleText>본인인증</HeaderTitleText>
           <HeaderRightContainer>
         <HeaderEmptyContainer/>
         </HeaderRightContainer>
       </HeaderBar>
-      <KeyboardAwareScrollView
-      showsVerticalScrollIndicator={false}
-      keyboardShouldPersistTaps={"handled"}>
       <BodyContainer>
-        <ItemContainer>
-          <ItemLabelText>이메일</ItemLabelText>
+        {/*
+        <LoginDescipText>
+          <LoginDescipText style={{fontWeight:'bold'}}>로그인하고</LoginDescipText>
+          {"\n"}맞춤 치과 정보 받기!</LoginDescipText>
+        */}
+        <ItemContainer style={{marginTop: 0}}>
           <ItemTextInput
-          style={(emailInputState === "unvalid" && {borderColor: '#FF3B30'}) || (emailInputFocus && {borderColor:'#267DFF'})}
-          onChangeText={(text:string) => onChangeEmailInput(text)}
+          ref={numberInputRef}
+          placeholder={" - 없이 번호 입력"}
+          placeholderTextColor={"#7e7e7e"}
+          style={[(numberInputState === "unvalid" && {borderColor: '#FF3B30'}) || (numberInputFocus && {borderColor:'#267DFF', backgroundColor: '#FFFFFF'})]}
+          onChangeText={(text:string) => onChangeNumberInput(text)}
           autoCapitalize={"none"}
-          onSubmitEditing={(text) => onUnfocusEmailInput(text.nativeEvent.text)}
-          onEndEditing={(text) => onUnfocusEmailInput(text.nativeEvent.text)}
-          onFocus={() => onFocusEmailInput()}
+          onSubmitEditing={(text) => onUnfocusNumberInput(text.nativeEvent.text)}
+          keyboardType={"number-pad"}
+          onEndEditing={(text) => onUnfocusNumberInput(text.nativeEvent.text)}
+          onFocus={() => onFocusNumberInput()}
+          autoFocus={true}
+          value={formattedNumber}
+          onKeyPress={(event) => onKeyPressNumberInput(event)}
           />
-          {emailInputState === "unvalid" && (    
-          <UnvaildInputText>올바른 이메일 형식이 아닙니다.</UnvaildInputText>
-          )
-          }
+          <TouchableWithoutFeedback onPress={() => clickSendAuthCode()}>
+          <VerifyTextContainer style={visibleAuthCodeInput ? {paddingLeft:10}: {paddingLeft: 20}}>
+          <VerifyText>{visibleAuthCodeInput ? "재전송" : "인증"}</VerifyText>
+          </VerifyTextContainer>
+          </TouchableWithoutFeedback>
         </ItemContainer>
-        <ItemContainer style={{marginTop: 30}}>
-          <ItemLabelText>비밀번호</ItemLabelText>
+        {visibleAuthCodeInput && (
+        <ItemContainer style={{marginTop: 16}}>
           <ItemTextInput
-          style={passwordInputFocus && {borderColor:'#267DFF'}}
-          onFocus={() => onFocusPasswordInput()}
-          onSubmitEditing={(text:any) => onUnfocusPasswordInput(text.nativeEvent.text)}
-          onEndEditing={(text:any) => onUnfocusPasswordInput(text.nativeEvent.text)}
-          secureTextEntry={true}
-          onChangeText={(text: string) => setPassword(text)}
+          ref={authCodeInputRef}
+          style={authCodeInputFocus && {borderColor:'#267DFF', backgroundColor: "#ffffff"}}
+          onFocus={() => onFocusAuthCodeInput()}
+          onSubmitEditing={(text:any) => onUnfocusAuthCodeInput(text.nativeEvent.text)}
+          onEndEditing={(text:any) => onUnfocusAuthCodeInput(text.nativeEvent.text)}
+          onChangeText={(text: string) => setAuthCode(text)}
           autoCapitalize={"none"}
+          keyboardType={"name-phone-pad"}
+          autoFocus={true}
           />
+          <TimeLimitTextContainer>
+            <TimeLimitText>{limitMin + ":" + limitSec}</TimeLimitText>
+          </TimeLimitTextContainer>
         </ItemContainer>
-        {(email === "" || password === "") && (
-        <DisabledLoginButton>
-        <DisabledLoginText>로그인</DisabledLoginText>
-      </DisabledLoginButton>
         )}
-        {(email !== "" && password !== "") && (
+        <FinishButtonContainer>
+          <AboveKeyboard>
+        {(number !== "" && authCode !== "") && (
           <TouchableWithoutFeedback onPress={() => clickLoginButton()}>
           <AbledLoginButton>
             <AbledLoginText>로그인</AbledLoginText>
           </AbledLoginButton>
           </TouchableWithoutFeedback>
         )}
+        {visibleAuthCodeInput && authCode == "" && (
+        <DisabledLoginButton>
+          <DisabledLoginText>로그인</DisabledLoginText>
+        </DisabledLoginButton>
+        )}
+        </AboveKeyboard>
+        </FinishButtonContainer>
       </BodyContainer>
-      <FooterContainer>
-        <TouchableWithoutFeedback onPress={() => moveToFindPassword()}>
-        <FindPasswordText>비밀번호 찾기</FindPasswordText>
-        </TouchableWithoutFeedback>
-      </FooterContainer>
-      </KeyboardAwareScrollView>
       {loading && (
         <LoadingContainer>
           <ActivityIndicator
