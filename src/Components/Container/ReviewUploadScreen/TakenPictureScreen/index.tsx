@@ -58,20 +58,19 @@ const GalleryText = Styled.Text`
 margin-top: 30px;
 `;
 
+const HeaderRegisterText = Styled.Text`
+`;
+
+const TakenPictureImage = Styled.Image`
+flex: 1;
+`;
+
 interface Props {
     navigation: any,
     route: any,
 }
 
-const ReviewUploadScreen = ({navigation, route}: Props) => {
-
-    const openCamera = () => {
-        navigation.navigate("Camera");
-    }
-
-    const moveToGallery = () => {
-        navigation.navigate("Gallery");
-    }
+const TakenPictureScreen = ({navigation, route}: Props) => {
 
     const goBack = () => {
         navigation.goBack();
@@ -86,22 +85,17 @@ const ReviewUploadScreen = ({navigation, route}: Props) => {
                     source={require('~/Assets/Images/HeaderBar/ic_back.png')}/>
                 </HeaderLeftContainer>
                 </TouchableWithoutFeedback>
-                <HeaderTitleText>Review Upload</HeaderTitleText>
+                <HeaderTitleText>영수증</HeaderTitleText>
                 <HeaderRightContainer>
+                    <HeaderRegisterText>등록</HeaderRegisterText>
                 </HeaderRightContainer>
             </HeaderBar>
             <BodyContainer>
-                <TouchableWithoutFeedback onPress={() => openCamera()}>
-                <TakePhotoText>사진찍기</TakePhotoText>
-                </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => moveToGallery()}>
-                <GalleryText>갤러리</GalleryText>
-                </TouchableWithoutFeedback>
             </BodyContainer>
         </Container>
     )
 }
 
-export default ReviewUploadScreen
+export default TakenPictureScreen
 
 

@@ -63,7 +63,7 @@ interface Props {
     route: any,
 }
 
-const ReviewUploadScreen = ({navigation, route}: Props) => {
+const ReviewContentScreen = ({navigation, route}: Props) => {
 
     const openCamera = () => {
         navigation.navigate("Camera");
@@ -102,6 +102,6 @@ const ReviewUploadScreen = ({navigation, route}: Props) => {
     )
 }
 
-export default ReviewUploadScreen
+export default ReviewContentScreen
 
 

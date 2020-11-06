@@ -9,7 +9,7 @@ import {
 const Container = Styled.View`
   width: ${wp('100%')}px;
   height: ${hp('100%')}px;
-  background-color: #ffffff;
+  background-color: #0075ff;
   flex: 1;
 `;
 
@@ -18,16 +18,15 @@ const LogoContainer = Styled.View`
 `;
 
 const SocialContainer = Styled.View`
- flex: 2;
+ flex: 1.5;
  align-items: center;
  justify-content: center;
 `;
 
 const LocalContainer = Styled.View`
- flex: 0.5;
+ flex: 0.7;
  align-items: center;
- justify-content: center;
- background-color: #c3c3c3;
+ padding-top: 27px;
  padding-left: 20px;
  padding-right: 20px;
 `;
@@ -38,8 +37,9 @@ const LocalLoginContainer = Styled.View`
 `;
 
 const LocalLoginText = Styled.Text`
- color: #000000;
+ color: #ffffff;
  font-size: 16px;
+ font-weight: bold;
 `;
 
 const LocalSignUpContainer = Styled.View`

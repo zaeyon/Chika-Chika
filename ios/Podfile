@@ -8,6 +8,8 @@ target 'chikaApp' do
 
   use_react_native!(:path => config["reactNativePath"])
 
+  pod 'react-native-image-editor', :path => '../node_modules/@react-native-community/image-editor'
+
   target 'chikaAppTests' do
     inherit! :complete
     # Pods for testing

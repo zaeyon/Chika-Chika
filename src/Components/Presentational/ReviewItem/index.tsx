@@ -22,6 +22,7 @@ const Container = Styled.View`
 const ProfileContainer = Styled.View`
  flex-direction: row;
  align-items: center;
+ justify-content: space-between;
 `;
 
 const ProfileLeftContainer = Styled.View`
@@ -30,25 +31,31 @@ const ProfileLeftContainer = Styled.View`
  background-color: #ffffff;
 `;
 
+const ProfileRightContainer = Styled.View`
+align-items: center;
+justify-content: center;
+`;
+
 const ProfileImage = Styled.Image`
- width: ${wp('12.8')}px;
- height: ${wp('12.8%')}px;
+ width: ${wp('10.66')}px;
+ height: ${wp('10.66%')}px;
  border-radius: 40px;
 `;
 
 const NicknameCreatedAtContainer = Styled.View`
- margin-left: 6px;
+ margin-left: 8px;
 `;
 
 const NicknameText = Styled.Text`
- font-size: 14px;
+ font-size: 15px;
+ font-weight: 600;
  color: #000000;
 `;
 
 const CreatedAtText = Styled.Text`
  margin-top: 2px;
- font-size: 12px;
- color: #888888;
+ font-size: 13px;
+ color: #a2a2a2;
 `;
 
 const ImageListContainer = Styled.View`
@@ -73,19 +80,27 @@ const InfoContainer = Styled.View`
 `;
 
 const TagListContainer = Styled.View`
-margin-top: 13px;
+margin-top: 8px;
+flex-direction: row;
 `;
 
 const TagText = Styled.Text`
-font-weight: bold;
-font-size: 17px;
-color: #267DFF;
+font-size: 14px;
+color: #000000;
+`;
+
+const TagBackground = Styled.View`
+padding-left: 12px;
+padding-right: 12px;
+padding-top: 8px;
+padding-bottom: 8px;
+background-color: #f1f1f1;
+border-radius: 100px;
+margin-right: 4px;
 `;
 
 const DateRatingContainer = Styled.View`
 margin-top: 6px;
- flex-direction: row;
- align-items: center;
 `;
 
 const InfoLabelBackground = Styled.View`
@@ -99,20 +114,25 @@ border-width: 1px;
 border-color: #F6F6F6;
 `;
 
+const InfoItemContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+`;
+
 const InfoLabelText = Styled.Text`
-color: #777777;
-font-size: 10px;
+color: #a1a1a1;
+font-size: 14px;
 `;
 
 const InfoValueText = Styled.Text`
 margin-top: 2px;
-margin-left: 4px;
+margin-left: 8px;
 font-size: 14px;
-color: #777777;
+color: #a1a1a1;
 `;
 
 const DescripContainer = Styled.View`
-margin-top: 16px;
+margin-top: 12px;
 `;
 
 const DescripText = Styled.Text`
@@ -165,10 +185,20 @@ const LikeValueText = Styled.Text`
  font-size: 16px;
 `;
 
+const ScrapContainer = Styled.View`
+align-items: center;
+justify-content: center;
+`;
+
 const ScrapIcon = Styled.Image`
-margin-left: 8px;
  width: ${wp('6.4%')};
  height: ${wp('6.4%')};
+`;
+
+const CommentIcon = Styled.Image`
+margin-left: 16px;
+width: ${wp('6.4%')};
+height: ${wp('6.4%')};
 `;
 
 const GetTreatInfoButton = Styled.View`
@@ -191,6 +221,11 @@ const RatingStarIcon = Styled.Image`
  height: ${wp('3.2%')};
 `;
 
+const TreatDateContainer = Styled.View`
+flex-direction: row;
+`;
+
+
 interface Props {
     navigation: any,
     profileImageUri: string,
@@ -204,9 +239,10 @@ interface Props {
     viewCount: number,
     treatInfoCount: number,
     likeCount: number,
+    commentCount: number,
 } 
 
-const ReviewItem = ({navigation, profileImageUri, nickname, createdAt, imageArray, tagArray, date, rating, description, viewCount, treatInfoCount, likeCount}: Props) => {
+const ReviewItem = ({navigation, profileImageUri, nickname, createdAt, imageArray, tagArray, date, rating, description, viewCount, treatInfoCount, likeCount, commentCount}: Props) => {
 
     const moveToReviewDetail = () => {
         navigation.navigate("ReviewStackScreen", {
@@ -234,6 +270,12 @@ const ReviewItem = ({navigation, profileImageUri, nickname, createdAt, imageArra
                 </NicknameCreatedAtContainer>
                 </ProfileLeftContainer>
                 </TouchableWithoutFeedback>
+                <ProfileRightContainer>
+                    <ScrapIcon
+                    source={require('~/Assets/Images/Review/ic_scrap_inline.png')}/>
+                </ProfileRightContainer>
+                
+
                 </ProfileContainer>
                 <InfoContainer>
                 <ImageListContainer>
@@ -247,44 +289,41 @@ const ReviewItem = ({navigation, profileImageUri, nickname, createdAt, imageArra
                     )}
                 </ImageListContainer>
                     <TagListContainer>
-                        <TagText>{"#" + tagArray[0]}
+                        <TagBackground>
+                        <TagText>{"#" + tagArray[0]}</TagText>
+                        </TagBackground>
                         {tagArray[1] && (
+                        <TagBackground>
                         <TagText>{" #" + tagArray[1]}</TagText>
+                        </TagBackground>
                         )}
-                        </TagText>
                     </TagListContainer>
                     <DateRatingContainer>
-                        <InfoLabelBackground>
+                        <InfoItemContainer>
                             <InfoLabelText>날짜</InfoLabelText>
-                        </InfoLabelBackground>
-                        <InfoValueText>{date}</InfoValueText>
-                        <InfoLabelBackground style={{marginLeft: 12}}>
+                            <InfoValueText>{date}</InfoValueText>
+                        </InfoItemContainer>
+                        <InfoItemContainer >
                             <InfoLabelText>만족도</InfoLabelText>
-                        </InfoLabelBackground>
                         <RatingStarIcon
                             style={{marginLeft: 4}}
                             source={require('~/Assets/Images/Review/ic_newStar.png')}/>
                         <InfoValueText>{rating}</InfoValueText>
+                        </InfoItemContainer>
                     </DateRatingContainer>
                     <DescripContainer>
                         <DescripText>{description}</DescripText>
                     </DescripContainer>
                     <MoreViewText>더보기</MoreViewText>
-                    <SocialInfoContainer>
-                        <SocialLabelText>조회</SocialLabelText>
-                        <SocialValueText>{viewCount}</SocialValueText>
-                        <SocialLabelText
-                        style={{marginLeft: 15}}>정보받기</SocialLabelText>
-                        <SocialValueText>{treatInfoCount}</SocialValueText>
-                    </SocialInfoContainer>
                 </InfoContainer>
                 <ActionContainer>
                     <LikeScrapContainer>
                         <LikeIcon
-                        source={require('~/Assets/Images/Review/ic_like_outline.png')}/>
+                        source={require('~/Assets/Images/Review/ic_like_inline.png')}/>
                         <LikeValueText>{likeCount}</LikeValueText>
-                        <ScrapIcon
-                        source={require('~/Assets/Images/Review/ic_scrap_outline.png')}/>
+                        <CommentIcon
+                        source={require('~/Assets/Images/Review/ic_comment_inline.png')}/>
+                        <LikeValueText>{commentCount}</LikeValueText>
                     </LikeScrapContainer>
                         <GetTreatInfoButton>
                             <GetTreatInfoText>시술 정보받기</GetTreatInfoText>
