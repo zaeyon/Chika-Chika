@@ -73,7 +73,8 @@ const TEST_REVIEW_DATA = [
         description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
         view: "300",
         getInfo: "102",
-        like: "123"
+        like: "123",
+        comment: "24"
     },
     {
         user: {
@@ -97,7 +98,8 @@ const TEST_REVIEW_DATA = [
         description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
         view: "300",
         getInfo: "102",
-        like: "123"
+        like: "123",
+        comment: "24"
     },
     {
         user: {
@@ -121,7 +123,8 @@ const TEST_REVIEW_DATA = [
         description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
         view: "300",
         getInfo: "102",
-        like: "123"
+        like: "123",
+        comment: "24"
     },
     {
         user: {
@@ -145,7 +148,8 @@ const TEST_REVIEW_DATA = [
         description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
         view: "300",
         getInfo: "102",
-        like: "123"
+        like: "123",
+        comment: "24"
     }
 ]
 
@@ -173,7 +177,8 @@ const HomeScreen = ({navigation}: Props) => {
             description={item.description}
             viewCount={item.view}
             treatInfoCount={item.getInfo}
-            likeCount={item.like}/>
+            likeCount={item.like}
+            commentCount={item.comment}/>
         )
     }
 

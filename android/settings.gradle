@@ -1,3 +1,5 @@
 rootProject.name = 'chikaApp'
+include ':@react-native-community_image-editor'
+project(':@react-native-community_image-editor').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/image-editor/android')
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'

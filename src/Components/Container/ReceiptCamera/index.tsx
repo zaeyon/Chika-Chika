@@ -8,6 +8,7 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
+import ImageEditor from "@react-native-community/image-editor";
 
 let {width, height} = Dimensions.get('window');
 const Container = Styled.View`
@@ -103,7 +104,7 @@ interface Props {
     route: any,
 }
 
-const Camera = ({navigation, route}: Props) => {
+const ReceiptCamera = ({navigation, route}: Props) => {
     const [cameraType, setCameraType] = useState<string>("front");
     const cameraRef = React.useRef(null); // useRef로 camera를 위한 ref를 하나 만들어 주고
 
@@ -115,12 +116,12 @@ const Camera = ({navigation, route}: Props) => {
                 exif: true,
                 doNotSave: false,
             });
-            console.log('촬영한 사진 data.uri', data.uri);
+            console.log('촬영한 사진 data', data);
             if(data) {
                 
                 CameraRoll.save(data.uri)
                 .then((result) => {
-                    console.log("사진 저장 성공 result", result)
+                    console.log("사진 저장 성공 result", result)    
                 })
                 .catch((error) => {
                     console.log("사진 저장 실패 error", error);
@@ -153,23 +154,6 @@ const Camera = ({navigation, route}: Props) => {
             captureAudio={false}
             type={cameraType === "front" ? RNCamera.Constants.Type.front : (cameraType === "back" ? RNCamera.Constants.Type.back : RNCamera.Constants.Type.front)}
             />
-            <View
-            style={{
-            position: 'absolute',
-            top: -wp('100%')/2 + 140,
-            left: -width/2 + 25,
-            right: -width/2 + 25,
-            bottom: -width/2 + 140,
-            backgroundColor: 'transparent',
-            borderWidth: width/2,
-            borderRadius: width-165,
-            borderColor: 'black',
-            opacity: 0.5,
-            }}>
-            </View>
-            <CameraGuideTextContainer>
-                <CameraGuideText>가이드에 맞춰 사진을 찍어주세요</CameraGuideText>
-            </CameraGuideTextContainer>
             <TakePhotoContainer>
             <TouchableWithoutFeedback onPress={() => takePhoto()}>
             <TakePhotoButton/>
@@ -192,4 +176,4 @@ const Camera = ({navigation, route}: Props) => {
     )
 }
 
-export default Camera;
+export default ReceiptCamera;

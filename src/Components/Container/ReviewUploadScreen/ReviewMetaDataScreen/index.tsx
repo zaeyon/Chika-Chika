@@ -63,15 +63,7 @@ interface Props {
     route: any,
 }
 
-const ReviewUploadScreen = ({navigation, route}: Props) => {
-
-    const openCamera = () => {
-        navigation.navigate("Camera");
-    }
-
-    const moveToGallery = () => {
-        navigation.navigate("Gallery");
-    }
+const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
     const goBack = () => {
         navigation.goBack();
@@ -86,22 +78,16 @@ const ReviewUploadScreen = ({navigation, route}: Props) => {
                     source={require('~/Assets/Images/HeaderBar/ic_back.png')}/>
                 </HeaderLeftContainer>
                 </TouchableWithoutFeedback>
-                <HeaderTitleText>Review Upload</HeaderTitleText>
+                <HeaderTitleText>작성</HeaderTitleText>
                 <HeaderRightContainer>
                 </HeaderRightContainer>
             </HeaderBar>
             <BodyContainer>
-                <TouchableWithoutFeedback onPress={() => openCamera()}>
-                <TakePhotoText>사진찍기</TakePhotoText>
-                </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => moveToGallery()}>
-                <GalleryText>갤러리</GalleryText>
-                </TouchableWithoutFeedback>
             </BodyContainer>
         </Container>
     )
 }
 
-export default ReviewUploadScreen
+export default ReviewMetaDataScreen
 
 

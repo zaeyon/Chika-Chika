@@ -249,6 +249,9 @@ PODS:
     - React
   - react-native-geolocation-service (5.0.0):
     - React
+  - react-native-image-editor (2.3.0):
+    - React
+    - React-RCTImage
   - react-native-nmap (0.0.52):
     - NMapsMap (~> 3.7.0)
     - React
@@ -369,6 +372,7 @@ DEPENDENCIES:
   - react-native-camera (from `../node_modules/react-native-camera`)
   - "react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)"
   - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
+  - "react-native-image-editor (from `../node_modules/@react-native-community/image-editor`)"
   - react-native-nmap (from `../node_modules/react-native-nmap`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -441,6 +445,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/cameraroll"
   react-native-geolocation-service:
     :path: "../node_modules/react-native-geolocation-service"
+  react-native-image-editor:
+    :path: "../node_modules/@react-native-community/image-editor"
   react-native-nmap:
     :path: "../node_modules/react-native-nmap"
   react-native-safe-area-context:
@@ -509,6 +515,7 @@ SPEC CHECKSUMS:
   react-native-camera: 5c1fbfecf63b802b8ca4a71c60d30a71550fb348
   react-native-cameraroll: 9d2b7c1707204d2040d2812f960c6cebdbd9f670
   react-native-geolocation-service: 141e33bdb179bcba10b216ee13962611e21f2be4
+  react-native-image-editor: bd67912f38a8e7a895bf6eb8f445acdcefd8fd0c
   react-native-nmap: 5d572d0318d0cecdc711e319b896604db349c880
   react-native-safe-area-context: 01158a92c300895d79dee447e980672dc3fb85a6
   React-RCTActionSheet: 53ea72699698b0b47a6421cb1c8b4ab215a774aa

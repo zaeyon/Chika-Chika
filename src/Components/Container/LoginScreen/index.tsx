@@ -10,6 +10,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import AboveKeyboard from 'react-native-above-keyboard';
+import {getStatusBarHeight} from 'react-native-status-bar-height'
 
 const Input = Styled.TextInput`
 position: relative;
@@ -18,7 +19,8 @@ width: ${wp('80%')}px;
 height: 50px;
 `;
 
-const Container = Styled.SafeAreaView`
+const Container = Styled.View`
+  padding-top: ${getStatusBarHeight()}
   flex: 1;
   background-color: #FEFFFF;
 `;
@@ -184,7 +186,7 @@ const FinishButtonContainer = Styled.View`
 width: ${wp('100%')};
 padding-left: ${wp('4.2%')};
 position:absolute;
-bottom: -20px;
+bottom: 16px;
 background-color : #707070;
 `;
 
@@ -208,8 +210,9 @@ const LoginScreen = ({navigation}: Props) => {
 
   const [visibleAuthCodeInput, setVisibleAuthCodeInput] = useState<boolean>(false);
 
-  const [limitMin, setLimitMin] = useState<number>(String(limitTime/60));
+  const [limitMin, setLimitMin] = useState<number>(parseInt(String(limitTime/60)));
   const [limitSec, setLimitSec] = useState<string>("0"+String(limitTime%60));
+  const [timeOver, setTimeOver] = useState<boolean>(false);
 
   const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
@@ -310,6 +313,7 @@ const LoginScreen = ({navigation}: Props) => {
 
       if(limitTime < 0) {
         clearInterval(timeout);
+        setTimeOver(true);
       }
     }, 1000)
   }
@@ -334,7 +338,9 @@ const LoginScreen = ({navigation}: Props) => {
   }
 
   const clickLoginButton = () => {
-    
+
+    clearInterval(timeout)
+
     dispatch(
       allActions.userActions.setUser({
           number: submitingNumber,
@@ -357,7 +363,6 @@ const LoginScreen = ({navigation}: Props) => {
    clearInterval(timeout)
    
    limitTime = 300;
-
  }
 
 
@@ -407,30 +412,35 @@ const LoginScreen = ({navigation}: Props) => {
         <ItemContainer style={{marginTop: 16}}>
           <ItemTextInput
           ref={authCodeInputRef}
-          style={authCodeInputFocus && {borderColor:'#267DFF', backgroundColor: "#ffffff"}}
+          style={(authCodeInputFocus && !timeOver && {borderColor:'#267DFF', backgroundColor: "#ffffff"}) || timeOver && {borderColor: '#E90000', backgroundColor: "#ffffff"}}
           onFocus={() => onFocusAuthCodeInput()}
           onSubmitEditing={(text:any) => onUnfocusAuthCodeInput(text.nativeEvent.text)}
           onEndEditing={(text:any) => onUnfocusAuthCodeInput(text.nativeEvent.text)}
           onChangeText={(text: string) => setAuthCode(text)}
           autoCapitalize={"none"}
-          keyboardType={"name-phone-pad"}
+          clearButtonMode={timeOver ? "always" : "never"}
           autoFocus={true}
           />
           <TimeLimitTextContainer>
+            {!timeOver && (
             <TimeLimitText>{limitMin + ":" + limitSec}</TimeLimitText>
+            )}
           </TimeLimitTextContainer>
+          {timeOver && (
+            <UnvaildInputText>인증 기간이 만료되었습니다.</UnvaildInputText>
+          )}
         </ItemContainer>
         )}
         <FinishButtonContainer>
           <AboveKeyboard>
-        {(number !== "" && authCode !== "") && (
+        {(number !== "" && authCode !== "" && !timeOver) && (
           <TouchableWithoutFeedback onPress={() => clickLoginButton()}>
           <AbledLoginButton>
             <AbledLoginText>로그인</AbledLoginText>
           </AbledLoginButton>
           </TouchableWithoutFeedback>
         )}
-        {visibleAuthCodeInput && authCode == "" && (
+        {((visibleAuthCodeInput && authCode == "") || (timeOver)) && (
         <DisabledLoginButton>
           <DisabledLoginText>로그인</DisabledLoginText>
         </DisabledLoginButton>

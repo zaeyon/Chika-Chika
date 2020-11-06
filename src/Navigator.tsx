@@ -28,8 +28,13 @@ import FullImagesScreen from '~/Components/Container/FullImagesScreen';
 
 // Review Upload Stack Screen
 import ReviewUploadScreen from '~/Components/Container/ReviewUploadScreen';
-import Camera from '~/Components/Container/Camera';
+import MetaDataScreen from '~/Components/Container/ReviewUploadScreen/ReviewMetaDataScreen';
+import ReviewContentScreen from '~/Components/Container/ReviewUploadScreen/ReviewContentScreen';
+import TeethCamera from '~/Components/Container/TeethCamera';
 import Gallery from '~/Components/Container/Gallery';
+import ReceiptRegisterScreen from '~/Components/Container/ReviewUploadScreen/ReceiptRegisterScreen';
+import ReceiptCamera from '~/Components/Container/ReceiptCamera';
+import TakenPictureScreen from '~/Components/Container/ReviewUploadScreen/TakenPictureScreen';
 
 // My Profile Stack Screen
 import MyProfileScreen from '~/Components/Container/MyProfileScreen';
@@ -128,14 +133,29 @@ function ReviewUploadStackScreen() {
         <ReviewUploadStack.Navigator
         headerMode="none">
             <ReviewUploadStack.Screen
+            name="ReceiptRegisterScreen"
+            component={ReceiptRegisterScreen}/>
+            <ReviewUploadStack.Screen
             name="ReviewUploadScreen"
             component={ReviewUploadScreen}/>
             <ReviewUploadStack.Screen
-            name="Camera"
-            component={Camera}/>
+            name="MetaDataScreen"
+            component={MetaDataScreen}/>
+            <ReviewUploadStack.Screen
+            name="ReviewContentScreen"
+            component={ReviewContentScreen}/>
+            <ReviewUploadStack.Screen
+            name="TeethCamera"
+            component={TeethCamera}/>
             <ReviewUploadStack.Screen
             name="Gallery"
             component={Gallery}/>
+            <ReviewUploadStack.Screen
+            name="ReceiptCamera"
+            component={ReceiptCamera}/>
+            <ReviewUploadStack.Screen
+            name="TakenPictureScreen"
+            component={TakenPictureScreen}/>
         </ReviewUploadStack.Navigator>
     )
 }
