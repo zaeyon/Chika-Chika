@@ -58,11 +58,14 @@ const GalleryText = Styled.Text`
 margin-top: 30px;
 `;
 
+
 const HeaderRegisterText = Styled.Text`
 `;
 
 const TakenPictureImage = Styled.Image`
-flex: 1;
+
+width: ${wp('100%')};
+height: ${hp('90%')}
 `;
 
 interface Props {
@@ -76,6 +79,10 @@ const TakenPictureScreen = ({navigation, route}: Props) => {
         navigation.goBack();
     }
 
+    const moveToReviewMeta = () => {
+        navigation.navigate("ReviewMetaDataScreen")
+    }
+
     return (
         <Container>
             <HeaderBar>
@@ -86,11 +93,16 @@ const TakenPictureScreen = ({navigation, route}: Props) => {
                 </HeaderLeftContainer>
                 </TouchableWithoutFeedback>
                 <HeaderTitleText>영수증</HeaderTitleText>
+                <TouchableWithoutFeedback onPress={() => moveToReviewMeta()}>
                 <HeaderRightContainer>
                     <HeaderRegisterText>등록</HeaderRegisterText>
                 </HeaderRightContainer>
+                </TouchableWithoutFeedback>
             </HeaderBar>
             <BodyContainer>
+                <TakenPictureImage
+                source={{uri:route.params.takenPictureUri}}
+                />
             </BodyContainer>
         </Container>
     )

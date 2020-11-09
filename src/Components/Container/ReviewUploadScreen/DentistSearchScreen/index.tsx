@@ -26,13 +26,13 @@ const HeaderBar = Styled.View`
 
 
 const HeaderLeftContainer = Styled.View`
-padding: 7px 16px 13px 15px;
+padding: 14px 0px 13px 15px;
  align-items: center;
  justify-content: center;
  flex-direction: row;
 `;
 
-const HeaderBackIcon = Styled.Image`
+const HeaderCancelIcon = Styled.Image`
 width: ${wp('6.4%')};
 height: ${wp('6.4%')};
 `;
@@ -44,10 +44,16 @@ font-weight: bold
 `;
 
 const HeaderRightContainer = Styled.View`
-padding: 7px 16px 13px 15px;
+padding: 14px 16px 13px 16px;
  align-items: center;
  justify-content: center;
  flex-direction: row;
+`;
+
+const HeaderSearchText = Styled.Text`
+font-weight: 300;
+font-size: 16px;
+color: #000000;
 `;
 
 const HeaderEmptyContainer = Styled.View`
@@ -104,23 +110,36 @@ font-size: 16px;
 color: #ffffff;
 `;
 
+const SearchInputContainer = Styled.View`
+width: ${wp('71.73%')};
+height: ${wp('10.666%')};
+border-radius: 8px;
+background-color: #F6F7F8;
+flex-direction: row;
+align-items: center;
+padding-left: 12px;
+`;
+
+const SearchIcon = Styled.Image`
+width: ${wp('4.2%')};
+height: ${wp('4.2%')};
+`;
+
+const SearchTextInput = Styled.TextInput`
+width: ${wp('65%')};
+font-weight: 300;
+font-size: 16px;
+`;
+
 interface Props {
     navigation: any,
     route: any,
 }
 
-const ReviewMetaDataScreen = ({navigation, route}: Props) => {
+const DentistSearchScreen = ({navigation, route}: Props) => {
     
-    const [hospitalName, setHospitalName] = useState<string>("")
-    const [treatDate, setTreatDate] = useState<string>("")
-    const [treatPrice, setTreatPrice] = useState<string>("")
-
     const goBack = () => {
         navigation.goBack();
-    }
-
-    const moveToDentistSearch = () => {
-        navigation.navigate("DentistSearchScreen");
     }
 
     return (
@@ -128,38 +147,26 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
             <HeaderBar>
                <TouchableWithoutFeedback onPress={() => goBack()}>
                 <HeaderLeftContainer>
-                    <HeaderBackIcon
-                    source={require('~/Assets/Images/HeaderBar/ic_back.png')}/>
+                    <HeaderCancelIcon
+                    source={require('~/Assets/Images/HeaderBar/ic_X.png')}/>
                 </HeaderLeftContainer>
                 </TouchableWithoutFeedback>
-                <HeaderTitleText>정보확인</HeaderTitleText>
+                <SearchInputContainer>
+                    <SearchIcon
+                    source={require('~/Assets/Images/HeaderBar/ic_search.png')}/>
+
+                </SearchInputContainer>
+
                 <HeaderRightContainer>
-                    <HeaderEmptyContainer>
-                    </HeaderEmptyContainer>
+                    <HeaderSearchText>검색</HeaderSearchText>
                 </HeaderRightContainer>
             </HeaderBar>
             <BodyContainer>
-                <TouchableWithoutFeedback onPress={() => moveToDentistSearch()}>
-                <MetaDataItemContainer>
-                <MetaDataText>{hospitalName}</MetaDataText>
-                </MetaDataItemContainer>
-                </TouchableWithoutFeedback>
-                <MetaDataItemContainer style={{marginTop: 16}}>
-                <MetaDataText>{treatDate}</MetaDataText>
-                </MetaDataItemContainer>
-                <MetaDataItemContainer style={{marginTop: 16}}>
-                <MetaDataText>{treatPrice}</MetaDataText>
-                </MetaDataItemContainer>
             </BodyContainer>
-            <FooterContainer>
-            <FinishButton>
-                <FinishText>확인</FinishText>
-            </FinishButton>
-            </FooterContainer>
         </Container>
     )
 }
 
-export default ReviewMetaDataScreen
+export default DentistSearchScreen
 
 
