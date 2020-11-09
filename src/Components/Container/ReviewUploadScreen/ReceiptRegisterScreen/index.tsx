@@ -117,7 +117,6 @@ const actionSheetRef = createRef();
         if(index === 1) {
             navigation.navigate("ReceiptCamera")
         }
-        
     }
 
     return (

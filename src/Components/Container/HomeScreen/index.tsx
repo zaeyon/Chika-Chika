@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList} from 'react-native';
+import {TouchableWithoutFeedback, FlatList, ScrollView} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -43,9 +43,119 @@ padding: 7px 16px 13px 15px;
  flex-direction: row;
 `;
 
-const ReviewListContainer = Styled.View`
-padding-bottom: ${isIphoneX() ? hp("11%") : hp("15%")}
+const HeaderEmptyContainer = Styled.View`
+width: ${wp('6.4%')};
+height: ${wp('6.4%')};
 `;
+
+const BodyContainer = Styled.View`
+padding-top: 32px;
+background-color: #ffffff;
+align-items: center;
+`;
+
+const ReviewContainer = Styled.View`
+`;
+
+const ReviewListContainer = Styled.View`
+`;
+
+const ReviewHeaderContainer = Styled.View`
+width: ${wp('87.2%')}
+flex-direction: row;
+align-items: center;
+justify-content: space-between;
+`;
+
+const ReviewLabelText = Styled.Text`
+font-weight: 700;
+font-size: 16px;
+color: #000000;
+`;
+
+const MoreViewContainer = Styled.View`
+align-items: center;
+justify-content: center;
+padding: 5px;
+`;
+
+const MoreViewText = Styled.Text`
+font-size: 16px;
+font-weight: 400;
+color: #000000;
+`;
+
+const ReviewItemContainer = Styled.View`
+margin-top: 8px;
+width: ${wp('87.2%')};
+height: ${wp('40%')};
+border-radius: 8px;
+border-width: 1px;
+border-color: #c4c4c4;
+`;
+
+
+const HospitalContainer = Styled.View`
+`;
+
+const HospitalListContainer = Styled.View`
+`;
+
+const HospitalHeaderContainer = Styled.View`
+width: ${wp('87.2%')}
+flex-direction: row;
+align-items: center;
+justify-content: space-between;
+`;
+
+const HospitalLabelText = Styled.Text`
+font-weight: 700;
+font-size: 16px;
+color: #000000;
+`;
+
+const HospitalItemContainer = Styled.View`
+margin-top: 8px;
+width: ${wp('87.2%')};
+height: ${wp('40%')};
+border-radius: 8px;
+border-width: 1px;
+border-color: #c4c4c4;
+`;
+
+const ReviewUploadButton = Styled.View`
+width: ${wp('87.2%')};
+height: ${wp('24.416%')};
+border-radius: 8px;
+border-width: 1px;
+border-color: #C4C4C4;
+align-items: center;
+justify-content: center;
+`;
+
+const ReviewUploadText = Styled.Text`
+font-weight: 700;
+color: #000000;
+font-size: 18px;
+`;
+
+
+const ToothCareButton = Styled.View`
+width: ${wp('87.2%')};
+height: ${wp('24.416%')};
+border-radius: 8px;
+border-width: 1px;
+border-color: #C4C4C4;
+align-items: center;
+justify-content: center;
+`;
+
+const ToothCareText = Styled.Text`
+font-weight: 700;
+color: #000000;
+font-size: 18px;
+`;
+
 
 const NearDentistText = Styled.Text`
 `;
@@ -163,6 +273,12 @@ const HomeScreen = ({navigation}: Props) => {
         navigation.navigate("NearDentistMap");
     }
 
+    const moveToReviewUpload = () => {
+        navigation.navigate("ReviewUploadStackScreen", {
+            screen: "ReceiptRegisterScreen"
+        });
+    }
+
     const renderReviewItem = ({item, index}: any) => {
         return (
             <ReviewItem
@@ -186,20 +302,66 @@ const HomeScreen = ({navigation}: Props) => {
         <Container>
             <HeaderBar>
                 <HeaderLeftContainer>
+                    <HeaderEmptyContainer>
+                    </HeaderEmptyContainer>
                 </HeaderLeftContainer>
                 <HeaderTitleText>Home</HeaderTitleText>
-                <TouchableWithoutFeedback onPress={() => moveToNearDentistMap()}>
                 <HeaderRightContainer>
-                    <NearDentistText>내 주변</NearDentistText>
+                    <HeaderEmptyContainer>
+                    </HeaderEmptyContainer>
                 </HeaderRightContainer>
-                </TouchableWithoutFeedback>
             </HeaderBar>
+            <ScrollView>
+            <BodyContainer>
+                <ReviewContainer>
+                    <ReviewHeaderContainer>
+                        <ReviewLabelText>인기 리뷰</ReviewLabelText>
+                        <MoreViewContainer>
+                            <MoreViewText>더보기</MoreViewText>
+                        </MoreViewContainer>
+                    </ReviewHeaderContainer>
+                    <ReviewListContainer>
+                        <ReviewItemContainer>
+                        </ReviewItemContainer>
+                    </ReviewListContainer>
+                </ReviewContainer>
+                <HospitalContainer style={{marginTop: 24}}>
+                    <HospitalHeaderContainer>
+                        <HospitalLabelText>인기 병원</HospitalLabelText>
+                        <MoreViewContainer>
+                            <MoreViewText>더보기</MoreViewText>
+                        </MoreViewContainer>
+                    </HospitalHeaderContainer>
+                    <HospitalListContainer>
+                        <HospitalItemContainer>
+                        </HospitalItemContainer>
+                    </HospitalListContainer>
+                </HospitalContainer>
+                <TouchableWithoutFeedback onPress={() => moveToReviewUpload()}>
+                <ReviewUploadButton style={{marginTop: 50}}>
+                    <ReviewUploadText>
+                        리뷰 작성하기
+                    </ReviewUploadText>
+                </ReviewUploadButton>
+                </TouchableWithoutFeedback>
+                <ToothCareButton style={{marginTop: 20}}>
+                    <ToothCareText>
+                        치아 관리하러 가기 
+                    </ToothCareText>
+                </ToothCareButton>
+            <ReviewContainer>
             <ReviewListContainer>
+                {/*
                 <FlatList
+                horizontal={true}
                 showsVerticalScrollIndicator={false}
                 data={TEST_REVIEW_DATA}
                 renderItem={renderReviewItem}/>
+                */}
             </ReviewListContainer>
+            </ReviewContainer>
+            </BodyContainer>
+            </ScrollView>
         </Container>
     )
 }

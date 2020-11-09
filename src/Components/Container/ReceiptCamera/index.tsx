@@ -105,7 +105,7 @@ interface Props {
 }
 
 const ReceiptCamera = ({navigation, route}: Props) => {
-    const [cameraType, setCameraType] = useState<string>("front");
+    const [cameraType, setCameraType] = useState<string>("back");
     const cameraRef = React.useRef(null); // useRef로 camera를 위한 ref를 하나 만들어 주고
 
     const takePhoto = async () => {
@@ -121,7 +121,11 @@ const ReceiptCamera = ({navigation, route}: Props) => {
                 
                 CameraRoll.save(data.uri)
                 .then((result) => {
-                    console.log("사진 저장 성공 result", result)    
+                    console.log("사진 저장 성공 result", result);
+                    navigation.navigate("TakenPictureScreen", {
+                        takenPictureUri: result
+                    })
+                        
                 })
                 .catch((error) => {
                     console.log("사진 저장 실패 error", error);

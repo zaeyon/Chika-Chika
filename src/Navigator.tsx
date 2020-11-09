@@ -20,7 +20,6 @@ import VerifyPhoneNumberScreen from '~/Components/Container/VerifyPhoneNumberScr
 
 // Home Stack Screee 
 import HomeScreen from '~/Components/Container/HomeScreen';
-import NearDentistMap from '~/Components/Container/NearDentistMap';
 
 // Review Stack Screen
 import ReviewDetailScreen from '~/Components/Container/ReviewDetailScreen';
@@ -28,13 +27,14 @@ import FullImagesScreen from '~/Components/Container/FullImagesScreen';
 
 // Review Upload Stack Screen
 import ReviewUploadScreen from '~/Components/Container/ReviewUploadScreen';
-import MetaDataScreen from '~/Components/Container/ReviewUploadScreen/ReviewMetaDataScreen';
+import ReviewMetaDataScreen from '~/Components/Container/ReviewUploadScreen/ReviewMetaDataScreen';
 import ReviewContentScreen from '~/Components/Container/ReviewUploadScreen/ReviewContentScreen';
 import TeethCamera from '~/Components/Container/TeethCamera';
 import Gallery from '~/Components/Container/Gallery';
 import ReceiptRegisterScreen from '~/Components/Container/ReviewUploadScreen/ReceiptRegisterScreen';
 import ReceiptCamera from '~/Components/Container/ReceiptCamera';
 import TakenPictureScreen from '~/Components/Container/ReviewUploadScreen/TakenPictureScreen';
+import DentistSearchScreen from '~/Components/Container/ReviewUploadScreen/DentistSearchScreen';
 
 // My Profile Stack Screen
 import MyProfileScreen from '~/Components/Container/MyProfileScreen';
@@ -48,9 +48,14 @@ import SettingScreen from '~/Components/Container/SettingScreen';
 // Community Stack Screen
 import CommunityScreen from '~/Components/Container/CommunityScreen';
 
+// Dentist Stack Screen
+import NearDentistMap from '~/Components/Container/NearDentistMap';
+
+// Teeth Care Stack Screen
+import TeethCareScreen from '~/Components/Container/TeethCareScreen';
+
 
 const Tab = createBottomTabNavigator();
-
 const AuthStack = createStackNavigator();
 const HomeStack = createStackNavigator();
 const ReviewUploadStack = createStackNavigator();
@@ -59,6 +64,8 @@ const ReviewStack = createStackNavigator();
 const AnotherProfileStack = createStackNavigator();
 const SettingStack = createStackNavigator();
 const CommunityStack = createStackNavigator();
+const DentistStack = createStackNavigator();
+const TeethCareStack = createStackNavigator();
 
 function AuthStackScreen() {
     return (
@@ -124,8 +131,33 @@ function HomeStackScreen() {
             <HomeStack.Screen
             name="NearDentistMap"
             component={NearDentistMap}/>
+            <HomeStack.Screen
+            name="ReviewUploadStackScreen"
+            component={ReviewUploadStackScreen}/>
         </HomeStack.Navigator>
     )
+}
+
+function DentistStackScreen() {
+  return (
+    <DentistStack.Navigator
+    headerMode="none">
+      <DentistStack.Screen
+      name="NearDentistMap"
+      component={NearDentistMap}/>
+    </DentistStack.Navigator>
+  )
+}
+
+function TeethCareStackScreen() {
+  return (
+    <TeethCareStack.Navigator
+    headerMode="none">
+      <TeethCareStack.Screen
+      name="TeethCareScreen"
+      component={TeethCareScreen}/>
+    </TeethCareStack.Navigator>
+  )
 }
 
 function ReviewUploadStackScreen() {
@@ -139,8 +171,8 @@ function ReviewUploadStackScreen() {
             name="ReviewUploadScreen"
             component={ReviewUploadScreen}/>
             <ReviewUploadStack.Screen
-            name="MetaDataScreen"
-            component={MetaDataScreen}/>
+            name="ReviewMetaDataScreen"
+            component={ReviewMetaDataScreen}/>
             <ReviewUploadStack.Screen
             name="ReviewContentScreen"
             component={ReviewContentScreen}/>
@@ -156,6 +188,9 @@ function ReviewUploadStackScreen() {
             <ReviewUploadStack.Screen
             name="TakenPictureScreen"
             component={TakenPictureScreen}/>
+            <ReviewUploadStack.Screen
+            name="DentistSearchScreen"
+            component={DentistSearchScreen}/>
         </ReviewUploadStack.Navigator>
     )
 }
@@ -209,11 +244,11 @@ function BottomTab() {
     ? routeName.state.routes[routeName.state.index].name
     : '';
 
-    if(routeName.name === 'ReviewStackScreen' || routeName.name === "NearDentistMap") {
+    if(routeName.name === 'ReviewStackScreen' || routeName.name === "NearDentistMap" || routeName.name === 'ReviewUploadStackScreen') {
       return false;
     }
 
-    if(stackRouteName === 'ReviewStackScreen') {
+    if(stackRouteName === 'ReviewStackScreen' || routeName.name === 'ReviewUploadStackScreen') {
       return false;
     }
 
@@ -223,54 +258,43 @@ function BottomTab() {
     return (
     <Tab.Navigator
       tabBarOptions={{
-        showLabel: false,
+        showLabel: true,
+        labelStyle: styles.tabLabel,
         style: styles.tabBar
       }}>
       <Tab.Screen 
       name="Home" 
       component={HomeStackScreen}
       options={({route}) => ({
-        tabBarIcon: ({focused}: {focused: boolean}) => (
-          <Image
-            source={
-            focused
-             ? require('~/Assets/Images/BottomTab/ic_home_focused.png')
-             : require('~/Assets/Images/BottomTab/ic_home_outline.png')
-            }
-          />
-        ),
         tabBarVisible: getHomeTabBarVisibility(route)
       })}
       />
-      <Tab.Screen 
-      name="Upload"
-      component={ReviewUploadStackScreen}
-      options={{
-        tabBarIcon: ({focused}: {focused: boolean}) => (
-          <Image
-            source={
-               require('~/Assets/Images/BottomTab/ic_upload.png')
-            }
-          />
-        ),
-        tabBarVisible: false,
-      }}
+      <Tab.Screen
+      name="Dentist"
+      component={DentistStackScreen}/>
+      <Tab.Screen
+      name="Teeth Care"
+      component={TeethCareStackScreen}
       />
       <Tab.Screen
       name="Community"
       component={CommunityStackScreen}
       options={{
+        /*
         tabBarIcon: ({focused}: {focused: boolean}) => (
+        
           <Image
           source={
             require('~/Assets/Images/BottomTab/ic_community_outline.png')
           }/>
         )
+        */
       }}/>
       <Tab.Screen 
       name="Profile" 
       component={MyProfileStackScreen}
       options={({route}) => ({
+        /*
         tabBarIcon: ({focused}: {focused: boolean}) => (
           <Image
             source={
@@ -280,6 +304,7 @@ function BottomTab() {
             }
           />
         ),
+        */
       })}
       />
     </Tab.Navigator>
@@ -306,6 +331,9 @@ const styles = StyleSheet.create({
       height: isIphoneX() ? wp("21%") : wp("15%"),
       position: 'absolute',
     },
+    tabLabel: {
+      fontSize: 13
+    }
   });
 
 export default Navigator
