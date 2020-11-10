@@ -34,7 +34,8 @@ import Gallery from '~/Components/Container/Gallery';
 import ReceiptRegisterScreen from '~/Components/Container/ReviewUploadScreen/ReceiptRegisterScreen';
 import ReceiptCamera from '~/Components/Container/ReceiptCamera';
 import TakenPictureScreen from '~/Components/Container/ReviewUploadScreen/TakenPictureScreen';
-import DentistSearchScreen from '~/Components/Container/ReviewUploadScreen/DentistSearchScreen';
+import DentalClinicSearchScreen from '~/Components/Container/ReviewUploadScreen/DentalClinicSearchScreen';
+import TreatSearchScreen from '~/Components/Container/ReviewUploadScreen/TreatSearchScreen';
 
 // My Profile Stack Screen
 import MyProfileScreen from '~/Components/Container/MyProfileScreen';
@@ -189,8 +190,11 @@ function ReviewUploadStackScreen() {
             name="TakenPictureScreen"
             component={TakenPictureScreen}/>
             <ReviewUploadStack.Screen
-            name="DentistSearchScreen"
-            component={DentistSearchScreen}/>
+            name="DentalClinicSearchScreen"
+            component={DentalClinicSearchScreen}/>
+            <ReviewUploadStack.Screen
+            name="TreatSearchScreen"
+            component={TreatSearchScreen}/>
         </ReviewUploadStack.Navigator>
     )
 }

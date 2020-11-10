@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback} from 'react-native';
+import {TouchableWithoutFeedback, FlatList} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -10,7 +10,6 @@ import { NavigationContainer } from '@react-navigation/native';
 const Container = Styled.SafeAreaView`
  flex: 1;
  background-color: #FFFFFF;
- align-items: center;
 `;
 
 const HeaderBar = Styled.View`
@@ -63,7 +62,7 @@ height: ${wp('6.4%')};
 
 const BodyContainer = Styled.View`
 align-items: center;
-padding-top: 39px;
+padding-top: 10px;
 `;
 
 const TakePhotoText = Styled.Text`
@@ -126,20 +125,79 @@ height: ${wp('4.2%')};
 `;
 
 const SearchTextInput = Styled.TextInput`
+margin-left: 8px;
 width: ${wp('65%')};
 font-weight: 300;
 font-size: 16px;
 `;
+
+const DentalClinicListContainer = Styled.View`
+`;
+
+const DentalClinicItemContainer = Styled.View`
+width: ${wp('100%')}
+padding-left: 20px;
+padding-top: 13px;
+padding-right: 13px;
+padding-bottom: 20px;
+`;
+
+const DentalClinicNameText = Styled.Text`
+font-weight: 300;
+font-size: 16px;
+color: #000000;
+`;
+
+const DentalClinicAddressText = Styled.Text`
+font-weight: 300;
+font-size: 13px;
+color: #9a9a9a;
+`;
+
+
+const DENTALCLINIC_TEST_DATA = [
+    {
+        name: "연세 좋은 이웃 치과의원",
+        address: "서울특별시 동대문구 왕산로 193 193 4층 (청량리동)"
+    },
+    {
+        name: "재미있는 치과의원",
+        address: "서울특별시 중구 을지로 3가 홍원빌딩"
+    },
+    {
+        name: "아름다운 치과의원",
+        address: "서울특별시 동대문구 왕산로 193 193 5층 (청량리동)"
+    }
+]
 
 interface Props {
     navigation: any,
     route: any,
 }
 
-const DentistSearchScreen = ({navigation, route}: Props) => {
+const DentalClinicSearchScreen = ({navigation, route}: Props) => {
     
     const goBack = () => {
         navigation.goBack();
+    }
+
+    const onPressDentalClinicItem = (name: string, address: string) => {
+        navigation.navigate("ReviewMetaDataScreen",{
+            dentalClinicName: name,
+            dentalClinicAddress: address,
+        })
+
+    }
+
+    const renderDentalClinicItem = ({item, index}: any) => {
+        return (
+            <TouchableWithoutFeedback onPress={() => onPressDentalClinicItem(item.name, item.address)}>
+            <DentalClinicItemContainer>
+                <DentalClinicNameText>{item.name}</DentalClinicNameText>
+                <DentalClinicAddressText>{item.address}</DentalClinicAddressText>
+            </DentalClinicItemContainer>
+            </TouchableWithoutFeedback>
+        )
     }
 
     return (
@@ -154,6 +212,9 @@ const DentistSearchScreen = ({navigation, route}: Props) => {
                 <SearchInputContainer>
                     <SearchIcon
                     source={require('~/Assets/Images/HeaderBar/ic_search.png')}/>
+                    <SearchTextInput
+                    placeholder={"병원 검색"}
+                    placeholderTextColor={"#ABA5A5"}/>
 
                 </SearchInputContainer>
 
@@ -162,11 +223,16 @@ const DentistSearchScreen = ({navigation, route}: Props) => {
                 </HeaderRightContainer>
             </HeaderBar>
             <BodyContainer>
+                <DentalClinicListContainer>
+                    <FlatList
+                    data={DENTALCLINIC_TEST_DATA}
+                    renderItem={renderDentalClinicItem}/>
+                </DentalClinicListContainer>
             </BodyContainer>
         </Container>
     )
 }
 
-export default DentistSearchScreen
+export default DentalClinicSearchScreen
 
 
