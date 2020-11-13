@@ -20,11 +20,14 @@ const HeaderBar = Styled.View`
  align-items: center;
  justify-content: space-between;
  background-color:#ffffff;
+ border-bottom-width: 0.6px;
+ border-color: #ECECEE;
 `;
 
 
 const HeaderLeftContainer = Styled.View`
-padding: 7px 16px 13px 15px;
+height: ${wp('13.8%')}px;
+padding: 0px 16px 0px 16px;
  align-items: center;
  justify-content: center;
  flex-direction: row;
@@ -36,12 +39,14 @@ height: ${wp('6.4%')};
 `;
 
 const HeaderTitleText = Styled.Text`
+margin-top: 5px;
 font-weight: bold;
 font-size: 18px; 
 `;
 
 const HeaderRightContainer = Styled.View`
-padding: 7px 16px 13px 15px;
+height: ${wp('13.8%')}px;
+padding: 0px 16px 0px 16px;
  align-items: center;
  justify-content: center;
  flex-direction: row;
@@ -90,6 +95,10 @@ font-size: 18px;
 color: #000000;
 `;
 
+const SkipContainer = Styled.View`
+padding: 20px;
+`;
+
 const SkipText = Styled.Text`
 margin-top: 50px;
 font-size: 18px;
@@ -116,7 +125,15 @@ const actionSheetRef = createRef();
     const onPressActionSheet = (index: number) => {
         if(index === 1) {
             navigation.navigate("ReceiptCamera")
+        } else if(index === 2) {
+            navigation.navigate("GallerySelectOne", {
+                
+            })
         }
+    }
+
+    const onPressSkip = () => {
+        navigation.navigate("ReviewMetaDataScreen")
     }
 
     return (
@@ -142,7 +159,11 @@ const actionSheetRef = createRef();
                         <ReceiptRegisterText>영수증 리뷰 쓰기</ReceiptRegisterText>
                     </ReceiptRegisterButton>
                     </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => onPressSkip()}>
+                    <SkipContainer>
                     <SkipText>건너뛰기</SkipText>
+                    </SkipContainer>
+                    </TouchableWithoutFeedback>
                 </ReceiptRegisterContainer>
             </BodyContainer>
             <ActionSheet

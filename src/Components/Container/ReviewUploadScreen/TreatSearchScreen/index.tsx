@@ -10,6 +10,7 @@ import { NavigationContainer } from '@react-navigation/native';
 const Container = Styled.SafeAreaView`
  flex: 1;
  background-color: #FFFFFF;
+ align-items: center;
 `;
 
 const HeaderBar = Styled.View`
@@ -25,7 +26,8 @@ const HeaderBar = Styled.View`
 
 
 const HeaderLeftContainer = Styled.View`
-padding: 14px 0px 13px 15px;
+height: ${wp('13.8%')}px;
+padding: 0px 16px 0px 16px;
  align-items: center;
  justify-content: center;
  flex-direction: row;
@@ -43,7 +45,8 @@ font-weight: bold
 `;
 
 const HeaderRightContainer = Styled.View`
-padding: 14px 16px 13px 16px;
+height: ${wp('13.8%')}px;
+padding: 0px 16px 0px 16px;
  align-items: center;
  justify-content: center;
  flex-direction: row;
@@ -61,7 +64,6 @@ height: ${wp('6.4%')};
 `;
 
 const BodyContainer = Styled.View`
-padding-top: 10px;
 `;
 
 const TakePhotoText = Styled.Text`
@@ -147,9 +149,11 @@ justify-content: space-between;
 
 const SelectedTreatContainer = Styled.View`
 padding-top: 16px;
-padding-bottom: 16px;
+padding-bottom: 8px;
 padding-left: 16px;
 padding-right: 16px;
+flex-direction: row;
+flex-wrap: wrap;
 `;
 
 const DividerContainer = Styled.View`
@@ -174,10 +178,11 @@ font-size: 16px;
 `;
 
 const SelectedTreatItemBackground = Styled.View`
+margin-bottom: 8px;
 padding-left: 14px;
 padding-right: 14px;
-padding-top: 4px;
-padding-bottom: 4px;
+padding-top: 0px;
+padding-bottom: 0px;
 background-color: #F0F6FC;
 border-radius: 100px;
 flex-direction: row;
@@ -191,13 +196,15 @@ font-size: 16px;
 `;
 
 const TreatItemDeleteIcon = Styled.Image`
+margin-left: 7px;
 width: ${wp('4.8%')};
 height: ${wp('4.8%')};
 `;
 
-
-
-
+const DeleteContainer = Styled.View`
+padding-top: 7px;
+padding-bottom: 7px; 
+`;
 
 const TEST_TREAT_DATA = [
     {
@@ -205,6 +212,9 @@ const TEST_TREAT_DATA = [
     },
     {
         name: "치아부식"
+    },
+    {
+        name: "충치"
     }
 ]
 
@@ -219,14 +229,45 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
     const [selectedTreatList, setSelectedTreatList] = useState<Array<Object>>([])
     const [onChangeSelectedTreatList, setOnChangeSelectedTreatList] = useState<boolean>(false);
 
-    const selectTreatItem = (treat: object) => {
+    useEffect(() => {
+        if(route.params?.selectedTreatList) {
+            setSelectedTreatList(route.params?.selectedTreatList);
+        }
         
+    }, [route.params?.selectedTreatList])
+
+    const selectTreatItem = (treat: object) => {
         var tmpSelectedTreatList = selectedTreatList
         tmpSelectedTreatList.push(treat)
         setSelectedTreatList(tmpSelectedTreatList)
         setOnChangeSelectedTreatList(!onChangeSelectedTreatList)
     }
+
+    const deleteTreatItem = (treat: object) => {
+
+        var tmpSelectedTreatList = selectedTreatList
+        var deleteIndex = tmpSelectedTreatList.indexOf(treat)
+        
+        tmpSelectedTreatList.splice(deleteIndex, 1)
+        setSelectedTreatList(tmpSelectedTreatList);
+        setOnChangeSelectedTreatList(!onChangeSelectedTreatList)
+    }
     
+    const onPressFinishButton = () => {
+        if(route.params?.requestPage === "metadata") {
+            navigation.navigate("DetailPriceScreen", {
+                selectedTreatList: selectedTreatList,
+                dentalClinic: route.params?.dentalClinic,
+                treatDate: route.params?.treatDate,
+                treatPrice: route.params?.treatPrice,
+            });
+        } else if(route.params?.requestPage === "content") {
+            navigation.navigate("ReviewContentScreen", {
+                selectedTreatList: selectedTreatList,
+            })
+        }
+    }
+
     const goBack = () => {
         navigation.goBack();
     }
@@ -241,17 +282,6 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
                 </TreatItemAddContainer>
                 </TouchableWithoutFeedback>
             </TreatItemContainer>
-
-        )
-    }
-
-    const renderSelectedItem = ({item, index}: any) => {
-        return (
-            <SelectedTreatItemBackground>
-                <SelectedTreatItemText>
-                    {item.name}
-                </SelectedTreatItemText>
-            </SelectedTreatItemBackground>
         )
     }
 
@@ -278,10 +308,21 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
             </HeaderBar>
             <BodyContainer>
                 <SelectedTreatContainer>
-                    <FlatList
-                    horizontal={true}
-                    data={selectedTreatList}
-                    renderItem={renderSelectedItem}/>
+                    {selectedTreatList.map((item, index) => {
+                        return (
+                            <SelectedTreatItemBackground style={{marginRight: 8}}>
+                                <SelectedTreatItemText>
+                                    {"# " + item.name}
+                                </SelectedTreatItemText>
+                                <TouchableWithoutFeedback onPress={() => deleteTreatItem(item)}>
+                                <DeleteContainer>
+                                <TreatItemDeleteIcon
+                                source={require('~/Assets/Images/Upload/ic_delete.png')}/>
+                                </DeleteContainer>
+                                </TouchableWithoutFeedback>
+                            </SelectedTreatItemBackground>
+                        )
+                    })}
                 </SelectedTreatContainer>
                 <DividerContainer/>
                 <TreatListContainer>
@@ -290,10 +331,24 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
                     renderItem={renderTreatItem}/>
                 </TreatListContainer>
             </BodyContainer>
+            <FooterContainer>
+            <TouchableWithoutFeedback onPress={() => onPressFinishButton()}>
+            <FinishButton>
+                <FinishText>확인</FinishText>
+            </FinishButton>
+            </TouchableWithoutFeedback>
+            </FooterContainer>
         </Container>
     )
 }
 
 export default TreatSearchScreen
 
+/*
+<FlatList
+showsHorizontalScrollIndicator={false}
+horizontal={true}
+data={selectedTreatList}
+renderItem={renderSelectedItem}/>
+*/
 

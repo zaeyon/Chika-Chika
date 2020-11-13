@@ -27,7 +27,8 @@ const HeaderBar = Styled.View`
 
 
 const HeaderLeftContainer = Styled.View`
-padding: 7px 16px 13px 15px;
+height: ${wp('13.8%')}px;
+padding: 0px 16px 0px 16px;
  align-items: center;
  justify-content: center;
  flex-direction: row;
@@ -39,13 +40,15 @@ height: ${wp('6.4%')};
 `;
 
 const HeaderTitleText = Styled.Text`
+margin-top: 5px;
 font-size: 18px;
 color: #000000;
 font-weight: bold
 `;
 
 const HeaderRightContainer = Styled.View`
-padding: 7px 16px 13px 15px;
+height: ${wp('13.8%')}px;
+padding: 0px 16px 0px 16px;
  align-items: center;
  justify-content: center;
  flex-direction: row;
@@ -164,7 +167,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     
     const [dentalClinicName, setDentalClinicName] = useState<string>("")
     const [dentalClinicAddress, setDentalClinicAddress] = useState<string>("")
-    const [treatDate, setTreatDate] = useState<string>("")
+    const [treatDate, setTreatDate] = useState<any>("")
     const [treatPrice, setTreatPrice] = useState<string>("")
 
     const [date, setDate] = useState(new Date());
@@ -179,6 +182,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     useEffect(() => {
         if(route.params?.dentalClinicName || route.params?.dentalCLinicAddress) {
             setDentalClinicName(route.params?.dentalClinicName)
+            setDentalClinicAddress(route.params?.dentalClinicAddress)
         }
     }, [route.params?.dentalClinicName, route.params?.dentalClinicAddress])
 
@@ -187,7 +191,9 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     }
 
     const moveToDentalClinicSearch = () => {
-        navigation.navigate("DentalClinicSearchScreen");
+        navigation.navigate("DentalClinicSearchScreen", {
+            requestPage: "metadata"
+        });
         setOnFocusDentalClinicName(true)
         setOnFocusTreatDate(false)
         setOnFocusTreatPrice(false)
@@ -231,7 +237,8 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
   const applyTreatDate = () => {
     console.log("date", date);
-    setDisplayDate(convertDisplayDate(date))
+    setDisplayDate(convertDisplayDate(date));
+    setTreatDate(date);
     setOnFocusTreatDate(false)
   }
 
@@ -253,9 +260,22 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }
 
   const onPressFinishButton = () => {
-      navigation.navigate("TreatSearchScreen");
+      navigation.navigate("TreatSearchScreen", {
+          dentalClinic: {
+              name: dentalClinicName,
+              address: dentalClinicAddress
+          },
+          treatDate: {
+              displayTreatDate: displayDate,
+              treatDate: treatDate
+          },
+          treatPrice: {
+              displayTreatPrice: displayPrice,
+              treatPrice: treatPrice,
+          },
+          requestPage: "metadata"
+      });
   }
-
 
     return (
         <TouchableWithoutFeedback onPress={() => onPressBackground()}>

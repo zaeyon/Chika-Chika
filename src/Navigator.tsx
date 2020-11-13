@@ -31,11 +31,15 @@ import ReviewMetaDataScreen from '~/Components/Container/ReviewUploadScreen/Revi
 import ReviewContentScreen from '~/Components/Container/ReviewUploadScreen/ReviewContentScreen';
 import TeethCamera from '~/Components/Container/TeethCamera';
 import Gallery from '~/Components/Container/Gallery';
+import GallerySelectOne from '~/Components/Container/GallerySelectOne';
 import ReceiptRegisterScreen from '~/Components/Container/ReviewUploadScreen/ReceiptRegisterScreen';
 import ReceiptCamera from '~/Components/Container/ReceiptCamera';
 import TakenPictureScreen from '~/Components/Container/ReviewUploadScreen/TakenPictureScreen';
 import DentalClinicSearchScreen from '~/Components/Container/ReviewUploadScreen/DentalClinicSearchScreen';
 import TreatSearchScreen from '~/Components/Container/ReviewUploadScreen/TreatSearchScreen';
+import DetailPriceScreen from '~/Components/Container/ReviewUploadScreen/DetailPriceScreen';
+import RatingScreen from '~/Components/Container/ReviewUploadScreen/RatingScreen';
+
 
 // My Profile Stack Screen
 import MyProfileScreen from '~/Components/Container/MyProfileScreen';
@@ -184,6 +188,9 @@ function ReviewUploadStackScreen() {
             name="Gallery"
             component={Gallery}/>
             <ReviewUploadStack.Screen
+            name="GallerySelectOne"
+            component={GallerySelectOne}/>
+            <ReviewUploadStack.Screen
             name="ReceiptCamera"
             component={ReceiptCamera}/>
             <ReviewUploadStack.Screen
@@ -195,6 +202,12 @@ function ReviewUploadStackScreen() {
             <ReviewUploadStack.Screen
             name="TreatSearchScreen"
             component={TreatSearchScreen}/>
+            <ReviewUploadStack.Screen
+            name="DetailPriceScreen"
+            component={DetailPriceScreen}/>
+            <ReviewUploadStack.Screen
+            name="RatingScreen"
+            component={RatingScreen}/>
         </ReviewUploadStack.Navigator>
     )
 }
