@@ -30,6 +30,7 @@
     "react-native-keyboard-aware-scroll-view": "^0.9.3",
     "react-native-map": "0.0.1",
     "react-native-nmap": "0.0.52",
+    "react-native-ratings": "^7.3.0",
     "react-native-reanimated": "^1.13.1",
     "react-native-responsive-screen": "^1.4.1",
     "react-native-safe-area-context": "^3.1.8",

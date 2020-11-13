@@ -19,11 +19,14 @@ const HeaderBar = Styled.View`
  align-items: center;
  justify-content: space-between;
  background-color:#ffffff;
+ border-bottom-width: 0.6px;
+ border-color: #ECECEE;
 `;
 
 
 const HeaderLeftContainer = Styled.View`
-padding: 7px 16px 13px 15px;
+height: ${wp('13.8%')}px;
+padding: 0px 16px 0px 16px;
  align-items: center;
  justify-content: center;
  flex-direction: row;
@@ -35,11 +38,14 @@ height: ${wp('6.4%')};
 `;
 
 const HeaderTitleText = Styled.Text`
+margin-top: 5px;
+
  
 `;
 
 const HeaderRightContainer = Styled.View`
-padding: 7px 16px 13px 15px;
+height: ${wp('13.8%')}px;
+padding: 0px 16px 0px 16px;
  align-items: center;
  justify-content: center;
  flex-direction: row;

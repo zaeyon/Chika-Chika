@@ -25,7 +25,8 @@ const HeaderBar = Styled.View`
 
 
 const HeaderLeftContainer = Styled.View`
-padding: 14px 0px 13px 15px;
+height: ${wp('13.8%')}px;
+padding: 0px 16px 0px 16px;
  align-items: center;
  justify-content: center;
  flex-direction: row;
@@ -37,13 +38,15 @@ height: ${wp('6.4%')};
 `;
 
 const HeaderTitleText = Styled.Text`
+margin-top: 5px;
 font-size: 18px;
 color: #000000;
 font-weight: bold
 `;
 
 const HeaderRightContainer = Styled.View`
-padding: 14px 16px 13px 16px;
+height: ${wp('13.8%')}px;
+padding: 0px 16px 0px 16px;
  align-items: center;
  justify-content: center;
  flex-direction: row;
@@ -182,10 +185,19 @@ const DentalClinicSearchScreen = ({navigation, route}: Props) => {
     }
 
     const onPressDentalClinicItem = (name: string, address: string) => {
-        navigation.navigate("ReviewMetaDataScreen",{
-            dentalClinicName: name,
-            dentalClinicAddress: address,
-        })
+        if(route.params?.requestPage === "metadata") {
+            navigation.navigate("ReviewMetaDataScreen",{
+                dentalClinicName: name,
+                dentalClinicAddress: address,
+            })
+        } else if(route.params?.requestPage === "content") {
+            navigation.navigate("ReviewContentScreen", {
+                dentalClinic: {
+                    name: name,
+                    address: address,
+                }
+            })
+        }
 
     }
 
@@ -215,9 +227,7 @@ const DentalClinicSearchScreen = ({navigation, route}: Props) => {
                     <SearchTextInput
                     placeholder={"병원 검색"}
                     placeholderTextColor={"#ABA5A5"}/>
-
                 </SearchInputContainer>
-
                 <HeaderRightContainer>
                     <HeaderSearchText>검색</HeaderSearchText>
                 </HeaderRightContainer>
