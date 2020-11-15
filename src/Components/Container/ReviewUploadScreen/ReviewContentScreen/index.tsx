@@ -94,6 +94,9 @@ align-items: center;
 const ContentContainer = Styled.View`
 flex: 1;
 background-color: #fbfbfb;
+align-items: center;
+padding-top: 16px;
+padding-bottom: 16px;
 `;
 
 const MetaInfoItemBackground = Styled.View`
@@ -164,6 +167,50 @@ justify-content: center;
 padding: 4px 16px 4px 12px;
 `;
 
+const ParaUnitContainer = Styled.View`
+width: ${wp('91.4666%')};
+border-width: 1px;
+border-color: #f1f1f1;
+border-radius: 8px;
+padding: 16px;
+align-items: center;
+justify-content: center;
+`;
+
+const AddImageContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+`;
+
+const AddImageButton = Styled.View`
+width: ${wp('82.933%')};
+height: ${wp('17.06%')};
+border-radius: 8px;
+border-width: 1px;
+border-color: #F1F1F1;
+align-items: center;
+justify-content: center;
+`;
+
+const AddImageIcon = Styled.Image`
+width: ${wp('4.8%')};
+height: ${wp('4.8%')};
+`;
+
+const AddImageText = Styled.Text`
+margin-left: 6px;
+font-weight: 300;
+font-size: 14px;
+color: #7A7A7A;
+`;
+
+const ParaTextInput = Styled.TextInput`
+margin-top: 16px;
+width: ${wp('82.933%')};
+font-weight: 300;
+font-size: 14px;
+color: #2B2B2B;
+`;
 
 
 interface Props {
@@ -316,6 +363,25 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
     const onPressBackground = () => {
         Keyboard.dismiss();
     }
+
+    const renderParaUnitItem = ({item, index}: any) => {
+        return (
+            <ParaUnitContainer>
+                <AddImageButton>
+                  <AddImageContainer>
+                    <AddImageIcon
+                    source={require('~/Assets/Images/Upload/ic_addImage.png')}/>
+                    <AddImageText>
+                        사진 추가하기(선택)
+                    </AddImageText>
+                    </AddImageContainer>
+                </AddImageButton>
+                <ParaTextInput
+                placeholder={"내용을 입력해 주세요 !"}
+                placeholderTextColor={"#BFBFBF"}/>
+            </ParaUnitContainer>
+        )
+    }
     
     return (
         <TouchableWithoutFeedback onPress={() => onPressBackground()}>
@@ -331,7 +397,7 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                 <HeaderRightContainer>
                     <HeaderEmptyContainer/>
                     <HeaderUploadText>
-                        올리기
+                    올리기
                     </HeaderUploadText>
                 </HeaderRightContainer>
             </HeaderBar>
@@ -371,7 +437,9 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                     </TouchableWithoutFeedback>
                     </FirstMetaDataListContainer>
                 </ScrollView>
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                <ScrollView 
+                horizontal={true} 
+                showsHorizontalScrollIndicator={false}>
                     <SecondMetaDataListContainer style={{marginTop: 8}}>
                         <TouchableWithoutFeedback onPress={() => moveToTreatSearch()}>
                         <MetaInfoItemBackground style={{marginLeft: 16}}>
@@ -383,8 +451,8 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                                 {treat.name}
                                 </MetaInfoItemText>
                             )   
-                    } else {
-                        return (
+                            } else {
+                            return (
                             <MetaInfoItemText>
                             {treat.name + ","}
                             </MetaInfoItemText>
@@ -415,7 +483,9 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                 </ScrollView>
                 </MetaInfoContainer>
                 <ContentContainer>
-
+                    <FlatList
+                    data={["1"]}
+                    renderItem={renderParaUnitItem}/>
                 </ContentContainer>
             </BodyContainer>
             {visibleDatePicker && (
