@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList, ScrollView, Keyboard} from 'react-native';
+import {TouchableWithoutFeedback, FlatList, ScrollView, Keyboard, StyleSheet, Alert} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -33,8 +33,8 @@ padding: 0px 16px 0px 15px;
 `;
 
 const HeaderBackIcon = Styled.Image`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const HeaderTitleText = Styled.Text`
@@ -45,7 +45,7 @@ color: #000000;
 `;
 
 const HeaderRightContainer = Styled.View`
-height: ${wp('13.8%')};
+height: ${wp('13.8%')}px;
 padding: 0px 16px 0px 15px;
  align-items: center;
  justify-content: center;
@@ -53,8 +53,8 @@ padding: 0px 16px 0px 15px;
 `;
 
 const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const HeaderUploadText = Styled.Text`
@@ -94,9 +94,8 @@ align-items: center;
 const ContentContainer = Styled.View`
 flex: 1;
 background-color: #fbfbfb;
-align-items: center;
-padding-top: 16px;
-padding-bottom: 16px;
+padding-top: 0px;
+padding-bottom: 0px;
 `;
 
 const MetaInfoItemBackground = Styled.View`
@@ -124,7 +123,7 @@ height: ${wp('3.266%')}px;
 
 
 const DateModalContainer = Styled.View`
-width: ${wp('100%')};
+width: ${wp('100%')}px;
 position: absolute;
 bottom: 0;
 background-color: #D5D8DD;
@@ -133,8 +132,8 @@ background-color: #D5D8DD;
 const ModalHeaderContainer = Styled.View`
  border-width: 0.6px;
  border-color: #ECECEE;
- width: ${wp('100%')};
- height: ${wp('12.5%')};
+ width: ${wp('100%')}px;
+ height: ${wp('12.5%')}px;
  background-color: #FAFAFA;
  flex-direction: row;
  justify-content: flex-end;
@@ -168,11 +167,21 @@ padding: 4px 16px 4px 12px;
 `;
 
 const ParaUnitContainer = Styled.View`
-width: ${wp('91.4666%')};
+width: ${wp('91.4666%')}px;
+background-color: #ffffff;
 border-width: 1px;
 border-color: #f1f1f1;
 border-radius: 8px;
 padding: 16px;
+align-items: center;
+justify-content: center;
+`;
+
+const EntireParaUnitContainer = Styled.View`
+width: ${wp('100%')}px;
+padding-top: 10px;
+padding-bottom: 10px;
+background-color: #fbfbfb;;
 align-items: center;
 justify-content: center;
 `;
@@ -183,8 +192,8 @@ align-items: center;
 `;
 
 const AddImageButton = Styled.View`
-width: ${wp('82.933%')};
-height: ${wp('17.06%')};
+width: ${wp('82.933%')}px;
+height: ${wp('17.06%')}px;
 border-radius: 8px;
 border-width: 1px;
 border-color: #F1F1F1;
@@ -193,8 +202,8 @@ justify-content: center;
 `;
 
 const AddImageIcon = Styled.Image`
-width: ${wp('4.8%')};
-height: ${wp('4.8%')};
+width: ${wp('4.8%')}px;
+height: ${wp('4.8%')}px;
 `;
 
 const AddImageText = Styled.Text`
@@ -205,11 +214,28 @@ color: #7A7A7A;
 `;
 
 const ParaTextInput = Styled.TextInput`
-margin-top: 16px;
-width: ${wp('82.933%')};
+margin-top: 13px;
+width: ${wp('82.933%')}px;
 font-weight: 300;
 font-size: 14px;
 color: #2B2B2B;
+`;
+
+const AddNewParaUnitContainer = Styled.View`
+position: absolute;
+
+flex: 1;
+`;
+
+const AddNewParaUnitButton = Styled.Image`
+width: ${wp('10.13%')};
+height: ${wp('10.13%')};
+`;
+
+const ParaImage = Styled.Image`
+width: ${wp('82.9%')}px;
+height: ${wp('71.7%')}px;
+border-radius: 8px;
 `;
 
 
@@ -232,8 +258,17 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
 
     const [changeMetaInfo, setChangeMetaInfo] = useState<boolean>(false);
     const [visibleDatePicker, setVisibleDatePicker] = useState<boolean>(false);
+    const [changeParagraphList, setChangeParagraphList] = useState<boolean>(false);
 
     const totalPriceInputRef = useRef()
+
+    const [paragraphList, setParagraphList] = useState<Array<object>>([
+        {
+            index: 1,
+            image: null,
+            description: null,
+        }
+    ]);
 
     useEffect(() => {
         if(route.params?.selectedTreatList) {
@@ -279,6 +314,42 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
         }
     }, [route.params.rating])
 
+    useEffect(() => {
+        if(route.params?.selectedImages) {
+            console.log("리뷰 업로드 route.params.selectedImages", route.params.selectedImages)
+
+            route.params.selectedImages.forEach((item: any, index: number) => {
+                console.log("선택된 사진 item", item)
+                
+                var tmpParagraphList = paragraphList
+                var paraObj
+
+                if(index == 0) {
+                    paraObj = tmpParagraphList[route.params?.startIndex]
+                    paraObj.image = item 
+
+                    tmpParagraphList[route.params?.startIndex] = paraObj
+                    setChangeParagraphList(!changeParagraphList)
+
+
+                } else {
+                    paraObj = {
+                     index: paragraphList.length + index,
+                     image: item,
+                     description: "" 
+                    }
+                    
+                    tmpParagraphList.push(paraObj)  
+                }
+
+
+                if(index == route.params.selectedImages.length-1) {
+                    setParagraphList(tmpParagraphList)
+                }
+            })
+        }
+    }, [route.params?.selectedImages])
+
     const openCamera = () => {
         navigation.navigate("Camera");
     }
@@ -288,7 +359,23 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
     }
 
     const goBack = () => {
-        navigation.goBack();
+        Alert.alert(
+            '게시글 작성을 취소하시겠어요?',
+            '',
+            [
+                {
+                    text: '확인',
+                    onPress: () => {
+                        navigation.navigate("HomeScreen")
+                    }
+                },
+                {
+                    text: '취소',
+                    onPress: () => 0,
+                    style: 'cancel'
+                }
+            ]
+        )
     }
 
     const moveToDentalClinicSearch = () => {
@@ -364,9 +451,36 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
         Keyboard.dismiss();
     }
 
+    const onPressAddImage = (index: number) => {
+        navigation.navigate("Gallery", {
+            requestType: "review",
+            startIndex: index
+        })
+    }
+
+    const onPressAddPara = () => {
+        var tmpParagraphList = paragraphList;
+        var paraObj = {
+            index: tmpParagraphList.length,
+            image: null,
+            description: null,
+        }
+
+        tmpParagraphList.push(paraObj)
+        setParagraphList(tmpParagraphList);
+        setChangeParagraphList(!changeParagraphList)
+    }
+
     const renderParaUnitItem = ({item, index}: any) => {
         return (
-            <ParaUnitContainer>
+        <EntireParaUnitContainer>
+            <ParaUnitContainer style={styles.paragraphShadow}>
+                {item.image && (
+                    <ParaImage
+                    source={{uri: item.image.uri}}/>
+                )}
+                {!item.image && (
+                <TouchableWithoutFeedback onPress={() => onPressAddImage(index)}>
                 <AddImageButton>
                   <AddImageContainer>
                     <AddImageIcon
@@ -376,15 +490,50 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                     </AddImageText>
                     </AddImageContainer>
                 </AddImageButton>
+                </TouchableWithoutFeedback>
+                )}
                 <ParaTextInput
+                multiline={true}
                 placeholder={"내용을 입력해 주세요 !"}
-                placeholderTextColor={"#BFBFBF"}/>
+                placeholderTextColor={"#BFBFBF"}
+                autoCapitalize={"none"}/>
             </ParaUnitContainer>
+            </EntireParaUnitContainer>
+        )
+    }
+
+    const renderAddParaUnitItem = () => {
+        return (
+        <TouchableWithoutFeedback onPress={() => onPressAddPara()}>
+        <EntireParaUnitContainer>
+        <ParaUnitContainer style={[styles.paragraphShadow, {opacity:0.15, shadowOpacity: 0.6}]}>
+            <AddImageButton>
+              <AddImageContainer>
+                <AddImageIcon
+                source={require('~/Assets/Images/Upload/ic_addImage.png')}/>
+                <AddImageText>
+                    사진 추가하기(선택)
+                </AddImageText>
+                </AddImageContainer>
+            </AddImageButton>
+            <ParaTextInput
+            editable={false}
+            multiline={true}
+            placeholder={"내용을 입력해 주세요 !"}
+            placeholderTextColor={"#BFBFBF"}
+            autoCapitalize={"none"}/>
+        </ParaUnitContainer>
+        <AddNewParaUnitContainer>
+            <AddNewParaUnitButton
+            source={require('~/Assets/Images/Upload/ic_addPara.png')}/>
+        </AddNewParaUnitContainer>
+        </EntireParaUnitContainer>
+        </TouchableWithoutFeedback>
+
         )
     }
     
     return (
-        <TouchableWithoutFeedback onPress={() => onPressBackground()}>
         <Container>
             <HeaderBar>
                <TouchableWithoutFeedback onPress={() => goBack()}>
@@ -484,8 +633,11 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                 </MetaInfoContainer>
                 <ContentContainer>
                     <FlatList
-                    data={["1"]}
-                    renderItem={renderParaUnitItem}/>
+                    scrollEnabled={true}
+                    showsVerticalScrollIndicator={false}
+                    data={paragraphList}
+                    renderItem={renderParaUnitItem}
+                    ListFooterComponent={renderAddParaUnitItem}/>
                 </ContentContainer>
             </BodyContainer>
             {visibleDatePicker && (
@@ -511,11 +663,21 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
             </DateModalContainer>
             )}
         </Container>
-        </TouchableWithoutFeedback>
     )
 }
 
 export default ReviewContentScreen
+
+const styles = StyleSheet.create({
+    paragraphShadow: {
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowRadius: 8,
+        shadowOpacity: 0.09
+    }
+})
 
 
 /*

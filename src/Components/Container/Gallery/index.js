@@ -403,11 +403,13 @@ class Gallery extends Component {
   _pressFinish() {
     console.log('사진선택완료');
     console.log('사진선택 this.state.selected', this.state.selected);
+    console.log("this.props.route.params.requestType", this.props.route.params.requestType)
     var _selectedImages = this.state.selected.slice(0);
 
-    if(this.props.route.params?.requestType === "upload") {
-      this.props.navigation.navigate('UploadScreen', {
+    if(this.props.route.params?.requestType === "review") {
+      this.props.navigation.navigate('ReviewContentScreen', {
         selectedImages: _selectedImages,
+        startIndex: this.props.route.params?.startIndex
       });
     } else if(this.props.route.params?.requestType === "edit") {
       this.props.navigation.navigate('FeedEditScreen', {
@@ -573,11 +575,11 @@ class Gallery extends Component {
            </HeaderRightContainer>
          )}
          {this.state.selected.length > 0 && (
-<TouchableWithoutFeedback onPress={() => this._pressFinish()}>
-<HeaderRightContainer>
-  <HeaderAttachText>첨부</HeaderAttachText>
-</HeaderRightContainer>
-</TouchableWithoutFeedback>
+           <TouchableWithoutFeedback onPress={() => this._pressFinish()}>
+              <HeaderRightContainer>
+                <HeaderAttachText>첨부</HeaderAttachText>
+              </HeaderRightContainer>
+           </TouchableWithoutFeedback>
          )}
         </HeaderContainer>
         {!this.state.visibleAlbumList && (

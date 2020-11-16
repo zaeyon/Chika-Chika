@@ -12,7 +12,10 @@ import {
 } from 'react-native-responsive-screen';
 
 import NaverMapView, {Circle, Marker, Path, Polyline, Polygon} from "react-native-nmap";
+import {isIphoneX} from 'react-native-iphone-x-helper'
 import Geolocation from 'react-native-geolocation-service';
+
+const mapHeight = hp('100%') - (wp('11.7%') - (isIphoneX() ? wp("21%") : wp("15%")))
 
 const Container = Styled.SafeAreaView`
 flex: 1;
@@ -26,6 +29,8 @@ const HeaderBar = Styled.View`
  align-items: center;
  justify-content: space-between;
  background-color:#ffffff;
+ padding-left: 16px;
+ padding-right: 16px;
 `;
 
 const HeaderLeftContainer = Styled.View`
@@ -52,6 +57,11 @@ padding: 7px 16px 13px 15px;
  flex-direction: row;
 `;
 
+const HeaderFilterIcon = Styled.Image`
+width: ${wp('6.4%')};
+height: ${wp('6.4%')};
+`;
+
 const HeaderEmptyContainer = Styled.View`
  width: ${wp('6.4%')}px;
  height: ${wp('6.4%')}px;
@@ -69,6 +79,22 @@ top: ${wp('11.7%')};
 align-items: center;
 justify-content: center;
 `;
+
+const SearchInputContainer = Styled.View`
+width: 307px;
+height: 35px;
+background-color: #ededed;
+justify-content: center;
+padding-left: 20px;
+`;
+
+const SearchTextInput = Styled.TextInput`
+
+`;
+
+
+
+
 
 interface Props {
     navigation: any,
@@ -157,25 +183,18 @@ const NearDentistMap = ({navigation, route}: Props) => {
     return (
         <Container>
             <HeaderBar>
-                <TouchableWithoutFeedback onPress={() => goBack()}>
-                <HeaderLeftContainer>
-                    <HeaderBackIcon
-                    source={require('~/Assets/Images/HeaderBar/ic_back.png')}/>
-                </HeaderLeftContainer>
-                </TouchableWithoutFeedback>
-                <HeaderTitleText>
-                    내 주변 치과
-                </HeaderTitleText>
-                <HeaderRightContainer>
-                    <HeaderEmptyContainer>
-                    </HeaderEmptyContainer>
-                </HeaderRightContainer>
+                <SearchInputContainer>
+                    <SearchTextInput
+                    placeholder={"병원, 지역검색"}/>
+                </SearchInputContainer>
+                <HeaderFilterIcon
+                    source={require('~/Assets/Images/HeaderBar/ic_filter.png')}/>
             </HeaderBar>
             <MapContainer>
                 <NaverMapView
                 ref={mapRef}
                 compass={false}
-                style={{width: '100%', height: '100%'}}
+                style={{width: '100%', height: hp('100%') - (isIphoneX() ? wp('44%') : wp('38%'))}}
                 showsMyLocationButton={true}
                 center={{...currentLocation, zoom: 16}}
                 onMapClick={(e:any) => console.warn('onMapClick', JSON.stringify(e))}>
@@ -199,3 +218,5 @@ const NearDentistMap = ({navigation, route}: Props) => {
 }
 
 export default NearDentistMap;
+
+// hp('100%') - (wp('11.7%') - (isIphoneX() ? wp("21%") : wp("15%")))
