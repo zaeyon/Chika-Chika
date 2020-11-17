@@ -53,8 +53,9 @@ import SettingScreen from '~/Components/Container/SettingScreen';
 // Community Stack Screen
 import CommunityScreen from '~/Components/Container/CommunityScreen';
 
-// Dentist Stack Screen
+// Dental Clinic Stack Screen
 import NearDentistMap from '~/Components/Container/NearDentistMap';
+import DentalClinicListScreen from '~/Components/Container/DentalClinicListScreen';
 
 // Teeth Care Stack Screen
 import TeethCareScreen from '~/Components/Container/TeethCareScreen';
@@ -69,7 +70,7 @@ const ReviewStack = createStackNavigator();
 const AnotherProfileStack = createStackNavigator();
 const SettingStack = createStackNavigator();
 const CommunityStack = createStackNavigator();
-const DentistStack = createStackNavigator();
+const DentalClinicStack = createStackNavigator();
 const TeethCareStack = createStackNavigator();
 
 function AuthStackScreen() {
@@ -134,23 +135,23 @@ function HomeStackScreen() {
             name="AnotherProfileStackScreen"
             component={AnotherProfileStackScreen}/>
             <HomeStack.Screen
-            name="NearDentistMap"
-            component={NearDentistMap}/>
-            <HomeStack.Screen
             name="ReviewUploadStackScreen"
             component={ReviewUploadStackScreen}/>
         </HomeStack.Navigator>
     )
 }
 
-function DentistStackScreen() {
+function DentalClinicStackScreen() {
   return (
-    <DentistStack.Navigator
+    <DentalClinicStack.Navigator
     headerMode="none">
-      <DentistStack.Screen
+      <DentalClinicStack.Screen
       name="NearDentistMap"
       component={NearDentistMap}/>
-    </DentistStack.Navigator>
+      <DentalClinicStack.Screen
+      name="DentalClinicListScreen"
+      component={DentalClinicListScreen}/>
+    </DentalClinicStack.Navigator>
   )
 }
 
@@ -287,8 +288,8 @@ function BottomTab() {
       })}
       />
       <Tab.Screen
-      name="Dentist"
-      component={DentistStackScreen}/>
+      name="Dental Clinic"
+      component={DentalClinicStackScreen}/>
       <Tab.Screen
       name="Teeth Care"
       component={TeethCareStackScreen}

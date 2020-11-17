@@ -90,10 +90,7 @@ padding-left: 20px;
 
 const SearchTextInput = Styled.TextInput`
 
-`;
-
-
-
+`; 
 
 
 interface Props {
@@ -180,13 +177,21 @@ const NearDentistMap = ({navigation, route}: Props) => {
         navigation.goBack();
     }
 
+    const moveToSearchDental = () => {
+        navigation.navigate("DentalClinicListScreen")
+    }
+
     return (
         <Container>
             <HeaderBar>
+                <TouchableWithoutFeedback onPress={() => moveToSearchDental()}>
                 <SearchInputContainer>
                     <SearchTextInput
-                    placeholder={"병원, 지역검색"}/>
+                    editable={false}
+                    placeholder={"병원, 지역검색"}
+                    autoFocus={false}/>
                 </SearchInputContainer>
+                </TouchableWithoutFeedback>
                 <HeaderFilterIcon
                     source={require('~/Assets/Images/HeaderBar/ic_filter.png')}/>
             </HeaderBar>
@@ -206,13 +211,6 @@ const NearDentistMap = ({navigation, route}: Props) => {
                 })}
                 </NaverMapView>
             </MapContainer>
-            {/*
-            {loading && (
-            <LoadingContainer>
-                <ActivityIndicator/>
-            </LoadingContainer>
-            )}
-            */}
         </Container>
     )
 }
