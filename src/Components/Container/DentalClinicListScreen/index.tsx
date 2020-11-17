@@ -2,9 +2,7 @@ import React, {useEffect, useState, useRef} from 'react';
 import Styled from 'styled-components/native';
 import {
     TouchableWithoutFeedback,
-    PermissionsAndroid,
-    Platform,
-    ActivityIndicator,
+    FlatList
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -12,6 +10,9 @@ import {
 } from 'react-native-responsive-screen';
 
 import {isIphoneX} from 'react-native-iphone-x-helper'
+
+// Local Component
+import DentalListItem from '~/Components/Presentational/DentalListItem'
 
 const Container = Styled.SafeAreaView`
 flex: 1;
@@ -89,15 +90,53 @@ const SearchTextInput = Styled.TextInput`
 
 `;
 
+
+
+const TEST_DENTAL_LIST = [
+    {
+        name: "연세자연치과의원",
+        address: "종로구 세종대로"
+    },
+    {
+        name: "연세정인치과의원",
+        address: "종로구 세문안로",
+    },
+    {
+        name: "더스퀘워치과의원",
+        address: "종로구 종로"
+    },
+    {
+        name: "연세자연치과의원",
+        address: "종로구 세종대로"
+    },
+    {
+        name: "연세정인치과의원",
+        address: "종로구 세문안로",
+    },
+    {
+        name: "더스퀘워치과의원",
+        address: "종로구 종로"
+    }
+]
+
 interface Props {
     navigation: any,
     route: any,
 }
 
 const DentalClinicListScreen = ({navigation, route}: Props) => {
+    const [dentalList, setDentalList] = useState<Array<object>>(TEST_DENTAL_LIST);
   
     const goBack = () => {
         navigation.goBack();
+    }
+
+    const renderDentalItem = ({item, index}) => {
+        return (
+            <DentalListItem
+            name={item.name}
+            address={item.address}/>
+        )
     }
 
     return (
@@ -105,12 +144,17 @@ const DentalClinicListScreen = ({navigation, route}: Props) => {
             <HeaderBar>
                 <SearchInputContainer>
                     <SearchTextInput
+                    editable={true}
                     placeholder={"병원, 지역검색"}/>
                 </SearchInputContainer>
                 <HeaderFilterIcon
                     source={require('~/Assets/Images/HeaderBar/ic_filter.png')}/>
             </HeaderBar>
             <BodyContainer>
+                <FlatList
+                showsVerticalScrollIndicator={false}
+                data={dentalList}
+                renderItem={renderDentalItem}/>
             </BodyContainer>
         </Container>
     )
