@@ -56,6 +56,7 @@ import CommunityScreen from '~/Components/Container/CommunityScreen';
 // Dental Clinic Stack Screen
 import NearDentistMap from '~/Components/Container/NearDentistMap';
 import DentalClinicListScreen from '~/Components/Container/DentalClinicListScreen';
+import DentalDetailScreen from '~/Components/Container/DentalDetailScreen';
 
 // Teeth Care Stack Screen
 import TeethCareScreen from '~/Components/Container/TeethCareScreen';
@@ -151,6 +152,9 @@ function DentalClinicStackScreen() {
       <DentalClinicStack.Screen
       name="DentalClinicListScreen"
       component={DentalClinicListScreen}/>
+      <DentalClinicStack.Screen
+      name="DentalDetailScreen"
+      component={DentalDetailScreen}/>
     </DentalClinicStack.Navigator>
   )
 }

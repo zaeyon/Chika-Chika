@@ -135,7 +135,9 @@ const DentalClinicListScreen = ({navigation, route}: Props) => {
         return (
             <DentalListItem
             name={item.name}
-            address={item.address}/>
+            address={item.address}
+            navigation={navigation}
+            route={route}/>
         )
     }
 

@@ -31,14 +31,23 @@ color: #cccccc;
 interface Prop {
     name: string,
     address: string,
+    navigation: any,
+    route: any
 }
 
-const DentalListItem = ({name, address}: Prop) => {
+const DentalListItem = ({name, address, navigation, route}: Prop) => {
+
+    const moveToDentalDetail = () => {
+        navigation.navigate("DentalDetailScreen")
+    }
+
     return (
+        <TouchableWithoutFeedback onPress={() => moveToDentalDetail()}>
         <Container>
             <DentalNameText>{name}</DentalNameText>
             <DentalAddressText>{address}</DentalAddressText>
         </Container>
+        </TouchableWithoutFeedback>
     )
 }
 

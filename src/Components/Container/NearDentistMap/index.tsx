@@ -88,6 +88,11 @@ justify-content: center;
 padding-left: 20px;
 `;
 
+const SearchText = Styled.Text`
+font-size: 15px;
+color: #c3c3c3;
+`;
+
 const SearchTextInput = Styled.TextInput`
 
 `; 
@@ -186,10 +191,7 @@ const NearDentistMap = ({navigation, route}: Props) => {
             <HeaderBar>
                 <TouchableWithoutFeedback onPress={() => moveToSearchDental()}>
                 <SearchInputContainer>
-                    <SearchTextInput
-                    editable={false}
-                    placeholder={"병원, 지역검색"}
-                    autoFocus={false}/>
+                    <SearchText>{"병원,지역 검색"}</SearchText>
                 </SearchInputContainer>
                 </TouchableWithoutFeedback>
                 <HeaderFilterIcon
