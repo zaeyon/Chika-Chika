@@ -206,7 +206,56 @@ font-size: 14px;
 color: #000000;
 `;
 
+const FooterContainer = Styled.View`
+margin-top: 24px;
+padding-bottom: ${hp('8%')}
+`;
 
+const ManageContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+justify-content: space-between;
+
+padding-left: 28px;
+padding-right: 28px;
+`;
+
+const ManageText = Styled.Text`
+font-weight: 700;
+color: #000000;
+font-size: 14px;
+`;
+
+const EditInfoButton = Styled.View`
+align-items: center;
+justify-content: center;
+width: ${wp('40.53%')};
+height: ${wp('23.46%')};
+border-width: 1px;
+`;
+
+const MakeDentalAccountButton = Styled.View`
+align-items: center;
+justify-content: center;
+width: ${wp('40.53%')};
+height: ${wp('23.46%')};
+border-width: 1px;
+`;
+
+
+const ReserveByPhoneContainer = Styled.View`
+margin-top: 24px;
+align-items: center;
+`;
+
+const ReserveByPhoneButton = Styled.View`
+width: ${wp('90.133%')};
+height: ${wp('14.93%')};
+border-radius: 8px;
+background-color: #c4c4c4;
+align-items: center;
+justify-content: center;
+`;
 
 interface Props {
     navigation: any,
@@ -264,6 +313,10 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
             console.log("getDentalLocationMap error", error)
 
         })
+    }
+
+    const moveToDentalInfoEdit = () => {
+        navigation.navigate("DentalInfoEditRequestScreen");
     }
 
     const goBack = () => {
@@ -342,8 +395,33 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
                         <InfoLabelText>{"진료 특이사항"}</InfoLabelText>
                         <InfoValueText>{dentalDetailInfo.detailInfo.uniqueness}</InfoValueText>
                     </TreatUniquenessContainer>
+                    <DentistInfoContainer>
+                        <InfoLabelText>{"의사정보"}</InfoLabelText>
+                        <InfoValueText>{dentalDetailInfo.detailInfo.dentist}</InfoValueText>
+                    </DentistInfoContainer>
                 </DentalDetailInfoContainer>
             </ContentContainer>
+            <FooterContainer>
+                <ManageContainer>
+                    <TouchableWithoutFeedback onPress={() => moveToDentalInfoEdit()}>
+                    <EditInfoButton>
+                        <ManageText>
+                            {"정보수정"}
+                        </ManageText>
+                    </EditInfoButton>
+                    </TouchableWithoutFeedback>
+                    <MakeDentalAccountButton>
+                        <ManageText>
+                            {"무료병원계정"}
+                        </ManageText>
+                    </MakeDentalAccountButton>
+                </ManageContainer>
+                <ReserveByPhoneContainer>
+                <ReserveByPhoneButton>
+                    <ManageText>{"전화 예약하기"}</ManageText>
+                </ReserveByPhoneButton>
+                </ReserveByPhoneContainer>
+            </FooterContainer>
             </ScrollView>
         </Container>
     )
