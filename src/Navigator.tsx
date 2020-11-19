@@ -22,6 +22,7 @@ import VerifyPhoneNumberScreen from '~/Components/Container/VerifyPhoneNumberScr
 import HomeScreen from '~/Components/Container/HomeScreen';
 
 // Review Stack Screen
+import ReviewListScreen from '~/Components/Container/ReviewListScreen';
 import ReviewDetailScreen from '~/Components/Container/ReviewDetailScreen';
 import FullImagesScreen from '~/Components/Container/FullImagesScreen';
 
@@ -57,9 +58,11 @@ import CommunityScreen from '~/Components/Container/CommunityScreen';
 import NearDentistMap from '~/Components/Container/NearDentistMap';
 import DentalClinicListScreen from '~/Components/Container/DentalClinicListScreen';
 import DentalDetailScreen from '~/Components/Container/DentalDetailScreen';
+import DentalInfoEditRequestScreen from '~/Components/Container/DentalDetailScreen/DentalInfoEditRequestScreen';
 
 // Teeth Care Stack Screen
 import TeethCareScreen from '~/Components/Container/TeethCareScreen';
+
 
 
 const Tab = createBottomTabNavigator();
@@ -101,6 +104,9 @@ function ReviewStackScreen() {
   return (
     <ReviewStack.Navigator
     headerMode="none">
+      <ReviewStack.Screen
+      name="ReviewListScreen"
+      component={ReviewListScreen}/>
       <ReviewStack.Screen
       name="ReviewDetailScreen"
       component={ReviewDetailScreen}/>
@@ -155,6 +161,9 @@ function DentalClinicStackScreen() {
       <DentalClinicStack.Screen
       name="DentalDetailScreen"
       component={DentalDetailScreen}/>
+      <DentalClinicStack.Screen
+      name="DentalInfoEditRequestScreen"
+      component={DentalInfoEditRequestScreen}/>
     </DentalClinicStack.Navigator>
   )
 }

@@ -6,12 +6,6 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {isIphoneX} from 'react-native-iphone-x-helper';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-
-// Local Component
-import TimerTabScreen from '~/Components/Container/TeethCareScreen/TimerTabScreen';
-import AITabScreen from '~/Components/Container/TeethCareScreen/AITabScreen';
-import ReportTabScreen from '~/Components/Container/TeethCareScreen/ReportTabScreen';
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -60,17 +54,6 @@ flex: 1;
 background-color: #ffffff;
 `;
 
-const AiTabContainer = Styled.View`
-flex: 1;
-backgorund-color: #ffffff;
-`;
-
-const ReportTabContainer = Styled.View`
-flex: 1;
-background-color: #ffffff;
-`;
-
-
 
 
 interface Props {
@@ -78,28 +61,16 @@ interface Props {
     route: any,
 }
 
-const TeethCareScreen = ({navigation, route}: Props) => {
-
-    const TeethCareTab = createMaterialTopTabNavigator();
+const ReportTabScreen = ({navigation, route}: Props) => {
 
     return (
         <Container>
             <BodyContainer>
-                <TeethCareTab.Navigator
-                tabBarOptions={{
-                    labelStyle: {fontSize: 18, fontWeight: "700", color: "#000000"},
-                    tabStyle: {width: 75},
-                    indicatorStyle: {backgroundColor: "#000000", height: 2.5}
-                }}>
-                    <TeethCareTab.Screen name="타이머" component={TimerTabScreen}/>
-                    <TeethCareTab.Screen name="AI" component={AITabScreen}/>
-                    <TeethCareTab.Screen name="리포트" component={ReportTabScreen}/>
-                </TeethCareTab.Navigator>
             </BodyContainer>
         </Container>
     )
 }
 
-export default TeethCareScreen
+export default ReportTabScreen
 
 
