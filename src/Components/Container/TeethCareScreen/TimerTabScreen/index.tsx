@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList, ScrollView, Text} from 'react-native';
+import {TouchableWithoutFeedback, FlatList, ScrollView, Text, Animated, Easing} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -84,6 +84,59 @@ align-items: center;
 justify-content: center;
 `;
 
+const CircleProgressContainer1 = Styled.View`
+flex-direction: row;
+width: ${wp("61.6%")};
+height: ${wp('61.6%')};
+border-radius: ${wp("30.8%")};
+`;
+
+const CircleProgressContainer2 = Styled.View`
+flex-direction: row;
+width: ${wp("61.6%")};
+height: ${wp('61.6%')};
+border-radius: ${wp("30.8%")};
+`;
+
+const SemiCircle1 = Styled.View`
+width: ${wp("30.8%")};
+height: ${wp('61.6%')};
+border-radius: ${wp("30.8%")};
+border-bottom-right-radius: 1;
+border-top-right-radius: 0;
+background-color: #eeeeee;
+`;
+
+const SemiCircle2 = Styled.View`
+width: ${wp("30.8%")};
+height: ${wp('61.6%')};
+border-radius: ${wp("30.8%")};
+border-bottom-left-radius: 1;
+border-top-left-radius: 0;
+background-color: #cccccc;
+`;
+
+const InvisibleSemiCircle1 = Styled.View`
+width: ${wp("30.8%")};
+height: ${wp('61.6%')};
+border-radius: ${wp("30.8%")};
+border-bottom-left-radius: 1;
+border-top-left-radius: 0;
+`;
+
+const InvisibleSemiCircle2 = Styled.View`
+width: ${wp("30.8%")};
+height: ${wp('61.6%')};
+border-radius: ${wp("30.8%")};
+border-bottom-right-radius: 1;
+border-top-right-radius: 0;
+`;
+
+const OperateTimerContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+`;
+
 const OperateTimerButton = Styled.View`
 margin-top: 16px;
 width: ${wp('12%')};
@@ -94,9 +147,56 @@ align-items: center;
 justify-content: center;
 `;
 
+const RemainingTimeContainer = Styled.View`
+width: ${wp("61.6%")};
+height: ${wp('61.6%')};
+flex-direction: row;
+align-items: center;
+justify-content: center;
+padding-bottom: 7px;
+position: absolute;
+
+`;
+
 const RemainingTimeText = Styled.Text`
 font-size: 32px;
 color: #000000;
+`;
+
+const ShadeSemiCircleContainer1 = Styled.View`
+width: ${wp("61.6%")};
+height: ${wp('61.6%')};
+flex-direction: row;
+align-items: center;
+position: absolute;
+`;
+
+const ShadeSemiCircle1 = Styled.View`
+width: ${wp("30.8%")};
+height: ${wp('61.6%')};
+border-radius: ${wp("30.8%")};
+border-bottom-right-radius: 1;
+border-top-right-radius: 0;
+background-color: #ffffff;
+`;
+
+
+const ShadeSemiCircleContainer2 = Styled.View`
+width: ${wp("61.6%")};
+height: ${wp('61.6%')};
+flex-direction: row;
+align-items: center;
+position: absolute;
+justify-content: flex-end;
+`;
+
+const ShadeSemiCircle2 = Styled.View`
+width: ${wp("30.8%")};
+height: ${wp('61.6%')};
+border-radius: ${wp("30.8%")};
+border-bottom-left-radius: 1;
+border-top-left-radius: 0;
+background-color: #ffffff;
 `;
 
 
@@ -106,6 +206,7 @@ interface Props {
 }
 
 var limitTime = 300;
+var progressRadius = 0;
 var timeout: any;
 
 const TimerTabScreen = ({navigation, route}: Props) => {
@@ -113,20 +214,55 @@ const TimerTabScreen = ({navigation, route}: Props) => {
     const [limitMin, setLimitMin] = useState<number>(Math.floor(limitTime/60));
     const [limitSec, setLimitSec] = useState<any>("0" + limitTime%60);
     const [timerFinished, setTimerFinished] = useState<boolean>(false);
-    const [timerState, setTimerState] = useState<string>("stopped")
+    const [timerState, setTimerState] = useState<string>("stopped");
+
+    const circleProgressValue1 = useRef(new Animated.Value(0)).current;
+    const circleProgressValue2 = useRef(new Animated.Value(0)).current;
+
+    const circleProgressAni1 = Animated.timing(circleProgressValue1, {
+        toValue: 1,
+        duration: 150000,
+        easing: Easing.linear(),
+    })
+
+    const circleProgressAni2 = Animated.timing(circleProgressValue2, {
+        toValue: 1,
+        duration: 150000,
+        easing: Easing.linear(),
+    })
+
+    const startCircleProgress = () => {
+        Animated.sequence([circleProgressAni1, circleProgressAni2]).start();
+    };
+
+    const firstSpin = circleProgressValue1.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '180deg']
+    })
+
+    const secondSpin = circleProgressValue2.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '180deg']
+    })
 
     const startTimer = () => {
+        startCircleProgress()
         setTimerState("started")
+        console.log("양치질 타이머 시작")
+
         timeout = setInterval(() => {
-            console.log("양치질 타이머 시작", limitTime)
+            limitTime = limitTime - 1
+            progressRadius = progressRadius + 1;
             setLimitMin(Math.floor(limitTime/60))
+
             if(String(limitTime%60).length == 1) {
                 setLimitSec("0" + String(limitTime%60))
             } else {
                 setLimitSec(String(limitTime%60))
             }
 
-            limitTime = limitTime - 1
+            console.log("CircleProgressValue1", circleProgressValue1)
+            console.log("CircleProgressValue2", circleProgressValue2)
 
             if(limitTime < 0) {
                 clearInterval(timeout)
@@ -136,8 +272,29 @@ const TimerTabScreen = ({navigation, route}: Props) => {
     }
 
     const stopTimer = () => {
+        console.log("양치질 타이머 중단")
         clearInterval(timeout)
         setTimerState("stopped")
+
+        Animated.timing(circleProgressValue1, {
+            toValue: 6,
+            duration: 300000
+          }).stop();
+    }
+
+    const initializeTimer = () => {
+        limitTime = 300;
+
+        setLimitMin(Math.floor(limitTime/60))
+        setLimitSec("0" + limitTime%60)
+
+        clearInterval(timeout)
+        setTimerState("stopped")
+
+        Animated.timing(circleProgressValue1, {
+            toValue: 0,
+            duration: 0
+        }).start();
     }
     
 
@@ -149,10 +306,41 @@ const TimerTabScreen = ({navigation, route}: Props) => {
                         <SlotText>점심</SlotText>
                     </SlotContainer>
                     <CircleTimerContainer>
+                        <Animated.View
+                        style={{transform: [{rotate: secondSpin}], position: "absolute"}}>
+                        <CircleProgressContainer2>
+                        <InvisibleSemiCircle2/>
+                        <SemiCircle2/>
+                        </CircleProgressContainer2>
+                        </Animated.View>
+                        <ShadeSemiCircleContainer2>
+                            <ShadeSemiCircle2/>
+                        </ShadeSemiCircleContainer2>
+                        {/*
+                        <Animated.View
+                        style={{transform: [{rotate: firstSpin}], position: "absolute"}}>
+                            <CircleProgressContainer1>
+                                <SemiCircle1/>
+                                <InvisibleSemiCircle1/>
+                            </CircleProgressContainer1>
+                        </Animated.View>
+                        <ShadeSemiCircleContainer1>
+                            <ShadeSemiCircle1/>
+                        </ShadeSemiCircleContainer1>
+                        */}
+                        <RemainingTimeContainer>
                         <RemainingTimeText>
-                            {`${limitMin} : ${limitSec}`}
+                            {limitMin}
+                        </RemainingTimeText>
+                        <RemainingTimeText>
+                            {" : "}
                         </RemainingTimeText> 
+                        <RemainingTimeText>
+                            {limitSec}
+                        </RemainingTimeText>
+                        </RemainingTimeContainer>
                     </CircleTimerContainer>
+                    <OperateTimerContainer>
                     {timerState == "stopped" && (
                     <TouchableWithoutFeedback onPress={() => startTimer()}>
                     <OperateTimerButton>
@@ -167,6 +355,12 @@ const TimerTabScreen = ({navigation, route}: Props) => {
                     </OperateTimerButton>
                     </TouchableWithoutFeedback>
                     )}
+                    <TouchableWithoutFeedback onPress={() => initializeTimer()}>
+                    <OperateTimerButton style={{marginLeft: 10}}>
+                        <Text>{"초기화"}</Text>
+                    </OperateTimerButton>
+                    </TouchableWithoutFeedback>
+                    </OperateTimerContainer>
                 </TimerContainer>
             </BodyContainer>
         </Container>
