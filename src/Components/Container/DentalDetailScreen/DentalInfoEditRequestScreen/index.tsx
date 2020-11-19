@@ -80,7 +80,7 @@ margin-top: 24px;
 align-items: center;
 `;
 
-const ReserveByPhoneButton = Styled.View`
+const RequestButton = Styled.View`
 width: ${wp('90.133%')};
 height: ${wp('14.93%')};
 border-radius: 8px;
@@ -96,7 +96,7 @@ interface Props {
 
 const DentalInfoEditRequestScreen = ({navigation, route}: Props) => {
 
-    
+
 
     const goBack = () => {
         navigation.goBack()
