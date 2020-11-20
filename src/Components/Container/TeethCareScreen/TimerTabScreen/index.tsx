@@ -93,6 +93,7 @@ border-radius: ${wp("30.8%")};
 
 const CircleProgressContainer2 = Styled.View`
 flex-direction: row;
+
 width: ${wp("61.6%")};
 height: ${wp('61.6%')};
 border-radius: ${wp("30.8%")};
@@ -107,13 +108,30 @@ border-top-right-radius: 0;
 background-color: #eeeeee;
 `;
 
+const BehindSemiCircleContainer = Styled.View`
+flex-direction: row;
+width: ${wp("61.6%")};
+height: ${wp('61.6%')};
+position: absolute;
+
+`;
+
+const BehindSemiCircle = Styled.View`
+width: ${wp("30.8%")};
+height: ${wp('61.6%')};
+border-radius: ${wp("30.8%")};
+border-bottom-right-radius: 1;
+border-top-right-radius: 0;
+background-color: #eeeeee;
+`;
+
 const SemiCircle2 = Styled.View`
 width: ${wp("30.8%")};
 height: ${wp('61.6%')};
 border-radius: ${wp("30.8%")};
 border-bottom-left-radius: 1;
 border-top-left-radius: 0;
-background-color: #cccccc;
+background-color: red;
 `;
 
 const InvisibleSemiCircle1 = Styled.View`
@@ -128,8 +146,8 @@ const InvisibleSemiCircle2 = Styled.View`
 width: ${wp("30.8%")};
 height: ${wp('61.6%')};
 border-radius: ${wp("30.8%")};
-border-bottom-right-radius: 1;
-border-top-right-radius: 0;
+border-bottom-left-radius: 1;
+border-top-left-radius: 0;
 `;
 
 const OperateTimerContainer = Styled.View`
@@ -215,9 +233,12 @@ const TimerTabScreen = ({navigation, route}: Props) => {
     const [limitSec, setLimitSec] = useState<any>("0" + limitTime%60);
     const [timerFinished, setTimerFinished] = useState<boolean>(false);
     const [timerState, setTimerState] = useState<string>("stopped");
+    const [visibleShadeCircle, setVisibleShadeCircle] = useState<boolean>(true)
 
     const circleProgressValue1 = useRef(new Animated.Value(0)).current;
     const circleProgressValue2 = useRef(new Animated.Value(0)).current;
+    const shadeCircleValue = useRef(new Animated.Value(0)).current;
+
 
     const circleProgressAni1 = Animated.timing(circleProgressValue1, {
         toValue: 1,
@@ -231,8 +252,13 @@ const TimerTabScreen = ({navigation, route}: Props) => {
         easing: Easing.linear(),
     })
 
+    const shadeCircleAni = Animated.timing(shadeCircleValue, {
+        toValue: 1,
+        duration: 1,    
+    })
+
     const startCircleProgress = () => {
-        Animated.sequence([circleProgressAni1, circleProgressAni2]).start();
+        Animated.sequence([circleProgressAni1, shadeCircleAni, circleProgressAni2]).start();
     };
 
     const firstSpin = circleProgressValue1.interpolate({
@@ -245,10 +271,19 @@ const TimerTabScreen = ({navigation, route}: Props) => {
         outputRange: ['0deg', '180deg']
     })
 
+    const shadeHide = shadeCircleValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['1', '0']
+    })
+
     const startTimer = () => {
         startCircleProgress()
         setTimerState("started")
         console.log("양치질 타이머 시작")
+        
+        setTimeout(() => {
+            setVisibleShadeCircle(false);
+        }, 150000)
 
         timeout = setInterval(() => {
             limitTime = limitTime - 1
@@ -306,17 +341,22 @@ const TimerTabScreen = ({navigation, route}: Props) => {
                         <SlotText>점심</SlotText>
                     </SlotContainer>
                     <CircleTimerContainer>
+                        
+                        {/*
+                        <ShadeSemiCircleContainer2>
+                            <ShadeSemiCircle2/>
+                        </ShadeSemiCircleContainer2>  
+                        */}    
                         <Animated.View
                         style={{transform: [{rotate: secondSpin}], position: "absolute"}}>
-                        <CircleProgressContainer2>
-                        <InvisibleSemiCircle2/>
-                        <SemiCircle2/>
-                        </CircleProgressContainer2>
+                            <CircleProgressContainer2>
+                                <InvisibleSemiCircle2/>
+                                <SemiCircle2/>
+                            </CircleProgressContainer2>
                         </Animated.View>
                         <ShadeSemiCircleContainer2>
                             <ShadeSemiCircle2/>
                         </ShadeSemiCircleContainer2>
-                        {/*
                         <Animated.View
                         style={{transform: [{rotate: firstSpin}], position: "absolute"}}>
                             <CircleProgressContainer1>
@@ -324,10 +364,14 @@ const TimerTabScreen = ({navigation, route}: Props) => {
                                 <InvisibleSemiCircle1/>
                             </CircleProgressContainer1>
                         </Animated.View>
+                        <BehindSemiCircleContainer>
+                            <BehindSemiCircle/>
+                        </BehindSemiCircleContainer>
+                        {visibleShadeCircle && (
                         <ShadeSemiCircleContainer1>
                             <ShadeSemiCircle1/>
                         </ShadeSemiCircleContainer1>
-                        */}
+                        )}
                         <RemainingTimeContainer>
                         <RemainingTimeText>
                             {limitMin}
