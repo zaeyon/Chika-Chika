@@ -274,6 +274,10 @@ interface Props {
 
 const ReviewListScreen = ({navigation}: Props) => {
 
+    const goBack = () => {
+       navigation.goBack()
+    }
+
     const renderReviewItem = ({item, index}: any) => {
         return (
             <ReviewItem
@@ -296,10 +300,12 @@ const ReviewListScreen = ({navigation}: Props) => {
     return (
         <Container>
             <HeaderBar>
+                <TouchableWithoutFeedback onPress={() => goBack()}>
                 <HeaderLeftContainer>
                     <HeaderBackIcon
                     source={require('~/Assets/Images/HeaderBar/ic_back.png')}/>
                 </HeaderLeftContainer>
+                </TouchableWithoutFeedback>
                 <HeaderTitleText>Review List</HeaderTitleText>
                 <HeaderRightContainer>
                     <HeaderEmptyContainer>
