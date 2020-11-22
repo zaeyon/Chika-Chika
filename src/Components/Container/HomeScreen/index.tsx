@@ -319,7 +319,7 @@ const HomeScreen = ({navigation}: Props) => {
             <BodyContainer>
                 <ReviewContainer>
                     <ReviewHeaderContainer>
-                        <ReviewLabelText>인기 리뷰</ReviewLabelText>
+                        <ReviewLabelText>인기 리뷰 TEST</ReviewLabelText>
                         <TouchableWithoutFeedback onPress={() => moveToReviewList()}>
                         <MoreViewContainer>
                             <MoreViewText>더보기</MoreViewText>
