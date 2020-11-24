@@ -6,6 +6,7 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import KakaoLogins, {KAKAO_AUTH_TYPES} from '@react-native-seoul/kakao-login';
+import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
 
 const Container = Styled.View`
   width: ${wp('100%')}px;
@@ -110,6 +111,8 @@ interface Props {
 
 const UnauthorizedScreen = ({navigation, route}: Props) => {
 
+    GoogleSignin.configure();
+
     const moveToLocalLogin = () => {
         navigation.navigate("LoginScreen")
     }
@@ -140,6 +143,24 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
         }
     }
 
+    const loginWithGoogle = async () => {
+        try {
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+            console.log("구글 로그인 성공 userInfo", userInfo);
+        } catch (error) {
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                // user cancelled the login flow
+              } else if (error.code === statusCodes.IN_PROGRESS) {
+                // operation (e.g. sign in) is in progress already
+              } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                // play services not available or outdated
+              } else {
+                // some other error happened
+              }
+        }
+    }
+
     return (
         <Container>
             <LogoContainer>
@@ -150,9 +171,11 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
                   <KakaoLoginText>카카오로 로그인</KakaoLoginText>
                 </KakaoLoginButton>
               </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback onPress={() => loginWithGoogle()}>
                 <GoogleLoginButton>
                   <GoogleLoginText>구글로 로그인</GoogleLoginText>
                 </GoogleLoginButton>
+              </TouchableWithoutFeedback>
                 <AppleLoginButton>
                   <AppleLoginText>Apple로 로그인</AppleLoginText>
                 </AppleLoginButton>
