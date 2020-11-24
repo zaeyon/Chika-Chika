@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback} from 'react-native';
+import {TouchableWithoutFeedback, Alert} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import KakaoLogins, {KAKAO_AUTH_TYPES} from '@react-native-seoul/kakao-login';
 
 const Container = Styled.View`
   width: ${wp('100%')}px;
@@ -117,20 +118,44 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
         navigation.navigate("VerifyPhoneNumberScreen")
     }
 
+    const loginWithKakao = () => {
+        if(!KakaoLogins) {
+            console.log("카카오 모듈 연결안됨")
+        } else {
+            console.log("카카오 로그인 시도")
+            KakaoLogins.login([KAKAO_AUTH_TYPES.Talk, KAKAO_AUTH_TYPES.Account])
+            .then(result => {
+                console.log("카카오 로그인 성공 result", result)
+                KakaoLogins.getProfile()
+                .then(profile => {
+                    console.log("카카오 계정 프로필 불러오기 성공 profile", profile)
+                })
+                .catch(error => {
+                    console.log("카카오 계정 프로필 불러오기 실패 error", error)
+                })
+            })
+            .catch(error => {
+                console.log("카카오 로그인 실패 error", error)
+            })
+        }
+    }
+
     return (
         <Container>
             <LogoContainer>
             </LogoContainer>
             <SocialContainer>
-             <KakaoLoginButton>
-                 <KakaoLoginText>카카오로 로그인</KakaoLoginText>
-             </KakaoLoginButton>
-             <GoogleLoginButton>
-                 <GoogleLoginText>구글로 로그인</GoogleLoginText>
-             </GoogleLoginButton>
-             <AppleLoginButton>
-                 <AppleLoginText>Apple로 로그인</AppleLoginText>
-             </AppleLoginButton>
+              <TouchableWithoutFeedback onPress={() => loginWithKakao()}>
+                <KakaoLoginButton>
+                  <KakaoLoginText>카카오로 로그인</KakaoLoginText>
+                </KakaoLoginButton>
+              </TouchableWithoutFeedback>
+                <GoogleLoginButton>
+                  <GoogleLoginText>구글로 로그인</GoogleLoginText>
+                </GoogleLoginButton>
+                <AppleLoginButton>
+                  <AppleLoginText>Apple로 로그인</AppleLoginText>
+                </AppleLoginButton>
             </SocialContainer>
             <LocalContainer>
               <TouchableWithoutFeedback onPress={() => moveToLocalLogin()}>
