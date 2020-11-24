@@ -55,7 +55,7 @@ import SettingScreen from '~/Components/Container/SettingScreen';
 import CommunityScreen from '~/Components/Container/CommunityScreen';
 
 // Dental Clinic Stack Screen
-import NearDentistMap from '~/Components/Container/NearDentistMap';
+import NearDentalMap from '~/Components/Container/NearDentalMap';
 import DentalClinicListScreen from '~/Components/Container/DentalClinicListScreen';
 import DentalDetailScreen from '~/Components/Container/DentalDetailScreen';
 import DentalInfoEditRequestScreen from '~/Components/Container/DentalDetailScreen/DentalInfoEditRequestScreen';
@@ -153,8 +153,8 @@ function DentalClinicStackScreen() {
     <DentalClinicStack.Navigator
     headerMode="none">
       <DentalClinicStack.Screen
-      name="NearDentistMap"
-      component={NearDentistMap}/>
+      name="NearDentalMap"
+      component={NearDentalMap}/>
       <DentalClinicStack.Screen
       name="DentalClinicListScreen"
       component={DentalClinicListScreen}/>
@@ -266,7 +266,8 @@ function CommunityStackScreen() {
 
 function BottomTab() {
 
-  const getHomeTabBarVisibility = (route: any) => {
+  // 특정 화면에서 Bottom Tab을 숨기기 위한 함수
+  const getHomeBottomTabBarVisibility = (route: any) => {
     const routeName = route.state
     ? route.state.routes[route.state.index]
     : '';
@@ -275,7 +276,7 @@ function BottomTab() {
     ? routeName.state.routes[routeName.state.index].name
     : '';
 
-    if(routeName.name === 'ReviewStackScreen' || routeName.name === "NearDentistMap" || routeName.name === 'ReviewUploadStackScreen') {
+    if(routeName.name === 'ReviewStackScreen' || routeName.name === 'ReviewUploadStackScreen') {
       return false;
     }
 
@@ -285,6 +286,24 @@ function BottomTab() {
 
     return true;
   }
+
+  const getDentalBottomTabBarVisibility = (route: any) => {
+    const routeName = route.state
+    ? route.state.routes[route.state.index]
+    : '';
+
+    const stackRouteName = routeName.state
+    ? routeName.state.routes[routeName.state.index].name
+    : '';
+
+    if(routeName.name === "DentalClinicListScreen") {
+      return false;
+    }
+
+    return true;
+  }
+
+  
 
     return (
     <Tab.Navigator
@@ -297,12 +316,16 @@ function BottomTab() {
       name="Home" 
       component={HomeStackScreen}
       options={({route}) => ({
-        tabBarVisible: getHomeTabBarVisibility(route)
+        tabBarVisible: getHomeBottomTabBarVisibility(route)
       })}
       />
       <Tab.Screen
       name="Dental Clinic"
-      component={DentalClinicStackScreen}/>
+      component={DentalClinicStackScreen}
+      options={({route}) => ({
+        tabBarVisible: getDentalBottomTabBarVisibility(route)
+      })}
+      />
       <Tab.Screen
       name="Teeth Care"
       component={TeethCareStackScreen}
