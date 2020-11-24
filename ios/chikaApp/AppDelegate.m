@@ -4,6 +4,9 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <KakaoOpenSDK/KakaoOpenSDK.h>
+@import UIKit;
+@import Firebase;
+
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -74,6 +77,7 @@ static void InitializeFlipper(UIApplication *application) {
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   [KOSession sharedSession].automaticPeriodicRefresh = YES;
+  [FIRApp configure];
   return YES;
 }
 
