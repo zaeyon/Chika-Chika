@@ -15,7 +15,7 @@ target 'chikaApp' do
     # Pods for testing
   end
   
-  pod 'NMapsMap'
+  #pod 'NMapsMap'
   # Enables Flipper.
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and

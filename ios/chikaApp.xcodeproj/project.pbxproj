@@ -711,7 +711,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.chikaApp;
 				PRODUCT_NAME = chikaApp;
 				SWIFT_OBJC_BRIDGING_HEADER = "chikaApp-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -735,7 +735,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.chikaApp;
 				PRODUCT_NAME = chikaApp;
 				SWIFT_OBJC_BRIDGING_HEADER = "chikaApp-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
