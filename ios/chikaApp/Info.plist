@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
+	<string>ko_KR</string>
 	<key>CFBundleDisplayName</key>
 	<string>chikaApp</string>
 	<key>CFBundleExecutable</key>
@@ -20,8 +20,36 @@
 	<string>1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakao0528ffa400f348fc61a241b399e8d8d1</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.104168934751-bbskptulttj6n5f2eia02g2oteebhenc</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>KAKAO_APP_KEY</key>
+	<string>0528ffa400f348fc61a241b399e8d8d1</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>kakaokompathauth</string>
+		<string>kakao0528ffa400f348fc61a241b399e8d8d1</string>
+		<string>kakaolink</string>
+		<string>kakaotalk-5.9.7</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NMFClientId</key>

@@ -3,6 +3,10 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <KakaoOpenSDK/KakaoOpenSDK.h>
+@import UIKit;
+@import Firebase;
+
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -24,6 +28,30 @@ static void InitializeFlipper(UIApplication *application) {
 #endif
 
 @implementation AppDelegate
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+                                      sourceApplication:(NSString *)sourceApplication
+                                              annotation:(id)annotation {
+    if ([KOSession isKakaoAccountLoginCallback:url]) {
+        return [KOSession handleOpenURL:url];
+    }
+
+    return false;
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+                                                options:(NSDictionary<NSString *,id> *)options {
+    if ([KOSession isKakaoAccountLoginCallback:url]) {
+        return [KOSession handleOpenURL:url];
+    }
+
+    return false;
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
+    [KOSession handleDidBecomeActive];
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -48,6 +76,8 @@ static void InitializeFlipper(UIApplication *application) {
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  [KOSession sharedSession].automaticPeriodicRefresh = YES;
+  [FIRApp configure];
   return YES;
 }
 
@@ -58,6 +88,10 @@ static void InitializeFlipper(UIApplication *application) {
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    [KOSession handleDidEnterBackground];
 }
 
 @end

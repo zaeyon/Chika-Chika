@@ -87,7 +87,29 @@ padding-left: 20px;
 `;
 
 const SearchTextInput = Styled.TextInput`
+`;
 
+const ViewMapButtonContainer = Styled.View`
+width: ${wp('100%')}
+position: absolute;
+bottom: 0;
+padding-top: 10px;
+padding-bottom: 10px;
+align-items: center;
+justify-content: center;
+`;
+
+const ViewMapButton = Styled.View`
+padding: 9px 11px 9px 11px;
+border-radius: 100px;
+background-color: #ffffff;
+align-items: center;
+justify-content: center;
+border-width: 1px;
+`;
+
+const ViewMapText = Styled.Text`
+font-size: 14px;
 `;
 
 
@@ -141,6 +163,10 @@ const DentalClinicListScreen = ({navigation, route}: Props) => {
         )
     }
 
+    const moveToMap = () => {
+        navigation.navigate("NearDentalMap")
+    }
+
     return (
         <Container>
             <HeaderBar>
@@ -157,6 +183,15 @@ const DentalClinicListScreen = ({navigation, route}: Props) => {
                 showsVerticalScrollIndicator={false}
                 data={dentalList}
                 renderItem={renderDentalItem}/>
+                <ViewMapButtonContainer>
+                    <TouchableWithoutFeedback onPress={() => moveToMap()}>
+                    <ViewMapButton>
+                        <ViewMapText>
+                            지도보기
+                        </ViewMapText>
+                    </ViewMapButton>
+                    </TouchableWithoutFeedback>
+                </ViewMapButtonContainer>
             </BodyContainer>
         </Container>
     )
