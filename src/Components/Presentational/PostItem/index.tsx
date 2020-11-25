@@ -1,172 +1,247 @@
 import React from 'react';
-import {TouchableWithoutFeedback, FlatList} from 'react-native';
+import {TouchableWithoutFeedback, FlatList, Text, View, Image,} from 'react-native';
 import Styled from 'styled-components/native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-const Container = Styled.View`
+const ContainerView = Styled.View`
 width: ${wp('100%')};
-height: ${wp('64%')};
-background-color: #ffffff;
-border-bottom-width: 2px;
-border-color: #e5e5e5;
 padding-top: 16px;
-padding-left: 16px;
-padding-right: 16px;
-padding-bottom: 16px;
+background-color: white
 `;
 
-const ProfileContainer = Styled.View`
+const BodyContainerView = Styled.View`
+display: flex;
+width: 100%;
+padding: 0px 16px;
+
+`
+
+const ProfileContainerView = Styled.View`
+width: auto;
+height: auto;
+margin-right: auto;
 flex-direction: row;
 align-items: center;
+
 `;
 
-const ProfileImageContainer = Styled.View`
+const HashTagContainerView = Styled.View`
+width: 100%;
+height: 24px;
+margin-top: 12px;
+background-color: white;
+
+`
+
+const HashTagFlatList = Styled(FlatList as new () => FlatList)`
+width: 100%;
+height: auto;
+
+
 `;
 
-const ProfileImage = Styled.Image`
-width: ${wp('10.6%')};
-height: ${wp('10.6%')};
-border-radius: 100px;
-`;
-
-const ProfileRightContainer = Styled.View`
-margin-left: 8px;
-`;
-
-const NicknameText = Styled.Text`
+const HashTagView = Styled.View`
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 2px 13px;
+height: 24px;
+border: 1px solid #C4C4C4;
+border-radius: 4px;
+background-color: white;
+color: '#rgb(0, 0, 0)'
+margin-right: 8px;
+`
+const HashTagText = Styled.Text`
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 20px;
+`
+// View => Image when ready
+const ProfileImage = Styled.Image<{source: any}>`
+width: 44px;
+height: 44px;
+background-color: grey;
+border-radius: 22px;
+`
+const ProfileNameText = Styled.Text`
+font-size: 14px;
+margin: 0px 8px;
+line-height: 24px;
+background-color: white;
+font-style: normal;
 font-weight: bold;
+`
+const ContentView = Styled.View`
+width: 100%;
+height: 48px;
+background-color: white;
+margin: 8px 0px;
+`;
+
+const ContentText = Styled.Text`
+font-style: normal;
+font-weight: normal;
 font-size: 14px;
-color: #000000;
+line-height: 24px;
 `;
 
-const CategoryCreatedAtContainer = Styled.View`
-margin-top: 4px;
-flex-direction: row;
-align-items: center;
-`;
-
-const CategoryText = Styled.Text`
-font-size: 12px;
-color: #828282;
-`;
-
-const CreatedAtText = Styled.Text`
-font-size: 12px;
-color: #828282;
-`;
-
-const TagListContainer = Styled.View`
-margin-top: 8px;
-padding-right: 10px;
-`;
-
-const TagText = Styled.Text`
-padding-right: 3px;
-font-weight: 400;
-font-size: 14px;
-color: #267DFF;
-`;
-
-const DescripContainer = Styled.View`
-margin-top: 8px;
-`;
-
-const DescripText = Styled.Text`
-color: #000000;
-font-size: 14px;
-`;
-
-const MoreViewText = Styled.Text`
-margin-left: 5px;
-font-size: 14px;
-color: #BDBDBD;
-`;
-
-const TagItemContainer = Styled.View`
-width: 20px;
-height: 20px;
-background-color: #000000;
-`;
-
+const ImageContainerView = Styled.View`
+margin: 8px 0px;
+width: 100%;
+height: 130px;
+margin-left: 1px;
+background-color: white;
+padding: 0px 16px;
+`
+const ImageFlatList = Styled(FlatList as new () => FlatList)`
+width: 100%;
+height: auto;
+`
+const ImageView = Styled.Image<{isFirst: number, source: any}>`
+width: 130px;
+height: 130px;
+background-color: grey;
+border-radius: 4px;
+margin-left: ${props => props.isFirst ? "8px" : "0px"}
+`
 const SocialInfoContainer = Styled.View`
-flex-direction: row;
+position: absolute;
+left: 0px;
+bottom: 0px;
+width: ${wp('100%')};
+height: 56px;
+
 align-items: center;
-`;
-
+flex-direction: row;
+`
+const SocialInfoView = Styled.View`
+flex-direction: row;
+display: flex;
+height: 24px;
+align-items: center;
+padding: 0px;
+margin-left: 16px;
+justify-content: space-between;
+`
 const SocialInfoText = Styled.Text`
-margin-top: 16px;
-margin-right: 10px;
-font-size: 12px;
-color: #828282;
-`;
-
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 16px;
+margin-left: 4px;
+`
 interface Props {
-    profileImageUri: string
-    nickname: string
-    category: string
-    createdAt: string
-    tagList: Array<string>
-    description: string
-    likeCount: number
-    commentCount: number
+    key: any
+    mode: string
+    navigation: any
+    data: any
 }
 
-const PostItem = ({profileImageUri, nickname, category, createdAt, tagList, description, likeCount, commentCount}: Props) => {
+const PostItem = ({key, mode, data, navigation}: Props) => {
+    console.log(data)
+const {user, category, createdAt, tagList, mediaFiles, paragraph, likes, comments} = data
 
-    const renderTagItem = ({item, index}: any) => {
-        return (
-          <TagItemContainer>
-            <TagText>ss</TagText>
-            </TagItemContainer>
-        )
-    }
+  const moveToCommunityDetail = () => {
+    navigation.navigate("CommunityDetailScreen", {data: data});
+  }
+
+  const moveToAnotherProfile = () => {
+      navigation.navigate("AnotherProfileStackScreen", {
+          screen: "AnotherProfileScreen"
+      })
+  }
 
     return (
-        <Container>
-          <ProfileContainer>
-            <ProfileImageContainer>
-              <ProfileImage
-              source={{uri: profileImageUri}}/>
-            </ProfileImageContainer>
-            <ProfileRightContainer>
-              <NicknameText>
-              {nickname}
-              </NicknameText>
-              <CategoryCreatedAtContainer>
-                <CategoryText>{category}</CategoryText>
-                <CreatedAtText>{createdAt}</CreatedAtText>
-              </CategoryCreatedAtContainer>        
-            </ProfileRightContainer>
-          </ProfileContainer>
-          <TagListContainer>
-            <TagText>
-              {tagList.map((tag, index) => {
-                if(index == 0) {
-                  return (
-                    <TagText>{"#" + tag}</TagText>
-                  )
-                } else {
-                  return (
-                    <TagText>{" #" + tag}</TagText>
-                  )
-                }
-              })}
-            </TagText>
-          </TagListContainer>
-          <DescripContainer>
-              <DescripText>
-                  {description}
-                  <MoreViewText> 더보기</MoreViewText>
-              </DescripText>
-          </DescripContainer>
-          <SocialInfoContainer>
-            <SocialInfoText>{"좋아요 " + likeCount + "개"}</SocialInfoText>
-            <SocialInfoText>{"댓글 " + commentCount + "개"}</SocialInfoText>
-          </SocialInfoContainer>
-        </Container>
+        <ContainerView
+            style={{
+                height: mode === 'Detail' ? 290 : 362
+            }}>
+          <TouchableWithoutFeedback onPress={() => {
+              moveToCommunityDetail();
+            }}>
+          <BodyContainerView>
+          <TouchableWithoutFeedback onPress={() => {
+              moveToAnotherProfile();
+            }}>
+            <ProfileContainerView>
+                <ProfileImage source={{
+                    url: user.profile_image
+                    }}/>
+
+                <ProfileNameText>
+                    {user.nickname}
+                </ProfileNameText>
+            </ProfileContainerView>
+            </TouchableWithoutFeedback>
+            <HashTagContainerView>
+            <HashTagFlatList
+            horizontal={true}
+            data={tagList}
+            renderItem={ ({item, index}) => (
+                <HashTagView>
+                    <HashTagText>
+
+                    {'#'+item}
+                    </HashTagText>
+                    </HashTagView>
+    )
+            }/>
+            </HashTagContainerView>
+            <ContentView>
+                <ContentText numberOfLines={2}>
+                    {paragraph}
+            </ContentText>
+            </ContentView>
+            </BodyContainerView>
+            </TouchableWithoutFeedback>
+            <ImageContainerView>
+                <ImageFlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={mediaFiles}
+                renderItem={({item, index}) => (
+                    <ImageView isFirst={index} key={index} source={{
+                        url: item.image_uri
+                    }}/>
+                )}>
+                    
+                </ImageFlatList>
+            </ImageContainerView>
+            {mode === 'Detail' ? null : 
+            <TouchableWithoutFeedback onPress={() => {
+                moveToCommunityDetail();
+              }}>
+            <SocialInfoContainer>
+                    <SocialInfoView>
+                        <Image source={require('~/Assets/Images/Review/ic_like_inline.png')}/>
+                        <SocialInfoText>
+                            {likes.length}
+                        </SocialInfoText>
+                    </SocialInfoView>
+                    <SocialInfoView>
+                        <Image source={require('~/Assets/Images/Review/ic_comment_inline.png')}/>
+                        <SocialInfoText>
+                            {comments.length}
+                        </SocialInfoText>
+                    </SocialInfoView>
+                    <SocialInfoView
+                        style={{
+                            position: 'absolute',
+                            right: 16,
+                        }}>
+                        <SocialInfoText>
+                            스크랩하기
+                        </SocialInfoText>
+                    </SocialInfoView>
+            </SocialInfoContainer>
+            </TouchableWithoutFeedback>
+            }
+        </ContainerView>
     )
 }
 
