@@ -15,6 +15,9 @@ import NaverMapView, {Circle, Marker, Path, Polyline, Polygon} from "react-nativ
 import {isIphoneX} from 'react-native-iphone-x-helper'
 import Geolocation from 'react-native-geolocation-service';
 
+// Local Component
+import SelectedDentalItem from '~/Components/Presentational/NearDentalMap/SelectedDentalItem';
+
 const mapHeight = hp('100%') - (wp('11.7%') - (isIphoneX() ? wp("21%") : wp("15%")))
 
 const Container = Styled.SafeAreaView`
@@ -24,7 +27,7 @@ background-color: #ffffff;
 
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
- height: ${wp('11.7%')}px;
+ height: ${wp('13.8%')}px;
  flex-direction: row;
  align-items: center;
  justify-content: space-between;
@@ -67,8 +70,15 @@ const HeaderEmptyContainer = Styled.View`
  height: ${wp('6.4%')}px;
 `;
 
+const HeaderFilterContainer = Styled.View`
+height: ${wp('13.8%')}px;
+align-items: center;
+justify-content: center;
+padding-left: 3px;
+padding-right: 3px;
+`;
+
 const MapContainer = Styled.View`
- flex: 1;
 `;
 
 const LoadingContainer = Styled.View`
@@ -94,13 +104,97 @@ color: #c3c3c3;
 `;
 
 const SearchTextInput = Styled.TextInput`
-
 `; 
+
+const DentalContainer = Styled.View`
+position: absolute;
+bottom: 0;
+width: ${wp('100%')};
+padding-bottom: 16px;
+align-items: center;
+`;
+
+
+const SelectedDentalItemContainer = Styled.View`
+width: ${wp('87.2%')};
+height: ${wp('41.6%')};
+background-color: #ffffff;
+border-width: 1px;
+border-color: #c4c4c4;
+padding-top: 20px;
+padding-bottom: 20px;
+padding-left: 16px;
+padding-right: 16px;
+flex-direction: row;
+align-items: center;
+`;
+
+const DentalImageContainer = Styled.View`
+width: ${wp('25%')};
+height: ${wp('25%')};
+`;
+
+const DentalImage = Styled.Image`
+width: ${wp('25%')};
+height: ${wp('25%')};
+`;
+
+
+const DentalInfoContainer = Styled.View`
+margin-left: 16px;
+flex-direction: column;
+`;
+
+const DentalInfoItemContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+`;
+
+const DentalInfoLabelText = Styled.Text`
+color: #000000;
+font-weight: bold;
+font-size: 14px;
+`;
+
+const DentalInfoValueText = Styled.Text`
+margin-left: 8px;
+color: #000000;
+font-size: 14px;
+`;
+
+const FilterListContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+padding-top: 9px
+padding-bottom: 9px;
+padding-left: 16px;
+padding-right: 16px;
+position: absolute;
+top: 0
+background-color: #ffffff;
+width: ${wp('100%')}
+`;
+
+const FilterItemContainer = Styled.View`
+padding: 9px 11px 9px 11px;
+border-radius: 100px;
+background-color: #c4c4c4;
+`;
+
+const FilterItemText = Styled.Text`
+color: #000000;
+font-size: 14px;
+`;
 
 
 interface Props {
     navigation: any,
     route: any,
+}
+
+interface Coord {
+    latitude: number;
+    longitude: number;
 }
 
 
@@ -114,15 +208,20 @@ const TEST_MARKER_LIST = [
     {latitude: 37.565383, longitude: 126.976292}
 ]
 
-const NearDentistMap = ({navigation, route}: Props) => {
-    const [currentLocation, setCurrentLocation] = useState<any>({latitude: 37, longitude: 127});
+const NearDentalMap = ({navigation, route}: Props) => {
+    const [currentLocation, setCurrentLocation] = useState<Coord>({latitude: 37.564362, longitude: 126.977011});
     const [loading, setLoading] = useState<boolean>(true);
+    const [visibleSelectedDentalItem, setVisibleSelectedDentalItem] = useState<boolean>(false)
+    const [visibleFilterList, setVisibleFilterList] = useState<boolean>(false)
     const mapRef = useRef(null);
+
+    /*
 
     async function hasAndroidPermission() {
         const permission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
         const hasLocationPermission = await PermissionsAndroid.check(permission);
         if(hasLocationPermission) {
+            
             Geolocation.getCurrentPosition(
                 (position) => {
                   console.log("사용자 현재 위치 position", position);
@@ -138,6 +237,7 @@ const NearDentistMap = ({navigation, route}: Props) => {
                 },
                 { enableHighAccuracy: false, timeout: 10000, maximumAge: 10000 }
             );
+            
         } else {
             const status = await PermissionsAndroid.request(permission)
             return status === 'granted';
@@ -164,9 +264,10 @@ const NearDentistMap = ({navigation, route}: Props) => {
             )
         }
     }
+    */
 
     useEffect(() => {
-        mapRef.current.setLocationTrackingMode(2)
+        //mapRef.current.setLocationTrackingMode(2)
         /*
         if(Platform.OS == 'android') {
             hasAndroidPermission()
@@ -186,6 +287,18 @@ const NearDentistMap = ({navigation, route}: Props) => {
         navigation.navigate("DentalClinicListScreen")
     }
 
+    const clickDentalMarker = () => {
+        setVisibleSelectedDentalItem(true);
+    }
+
+    const clickMapBackground = () => {
+        setVisibleSelectedDentalItem(false)
+    }
+    
+    const clickFilterIcon = () => {
+        setVisibleFilterList(!visibleFilterList)
+    }
+
     return (
         <Container>
             <HeaderBar>
@@ -194,29 +307,55 @@ const NearDentistMap = ({navigation, route}: Props) => {
                     <SearchText>{"병원,지역 검색"}</SearchText>
                 </SearchInputContainer>
                 </TouchableWithoutFeedback>
-                <HeaderFilterIcon
+                <TouchableWithoutFeedback onPress={() => clickFilterIcon()}>
+                <HeaderFilterContainer>
+                    <HeaderFilterIcon
                     source={require('~/Assets/Images/HeaderBar/ic_filter.png')}/>
+                </HeaderFilterContainer>
+                </TouchableWithoutFeedback>
             </HeaderBar>
             <MapContainer>
                 <NaverMapView
                 ref={mapRef}
                 compass={false}
                 style={{width: '100%', height: hp('100%') - (isIphoneX() ? wp('44%') : wp('38%'))}}
-                showsMyLocationButton={true}
+                showsMyLocationButton={!visibleSelectedDentalItem}
                 center={{...currentLocation, zoom: 16}}
-                onMapClick={(e:any) => console.warn('onMapClick', JSON.stringify(e))}>
+                onMapClick={(e:any) => clickMapBackground()}>
                 {TEST_MARKER_LIST.map((item, index) => {
                     return (
                         <Marker
-                        coordinate={item}/>
+                        coordinate={item}
+                        onClick={clickDentalMarker}/>
                     )
                 })}
                 </NaverMapView>
+                {visibleFilterList && (
+                <FilterListContainer>
+                    <FilterItemContainer>
+                        <FilterItemText>{"요일"}</FilterItemText>
+                    </FilterItemContainer>
+                    <FilterItemContainer style={{marginLeft: 12}}>
+                        <FilterItemText>{"주차가능"}</FilterItemText>
+                    </FilterItemContainer>
+                    <FilterItemContainer style={{marginLeft: 12}}>
+                        <FilterItemText>{"일요일･공휴일 휴진"}</FilterItemText>
+                    </FilterItemContainer>
+                    <FilterItemContainer style={{marginLeft: 12}}>
+                        <FilterItemText>{"시간"}</FilterItemText>
+                    </FilterItemContainer>
+                </FilterListContainer>
+                )}
+                {visibleSelectedDentalItem && (
+                    <DentalContainer>
+                        <SelectedDentalItem/>
+                    </DentalContainer>
+                )}
             </MapContainer>
         </Container>
     )
 }
 
-export default NearDentistMap;
+export default NearDentalMap;
 
 // hp('100%') - (wp('11.7%') - (isIphoneX() ? wp("21%") : wp("15%")))
