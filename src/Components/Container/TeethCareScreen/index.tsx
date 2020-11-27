@@ -7,11 +7,13 @@ import {
 } from 'react-native-responsive-screen';
 import {isIphoneX} from 'react-native-iphone-x-helper';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import { useIsFocused } from '@react-navigation/native';
 
 // Local Component
 import TimerTabScreen from '~/Components/Container/TeethCareScreen/TimerTabScreen';
 import AITabScreen from '~/Components/Container/TeethCareScreen/AITabScreen';
 import ReportTabScreen from '~/Components/Container/TeethCareScreen/ReportTabScreen';
+import SymptomSlidingUpPanel from '~/Components/Presentational/TeethCareScreen/SymptomSlidingUpPanel'
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -53,6 +55,7 @@ height: ${wp('6.4%')};
 
 const BodyContainer = Styled.View`
 flex: 1;
+background-color: #ffffff;
 `;
 
 const TimerTabContainer = Styled.View`
@@ -60,14 +63,17 @@ flex: 1;
 background-color: #ffffff;
 `;
 
-const AiTabContainer = Styled.View`
+const AITabContainer = Styled.View`
 flex: 1;
-backgorund-color: #ffffff;
+background-color: #ffffff;
 `;
 
 const ReportTabContainer = Styled.View`
 flex: 1;
 background-color: #ffffff;
+`;
+
+const SlidingUpPanelContainer = Styled.View`
 `;
 
 
@@ -79,8 +85,74 @@ interface Props {
 }
 
 const TeethCareScreen = ({navigation, route}: Props) => {
+    const [currentTab, setCurrentTab] = useState<string>("timer");
+    const [isFocusedTimerTab, setIsFocusedTimerTab] = useState<boolean>(true);
+    const [isFocusedAITab, setIsFocusedAITab] = useState<boolean>(false);
+    const [isFocusedReportTab, setIsFocusedReportTab] = useState<boolean>(false);
 
     const TeethCareTab = createMaterialTopTabNavigator();
+
+    const focusOnTimerTab = () => {
+        setCurrentTab("timer");
+    }
+
+    const focusOnAITab = () => {
+        setCurrentTab("ai");
+    }
+
+    const focusOnReportTab = () => {
+        setCurrentTab("report")
+    }
+
+    const TimerTab = () => {
+        const isFocused = useIsFocused();
+        console.log("TimerTab isFocused", isFocused)
+        if(isFocused) {
+            setCurrentTab("timer")
+        }
+
+        return (
+            <TimerTabContainer>
+                <TimerTabScreen
+                navigation={navigation}
+                route={route}/>
+            </TimerTabContainer>
+        )
+    }
+
+    const AITab = () => {
+        const isFocused = useIsFocused();
+        console.log("AITab isFocused", isFocused);
+        if(isFocused) {
+            setCurrentTab("ai")
+        }
+
+        return (
+            <AITabContainer>
+                <AITabScreen
+                navigation={navigation}
+                route={route}
+                />
+            </AITabContainer>
+        )
+    }
+
+    const ReportTab = () => {
+        const isFocused = useIsFocused();
+        console.log("AITab is Focused", isFocused);
+         if(isFocused) {
+             setCurrentTab("report")
+        }
+
+        return (
+            <ReportTabContainer>
+                <ReportTabScreen
+                navigation={navigation}
+                route={route}
+                />
+            </ReportTabContainer>
+        )
+    }
 
     return (
         <Container>
@@ -90,12 +162,15 @@ const TeethCareScreen = ({navigation, route}: Props) => {
                     labelStyle: {fontSize: 18, fontWeight: "700", color: "#000000"},
                     tabStyle: {width: 75},
                     indicatorStyle: {backgroundColor: "#000000", height: 2.5}
-                }}>
-                    <TeethCareTab.Screen name="타이머" component={TimerTabScreen}/>
-                    <TeethCareTab.Screen name="AI" component={AITabScreen}/>
-                    <TeethCareTab.Screen name="리포트" component={ReportTabScreen}/>
+                    }}>
+                    <TeethCareTab.Screen name="타이머" component={TimerTab}/>
+                    <TeethCareTab.Screen name="AI" component={AITab}/>
+                    <TeethCareTab.Screen name="리포트" component={ReportTab}/>
                 </TeethCareTab.Navigator>
             </BodyContainer>
+            {currentTab === "timer" && (
+            <SymptomSlidingUpPanel/>
+            )}
         </Container>
     )
 }

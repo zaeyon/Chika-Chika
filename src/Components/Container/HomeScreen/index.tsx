@@ -157,8 +157,6 @@ font-size: 18px;
 `;
 
 
-const NearDentistText = Styled.Text`
-`;
 
 const TEST_REVIEW_DATA = [
     {
