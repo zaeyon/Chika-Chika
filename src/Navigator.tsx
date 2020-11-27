@@ -288,7 +288,17 @@ function CommunityStackScreen() {
       <CommunityStack.Screen
             name="CommunityPostUploadStackScreen"
             component={CommunityPostUploadStackScreen}/>
+      <CommunityStack.Screen
+          options={
+            {
+              gestureEnabled: false,
+              
+            }
+          }
+          name="FullImagesScreen"
+          component={FullImagesScreen}/>
     </CommunityStack.Navigator>
+  
   )
 }
 
@@ -313,10 +323,6 @@ function BottomTab() {
       return false;
     }
 
-    if(routeName.name === "CommunityDetailScreen" || routeName.name === "CommunityPostUploadStackScreen") {
-      return false;
-    }
-
     return true;
   }
 
@@ -336,7 +342,29 @@ function BottomTab() {
     return true;
   }
 
-  
+  const getCommunityBottomTabBarVisibility = (route: any) => {
+    const routeName = route.state
+    ? route.state.routes[route.state.index]
+    : '';
+
+    const stackRouteName = routeName.state
+    ? routeName.state.routes[routeName.state.index].name
+    : '';
+
+    if(stackRouteName === "CommunityStackScreen" || routeName.name === "CommunityPostUploadStackScreen") {
+      return false;
+    }
+
+    if(stackRouteName === "CommunityStackScreen" || routeName.name === "CommunityDetailScreen") {
+      return false;
+    }
+
+    if(stackRouteName === "CommunityStackScreen" || routeName.name === "FullImagesScreen") {
+      return false;
+    }
+
+
+  }
 
     return (
     <Tab.Navigator
@@ -367,7 +395,7 @@ function BottomTab() {
       name="Community"
       component={CommunityStackScreen}
       options={({route}) => ({
-        tabBarVisible: getHomeTabBarVisibility(route)
+        tabBarVisible: getCommunityBottomTabBarVisibility(route)
         /*
         tabBarIcon: ({focused}: {focused: boolean}) => (
         

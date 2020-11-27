@@ -46,6 +46,10 @@ font-weight: bold;
 font-size: 18px; 
 `;
 
+const HeaderText = Styled.Text`
+margin-top: 5px;
+font-size: 18px;
+`
 const HeaderRightContainer = Styled.View`
 width: 30%;
 height: ${wp('13.8%')}px;
@@ -150,11 +154,11 @@ interface Props {
 
 
 const CommunityCreatePostScreen = ({navigation, route, selectedTreatList, selectedImages}: Props) => {
-    const [tagList, setTagList] = useState([]);
-    const [imageList, setImageList] = useState([]);
-    const [category, setCategory] = useState('');
-    const [paragraph, setParagraph] = useState('');
-    const [selectedBoxList, setSelectedBoxList] = useState([]);
+    const [tagList, setTagList] = useState<string[]>([]);
+    const [imageList, setImageList] = useState<string[]>([]);
+    const [category, setCategory] = useState<string>('');
+    const [paragraph, setParagraph] = useState<string>('');
+    const [selectedBoxList, setSelectedBoxList] = useState<string[]>([]);
 
     useEffect(() => {
         setTagList(selectedTreatList)
@@ -184,9 +188,9 @@ const CommunityCreatePostScreen = ({navigation, route, selectedTreatList, select
                     source={require('~/Assets/Images/HeaderBar/ic_back.png')}/>
                 </HeaderLeftContainer>
                 </TouchableWithoutFeedback>
-                <HeaderTitleText>작성</HeaderTitleText>
+                <HeaderTitleText>글 작성</HeaderTitleText>
                 <HeaderRightContainer>
-                <HeaderTitleText>올리기</HeaderTitleText>
+                <HeaderText>올리기</HeaderText>
                 </HeaderRightContainer>
             </HeaderBar>
             <BodyContainerView>
@@ -235,6 +239,7 @@ const CommunityCreatePostScreen = ({navigation, route, selectedTreatList, select
             onChangeText={(text) => {
                 setParagraph(text)
             }}
+            autoCorrect={false}
             >
             
             </ParagraphTextInput>
