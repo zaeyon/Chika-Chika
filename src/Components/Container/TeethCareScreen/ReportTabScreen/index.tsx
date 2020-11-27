@@ -7,6 +7,9 @@ import {
 } from 'react-native-responsive-screen';
 import {isIphoneX} from 'react-native-iphone-x-helper';
 
+// Local Component
+import ReportThumbnailItem from '~/Components/Presentational/TeethCareScreen/ReportThumbnailItem';
+
 const Container = Styled.SafeAreaView`
  flex: 1;
  background-color: #FFFFFF;
@@ -47,14 +50,54 @@ height: ${wp('6.4%')};
 
 const BodyContainer = Styled.View`
 flex: 1;
+background-color: #fbfbfb;
 `;
 
-const TimerTabContainer = Styled.View`
-flex: 1;
-background-color: #ffffff;
+const IntroContainer = Styled.View`
+padding-top: 27px;
+padding-left: 16px;
+padding-bottom: 6px;
+padding-right: 16px;
 `;
 
+const TodayDateContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+`;
 
+const SunIcon = Styled.Image`
+width: ${wp('4.26%')};
+height: ${wp('4.26%')};
+`;
+
+const TodayDateText = Styled.Text`
+font-weight: 400;
+color: #0085FF;
+font-size: 14px;
+`;
+
+const UserNicknameText = Styled.Text`
+margin-top: 8px;
+font-weight: 700;
+font-size: 20px;
+color: #686868;
+`;
+
+const IntroText = Styled.Text`
+margin-top: 3px;
+font-size: 20px;
+color: #686868;
+`;
+
+const ReportThumbnailListContainer = Styled.View`
+padding: 6px 16px 21px 16px;
+`;
+
+const ReportThumbnailListRowContainer = Styled.View`
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+`;
 
 interface Props {
     navigation: any,
@@ -66,6 +109,41 @@ const ReportTabScreen = ({navigation, route}: Props) => {
     return (
         <Container>
             <BodyContainer>
+                <IntroContainer>
+                    <TodayDateContainer>
+                        <SunIcon
+                        source={require('~/Assets/Images/Report/ic_sun.png')}/>
+                        <TodayDateText>{"2020년 11월 13일(화)"}</TodayDateText>
+                    </TodayDateContainer>
+                    <UserNicknameText>{"익명의 오소리님"}</UserNicknameText>
+                    <IntroText>{"안녕하세요."}</IntroText>
+                </IntroContainer>
+                <ReportThumbnailListContainer>
+                    <ReportThumbnailListRowContainer>
+                        <ReportThumbnailItem
+                        title={"타이머"}
+                        value={"200회"}
+                        description={"월간평균"}
+                        recentRecord={"최근기록 10분전"}
+                        />
+                        <ReportThumbnailItem
+                        title={"칫솔 마모정도"}
+                        value={"1단계"}
+                        description={"양호"}
+                        recentRecord={"최근기록 1일전"}
+                        />
+                    </ReportThumbnailListRowContainer>
+                    <ReportThumbnailListRowContainer style={{marginTop: 13}}>
+                        <ReportThumbnailItem
+                        title={"치아 증상 체크"}
+                        value={"질병 없음"}
+                        recentRecord={"최근기록 1일전"}/>
+                        <ReportThumbnailItem
+                        title={"교정∙미백"}
+                        value={"30점"}
+                        recentRecord={"최근기록 1일전"}/>
+                    </ReportThumbnailListRowContainer>
+                </ReportThumbnailListContainer>
             </BodyContainer>
         </Container>
     )

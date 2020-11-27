@@ -17,6 +17,7 @@ import Geolocation from 'react-native-geolocation-service';
 
 // Local Component
 import SelectedDentalItem from '~/Components/Presentational/NearDentalMap/SelectedDentalItem';
+import DentalListSlidingUpPanel from '~/Components/Presentational/NearDentalMap/DentalListSlidingUpPanel'
 
 const mapHeight = hp('100%') - (wp('11.7%') - (isIphoneX() ? wp("21%") : wp("15%")))
 
@@ -106,7 +107,7 @@ color: #c3c3c3;
 const SearchTextInput = Styled.TextInput`
 `; 
 
-const DentalContainer = Styled.View`
+const SelectedDentalContainer = Styled.View`
 position: absolute;
 bottom: 0;
 width: ${wp('100%')};
@@ -186,6 +187,32 @@ color: #000000;
 font-size: 14px;
 `;
 
+const DetailFilterListContainer = Styled.View`
+padding-top: 27px;
+padding-bottom: 27px;
+padding-left: 16px;
+padding-right: 16px;
+background-color: #ffffff;
+border-top-left-radius: 20px;
+border-top-right-radius: 20px;
+flex-direction: column;
+position: absolute;
+bottom: 0;
+`;
+
+const DetailFilterRowContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+`;
+
+const DetailFilterItemContainer = Styled.View`
+padding: 9px 11px 9px 11px;
+border-radius: 100px;
+background-color: #ffffff;
+border-width: 1px;
+border-color: #c4c4c4;
+`;
+
 
 interface Props {
     navigation: any,
@@ -212,11 +239,13 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const [currentLocation, setCurrentLocation] = useState<Coord>({latitude: 37.564362, longitude: 126.977011});
     const [loading, setLoading] = useState<boolean>(true);
     const [visibleSelectedDentalItem, setVisibleSelectedDentalItem] = useState<boolean>(false)
-    const [visibleFilterList, setVisibleFilterList] = useState<boolean>(false)
+    const [visibleFilterList, setVisibleFilterList] = useState<boolean>(false);
+    const [visibleDetailFilterList, setVisibleDetailFilterList] = useState<boolean>(false);
+
     const mapRef = useRef(null);
 
-    /*
 
+    /*
     async function hasAndroidPermission() {
         const permission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
         const hasLocationPermission = await PermissionsAndroid.check(permission);
@@ -299,6 +328,14 @@ const NearDentalMap = ({navigation, route}: Props) => {
         setVisibleFilterList(!visibleFilterList)
     }
 
+    const clickDayOfWeekFilter = () => {
+        setVisibleDetailFilterList(!visibleDetailFilterList)
+    }
+
+    const moveToDentalDetail = () => {
+        navigation.navigate("DentalDetailScreen")
+    }
+
     return (
         <Container>
             <HeaderBar>
@@ -332,9 +369,11 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 </NaverMapView>
                 {visibleFilterList && (
                 <FilterListContainer>
+                    <TouchableWithoutFeedback onPress={() => clickDayOfWeekFilter()}>
                     <FilterItemContainer>
                         <FilterItemText>{"요일"}</FilterItemText>
                     </FilterItemContainer>
+                    </TouchableWithoutFeedback>
                     <FilterItemContainer style={{marginLeft: 12}}>
                         <FilterItemText>{"주차가능"}</FilterItemText>
                     </FilterItemContainer>
@@ -347,11 +386,46 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 </FilterListContainer>
                 )}
                 {visibleSelectedDentalItem && (
-                    <DentalContainer>
+                <TouchableWithoutFeedback onPress={() => moveToDentalDetail()}>
+                    <SelectedDentalContainer>
                         <SelectedDentalItem/>
-                    </DentalContainer>
+                    </SelectedDentalContainer>
+                </TouchableWithoutFeedback>
+                )}
+                {visibleDetailFilterList && (
+                <DetailFilterListContainer>
+                    <DetailFilterRowContainer>
+                        <DetailFilterItemContainer>
+                            <FilterItemText>{"월요일"}</FilterItemText>
+                        </DetailFilterItemContainer>
+                        <DetailFilterItemContainer style={{marginLeft: 8}}>
+                            <FilterItemText>{"화요일"}</FilterItemText>
+                        </DetailFilterItemContainer>
+                        <DetailFilterItemContainer style={{marginLeft: 8}}>
+                            <FilterItemText>{"수요일"}</FilterItemText>
+                        </DetailFilterItemContainer>
+                        <DetailFilterItemContainer style={{marginLeft: 8}}>
+                            <FilterItemText>{"목요일"}</FilterItemText>
+                        </DetailFilterItemContainer>
+                        <DetailFilterItemContainer style={{marginLeft: 8}}>
+                            <FilterItemText>{"금요일"}</FilterItemText>
+                        </DetailFilterItemContainer>
+                    </DetailFilterRowContainer>
+                    <DetailFilterRowContainer style={{marginTop: 12}}>
+                        <DetailFilterItemContainer>
+                            <FilterItemText>{"토요일"}</FilterItemText>
+                        </DetailFilterItemContainer>
+                        <DetailFilterItemContainer style={{marginLeft: 8}}>
+                            <FilterItemText>{"일요일"}</FilterItemText>
+                        </DetailFilterItemContainer>
+                    </DetailFilterRowContainer>
+                </DetailFilterListContainer>
                 )}
             </MapContainer>
+            <DentalListSlidingUpPanel
+            navigation={navigation}
+            route={route}
+            />
         </Container>
     )
 }
