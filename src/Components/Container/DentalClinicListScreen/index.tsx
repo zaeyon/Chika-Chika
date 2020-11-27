@@ -153,7 +153,7 @@ const DentalClinicListScreen = ({navigation, route}: Props) => {
         navigation.goBack();
     }
 
-    const renderDentalItem = ({item, index}) => {
+    const renderDentalItem = ({item, index}: any) => {
         return (
             <DentalListItem
             name={item.name}

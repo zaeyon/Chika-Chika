@@ -5,7 +5,11 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {isIphoneX} from 'react-native-iphone-x-helper';
+import { isIphoneX } from 'react-native-iphone-x-helper';
+
+// Local Component
+import SymptomSlidingUpPanel from '~/Components/Presentational/TeethCareScreen/SymptomSlidingUpPanel';
+
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -217,6 +221,27 @@ border-top-left-radius: 0;
 background-color: #ffffff;
 `;
 
+const MeasureBrushDetritionButton = Styled.View`
+width: ${wp('91.46%')};
+height: ${wp('27.73%')};
+border-radius: 12px;
+border-width: 1px;
+border-color: #f0f0f0;
+background-color: #ffffff;
+align-items: center;
+justify-content: center;
+`;
+
+const MeasurceBrushDetritionText = Styled.Text`
+`;
+
+const MeasureBrushDetritionContainer = Styled.View`
+padding-top: 12px;
+padding-bottom: 12px;
+width: ${wp('100%')};
+align-items: center;
+`;
+
 
 interface Props {
     navigation: any,
@@ -243,18 +268,21 @@ const TimerTabScreen = ({navigation, route}: Props) => {
     const circleProgressAni1 = Animated.timing(circleProgressValue1, {
         toValue: 1,
         duration: 150000,
-        easing: Easing.linear(),
+        easing: Easing.linear,
+        useNativeDriver: true
     })
 
     const circleProgressAni2 = Animated.timing(circleProgressValue2, {
         toValue: 1,
         duration: 150000,
-        easing: Easing.linear(),
+        easing: Easing.linear,
+        useNativeDriver: true,
     })
 
     const shadeCircleAni = Animated.timing(shadeCircleValue, {
         toValue: 1,
-        duration: 1,    
+        duration: 1,
+        useNativeDriver: true,
     })
 
     const startCircleProgress = () => {
@@ -313,7 +341,8 @@ const TimerTabScreen = ({navigation, route}: Props) => {
 
         Animated.timing(circleProgressValue1, {
             toValue: 6,
-            duration: 300000
+            duration: 300000,
+            useNativeDriver: true
           }).stop();
     }
 
@@ -328,7 +357,8 @@ const TimerTabScreen = ({navigation, route}: Props) => {
 
         Animated.timing(circleProgressValue1, {
             toValue: 0,
-            duration: 0
+            duration: 0,
+            useNativeDriver: true,
         }).start();
     }
     
@@ -341,12 +371,12 @@ const TimerTabScreen = ({navigation, route}: Props) => {
                         <SlotText>점심</SlotText>
                     </SlotContainer>
                     <CircleTimerContainer>
-                        
                         {/*
                         <ShadeSemiCircleContainer2>
                             <ShadeSemiCircle2/>
                         </ShadeSemiCircleContainer2>  
-                        */}    
+                        */}
+                        {/*
                         <Animated.View
                         style={{transform: [{rotate: secondSpin}], position: "absolute"}}>
                             <CircleProgressContainer2>
@@ -364,6 +394,7 @@ const TimerTabScreen = ({navigation, route}: Props) => {
                                 <InvisibleSemiCircle1/>
                             </CircleProgressContainer1>
                         </Animated.View>
+                        */}    
                         <BehindSemiCircleContainer>
                             <BehindSemiCircle/>
                         </BehindSemiCircleContainer>
@@ -405,7 +436,13 @@ const TimerTabScreen = ({navigation, route}: Props) => {
                     </OperateTimerButton>
                     </TouchableWithoutFeedback>
                     </OperateTimerContainer>
-                </TimerContainer>
+                    </TimerContainer>
+                    <MeasureBrushDetritionContainer>
+                    <MeasureBrushDetritionButton>
+                        <MeasurceBrushDetritionText>칫솔마모정도</MeasurceBrushDetritionText>
+                        <MeasurceBrushDetritionText>측정하기</MeasurceBrushDetritionText>
+                    </MeasureBrushDetritionButton>
+                    </MeasureBrushDetritionContainer>
             </BodyContainer>
         </Container>
     )
