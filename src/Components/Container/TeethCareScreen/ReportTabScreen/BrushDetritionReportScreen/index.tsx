@@ -60,14 +60,14 @@ const BodyContainer = Styled.View`
 flex: 1;
 `;
 
-const TimerReportScreen = ({}) => {
+const BrushDetritionScreen = ({}) => {
     return (
         <Container>
             <HeaderBar>
                 <HeaderLeftContainer>
                     <HeaderEmptyContainer/>
                 </HeaderLeftContainer>
-                <HeaderTitleText>타이머</HeaderTitleText>
+                <HeaderTitleText>칫솔 마모정도</HeaderTitleText>
                 <HeaderRightContainer>
                     <HeaderCloseIcon
                     source={require('~/Assets/Images/HeaderBar/ic_X.png')}/>
@@ -79,4 +79,4 @@ const TimerReportScreen = ({}) => {
     )
 }
 
-export default TimerReportScreen
+export default BrushDetritionScreen;

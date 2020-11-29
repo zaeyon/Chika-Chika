@@ -106,6 +106,27 @@ interface Props {
 
 const ReportTabScreen = ({navigation, route}: Props) => {
 
+    const moveToTimerReport = () => {
+        console.log("타이머 리포트 보기")
+        //navigation.navigate("TimerReportScreen");
+    }
+    
+    const moveToDetailReport = () => {
+        console.log("상세 리포트 보기");
+    }
+
+    const moveToSymptomReport = () => {
+        navigation.navigate("SymptomReportScreen");
+    }
+
+    const moveToBrushDetrition = () => {
+        navigation.navigate("BrushDetritionScreen");
+    }
+
+    const moveToAIReport = () => {
+        navigation.navigate("AIReportScreen");
+    }
+
     return (
         <Container>
             <BodyContainer>
@@ -120,28 +141,36 @@ const ReportTabScreen = ({navigation, route}: Props) => {
                 </IntroContainer>
                 <ReportThumbnailListContainer>
                     <ReportThumbnailListRowContainer>
+                        <TouchableWithoutFeedback onPress={() => moveToDetailReport()}>
                         <ReportThumbnailItem
                         title={"타이머"}
                         value={"200회"}
                         description={"월간평균"}
                         recentRecord={"최근기록 10분전"}
                         />
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => moveToBrushDetrition()}>
                         <ReportThumbnailItem
                         title={"칫솔 마모정도"}
                         value={"1단계"}
                         description={"양호"}
                         recentRecord={"최근기록 1일전"}
                         />
+                        </TouchableWithoutFeedback>
                     </ReportThumbnailListRowContainer>
                     <ReportThumbnailListRowContainer style={{marginTop: 13}}>
+                        <TouchableWithoutFeedback onPress={() => moveToSymptomReport()}>
                         <ReportThumbnailItem
                         title={"치아 증상 체크"}
                         value={"질병 없음"}
                         recentRecord={"최근기록 1일전"}/>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => moveToAIReport()}>
                         <ReportThumbnailItem
                         title={"교정∙미백"}
                         value={"30점"}
                         recentRecord={"최근기록 1일전"}/>
+                        </TouchableWithoutFeedback>
                     </ReportThumbnailListRowContainer>
                 </ReportThumbnailListContainer>
             </BodyContainer>

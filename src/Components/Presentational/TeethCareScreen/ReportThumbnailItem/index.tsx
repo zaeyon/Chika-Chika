@@ -1,6 +1,6 @@
 import React from 'react';
 import Styled from 'styled-components/native';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -72,6 +72,10 @@ interface Props {
 }
 
 const ReportThumbnailItem = ({title, value, description, recentRecord}: Props) => {
+    const moveToDetailReport = () => {
+        console.log("상세 리포트 보기");
+    }
+
     return (
         <Container style={styles.shadow}>
             <TitleText>{title}</TitleText>
