@@ -104,13 +104,13 @@ interface Props {
 const CommentItem = ({profileImage, nickname, comment, createdAt, replys, clickToReply, commentId, navigation, openCommentModal}: Props) => {
     const currentUser = useSelector((state: any) => state.currentUser);
 
-    function getDateFormat(date) {
-        var year = date.getFullYear();
-        var month = (1+ date.getMonth());
-        month = month >= 10 ? month : '0' + month;
-        var day = date.getDate();
-        day = day >= 10 ? day : '0' + day;
-        return year + '/' + month + '/' + day;
+    function getDateFormat(date: Date) {
+        let year = date.getFullYear();
+        let month = (1+ date.getMonth());
+        let monthStr = month >= 10 ? month : '0' + month;
+        let day = date.getDate();
+        let dayStr = day >= 10 ? day : '0' + day;
+        return year + '/' + monthStr + '/' + dayStr;
     }
 
     const moveToUserProfile = () => {

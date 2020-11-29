@@ -52,8 +52,10 @@ import AnotherProfileScreen from '~/Components/Container/AnotherProfileScreen';
 import SettingScreen from '~/Components/Container/SettingScreen';
 
 // Community Stack Screen
-import CommunityScreen from '~/Components/Container/CommunityScreen';
-
+import CommunityListScreen from '~/Components/Container/CommunityListScreen';
+import CommunityDetailScreen from '~/Components/Container/CommunityDetailScreen';
+import CommunityPostUploadScreen from '~/Components/Container/CommunityPostUploadScreen'
+import CommunityTreatSearchScreen from '~/Components/Container/CommunityPostUploadScreen/TreatSearchScreen'
 // Dental Clinic Stack Screen
 import NearDentalMap from '~/Components/Container/NearDentalMap';
 import DentalClinicListScreen from '~/Components/Container/DentalClinicListScreen';
@@ -78,6 +80,7 @@ const ReviewStack = createStackNavigator();
 const AnotherProfileStack = createStackNavigator();
 const SettingStack = createStackNavigator();
 const CommunityStack = createStackNavigator();
+const CommunityPostUploadStack = createStackNavigator();
 const DentalClinicStack = createStackNavigator();
 const TeethCareStack = createStackNavigator();
 
@@ -268,14 +271,50 @@ function SettingStackScreen() {
   )
 }
 
+function CommunityPostUploadStackScreen() {
+  return (
+    <CommunityPostUploadStack.Navigator
+    headerMode="none"
+    >
+      <CommunityPostUploadStack.Screen
+      name="CommunityPostUploadScreen"
+      component={CommunityPostUploadScreen}/>
+      <CommunityPostUploadStack.Screen
+      name="CommunityTreatSearchScreen"
+      component={CommunityTreatSearchScreen} />
+      <CommunityPostUploadStack.Screen
+      name="CommunityGallery"
+      component={Gallery}/>
+    </CommunityPostUploadStack.Navigator>
+  )
+}
 function CommunityStackScreen() {
   return (
     <CommunityStack.Navigator
     headerMode="none">
       <CommunityStack.Screen
-      name="CommunityScreen"
-      component={CommunityScreen}/>
+      name="CommunityListScreen"
+      component={CommunityListScreen}/>
+      <CommunityStack.Screen
+      name="CommunityDetailScreen"
+      component={CommunityDetailScreen}/>
+      <CommunityStack.Screen
+            name="AnotherProfileStackScreen"
+            component={AnotherProfileStackScreen}/>
+      <CommunityStack.Screen
+            name="CommunityPostUploadStackScreen"
+            component={CommunityPostUploadStackScreen}/>
+      <CommunityStack.Screen
+          options={
+            {
+              gestureEnabled: false,
+              
+            }
+          }
+          name="FullImagesScreen"
+          component={FullImagesScreen}/>
     </CommunityStack.Navigator>
+  
   )
 }
 
@@ -319,7 +358,29 @@ function BottomTab() {
     return true;
   }
 
-  
+  const getCommunityBottomTabBarVisibility = (route: any) => {
+    const routeName = route.state
+    ? route.state.routes[route.state.index]
+    : '';
+
+    const stackRouteName = routeName.state
+    ? routeName.state.routes[routeName.state.index].name
+    : '';
+
+    if(stackRouteName === "CommunityStackScreen" || routeName.name === "CommunityPostUploadStackScreen") {
+      return false;
+    }
+
+    if(stackRouteName === "CommunityStackScreen" || routeName.name === "CommunityDetailScreen") {
+      return false;
+    }
+
+    if(stackRouteName === "CommunityStackScreen" || routeName.name === "FullImagesScreen") {
+      return false;
+    }
+
+
+  }
 
     return (
     <Tab.Navigator
@@ -349,7 +410,8 @@ function BottomTab() {
       <Tab.Screen
       name="Community"
       component={CommunityStackScreen}
-      options={{
+      options={({route}) => ({
+        tabBarVisible: getCommunityBottomTabBarVisibility(route)
         /*
         tabBarIcon: ({focused}: {focused: boolean}) => (
         
@@ -359,7 +421,7 @@ function BottomTab() {
           }/>
         )
         */
-      }}/>
+      })}/>
       <Tab.Screen 
       name="Profile" 
       component={MyProfileStackScreen}
