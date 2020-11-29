@@ -60,14 +60,14 @@ const BodyContainer = Styled.View`
 flex: 1;
 `;
 
-const TimerReportScreen = ({}) => {
+const AIReportScreen = ({}) => {
     return (
         <Container>
             <HeaderBar>
                 <HeaderLeftContainer>
                     <HeaderEmptyContainer/>
                 </HeaderLeftContainer>
-                <HeaderTitleText>타이머</HeaderTitleText>
+                <HeaderTitleText>교정･미백</HeaderTitleText>
                 <HeaderRightContainer>
                     <HeaderCloseIcon
                     source={require('~/Assets/Images/HeaderBar/ic_X.png')}/>
@@ -79,4 +79,4 @@ const TimerReportScreen = ({}) => {
     )
 }
 
-export default TimerReportScreen
+export default AIReportScreen
