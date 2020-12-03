@@ -16,9 +16,9 @@ import {
 const ContainerView = Styled.View`
 width: ${wp('100%')};
 height: auto;
-padding-top: 16px;
+padding-top: 24px;
 background-color: white
-margin-bottom: 13px;
+
 `;
 
 const BodyContainerView = Styled.View`
@@ -177,9 +177,11 @@ const PostItem = ({key, mode, data, navigation}: Props) => {
 
   const moveToFullImages = (imageUri: string) => {
     console.log('TEST_REVIEW_DETAIL_DATA.mediaFiles', mediaFiles);
-    let index = mediaFiles.findIndex((image) => image.image_uri === imageUri);
+    let index = mediaFiles.findIndex(
+      (image: any) => image.image_uri === imageUri,
+    );
 
-    let imageUri_arr = mediaFiles.map((image) => {
+    let imageUri_arr = mediaFiles.map((image: any) => {
       return image.image_uri;
     });
 
@@ -225,7 +227,7 @@ const PostItem = ({key, mode, data, navigation}: Props) => {
               horizontal={true}
               data={tagList}
               renderItem={({item, index}) => (
-                <HashTagView>
+                <HashTagView key={'hashtag' + index}>
                   <HashTagText>{'#' + item}</HashTagText>
                 </HashTagView>
               )}
@@ -243,6 +245,7 @@ const PostItem = ({key, mode, data, navigation}: Props) => {
           data={mediaFiles}
           renderItem={({item, index}) => (
             <TouchableWithoutFeedback
+              key={'TouchableImage' + index}
               onPress={() => {
                 mode === 'Detail'
                   ? moveToFullImages(item.image_uri)
@@ -250,7 +253,7 @@ const PostItem = ({key, mode, data, navigation}: Props) => {
               }}>
               <ImageView
                 isFirst={index}
-                key={index}
+                key={'image' + index}
                 source={{
                   url: item.image_uri,
                 }}

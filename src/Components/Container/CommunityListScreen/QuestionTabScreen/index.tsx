@@ -1,30 +1,49 @@
-import React, {useState, useEffect} from 'react';
-import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList} from 'react-native';
-import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import React, {useState} from 'react';
+import {View, Text, TextInput, StyleSheet} from 'react-native';
 
-const ContainerView = Styled.SafeAreaView`
- flex: 1;
- background-color: #FFFFFF;
-`;
+const styles = StyleSheet.create({
+  wrapper: {
+    width: '90%',
+    height: 24,
+    position: 'relative',
+    alignSelf: 'center',
+  },
+  inputWrapper: {
+    position: 'absolute',
+    top: 0,
+    height: 24,
+    width: '100%',
+    borderWidth: 1,
+    borderColor: 'gray',
+  },
+  input: {
+    height: 24,
+    fontSize: 18,
+    width: '100%',
+  },
+  text: {
+    height: 24,
+    fontSize: 18,
+    position: 'absolute',
+    top: 0,
+    color: 'transparent',
+  },
+  mention: {
+    backgroundColor: 'rgba(0, 150, 255, .5)',
+  },
+});
 
-interface Props {
-    navigation: any,
-    route: any,
-}
+const QuestionTabScreen = () => {
+  const [inputText, setInputText] = useState('');
+  const [formattedText, setFormattedText] = useState('');
 
-
-const QuestionTabScreen = ({navigation, route}: Props) => {
-   
-
-    return (
-        <ContainerView>
-            
-        </ContainerView>
-    )
-}
+  return (
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: 'red',
+      }}></View>
+  );
+};
 
 export default QuestionTabScreen;

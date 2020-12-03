@@ -18,11 +18,11 @@ import {
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 // Local Component
-import PostInformation from '~/Components/Presentational/PostDetailScreen/PostInformation';
+import PostInformation from '~/Components/Presentational/CommunityPostDetailScreen/PostInformation';
 import PostItem from '~/Components/Presentational/PostItem';
-import DentistComment from '~/Components/Presentational/PostDetailScreen/DentistComment';
-import PostCommentList from '~/Components/Presentational/PostDetailScreen/PostCommentList';
-import CommentBottomBar from '~/Components/Presentational/CommentBottomBar';
+import DentistComment from '~/Components/Presentational/CommunityPostDetailScreen/DentistComment';
+import PostCommentList from '~/Components/Presentational/CommunityPostDetailScreen/PostCommentList';
+import PostBottomBar from '~/Components/Presentational/CommunityPostDetailScreen/PostBottomBar';
 import {bindActionCreators} from 'redux';
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
@@ -42,20 +42,30 @@ interface Props {
   data: any;
 }
 
-export default class CommunityDetailScreen extends React.Component<Props> {
+interface States {
+  scrollY: Animated.Value;
+  keyboardHeight: Animated.Value;
+}
+
+export default class CommunityDetailScreen extends React.Component<
+  Props,
+  States
+> {
+  scrollView: any;
   constructor(props: Props) {
     super(props);
     this.state = {
       scrollY: new Animated.Value(0),
       keyboardHeight: new Animated.Value(0),
     };
+
     this.toggleKeyboardAnimation = this.toggleKeyboardAnimation.bind(this);
   }
 
-  toggleKeyboardAnimation = (height) => {
+  toggleKeyboardAnimation = (height: Number) => {
     this.scrollView &&
       this.scrollView.scrollTo({
-        y: this.state.scrollY._value + height,
+        y: (this.state.scrollY as any)._value + height,
       });
   };
 
@@ -65,9 +75,8 @@ export default class CommunityDetailScreen extends React.Component<Props> {
         <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
           <BodyContainerScrollView
             scrollIndicatorInsets={{
-              bottom: hp('100%') * 0.01,
+              bottom: getBottomSpace() ? 0 : 11,
             }}
-            contentContainerStyle={{}}
             ref={(ref) => (this.scrollView = ref)}
             scrollEventThrottle={16}
             onScroll={Animated.event([
@@ -93,9 +102,7 @@ export default class CommunityDetailScreen extends React.Component<Props> {
             />
           </BodyContainerScrollView>
         </KeyboardAvoidingView>
-        <CommentBottomBar
-          toggleKeyboardAnimation={this.toggleKeyboardAnimation}
-        />
+        <PostBottomBar toggleKeyboardAnimation={this.toggleKeyboardAnimation} />
       </ContainerView>
     );
   }
