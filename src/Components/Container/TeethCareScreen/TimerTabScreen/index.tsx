@@ -167,6 +167,8 @@ background-color: #eeeeee;
 border-radius: 100px;
 align-items: center;
 justify-content: center;
+flex-direction: row;
+align-items: center;
 `;
 
 const RemainingTimeContainer = Styled.View`
@@ -229,10 +231,26 @@ border-width: 1px;
 border-color: #f0f0f0;
 background-color: #ffffff;
 align-items: center;
-justify-content: center;
+flex-direction: row;
+padding-top: 24px;
+padding-left: 24px;
+padding-bottom: 24px;
+padding-right: 24px;
 `;
 
-const MeasurceBrushDetritionText = Styled.Text`
+const MeasureBrushDetritionIcon = Styled.View`
+width: ${wp('14.9%')};
+height: ${wp('14.9%')};
+background-color: #eeeeee;
+border-radius: 100px;
+`;
+
+const MeasureBrushDetritionTextContainer = Styled.View`
+padding-left: 16px;
+`;
+
+const MeasureBrushDetritionText = Styled.Text`
+font-size: 16px;
 `;
 
 const MeasureBrushDetritionContainer = Styled.View`
@@ -241,6 +259,7 @@ padding-bottom: 12px;
 width: ${wp('100%')};
 align-items: center;
 `;
+
 
 
 interface Props {
@@ -303,6 +322,10 @@ const TimerTabScreen = ({navigation, route}: Props) => {
         inputRange: [0, 1],
         outputRange: ['1', '0']
     })
+
+    const moveToBrushDetrition = () => {
+        navigation.navigate("BrushDetritionCamera");
+    }
 
     const startTimer = () => {
         startCircleProgress()
@@ -438,10 +461,15 @@ const TimerTabScreen = ({navigation, route}: Props) => {
                     </OperateTimerContainer>
                     </TimerContainer>
                     <MeasureBrushDetritionContainer>
+                    <TouchableWithoutFeedback onPress={() => moveToBrushDetrition()}>
                     <MeasureBrushDetritionButton>
-                        <MeasurceBrushDetritionText>칫솔마모정도</MeasurceBrushDetritionText>
-                        <MeasurceBrushDetritionText>측정하기</MeasurceBrushDetritionText>
+                        <MeasureBrushDetritionIcon/>
+                        <MeasureBrushDetritionTextContainer>
+                        <MeasureBrushDetritionText>칫솔마모정도</MeasureBrushDetritionText>
+                        <MeasureBrushDetritionText style={{marginTop: 5}}>측정하기</MeasureBrushDetritionText>
+                        </MeasureBrushDetritionTextContainer>
                     </MeasureBrushDetritionButton>
+                    </TouchableWithoutFeedback>
                     </MeasureBrushDetritionContainer>
             </BodyContainer>
         </Container>

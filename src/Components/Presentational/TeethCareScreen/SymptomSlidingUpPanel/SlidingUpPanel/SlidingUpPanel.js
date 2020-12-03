@@ -60,6 +60,8 @@ class SlidingUpPanel extends React.PureComponent {
     backdropStyle: ViewPropTypes.style,
     children: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
     panelState: PropTypes.string,
+    openPanel: PropTypes.func,
+    hidePanel: PropTypes.func,
   }
 
   static defaultProps = {
@@ -82,6 +84,8 @@ class SlidingUpPanel extends React.PureComponent {
     friction: Constants.DEFAULT_FRICTION,
     onBottomReached: () => null,
     panelState: "hide",
+    openPanel: () => null,
+    hidePanel: () => null,
   }
 
   // eslint-disable-next-line react/sort-comp
@@ -501,6 +505,8 @@ class SlidingUpPanel extends React.PureComponent {
       panelState: "show"
     })
 
+    this.props.openPanel()
+
     if (!mayBeValueOrOptions) {
       const {top} = this.props.draggableRange
       return this._triggerAnimation({toValue: top})
@@ -516,8 +522,10 @@ class SlidingUpPanel extends React.PureComponent {
   hide() {
     this.setState({
       panelState: "hide"
-
     })
+
+    this.props.hidePanel()
+    
     const {bottom} = this.props.draggableRange
     this._triggerAnimation({toValue: bottom})
   }
