@@ -6,11 +6,7 @@ import {
   FlatList,
   View,
   Animated,
-  LayoutAnimation,
-  Keyboard,
   KeyboardAvoidingView,
-  Text,
-  ScrollView,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
