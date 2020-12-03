@@ -8,6 +8,8 @@ import {
   Animated,
   Keyboard,
   LayoutAnimation,
+  UIManager,
+  Platform,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -46,6 +48,12 @@ interface Props {
   setSearchMode: any;
 }
 
+if (Platform.OS === 'android') {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+}
+
 const HashTagSearchBarView = ({setSearchMode}: Props) => {
   const translateY = useRef(new Animated.Value(-getBottomSpace())).current;
   const [bottomSpace, setBottomSpace] = useState(-(getBottomSpace() + 168));
@@ -68,18 +76,19 @@ const HashTagSearchBarView = ({setSearchMode}: Props) => {
 
   const _keyboardWillShow = (e: any) => {
     LayoutAnimation.configureNext(
-      LayoutAnimation.create(e.duration, LayoutAnimation.Types[e.easing]),
+      LayoutAnimation.create(
+        e.duration,
+        LayoutAnimation.Types[e.easing],
+        LayoutAnimation.Properties.opacity,
+      ),
     );
     setBottomSpace(e.endCoordinates.height - getBottomSpace());
   };
   const _keyboardWillHide = (e: any) => {
-    LayoutAnimation.configureNext(
-      LayoutAnimation.create(e.duration, LayoutAnimation.Types[e.easing]),
-    );
     setBottomSpace(-(e.endCoordinates.height - getBottomSpace()));
   };
 
-  const renderHashTagCategoryView = ({item, index}) => (
+  const renderHashTagCategoryView = ({item, index}: any) => (
     <HashTagItemView
       onPress={() => {
         setSelectedHashTagCategory(
