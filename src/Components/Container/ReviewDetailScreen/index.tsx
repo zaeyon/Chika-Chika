@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList} from 'react-native';
+import {TouchableWithoutFeedback, FlatList, ScrollView} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp
@@ -10,6 +10,7 @@ import {isIphoneX} from 'react-native-iphone-x-helper';
 import ReviewInformation from '~/Components/Presentational/ReviewDetailScreen/ReviewInformation';
 import ReviewContent from '~/Components/Presentational/ReviewDetailScreen/ReviewContent';
 import ReviewCommentList from '~/Components/Presentational/ReviewDetailScreen/ReviewCommentList';
+import ReviewBottomBar from '~/Components/Presentational/ReviewDetailScreen/ReviewBottomBar';
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -57,15 +58,15 @@ width: ${wp('6.4%')};
 height: ${wp('6.4%')};
 `;
 
-const BodyContainer = Styled.ScrollView`
+const BodyContainer = Styled.View`
 flex: 1;
 background-color: #ffffff;
 `;
 
-const BottomContainer = Styled.View`
-flex: 1;
-background-color: #ffffff;
+const BottomBarContainer = Styled.View`
 `;
+
+
 
 const TEST_REVIEW_DETAIL_DATA = {
     user : {
@@ -210,6 +211,8 @@ const goBack = () => {
                     source={require('~/Assets/Images/HeaderBar/ic_more.png')}/>
                 </HeaderRightContainer>
             </HeaderBar>
+            <ScrollView
+            showsVerticalScrollIndicator={false}>
             <ReviewInformation
                 user={TEST_REVIEW_DETAIL_DATA.user}
                 createdAt={TEST_REVIEW_DETAIL_DATA.createdAt}
@@ -218,15 +221,18 @@ const goBack = () => {
                 rating={TEST_REVIEW_DETAIL_DATA.rating}
                 location={TEST_REVIEW_DETAIL_DATA.location}
                 treat_date={TEST_REVIEW_DETAIL_DATA.treat_date}/>
-            <BodyContainer
-            showsVerticalScrollIndicator={false}>
+            <BodyContainer>
                 <ReviewContent
                 moveToFullImages={moveToFullImages}
                 paragraphData={TEST_REVIEW_DETAIL_DATA.paragraph}/>
                 <ReviewCommentList
                 commentList={TEST_REVIEW_DETAIL_DATA.comments}/>
-
             </BodyContainer>
+            </ScrollView>
+            <BottomBarContainer>
+                <ReviewBottomBar
+                likeCount={22}/>
+            </BottomBarContainer>
         </Container>
     )
 }

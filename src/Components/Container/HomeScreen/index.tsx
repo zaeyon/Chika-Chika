@@ -6,6 +6,7 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {isIphoneX} from 'react-native-iphone-x-helper';
+import DeviceInfo from 'react-native-device-info'
 
 // Local Component
 import ReviewItem from '~/Components/Presentational/ReviewItem';
@@ -44,14 +45,15 @@ padding: 7px 16px 13px 15px;
 `;
 
 const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const BodyContainer = Styled.View`
 padding-top: 32px;
 background-color: #ffffff;
 align-items: center;
+padding-bottom: ${DeviceInfo.hasNotch() ? hp('6%') : hp('14%')}px;
 `;
 
 const ReviewContainer = Styled.View`
@@ -61,7 +63,7 @@ const ReviewListContainer = Styled.View`
 `;
 
 const ReviewHeaderContainer = Styled.View`
-width: ${wp('87.2%')}
+width: ${wp('87.2%')}px;
 flex-direction: row;
 align-items: center;
 justify-content: space-between;
@@ -87,8 +89,8 @@ color: #000000;
 
 const ReviewItemContainer = Styled.View`
 margin-top: 8px;
-width: ${wp('87.2%')};
-height: ${wp('40%')};
+width: ${wp('87.2%')}px;
+height: ${wp('40%')}px;
 border-radius: 8px;
 border-width: 1px;
 border-color: #c4c4c4;
@@ -102,7 +104,7 @@ const HospitalListContainer = Styled.View`
 `;
 
 const HospitalHeaderContainer = Styled.View`
-width: ${wp('87.2%')}
+width: ${wp('87.2%')}px;
 flex-direction: row;
 align-items: center;
 justify-content: space-between;
@@ -116,16 +118,16 @@ color: #000000;
 
 const HospitalItemContainer = Styled.View`
 margin-top: 8px;
-width: ${wp('87.2%')};
-height: ${wp('40%')};
+width: ${wp('87.2%')}px;
+height: ${wp('40%')}px;
 border-radius: 8px;
 border-width: 1px;
 border-color: #c4c4c4;
 `;
 
 const ReviewUploadButton = Styled.View`
-width: ${wp('87.2%')};
-height: ${wp('24.416%')};
+width: ${wp('87.2%')}px;
+height: ${wp('24.416%')}px;
 border-radius: 8px;
 border-width: 1px;
 border-color: #C4C4C4;
@@ -141,8 +143,8 @@ font-size: 18px;
 
 
 const ToothCareButton = Styled.View`
-width: ${wp('87.2%')};
-height: ${wp('24.416%')};
+width: ${wp('87.2%')}px;
+height: ${wp('24.416%')}px;
 border-radius: 8px;
 border-width: 1px;
 border-color: #C4C4C4;
@@ -313,7 +315,7 @@ const HomeScreen = ({navigation}: Props) => {
                     </HeaderEmptyContainer>
                 </HeaderRightContainer>
             </HeaderBar>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
             <BodyContainer>
                 <ReviewContainer>
                     <ReviewHeaderContainer>

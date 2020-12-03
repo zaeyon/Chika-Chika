@@ -10,7 +10,8 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import AboveKeyboard from 'react-native-above-keyboard';
-import {getStatusBarHeight} from 'react-native-status-bar-height'
+//import {getStatusBarHeight} from 'react-native-status-bar-height'
+import {getStatusBarHeight} from 'react-native-iphone-x-helper'
 
 const Input = Styled.TextInput`
 position: relative;
@@ -20,7 +21,7 @@ height: 50px;
 `;
 
 const Container = Styled.View`
-  padding-top: ${getStatusBarHeight()}
+  padding-top: 44px;
   flex: 1;
   background-color: #FEFFFF;
 `;
@@ -199,6 +200,7 @@ var limitTime = 300;
 var timeout: any;
 
 const LoginScreen = ({navigation}: Props) => {
+  console.log("getStatusBarHeight", getStatusBarHeight())
   const [number, setNumber] = useState('');
   const [authCode, setAuthCode] = useState<string>('');
   const [validNumber, setValidNumber] = useState<boolean>(false);

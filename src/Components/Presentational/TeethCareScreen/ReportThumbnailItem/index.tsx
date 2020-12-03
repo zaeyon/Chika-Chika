@@ -69,14 +69,31 @@ interface Props {
     value: string,
     description?: string,
     recentRecord: string,
+    type: string,
+    navigation: any,
+    route: any,
 }
 
-const ReportThumbnailItem = ({title, value, description, recentRecord}: Props) => {
+const ReportThumbnailItem = ({title, value, description, recentRecord, type, navigation, route}: Props) => {
+    
+
     const moveToDetailReport = () => {
-        console.log("상세 리포트 보기");
+        console.log("moveToDetailReport type", type);
+        if(type === "timer") {
+            console.log("타이머 리포트 상세 보기")
+            navigation.navigate("TimerReportScreen")
+        } else if(type === "brushDetrition") {
+            navigation.navigate("BrushDetritionReportScreen")
+        } else if(type === "symptom") {
+            navigation.navigate("SymptomReportScreen")
+        } else if(type === "ai") {
+            navigation.navigate("AIReportScreen");
+        }
+        //console.log("타이머 리포트 상세 보기ㅋㅋ")
     }
 
     return (
+        <TouchableWithoutFeedback onPress={() => moveToDetailReport()}>
         <Container style={styles.shadow}>
             <TitleText>{title}</TitleText>
             <ReportExpressContainer>
@@ -90,6 +107,7 @@ const ReportThumbnailItem = ({title, value, description, recentRecord}: Props) =
                 <RecentRecordText>{recentRecord}</RecentRecordText>
             </RecentRecordContainer>
         </Container>
+        </TouchableWithoutFeedback>
     )
 }
 

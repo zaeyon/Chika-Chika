@@ -4,8 +4,9 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {TouchableWithoutFeedback} from 'react-native';
 
-const Container = Styled.View`
+const Container = Styled.SafeAreaView`
 flex: 1;
 background-color: #ffffff;
 `;
@@ -41,6 +42,7 @@ height: ${wp('6.4%')};
 
 const HeaderTitleText = Styled.Text`
 margin-top: 5px;
+font-size: 16px;
 `;
 
 const HeaderRightContainer = Styled.View`
@@ -60,7 +62,17 @@ const BodyContainer = Styled.View`
 flex: 1;
 `;
 
-const AIReportScreen = ({}) => {
+interface Props {
+    navigation: any,
+    route: any,
+}
+
+const AIReportScreen = ({navigation, route}: Props) => {
+
+    const goBack = () => {
+        navigation.goBack()
+    }
+
     return (
         <Container>
             <HeaderBar>
@@ -68,10 +80,12 @@ const AIReportScreen = ({}) => {
                     <HeaderEmptyContainer/>
                 </HeaderLeftContainer>
                 <HeaderTitleText>교정･미백</HeaderTitleText>
+                <TouchableWithoutFeedback onPress={() => goBack()}>
                 <HeaderRightContainer>
                     <HeaderCloseIcon
                     source={require('~/Assets/Images/HeaderBar/ic_X.png')}/>
                 </HeaderRightContainer>
+                </TouchableWithoutFeedback>
             </HeaderBar>
             <BodyContainer>
             </BodyContainer>

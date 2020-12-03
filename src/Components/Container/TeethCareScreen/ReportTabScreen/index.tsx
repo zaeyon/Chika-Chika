@@ -108,7 +108,7 @@ const ReportTabScreen = ({navigation, route}: Props) => {
 
     const moveToTimerReport = () => {
         console.log("타이머 리포트 보기")
-        //navigation.navigate("TimerReportScreen");
+        navigation.navigate("TimerReportScreen");
     }
     
     const moveToDetailReport = () => {
@@ -141,20 +141,24 @@ const ReportTabScreen = ({navigation, route}: Props) => {
                 </IntroContainer>
                 <ReportThumbnailListContainer>
                     <ReportThumbnailListRowContainer>
-                        <TouchableWithoutFeedback onPress={() => moveToDetailReport()}>
                         <ReportThumbnailItem
                         title={"타이머"}
                         value={"200회"}
                         description={"월간평균"}
                         recentRecord={"최근기록 10분전"}
+                        type={"timer"}
+                        navigation={navigation}
+                        route={route}
                         />
-                        </TouchableWithoutFeedback>
                         <TouchableWithoutFeedback onPress={() => moveToBrushDetrition()}>
                         <ReportThumbnailItem
                         title={"칫솔 마모정도"}
                         value={"1단계"}
                         description={"양호"}
                         recentRecord={"최근기록 1일전"}
+                        type={"brushDetrition"}
+                        navigation={navigation}
+                        route={route}
                         />
                         </TouchableWithoutFeedback>
                     </ReportThumbnailListRowContainer>
@@ -163,13 +167,19 @@ const ReportTabScreen = ({navigation, route}: Props) => {
                         <ReportThumbnailItem
                         title={"치아 증상 체크"}
                         value={"질병 없음"}
-                        recentRecord={"최근기록 1일전"}/>
+                        recentRecord={"최근기록 1일전"}
+                        type={"symptom"}
+                        navigation={navigation}
+                        route={route}/>
                         </TouchableWithoutFeedback>
                         <TouchableWithoutFeedback onPress={() => moveToAIReport()}>
                         <ReportThumbnailItem
                         title={"교정∙미백"}
                         value={"30점"}
-                        recentRecord={"최근기록 1일전"}/>
+                        recentRecord={"최근기록 1일전"}
+                        type={"ai"}
+                        navigation={navigation}
+                        route={route}/>
                         </TouchableWithoutFeedback>
                     </ReportThumbnailListRowContainer>
                 </ReportThumbnailListContainer>
