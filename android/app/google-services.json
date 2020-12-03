@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "104168934751",
+    "firebase_url": "https://chika-chika.firebaseio.com",
+    "project_id": "chika-chika",
+    "storage_bucket": "chika-chika.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:104168934751:android:8a34d0f04ebd7c46f6faea",
+        "android_client_info": {
+          "package_name": "com.chikaapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "104168934751-999knpin6ok7rckcd7bkgi5fogenav0j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.chikaapp",
+            "certificate_hash": "d970d9c705728a25de332477218ca6c122bb4878"
+          }
+        },
+        {
+          "client_id": "104168934751-huegrbg287irl0pdjin3ulqj4r9h5ld0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAK4EkEiRpVsCGUMlvlgChrOiMBNXHjJrQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "104168934751-huegrbg287irl0pdjin3ulqj4r9h5ld0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "104168934751-bbskptulttj6n5f2eia02g2oteebhenc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.chikaApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
