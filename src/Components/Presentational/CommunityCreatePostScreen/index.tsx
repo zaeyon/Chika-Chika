@@ -315,43 +315,6 @@ const CommunityCreatePostScreen = ({
       requestType: 'CommunityPostUploadScreen',
     });
   };
-
-  const handleChangeText = (inputText) => {
-    const retLines = inputText.split('\n');
-    console.log(retLines);
-    const formattedText = [];
-    retLines.forEach((retLine) => {
-      const words = retLine.split(' ');
-      const contentLength = words.length;
-      var format = /[ !#@$%^&*()_+\-=\[\]{};':"\\|,.<>\/?\n]/;
-      words.forEach((word, index) => {
-        if (
-          (word.startsWith('@') && !format.test(word.substr(1))) ||
-          (word.startsWith('#') && !format.test(word.substr(1)))
-        ) {
-          const mention = (
-            <Text
-              key={index}
-              style={{
-                color: 'blue',
-                fontSize: 16,
-                lineHeight: 28,
-              }}>
-              {word}
-            </Text>
-          );
-          if (index !== contentLength - 1) formattedText.push(mention, ' ');
-          else formattedText.push(mention);
-        } else {
-          if (index !== contentLength - 1) return formattedText.push(word, ' ');
-          else return formattedText.push(word);
-        }
-      });
-    });
-
-    setParagraph(inputText); // still update your raw text, this will probably go to your api
-    setFormattedParagraph(formattedText);
-  };
   const renderCategories = (categoryList: any) => {
     return categoryList.map((item: any, index: number) => {
       return (
