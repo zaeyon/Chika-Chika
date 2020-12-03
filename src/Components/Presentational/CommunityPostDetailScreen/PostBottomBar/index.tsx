@@ -16,6 +16,7 @@ import {
 } from 'react-native-responsive-screen';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 import Animated from 'react-native-reanimated';
+import {AnyAction} from 'redux';
 
 const CommentBottomBarContainerView = Styled.View`
 height: auto;
@@ -61,7 +62,7 @@ line-height: 16px;
 `;
 
 const CommentSubmitText = Styled.Text``;
-const CommentBottomBar = ({toggleKeyboardAnimation}: any) => {
+const PostBottomBar = ({toggleKeyboardAnimation}: any) => {
   const [isFocused, setIsFocused] = useState(false);
   useEffect(() => {
     Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
@@ -122,6 +123,7 @@ const CommentBottomBar = ({toggleKeyboardAnimation}: any) => {
 
         <CommentTextInput
           multiline
+          clearButtonMode="always"
           onFocus={() => {
             setIsFocused(true);
           }}
@@ -149,4 +151,4 @@ const CommentBottomBar = ({toggleKeyboardAnimation}: any) => {
   );
 };
 
-export default CommentBottomBar;
+export default PostBottomBar;
