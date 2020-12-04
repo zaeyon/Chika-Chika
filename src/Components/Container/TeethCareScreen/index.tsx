@@ -169,7 +169,9 @@ const TeethCareScreen = ({navigation, route}: Props) => {
                 </TeethCareTab.Navigator>
             </BodyContainer>
             {currentTab === "timer" && (
-            <SymptomSlidingUpPanel/>
+            <SymptomSlidingUpPanel
+            navigation={navigation}
+            route={route}/>
             )}
         </Container>
     )
