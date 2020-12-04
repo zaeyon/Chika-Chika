@@ -32,9 +32,15 @@ interface Props {
 const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchCategory, setSearchCategory] = useState('');
+  const [suggestionList, setSuggestionList] = useState([
+    {id: '1', name: '운정연세치과', location: '파주시 운정동'},
+    {id: '2', name: '운좋은 치과', location: '파주시 운정동'},
+  ]);
+  const [hashTagList, setHashTagList] = useState([]);
 
   useEffect(() => {
     //fetch here!!
+
     if (searchCategory !== '' && searchQuery !== '') {
       console.log(searchCategory, searchQuery);
     }
@@ -45,8 +51,10 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         navigation={navigation}
         selectedTreatList={route.params?.selectedTreatList}
         selectedImages={route.params?.selectedImages}
+        searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         setSearchCategory={setSearchCategory}
+        suggestionList={suggestionList}
       />
     </ContainerView>
   );

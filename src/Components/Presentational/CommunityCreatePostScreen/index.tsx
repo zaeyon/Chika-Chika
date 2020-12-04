@@ -18,40 +18,12 @@ import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 // Local Component
 import ImageContentView from '~/Components/Presentational/CommunityCreatePostScreen/ImageContentView';
 import HashTagSearchBarView from '~/Components/Presentational/CommunityCreatePostScreen/HashTagSearchBarView';
+import NavigationHeader from '~/Components/Presentational/NavigationHeader';
+
 const ContainerView = Styled.View`
  flex: 1;
  background-color: white;
 
-`;
-const HeaderBar = Styled.View`
- width: ${wp('100%')}px;
- height: ${hp('7.13')}px;
- margin-top: 7px;
- flex-direction: row;
- align-items: center;
- justify-content: space-between;
- background-color: white;
- border-bottom-width: 0.6px;
- border-color: #ECECEE;
-`;
-
-const HeaderLeftContainer = Styled.View`
-width: 30%;
-height: ${wp('13.8%')}px;
-padding: 0px 16px;
- align-items: center;
- flex-direction: row;
-`;
-
-const HeaderBackIcon = Styled.Image`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
-`;
-
-const HeaderTitleText = Styled.Text`
-margin-top: 5px;
-font-weight: bold;
-font-size: 18px; 
 `;
 
 const HeaderText = Styled.Text`
@@ -67,24 +39,20 @@ padding: 0px 16px 0px 16px;
  flex-direction: row;
 `;
 
-const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
-`;
-
 const BodyContainerView = Styled.View`
 width: 100%;
 flex: 1;
 `;
 
 const CategoryContainerView = Styled.View`
-width: 100%;
+width: ${wp('100%') - 32}px;
 margin: 4px 16px 0px 16px;
 height: ${hp('7.13')}px;
 flex-direction: row;
 align-items: center;
 border-bottom-width: 1px;
 border-color: #F2F2F2;
+
 `;
 
 const CategoryTitleText = Styled.Text`
@@ -113,55 +81,24 @@ const PopupAdviceText = Styled.Text`
 font-size: 14px;
 line-height: 24px;`;
 
-const TreatSearchView = Styled.View`
-`;
-const TreatSearchText = Styled.Text`
-font-size: 20px;
-line-height: 23px;
-`;
-const TreatFlatList = Styled(FlatList as new () => FlatList)`
-width: 100%;
-height: 50px;
-background-color: yellow;
-`;
-const TreatItemView = Styled.View`
-margin: 0px; 5px;
-width: 100px;
-`;
-
-const TreatItemText = Styled.Text`
-
-`;
-const ParagraphContentView = Styled.View`
-flex: 1;
-background-color: grey;
-margin-top: 16px;
-max-height: ${hp('44%')}px;
-`;
 const ParagraphTextInput = Styled.TextInput`
 width: 100%;
 padding: 0px 16px;
+margin-top: 16px;
 font-size: 16px;
 line-height: 28px;
-
 `;
 
 const FooterContainerView = Styled.View`
 width: ${wp('100%')}px;
-height: 56px;
-
-`;
-const CheckBoxFlatList = Styled(FlatList as new () => FlatList)`
-position: absolute;
-bottom: 0px;
-width: 100%;
-height: auto;
-padding: 0px 16px;
+height: ${hp('10.59%') - getBottomSpace()}px;
+justify-content: flex-end;
+padding: 16px 16px;
 border-top-width: 1px;
 border-color: #C8C8C8;
 `;
 const CheckBoxItemView = Styled.View`
-width: 100%;
+margin-left: auto;
 height: auto;
 flex-direction: row
 `;
@@ -180,14 +117,13 @@ line-height: 24px;
 `;
 
 const GalleryContainerView = Styled.View`
-margin-top: auto;
 width: 100%;
-height: auto;
-padding: 9px 0px 9px 16px;
+height: ${hp('11.82%')}px;
 flex-direction: row;
 align-items: flex-end;
+padding-left: 16px;
+padding-bottom: 24px;
 margin-bottom: 24px;
-
 `;
 
 const GalleryUploadTouchableOpacity = Styled(
@@ -207,7 +143,12 @@ width: 20px;
 height: 20px;
 `;
 
-const GalleryStatusText = Styled.Text``;
+const GalleryStatusText = Styled.Text`
+font-size: 12px;
+line-height: 16px;
+margin-top: 3px;
+color: #C4C4C4;
+`;
 
 const GalleryFlatList = Styled(FlatList as new () => FlatList)`
 flex: 1;
@@ -239,8 +180,10 @@ interface Props {
   route: any;
   selectedTreatList: any;
   selectedImages: any;
+  searchQuery: any;
   setSearchQuery: any;
   setSearchCategory: any;
+  suggestionList: any;
 }
 
 const CommunityCreatePostScreen = ({
@@ -248,8 +191,10 @@ const CommunityCreatePostScreen = ({
   route,
   selectedTreatList,
   selectedImages,
+  searchQuery,
   setSearchQuery,
   setSearchCategory,
+  suggestionList,
 }: Props) => {
   const [tagList, setTagList] = useState<string[]>([]);
   const [categoryList, setCategoryList] = useState<string[]>([
@@ -259,30 +204,53 @@ const CommunityCreatePostScreen = ({
   ]);
   const [imageRenderList, setImageRenderList] = useState<string[]>([]);
   const [imageDataList, setImageDataList] = useState<string[]>([]);
-  const [category, setCategory] = useState<string>('');
   const [paragraph, setParagraph] = useState<string>('');
   const [selectedBoxList, setSelectedBoxList] = useState<string[]>([]);
   const [isPopupShown, setIsPopupShown] = useState<boolean>(true);
   const categoryIndex = useRef(new Animated.Value(0)).current;
   const [textInputHeight, setTextInputHeight] = useState(hp('44%'));
   const [searchMode, setSearchMode] = useState('');
-  const [startIndex, setStartIndex] = useState(0);
-  const [formattedParagraph, setFormattedParagraph] = useState('');
-  const [inputHeight, setInputHeight] = useState(20);
-  const scrollView = useRef();
+  const [startIndex, setStartIndex] = useState(0); //index of #
+  const [endIndex, setEndIndex] = useState(0); //index of tag's last word + 1 (' ')
+  const [cursorIndex, setCursorIndex] = useState(0);
+  const [toggleCreateHashTag, setToggleCreateHashTag] = useState(false);
+  const textInput = useRef();
+
   useEffect(() => {
     setTagList(selectedTreatList);
   }, [selectedTreatList]);
 
   useEffect(() => {
+    console.log('fd');
     setSearchQuery('');
     if (searchMode !== '') {
-      setStartIndex(paragraph.length);
-
+      setToggleCreateHashTag(true);
+      console.log('cursor', cursorIndex);
+      setStartIndex(cursorIndex + 1);
+      setEndIndex(cursorIndex + 2);
+      if (cursorIndex === 0) {
+        console.log('first');
+        setParagraph(
+          paragraph.slice(0, cursorIndex) + '#' + paragraph.slice(cursorIndex),
+        );
+      } else {
+        setParagraph(
+          paragraph.slice(0, cursorIndex) + '# ' + paragraph.slice(cursorIndex),
+        );
+        console.log('bpb', cursorIndex);
+        textInput.current.setNativeProps({
+          selection: {
+            start: cursorIndex - 1,
+            end: cursorIndex - 1,
+          },
+        });
+        setCursorIndex(cursorIndex + 1);
+      }
       console.log(paragraph.length);
     }
     setSearchCategory(searchMode);
   }, [searchMode]);
+
   useEffect(() => {
     let newImages = selectedImages || [];
     let newImageList = imageDataList.concat(newImages.concat());
@@ -290,10 +258,7 @@ const CommunityCreatePostScreen = ({
     setImageDataList(newImageList);
     console.log(selectedImages);
   }, [selectedImages]);
-  useEffect(() => {
-    console.log('parargraph' + paragraph);
-    console.log('formatted' + formattedParagraph);
-  }, [paragraph, formattedParagraph]);
+
   const deleteImageByFilename = (filename: string) => {
     let newImageList = imageDataList
       .concat()
@@ -310,6 +275,26 @@ const CommunityCreatePostScreen = ({
     navigation.navigate('CommunityGallery', {
       requestType: 'CommunityPostUploadScreen',
     });
+  };
+
+  const completeCurrentHashTag = (selectedHashTag: any) => {
+    console.log(paragraph.slice(0, startIndex));
+    console.log(paragraph.slice(endIndex, paragraph.length));
+    setParagraph(
+      paragraph.slice(0, startIndex) +
+        selectedHashTag +
+        ' ' +
+        paragraph.slice(endIndex, paragraph.length),
+    );
+
+    textInput.current.setNativeProps({
+      selection: {
+        start: endIndex,
+        end: endIndex,
+      },
+    });
+    setSearchMode('');
+    setSearchQuery('');
   };
   const renderCategories = (categoryList: any) => {
     return categoryList.map((item: any, index: number) => {
@@ -341,19 +326,24 @@ const CommunityCreatePostScreen = ({
 
   return (
     <ContainerView>
-      <HeaderBar>
-        <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
-          <HeaderLeftContainer>
-            <HeaderBackIcon
-              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
-            />
-          </HeaderLeftContainer>
-        </TouchableWithoutFeedback>
-        <HeaderTitleText>글 작성</HeaderTitleText>
-        <HeaderRightContainer>
-          <HeaderText>올리기</HeaderText>
-        </HeaderRightContainer>
-      </HeaderBar>
+      <NavigationHeader
+        renderHeaderLeftContainer={() => {
+          return (
+            <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
+              <HeaderText>취소</HeaderText>
+            </TouchableWithoutFeedback>
+          );
+        }}
+        renderHeaderRightContanier={() => {
+          return (
+            <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
+              <HeaderText>완료</HeaderText>
+            </TouchableWithoutFeedback>
+          );
+        }}
+        headerTitle="글쓰기"
+      />
+
       <BodyContainerView>
         <CategoryContainerView>
           <CategoryTitleText>카테고리</CategoryTitleText>
@@ -420,25 +410,115 @@ const CommunityCreatePostScreen = ({
           behavior="padding"
           style={{
             width: '100%',
-            height: isPopupShown ? hp('65.1%') : hp('75%'),
+            height:
+              (isPopupShown ? hp('65.1%') : hp('75%')) +
+              suggestionList.length * hp('7.39%'),
           }}>
           <ParagraphTextInput
+            ref={textInput}
             style={{
-              marginBottom: hp('19.5%'),
+              marginBottom: hp('19.5%') + suggestionList.length * hp('7.39%'),
               flex: 1,
             }}
             placeholderTextColor="#C4C4C4"
             placeholder="수다방에 올릴 게시물을 작성해주세요!"
             multiline
+            value={paragraph}
             scrollEnabled={true}
-            onChangeText={(text) => {
+            onKeyPress={(e) => {
+              if (e.nativeEvent.key === 'Backspace') {
+              }
+            }}
+            onSelectionChange={(event) => {
+              console.log(
+                'hola',
+                startIndex,
+                endIndex,
+                event.nativeEvent.selection.end,
+              );
+              if (toggleCreateHashTag) {
+                setToggleCreateHashTag(false);
+                return;
+              }
               if (searchMode !== '') {
-                setSearchQuery(text.slice(startIndex));
+                if (
+                  event.nativeEvent.selection.end > endIndex ||
+                  event.nativeEvent.selection.end < startIndex
+                ) {
+                  setParagraph(
+                    paragraph.slice(0, startIndex - 1) +
+                      paragraph.slice(endIndex),
+                  );
+                  setSearchMode('');
+                  if (event.nativeEvent.selection.end < startIndex) {
+                    textInput.current.setNativeProps({
+                      selection: {
+                        start:
+                          event.nativeEvent.selection.end +
+                          endIndex -
+                          startIndex,
+                        end:
+                          event.nativeEvent.selection.end +
+                          endIndex -
+                          startIndex,
+                      },
+                    });
+                  }
+                }
+              }
+              setCursorIndex(event.nativeEvent.selection.end);
+            }}
+            onChangeText={(text) => {
+              if (paragraph.length > text.length) {
+                if (searchMode === '') {
+                  //back-space
+                  let searchIndex = cursorIndex - 1;
+                  let newParagraph = text;
+
+                  while (searchIndex >= 0) {
+                    if (paragraph.charAt(searchIndex) == '#') {
+                      newParagraph =
+                        paragraph.slice(0, searchIndex) +
+                        paragraph.slice(cursorIndex + 1);
+                      break;
+                    } else if (paragraph.charAt(searchIndex) == ' ') {
+                      break;
+                    }
+                    searchIndex -= 1;
+                  }
+
+                  setParagraph(newParagraph);
+                } else {
+                  if (cursorIndex === startIndex - 1) {
+                    setSearchMode('');
+                  }
+                  setParagraph(text);
+                }
+              } else {
+                setParagraph(text);
+              }
+
+              if (searchMode !== '') {
+                setSearchQuery(text.slice(startIndex).split(' ')[0]); // #부터 ' '까지 자른 것이 쿼리
+                setEndIndex(
+                  startIndex + text.slice(startIndex).split(' ')[0].length + 1,
+                );
+                console.log(
+                  'dd',
+                  startIndex,
+                  endIndex,
+                  startIndex + text.slice(startIndex).split(' ')[0].length + 1,
+                );
+                console.log('cursor', cursorIndex);
               }
             }}
             autoCorrect={false}></ParagraphTextInput>
         </KeyboardAvoidingView>
-        <GalleryContainerView>
+        <GalleryContainerView
+          style={{
+            position: 'absolute',
+            bottom: -hp('2.6%'),
+          }}>
           <GalleryUploadTouchableOpacity
             onPress={() => {
               onPressAddImage();
@@ -446,7 +526,12 @@ const CommunityCreatePostScreen = ({
             <GalleryStatusImage
               source={require('~/Assets/Images/Picture/camera.png')}
             />
-            <GalleryStatusText>{'1/5'}</GalleryStatusText>
+            <GalleryStatusText>
+              <GalleryStatusText style={{color: '#0075FF'}}>
+                {imageRenderList.length}
+              </GalleryStatusText>
+              /5
+            </GalleryStatusText>
           </GalleryUploadTouchableOpacity>
           <GalleryFlatList
             data={imageRenderList}
@@ -464,43 +549,20 @@ const CommunityCreatePostScreen = ({
         </GalleryContainerView>
       </BodyContainerView>
       <FooterContainerView>
-        <CheckBoxFlatList
-          data={[{title: '의사에게 물어보기'}]}
-          contentContainerStyle={{
-            alignItems: 'flex-end',
-            paddingVertical: 16,
-          }}
-          renderItem={({item, index}) => (
-            <CheckBoxItemView>
-              <TouchableOpacity
-                onPress={() => {
-                  console.log(index);
-                  console.log(selectedBoxList);
-                  if (selectedBoxList.includes(item.title)) {
-                    const idx = selectedBoxList.indexOf(item.title);
-                    const newSelectedBoxList = selectedBoxList.filter(
-                      (title) => title !== item.title,
-                    );
-                    setSelectedBoxList(newSelectedBoxList);
-                  } else {
-                    console.log('hi' + selectedBoxList.concat([item.title]));
-                    setSelectedBoxList(selectedBoxList.concat([item.title]));
-                  }
-                }}>
-                <CheckBoxImage
-                  style={{
-                    backgroundColor: selectedBoxList.includes(item.title)
-                      ? 'red'
-                      : 'white',
-                  }}
-                />
-              </TouchableOpacity>
-              <CheckBoxItemText>{item.title}</CheckBoxItemText>
-            </CheckBoxItemView>
-          )}
-        />
+        <CheckBoxItemView>
+          <TouchableOpacity onPress={() => {}}>
+            <CheckBoxImage />
+          </TouchableOpacity>
+          <CheckBoxItemText>의사에게 물어보기</CheckBoxItemText>
+        </CheckBoxItemView>
       </FooterContainerView>
-      <HashTagSearchBarView setSearchMode={setSearchMode} />
+      <HashTagSearchBarView
+        setSearchMode={setSearchMode}
+        searchMode={searchMode}
+        searchQuery={searchQuery}
+        suggestionList={suggestionList}
+        completeCurrentHashTag={completeCurrentHashTag}
+      />
     </ContainerView>
   );
 };
