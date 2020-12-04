@@ -10,7 +10,10 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import AboveKeyboard from 'react-native-above-keyboard';
-import {getStatusBarHeight} from 'react-native-status-bar-height'
+//import {getStatusBarHeight} from 'react-native-status-bar-height'
+import {getStatusBarHeight} from 'react-native-iphone-x-helper'
+
+import POSTSendTokenToPhone from '~/Routes/Auth/POSTSendTokenToPhone';
 
 const Input = Styled.TextInput`
 position: relative;
@@ -20,7 +23,7 @@ height: 50px;
 `;
 
 const Container = Styled.View`
-  padding-top: ${getStatusBarHeight()}
+  padding-top: 44px;
   flex: 1;
   background-color: #FEFFFF;
 `;
@@ -300,7 +303,7 @@ const LoginScreen = ({navigation}: Props) => {
 
   const startTimeout = () => {
       timeout = setInterval(function() {
-      console.log("시간제한 시작", limitTime)
+      //console.log("시간제한 시작", limitTime)
       setLimitMin((parseInt(String(limitTime/60))))
       if(String(limitTime%60).length == 1) {
         setLimitSec("0"+String(limitTime%60))
@@ -351,10 +354,20 @@ const LoginScreen = ({navigation}: Props) => {
  const clickSendAuthCode = () => {
    if(formattedNumber.split("").length === 17) {
     var tmpNumber = formattedNumber.split(" - ");
+    var phoneNumber = tmpNumber.join("");
     console.log("tmpNumber", tmpNumber.join(""));
+    
     setNumber(tmpNumber.join(""));
     setVisibleAuthCodeInput(true)
     startTimeout()
+
+    POSTSendTokenToPhone(String(phoneNumber))
+    .then(function(response) {
+      console.log("POSTSendTokenToPhone response", response);
+    })
+    .catch(function(error) {
+      console.log("POSTSendTokenToPhone error", error);
+    })
    }
  }
 

@@ -5,13 +5,12 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import NaverMapView, {Marker} from 'react-native-nmap';
-import { NavigationContainer } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
 import { FlingGestureHandler } from 'react-native-gesture-handler';
 
-import base64 from 'base-64';
+// Local Component
+import ReviewItem from '~/Components/Presentational/ReviewItem';
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -152,6 +151,9 @@ padding-left: 16px;
 padding-right: 16px;
 `;
 
+const DentalReviewInfoContainer = Styled.View`
+`;
+
 const IntroContainer = Styled.View`
 `;
 
@@ -207,7 +209,6 @@ color: #000000;
 `;
 
 const FooterContainer = Styled.View`
-margin-top: 24px;
 padding-bottom: ${hp('8%')}
 `;
 
@@ -215,9 +216,9 @@ const ManageContainer = Styled.View`
 flex-direction: row;
 align-items: center;
 justify-content: space-between;
-
-padding-left: 28px;
-padding-right: 28px;
+margin-top: 24px;
+padding-left: 10px;
+padding-right: 10px;
 `;
 
 const ManageText = Styled.Text`
@@ -257,10 +258,170 @@ align-items: center;
 justify-content: center;
 `;
 
+const SelectInfoTypeContainer = Styled.View`
+padding-top: 20px;
+padding-bottom: 20px;
+flex-direction: row;
+align-items: center;
+justify-content: center;
+`;
+
+const SelectInfoTypeText = Styled.Text`
+font-weight: 400;
+color: #000000;
+font-size: 14px;
+`;
+
+const AverageRatingContainer = Styled.View`
+padding-left: 16px;
+padding-right: 16px;
+`;
+
+const RatingItemListContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+justify-content: space-between;
+`;
+
+const RatingTitleText = Styled.Text`
+font-weight: 400;
+font-size: 12px;
+color: #000000;
+`;
+
+const RatingItemContainer = Styled.View`
+width: ${wp('29%')}px;
+height: ${wp('29%')}px;
+border-width: 1px;
+border-color: #c4c4c4;
+align-items: center;
+justify-content: center;
+`;
+
+const RatingLabelText = Styled.Text`
+font-weight: 700;
+font-size: 14px;
+color: #000000;
+`;
+
+const RatingValueText = Styled.Text`
+font-weight: 400;
+font-size: 14px;
+color: #000000;
+`;
+
+
+const ReviewListContainer = Styled.View`
+`;
+
 interface Props {
     navigation: any,
     route: any,
 }
+
+
+const TEST_REVIEW_DATA = [
+    {
+        user: {
+            profileImage: "http://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2020/03/27/5561b209-4809-4c6e-9f8b-33d0e7792de8.jpg",
+            nickname: "닉네임"
+        },
+        createdAt: '2020-10-13',
+        reviewImages: [
+            {
+                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
+            },
+            {
+                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
+            },
+        ],
+        tags: [
+            "치아교정", "부정교합"
+        ],
+        date: "2020-09-24",
+        rating: "3.5",
+        description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
+        view: "300",
+        getInfo: "102",
+        like: "123",
+        comment: "24"
+    },
+    {
+        user: {
+            profileImage: "http://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2020/03/27/5561b209-4809-4c6e-9f8b-33d0e7792de8.jpg",
+            nickname: "닉네임2"
+        },
+        createdAt: '2020-10-13',
+        reviewImages: [
+            {
+                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
+            },
+            {
+                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
+            },
+        ],
+        tags: [
+            "치아교정", "부정교합"
+        ],
+        date: "2020-09-24",
+        rating: "3.5",
+        description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
+        view: "300",
+        getInfo: "102",
+        like: "123",
+        comment: "24"
+    },
+    {
+        user: {
+            profileImage: "http://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2020/03/27/5561b209-4809-4c6e-9f8b-33d0e7792de8.jpg",
+            nickname: "닉네임3"
+        },
+        createdAt: '2020-10-13',
+        reviewImages: [
+            {
+                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
+            },
+            {
+                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
+            },
+        ],
+        tags: [
+            "치아교정", "부정교합"
+        ],
+        date: "2020-09-24",
+        rating: "3.5",
+        description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
+        view: "300",
+        getInfo: "102",
+        like: "123",
+        comment: "24"
+    },
+    {
+        user: {
+            profileImage: "http://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2020/03/27/5561b209-4809-4c6e-9f8b-33d0e7792de8.jpg",
+            nickname: "닉네임4"
+        },
+        createdAt: '2020-10-13',
+        reviewImages: [
+            {
+                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
+            },
+            {
+                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
+            },
+        ],
+        tags: [
+            "치아교정", "부정교합"
+        ],
+        date: "2020-09-24",
+        rating: "3.5",
+        description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
+        view: "300",
+        getInfo: "102",
+        like: "123",
+        comment: "24"
+    }
+]
 
 const TEST_DENTAL_DETAIL_DATA = {
     coverImage: {
@@ -285,8 +446,9 @@ const TEST_DENTAL_DETAIL_DATA = {
 }
 
 const DentalDetailScreen = ({navigation, route}: Props) => {
-    const [dentalDetailInfo, setDentalDetailInfo] = useState<object>(TEST_DENTAL_DETAIL_DATA)
-    const [locationMapBase64, setLocationMapBase64] = useState<any>(null)
+    const [dentalDetailInfo, setDentalDetailInfo] = useState<any>(TEST_DENTAL_DETAIL_DATA)
+    const [locationMapBase64, setLocationMapBase64] = useState<any>(null);
+    const [infoType, setInfoType] = useState<string>("detailInfo");
 
     const nMapClientId = "htnc7h3vi5"
 
@@ -323,7 +485,33 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
         navigation.goBack()
     }
 
+    const clickDetailInfoType = () => {
+        setInfoType("detailInfo")
 
+    }
+
+    const clickReviewType = () => {
+        setInfoType("review")
+    }
+
+    const renderReviewItem = ({item, index}: any) => {
+        return (
+            <ReviewItem
+            navigation={navigation}
+            profileImageUri={item.user.profileImage}
+            nickname={item.user.nickname}
+            createdAt={item.createdAt}
+            imageArray={item.reviewImages}
+            tagArray={item.tags}
+            date={item.date}
+            rating={item.rating}
+            description={item.description}
+            viewCount={item.view}
+            treatInfoCount={item.getInfo}
+            likeCount={item.like}
+            commentCount={item.comment}/>
+        )
+    }
     
     return (
         <Container>
@@ -368,6 +556,15 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
                         </TagListContainer>
                     </BasicFooterContainer>
                 </BasicInfoContainer>
+                <SelectInfoTypeContainer>
+                    <TouchableWithoutFeedback onPress={() => clickDetailInfoType()}>
+                    <SelectInfoTypeText>{"상세정보"}</SelectInfoTypeText>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => clickReviewType()}>
+                    <SelectInfoTypeText style={{marginLeft: 29}}>{"리뷰"}</SelectInfoTypeText>
+                    </TouchableWithoutFeedback>
+                </SelectInfoTypeContainer>
+                {infoType === "detailInfo" && (
                 <DentalDetailInfoContainer>
                     <IntroContainer>
                         <InfoLabelText>{"병원소개"}</InfoLabelText>
@@ -398,11 +595,8 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
                     <DentistInfoContainer>
                         <InfoLabelText>{"의사정보"}</InfoLabelText>
                         <InfoValueText>{dentalDetailInfo.detailInfo.dentist}</InfoValueText>
-                    </DentistInfoContainer>
-                </DentalDetailInfoContainer>
-            </ContentContainer>
-            <FooterContainer>
-                <ManageContainer>
+                    </DentistInfoContainer> 
+                    <ManageContainer>
                     <TouchableWithoutFeedback onPress={() => moveToDentalInfoEdit()}>
                     <EditInfoButton>
                         <ManageText>
@@ -415,7 +609,40 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
                             {"무료병원계정"}
                         </ManageText>
                     </MakeDentalAccountButton>
-                </ManageContainer>
+                    </ManageContainer>
+                </DentalDetailInfoContainer>
+                )}
+                {infoType === "review" && (
+                <DentalReviewInfoContainer>
+                    <AverageRatingContainer>
+                        <RatingTitleText>별점</RatingTitleText>
+                        <RatingItemListContainer style={{marginTop: 8}}>
+                        <RatingItemContainer>
+                            <RatingLabelText>{"진료"}</RatingLabelText>
+                            <RatingValueText style={{marginTop: 14}}>{"★4.0 / 5.0"}</RatingValueText>
+                        </RatingItemContainer>
+                        <RatingItemContainer>
+                            <RatingLabelText>{"가격"}</RatingLabelText>
+                            <RatingValueText style={{marginTop: 14}}>{"★4.0 / 5.0"}</RatingValueText>
+                        </RatingItemContainer>
+                        <RatingItemContainer>
+                            <RatingLabelText>{"서비스"}</RatingLabelText>
+                            <RatingValueText style={{marginTop: 14}}>{"★4.0 / 5.0"}</RatingValueText>
+                        </RatingItemContainer>
+                        </RatingItemListContainer>
+                    </AverageRatingContainer>
+                    <ReviewListContainer>
+                        <FlatList
+                        horizontal={false}
+                        showsVerticalScrollIndicator={false}
+                        data={TEST_REVIEW_DATA}
+                        renderItem={renderReviewItem}/>
+                    </ReviewListContainer>
+                </DentalReviewInfoContainer>
+
+                )}
+            </ContentContainer>
+            <FooterContainer>
                 <ReserveByPhoneContainer>
                 <ReserveByPhoneButton>
                     <ManageText>{"전화 예약하기"}</ManageText>

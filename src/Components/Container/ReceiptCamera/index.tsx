@@ -12,6 +12,9 @@ import ImageEditor from "@react-native-community/image-editor";
 
 let {width, height} = Dimensions.get('window');
 const Container = Styled.View`
+position: absolute;
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
 `;
 
 const HeaderBar = Styled.View`
@@ -63,7 +66,7 @@ height: ${hp('70%')};
 background-color: #ffffff00;
 `;
 
-const TakePhotoContainer = Styled.View`
+const TakePictureContainer = Styled.View`
 position: absolute;
 width: ${wp('100%')};
 justify-content: center;
@@ -72,7 +75,7 @@ bottom: 30;
 padding-bottom: 20px;
 `;
 
-const TakePhotoButton = Styled.View`
+const TakePictureButton = Styled.View`
 position: absolute;
 width: 80px;
 height: 80px;
@@ -106,9 +109,10 @@ interface Props {
 
 const ReceiptCamera = ({navigation, route}: Props) => {
     const [cameraType, setCameraType] = useState<string>("back");
-    const cameraRef = React.useRef(null); // useRef로 camera를 위한 ref를 하나 만들어 주고
+    
+    const cameraRef = React.useRef<any>(null); // useRef로 camera를 위한 ref를 하나 만들어 주고
 
-    const takePhoto = async () => {
+    const takePicture = async () => {
         console.log('cameraRef', cameraRef);
         if(cameraRef) {
             const data = await cameraRef.current.takePictureAsync({
@@ -158,11 +162,11 @@ const ReceiptCamera = ({navigation, route}: Props) => {
             captureAudio={false}
             type={cameraType === "front" ? RNCamera.Constants.Type.front : (cameraType === "back" ? RNCamera.Constants.Type.back : RNCamera.Constants.Type.front)}
             />
-            <TakePhotoContainer>
-            <TouchableWithoutFeedback onPress={() => takePhoto()}>
-            <TakePhotoButton/>
+            <TakePictureContainer>
+            <TouchableWithoutFeedback onPress={() => takePicture()}>
+            <TakePictureButton/>
             </TouchableWithoutFeedback>
-            </TakePhotoContainer>
+            </TakePictureContainer>
             <HeaderBar>
                 <TouchableWithoutFeedback onPress={() => goBack()}>
                 <HeaderLeftContainer>

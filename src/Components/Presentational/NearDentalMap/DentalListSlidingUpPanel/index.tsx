@@ -162,12 +162,11 @@ const DentalListSidingUpPanel = ({navigation, route}: any) => {
         allowMomentum={false}
         allowDragging={allowDraggingPanel}
         ref={panelRef}
-        draggableRange={{top: hp('90%'), bottom: hp('17%')}}
+        draggableRange={{top: hp('90%'), bottom: hp('14%')}}
         slidingUpPanel={slidingUpPanel}
         slidingDownPanel={slidingDownPanel}
         listIndex={listIndex}
-        dragDentalPanel={dragDentalPanel}
-        minimumVelocityThreshold={0.1}>
+        dragDentalPanel={dragDentalPanel}>
             <Container>
                 <ViewDentalContainer>
                     <UpArrowIcon

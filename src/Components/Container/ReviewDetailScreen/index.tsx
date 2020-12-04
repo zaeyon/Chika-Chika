@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList} from 'react-native';
+import {TouchableWithoutFeedback, FlatList, ScrollView, KeyboardAvoidingView, Keyboard} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp
@@ -10,6 +10,9 @@ import {isIphoneX} from 'react-native-iphone-x-helper';
 import ReviewInformation from '~/Components/Presentational/ReviewDetailScreen/ReviewInformation';
 import ReviewContent from '~/Components/Presentational/ReviewDetailScreen/ReviewContent';
 import ReviewCommentList from '~/Components/Presentational/ReviewDetailScreen/ReviewCommentList';
+import ReviewBottomBar from '~/Components/Presentational/ReviewDetailScreen/ReviewBottomBar';
+import DentalInfomation from '~/Components/Presentational/ReviewDetailScreen/DentalInfomation';
+import DetailMetaInfo from '~/Components/Presentational/ReviewDetailScreen/DetailMetaInfo';
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -57,15 +60,34 @@ width: ${wp('6.4%')};
 height: ${wp('6.4%')};
 `;
 
-const BodyContainer = Styled.ScrollView`
+const BodyContainer = Styled.View`
 flex: 1;
 background-color: #ffffff;
 `;
 
-const BottomContainer = Styled.View`
-flex: 1;
-background-color: #ffffff;
+const BottomBarContainer = Styled.View`
+position: absolute;
+bottom: 0;
+width: ${wp('100%')};
 `;
+
+const DentalInfoContainer = Styled.View`
+margin-top: 11px;
+width: ${wp('100%')}px;
+align-items: center;
+`;
+
+const CommentListContainer = Styled.View`
+margin-top: 20px;
+`;
+
+const DetailMetaInfoContainer = Styled.View`
+margin-top: 8px;
+width: ${wp('100%')}px;
+align-items: center;
+`;
+
+
 
 const TEST_REVIEW_DETAIL_DATA = {
     user : {
@@ -174,8 +196,39 @@ interface Props {
 }
 
 const ReviewDetailScreen = ({navigation, route}: Props) => {
+    const [isCommentInputFocused, setIsCommentInputFocused] = useState<boolean>(false);
+    const [paddingBottom, setPaddingBottom] = useState<number>(hp('8%'));
+    const scrollViewRef = useRef<any>();
+    const reviewScrollViewRef = useRef<any>(null);
 
-   const moveToFullImages = (imageUri:string) => {
+    useEffect(() => {
+        Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
+        Keyboard.addListener("keyboardWillShow", _keyboardWillShow);
+        Keyboard.addListener("keyboardWillHide", _keyboardWillHide);
+
+        // cleanup function
+        return () => {
+            Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
+            Keyboard.removeListener("keyboardWillHide", _keyboardWillHide);
+        }
+    }, [])
+
+    const _keyboardWillShow = (e: any) => {
+        setPaddingBottom(e.endCoordinates.height + hp('8%'));
+
+      }
+
+    const _keyboardDidShow = (e: any) => {
+        //setPaddingBottom(e.endCoordinates.height);
+        reviewScrollViewRef.current.scrollToEnd({animated: true})
+    }
+
+    const _keyboardWillHide = () => {
+        setPaddingBottom(hp('8%'));
+        setIsCommentInputFocused(false);
+    }
+
+    const moveToFullImages = (imageUri:string) => {
 
     console.log("TEST_REVIEW_DETAIL_DATA.mediaFiles", TEST_REVIEW_DETAIL_DATA.mediaFiles);
     var index = TEST_REVIEW_DETAIL_DATA.mediaFiles.findIndex((image) => image.image_uri === imageUri);
@@ -186,15 +239,23 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
     console.log("선택한 사진의 mediaFiles index", index);
 
-    navigation.navigate("FullImagesScreen", {
-      imagesUrl_arr : imageUri_arr,
-      imageIndex: index,
-    })
-}
+        navigation.navigate("FullImagesScreen", {
+            imagesUrl_arr : imageUri_arr,
+            imageIndex: index,
+        })
+    }
 
-const goBack = () => {
-    navigation.goBack()
-}
+    const goBack = () => {
+        navigation.goBack()
+    }
+
+    const clickCommentIcon = () => {
+        setIsCommentInputFocused(true)
+    }
+
+    const toggleKeyboardAnimation = (height: Number) => {
+      
+    };
 
     return (
         <Container>
@@ -210,6 +271,9 @@ const goBack = () => {
                     source={require('~/Assets/Images/HeaderBar/ic_more.png')}/>
                 </HeaderRightContainer>
             </HeaderBar>
+            <ScrollView
+            ref={reviewScrollViewRef}
+            showsVerticalScrollIndicator={false}>
             <ReviewInformation
                 user={TEST_REVIEW_DETAIL_DATA.user}
                 createdAt={TEST_REVIEW_DETAIL_DATA.createdAt}
@@ -219,14 +283,32 @@ const goBack = () => {
                 location={TEST_REVIEW_DETAIL_DATA.location}
                 treat_date={TEST_REVIEW_DETAIL_DATA.treat_date}/>
             <BodyContainer
-            showsVerticalScrollIndicator={false}>
+            style={{paddingBottom: paddingBottom}}>
                 <ReviewContent
                 moveToFullImages={moveToFullImages}
                 paragraphData={TEST_REVIEW_DETAIL_DATA.paragraph}/>
+                <DentalInfoContainer>
+                    <DentalInfomation/>
+                </DentalInfoContainer>
+                <DetailMetaInfoContainer>
+                    <DetailMetaInfo/>
+                </DetailMetaInfoContainer>
+                <CommentListContainer>
                 <ReviewCommentList
                 commentList={TEST_REVIEW_DETAIL_DATA.comments}/>
+                </CommentListContainer>
 
             </BodyContainer>
+            </ScrollView>
+            <KeyboardAvoidingView
+            behavior={"position"}>
+            <BottomBarContainer>
+                <ReviewBottomBar
+                isCommentInputFocused={isCommentInputFocused}
+                clickCommentIcon={clickCommentIcon}
+                likeCount={22}/>
+            </BottomBarContainer>
+            </KeyboardAvoidingView>
         </Container>
     )
 }

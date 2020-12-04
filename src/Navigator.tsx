@@ -64,6 +64,13 @@ import DentalInfoEditRequestScreen from '~/Components/Container/DentalDetailScre
 
 // Teeth Care Stack Screen
 import TeethCareScreen from '~/Components/Container/TeethCareScreen';
+import TimerReportScreen from '~/Components/Container/TeethCareScreen/ReportTabScreen/TimerReportScreen';
+import BrushDetritionReportScreen from '~/Components/Container/TeethCareScreen/ReportTabScreen/BrushDetritionReportScreen';
+import SymptomReportScreen from '~/Components/Container/TeethCareScreen/ReportTabScreen/SymptomReportScreen';
+import AIReportScreen from '~/Components/Container/TeethCareScreen/ReportTabScreen/AIReportScreen';
+import RelatedDiseaseScreen from '~/Components/Container/TeethCareScreen/TimerTabScreen/RelatedDiseaseScreen';
+import BrushDetritionCamera from '~/Components/Container/BrushDetritionCamera';
+import MeasuredBrushPictureScreen from '~/Components/Container/BrushDetritionCamera/MeasuredBrushPictureScreen';
 
 
 
@@ -178,6 +185,27 @@ function TeethCareStackScreen() {
       <TeethCareStack.Screen
       name="TeethCareScreen"
       component={TeethCareScreen}/>
+      <TeethCareStack.Screen
+      name="TimerReportScreen"
+      component={TimerReportScreen}/>
+      <TeethCareStack.Screen
+      name="BrushDetritionReportScreen"
+      component={BrushDetritionReportScreen}/>
+      <TeethCareStack.Screen
+      name="SymptomReportScreen"
+      component={SymptomReportScreen}/>
+      <TeethCareStack.Screen
+      name="AIReportScreen"
+      component={AIReportScreen}/>
+      <TeethCareStack.Screen
+      name="RelatedDiseaseScreen"
+      component={RelatedDiseaseScreen}/>
+      <TeethCareStack.Screen
+      name="BrushDetritionCamera"
+      component={BrushDetritionCamera}/>
+      <TeethCareStack.Screen
+      name="MeasuredBrushPictureScreen"
+      component={MeasuredBrushPictureScreen}/>
     </TeethCareStack.Navigator>
   )
 }
@@ -340,6 +368,7 @@ function BottomTab() {
     }
 
     return true;
+
   }
 
   const getCommunityBottomTabBarVisibility = (route: any) => {
@@ -363,7 +392,32 @@ function BottomTab() {
       return false;
     }
 
+    return true;
 
+  }
+
+  const getTeethCareBottomTabVisibility = (route: any) => {
+    
+    const routeName = route.state
+    ? route.state.routes[route.state.index]
+    : '';
+
+    const stackRouteName = routeName.state
+    ? routeName.state.routes[routeName.state.index].name
+    : '';
+
+    console.log("routeName", routeName);
+    console.log("stackRouteName", stackRouteName)
+
+    if(routeName.name === "BrushDetritionCamera" || routeName.name === "MeasuredBrushPictureScreen") {
+      return false;
+    }
+
+    if(stackRouteName === "BrushDetritionCamera") {
+      return false;
+    }
+
+    return true;
   }
 
     return (
@@ -390,6 +444,9 @@ function BottomTab() {
       <Tab.Screen
       name="Teeth Care"
       component={TeethCareStackScreen}
+      options={({route}) => ({
+        tabBarVisible: getTeethCareBottomTabVisibility(route)
+      })}
       />
       <Tab.Screen
       name="Community"
