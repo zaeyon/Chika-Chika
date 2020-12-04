@@ -8,9 +8,6 @@ import {
 import {isIphoneX} from 'react-native-iphone-x-helper';
 import DeviceInfo from 'react-native-device-info'
 
-// Local Component
-import ReviewItem from '~/Components/Presentational/ReviewItem';
-
 const Container = Styled.SafeAreaView`
  flex: 1;
  background-color: #FFFFFF;
@@ -158,111 +155,6 @@ color: #000000;
 font-size: 18px;
 `;
 
-
-
-const TEST_REVIEW_DATA = [
-    {
-        user: {
-            profileImage: "http://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2020/03/27/5561b209-4809-4c6e-9f8b-33d0e7792de8.jpg",
-            nickname: "닉네임"
-        },
-        createdAt: '2020-10-13',
-        reviewImages: [
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
-        ],
-        tags: [
-            "치아교정", "부정교합"
-        ],
-        date: "2020-09-24",
-        rating: "3.5",
-        description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
-        view: "300",
-        getInfo: "102",
-        like: "123",
-        comment: "24"
-    },
-    {
-        user: {
-            profileImage: "http://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2020/03/27/5561b209-4809-4c6e-9f8b-33d0e7792de8.jpg",
-            nickname: "닉네임2"
-        },
-        createdAt: '2020-10-13',
-        reviewImages: [
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
-        ],
-        tags: [
-            "치아교정", "부정교합"
-        ],
-        date: "2020-09-24",
-        rating: "3.5",
-        description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
-        view: "300",
-        getInfo: "102",
-        like: "123",
-        comment: "24"
-    },
-    {
-        user: {
-            profileImage: "http://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2020/03/27/5561b209-4809-4c6e-9f8b-33d0e7792de8.jpg",
-            nickname: "닉네임3"
-        },
-        createdAt: '2020-10-13',
-        reviewImages: [
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
-        ],
-        tags: [
-            "치아교정", "부정교합"
-        ],
-        date: "2020-09-24",
-        rating: "3.5",
-        description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
-        view: "300",
-        getInfo: "102",
-        like: "123",
-        comment: "24"
-    },
-    {
-        user: {
-            profileImage: "http://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2020/03/27/5561b209-4809-4c6e-9f8b-33d0e7792de8.jpg",
-            nickname: "닉네임4"
-        },
-        createdAt: '2020-10-13',
-        reviewImages: [
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
-        ],
-        tags: [
-            "치아교정", "부정교합"
-        ],
-        date: "2020-09-24",
-        rating: "3.5",
-        description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
-        view: "300",
-        getInfo: "102",
-        like: "123",
-        comment: "24"
-    }
-]
-
 interface Props {
     navigation: any,
 }
@@ -279,27 +171,6 @@ const HomeScreen = ({navigation}: Props) => {
         navigation.navigate("ReviewUploadStackScreen", {
             screen: "ReceiptRegisterScreen"
         });
-    }
-
-    
-
-    const renderReviewItem = ({item, index}: any) => {
-        return (
-            <ReviewItem
-            navigation={navigation}
-            profileImageUri={item.user.profileImage}
-            nickname={item.user.nickname}
-            createdAt={item.createdAt}
-            imageArray={item.reviewImages}
-            tagArray={item.tags}
-            date={item.date}
-            rating={item.rating}
-            description={item.description}
-            viewCount={item.view}
-            treatInfoCount={item.getInfo}
-            likeCount={item.like}
-            commentCount={item.comment}/>
-        )
     }
 
     return (

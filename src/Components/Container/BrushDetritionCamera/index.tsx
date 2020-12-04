@@ -160,54 +160,42 @@ const BrushDetritionCamera = ({navigation, route}: Props) => {
     const coverOpaAniValue = useRef(new Animated.Value(1)).current;
     const cameraRef = useRef<any>(null);
 
+    const guideLineTLAnim = Animated.spring(guideLineTLAniValue, {
+        toValue: -wp('17%'),
+        useNativeDriver: true,
+        bounciness: 12
+    })
+
+    const guideLineTRAnim = Animated.spring(guideLineTRAniValue, {
+        toValue: wp('17%'),
+        useNativeDriver: true,
+        bounciness: 12
+    })
+
+    const guideLineBLAnim = Animated.spring(guideLineBLAniValue, {
+        toValue: -wp('17%'),
+        useNativeDriver: true,
+        bounciness: 12
+    })
+
+    const guideLineBRAnim = Animated.spring(guideLineBRAniValue, {
+        toValue: wp('17%'),
+        useNativeDriver: true,
+        bounciness: 12
+    })
+
     useEffect(() => {
         if(route.params?.remeasure) {
             setGuideLineState("open")
             setGuideText(`칫솔 옆모습을\n평평한 배경에서\n칫솔대는 안보이게!`)
-
-            Animated.spring(guideLineTLAniValue, {
-                toValue:  -wp('17%'),
-                useNativeDriver: true,
-                bounciness: 12
-            }).start()
-            Animated.spring(guideLineTRAniValue, {
-                toValue: wp('17%'),
-                useNativeDriver: true,
-                bounciness: 12
-            }).start()
-            Animated.spring(guideLineBLAniValue, {
-                toValue: -wp('17%'),
-                useNativeDriver: true,
-                bounciness: 12
-            }).start()
-            Animated.spring(guideLineBRAniValue, {
-                toValue: wp('17%'),
-                useNativeDriver: true,
-                bounciness: 12
-            }).start()
-            
-            Animated.timing(coverOpaAniValue, {
-                toValue: 0,
-                duration: 600,
-                useNativeDriver: true,
-            }).start()
-            
+    
+           Animated.parallel([guideLineTLAnim, guideLineTRAnim, guideLineBLAnim, guideLineBRAnim]).start()
         }
 
     }, [route.params?.remeasure])
 
+     
 
-
-    const coverOpacityAnim = Animated.timing(coverOpaAniValue, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: true,
-    })
-
-    const coverOpacityChange = coverOpaAniValue.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0.8, 0],
-    })
 
     const takePicture = async () => {
         if(cameraRef) {
@@ -241,32 +229,8 @@ const BrushDetritionCamera = ({navigation, route}: Props) => {
             setGuideText(`칫솔 옆모습을\n평평한 배경에서\n칫솔대는 안보이게!`)
 
             console.log("open guide line")
-            Animated.spring(guideLineTLAniValue, {
-                toValue:  -wp('17%'),
-                useNativeDriver: true,
-                bounciness: 12
-            }).start()
-            Animated.spring(guideLineTRAniValue, {
-                toValue: wp('17%'),
-                useNativeDriver: true,
-                bounciness: 12
-            }).start()
-            Animated.spring(guideLineBLAniValue, {
-                toValue: -wp('17%'),
-                useNativeDriver: true,
-                bounciness: 12
-            }).start()
-            Animated.spring(guideLineBRAniValue, {
-                toValue: wp('17%'),
-                useNativeDriver: true,
-                bounciness: 12
-            }).start()
-            
-            Animated.timing(coverOpaAniValue, {
-                toValue: 0,
-                duration: 600,
-                useNativeDriver: true,
-            }).start()
+
+           Animated.parallel([guideLineTLAnim, guideLineTRAnim, guideLineBLAnim, guideLineBRAnim]).start()
         }
     }
 

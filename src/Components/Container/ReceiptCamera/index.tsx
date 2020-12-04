@@ -109,7 +109,8 @@ interface Props {
 
 const ReceiptCamera = ({navigation, route}: Props) => {
     const [cameraType, setCameraType] = useState<string>("back");
-    const cameraRef = React.useRef(null); // useRef로 camera를 위한 ref를 하나 만들어 주고
+    
+    const cameraRef = React.useRef<any>(null); // useRef로 camera를 위한 ref를 하나 만들어 주고
 
     const takePicture = async () => {
         console.log('cameraRef', cameraRef);
