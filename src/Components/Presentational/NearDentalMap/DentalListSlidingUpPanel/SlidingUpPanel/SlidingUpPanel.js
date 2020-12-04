@@ -98,6 +98,7 @@ class SlidingUpPanel extends React.PureComponent {
     onPanResponderMove: this._onPanResponderMove.bind(this),
     onPanResponderRelease: this._onPanResponderRelease.bind(this),
     onPanResponderTerminate: this._onPanResponderTerminate.bind(this),
+    onStartShouldSetPanResponder: this._onStartShouldSetPanResponder.bind(this),
     onShouldBlockNativeResponder: () => true,
     onPanResponderTerminationRequest: () => false
   })
@@ -119,6 +120,10 @@ class SlidingUpPanel extends React.PureComponent {
 
   constructor(props) {
     super(props)
+
+    this.state = {
+      panelState: "hide"
+    }
 
     this._storeKeyboardPosition = this._storeKeyboardPosition.bind(this)
     this._isInsideDraggableRange = this._isInsideDraggableRange.bind(this)
@@ -191,6 +196,13 @@ class SlidingUpPanel extends React.PureComponent {
       this._backButtonListener.remove()
     }
   }
+
+  _onStartShouldSetPanResponder(evt, gestureState) {
+    if(this.state.panelState === "hide") {
+      this.show();
+    }
+  }
+
 
   _onMoveShouldSetPanResponder(evt, gestureState) {
 

@@ -1,18 +1,30 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {TouchableWithoutFeedback, View, TouchableOpacity, Keyboard, KeyboardAvoidingView} from 'react-native'
 import {getBottomSpace} from 'react-native-iphone-x-helper';
 import DeviceInfo from 'react-native-device-info';
 
 const Container = Styled.View`
-width: ${wp('100%')}px;
-height: ${DeviceInfo.hasNotch() ? wp('15.2%') : wp('19.2%')}px;
+height: auto;
+min-height: ${hp('100%') * 0.08}px;
+max-height: ${hp('100%') * 0.15}px;
 border-top-width: 1px;
 border-color: #c4c4c4;
 background-color: #ffffff;
+`;
+
+const DefaultContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+justify-content: space-around;
+`;
+
+const CommentInputContainer = Styled.View`
+padding: 12px 16px;
 flex-direction: row;
 align-items: center;
 justify-content: space-around;
@@ -21,7 +33,6 @@ justify-content: space-around;
 const SocialInfoListContainer = Styled.View`
 flex-direction: row;
 align-items: center;
-
 `;
 
 const LikeContainer = Styled.View`
@@ -77,32 +88,106 @@ font-size: 14px;
 color: #ffffff;
 `;
 
+const CommentTextInput = Styled.TextInput`
+border-radius: 8px;
+font-size: 14px;
+line-height: 16px;
+flex: 1;
+padding: ${hp('100%') * 0.01478}px ${hp('100%') * 0.0197}px ${
+  hp('100%') * 0.01478 - 1
+}px ${hp('100%') * 0.0197}px;
+`;
+
+const CommentUploadText = Styled.Text`
+font-size: 14px;
+line-height: 16px;
+`;
+
 interface Props {
-    likeCount: number
+    likeCount: number,
+    clickCommentIcon: () => void,
+    isCommentInputFocused: boolean,
 }
 
-const ReviewBottomBar = ({likeCount}: Props) => {
-    console.log("getBottomSpace", getBottomSpace())
+const ReviewBottomBar = ({likeCount, clickCommentIcon, isCommentInputFocused}: Props) => {
+    const [isCommentInput, setIsCommentInput] = useState<boolean>(false);
+
+    /*
+    useEffect(() => {
+        Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
+        Keyboard.addListener("keyboardWillHide", _keyboardWillHide);
+
+        // cleanup function
+        return () => {
+            Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
+            Keyboard.removeListener("keyboardWillHide", _keyboardWillHide);
+        }
+    }, [])
+
+    const _keyboardDidShow = (e: any) => {
+        //setPaddingBottom(e.endCoordinates.height);
+        //scrollViewRef.current.scrollToEnd({animated: false})
+    }
+
+    const _keyboardWillHide = () => {
+        setIsCommentInput(false);
+    }
+    */
+
+    const clickCommentIcon2 = () => {
+        setIsCommentInput(true)
+    }
+
     return (
         <Container>
-            <SocialInfoListContainer>
-            <LikeContainer>
-                <LikeIcon
-                source={require('~/Assets/Images/Social/ic_like.png')}/>
-                <LikeCountText>{likeCount}</LikeCountText>
-            </LikeContainer>
-            <ScrapContainer>
-                <ScrapIcon
-                source={require('~/Assets/Images/Social/ic_scrap.png')}/>
-            </ScrapContainer>
-            <CommentContainer>
-                <CommentIcon
-                source={require('~/Assets/Images/Social/ic_comment.png')}/>
-            </CommentContainer>
-            </SocialInfoListContainer>
-            <SeeDentalInfoButton>
-                <SeeDentalInfoText>{"병원정보 보러가기"}</SeeDentalInfoText>
-            </SeeDentalInfoButton>
+            {!isCommentInputFocused ? (
+            <DefaultContainer>
+                <SocialInfoListContainer>
+                    <LikeContainer>
+                        <LikeIcon
+                        source={require('~/Assets/Images/Social/ic_like.png')}/>
+                    <LikeCountText>{likeCount}</LikeCountText>
+                    </LikeContainer>
+                    <ScrapContainer>
+                        <ScrapIcon
+                        source={require('~/Assets/Images/Social/ic_scrap.png')}/>
+                    </ScrapContainer>
+                    <TouchableWithoutFeedback onPress={() => clickCommentIcon()}>
+                    <CommentContainer>
+                        <CommentIcon
+                        source={require('~/Assets/Images/Social/ic_comment.png')}/>
+                    </CommentContainer>
+                    </TouchableWithoutFeedback>
+                </SocialInfoListContainer>
+                <SeeDentalInfoButton>
+                    <SeeDentalInfoText>{"병원정보 보러가기"}</SeeDentalInfoText>
+                </SeeDentalInfoButton>
+            </DefaultContainer>
+            ) : (
+                <CommentInputContainer>
+                    <CommentTextInput
+                    multiline={true}
+                    clearButtonMode="always" 
+                    autoCorrect={false}
+                    autoFocus={true}
+                    placeholder="댓글 입력"
+                    placeholderTextColor={'grey'}
+                    style={{
+                    borderWidth: 1,
+                    borderColor: '#E9E9E9',
+                    backgroundColor: 'white',
+                    }}
+                    />
+                    <TouchableOpacity
+                      style={{
+                        justifyContent: 'center',
+                        marginLeft: 16,
+                      }}
+                      onPress={() => {}}>
+                      <CommentUploadText>게시</CommentUploadText>
+                    </TouchableOpacity>
+                </CommentInputContainer>
+            )}
         </Container>
     )
 }
