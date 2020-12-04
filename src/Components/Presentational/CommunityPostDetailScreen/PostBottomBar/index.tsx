@@ -51,7 +51,7 @@ border-radius: 8px;
 font-size: 14px;
 line-height: 16px;
 flex: 1;
-padding: ${hp('100%') * 0.01478}px ${hp('100%') * 0.0197}px ${
+padding: ${hp('100%') * 0.016}px ${hp('100%') * 0.0197}px ${
   hp('100%') * 0.01478 - 1
 }px ${hp('100%') * 0.0197}px;
 

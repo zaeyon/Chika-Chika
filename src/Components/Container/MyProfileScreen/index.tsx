@@ -2,8 +2,8 @@ import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback} from 'react-native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 const Container = Styled.SafeAreaView`
@@ -20,7 +20,6 @@ const HeaderBar = Styled.View`
  background-color:#ffffff;
 `;
 
-
 const HeaderLeftContainer = Styled.View`
 padding: 7px 16px 13px 15px;
  align-items: center;
@@ -28,9 +27,9 @@ padding: 7px 16px 13px 15px;
  flex-direction: row;
 `;
 
-const HeaderHamburgerIcon = Styled.Image`
- width: ${wp('6.4%')};
- height: ${wp('6.4%')};
+const HeaderBackIcon = Styled.Image`
+width: ${wp('6.4%')};
+height: ${wp('6.4%')};
 `;
 
 const HeaderTitleText = Styled.Text`
@@ -48,37 +47,33 @@ const ReviewListContainer = Styled.ScrollView`
 `;
 
 interface Props {
-    navigation: any,
-    route: any,
+  navigation: any;
+  route: any;
 }
 
 const MyProfileScreen = ({navigation, route}: Props) => {
+  const moveToSetting = () => {
+    navigation.navigate('SettingStackScreen', {
+      screen: 'SettingScreen',
+    });
+  };
 
-    const moveToSetting = () => {
-        navigation.navigate("SettingStackScreen", {
-            screen: "SettingScreen"
-        })
-    }
+  return (
+    <Container>
+      <HeaderBar>
+        <TouchableWithoutFeedback onPress={() => moveToSetting()}>
+          <HeaderLeftContainer>
+            <HeaderBackIcon
+              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
+            />
+          </HeaderLeftContainer>
+        </TouchableWithoutFeedback>
+        <HeaderTitleText>My Profile</HeaderTitleText>
+        <HeaderRightContainer></HeaderRightContainer>
+      </HeaderBar>
+      <ReviewListContainer></ReviewListContainer>
+    </Container>
+  );
+};
 
-    return (
-        <Container>
-            <HeaderBar>
-                <TouchableWithoutFeedback onPress={() => moveToSetting()}>
-                <HeaderLeftContainer>
-                    <HeaderHamburgerIcon
-                    source={require('~/Assets/Images/HeaderBar/ic_hamburger.png')}/>
-                </HeaderLeftContainer>
-                </TouchableWithoutFeedback>
-                <HeaderTitleText>My Profile</HeaderTitleText>
-                <HeaderRightContainer>
-                </HeaderRightContainer>
-            </HeaderBar>
-            <ReviewListContainer>
-            </ReviewListContainer>
-        </Container>
-    )
-}
-
-export default MyProfileScreen
-
-
+export default MyProfileScreen;

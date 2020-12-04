@@ -18,27 +18,56 @@ import {
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 
 const HashTagItemFlatList = Styled(FlatList as new () => FlatList)`
-height: 71.4%;
 width: 100%
-
+border-top-width: 1px;
+border-color: #DADADA;
 `;
 
 const HashTagCategoryFlatList = Styled(FlatList as new () => FlatList)`
-height: 28.6%;
+height: ${hp('5.91%')}px;
 width: 100%;
 background: white;
 z-index: 2;
 `;
 
 const HashTagItemView = Styled(TouchableOpacity as new () => TouchableOpacity)`
-padding: 4px 16px;
+width: 100%;
+height: ${hp('7.39%')}px;
+border-bottom-width: 1px;
+border-color: #DADADA;
+flex-direction: row;
+align-items: center;
+padding: 0px 16px;
+`;
+
+const HashTagItemIconImage = Styled.Image`
+width: 22px;
+height: 22px;
+margin-right: 8px;
+`;
+
+const HashTagItemNameText = Styled.Text`
+margin-right: 4px;
+font-size: 18px;
+line-height: 28px;`;
+
+const HashTagItemLocationText = Styled.Text`
+font-size: 14px;
+line-height: 28px;
+color: #0075FF;
+`;
+
+const HashTagCategoryView = Styled(
+  TouchableOpacity as new () => TouchableOpacity,
+)`
+padding: 0px 16px;
 border-radius: 100px;
 border: 0.5px solid #E5E5E5;
 margin: 0px 4px;
 `;
 
-const HashTagItemText = Styled.Text`
-
+const HashTagCategoryText = Styled.Text`
+margin: auto 0px;
 font-size: 16px;
 line-height: 28px;
 
@@ -46,6 +75,10 @@ line-height: 28px;
 
 interface Props {
   setSearchMode: any;
+  searchMode: any;
+  suggestionList: any;
+  searchQuery: any;
+  completeCurrentHashTag: any;
 }
 
 if (Platform.OS === 'android') {
@@ -54,10 +87,17 @@ if (Platform.OS === 'android') {
   }
 }
 
-const HashTagSearchBarView = ({setSearchMode}: Props) => {
+const HashTagSearchBarView = ({
+  setSearchMode,
+  searchMode,
+  suggestionList,
+  searchQuery,
+  completeCurrentHashTag,
+}: Props) => {
   const translateY = useRef(new Animated.Value(-getBottomSpace())).current;
   const [bottomSpace, setBottomSpace] = useState(-(getBottomSpace() + 168));
   const [selectedHashTagCategory, setSelectedHashTagCategory] = useState('');
+
   useEffect(() => {
     Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
     Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
@@ -74,6 +114,12 @@ const HashTagSearchBarView = ({setSearchMode}: Props) => {
     setSearchMode(selectedHashTagCategory);
   }, [selectedHashTagCategory]);
 
+  useEffect(() => {
+    if (searchMode === '') {
+      setSelectedHashTagCategory('');
+    }
+  }, [searchMode]);
+
   const _keyboardWillShow = (e: any) => {
     LayoutAnimation.configureNext(
       LayoutAnimation.create(
@@ -88,8 +134,37 @@ const HashTagSearchBarView = ({setSearchMode}: Props) => {
     setBottomSpace(-(e.endCoordinates.height - getBottomSpace()));
   };
 
+  const renderHashTagItemView = ({item, index}: any) => {
+    const korean = /[가-힣]/;
+    const lastInput = searchQuery[searchQuery.length - 1];
+    const isCompeleteWord = korean.test(lastInput);
+    const shownLength = isCompeleteWord
+      ? searchQuery.length
+      : searchQuery.length - 1;
+    return (
+      <HashTagItemView
+        onPress={() => {
+          completeCurrentHashTag(item.name);
+        }}>
+        <HashTagItemIconImage
+          source={require('~/Assets/Images/Category/hospital.png')}
+        />
+        <HashTagItemNameText>
+          <HashTagItemNameText
+            style={{
+              color: '#0075FF',
+            }}>
+            {searchQuery.slice(0, shownLength)}
+          </HashTagItemNameText>
+          {item.name.slice(shownLength)}
+        </HashTagItemNameText>
+        <HashTagItemLocationText>{item.location}</HashTagItemLocationText>
+      </HashTagItemView>
+    );
+  };
+
   const renderHashTagCategoryView = ({item, index}: any) => (
-    <HashTagItemView
+    <HashTagCategoryView
       onPress={() => {
         setSelectedHashTagCategory(
           selectedHashTagCategory === item ? '' : item,
@@ -98,13 +173,13 @@ const HashTagSearchBarView = ({setSearchMode}: Props) => {
       style={{
         backgroundColor: selectedHashTagCategory === item ? '#0075FF' : 'white',
       }}>
-      <HashTagItemText
+      <HashTagCategoryText
         style={{
           color: selectedHashTagCategory === item ? 'white' : '#494949',
         }}>
         {item}
-      </HashTagItemText>
-    </HashTagItemView>
+      </HashTagCategoryText>
+    </HashTagCategoryView>
   );
   return (
     <View
@@ -113,9 +188,16 @@ const HashTagSearchBarView = ({setSearchMode}: Props) => {
         bottom: bottomSpace,
         left: 0,
         width: '100%',
-        height: 168,
+        flex: 1,
       }}>
-      <HashTagItemFlatList />
+      <HashTagItemFlatList
+        keyboardShouldPersistTaps={'handled'}
+        style={{
+          height: Math.min(2, suggestionList.length) * hp('7.39%'),
+        }}
+        data={suggestionList}
+        renderItem={renderHashTagItemView}
+      />
       <HashTagCategoryFlatList
         keyboardShouldPersistTaps={'handled'}
         contentContainerStyle={{
