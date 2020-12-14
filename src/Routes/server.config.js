@@ -1,5 +1,5 @@
 const serverConfig = {
-    baseUri : "https://iejagclcdb.execute-api.ap-northeast-2.amazonaws.com/prod"
+  baseUri: 'https://43tbm5rlw1.execute-api.ap-northeast-1.amazonaws.com/test',
 };
 
-export default serverConfig
+export default serverConfig;

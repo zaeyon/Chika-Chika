@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
@@ -6,6 +6,7 @@ import {
   FlatList,
   View,
   Text,
+  Animated,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -53,7 +54,7 @@ interface Props {
 }
 
 const CommunityListScreen = ({navigation, route}: Props) => {
-  const CommunityTab = createMaterialTopTabNavigator();
+  const CommunityTopTab = createMaterialTopTabNavigator();
 
   return (
     <ContainerView>
@@ -61,7 +62,7 @@ const CommunityListScreen = ({navigation, route}: Props) => {
         <HeaderContentText>수다방</HeaderContentText>
       </HeaderConatinerView>
       <BodyContainerView>
-        <CommunityTab.Navigator
+        <CommunityTopTab.Navigator
           style={{
             flex: 1,
           }}
@@ -96,31 +97,13 @@ const CommunityListScreen = ({navigation, route}: Props) => {
               height: 2.5,
             },
           }}>
-          <CommunityTab.Screen name="전체" component={HomeTabScreen} />
-          <CommunityTab.Screen name="질문" component={QuestionTabScreen} />
-          <CommunityTab.Screen name="자유수다" component={GeneralTabScreen} />
-        </CommunityTab.Navigator>
-        <TouchableOpacity
-          activeOpacity={0.5}
-          onPress={() => {
-            navigation.navigate('CommunityPostUploadStackScreen');
-          }}>
-          <View
-            style={{
-              position: 'absolute',
-              right: wp('50%') - 45,
-              bottom: (getBottomSpace() ? wp('12%') : wp('15%')) + 23,
-              backgroundColor: '#C4C4C4',
-              borderRadius: 100,
-              width: 90,
-              height: 34,
-              padding: 9,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Text>글 작성하기</Text>
-          </View>
-        </TouchableOpacity>
+          <CommunityTopTab.Screen name="전체" component={HomeTabScreen} />
+          <CommunityTopTab.Screen name="질문" component={QuestionTabScreen} />
+          <CommunityTopTab.Screen
+            name="자유수다"
+            component={GeneralTabScreen}
+          />
+        </CommunityTopTab.Navigator>
       </BodyContainerView>
     </ContainerView>
   );
