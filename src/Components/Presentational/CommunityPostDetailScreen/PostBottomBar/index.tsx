@@ -62,8 +62,15 @@ line-height: 16px;
 `;
 
 const CommentSubmitText = Styled.Text``;
-const PostBottomBar = ({toggleKeyboardAnimation}: any) => {
+const PostBottomBar = ({
+  toggleKeyboardAnimation,
+  uploadComment,
+  postLikeNum,
+  viewerLikeCommunityPost,
+}: any) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [commentText, setCommentText] = useState('');
+
   useEffect(() => {
     Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
     Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
@@ -107,7 +114,7 @@ const PostBottomBar = ({toggleKeyboardAnimation}: any) => {
                 <Image
                   source={require('~/Assets/Images/Review/ic_like_inline.png')}
                 />
-                <SoicalInfoText>93</SoicalInfoText>
+                <SoicalInfoText>{postLikeNum}</SoicalInfoText>
               </SocialInfoView>
             </TouchableOpacity>
             <SocialInfoView
@@ -135,6 +142,10 @@ const PostBottomBar = ({toggleKeyboardAnimation}: any) => {
             borderColor: '#E9E9E9',
             backgroundColor: isFocused ? 'white' : '#E9E9E9',
           }}
+          value={commentText}
+          onChangeText={(text) => {
+            setCommentText(text);
+          }}
         />
         {isFocused ? (
           <TouchableOpacity
@@ -142,7 +153,11 @@ const PostBottomBar = ({toggleKeyboardAnimation}: any) => {
               justifyContent: 'center',
               marginLeft: 16,
             }}
-            onPress={() => {}}>
+            onPress={() => {
+              uploadComment(commentText);
+              setCommentText('');
+              Keyboard.dismiss();
+            }}>
             <CommentUploadText>게시</CommentUploadText>
           </TouchableOpacity>
         ) : null}

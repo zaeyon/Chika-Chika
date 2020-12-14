@@ -2,8 +2,8 @@ import React from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback, FlatList} from 'react-native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 import CommentItem from '~/Components/Presentational/CommentItem';
@@ -32,40 +32,33 @@ padding-bottom: 16px;
 `;
 
 interface Props {
-    commentList: Array<object>,
+  commentList: Array<object>;
 }
 
 const ReviewCommentList = ({commentList}: Props) => {
-    
-    const renderCommentItem = ({item, index}: any) => {
-        return (
-            <CommentItem
-            commentId={item.commentId}
-            profileImage={item.user.profile_image}
-            nickname={item.user.nickname}
-            comment={item.comment}
-            createdAt={item.createdAt}
-            replys={item.replys}
-            />
-        )
-    }
-
+  const renderCommentItem = ({item, index}: any) => {
     return (
-        <Container>
-            <HeaderContainer>
-                <HeaderCommentCountText>댓글</HeaderCommentCountText>
-            </HeaderContainer>
-            <CommentListContainer>
-                <FlatList
-                data={commentList}
-                renderItem={renderCommentItem}/>
-            </CommentListContainer>
-        </Container>
-    )
-}
+      <CommentItem
+        commentId={item.id}
+        profileImage={item.user.profileImage}
+        nickname={item.user.nickname}
+        comment={item.description}
+        createdAt={item.createdAt}
+        replys={item.Replys}
+      />
+    );
+  };
 
-export default ReviewCommentList
+  return (
+    <Container>
+      <HeaderContainer>
+        <HeaderCommentCountText>댓글</HeaderCommentCountText>
+      </HeaderContainer>
+      <CommentListContainer>
+        <FlatList data={commentList} renderItem={renderCommentItem} />
+      </CommentListContainer>
+    </Container>
+  );
+};
 
-
-
-
+export default ReviewCommentList;
