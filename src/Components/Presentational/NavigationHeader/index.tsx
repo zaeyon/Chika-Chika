@@ -14,6 +14,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
  height: ${hp('8%')}px;
@@ -23,12 +24,12 @@ const HeaderBar = Styled.View`
  justify-content: space-between;
  background-color: white;
  border-bottom-width: 1px;
- border-color: #C8C8C8;
+ border-color: #eeeeee;
 `;
 
 const HeaderLeftContainer = Styled.View`
 width: 30%;
-height: ${wp('13.8%')}px;
+height: ${hp('8%')}px;
 padding: 0px 16px;
  align-items: center;
  flex-direction: row;
@@ -43,7 +44,7 @@ font-size: 18px;
 
 const HeaderRightContainer = Styled.View`
 width: 30%;
-height: ${wp('13.8%')}px;
+height: ${hp('8%')}px;
 padding: 0px 16px 0px 16px;
  align-items: center;
  justify-content: flex-end;

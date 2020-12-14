@@ -1,12 +1,19 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList, ScrollView, Keyboard, StyleSheet, Alert} from 'react-native';
+import {TouchableWithoutFeedback, FlatList, ScrollView, Keyboard, StyleSheet, Alert, View} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { NavigationContainer } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
+import {RNS3} from 'react-native-upload-aws-s3';
+
+import {uploadImageToS3} from '~/method/uploadImageToS3';
+
+// route
+import POSTReviewUpload from '~/Routes/Review/POSTReviewUpload';
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -99,11 +106,16 @@ padding-bottom: 0px;
 `;
 
 const MetaInfoItemBackground = Styled.View`
-padding: 4px 16px 4px 16px;
+min-width: ${wp('15%')}px;
+height: ${hp('3.5%')}px;
+padding-left: 16px;
+padding-right: 16px;
+align-items: center;
 background-color: #F0F6FC;
 border-radius: 100px;
 flex-direction: row;
 align-items: center;
+justify-content: center;
 `;
 
 const MetaInfoItemTextList = Styled.Text`
@@ -156,14 +168,13 @@ const TotalPriceInput = Styled.TextInput`
 font-size: 16px;
 color: #F0F6FC;
 font-weight: 300;
-padding-left: 10px;
 `;
 
 const TotalPriceContainer = Styled.View`
+min-width: ${wp('15%')}px;
 position: absolute;
 align-items: center;
 justify-content: center;
-padding: 4px 16px 4px 12px;
 `;
 
 const ParaUnitContainer = Styled.View`
@@ -250,8 +261,10 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
     const [dentalClinic, setDentalClinic] = useState<object>({});
     const [treatDate, setTreatDate] = useState<object>({});
     const [treatPrice, setTreatPrice] = useState<object>({});
+    const [detailPriceList, setDetailPriceList] = useState<Array<object>>([]);
     const [selectedTreatList, setSelectedTreatList] = useState<Array<object>>([]);
-    const [rating, setRating] = useState<object>({});
+    const [rating, setRating] = useState<object>({}); 
+    const [isDetailPrice, setIsDetailPrice] = useState<boolean>(false);
 
     const [displayTotalPrice, setDisplayTotalPrice] = useState<string>(route.params.treatPrice.displayTreatPrice);
     const [totalPrice, setTotalPrice] = useState<any>(route.params.treatPrice.treatPrice);
@@ -259,9 +272,11 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
     const [changeMetaInfo, setChangeMetaInfo] = useState<boolean>(false);
     const [visibleDatePicker, setVisibleDatePicker] = useState<boolean>(false);
     const [changeParagraphList, setChangeParagraphList] = useState<boolean>(false);
+    const [certifiedBill, setCertifiedBill] = useState<boolean>(false);
 
     const totalPriceInputRef = useRef()
 
+    const [selectedImageList, setSelectedImageList] = useState<Array<any>>([]);
     const [paragraphList, setParagraphList] = useState<Array<object>>([
         {
             index: 1,
@@ -286,33 +301,54 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
 
     useEffect(() => {
         if(route.params?.dentalClinic) {
+            console.log("route.params?.dentalClinic", route.params.dentalClinic);
             setDentalClinic(route.params?.dentalClinic)
         }
     }, [route.params?.dentalClinic])
 
     useEffect(() => {
         if(route.params?.treatDate) {
+            console.log("route.params?.treatDate", route.params?.treatDate);
             setTreatDate(route.params?.treatDate)
         }
     }, [route.params?.treatDate])
 
     useEffect(() => {
         if(route.params?.treatPrice) {
+            console.log("route.params.treatPrice", route.params.treatPrice);
             setTreatPrice(route.params?.treatPrice)
         }
     }, [route.params?.treatPrice])
 
     useEffect(() => {
         if(route.params?.selectedTreatList) {
+            console.log("route.params.selectedTreatList", route.params.selectedTreatList);
+            console.log("route.params.detailPriceList", route.params.detailPriceList)
             setSelectedTreatList(route.params?.selectedTreatList)
+
         }
     }, [route.params?.selectedTreatList])
 
     useEffect(() => {
         if(route.params?.rating) {
+            console.log("route.params.rating", route.params?.rating);
             setRating(route.params?.rating)
         }
     }, [route.params.rating])
+
+    useEffect(() => {
+        if(route.params?.isDetailPrice) {
+            console.log("route.params.isDetailPrice", route.params?.isDetailPrice);
+            setIsDetailPrice(route.params.isDetailPrice);
+        }
+    }, [route.params?.isDetailPrice])
+
+    useEffect(() => {
+        if(route.params?.detailPriceList) {
+            console.log("route.params.detailPriceList", route.params.detailPriceList)
+            setDetailPriceList(route.params.detailPriceList);
+        }
+    }, [route.params?.detailPriceList])
 
     useEffect(() => {
         if(route.params?.selectedImages) {
@@ -322,6 +358,7 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                 console.log("선택된 사진 item", item)
                 
                 var tmpParagraphList = paragraphList
+                var tmpSelectedImageList = selectedImageList
                 var paraObj
 
                 if(index == 0) {
@@ -341,7 +378,6 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                     
                     tmpParagraphList.push(paraObj)  
                 }
-
 
                 if(index == route.params.selectedImages.length-1) {
                     setParagraphList(tmpParagraphList)
@@ -420,10 +456,17 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
     }
 
     const onChangePriceInput = (text: string) => {
+
         console.log("text", text);
         console.log("treatPrice", treatPrice);
-        setTotalPrice(text);
-        setDisplayTotalPrice(Number(text).toLocaleString() + "원")
+
+        if(text.trim() === "") {
+            setTotalPrice("")
+            setDisplayTotalPrice("")
+        } else {
+            setTotalPrice(text);
+            setDisplayTotalPrice(Number(text).toLocaleString() + "원")
+        }
     }
 
     const moveToTreatSearch = () => {
@@ -436,7 +479,8 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
     const moveToDetailPrice = () => {
         navigation.push("DetailPriceScreen", {
             requestPage: "content",
-            selectedTreatList: selectedTreatList
+            selectedTreatList: selectedTreatList,
+            treatPrice: treatPrice,
         })
     }
 
@@ -470,6 +514,121 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
         setParagraphList(tmpParagraphList);
         setChangeParagraphList(!changeParagraphList)
     }
+
+    const uploadReview = () => {
+
+        var tmpParagraphList = paragraphList;
+        var descriptions = new Array();
+        var paragraphs = new Array();
+
+        const starRate_cost = rating.priceRating;
+        const starRate_treatment = rating.treatRating;
+        const starRate_service = rating.serviceRating;
+        const certified_bill = certifiedBill;
+        const dentalClinicId = dentalClinic.id;
+
+        const treatments = selectedTreatList.map((item: any, index) => {
+            if(item.price) {
+
+                const tmpObj = {
+                    id: item.id,
+                    price: item.price,
+                }
+
+                return tmpObj
+
+            } else {
+
+                const tmpObj = {
+                    id: item.id,
+                    price: null,
+                }
+
+                return tmpObj
+            }
+        })
+
+        tmpParagraphList.forEach((item: any, paraIndex: number) => {
+            console.log("item", item);
+
+            descriptions.push(item.description)
+
+            if(item.image) {
+                uploadImageToS3(item.image)
+                .then((res: any) => {
+                    console.log("uploadImageToS3 res", res)
+
+                    if(item.description) {
+
+                        const paraObj = {
+                            index: paraIndex,
+                            description: item.description,
+                            location: res.response.location,
+                            key: res.response.key,
+                            mimeType: res.type,
+                            originalName: res.originalName,
+                            size: res.size,
+                            imgBeforeAfters: "before"
+                        }
+                        paragraphs.push(paraObj)
+
+                    } else if (!item.description) {
+
+                        const paraObj = {
+                            index: paraIndex,
+                            description: null,
+                            location: res.response.location,
+                            key: res.response.key,
+                            mimeType: res.type,
+                            originalName: res.originalName,
+                            size: res.size,
+                            imgBeforeAfters: "before"
+                        }
+                        paragraphs.push(paraObj)
+                    }
+                })
+                .catch((err) => {
+                    console.log("upload s3 err", err);
+                })
+            } else {
+                if(item.description) {
+
+                    const paraObj = {
+                        index: paraIndex,
+                        description: item.description,
+                        location: null,
+                        key: null,
+                        mimeType: null,
+                        originalName: null,
+                        size: null,
+                        imgBeforeAfters: null
+                    }
+                    paragraphs.push(paraObj)
+
+                } else if (!item.description) {
+
+                    const paraObj = {
+                        index: paraIndex,
+                        description: null,
+                        location: null,
+                        key: null,
+                        mimeType: null,
+                        originalName: null,
+                        size: null,
+                        imgBeforeAfters: null
+                    }
+                    paragraphs.push(paraObj)
+                }
+            }
+
+            if(paraIndex == paragraphList.length - 1) {
+                POSTReviewUpload({starRate_cost, starRate_treatment, starRate_service, certified_bill, treatments, })
+            }
+        })
+
+        
+    }
+
 
     const renderParaUnitItem = ({item, index}: any) => {
         return (
@@ -543,24 +702,27 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                 </HeaderLeftContainer>
                 </TouchableWithoutFeedback>
                 <HeaderTitleText>작성</HeaderTitleText>
+                <TouchableWithoutFeedback onPress={() => uploadReview()}>
                 <HeaderRightContainer>
                     <HeaderEmptyContainer/>
                     <HeaderUploadText>
                     올리기
                     </HeaderUploadText>
                 </HeaderRightContainer>
+                </TouchableWithoutFeedback>
             </HeaderBar>
             <BodyContainer>
                 <MetaInfoContainer>
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                     <FirstMetaDataListContainer>
                     <TouchableWithoutFeedback onPress={() => moveToDentalClinicSearch()}>
-                    <MetaInfoItemBackground style={{marginLeft: 16}}>
+                    <MetaInfoItemBackground style={[{marginLeft: 16}]}>
                         <MetaInfoItemText>
-                        {dentalClinic.name}
+                        {dentalClinic.name ? dentalClinic.name : "병원"}
                         </MetaInfoItemText>
                     </MetaInfoItemBackground>
                     </TouchableWithoutFeedback>
+                    {treatDate.displayTreatDate != "" && (
                     <TouchableWithoutFeedback onPress={() => onPressTreatDate()}>
                     <MetaInfoItemBackground style={{marginLeft: 8}}>
                         <MetaInfoItemText>
@@ -568,9 +730,20 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                         </MetaInfoItemText>
                     </MetaInfoItemBackground>
                     </TouchableWithoutFeedback>
+                    )}
+                    {treatDate.displayTreatDate == "" && (
+                    <TouchableWithoutFeedback onPress={() => onPressTreatDate()}>
+                    <MetaInfoItemBackground style={{marginLeft: 8, backgroundColor: "#F3F3F3"}}>
+                        <MetaInfoItemText style={{color :"#BCBCBC"}}>
+                        {"날짜"}
+                        </MetaInfoItemText>
+                    </MetaInfoItemBackground>
+                    </TouchableWithoutFeedback>
+                    )}
                     <TouchableWithoutFeedback onPress={() => onPressTreatPrice()}>
-                    <MetaInfoItemBackground style={{marginLeft: 8, marginRight: 16}}>
+                    <MetaInfoItemBackground style={[{marginLeft: 8, marginRight: 16}, !displayTotalPrice && {backgroundColor: "#f3f3f3"}]}>
                         <TotalPriceInput
+                        style={{paddingLeft: 8, paddingRight: 8}}
                         ref={totalPriceInputRef}
                         value={totalPrice}
                         keyboardType={"number-pad"}
@@ -578,8 +751,8 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                         onChangeText={(text:string) => onChangePriceInput(text)}
                         />
                     <TotalPriceContainer>
-                    <MetaInfoItemText>
-                    {displayTotalPrice}
+                    <MetaInfoItemText style={!displayTotalPrice && {color: "#bcbcbc"}}>
+                    {displayTotalPrice ? displayTotalPrice : "비용"}
                     </MetaInfoItemText>
                     </TotalPriceContainer>
                     </MetaInfoItemBackground>
@@ -589,50 +762,71 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                 <ScrollView 
                 horizontal={true} 
                 showsHorizontalScrollIndicator={false}>
-                    <SecondMetaDataListContainer style={{marginTop: 8}}>
-                        <TouchableWithoutFeedback onPress={() => moveToTreatSearch()}>
-                        <MetaInfoItemBackground style={{marginLeft: 16}}>
-                            <MetaInfoItemTextList>
-                            {selectedTreatList.map((treat: any, index: number) => {
-                            if(index === selectedTreatList.length - 1) {
+                <SecondMetaDataListContainer style={{marginTop: 8}}>
+                    {selectedTreatList.length === 0 && (
+                    <TouchableWithoutFeedback onPress={() => moveToTreatSearch()}>
+                    <MetaInfoItemBackground style={{marginLeft: 16, backgroundColor: "#f3f3f3"}}>
+                        <MetaInfoItemText style={{color: "#bcbcbc"}}>{"진료항목"}</MetaInfoItemText>
+                    </MetaInfoItemBackground>
+                    </TouchableWithoutFeedback>
+                    )}
+                    {selectedTreatList.length > 0 && (
+                    <TouchableWithoutFeedback onPress={() => moveToTreatSearch()}>
+                    <MetaInfoItemBackground style={{marginLeft: 16}}>
+                        <MetaInfoItemTextList>
+                        {selectedTreatList.map((treat: any, index: number) => {
+                        if(index === selectedTreatList.length - 1) {
                             return (
                                 <MetaInfoItemText>
                                 {treat.name}
                                 </MetaInfoItemText>
                             )   
-                            } else {
+                        } else {
                             return (
-                            <MetaInfoItemText>
-                            {treat.name + ","}
-                            </MetaInfoItemText>
-                        )
-                    }
-                })
-                }
-                </MetaInfoItemTextList>
-                </MetaInfoItemBackground>
-                </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => moveToRating()}>
-                <MetaInfoItemBackground style={{marginLeft: 8}}>
-                <RatingStarIcon
-                source={require('~/Assets/Images/Upload/ic_ratingStar.png')}/>
-                <MetaInfoItemText style={{marginLeft: 2}}>
-                {rating.aveRating}
-                </MetaInfoItemText>
-                </MetaInfoItemBackground>
-                </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => moveToDetailPrice()}>
-                <MetaInfoItemBackground style={{marginLeft: 8, marginRight: 16}}>
-                <MetaInfoItemText>
-                {"상세비용"}
-                </MetaInfoItemText>
-                </MetaInfoItemBackground>
-                </TouchableWithoutFeedback>
+                                <MetaInfoItemText>
+                                {treat.name + ","}
+                                </MetaInfoItemText>
+                            )
+                        }
+                        })
+                        }
+                        </MetaInfoItemTextList>
+                    </MetaInfoItemBackground>
+                    </TouchableWithoutFeedback>
+                    )}
+                    <TouchableWithoutFeedback onPress={() => moveToRating()}>
+                    <MetaInfoItemBackground style={{marginLeft: 8}}>
+                        <RatingStarIcon
+                        source={require('~/Assets/Images/Upload/ic_ratingStar.png')}/>
+                        <MetaInfoItemText style={{marginLeft: 2}}>
+                        {rating.aveRating}
+                        </MetaInfoItemText>
+                    </MetaInfoItemBackground>
+                    </TouchableWithoutFeedback>
+                    {!isDetailPrice && (
+                    <TouchableWithoutFeedback onPress={() => moveToDetailPrice()}>
+                    <MetaInfoItemBackground style={{marginLeft: 8, marginRight: 16, backgroundColor: "#f3f3f3"}}>
+                        <MetaInfoItemText style={{color: "#bcbcbc"}}>
+                        {"상세비용"}
+                        </MetaInfoItemText>
+                    </MetaInfoItemBackground>
+                    </TouchableWithoutFeedback>
+                    )}
+                    {(isDetailPrice && (
+                    <TouchableWithoutFeedback onPress={() => moveToDetailPrice()}>
+                    <MetaInfoItemBackground style={{marginLeft: 8, marginRight: 16}}>
+                        <MetaInfoItemText>
+                        {"상세비용"}
+                        </MetaInfoItemText>
+                    </MetaInfoItemBackground>
+                    </TouchableWithoutFeedback>
+                    )
+                    )}
                 </SecondMetaDataListContainer>
                 </ScrollView>
                 </MetaInfoContainer>
                 <ContentContainer>
-                    <FlatList
+                    <KeyboardAwareFlatList
                     scrollEnabled={true}
                     showsVerticalScrollIndicator={false}
                     data={paragraphList}

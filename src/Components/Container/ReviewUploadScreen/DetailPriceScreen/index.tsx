@@ -7,6 +7,8 @@ import {
 } from 'react-native-responsive-screen';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+import AboveKeyboard from 'react-native-above-keyboard';
+
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -94,10 +96,16 @@ color: #0075FF
 `;
 
 const FooterContainer = Styled.View`
+width: ${wp('100%')}px;
 position: absolute;
 bottom: 53px;
-
 `;
+
+const FinishButtonContainer = Styled.View`
+width: ${wp('100%')}px;
+align-items: center;
+`;
+
 
 const FinishButton = Styled.View`
 width: ${wp('91.46%')};
@@ -167,7 +175,9 @@ const DetailPriceScreen = ({navigation, route}: Props) => {
     const [onFocusTreatPrice, setOnFocusTreatPrice] = useState<boolean>(false);
     const [detailPriceList, setDetailPriceList] = useState<Array<object>>([]);
     const [changeDetailPriceList, setChangeDetailPriceList] = useState<boolean>(false);
-    const priceInputRef = useRef<any>()
+    const priceInputRef = useRef<any>()    
+    const [buttonBottomPadding, setButtonBottomPadding] = useState<number>(53);
+
 
     for (var i = 0; i < route.params.selectedTreatList.length; i++) {
         route.params.selectedTreatList[i].inputRef = useRef()
@@ -183,6 +193,30 @@ const DetailPriceScreen = ({navigation, route}: Props) => {
         }
         
     }, [route.params?.selectedTreatList])
+
+    
+    /*
+    useEffect(() => {
+
+            Keyboard.addListener("keyboardWillShow", onKeyboardWillShow);
+            Keyboard.addListener("keyboardWillHide", onKeyboardWillHide);
+    
+            return () => {
+                Keyboard.removeListener("keyboardWillShow", onKeyboardWillShow);
+                Keyboard.removeListener("keyboardWillHide", onKeyboardWillHide);
+            }
+
+    }, [])
+    */
+
+
+    const onKeyboardWillShow = () => {
+        setButtonBottomPadding(20);
+    }
+  
+    const onKeyboardWillHide = () => {
+        setButtonBottomPadding(53);
+    }
 
     const goBack = () => {
         navigation.goBack();
@@ -241,6 +275,7 @@ const DetailPriceScreen = ({navigation, route}: Props) => {
   const onChangeDetailPriceInput = (text: string, index: number) => {
       console.log("text", text)
       console.log("index", index);
+      console.log("detailPriceList", detailPriceList);
 
       var tmpDetailPriceList = detailPriceList
 
@@ -252,13 +287,44 @@ const DetailPriceScreen = ({navigation, route}: Props) => {
 
   
   const onPressFinishButton = () => {
-      navigation.navigate("RatingScreen", {
-          selectedTreatList: route.params?.selectedTreatList,
-          dentalClinic: route.params?.dentalClinic,
-          treatDate: route.params?.treatDate,
-          treatPrice: route.params?.treatPrice,
-          requestPage: "detailPrice"
-      });
+      let isDetailPrice = false
+
+      detailPriceList.forEach((item, index) => {
+          console.log("item", item);
+          if(item.price) {
+              isDetailPrice = true
+          }
+      })
+
+
+      if(route.params?.requestPage === "treat") {
+        navigation.navigate("RatingScreen", {
+            selectedTreatList: route.params?.selectedTreatList,
+            dentalClinic: route.params?.dentalClinic,
+            treatDate: route.params?.treatDate,
+            treatPrice: route.params?.treatPrice,
+            detailPriceList: detailPriceList,
+            isDetailPrice: isDetailPrice,
+            requestPage: "detailPrice"
+        });
+      } else if(route.params?.requestPage === "content") {
+        navigation.navigate("ReviewContentScreen", {
+            treatPrice: route.params?.treatPrice,
+            isDetailPrice: isDetailPrice,
+            detailPriceList: detailPriceList,
+        });
+      }
+  }
+
+  const skipDetailPrice = () => {
+    navigation.navigate("RatingScreen", {
+        selectedTreatList: route.params?.selectedTreatList,
+        dentalClinic: route.params?.dentalClinic,
+        treatDate: route.params?.treatDate,
+        treatPrice: route.params?.treatPrice,
+        detailPriceList: [],
+        requestPage: "detailPrice"
+    });
   }
 
   const onClickDetailPriceItem = (item: object, index: number) => {
@@ -303,9 +369,11 @@ const DetailPriceScreen = ({navigation, route}: Props) => {
                 <HeaderTitleText>상세비용</HeaderTitleText>
                 <HeaderRightContainer>
                     <HeaderEmptyContainer/>
+                    <TouchableWithoutFeedback onPress={() => skipDetailPrice()}>
                     <HeaderSkipContainer>
                     <SkipText>건너뛰기</SkipText>
                     </HeaderSkipContainer>
+                    </TouchableWithoutFeedback>
                 </HeaderRightContainer>
             </HeaderBar>
             <BodyContainer>
@@ -313,12 +381,16 @@ const DetailPriceScreen = ({navigation, route}: Props) => {
                 data={detailPriceList}
                 renderItem={renderDetailPriceItem}/>
             </BodyContainer>
-            <FooterContainer>
-            <TouchableWithoutFeedback onPress={() => onPressFinishButton()}>
-            <FinishButton>
-                <FinishText>확인</FinishText>
-            </FinishButton>
-            </TouchableWithoutFeedback>
+            <FooterContainer style={{bottom: buttonBottomPadding}}>
+                <AboveKeyboard>
+                <FinishButtonContainer>
+                    <TouchableWithoutFeedback onPress={() => onPressFinishButton()}>
+                    <FinishButton>
+                        <FinishText>확인</FinishText>
+                    </FinishButton>
+                    </TouchableWithoutFeedback>
+                </FinishButtonContainer>
+                </AboveKeyboard>
             </FooterContainer>
         </Container>
         </TouchableWithoutFeedback>

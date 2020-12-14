@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.facebook.react.BuildConfig;
 import com.facebook.react.ReactApplication;
+import com.rnfs.RNFSPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.reactnativecommunity.imageeditor.ImageEditorPackage;
 import com.facebook.react.ReactInstanceManager;
@@ -15,7 +16,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
+
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
+import com.rnfs.RNFSPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -41,7 +44,9 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
-                    new RNGoogleSigninPackage() // <-- this needs to be in the list
+            new RNFSPackage(),
+                    new RNGoogleSigninPackage(), // <-- this needs to be in the list
+                    new RNSPackage();
             );
         }
 

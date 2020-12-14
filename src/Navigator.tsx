@@ -9,6 +9,8 @@ import {
 } from 'react-native-responsive-screen';
 import {useDispatch, useSelector} from 'react-redux';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
+import DeviceInfo from 'react-native-device-info';
+
 import allActions from '~/actions';
 
 // Auth Stack Screen 
@@ -72,6 +74,9 @@ import RelatedDiseaseScreen from '~/Components/Container/TeethCareScreen/TimerTa
 import BrushDetritionCamera from '~/Components/Container/BrushDetritionCamera';
 import MeasuredBrushPictureScreen from '~/Components/Container/BrushDetritionCamera/MeasuredBrushPictureScreen';
 
+// Hometown Setting Screen 
+import HometownSettingScreen from '~/Components/Container/HometownSettingScreen';
+
 
 
 const Tab = createBottomTabNavigator();
@@ -86,6 +91,13 @@ const CommunityStack = createStackNavigator();
 const CommunityPostUploadStack = createStackNavigator();
 const DentalClinicStack = createStackNavigator();
 const TeethCareStack = createStackNavigator();
+
+const config = {
+  animation: 'timing',
+  config: {
+    duration: 0,
+  },
+};
 
 function AuthStackScreen() {
     return (
@@ -106,6 +118,9 @@ function AuthStackScreen() {
             <AuthStack.Screen
             name="VerifyPhoneNumberScreen"
             component={VerifyPhoneNumberScreen}/>
+            <AuthStack.Screen
+            name="HometownSettingScreen"
+            component={HometownSettingScreen}/>
         </AuthStack.Navigator>
     )
 }
@@ -167,7 +182,13 @@ function DentalClinicStackScreen() {
       component={NearDentalMap}/>
       <DentalClinicStack.Screen
       name="DentalClinicListScreen"
-      component={DentalClinicListScreen}/>
+      component={DentalClinicListScreen}
+      options={{
+        transitionSpec: {
+          open: config,
+          close: config,
+        },
+      }}/>
       <DentalClinicStack.Screen
       name="DentalDetailScreen"
       component={DentalDetailScreen}/>
@@ -428,28 +449,28 @@ function BottomTab() {
         style: styles.tabBar
       }}>
       <Tab.Screen 
-      name="Home" 
+      name="홈" 
       component={HomeStackScreen}
       options={({route}) => ({
         tabBarVisible: getHomeBottomTabBarVisibility(route)
       })}
       />
       <Tab.Screen
-      name="Dental Clinic"
+      name="지도"
       component={DentalClinicStackScreen}
       options={({route}) => ({
         tabBarVisible: getDentalBottomTabBarVisibility(route)
       })}
       />
       <Tab.Screen
-      name="Teeth Care"
+      name="관리"
       component={TeethCareStackScreen}
       options={({route}) => ({
         tabBarVisible: getTeethCareBottomTabVisibility(route)
       })}
       />
       <Tab.Screen
-      name="Community"
+      name="수다방"
       component={CommunityStackScreen}
       options={({route}) => ({
         tabBarVisible: getCommunityBottomTabBarVisibility(route)
@@ -464,7 +485,7 @@ function BottomTab() {
         */
       })}/>
       <Tab.Screen 
-      name="Profile" 
+      name="마이" 
       component={MyProfileStackScreen}
       options={({route}) => ({
         /*
@@ -501,7 +522,7 @@ const Navigator = () => {
 const styles = StyleSheet.create({
     tabBar: {
       paddingTop: isIphoneX() ? 10 : 0,
-      height: isIphoneX() ? wp("21%") : wp("15%"),
+      height: DeviceInfo.hasNotch() ? hp("9.6%") : hp("9.6%"),
       position: 'absolute',
     },
     tabLabel: {

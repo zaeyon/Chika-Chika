@@ -145,17 +145,17 @@ const ReviewBottomBar = ({likeCount, clickCommentIcon, isCommentInputFocused}: P
                 <SocialInfoListContainer>
                     <LikeContainer>
                         <LikeIcon
-                        source={require('~/Assets/Images/Social/ic_like.png')}/>
+                        source={require('~/Assets/Images/Indicator/ic_like.png')}/>
                     <LikeCountText>{likeCount}</LikeCountText>
                     </LikeContainer>
                     <ScrapContainer>
                         <ScrapIcon
-                        source={require('~/Assets/Images/Social/ic_scrap.png')}/>
+                        source={require('~/Assets/Images/Indicator/ic_scrap.png')}/>
                     </ScrapContainer>
                     <TouchableWithoutFeedback onPress={() => clickCommentIcon()}>
                     <CommentContainer>
                         <CommentIcon
-                        source={require('~/Assets/Images/Social/ic_comment.png')}/>
+                        source={require('~/Assets/Images/Indicator/ic_comment.png')}/>
                     </CommentContainer>
                     </TouchableWithoutFeedback>
                 </SocialInfoListContainer>

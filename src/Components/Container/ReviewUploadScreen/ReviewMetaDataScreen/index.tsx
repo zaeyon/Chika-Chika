@@ -6,6 +6,7 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import AboveKeyboard from 'react-native-above-keyboard';
 
 
 const Container = Styled.SafeAreaView`
@@ -88,9 +89,14 @@ color: #0075FF
 `;
 
 const FooterContainer = Styled.View`
+width: ${wp('100%')}px;
 position: absolute;
 bottom: 53px;
+`;
 
+const FinishButtonContainer = Styled.View`
+width: ${wp('100%')}px;
+align-items: center;
 `;
 
 const FinishButton = Styled.View`
@@ -163,12 +169,17 @@ interface Props {
     route: any,
 }
 
+type dentalData = {
+    name: string,
+    address: string,
+    id: number,
+}
+
 const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     
-    const [dentalClinicName, setDentalClinicName] = useState<string>("")
-    const [dentalClinicAddress, setDentalClinicAddress] = useState<string>("")
     const [treatDate, setTreatDate] = useState<any>("")
     const [treatPrice, setTreatPrice] = useState<string>("")
+    const [dentalClinic, setDentalClinic] = useState<object>({});
 
     const [date, setDate] = useState(new Date());
     const [displayDate , setDisplayDate] = useState<string>("")
@@ -176,15 +187,45 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     const [onFocusDentalClinicName, setOnFocusDentalClinicName] = useState<boolean>(false)
     const [onFocusTreatDate, setOnFocusTreatDate] = useState<boolean>(false);
     const [onFocusTreatPrice, setOnFocusTreatPrice] = useState<boolean>(false);
+    const [buttonBottomPadding, setButtonBottomPadding] = useState<number>(53);
+
 
     const priceInputRef = useRef<any>()
 
+    /*
     useEffect(() => {
-        if(route.params?.dentalClinicName || route.params?.dentalCLinicAddress) {
-            setDentalClinicName(route.params?.dentalClinicName)
-            setDentalClinicAddress(route.params?.dentalClinicAddress)
+        if(route.params?.selectedTreatList) {
+            setSelectedTreatList(route.params?.selectedTreatList);
         }
-    }, [route.params?.dentalClinicName, route.params?.dentalClinicAddress])
+        
+    }, [route.params?.selectedTreatList])
+    */
+
+    useEffect(() => {
+        if(route.params?.dentalClinic) {
+            setDentalClinic(route.params?.dentalClinic)
+        }
+    }, [route.params?.dentalClinic])
+
+    useEffect(() => {
+        
+        Keyboard.addListener("keyboardWillShow", onKeyboardWillShow);
+        Keyboard.addListener("keyboardWillHide", onKeyboardWillHide);
+
+        return () => {
+            Keyboard.removeListener("keyboardWillShow", onKeyboardWillShow);
+            Keyboard.removeListener("keyboardWillHide", onKeyboardWillHide);
+        }
+
+    }, [])
+
+    const onKeyboardWillShow = () => {
+        setButtonBottomPadding(20);
+    }
+  
+    const onKeyboardWillHide = () => {
+        setButtonBottomPadding(53);
+    }
 
     const goBack = () => {
         navigation.goBack();
@@ -261,10 +302,8 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
   const onPressFinishButton = () => {
       navigation.navigate("TreatSearchScreen", {
-          dentalClinic: {
-              name: dentalClinicName,
-              address: dentalClinicAddress
-          },
+          dentalClinic: dentalClinic
+          ,
           treatDate: {
               displayTreatDate: displayDate,
               treatDate: treatDate
@@ -275,7 +314,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
           },
           requestPage: "metadata"
       });
-  }
+    } 
 
     return (
         <TouchableWithoutFeedback onPress={() => onPressBackground()}>
@@ -296,7 +335,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
             <BodyContainer>
                 <TouchableWithoutFeedback onPress={() => moveToDentalClinicSearch()}>
                 <MetaDataItemContainer style={onFocusDentalClinicName && {borderWidth: 1, borderColor: "#0075FF"}}>
-                <MetaDataText>{dentalClinicName}</MetaDataText>
+                <MetaDataText>{dentalClinic.name}</MetaDataText>
                 </MetaDataItemContainer>
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback onPress={() => onPressTreatDate()}>
@@ -321,12 +360,17 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                 </MetaDataItemContainer>
                 </TouchableWithoutFeedback>
             </BodyContainer>
+            
             <FooterContainer>
-            <TouchableWithoutFeedback onPress={() => onPressFinishButton()}>
-            <FinishButton>
-                <FinishText>확인</FinishText>
-            </FinishButton>
-            </TouchableWithoutFeedback>
+                <AboveKeyboard>
+                <FinishButtonContainer>
+                    <TouchableWithoutFeedback onPress={() => onPressFinishButton()}>
+                    <FinishButton>
+                        <FinishText>확인</FinishText>
+                    </FinishButton>
+                    </TouchableWithoutFeedback>
+                </FinishButtonContainer>
+            </AboveKeyboard>
             </FooterContainer>
             {onFocusTreatDate &&  (
             <DateModalContainer>
@@ -349,7 +393,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                     maximumDate={new Date()}
                     />
             </DateModalContainer>
-      )}
+            )}
         </Container>
         </TouchableWithoutFeedback>
     )

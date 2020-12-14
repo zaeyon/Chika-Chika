@@ -11,8 +11,12 @@ target 'chikaApp' do
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
 
   pod 'react-native-image-editor', :path => '../node_modules/@react-native-community/image-editor'
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+
   pod 'Firebase/Analytics'
   pod 'GoogleSignIn', '~> 5.0.2'
+
+  pod 'RNConvertPhAsset', :path => '../node_modules/react-native-convert-ph-asset'
 
   target 'chikaAppTests' do
     inherit! :complete

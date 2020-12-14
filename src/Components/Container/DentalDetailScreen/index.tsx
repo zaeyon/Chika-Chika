@@ -11,6 +11,7 @@ import { FlingGestureHandler } from 'react-native-gesture-handler';
 
 // Local Component
 import ReviewItem from '~/Components/Presentational/ReviewItem';
+import {callPhoneNumber} from '~/method/callPhoneNumber';
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -644,9 +645,11 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
             </ContentContainer>
             <FooterContainer>
                 <ReserveByPhoneContainer>
+                <TouchableWithoutFeedback onPress={() => callPhoneNumber("01093664131")}>
                 <ReserveByPhoneButton>
                     <ManageText>{"전화 예약하기"}</ManageText>
                 </ReserveByPhoneButton>
+                </TouchableWithoutFeedback>
                 </ReserveByPhoneContainer>
             </FooterContainer>
             </ScrollView>

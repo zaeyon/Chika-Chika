@@ -6,6 +6,11 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { NavigationContainer } from '@react-navigation/native';
+import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
+import DeviceInfo from 'react-native-device-info';
+
+// route
+import GETDentalSearch from '~/Routes/Search/GETDentalSearch';
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -66,6 +71,7 @@ height: ${wp('6.4%')};
 const BodyContainer = Styled.View`
 align-items: center;
 padding-top: 10px;
+padding-bottom: ${DeviceInfo.hasNotch() ? hp('3s%') : hp('14%')}px;
 `;
 
 const TakePhotoText = Styled.Text`
@@ -170,6 +176,38 @@ const DENTALCLINIC_TEST_DATA = [
     {
         name: "아름다운 치과의원",
         address: "서울특별시 동대문구 왕산로 193 193 5층 (청량리동)"
+    },
+    {
+        name: "연세 좋은 이웃 치과의원",
+        address: "서울특별시 동대문구 왕산로 193 193 4층 (청량리동)"
+    },
+    {
+        name: "재미있는 치과의원",
+        address: "서울특별시 중구 을지로 3가 홍원빌딩"
+    },
+    {
+        name: "아름다운 치과의원",
+        address: "서울특별시 동대문구 왕산로 193 193 5층 (청량리동)"
+    },
+    {
+        name: "연세 좋은 이웃 치과의원",
+        address: "서울특별시 동대문구 왕산로 193 193 4층 (청량리동)"
+    },
+    {
+        name: "재미있는 치과의원",
+        address: "서울특별시 중구 을지로 3가 홍원빌딩"
+    },
+    {
+        name: "아름다운 치과의원",
+        address: "서울특별시 동대문구 왕산로 193 193 5층 (청량리동)"
+    },
+    {
+        name: "재미있는 치과의원",
+        address: "서울특별시 중구 을지로 3가 홍원빌딩"
+    },
+    {
+        name: "아름다운 치과의원",
+        address: "서울특별시 동대문구 왕산로 193 193 5층 (청량리동)"
     }
 ]
 
@@ -178,24 +216,28 @@ interface Props {
     route: any,
 }
 
+interface Dental {
+    name: string,
+    address: string,
+    id: number,
+
+}
+
 const DentalClinicSearchScreen = ({navigation, route}: Props) => {
+    const [autoCompletedDentalList, setAutoCompletedDentalList] = useState<Array<Dental>>([]);
     
     const goBack = () => {
         navigation.goBack();
     }
 
-    const onPressDentalClinicItem = (name: string, address: string) => {
+    const onPressDentalClinicItem = (selectedDental: object) => {
         if(route.params?.requestPage === "metadata") {
             navigation.navigate("ReviewMetaDataScreen",{
-                dentalClinicName: name,
-                dentalClinicAddress: address,
+                dentalClinic: selectedDental
             })
         } else if(route.params?.requestPage === "content") {
             navigation.navigate("ReviewContentScreen", {
-                dentalClinic: {
-                    name: name,
-                    address: address,
-                }
+                dentalClinic: selectedDental
             })
         }
 
@@ -203,13 +245,28 @@ const DentalClinicSearchScreen = ({navigation, route}: Props) => {
 
     const renderDentalClinicItem = ({item, index}: any) => {
         return (
-            <TouchableWithoutFeedback onPress={() => onPressDentalClinicItem(item.name, item.address)}>
+            <TouchableWithoutFeedback onPress={() => onPressDentalClinicItem(item)}>
             <DentalClinicItemContainer>
                 <DentalClinicNameText>{item.name}</DentalClinicNameText>
                 <DentalClinicAddressText>{item.address}</DentalClinicAddressText>
             </DentalClinicItemContainer>
             </TouchableWithoutFeedback>
         )
+    }
+
+    const onChangeDentalInput = (text: string) => {
+        if(text.trim() === "") {
+            setAutoCompletedDentalList([])
+        } else {
+            GETDentalSearch(text)
+            .then(function(response: any) {
+                console.log("GETDentalSearch response", response)
+                setAutoCompletedDentalList(response);
+            })
+            .catch(function(error: any) {
+                console.log("GETDentalSearch error", error);
+            })
+        } 
     }
 
     return (
@@ -225,8 +282,11 @@ const DentalClinicSearchScreen = ({navigation, route}: Props) => {
                     <SearchIcon
                     source={require('~/Assets/Images/HeaderBar/ic_search.png')}/>
                     <SearchTextInput
+                    autoCapitalize={"none"}
+                    autoFocus={true}
                     placeholder={"병원 검색"}
-                    placeholderTextColor={"#ABA5A5"}/>
+                    placeholderTextColor={"#ABA5A5"}
+                    onChangeText={(text: string) => onChangeDentalInput(text)}/>
                 </SearchInputContainer>
                 <HeaderRightContainer>
                     <HeaderSearchText>검색</HeaderSearchText>
@@ -234,8 +294,10 @@ const DentalClinicSearchScreen = ({navigation, route}: Props) => {
             </HeaderBar>
             <BodyContainer>
                 <DentalClinicListContainer>
-                    <FlatList
-                    data={DENTALCLINIC_TEST_DATA}
+                    <KeyboardAwareFlatList
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps={"always"}
+                    data={autoCompletedDentalList}
                     renderItem={renderDentalClinicItem}/>
                 </DentalClinicListContainer>
             </BodyContainer>

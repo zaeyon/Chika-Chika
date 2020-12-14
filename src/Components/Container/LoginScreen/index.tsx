@@ -14,6 +14,7 @@ import AboveKeyboard from 'react-native-above-keyboard';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper'
 
 import POSTSendTokenToPhone from '~/Routes/Auth/POSTSendTokenToPhone';
+import POSTVerifyPhoneNumber from '~/Routes/Auth/POSTVerifyPhoneNumber';
 
 const Input = Styled.TextInput`
 position: relative;
@@ -193,6 +194,9 @@ bottom: 16px;
 background-color : #707070;
 `;
 
+const LoginButtonContainer = Styled.View`
+`;
+
 interface Props {
     navigation: any,
     route: any,
@@ -341,14 +345,26 @@ const LoginScreen = ({navigation}: Props) => {
   }
 
   const clickLoginButton = () => {
-
     clearInterval(timeout)
+    POSTVerifyPhoneNumber(String(number), String(authCode))
+    .then(function(response: any) {
+      console.log("POSTVerifyPhoneNumber response", response)
+    })
+    .catch(function(error) {
+      console.log("POSTVerifyPhoneNumber error", error);
+    })
 
-    dispatch(
+      
+      dispatch(
       allActions.userActions.setUser({
           number: submitingNumber,
-      })
-    )
+      }))
+      
+
+      /*
+      navigation.navigate("HometownSettingScreen");
+      
+      */
   }
 
  const clickSendAuthCode = () => {
@@ -361,6 +377,8 @@ const LoginScreen = ({navigation}: Props) => {
     setVisibleAuthCodeInput(true)
     startTimeout()
 
+    /*
+
     POSTSendTokenToPhone(String(phoneNumber))
     .then(function(response) {
       console.log("POSTSendTokenToPhone response", response);
@@ -368,6 +386,7 @@ const LoginScreen = ({navigation}: Props) => {
     .catch(function(error) {
       console.log("POSTSendTokenToPhone error", error);
     })
+    */
    }
  }
 
@@ -445,19 +464,21 @@ const LoginScreen = ({navigation}: Props) => {
         </ItemContainer>
         )}
         <FinishButtonContainer>
-          <AboveKeyboard>
-        {(number !== "" && authCode !== "" && !timeOver) && (
-          <TouchableWithoutFeedback onPress={() => clickLoginButton()}>
-          <AbledLoginButton>
-            <AbledLoginText>로그인</AbledLoginText>
-          </AbledLoginButton>
-          </TouchableWithoutFeedback>
-        )}
-        {((visibleAuthCodeInput && authCode == "") || (timeOver)) && (
-        <DisabledLoginButton>
-          <DisabledLoginText>로그인</DisabledLoginText>
-        </DisabledLoginButton>
-        )}
+        <AboveKeyboard>
+            <LoginButtonContainer>
+            {(number !== "" && authCode !== "" && !timeOver) && (
+            <TouchableWithoutFeedback onPress={() => clickLoginButton()}>
+            <AbledLoginButton>
+              <AbledLoginText>로그인</AbledLoginText>
+            </AbledLoginButton>
+            </TouchableWithoutFeedback>
+            )}
+            {((visibleAuthCodeInput && authCode == "") || (timeOver)) && (
+            <DisabledLoginButton>
+              <DisabledLoginText>로그인</DisabledLoginText>
+            </DisabledLoginButton>
+            )}
+            </LoginButtonContainer>
         </AboveKeyboard>
         </FinishButtonContainer>
       </BodyContainer>

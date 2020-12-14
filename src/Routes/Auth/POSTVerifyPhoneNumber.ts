@@ -3,17 +3,21 @@ import serverConfig from '../server.config';
 
 const baseUri = serverConfig.baseUri
 
-const POSTSendTokenToPhone = (phoneNumber: string) => {
+const POSTVerifyPhoneNumber = (phoneNumber: string, token: string) => {
 
-    const uri = baseUri + "/sendTokenToPhoneNumber";
-    const jsonStr = `{"userPhoneNumber":  "${phoneNumber}"}`
+    const uri = baseUri + "/verifyPhoneNumber";
 
-    console.log("jsonStr", jsonStr);
+    const bodyParam = `{
+        "token": "${token}",
+        "userPhoneNumber":  "${phoneNumber}"
+    }`
+
+    console.log("bodyParam", bodyParam);
 
     return new Promise(function(resolve, reject) {
-
+        
         axios
-        .post(uri, jsonStr, {
+        .post(uri, bodyParam, {
             headers: {
               'Content-Type': "application/x-www-form-urlencoded",
             },
@@ -24,8 +28,7 @@ const POSTSendTokenToPhone = (phoneNumber: string) => {
         .catch(function(error) {
             reject(error.response);
         })
-
     })
 }
 
-export default POSTSendTokenToPhone;
+export default POSTVerifyPhoneNumber;
