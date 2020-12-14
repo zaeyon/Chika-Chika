@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo, useCallback, useEffect} from 'react';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
@@ -40,7 +40,7 @@ align-items: center;
 const HashTagContainerView = Styled.View`
 width: 100%;
 height: 24px;
-margin-top: 12px;
+margin-top: 16px;
 background-color: white;
 
 `;
@@ -48,11 +48,9 @@ background-color: white;
 const HashTagFlatList = Styled(FlatList as new () => FlatList)`
 width: 100%;
 height: auto;
-
-
 `;
 
-const HashTagView = Styled.View`
+const HashTagIconView = Styled.View`
 display: flex;
 flex-direction: row;
 align-items: center;
@@ -64,7 +62,7 @@ background-color: white;
 color: '#rgb(0, 0, 0)'
 margin-right: 8px;
 `;
-const HashTagText = Styled.Text`
+const HashTagIconText = Styled.Text`
 font-style: normal;
 font-weight: normal;
 font-size: 14px;
@@ -87,8 +85,8 @@ font-weight: bold;
 `;
 const ContentView = Styled.View`
 width: 100%;
-height: 48px;
-background-color: white;
+height: auto;
+background: white;
 margin: 8px 0px;
 `;
 
@@ -102,9 +100,7 @@ line-height: 24px;
 const ImageContainerView = Styled.View`
 margin: 8px 0px;
 width: 100%;
-height: 130px;
-background-color: white;
-
+height: auto;
 `;
 const ImageFlatList = Styled(FlatList as new () => FlatList)`
 width: 100%;
@@ -119,12 +115,8 @@ margin-right: 16px;
 margin-left: ${(props) => (props.isFirst ? '0px' : '16px')}
 `;
 const SocialInfoContainerView = Styled.View`
-position: absolute;
-left: 0px;
-bottom: 0px;
 width: ${wp('100%')};
 height: 56px;
-
 align-items: center;
 flex-direction: row;
 `;
@@ -143,6 +135,9 @@ font-size: 14px;
 line-height: 16px;
 margin-left: 4px;
 `;
+const HashTagText = Styled.Text`
+  color: #0075FF;
+`;
 interface Props {
   key: any;
   mode: string;
@@ -151,20 +146,58 @@ interface Props {
 }
 
 const PostItem = ({key, mode, data, navigation}: Props) => {
-  const {
-    user,
-    category,
-    createdAt,
-    tagList,
-    mediaFiles,
-    paragraph,
-    likes,
-    comments,
-  } = data;
+  const {user, createdAt, description, postLikeNum, postCommentsNum} = data;
+  const tagList = ['임플란트', '충치'];
+  const mediaFiles = data.community_imgs;
   const proComments = [
     '안녕하세요 전윤정님. 저희 치과를 이용해주셔서 감사합니다. 어쩌구저쩌구 어쩌구저쩌구',
   ];
-
+  const formatHashTag = (text: string) => {
+    return (
+      <TouchableWithoutFeedback>
+        <HashTagText>{'#' + text}</HashTagText>
+      </TouchableWithoutFeedback>
+    );
+  };
+  const formatDescription = (oldDescription: string) => {
+    let formattedDescription: any[] = [];
+    const lines = oldDescription.split(/\r\n|\r|\n/);
+    for (let line of lines) {
+      let formattedLine = [];
+      const words = line.split(' ');
+      for (let word of words) {
+        if (
+          word.charAt(0) === '{' &&
+          word.charAt(1) === '{' &&
+          word.charAt(word.length - 1) === '}' &&
+          word.charAt(word.length - 2) === '}'
+        ) {
+          //isTag
+          const formattedHashTag = formatHashTag(
+            word.slice(2, word.length - 2),
+          );
+          formattedLine.push(formattedHashTag);
+        } else {
+          formattedLine.push(word);
+        }
+        if (words.indexOf(word) !== words.length - 1) {
+          formattedLine.push(' ');
+        }
+      }
+      if (lines.indexOf(line) !== lines.length - 1) {
+        formattedDescription = formattedDescription.concat(
+          formattedLine,
+          '\r\n',
+        );
+      } else {
+        formattedDescription = formattedDescription.concat(formattedLine);
+      }
+    }
+    return formattedDescription;
+    // let description = oldDescription.replace(/{{/gi, '#');
+    // description = description.replace(/}}/gi, '');
+    // return description;
+  };
   const moveToCommunityDetail = () => {
     navigation.navigate('CommunityDetailScreen', {data: data});
   };
@@ -176,15 +209,14 @@ const PostItem = ({key, mode, data, navigation}: Props) => {
   };
 
   const moveToFullImages = (imageUri: string) => {
-    console.log('TEST_REVIEW_DETAIL_DATA.mediaFiles', mediaFiles);
     let index = mediaFiles.findIndex(
-      (image: any) => image.image_uri === imageUri,
+      (image: any) => image.img_url === imageUri,
     );
 
     let imageUri_arr = mediaFiles.map((image: any) => {
-      return image.image_uri;
+      return image.img_url;
     });
-
+    console.log(mediaFiles);
     console.log('선택한 사진의 mediaFiles index', index);
 
     navigation.navigate('FullImagesScreen', {
@@ -198,10 +230,14 @@ const PostItem = ({key, mode, data, navigation}: Props) => {
 
   const toggleSocialScrap = () => {};
 
+  const memoDescription = useMemo(() => formatDescription(description), [
+    description,
+  ]);
+
   return (
     <ContainerView
       style={{
-        height: mode === 'Detail' ? 316 : 362,
+        height: 'auto',
       }}>
       <TouchableWithoutFeedback
         onPress={() => {
@@ -215,7 +251,8 @@ const PostItem = ({key, mode, data, navigation}: Props) => {
             <ProfileContainerView>
               <ProfileImage
                 source={{
-                  url: user.profile_image,
+                  url: user.profileImage,
+                  cache: 'force-cache',
                 }}
               />
 
@@ -226,41 +263,50 @@ const PostItem = ({key, mode, data, navigation}: Props) => {
             <HashTagFlatList
               horizontal={true}
               data={tagList}
+              keyExtractor={(item) => item}
               renderItem={({item, index}) => (
-                <HashTagView key={'hashtag' + index}>
-                  <HashTagText>{'#' + item}</HashTagText>
-                </HashTagView>
+                <HashTagIconView key={'hashtag' + index}>
+                  <HashTagIconText>{'#' + item}</HashTagIconText>
+                </HashTagIconView>
               )}
             />
           </HashTagContainerView>
           <ContentView>
-            <ContentText numberOfLines={2}>{paragraph}</ContentText>
+            {mode === 'Detail' ? (
+              <ContentText>{formatDescription(description)}</ContentText>
+            ) : (
+              <ContentText numberOfLines={2}>{memoDescription}</ContentText>
+            )}
           </ContentView>
         </BodyContainerView>
       </TouchableWithoutFeedback>
-      <ImageContainerView>
-        <ImageFlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          data={mediaFiles}
-          renderItem={({item, index}) => (
-            <TouchableWithoutFeedback
-              key={'TouchableImage' + index}
-              onPress={() => {
-                mode === 'Detail'
-                  ? moveToFullImages(item.image_uri)
-                  : moveToCommunityDetail();
-              }}>
-              <ImageView
-                isFirst={index}
-                key={'image' + index}
-                source={{
-                  url: item.image_uri,
-                }}
-              />
-            </TouchableWithoutFeedback>
-          )}></ImageFlatList>
-      </ImageContainerView>
+      {mediaFiles.length > 0 ? (
+        <ImageContainerView>
+          <ImageFlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={mediaFiles}
+            keyExtractor={(item) => item.id}
+            renderItem={({item, index}) => (
+              <TouchableWithoutFeedback
+                key={'TouchableImage' + index}
+                onPress={() => {
+                  mode === 'Detail'
+                    ? moveToFullImages(item.img_url)
+                    : moveToCommunityDetail();
+                }}>
+                <ImageView
+                  isFirst={index}
+                  key={'image' + index}
+                  source={{
+                    url: item.img_url,
+                    cache: 'force-cache',
+                  }}
+                />
+              </TouchableWithoutFeedback>
+            )}></ImageFlatList>
+        </ImageContainerView>
+      ) : null}
       {mode === 'Detail' ? null : (
         <TouchableWithoutFeedback
           onPress={() => {
@@ -278,7 +324,7 @@ const PostItem = ({key, mode, data, navigation}: Props) => {
                 <Image
                   source={require('~/Assets/Images/Review/ic_like_inline.png')}
                 />
-                <SocialInfoText>{likes.length}</SocialInfoText>
+                <SocialInfoText>{postLikeNum}</SocialInfoText>
               </SocialInfoView>
             </TouchableOpacity>
 
@@ -286,7 +332,7 @@ const PostItem = ({key, mode, data, navigation}: Props) => {
               <Image
                 source={require('~/Assets/Images/Review/ic_comment_inline.png')}
               />
-              <SocialInfoText>{comments.length}</SocialInfoText>
+              <SocialInfoText>{postCommentsNum}</SocialInfoText>
             </SocialInfoView>
 
             <TouchableOpacity

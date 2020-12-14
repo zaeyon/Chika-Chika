@@ -1,12 +1,25 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList, View} from 'react-native';
+import {
+  TouchableWithoutFeedback,
+  FlatList,
+  View,
+  TouchableOpacity,
+  Text,
+  RefreshControl,
+  ActivityIndicator,
+  Animated,
+} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
-import PostItem from '../../../Presentational/PostItem';
+
+//local component
+import PostItem from '~/Components/Presentational/PostItem';
+import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
+
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
  background-color: #FFFFFF;
@@ -15,128 +28,162 @@ const ContainerView = Styled.SafeAreaView`
 const BodyContainerFlatList = Styled(FlatList as new () => FlatList)`
 flex: 1;
 `;
+
+const ActivityIndicatorContianerView = Styled.View`
+width: ${wp('100%')}px;
+height: auto;
+align-items: center;
+padding: 10px 0px;
+`;
 interface Props {
   navigation: any;
   route: any;
 }
 
-const data = {
-  user: {
-    profile_image:
-      'https://i.pinimg.com/564x/25/cd/bf/25cdbfb4c026ab04e3754ae707a4c7eb.jpg',
-    nickname: '전윤정',
-  },
-  createdAt: '2020-10-22',
-  tagList: ['임플란트', '충치'],
-  rating: 3.5,
-  location: '서울시 강남구',
-  treat_date: '2020.09.24',
-  category: '전체',
-  mediaFiles: [
-    {
-      image_uri: 'https://fimg4.pann.com/new/download.jsp?FileID=49691685',
-    },
-    {
-      image_uri: 'https://fimg4.pann.com/new/download.jsp?FileID=49691687',
-    },
-    {
-      image_uri: 'https://fimg4.pann.com/new/download.jsp?FileID=49691693',
-    },
-  ],
-
-  paragraph:
-    '안녕하세욤 교정 한달 경과 후기에요!                                               +) 가격은 댓글보다 쪽지 먼저 주시면 바로 답해드릴게요.',
-  likes: [
-    {
-      commentId: 1,
-      user: {
-        profile_image:
-          'http://imgmmw.mbn.co.kr/storage/news/2019/08/13/3274f4fbbaa2020ff9d1fb706be99787.jpg',
-        nickname: '메렁메렁',
-      },
-      comment: '잘 되셨네요ㅜㅜㅜㅜ 얼마에 하셨나요? 쪽지 부탁드려요.',
-      createdAt: '2020-10-21',
-      replys: [],
-    },
-    {
-      commentId: 2,
-      user: {
-        profile_image:
-          'http://imgmmw.mbn.co.kr/storage/news/2019/08/13/3274f4fbbaa2020ff9d1fb706be99787.jpg',
-        nickname: '메렁메렁',
-      },
-      comment: '잘 되셨네요ㅜㅜㅜㅜ 얼마에 하셨나요? 쪽지 부탁드려요.',
-      createdAt: '2020-10-21',
-      replys: [],
-    },
-    {
-      commentId: 1,
-      user: {
-        profile_image:
-          'http://imgmmw.mbn.co.kr/storage/news/2019/08/13/3274f4fbbaa2020ff9d1fb706be99787.jpg',
-        nickname: '메렁메렁',
-      },
-      comment: '잘 되셨네요ㅜㅜㅜㅜ 얼마에 하셨나요? 쪽지 부탁드려요.',
-      createdAt: '2020-10-21',
-      replys: [],
-    },
-    {
-      commentId: 2,
-      user: {
-        profile_image:
-          'http://imgmmw.mbn.co.kr/storage/news/2019/08/13/3274f4fbbaa2020ff9d1fb706be99787.jpg',
-        nickname: '메렁메렁',
-      },
-      comment: '잘 되셨네요ㅜㅜㅜㅜ 얼마에 하셨나요? 쪽지 부탁드려요.',
-      createdAt: '2020-10-21',
-      replys: [],
-    },
-  ],
-  comments: [
-    {
-      commentId: 1,
-      user: {
-        profile_image:
-          'http://imgmmw.mbn.co.kr/storage/news/2019/08/13/3274f4fbbaa2020ff9d1fb706be99787.jpg',
-        nickname: '메렁메렁',
-      },
-      comment: '잘 되셨네요ㅜㅜㅜㅜ 얼마에 하셨나요? 쪽지 부탁드려요.',
-      createdAt: '2020-10-21',
-      replys: [],
-    },
-    {
-      commentId: 2,
-      user: {
-        profile_image:
-          'http://imgmmw.mbn.co.kr/storage/news/2019/08/13/3274f4fbbaa2020ff9d1fb706be99787.jpg',
-        nickname: '메렁메렁',
-      },
-      comment: '잘 되셨네요ㅜㅜㅜㅜ 얼마에 하셨나요? 쪽지 부탁드려요.',
-      createdAt: '2020-10-21',
-      replys: [],
-    },
-  ],
-};
-
 const HomeTabScreen = ({navigation, route}: Props) => {
+  const type = 'All';
+  const limit = 10;
+  const [postData, setPostData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [isEndReached, setIsEndReached] = useState(false);
+  const [order, setOrder] = useState('createdAt');
+
+  const buttonY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const form = {
+      type: type,
+      limit: limit,
+      offset: pageIndex * limit,
+      order: order,
+    };
+    GETCommunityPosts(form).then((response: any) => {
+      setPostData(response);
+      console.log('res', response.length);
+    });
+  }, []);
+
+  const onRefresh = () => {
+    const form = {
+      type: type,
+      limit: limit,
+      offset: 0,
+      order: order,
+    };
+    setRefreshing(true);
+    GETCommunityPosts(form).then((response: any) => {
+      setPostData(response);
+      setPageIndex(0);
+      setRefreshing(false);
+    });
+  };
+
+  const renderPosts = ({item, index}: any) => (
+    <PostItem key={index} mode={'Card'} navigation={navigation} data={item} />
+  );
+
+  const getItemKey = (item: any) => item.id;
+
+  const onEndReached = (info: any) => {
+    console.log(info.distanceFromEnd);
+
+    if (!isEndReached) {
+      setIsEndReached(true);
+      const newPageIndex = pageIndex + 1;
+
+      const form = {
+        type: type,
+        limit: limit,
+        offset: newPageIndex * limit,
+        order: order,
+      };
+      setPageIndex((prev: any) => prev + 1);
+      GETCommunityPosts(form).then((response: any) => {
+        console.log(response.length);
+        setPostData((prev: any) => {
+          return [...prev, ...response];
+        });
+        setIsEndReached(false);
+      });
+    }
+  };
+
   return (
     <ContainerView>
       <BodyContainerFlatList
-        data={[1, 2, 3, 4, 5]}
+        data={postData}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        keyExtractor={getItemKey}
         scrollIndicatorInsets={{
-          bottom: getBottomSpace() ? wp('12%') : wp('15%'),
+          bottom: isIphoneX() ? wp('13%') : wp('15%'),
         }}
         contentContainerStyle={{
-          paddingBottom: getBottomSpace() ? wp('12%') : wp('15%'),
+          paddingBottom: isIphoneX() ? wp('13%') : wp('15%'),
         }}
-        renderItem={({item, index}) => (
-          <PostItem
-            key={index}
-            mode={'Card'}
-            navigation={navigation}
-            data={Object.assign({}, data)}
-          />
-        )}></BodyContainerFlatList>
+        renderItem={renderPosts}
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {
+                contentOffset: {
+                  y: buttonY,
+                },
+              },
+            },
+          ],
+          {useNativeDriver: false},
+        )}
+        scrollEventThrottle={16}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={5}
+        ListFooterComponent={
+          isEndReached ? (
+            <ActivityIndicatorContianerView>
+              <ActivityIndicator size="large" />
+            </ActivityIndicatorContianerView>
+          ) : null
+        }
+      />
+      <Animated.View
+        style={{
+          position: 'absolute',
+          zIndex: 3,
+          right: wp('50%') - 45,
+          bottom: (getBottomSpace() ? wp('12%') : wp('15%')) + 23,
+          backgroundColor: '#C4C4C4',
+          borderRadius: 100,
+          width: 90,
+          height: 34,
+          justifyContent: 'center',
+          alignItems: 'center',
+          transform: [
+            {
+              translateY: buttonY.interpolate({
+                inputRange: [
+                  0,
+                  (getBottomSpace() ? wp('12%') : wp('15%')) + 23,
+                ],
+                outputRange: [
+                  0,
+                  (getBottomSpace() ? wp('12%') : wp('15%')) + 23,
+                ],
+                extrapolate: 'clamp',
+              }),
+            },
+          ],
+        }}>
+        <TouchableOpacity
+          style={{
+            flex: 1,
+            padding: 9,
+            borderRadius: 100,
+          }}>
+          <Text>글 작성하기</Text>
+        </TouchableOpacity>
+      </Animated.View>
     </ContainerView>
   );
 };

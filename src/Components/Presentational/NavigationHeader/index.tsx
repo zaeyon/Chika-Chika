@@ -26,6 +26,10 @@ const HeaderBar = Styled.View`
  border-color: #C8C8C8;
 `;
 
+const HeaderText = Styled.Text`
+font-size: 18px;
+`;
+
 const HeaderLeftContainer = Styled.View`
 width: 30%;
 height: ${wp('13.8%')}px;
@@ -34,11 +38,13 @@ padding: 0px 16px;
  flex-direction: row;
 `;
 
+const HeaderTitleContainer = Styled.View`
+height: ${wp('13.8%')}px;
+justify-content: center;
+`;
 const HeaderTitleText = Styled.Text`
-
 font-weight: bold;
 font-size: 18px; 
-
 `;
 
 const HeaderRightContainer = Styled.View`
@@ -50,22 +56,65 @@ padding: 0px 16px 0px 16px;
  flex-direction: row;
 `;
 
+const HeaderIconView = Styled.View`
+flex: 1;
+`;
+const HeaderIcon = Styled.Image`
+
+`;
+
+interface HeaderProps {
+  onPress: any;
+  text: string;
+}
+
 interface Props {
-  renderHeaderLeftContainer: any;
-  renderHeaderRightContanier: any;
+  headerLeftProps?: HeaderProps;
+  headerRightProps?: HeaderProps;
   headerTitle: string;
 }
 const NavigationHeader = ({
-  renderHeaderLeftContainer,
-  renderHeaderRightContanier,
+  headerLeftProps,
+  headerRightProps,
   headerTitle,
 }: Props) => {
   return (
     <HeaderBar>
-      <HeaderLeftContainer>{renderHeaderLeftContainer()}</HeaderLeftContainer>
-      <HeaderTitleText>{headerTitle}</HeaderTitleText>
+      <HeaderLeftContainer>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            headerLeftProps?.onPress();
+          }}>
+          {headerLeftProps?.text === 'arrow' ? (
+            <HeaderIconView>
+              <HeaderIcon
+                style={{resizeMode: 'contain'}}
+                source={require('~/Assets/Images/Arrow/ic_leftArrow.png')}
+              />
+            </HeaderIconView>
+          ) : (
+            <HeaderText>{headerLeftProps?.text}</HeaderText>
+          )}
+        </TouchableWithoutFeedback>
+      </HeaderLeftContainer>
+      <HeaderTitleContainer>
+        <HeaderTitleText>{headerTitle}</HeaderTitleText>
+      </HeaderTitleContainer>
       <HeaderRightContainer>
-        {renderHeaderRightContanier()}
+        <TouchableWithoutFeedback
+          onPress={() => {
+            headerRightProps?.onPress();
+          }}>
+          {headerRightProps?.text === 'arrow' ? (
+            <HeaderIconView>
+              <HeaderIcon
+                source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
+              />
+            </HeaderIconView>
+          ) : (
+            <HeaderText>{headerRightProps?.text}</HeaderText>
+          )}
+        </TouchableWithoutFeedback>
       </HeaderRightContainer>
     </HeaderBar>
   );
