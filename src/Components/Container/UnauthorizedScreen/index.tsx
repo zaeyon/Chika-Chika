@@ -26,11 +26,11 @@ const SocialContainer = Styled.View`
 `;
 
 const LocalContainer = Styled.View`
- flex: 0.7;
+ flex: 1;
  align-items: center;
- padding-top: 27px;
  padding-left: 20px;
  padding-right: 20px;
+ justify-content: center;
 `;
 
 const LocalLoginContainer = Styled.View`

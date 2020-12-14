@@ -2,12 +2,16 @@ import React, {useEffect, useState, useRef} from 'react';
 import Styled from 'styled-components/native';
 import {
     TouchableWithoutFeedback,
-    FlatList
+    FlatList,
+    ScrollView,
+    Keyboard,
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
+import AboveKeyboard from 'react-native-above-keyboard';
 
 import {isIphoneX} from 'react-native-iphone-x-helper'
 
@@ -21,17 +25,19 @@ background-color: #ffffff;
 
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
- height: ${wp('11.7%')}px;
+ height: ${wp('16.8%')}px;
  flex-direction: row;
  align-items: center;
  justify-content: space-between;
  background-color:#ffffff;
  padding-left: 16px;
  padding-right: 16px;
+ border-bottom-width: 2px;
+ border-color: #eeeeee;
 `;
 
 const HeaderLeftContainer = Styled.View`
-padding: 7px 15px 13px 16px;
+padding: 10px 15px 10px 16px;
 align-items: center;
 justify-content: center;
 `;
@@ -48,7 +54,8 @@ color: #1D1E1F;
 `;
 
 const HeaderRightContainer = Styled.View`
-padding: 7px 16px 13px 15px;
+background-color: #ffffff;
+padding: 13px 16px 13px 15px;
  align-items: center;
  justify-content: center;
  flex-direction: row;
@@ -79,22 +86,31 @@ justify-content: center;
 `;
 
 const SearchInputContainer = Styled.View`
-width: 307px;
-height: 35px;
+flex-direction: row;
+flex: 1;
+height: ${wp('10.66%')}px;
 background-color: #ededed;
-justify-content: center;
-padding-left: 20px;
+align-items: center;
+padding-left: 10px;
+border-radius: 4px;
 `;
 
 const SearchTextInput = Styled.TextInput`
+padding-left: 12px;
+font-size: 16px;
+color: #979797;
 `;
 
-const ViewMapButtonContainer = Styled.View`
-width: ${wp('100%')}
+const AboveKeyboardContainer = Styled.View`
+width: ${wp('100%')};
 position: absolute;
 bottom: 0;
 padding-top: 10px;
 padding-bottom: 10px;
+`;
+
+const MapButtonContainer = Styled.View`
+width: ${wp('100%')}px;
 align-items: center;
 justify-content: center;
 `;
@@ -109,6 +125,35 @@ border-width: 1px;
 `;
 
 const ViewMapText = Styled.Text`
+font-size: 16px
+font-weight: 400;
+color: #000000;
+`;
+
+const SearchIcon = Styled.Image`
+width: ${wp("6.4%")}px;
+height: ${wp('6.4%')}px;
+`;
+
+const FilterListContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+padding-top: 7px
+padding-bottom: 7px;
+background-color: #ffffff;
+width: ${wp('100%')};
+`;
+
+const FilterItemContainer = Styled.View`
+padding: 9px 11px 9px 11px;
+border-radius: 100px;
+background-color: #ffffff;
+border-width: 1px;
+border-color: #c4c4c4;
+`;
+
+const FilterItemText = Styled.Text`
+color: #000000;
 font-size: 14px;
 `;
 
@@ -148,7 +193,31 @@ interface Props {
 
 const DentalClinicListScreen = ({navigation, route}: Props) => {
     const [dentalList, setDentalList] = useState<Array<object>>(TEST_DENTAL_LIST);
+    const [visibleTimeFilterModal, setVisibleTimeFilterModal] = useState<boolean>(false);
+    const [visibleDayFilterModal, setVisibleDayFilterModal] = useState<boolean>(false);
+    const [selectedDayFilterIndicator, setSelectedDayFilterIndicator] = useState<Array<any>>([]);
+    const [bottomPadding, setBottomPadding] = useState<number>(40);
+
+    useEffect(() => {
+        Keyboard.addListener("keyboardWillShow", onKeyboardDidShow);
+        Keyboard.addListener("keyboardDidHide", onKeyboardDidHide);
+
+        return () => {
+            Keyboard.removeListener("keyboardWillShow", onKeyboardDidShow);
+            Keyboard.removeListener("keyboardDidHide", onKeyboardDidHide);
+        }
+
+    }, [])
+
+    const onKeyboardDidShow = () => {
+        setBottomPadding(20);
+    }
   
+    const onKeyboardDidHide = () => {
+        setBottomPadding(40);
+    }
+
+
     const goBack = () => {
         navigation.goBack();
     }
@@ -167,32 +236,79 @@ const DentalClinicListScreen = ({navigation, route}: Props) => {
         navigation.navigate("NearDentalMap")
     }
 
+    const clickDayOfWeekFilter = () => {
+        setVisibleDayFilterModal(true);
+    }
+
+    const clickTimeFilter = () => {
+        setVisibleTimeFilterModal(true);
+        //timeTextInputRef.current.focus()
+    }
+
     return (
         <Container>
             <HeaderBar>
                 <SearchInputContainer>
+                    <SearchIcon
+                    source={require('~/Assets/Images/Search/ic_search.png')}/>
                     <SearchTextInput
+                    placeholder={"병원, 지역을 검색해 보세요."}
+                    placeholderTextColor={"#979797"}
                     editable={true}
-                    placeholder={"병원, 지역검색"}/>
+                    autoFocus={true}/>
                 </SearchInputContainer>
-                <HeaderFilterIcon
-                    source={require('~/Assets/Images/HeaderBar/ic_filter.png')}/>
             </HeaderBar>
             <BodyContainer>
-                <FlatList
+                <FilterListContainer>
+                <ScrollView
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}>
+                    <TouchableWithoutFeedback onPress={() => clickDayOfWeekFilter()}>
+                    <FilterItemContainer style={{marginLeft: 16}}>
+                        {selectedDayFilterIndicator.indexOf("전체") !== -1 && (
+                        <FilterItemText>{"전체"}</FilterItemText>
+                        )}
+                        {selectedDayFilterIndicator.length === 0 && (
+                        <FilterItemText>{"방문일"}</FilterItemText>
+                        )}
+                        {selectedDayFilterIndicator.length === 1 && selectedDayFilterIndicator.indexOf("전체") === -1 && (
+                        <FilterItemText>{selectedDayFilterIndicator[0] + "요일"}</FilterItemText>
+                        )}
+                        {selectedDayFilterIndicator.length > 1 && selectedDayFilterIndicator.indexOf("전체") === -1 && (
+                        <FilterItemText>{selectedDayFilterIndicator.join(",")}</FilterItemText>
+                        )}
+                    </FilterItemContainer>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => clickTimeFilter()}>
+                    <FilterItemContainer style={{marginLeft: 12}}>
+                        <FilterItemText>{"방문시간"}</FilterItemText>
+                    </FilterItemContainer>
+                    </TouchableWithoutFeedback>
+                    <FilterItemContainer style={{marginLeft: 12}}>
+                        <FilterItemText>{"일요일･공휴일 휴진"}</FilterItemText>
+                    </FilterItemContainer>
+                    <FilterItemContainer style={{marginLeft: 12, marginRight: 16}}>
+                        <FilterItemText>{"주차가능"}</FilterItemText>
+                    </FilterItemContainer>
+                </ScrollView>
+                </FilterListContainer>
+                <KeyboardAwareFlatList
+                keyboardShouldPersistTaps={"always"}
                 showsVerticalScrollIndicator={false}
                 data={dentalList}
                 renderItem={renderDentalItem}/>
-                <ViewMapButtonContainer>
-                    <TouchableWithoutFeedback onPress={() => moveToMap()}>
-                    <ViewMapButton>
-                        <ViewMapText>
-                            지도보기
-                        </ViewMapText>
-                    </ViewMapButton>
-                    </TouchableWithoutFeedback>
-                </ViewMapButtonContainer>
             </BodyContainer>
+                <AboveKeyboardContainer style={{paddingBottom: bottomPadding}}>
+                <AboveKeyboard>
+                <MapButtonContainer>
+                <TouchableWithoutFeedback onPress={() => moveToMap()}>
+                <ViewMapButton>
+                    <ViewMapText>{"지도로보기"}</ViewMapText>
+                </ViewMapButton>
+                </TouchableWithoutFeedback>
+                </MapButtonContainer>
+                </AboveKeyboard>
+                </AboveKeyboardContainer>
         </Container>
     )
 }

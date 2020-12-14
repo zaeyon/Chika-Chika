@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, Keyboard, FlatList} from 'react-native';
+import {TouchableWithoutFeedback, Keyboard, FlatList, Alert} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -170,9 +170,11 @@ const RatingScreen = ({navigation, route}: Props) => {
      const [serviceRating, setServiceRating] = useState<number>(0);
      const [treatRating, setTreatRating] = useState<number>(0);
      const [priceRating, setPriceRating] = useState<number>(0);
-     const [inputingServiceRating, setInputingServiceRating] = useState<string>();
-     const [inputingTreatRating, setInputingTreatRating] = useState<string>();
-     const [inputingPriceRating, setInputingPriceRating] = useState<string>();
+
+     const [serviceRatingEnroll, setServiceRatingEnroll] = useState<boolean>(false);
+     const [treatRatingEnroll, setTreatRatingEnroll] = useState<boolean>(false);
+     const [priceRatingEnroll, setPriceRatingEnroll] = useState<boolean>(false);
+     
 
      useEffect(() => {
          if(route.params?.inputedRating) {
@@ -192,59 +194,61 @@ const RatingScreen = ({navigation, route}: Props) => {
   const completeServiceRating = (rating: any) => {
     console.log("rating", rating);
     setServiceRating(rating);
-    setInputingServiceRating("");
+    setServiceRatingEnroll(true);
 }
 
 const movingServiceRating = (rating: any) => {
     console.log("rating changed", rating)
-    setInputingServiceRating(rating);
 }
 
 
 const completeTreatRating = (rating: any) => {
     console.log("rating", rating);
     setTreatRating(rating);
-    setInputingTreatRating("");
+    setTreatRatingEnroll(true);
 }
 
 const movingTreatRating = (rating: any) => {
     console.log("rating changed", rating)
-    setInputingTreatRating(rating);
 }
 
 const completePriceRating = (rating: any) => {
     setPriceRating(rating)
-    setInputingPriceRating("")
+    setPriceRatingEnroll(true);
 }
 
 const movingPriceRating = (rating: any) => {
     console.log("rating changed", rating)
-    setInputingTreatRating(rating);
 }
 
 const onPressFinishButton = () => {
-    if(route.params.requestPage === "detailPrice") {
-        navigation.navigate("ReviewContentScreen", {
-        selectedTreatList: route.params?.selectedTreatList,
-        dentalClinic: route.params?.dentalClinic,
-        treatDate: route.params?.treatDate,
-        treatPrice: route.params?.treatPrice,
-        rating: {
-            serviceRating: serviceRating,
-            treatRating: treatRating,
-            priceRating: priceRating,
-            aveRating: ((serviceRating + treatRating + priceRating) / 3).toFixed(1)
-        }
-    });
-    } else if(route.params?.requestPage === "content") {
-        navigation.navigate("ReviewContentScreen", {
+    if(serviceRating > 0 && treatRating > 0 && priceRating > 0) {
+        if(route.params.requestPage === "detailPrice") {
+            navigation.navigate("ReviewContentScreen", {
+            selectedTreatList: route.params?.selectedTreatList,
+            dentalClinic: route.params?.dentalClinic,
+            treatDate: route.params?.treatDate,
+            treatPrice: route.params?.treatPrice,
             rating: {
                 serviceRating: serviceRating,
                 treatRating: treatRating,
                 priceRating: priceRating,
                 aveRating: ((serviceRating + treatRating + priceRating) / 3).toFixed(1)
-            }
-        })
+            },
+            detailPriceList: route.params?.detailPriceList,
+        });
+        } else if(route.params?.requestPage === "content") {
+            navigation.navigate("ReviewContentScreen", {
+                rating: {
+                    serviceRating: serviceRating,
+                    treatRating: treatRating,
+                    priceRating: priceRating,
+                    aveRating: ((serviceRating + treatRating + priceRating) / 3).toFixed(1)
+                }
+            })
+        }
+    } else {
+        Alert.alert("평점을 등록해주세요!")
     }
     
 }
