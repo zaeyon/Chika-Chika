@@ -70,12 +70,9 @@ const HashTagCategoryText = Styled.Text`
 margin: auto 0px;
 font-size: 16px;
 line-height: 28px;
-
 `;
 
 interface Props {
-  setSearchMode: any;
-  searchMode: any;
   suggestionList: any;
   searchQuery: any;
   completeCurrentHashTag: any;
@@ -87,16 +84,12 @@ if (Platform.OS === 'android') {
   }
 }
 
-const HashTagSearchBarView = ({
-  setSearchMode,
-  searchMode,
+const SuggestionBarView = ({
   suggestionList,
   searchQuery,
   completeCurrentHashTag,
 }: Props) => {
-  const translateY = useRef(new Animated.Value(-getBottomSpace())).current;
   const [bottomSpace, setBottomSpace] = useState(-(getBottomSpace() + 168));
-  const [selectedHashTagCategory, setSelectedHashTagCategory] = useState('');
 
   useEffect(() => {
     Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
@@ -108,17 +101,6 @@ const HashTagSearchBarView = ({
       Keyboard.removeListener('keyboardWillHide', _keyboardWillHide);
     };
   }, []);
-
-  useEffect(() => {
-    console.log(selectedHashTagCategory === '' ? 'false' : 'true');
-    setSearchMode(selectedHashTagCategory);
-  }, [selectedHashTagCategory]);
-
-  useEffect(() => {
-    if (searchMode === '') {
-      setSelectedHashTagCategory('');
-    }
-  }, [searchMode]);
 
   const _keyboardWillShow = (e: any) => {
     LayoutAnimation.configureNext(
@@ -135,12 +117,6 @@ const HashTagSearchBarView = ({
   };
 
   const renderHashTagItemView = ({item, index}: any) => {
-    const korean = /[가-힣]/;
-    const lastInput = searchQuery[searchQuery.length - 1];
-    const isCompeleteWord = korean.test(lastInput);
-    const shownLength = isCompeleteWord
-      ? searchQuery.length
-      : searchQuery.length - 1;
     return (
       <HashTagItemView
         onPress={() => {
@@ -154,33 +130,15 @@ const HashTagSearchBarView = ({
             style={{
               color: '#0075FF',
             }}>
-            {searchQuery.slice(0, shownLength)}
+            {searchQuery}
           </HashTagItemNameText>
-          {item.name.slice(shownLength)}
+          {item.name.slice(searchQuery.length)}
         </HashTagItemNameText>
         <HashTagItemLocationText>{item.location}</HashTagItemLocationText>
       </HashTagItemView>
     );
   };
 
-  const renderHashTagCategoryView = ({item, index}: any) => (
-    <HashTagCategoryView
-      onPress={() => {
-        setSelectedHashTagCategory(
-          selectedHashTagCategory === item ? '' : item,
-        );
-      }}
-      style={{
-        backgroundColor: selectedHashTagCategory === item ? '#0075FF' : 'white',
-      }}>
-      <HashTagCategoryText
-        style={{
-          color: selectedHashTagCategory === item ? 'white' : '#494949',
-        }}>
-        {item}
-      </HashTagCategoryText>
-    </HashTagCategoryView>
-  );
   return (
     <View
       style={{
@@ -190,26 +148,18 @@ const HashTagSearchBarView = ({
         width: '100%',
         flex: 1,
       }}>
-      <HashTagItemFlatList
-        keyboardShouldPersistTaps={'handled'}
-        style={{
-          height: Math.min(2, suggestionList.length) * hp('7.39%'),
-        }}
-        data={suggestionList}
-        renderItem={renderHashTagItemView}
-      />
-      <HashTagCategoryFlatList
-        keyboardShouldPersistTaps={'handled'}
-        contentContainerStyle={{
-          paddingVertical: 6,
-          paddingHorizontal: 12,
-        }}
-        horizontal
-        data={['# 병원', '# 치료', '# 짜장면']}
-        renderItem={renderHashTagCategoryView}
-      />
+      {suggestionList.length > 0 && searchQuery !== '' ? (
+        <HashTagItemFlatList
+          keyboardShouldPersistTaps={'handled'}
+          style={{
+            height: Math.min(2, suggestionList.length) * hp('7.39%'),
+          }}
+          data={suggestionList}
+          renderItem={renderHashTagItemView}
+        />
+      ) : null}
     </View>
   );
 };
 
-export default HashTagSearchBarView;
+export default SuggestionBarView;
