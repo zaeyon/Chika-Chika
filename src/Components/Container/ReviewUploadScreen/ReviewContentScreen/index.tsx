@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList, ScrollView, Keyboard, StyleSheet, Alert, View} from 'react-native';
+import {TouchableWithoutFeedback, FlatList, ScrollView, Keyboard, StyleSheet, Alert, View, ActivityIndicator} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -249,6 +249,15 @@ height: ${wp('71.7%')}px;
 border-radius: 8px;
 `;
 
+const IndicatorContainer = Styled.View`
+position: absolute;
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
+background-color: #00000030;
+align-items: center;
+justify-content: center;
+`;
+
 
 interface Props {
     navigation: any,
@@ -273,6 +282,7 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
     const [visibleDatePicker, setVisibleDatePicker] = useState<boolean>(false);
     const [changeParagraphList, setChangeParagraphList] = useState<boolean>(false);
     const [certifiedBill, setCertifiedBill] = useState<boolean>(false);
+    const [uploadLoading, setUploadLoading] = useState<boolean>(false);
 
     const totalPriceInputRef = useRef()
 
@@ -515,7 +525,121 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
         setChangeParagraphList(!changeParagraphList)
     }
 
+    const submitParaDescrip = (text: string, index: number) => {
+        console.log("inputParaDescrip text", text);
+
+        var tmpParagraphList = paragraphList;
+        tmpParagraphList[index].description = text;
+    }
+
     const uploadReview = () => {
+        setUploadLoading(true);
+        console.log("dentalClinicId", dentalClinic.id);
+
+        var tmpParagraphList = paragraphList;
+        var descriptions = new Array();
+        var paragraphs = new Array();
+
+        const starRate_cost = rating.priceRating;
+        const starRate_treatment = rating.treatRating;
+        const starRate_service = rating.serviceRating;
+        const certified_bill = certifiedBill;
+        const dentalClinicId = dentalClinic.id;
+
+        const treatments = selectedTreatList.map((item: any, index) => {
+            if(item.price) {
+
+                const tmpObj = {
+                    id: item.id,
+                    cost: item.price,
+                }
+
+                return tmpObj
+
+            } else {
+
+                const tmpObj = {
+                    id: item.id,
+                    cost: null,
+                }
+
+                return tmpObj
+            }
+        })
+
+        tmpParagraphList.forEach((item: any, paraIndex: number) => {
+            console.log("item", item);
+            if(item.image) {
+                uploadImageToS3(item.image)
+                .then((res: any) => {
+                    console.log("uploadImageToS3 res", res)
+
+                        const paraObj = {
+                            index: paraIndex,
+                            description: item.description ? item.description : null,
+                            location: res.response.location,
+                            key: res.response.key,
+                            mimeType: res.type,
+                            originalName: res.originalName,
+                            size: res.size,
+                            imgBeforeAfters: "before"
+                        }
+                        paragraphs.push(paraObj)
+                
+                    if(paraIndex == paragraphList.length - 1) {
+                        setTimeout(() => {
+                            POSTReviewUpload({starRate_cost, starRate_treatment, starRate_service, certified_bill, treatments, dentalClinicId, paragraphs})
+                            .then((response) => {
+                                setUploadLoading(false);
+                                console.log("POSTReviewUpload response", response);   
+                                navigation.navigate("HomeScreen")
+                            })
+                            .catch((error) => {
+                                setUploadLoading(false);
+                                console.log("POSTReviewUpload error", error);
+                            })
+                        }, 100)
+                    }
+                })
+                .catch((err) => {
+                    console.log("upload s3 err", err);
+                })
+            } else {
+                    
+                const paraObj = {
+                    index: paraIndex,
+                    description: item.description ? item.description : null,
+                    location: null,
+                    key: null,
+                        mimeType: null,
+                        originalName: null,
+                        size: null,
+                        imgBeforeAfters: null
+                    }
+
+                    paragraphs.push(paraObj)
+
+                    if(paraIndex == paragraphList.length - 1) {
+                        setTimeout(() => {
+                            POSTReviewUpload({starRate_cost, starRate_treatment, starRate_service, certified_bill, treatments, dentalClinicId, paragraphs})
+                            .then((response) => {
+                                setUploadLoading(false);
+                                console.log("POSTReviewUpload response", response);   
+                                navigation.navigate("HomeScreen")
+                            })
+                            .catch((error) => {
+                                setUploadLoading(false);
+                                console.log("POSTReviewUpload error", error);
+                            })
+                        }, 100)
+                    }
+                }
+            })
+    }
+
+    /*
+    async function uploadReview2() {
+        console.log("dentalClinicId", dentalClinic.id);
 
         var tmpParagraphList = paragraphList;
         var descriptions = new Array();
@@ -548,21 +672,14 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
             }
         })
 
-        tmpParagraphList.forEach((item: any, paraIndex: number) => {
-            console.log("item", item);
-
-            descriptions.push(item.description)
-
+        const imagePromises = paragraphList.map((item: any, paraIndex: number) => {
             if(item.image) {
                 uploadImageToS3(item.image)
                 .then((res: any) => {
                     console.log("uploadImageToS3 res", res)
-
-                    if(item.description) {
-
                         const paraObj = {
                             index: paraIndex,
-                            description: item.description,
+                            description: item.description ? item.description : null,
                             location: res.response.location,
                             key: res.response.key,
                             mimeType: res.type,
@@ -570,64 +687,33 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                             size: res.size,
                             imgBeforeAfters: "before"
                         }
-                        paragraphs.push(paraObj)
-
-                    } else if (!item.description) {
-
-                        const paraObj = {
-                            index: paraIndex,
-                            description: null,
-                            location: res.response.location,
-                            key: res.response.key,
-                            mimeType: res.type,
-                            originalName: res.originalName,
-                            size: res.size,
-                            imgBeforeAfters: "before"
-                        }
-                        paragraphs.push(paraObj)
-                    }
+                        return paraObj
                 })
-                .catch((err) => {
-                    console.log("upload s3 err", err);
+                .catch((error: any) => {
+                    console.log("image upload to s3 error", error);
                 })
             } else {
-                if(item.description) {
-
-                    const paraObj = {
-                        index: paraIndex,
-                        description: item.description,
-                        location: null,
-                        key: null,
-                        mimeType: null,
-                        originalName: null,
-                        size: null,
-                        imgBeforeAfters: null
-                    }
-                    paragraphs.push(paraObj)
-
-                } else if (!item.description) {
-
-                    const paraObj = {
-                        index: paraIndex,
-                        description: null,
-                        location: null,
-                        key: null,
-                        mimeType: null,
-                        originalName: null,
-                        size: null,
-                        imgBeforeAfters: null
-                    }
-                    paragraphs.push(paraObj)
-                }
-            }
-
-            if(paraIndex == paragraphList.length - 1) {
-                POSTReviewUpload({starRate_cost, starRate_treatment, starRate_service, certified_bill, treatments, })
+                const paraObj = {
+                    index: paraIndex,
+                    description: item.description ? item.description : null,
+                    location: null,
+                    key: null,
+                    mimeType: null,
+                    originalName: null,
+                    size: null,
+                    imgBeforeAfters: null
+                }                
+                return paraObj
             }
         })
 
-        
+
+        await Promise.all(imagePromises)
+        .then((images) => {
+            console.log("Promise.all images", images)
+        })
     }
+    */
 
 
     const renderParaUnitItem = ({item, index}: any) => {
@@ -655,7 +741,9 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                 multiline={true}
                 placeholder={"내용을 입력해 주세요 !"}
                 placeholderTextColor={"#BFBFBF"}
-                autoCapitalize={"none"}/>
+                autoCapitalize={"none"}
+                onSubmitEditing={(response: any) => submitParaDescrip(response.nativeEvent.text, index)}
+                onEndEditing={(response: any) => submitParaDescrip(response.nativeEvent.text, index)}/>
             </ParaUnitContainer>
             </EntireParaUnitContainer>
         )
@@ -855,6 +943,12 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                     maximumDate={new Date()}
                     />
             </DateModalContainer>
+            )}
+            {uploadLoading && (
+            <IndicatorContainer>
+                <ActivityIndicator
+                color={"#ffffff"}/>
+            </IndicatorContainer>
             )}
         </Container>
     )

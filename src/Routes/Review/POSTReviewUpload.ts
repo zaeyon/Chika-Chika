@@ -13,7 +13,7 @@ interface params {
 
 const POSTReviewUpload = ({starRate_cost, starRate_treatment, starRate_service, certified_bill, treatments, dentalClinicId, paragraphs}: params) => {
     console.log("serverConfig.jwtToken", serverConfig.jwtToken);
-    const uri = serverConfig.baseUri + "/prod/api/vi/reviews"
+    const uri = serverConfig.baseUri + "/api/v1/reviews"
 
     console.log("POSTReviewUpload starRate_cost", starRate_cost);
     console.log("POSTReviewUpload starRate_treatment", starRate_treatment);
@@ -22,13 +22,15 @@ const POSTReviewUpload = ({starRate_cost, starRate_treatment, starRate_service, 
     console.log("POSTReviewUpload dentalClinicId", dentalClinicId);
     console.log("POSTReviewUpload paragraphs", paragraphs);
 
-    const body = `""starRate_cost":${starRate_cost},"starRate_treatment":${starRate_treatment},"starRate_service":${starRate_service},"certified_bill":${certified_bill},"treatments":${treatments},"dentalClinicId":${dentalClinicId}`
+    const body = `{"starRate_cost":${starRate_cost},"starRate_treatment":${starRate_treatment},"starRate_service":${starRate_service},"certified_bill":${certified_bill},"treatments":${JSON.stringify(treatments)},"dentalClinicId":${dentalClinicId}}`
+
+    const stringfiedPara = JSON.stringify(paragraphs); 
 
     console.log("body", body);
 
     var formData = new FormData();
     formData.append("body", body);
-    formData.append("paragraphs", paragraphs);
+    formData.append("paragraphs", stringfiedPara);
 
     return new Promise(function(resolve, reject) {
         axios

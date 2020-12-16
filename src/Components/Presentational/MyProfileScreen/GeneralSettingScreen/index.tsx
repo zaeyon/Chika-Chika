@@ -5,6 +5,12 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {useDispatch} from 'react-redux';
+import allActions from '~/actions';
+
+// Async Storage
+import {storeUserInfo} from '~/storage/currentUser';
+
 
 const ContainerView = Styled.View`
 flex: 1;
@@ -63,6 +69,13 @@ interface Props {
   route: any;
 }
 const GeneralSettingScreen = ({navigation, route}: Props) => {
+  const dispatch = useDispatch();
+
+  const logout = () => {
+    storeUserInfo(null);
+    dispatch(allActions.userActions.logOut())
+  }
+
   return (
     <ContainerView>
       <UserSettingView>
@@ -91,15 +104,15 @@ const GeneralSettingScreen = ({navigation, route}: Props) => {
       </UserSettingView>
       <Line />
       <UserSettingView>
-        <ContentTouchableOpacity>
+        <ContentTouchableOpacity onPress={() => logout()}>
           <ContentTitleText>로그아웃</ContentTitleText>
+        </ContentTouchableOpacity>
           <ContentText
             style={{
               marginLeft: 'auto',
             }}>
             회원탈퇴
           </ContentText>
-        </ContentTouchableOpacity>
       </UserSettingView>
     </ContainerView>
   );

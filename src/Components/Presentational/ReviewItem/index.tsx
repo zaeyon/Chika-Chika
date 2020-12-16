@@ -225,15 +225,19 @@ const TreatDateContainer = Styled.View`
 flex-direction: row;
 `;
 
+interface UserData {
+    profileImg: string,
+    nickname: string
+}
+
 
 interface Props {
     navigation: any,
-    profileImageUri: string,
-    nickname: string,
+    writer: UserData,
     createdAt: string,
     imageArray: Array<any>,
-    tagArray: Array<string>,
-    date: string,
+    treatmentArray: Array<string>,
+    treatmentDate: string,
     rating: number,
     description: string,
     viewCount: number,
@@ -242,7 +246,7 @@ interface Props {
     commentCount: number,
 } 
 
-const ReviewItem = ({navigation, profileImageUri, nickname, createdAt, imageArray, tagArray, date, rating, description, viewCount, treatInfoCount, likeCount, commentCount}: Props) => {
+const ReviewItem = ({navigation, writer, createdAt, imageArray, treatmentArray, treatmentDate, rating, description, viewCount, treatInfoCount, likeCount, commentCount}: Props) => {
 
     const moveToReviewDetail = () => {
         navigation.navigate("ReviewStackScreen", {
@@ -256,6 +260,19 @@ const ReviewItem = ({navigation, profileImageUri, nickname, createdAt, imageArra
         })
     }
 
+    const formatDate = (date: string) => {
+        const tmpDate = new Date(date);
+
+        var year = tmpDate.getFullYear() + "",
+            month = tmpDate.getMonth() + 1 + "",
+            day = tmpDate.getDay() + "";
+
+            month = Number(month) >= 10 ? month : '0' + month;
+            day = Number(day) >= 10 ? day : '0' + day;
+
+            return year + "년 " + month + "월 " + day +"일"
+    }
+
     return (
         <TouchableWithoutFeedback onPress={() => moveToReviewDetail()}>
         <Container>
@@ -263,10 +280,10 @@ const ReviewItem = ({navigation, profileImageUri, nickname, createdAt, imageArra
                 <TouchableWithoutFeedback onPress={() => moveToAnotherProfile()}>
                 <ProfileLeftContainer>
                 <ProfileImage
-                source={{uri:profileImageUri}}/>
+                source={{uri:writer.profileImg}}/>
                 <NicknameCreatedAtContainer>
-                    <NicknameText>{nickname}</NicknameText>
-                    <CreatedAtText>{createdAt}</CreatedAtText>
+                    <NicknameText>{writer.nickname}</NicknameText>
+                    <CreatedAtText>{formatDate(createdAt)}</CreatedAtText>
                 </NicknameCreatedAtContainer>
                 </ProfileLeftContainer>
                 </TouchableWithoutFeedback>
@@ -274,8 +291,6 @@ const ReviewItem = ({navigation, profileImageUri, nickname, createdAt, imageArra
                     <ScrapIcon
                     source={require('~/Assets/Images/Review/ic_scrap_inline.png')}/>
                 </ProfileRightContainer>
-                
-
                 </ProfileContainer>
                 <InfoContainer>
                 <ImageListContainer>
@@ -290,18 +305,18 @@ const ReviewItem = ({navigation, profileImageUri, nickname, createdAt, imageArra
                 </ImageListContainer>
                     <TagListContainer>
                         <TagBackground>
-                        <TagText>{"#" + tagArray[0]}</TagText>
+                        <TagText>{"#" + treatmentArray[0]}</TagText>
                         </TagBackground>
-                        {tagArray[1] && (
+                        {treatmentArray[1] && (
                         <TagBackground>
-                        <TagText>{" #" + tagArray[1]}</TagText>
+                        <TagText>{" #" + treatmentArray[1]}</TagText>
                         </TagBackground>
                         )}
                     </TagListContainer>
                     <DateRatingContainer>
                         <InfoItemContainer>
                             <InfoLabelText>날짜</InfoLabelText>
-                            <InfoValueText>{date}</InfoValueText>
+                            <InfoValueText>{treatmentDate}</InfoValueText>
                         </InfoItemContainer>
                         <InfoItemContainer >
                             <InfoLabelText>만족도</InfoLabelText>

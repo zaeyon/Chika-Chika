@@ -6,6 +6,7 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {isIphoneX} from 'react-native-iphone-x-helper';
+import {useSelector, useDispatch} from 'react-redux';
 import DeviceInfo from 'react-native-device-info'
 
 const Container = Styled.SafeAreaView`
@@ -160,6 +161,8 @@ interface Props {
 }
 
 const HomeScreen = ({navigation}: Props) => {
+    const currentUser = useSelector((state: any) => state.currentUser);
+    console.log("현재 로그인된 사용자 정보 currentUser", currentUser);
 
     const moveToReviewList = () => {
         navigation.navigate("ReviewStackScreen", {

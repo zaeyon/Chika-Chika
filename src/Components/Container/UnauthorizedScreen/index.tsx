@@ -8,6 +8,14 @@ import {
 import KakaoLogins, {KAKAO_AUTH_TYPES} from '@react-native-seoul/kakao-login';
 import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
 
+import {
+  appleAuth
+} from '@invertase/react-native-apple-authentication';
+
+// route
+import POSTLogin from '~/Routes/Auth/POSTLogin';
+import POSTRegister from '~/Routes/Auth/POSTRegister';
+
 const Container = Styled.View`
   width: ${wp('100%')}px;
   height: ${hp('100%')}px;
@@ -161,30 +169,57 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
         }
     }
 
+    async function loginWithApple() {
+      // performs login request
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+      });
+    
+      // get current authentication state for user
+      // /!\ This method must be tested on a real device. On the iOS simulator it always throws an error.
+
+      const credentialState = await appleAuth.getCredentialStateForUser(appleAuthRequestResponse.user);
+    
+      // use credentialState response to ensure the user is authenticated
+      if (credentialState === appleAuth.State.AUTHORIZED) {
+        console.log("Apple Login Success credentialState", credentialState);
+        console.log("appleAuthRequestResponse", appleAuthRequestResponse);
+        Alert.alert("로그인성공");
+      }
+    }
+
+
+
+
+  
+
     return (
         <Container>
             <LogoContainer>
             </LogoContainer>
             <SocialContainer>
               <TouchableWithoutFeedback onPress={() => loginWithKakao()}>
-                <KakaoLoginButton>
-                  <KakaoLoginText>카카오로 로그인</KakaoLoginText>
-                </KakaoLoginButton>
+              <KakaoLoginButton>
+                <KakaoLoginText>카카오로 로그인</KakaoLoginText>
+              </KakaoLoginButton>
               </TouchableWithoutFeedback>
               <TouchableWithoutFeedback onPress={() => loginWithGoogle()}>
-                <GoogleLoginButton>
-                  <GoogleLoginText>구글로 로그인</GoogleLoginText>
-                </GoogleLoginButton>
+              <GoogleLoginButton>
+                <GoogleLoginText>구글로 로그인</GoogleLoginText>
+              </GoogleLoginButton>
               </TouchableWithoutFeedback>
-                <AppleLoginButton>
-                  <AppleLoginText>Apple로 로그인</AppleLoginText>
-                </AppleLoginButton>
+              <TouchableWithoutFeedback onPress={() => loginWithApple()}>
+              <AppleLoginButton>
+                <AppleLoginText>Apple로 로그인</AppleLoginText>
+              </AppleLoginButton>
+              </TouchableWithoutFeedback>
             </SocialContainer>
             <LocalContainer>
               <TouchableWithoutFeedback onPress={() => moveToLocalLogin()}>
-                <LocalLoginContainer>
+              <LocalLoginContainer>
                 <LocalLoginText>전화번호로 로그인 / 회원가입</LocalLoginText>
-                </LocalLoginContainer>
+              </LocalLoginContainer>
               </TouchableWithoutFeedback>
             </LocalContainer>
         </Container>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, Image} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -12,6 +12,9 @@ import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 import DeviceInfo from 'react-native-device-info';
 
 import allActions from '~/actions';
+
+// Async Storage
+import {getUserInfo} from '~/storage/currentUser';
 
 // ReUsable Components
 import InstantCamera from './Components/Container/InstantCamera';
@@ -101,7 +104,7 @@ const CommunityPostUploadStack = createStackNavigator();
 const DentalClinicStack = createStackNavigator();
 const TeethCareStack = createStackNavigator();
 
-const config = {
+const staticConfig = {
   animation: 'timing',
   config: {
     duration: 0,
@@ -114,7 +117,14 @@ function AuthStackScreen() {
         headerMode="none">
             <AuthStack.Screen
             name="UnauthorizedScreen"
-            component={UnauthorizedScreen}/>
+            component={UnauthorizedScreen}
+            options={{
+              transitionSpec: {
+                open: staticConfig,
+                close: staticConfig,
+              }
+            }}
+            />
             <AuthStack.Screen
             name="LoginScreen"
             component={LoginScreen}/>
@@ -196,8 +206,8 @@ function DentalClinicStackScreen() {
       component={DentalClinicListScreen}
       options={{
         transitionSpec: {
-          open: config,
-          close: config,
+          open: staticConfig,
+          close: staticConfig,
         },
       }}/>
       <DentalClinicStack.Screen
@@ -561,6 +571,23 @@ function BottomTab() {
 
 const Navigator = () => {
   const currentUser = useSelector((state: any) => state.currentUser);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+
+    getUserInfo()
+    .then((response) => {
+      console.log("getUserInfo response", response);
+      if(response !== null) {
+        dispatch(allActions.userActions.setUser(response));
+      } 
+    })
+    .catch((error) => {
+      console.log("getUserInfo error", error);
+    })
+
+  }, [])
+
   return (
     <NavigationContainer>
       {currentUser.loggedIn ? <BottomTab /> : <AuthStackScreen />}

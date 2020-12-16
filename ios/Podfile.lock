@@ -418,6 +418,10 @@ PODS:
     - React-Core (= 0.63.3)
     - React-cxxreact (= 0.63.3)
     - React-jsi (= 0.63.3)
+  - RNAppleAuthentication (2.1.0):
+    - React-Core
+  - RNCAsyncStorage (1.13.0):
+    - React
   - RNCMaskedView (0.1.10):
     - React
   - RNConvertPhAsset (1.0.3):
@@ -498,6 +502,8 @@ DEPENDENCIES:
   - React-RCTText (from `../node_modules/react-native/Libraries/Text`)
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - "RNAppleAuthentication (from `../node_modules/@invertase/react-native-apple-authentication`)"
+  - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNConvertPhAsset (from `../node_modules/react-native-convert-ph-asset`)
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
@@ -607,6 +613,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/Libraries/Vibration"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNAppleAuthentication:
+    :path: "../node_modules/@invertase/react-native-apple-authentication"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
   RNConvertPhAsset:
@@ -689,6 +699,8 @@ SPEC CHECKSUMS:
   React-RCTText: 65a6de06a7389098ce24340d1d3556015c38f746
   React-RCTVibration: 8e9fb25724a0805107fc1acc9075e26f814df454
   ReactCommon: 4167844018c9ed375cc01a843e9ee564399e53c3
+  RNAppleAuthentication: 46cbc67739bae83ca229497f9b0038f3f5431443
+  RNCAsyncStorage: b34c5db7bd4b2ef9a7ced5b59b1e6a0c5c6eb24e
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
   RNConvertPhAsset: 6ccaf96acc60fc0cba2218a80291970ce21cbd8c
   RNDateTimePicker: 88dc10d685ce961339bad3353c64db96c5abd19b
