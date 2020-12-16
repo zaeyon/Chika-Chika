@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList, ScrollView} from 'react-native';
+import {TouchableWithoutFeedback, FlatList, ScrollView, ActivityIndicator} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -164,6 +164,13 @@ color: #000000;
 font-size: 18px;
 `;
 
+const IndicatorContainer = Styled.View`
+flex: 1;
+background-color: #ffffff;
+align-items: center;
+justify-content: center;
+`;
+
 
 const TEST_REVIEW_DATA = [
     {
@@ -297,6 +304,7 @@ interface ReviewData {
 
 const ReviewListScreen = ({navigation}: Props) => {
     const [reviewList, setReviewList] = useState<Array<ReviewData>>([]);
+    const [loadingReviewList, setLoadingReviewList] = useState<boolean>(true);
     const [order, setOrder] = useState<string>("createdAt");
 
     var offset = 0;
@@ -311,6 +319,7 @@ const ReviewListScreen = ({navigation}: Props) => {
         .then((response: any) => {
             console.log("GETReviewList response", response);
             setReviewList(response);
+            setLoadingReviewList(false);
         })
         .catch((error) => {
             console.log("GETReviewList error", error)
@@ -359,6 +368,7 @@ const ReviewListScreen = ({navigation}: Props) => {
                     </HeaderEmptyContainer>
                 </HeaderRightContainer>
             </HeaderBar>
+            {!loadingReviewList && (
             <ReviewContainer>
             <ReviewListContainer>
                 <FlatList
@@ -368,6 +378,12 @@ const ReviewListScreen = ({navigation}: Props) => {
                 renderItem={renderReviewItem}/>
             </ReviewListContainer>
             </ReviewContainer>
+            )}
+            {loadingReviewList && (
+            <IndicatorContainer>
+                <ActivityIndicator/>
+            </IndicatorContainer>
+            )}
         </Container>
     )
 }
