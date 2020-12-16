@@ -5,6 +5,7 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import { FlatList } from 'react-native-gesture-handler';
 
 const Container = Styled.View`
  padding-top: 24px;
@@ -92,11 +93,13 @@ color: #000000;
 const TagBackground = Styled.View`
 padding-left: 12px;
 padding-right: 12px;
-padding-top: 8px;
-padding-bottom: 8px;
+padding-top: 4px;
+padding-bottom: 4px;
 background-color: #f1f1f1;
-border-radius: 100px;
+border-radius: 4px;
 margin-right: 4px;
+flex-direction: row;
+align-items: center;
 `;
 
 const DateRatingContainer = Styled.View`
@@ -248,6 +251,8 @@ interface Props {
 
 const ReviewItem = ({navigation, writer, createdAt, imageArray, treatmentArray, treatmentDate, rating, description, viewCount, treatInfoCount, likeCount, commentCount}: Props) => {
 
+    console.log("ReviewItem treatmentArray", treatmentArray);
+
     const moveToReviewDetail = () => {
         navigation.navigate("ReviewStackScreen", {
            screen: "ReviewDetailScreen"
@@ -271,6 +276,17 @@ const ReviewItem = ({navigation, writer, createdAt, imageArray, treatmentArray, 
             day = Number(day) >= 10 ? day : '0' + day;
 
             return year + "년 " + month + "월 " + day +"일"
+    }
+
+    const renderTreatmentItem = ({item, index}: any) => {
+        return (
+            <TagBackground>
+                <TagText style={{fontSize: 14, fontWeight: "200", color: "#000000"}}>
+                {"# "}</TagText>
+                <TagText>{item.name}</TagText>
+                
+            </TagBackground>
+        )
     }
 
     return (
@@ -304,14 +320,10 @@ const ReviewItem = ({navigation, writer, createdAt, imageArray, treatmentArray, 
                     )}
                 </ImageListContainer>
                     <TagListContainer>
-                        <TagBackground>
-                        <TagText>{"#" + treatmentArray[0]}</TagText>
-                        </TagBackground>
-                        {treatmentArray[1] && (
-                        <TagBackground>
-                        <TagText>{" #" + treatmentArray[1]}</TagText>
-                        </TagBackground>
-                        )}
+                        <FlatList
+                        horizontal={true}
+                        data={treatmentArray}
+                        renderItem={renderTreatmentItem}/>
                     </TagListContainer>
                     <DateRatingContainer>
                         <InfoItemContainer>
