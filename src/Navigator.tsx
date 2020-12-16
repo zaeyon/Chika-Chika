@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, Image} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -12,6 +12,9 @@ import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 import DeviceInfo from 'react-native-device-info';
 
 import allActions from '~/actions';
+
+// Async Storage
+import {getUserInfo} from '~/storage/currentUser';
 
 // ReUsable Components
 import InstantCamera from './Components/Container/InstantCamera';
@@ -103,7 +106,7 @@ const DentalClinicStack = createStackNavigator();
 const TeethCareStack = createStackNavigator();
 const KeywordSearchStack = createStackNavigator();
 
-const config = {
+const staticConfig = {
   animation: 'timing',
   config: {
     duration: 0,
@@ -111,28 +114,36 @@ const config = {
 };
 
 function AuthStackScreen() {
-  return (
-    <AuthStack.Navigator headerMode="none">
-      <AuthStack.Screen
-        name="UnauthorizedScreen"
-        component={UnauthorizedScreen}
-      />
-      <AuthStack.Screen name="LoginScreen" component={LoginScreen} />
-      <AuthStack.Screen name="BasicInputScreen" component={BasicInputScreen} />
-      <AuthStack.Screen
-        name="ProfileInputScreen"
-        component={ProfileInputScreen}
-      />
-      <AuthStack.Screen
-        name="VerifyPhoneNumberScreen"
-        component={VerifyPhoneNumberScreen}
-      />
-      <AuthStack.Screen
-        name="HometownSettingScreen"
-        component={HometownSettingScreen}
-      />
-    </AuthStack.Navigator>
-  );
+    return (
+        <AuthStack.Navigator
+        headerMode="none">
+            <AuthStack.Screen
+            name="UnauthorizedScreen"
+            component={UnauthorizedScreen}
+            options={{
+              transitionSpec: {
+                open: staticConfig,
+                close: staticConfig,
+              }
+            }}
+            />
+            <AuthStack.Screen
+            name="LoginScreen"
+            component={LoginScreen}/>
+            <AuthStack.Screen
+            name="BasicInputScreen"
+            component={BasicInputScreen}/>
+            <AuthStack.Screen
+            name="ProfileInputScreen"
+            component={ProfileInputScreen}/>
+            <AuthStack.Screen
+            name="VerifyPhoneNumberScreen"
+            component={VerifyPhoneNumberScreen}/>
+            <AuthStack.Screen
+            name="HometownSettingScreen"
+            component={HometownSettingScreen}/>
+        </AuthStack.Navigator>
+    )
 }
 
 function ReviewStackScreen() {
@@ -193,15 +204,14 @@ function DentalClinicStackScreen() {
         component={NearDentalMap}
       />
       <DentalClinicStack.Screen
-        name="DentalClinicListScreen"
-        component={DentalClinicListScreen}
-        options={{
-          transitionSpec: {
-            open: config,
-            close: config,
-          },
-        }}
-      />
+      name="DentalClinicListScreen"
+      component={DentalClinicListScreen}
+      options={{
+        transitionSpec: {
+          open: staticConfig,
+          close: staticConfig,
+        },
+      }}/>
       <DentalClinicStack.Screen
         name="DentalDetailScreen"
         component={DentalDetailScreen}
@@ -585,6 +595,23 @@ function BottomTab() {
 
 const Navigator = () => {
   const currentUser = useSelector((state: any) => state.currentUser);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+
+    getUserInfo()
+    .then((response) => {
+      console.log("getUserInfo response", response);
+      if(response !== null) {
+        dispatch(allActions.userActions.setUser(response));
+      } 
+    })
+    .catch((error) => {
+      console.log("getUserInfo error", error);
+    })
+
+  }, [])
+
   return (
     <NavigationContainer>
       {currentUser.loggedIn ? <BottomTab /> : <AuthStackScreen />}

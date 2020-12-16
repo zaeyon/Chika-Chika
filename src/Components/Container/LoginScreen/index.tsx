@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import Styled from 'styled-components/native';
-import {Text, TouchableWithoutFeedback, StyleSheet, Alert, ActivityIndicator} from 'react-native';
+import {Text, TouchableWithoutFeedback, StyleSheet, Alert, ActivityIndicator, Keyboard} from 'react-native';
 import axios from 'axios';
 import {resolvePlugin} from '@babel/core';
 import {useSelector, useDispatch} from 'react-redux';
@@ -13,8 +13,13 @@ import AboveKeyboard from 'react-native-above-keyboard';
 //import {getStatusBarHeight} from 'react-native-status-bar-height'
 import {getStatusBarHeight} from 'react-native-iphone-x-helper'
 
+// Async Storage
+import {storeUserInfo} from '~/storage/currentUser';
+
+// Route
 import POSTSendTokenToPhone from '~/Routes/Auth/POSTSendTokenToPhone';
 import POSTVerifyPhoneNumber from '~/Routes/Auth/POSTVerifyPhoneNumber';
+import POSTLogin from '~/Routes/Auth/POSTLogin';
 
 const Input = Styled.TextInput`
 position: relative;
@@ -138,13 +143,13 @@ align-items: center;
 padding-bottom: 30px;
 `;
 
-const UnvaildInputText = Styled.Text`
+const InvalidInputText = Styled.Text`
  position: absolute;
  bottom: -18;
  left: 5;
  margin-left: 3px;
  margin-top: 5px;
- color: #FF3B30;
+ color: #FF5656;
  font-size: 13px;
 `;
 
@@ -197,6 +202,15 @@ background-color : #707070;
 const LoginButtonContainer = Styled.View`
 `;
 
+const IndicatorContainer = Styled.View`
+position: absolute;
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
+background-color: #00000040;
+align-items: center;
+justify-content: center;
+`;
+
 interface Props {
     navigation: any,
     route: any,
@@ -204,16 +218,21 @@ interface Props {
 
 var limitTime = 300;
 var timeout: any;
+//var isUser = false;
 
 const LoginScreen = ({navigation}: Props) => {
   const [number, setNumber] = useState('');
   const [authCode, setAuthCode] = useState<string>('');
   const [validNumber, setValidNumber] = useState<boolean>(false);
+  const [invalidPhoneNumber, setInvalidPhoneNumber] = useState<boolean>(false);
+  const [invalidAuthCode, setInvalidAuthCode] = useState<boolean>(false);
   const [numberInputState, setNumberInputState] = useState<string>("noInput");
   const [numberInputFocus, setNumberInputFocus] = useState<boolean>(false);
   const [authCodeInputFocus, setAuthCodeInputFocus] = useState<boolean>(false);
+  const [isUser, setIsUser] = useState<boolean>(false);
   const [formattedNumber, setFormattedNumber] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingVerify, setLoadingVerify] = useState<boolean>(false);
 
   const [visibleAuthCodeInput, setVisibleAuthCodeInput] = useState<boolean>(false);
 
@@ -344,60 +363,113 @@ const LoginScreen = ({navigation}: Props) => {
     setAuthCodeInputFocus(false);
   }
 
-  const clickLoginButton = () => {
-    clearInterval(timeout)
-    POSTVerifyPhoneNumber(String(number), String(authCode))
-    .then(function(response: any) {
-      console.log("POSTVerifyPhoneNumber response", response)
-    })
-    .catch(function(error) {
-      console.log("POSTVerifyPhoneNumber error", error);
-    })
-
-      
-      dispatch(
-      allActions.userActions.setUser({
-          number: submitingNumber,
-      }))
-      
-
-      /*
-      navigation.navigate("HometownSettingScreen");
-      
-      */
+  const onChangeAuthCodeInput = (text: string) => {
+    setInvalidAuthCode(false);
+    setAuthCode(text);
   }
 
- const clickSendAuthCode = () => {
-   if(formattedNumber.split("").length === 17) {
-    var tmpNumber = formattedNumber.split(" - ");
-    var phoneNumber = tmpNumber.join("");
-    console.log("tmpNumber", tmpNumber.join(""));
+  const clickLoginButton = () => {
+    Keyboard.dismiss();
+    setLoadingVerify(true);
+    console.log("isUser", isUser);
+
+    if(isUser) {
+      const phoneNumber = String(number);
+      login(phoneNumber, authCode);
+    } else {
+      POSTVerifyPhoneNumber(String(number), String(authCode))
+      .then(function(response: any) {
+        setLoadingVerify(false);
+        clearInterval(timeout)
+        console.log("POSTVerifyPhoneNumber response", response)
+        console.log("number", number);
+       
+        navigation.navigate("HometownSettingScreen", {
+          certifiedPhoneNumber: true,
+          provider: "local",
+          fcmToken: null,
+          userPhoneNumber: String(number),
+          nickname: "TEST" + String(Date.now()),
+          isUser: isUser,
+        });
+      })
+      .catch(function(error) {
+        setLoadingVerify(false);
+        console.log("POSTVerifyPhoneNumber error", error);
+      })
+    }
+  }
+
+  const clickSendAuthCode = () => {
+    if(formattedNumber.split("").length === 17) {
+      setInvalidPhoneNumber(false);
+      clearInterval(timeout);
+      limitTime = 300;
+
+      var tmpNumber = formattedNumber.split(" - ");
+      var phoneNumber = tmpNumber.join("");
+      console.log("tmpNumber", tmpNumber.join(""));
+
+      setNumber(tmpNumber.join(""));
+      setInvalidAuthCode(false);
+      setTimeOver(false)
+      setVisibleAuthCodeInput(true)
+      startTimeout()
+
+      POSTSendTokenToPhone(String(phoneNumber))
+      .then(function(response: any) {
+        console.log("POSTSendTokenToPhone response", response);
+        setIsUser(response.exist);
+      })
+      .catch(function(error) {
+        console.log("POSTSendTokenToPhone error", error);
+      })
+    } else {
+      setInvalidPhoneNumber(true)
+      clearInterval(timeout);
+      Alert.alert("올바른 전화번호를 입력하세요!");
+      
+    }
+  }
+
+  const login = (submitPhoneNumber: string, submitAuthCode: string) => {
     
-    setNumber(tmpNumber.join(""));
-    setVisibleAuthCodeInput(true)
-    startTimeout()
+    const phoneNumber = submitPhoneNumber;
+    const authCode = submitAuthCode;
 
-    /*
+    POSTLogin({phoneNumber, authCode})
+      .then(function(response: any) {
+        console.log("POSTLogin response", response)
+        if(response.statusText === "Accepted") {
+          setLoadingVerify(false);
+          clearInterval(timeout);
 
-    POSTSendTokenToPhone(String(phoneNumber))
-    .then(function(response) {
-      console.log("POSTSendTokenToPhone response", response);
-    })
-    .catch(function(error) {
-      console.log("POSTSendTokenToPhone error", error);
-    })
-    */
-   }
- }
+          const userInfo = {
+            jwtToken: response.token,
+            phoneNumber: phoneNumber
+          }
+          
+          storeUserInfo(userInfo);
+          dispatch(allActions.userActions.setUser(userInfo));
+        }
+      })
+      .catch(function(error: any) {
+        setLoadingVerify(false);
+        console.log("POSTLogin error", error);
+        console.log("error.status", error.status);
+        if(error.status == 401) {
+          setInvalidAuthCode(true);
+        }
+      })
+  }
 
- const goBack = () => {
+
+  const goBack = () => {
    navigation.goBack()
    clearInterval(timeout)
    
    limitTime = 300;
- }
-
-
+  }
 
   return (
     <Container>
@@ -423,7 +495,7 @@ const LoginScreen = ({navigation}: Props) => {
           ref={numberInputRef}
           placeholder={" - 없이 번호 입력"}
           placeholderTextColor={"#7e7e7e"}
-          style={[(numberInputState === "unvalid" && {borderColor: '#FF3B30'}) || (numberInputFocus && {borderColor:'#267DFF', backgroundColor: '#FFFFFF'})]}
+          style={[(numberInputState === "invalid" && {borderColor: '#FF3B30'}) || (numberInputFocus && {borderColor:'#267DFF', backgroundColor: '#FFFFFF'})]}
           onChangeText={(text:string) => onChangeNumberInput(text)}
           autoCapitalize={"none"}
           onSubmitEditing={(text) => onUnfocusNumberInput(text.nativeEvent.text)}
@@ -444,11 +516,12 @@ const LoginScreen = ({navigation}: Props) => {
         <ItemContainer style={{marginTop: 16}}>
           <ItemTextInput
           ref={authCodeInputRef}
-          style={(authCodeInputFocus && !timeOver && {borderColor:'#267DFF', backgroundColor: "#ffffff"}) || timeOver && {borderColor: '#E90000', backgroundColor: "#ffffff"}}
+          style={(authCodeInputFocus && !timeOver && !invalidAuthCode && {borderColor:'#267DFF', backgroundColor: "#ffffff"}) || ((timeOver || invalidAuthCode) && {borderColor: '#FF5656', backgroundColor: "#ffffff"})}
           onFocus={() => onFocusAuthCodeInput()}
           onSubmitEditing={(text:any) => onUnfocusAuthCodeInput(text.nativeEvent.text)}
           onEndEditing={(text:any) => onUnfocusAuthCodeInput(text.nativeEvent.text)}
-          onChangeText={(text: string) => setAuthCode(text)}
+          onChangeText={(text: string) => onChangeAuthCodeInput(text)}
+          keyboardType={"number-pad"}
           autoCapitalize={"none"}
           clearButtonMode={timeOver ? "always" : "never"}
           autoFocus={true}
@@ -459,21 +532,24 @@ const LoginScreen = ({navigation}: Props) => {
             )}
           </TimeLimitTextContainer>
           {timeOver && (
-            <UnvaildInputText>인증 기간이 만료되었습니다.</UnvaildInputText>
+            <InvalidInputText>{"인증 기간이 만료되었습니다."}</InvalidInputText>
+          )}
+          {invalidAuthCode && (
+            <InvalidInputText>{"인증번호가 일치하지 않습니다."}</InvalidInputText>
           )}
         </ItemContainer>
         )}
         <FinishButtonContainer>
         <AboveKeyboard>
             <LoginButtonContainer>
-            {(number !== "" && authCode !== "" && !timeOver) && (
+            {(number !== "" && authCode !== "" && !timeOver && !invalidPhoneNumber) && (
             <TouchableWithoutFeedback onPress={() => clickLoginButton()}>
             <AbledLoginButton>
               <AbledLoginText>로그인</AbledLoginText>
             </AbledLoginButton>
             </TouchableWithoutFeedback>
             )}
-            {((visibleAuthCodeInput && authCode == "") || (timeOver)) && (
+            {((visibleAuthCodeInput && authCode == "") || (timeOver) || invalidPhoneNumber) && (
             <DisabledLoginButton>
               <DisabledLoginText>로그인</DisabledLoginText>
             </DisabledLoginButton>
@@ -482,7 +558,7 @@ const LoginScreen = ({navigation}: Props) => {
         </AboveKeyboard>
         </FinishButtonContainer>
       </BodyContainer>
-      {loading && (
+      {(loading || loadingVerify) && (
         <LoadingContainer>
           <ActivityIndicator
           color={"#FFFFFF"}/>
