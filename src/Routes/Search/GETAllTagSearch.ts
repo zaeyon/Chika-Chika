@@ -1,12 +1,12 @@
 import axios from 'axios';
-import serverConfig from '../../server.config';
+import serverConfig from '../server.config';
 
 const baseUri = serverConfig.baseUri
 
-const GETAutocompletedHashTagList = (query: string) => {
+const GETAllTagSearch = (query: string) => {
 
-    const uri = baseUri + "/search/clinics";
-    const formattedQuery = '?q='+query
+    const uri = baseUri + "/search/allTagItems";
+    const formattedQuery = '?q='+query+'&limit=20&offset=0'
 
     return new Promise(function(resolve, reject) {
 
@@ -28,4 +28,4 @@ const GETAutocompletedHashTagList = (query: string) => {
     })
 }
 
-export default GETAutocompletedHashTagList;
+export default GETAllTagSearch;
