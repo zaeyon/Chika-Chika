@@ -89,7 +89,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
     />
   );
 
-  const getItemKey = (item: any) => item.id;
+  const getItemKey = (item: any) => String(item.id);
 
   const onEndReached = (info: any) => {
     console.log(info.distanceFromEnd);

@@ -189,6 +189,7 @@ interface Props {
   setWantDentistHelp: any;
   isPopupShown: any;
   setIsPopupShown: any;
+  isLoading: any;
 }
 
 const CommunityCreatePostScreen = ({
@@ -211,6 +212,7 @@ const CommunityCreatePostScreen = ({
   setWantDentistHelp,
   isPopupShown,
   setIsPopupShown,
+  isLoading,
 }: Props) => {
   const [imageRenderList, setImageRenderList] = useState<string[]>(
     imageDataList,
@@ -531,6 +533,7 @@ const CommunityCreatePostScreen = ({
           suggestionList={suggestionList}
           searchQuery={searchQuery}
           completeCurrentHashTag={completeCurrentHashTag}
+          isLoading={isLoading}
         />
         <ActionSheet
           ref={actionSheetRef}

@@ -34,7 +34,6 @@ height: auto;
 margin-right: auto;
 flex-direction: row;
 align-items: center;
-
 `;
 
 const HashTagContainerView = Styled.View`
@@ -152,9 +151,9 @@ const PostItem = ({mode, data, navigation}: Props) => {
   const proComments = [
     '안녕하세요 전윤정님. 저희 치과를 이용해주셔서 감사합니다. 어쩌구저쩌구 어쩌구저쩌구',
   ];
-  const formatHashTag = (text: string) => {
+  const formatHashTag = (text: string, index: number) => {
     return (
-      <TouchableWithoutFeedback>
+      <TouchableWithoutFeedback key={text + index}>
         <HashTagText>{'#' + text}</HashTagText>
       </TouchableWithoutFeedback>
     );
@@ -175,6 +174,7 @@ const PostItem = ({mode, data, navigation}: Props) => {
           //isTag
           const formattedHashTag = formatHashTag(
             word.slice(2, word.length - 2),
+            formattedLine.length,
           );
           formattedLine.push(formattedHashTag);
         } else {
@@ -261,10 +261,7 @@ const PostItem = ({mode, data, navigation}: Props) => {
       onPress={() => {
         moveToCommunityDetail();
       }}>
-      <ContainerView
-        style={{
-          height: 'auto',
-        }}>
+      <ContainerView>
         <BodyContainerView>
           <TouchableWithoutFeedback
             onPress={() => {
@@ -285,9 +282,9 @@ const PostItem = ({mode, data, navigation}: Props) => {
             <HashTagFlatList
               horizontal={true}
               data={tagList}
-              keyExtractor={(item) => item}
+              keyExtractor={(item, index) => item + index}
               renderItem={({item, index}) => (
-                <HashTagIconView key={'hashtag' + index}>
+                <HashTagIconView>
                   <HashTagIconText>{'#' + item}</HashTagIconText>
                 </HashTagIconView>
               )}
@@ -309,7 +306,7 @@ const PostItem = ({mode, data, navigation}: Props) => {
               showsHorizontalScrollIndicator={false}
               alwaysBounceHorizontal={false}
               data={mediaFiles}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => String(item.id)}
               renderItem={renderImagesCallback}></ImageFlatList>
           </ImageContainerView>
         ) : null}

@@ -59,10 +59,14 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   const [categoryList, setCategoryList] = useState<string[]>(['질문', '자유']);
   const [isPopupShown, setIsPopupShown] = useState<boolean>(true);
 
+  const [onSubmit, setOnSubmit] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     //fetch here!!
     console.log(searchQuery);
     async function fetchData() {
+      setIsLoading(true);
       const incompleteKorean = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
       if (!incompleteKorean.test(searchQuery)) {
         if (searchQuery !== '') {
@@ -71,7 +75,11 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
           setSearchQuery((prev) => {
             if (prev !== searchQuery) {
             } else {
-              setSuggestionList(response);
+              setIsLoading((prev) => {
+                setSuggestionList(response);
+                console.log(prev);
+                return false;
+              });
             }
             return prev;
           });
@@ -145,6 +153,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   };
   const uploadPost = async () => {
     console.log(description, wantDentistHelp, category, images);
+    setOnSubmit(true);
     const formattedImages = await formatImages(images);
     const formattedDescription = formatDescription(description);
     const formattedCategory = formatCategory(category);
@@ -167,6 +176,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
 
   const editPost = async () => {
     console.log(description, wantDentistHelp, category, images);
+    setOnSubmit(true);
     const formattedImages = await formatImages(images);
     const formattedDescription = formatDescription(description);
     const formattedCategory = formatCategory(category);
@@ -194,7 +204,11 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
           text: '취소',
         }}
         headerRightProps={
-          mode === 'edit'
+          onSubmit
+            ? {
+                text: '생성중',
+              }
+            : mode === 'edit'
             ? {
                 onPress: editPost,
                 text: '완료',
@@ -226,6 +240,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         setWantDentistHelp={setWantDentistHelp}
         isPopupShown={isPopupShown}
         setIsPopupShown={setIsPopupShown}
+        isLoading={isLoading}
       />
     </ContainerView>
   );
