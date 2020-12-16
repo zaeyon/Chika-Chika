@@ -22,9 +22,12 @@ const Container = Styled.View`
 `;
 
 const ProfileImageContainer = Styled.View`
-padding-top: 15px;
-padding-left: 16px;
-padding-right: 12px;
+width: ${wp('9.6%')};
+ height: ${wp('9.6%')};
+
+margin-top: 15px;
+margin-left: 16px;
+margin-right: 12px;
  align-items: center;
 `;
 
@@ -58,8 +61,8 @@ const FooterContainer = Styled.View`
 `;
 
 const ProfileImage = Styled.Image`
- width: ${wp('9.6%')};
- height: ${wp('9.6%')};
+ width: 100%;
+ height: 100%;
  border-radius: 100px;
  background: grey;
 `;
