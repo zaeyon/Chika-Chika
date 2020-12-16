@@ -20,6 +20,13 @@
 		47DD8F34EB7BC312ADCDEC0B /* libPods-chikaApp-chikaAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E8140D8A3DB1E3120D14D5 /* libPods-chikaApp-chikaAppTests.a */; };
 		7B9B48EC3BCFAF9EC8BCDFC4 /* libPods-chikaApp-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2536268A484724DF330B6AE /* libPods-chikaApp-tvOSTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		87141FCE84EE448381346CC1 /* RobotoMono-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5CBD8F4A5661431FB4E50BA5 /* RobotoMono-Bold.ttf */; };
+		9F95A0652D3048B89BDC2E10 /* NanumSquareBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64ED8115836A4AF493AFFC0E /* NanumSquareBold.ttf */; };
+		BD9361F06CC740E881A737EF /* NanumPenScript-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EA6B094AE4F24F328F82632E /* NanumPenScript-Regular.ttf */; };
+		C046EC6DACB44A77ABF967D5 /* NanumSquareExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4CFFF851AC3E44FA80313426 /* NanumSquareExtraBold.ttf */; };
+		C3FFA84AA4654061BCC125EB /* WorkSans-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E8CCDBFA7D8B416E9AE41547 /* WorkSans-Medium.ttf */; };
+		C74455CBA2DA4D5E8E7C911A /* NanumSquareRegular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 48097296069349A1A53E6798 /* NanumSquareRegular.ttf */; };
+		D236DF3A495C40969E53656F /* NanumSquareLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 422E7A97FC6041DE894DAFE3 /* NanumSquareLight.ttf */; };
 		F14D2E2B5E46041549158DE8 /* libPods-chikaApp-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 592CDC0DC2BD4A5F53AAC2A9 /* libPods-chikaApp-tvOS.a */; };
 		F2646A8D075067EDC4FAF176 /* libPods-chikaApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BC7896BF0E6B6C9BAA46782 /* libPods-chikaApp.a */; };
 /* End PBXBuildFile section */
@@ -46,6 +53,7 @@
 		00E356EE1AD99517003FC87E /* chikaAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = chikaAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* chikaAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = chikaAppTests.m; sourceTree = "<group>"; };
+		0A6D48F82588A11800184AAD /* chikaApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = chikaApp.entitlements; path = chikaApp/chikaApp.entitlements; sourceTree = "<group>"; };
 		0AAE3687256D01310005A342 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0AC595CC253EC38300B0B676 /* chikaApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "chikaApp-Bridging-Header.h"; sourceTree = "<group>"; };
 		0AC595CD253EC38300B0B676 /* swift-header.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "swift-header.swift"; sourceTree = "<group>"; };
@@ -60,16 +68,27 @@
 		2D02E4901E0B4A5D006451C7 /* chikaApp-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "chikaApp-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		31B1DA79BED52E904639C6EB /* Pods-chikaApp-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-chikaApp-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-chikaApp-tvOS/Pods-chikaApp-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		3A3E23D0EB7B8D52F0FBC708 /* Pods-chikaApp-chikaAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-chikaApp-chikaAppTests.debug.xcconfig"; path = "Target Support Files/Pods-chikaApp-chikaAppTests/Pods-chikaApp-chikaAppTests.debug.xcconfig"; sourceTree = "<group>"; };
+		422E7A97FC6041DE894DAFE3 /* NanumSquareLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NanumSquareLight.ttf; path = ../assets/fonts/NanumSquareLight.ttf; sourceTree = "<group>"; };
 		43A626E0AF71B46521CE44F0 /* Pods-chikaApp-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-chikaApp-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-chikaApp-tvOSTests/Pods-chikaApp-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		48097296069349A1A53E6798 /* NanumSquareRegular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NanumSquareRegular.ttf; path = ../assets/fonts/NanumSquareRegular.ttf; sourceTree = "<group>"; };
+		4CFFF851AC3E44FA80313426 /* NanumSquareExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NanumSquareExtraBold.ttf; path = ../assets/fonts/NanumSquareExtraBold.ttf; sourceTree = "<group>"; };
 		592CDC0DC2BD4A5F53AAC2A9 /* libPods-chikaApp-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-chikaApp-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5CBD8F4A5661431FB4E50BA5 /* RobotoMono-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RobotoMono-Bold.ttf"; path = "../assets/fonts/RobotoMono-Bold.ttf"; sourceTree = "<group>"; };
 		5F51CD5C66FD61F02D262EF7 /* Pods-chikaApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-chikaApp.release.xcconfig"; path = "Target Support Files/Pods-chikaApp/Pods-chikaApp.release.xcconfig"; sourceTree = "<group>"; };
+		64ED8115836A4AF493AFFC0E /* NanumSquareBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NanumSquareBold.ttf; path = ../assets/fonts/NanumSquareBold.ttf; sourceTree = "<group>"; };
 		69D20674D739BBEE4B0287BD /* Pods-chikaApp-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-chikaApp-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-chikaApp-tvOSTests/Pods-chikaApp-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = chikaApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		8AF32FA783B64832BF265861 /* NanumSquareExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NanumSquareExtraBold.ttf; path = ../src/Assets/Fonts/NanumSquareExtraBold.ttf; sourceTree = "<group>"; };
+		9A31B45BA4D046F5A6BC6981 /* NanumSquareRegular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NanumSquareRegular.ttf; path = ../src/Assets/Fonts/NanumSquareRegular.ttf; sourceTree = "<group>"; };
 		9C54FAA114BCA30B54A579C3 /* Pods-chikaApp-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-chikaApp-tvOS.release.xcconfig"; path = "Target Support Files/Pods-chikaApp-tvOS/Pods-chikaApp-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		A2536268A484724DF330B6AE /* libPods-chikaApp-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-chikaApp-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF053E21E52AB4702E5D9A19 /* Pods-chikaApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-chikaApp.debug.xcconfig"; path = "Target Support Files/Pods-chikaApp/Pods-chikaApp.debug.xcconfig"; sourceTree = "<group>"; };
 		B3E8140D8A3DB1E3120D14D5 /* libPods-chikaApp-chikaAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-chikaApp-chikaAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7355782E10B435CB7B99362 /* NanumSquareBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NanumSquareBold.ttf; path = ../src/Assets/Fonts/NanumSquareBold.ttf; sourceTree = "<group>"; };
 		C03E9D0665AFB268A5D49018 /* Pods-chikaApp-chikaAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-chikaApp-chikaAppTests.release.xcconfig"; path = "Target Support Files/Pods-chikaApp-chikaAppTests/Pods-chikaApp-chikaAppTests.release.xcconfig"; sourceTree = "<group>"; };
+		C0BF60D630FF41DA91340702 /* NanumSquareLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NanumSquareLight.ttf; path = ../src/Assets/Fonts/NanumSquareLight.ttf; sourceTree = "<group>"; };
+		E8CCDBFA7D8B416E9AE41547 /* WorkSans-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "WorkSans-Medium.ttf"; path = "../assets/fonts/WorkSans-Medium.ttf"; sourceTree = "<group>"; };
+		EA6B094AE4F24F328F82632E /* NanumPenScript-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "NanumPenScript-Regular.ttf"; path = "../assets/fonts/NanumPenScript-Regular.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
@@ -130,6 +149,7 @@
 		13B07FAE1A68108700A75B9A /* chikaApp */ = {
 			isa = PBXGroup;
 			children = (
+				0A6D48F82588A11800184AAD /* chikaApp.entitlements */,
 				0AAE3687256D01310005A342 /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -173,6 +193,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				89DD36E3752DC0C72FED91DE /* Pods */,
+				C3742414806E4EB49A38C89C /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -203,6 +224,24 @@
 				43A626E0AF71B46521CE44F0 /* Pods-chikaApp-tvOSTests.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		C3742414806E4EB49A38C89C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B7355782E10B435CB7B99362 /* NanumSquareBold.ttf */,
+				8AF32FA783B64832BF265861 /* NanumSquareExtraBold.ttf */,
+				C0BF60D630FF41DA91340702 /* NanumSquareLight.ttf */,
+				9A31B45BA4D046F5A6BC6981 /* NanumSquareRegular.ttf */,
+				64ED8115836A4AF493AFFC0E /* NanumSquareBold.ttf */,
+				4CFFF851AC3E44FA80313426 /* NanumSquareExtraBold.ttf */,
+				422E7A97FC6041DE894DAFE3 /* NanumSquareLight.ttf */,
+				48097296069349A1A53E6798 /* NanumSquareRegular.ttf */,
+				E8CCDBFA7D8B416E9AE41547 /* WorkSans-Medium.ttf */,
+				5CBD8F4A5661431FB4E50BA5 /* RobotoMono-Bold.ttf */,
+				EA6B094AE4F24F328F82632E /* NanumPenScript-Regular.ttf */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -303,7 +342,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = HC9LUKBNP4;
+						DevelopmentTeam = YJZCBUF344;
 						LastSwiftMigration = 1200;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
@@ -353,6 +392,13 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				0AAE3688256D01310005A342 /* GoogleService-Info.plist in Resources */,
+				9F95A0652D3048B89BDC2E10 /* NanumSquareBold.ttf in Resources */,
+				C046EC6DACB44A77ABF967D5 /* NanumSquareExtraBold.ttf in Resources */,
+				D236DF3A495C40969E53656F /* NanumSquareLight.ttf in Resources */,
+				C74455CBA2DA4D5E8E7C911A /* NanumSquareRegular.ttf in Resources */,
+				C3FFA84AA4654061BCC125EB /* WorkSans-Medium.ttf in Resources */,
+				87141FCE84EE448381346CC1 /* RobotoMono-Bold.ttf in Resources */,
+				BD9361F06CC740E881A737EF /* NanumPenScript-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -709,8 +755,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = chikaApp/chikaApp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = HC9LUKBNP4;
+				DEVELOPMENT_TEAM = YJZCBUF344;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = chikaApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -734,8 +781,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = chikaApp/chikaApp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = HC9LUKBNP4;
+				DEVELOPMENT_TEAM = YJZCBUF344;
 				INFOPLIST_FILE = chikaApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (

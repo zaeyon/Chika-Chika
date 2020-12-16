@@ -10,6 +10,8 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@invertase/react-native-apple-authentication": "^2.1.0",
+    "@react-native-async-storage/async-storage": "github:react-native-async-storage/async-storage",
     "@react-native-community/cameraroll": "^4.0.1",
     "@react-native-community/datetimepicker": "^3.0.4",
     "@react-native-community/google-signin": "^5.0.0",

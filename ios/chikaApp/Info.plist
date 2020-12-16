@@ -81,6 +81,16 @@
 	<string>For user take and save photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>For user to register photos </string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>NanumSquareExtraBold.ttf</string>
+		<string>NanumSquareLight.ttf</string>
+		<string>NanumSquareRegular.ttf</string>
+		<string>NanumSquareBold.ttf</string>
+		<string>WorkSans-Medium.ttf</string>
+		<string>RobotoMono-Bold.ttf</string>
+		<string>NanumPenScript-Regular.ttf</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
