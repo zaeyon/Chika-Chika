@@ -10,6 +10,9 @@ import {createStore} from 'redux';
 import rootReducer from './reducers';
 import Navigator from '~/Navigator'
 
+// Async Storage
+import {getUserInfo} from '~/storage/currentUser';
+
 const store = createStore(rootReducer)
 
 async function hasAndroidPermission() {

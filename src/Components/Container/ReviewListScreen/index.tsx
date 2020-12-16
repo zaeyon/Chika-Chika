@@ -10,6 +10,9 @@ import {isIphoneX} from 'react-native-iphone-x-helper';
 // Local Component
 import ReviewItem from '~/Components/Presentational/ReviewItem';
 
+// Route
+import GETReviewList from '~/Routes/Review/GETReviewList';
+
 const Container = Styled.SafeAreaView`
  flex: 1;
  background-color: #FFFFFF;
@@ -269,28 +272,75 @@ interface Props {
     navigation: any,
 }
 
+interface ReviewData {
+    id: Number,
+    user: Object,
+    userId: String,
+    TreatmentItems: Array<Object>,
+    certifiedBill: Boolean,
+    createdAt: String,
+    deletedAt: String,
+    dentalClinicId: Number,
+    dental_clinic: Object,
+    hits: Number,
+    concsulationDate: String,
+    reviewCommentNum: Number,
+    reivewLikeNum: Number,
+    reviewViewNum: Number,
+    review_contents: Array<Object>,
+    starRate_cost: Number,
+    starRate_service: Number,
+    starRate_treatment: Number,
+    updatedAt: String,
+    viewerLikedReview: Number,
+}
+
 const ReviewListScreen = ({navigation}: Props) => {
+    const [reviewList, setReviewList] = useState<Array<ReviewData>>([]);
+    const [order, setOrder] = useState<string>("createdAt");
+
+    var offset = 0;
+    var limit = 10;
+
+    useEffect(() => {
+        getReviewList()
+    }, [])
+
+    const getReviewList = () => {
+        GETReviewList({order, offset, limit})
+        .then((response: any) => {
+            console.log("GETReviewList response", response);
+            setReviewList(response);
+        })
+        .catch((error) => {
+            console.log("GETReviewList error", error)
+        })
+    }
 
     const goBack = () => {
        navigation.goBack()
     }
 
     const renderReviewItem = ({item, index}: any) => {
+
+        const avgRating = ((item.starRate_cost + item.starRate_service + item.StarRate_treatment)/3).toFixed(1);
+
+        console.log("renderReviewItem item", item.review_contents);
+
         return (
             <ReviewItem
             navigation={navigation}
-            profileImageUri={item.user.profileImage}
-            nickname={item.user.nickname}
+            writer={item.user}
             createdAt={item.createdAt}
-            imageArray={item.reviewImages}
-            tagArray={item.tags}
-            date={item.date}
-            rating={item.rating}
-            description={item.description}
-            viewCount={item.view}
+            imageArray={item.reviewImages ? item.reviewImages : []}
+            treatmentArray={item.TreatmentItems}
+            treatmentDate={item.concsulationDate}
+            rating={item.avgRating}
+            description={item.description ? item.description : ""}
+            viewCount={item.reviewViewNum}
             treatInfoCount={item.getInfo}
-            likeCount={item.like}
-            commentCount={item.comment}/>
+            likeCount={item.reviewLikeNum}
+            commentCount={item.reviewCommentNum}/>
         )
     }
 
@@ -314,7 +364,7 @@ const ReviewListScreen = ({navigation}: Props) => {
                 <FlatList
                 horizontal={false}
                 showsVerticalScrollIndicator={false}
-                data={TEST_REVIEW_DATA}
+                data={reviewList}
                 renderItem={renderReviewItem}/>
             </ReviewListContainer>
             </ReviewContainer>

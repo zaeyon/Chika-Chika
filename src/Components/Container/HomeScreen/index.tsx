@@ -6,7 +6,8 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {isIphoneX} from 'react-native-iphone-x-helper';
-import DeviceInfo from 'react-native-device-info';
+import {useSelector, useDispatch} from 'react-redux';
+import DeviceInfo from 'react-native-device-info'
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -157,68 +158,80 @@ interface Props {
 }
 
 const HomeScreen = ({navigation}: Props) => {
-  const moveToReviewList = () => {
-    navigation.navigate('ReviewStackScreen', {
-      screen: 'ReviewListScreen',
-    });
-  };
+    const currentUser = useSelector((state: any) => state.currentUser);
+    console.log("현재 로그인된 사용자 정보 currentUser", currentUser);
 
-  const moveToReviewUpload = () => {
-    navigation.navigate('ReviewUploadStackScreen', {
-      screen: 'ReceiptRegisterScreen',
-    });
-  };
+    const moveToReviewList = () => {
+        navigation.navigate("ReviewStackScreen", {
+            screen: "ReviewListScreen"
+        });
+    }
 
-  return (
-    <Container>
-      <HeaderBar>
-        <HeaderLeftContainer>
-          <HeaderEmptyContainer></HeaderEmptyContainer>
-        </HeaderLeftContainer>
-        <HeaderTitleText>Home</HeaderTitleText>
-        <HeaderRightContainer>
-          <HeaderEmptyContainer></HeaderEmptyContainer>
-        </HeaderRightContainer>
-      </HeaderBar>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <BodyContainer>
-          <ReviewContainer>
-            <ReviewHeaderContainer>
-              <ReviewLabelText>인기 리뷰 TEST</ReviewLabelText>
-              <TouchableWithoutFeedback onPress={() => moveToReviewList()}>
-                <MoreViewContainer>
-                  <MoreViewText>더보기</MoreViewText>
-                </MoreViewContainer>
-              </TouchableWithoutFeedback>
-            </ReviewHeaderContainer>
-            <ReviewListContainer>
-              <ReviewItemContainer></ReviewItemContainer>
-            </ReviewListContainer>
-          </ReviewContainer>
-          <HospitalContainer style={{marginTop: 24}}>
-            <HospitalHeaderContainer>
-              <HospitalLabelText>인기 병원</HospitalLabelText>
-              <MoreViewContainer>
-                <MoreViewText>더보기</MoreViewText>
-              </MoreViewContainer>
-            </HospitalHeaderContainer>
-            <HospitalListContainer>
-              <HospitalItemContainer></HospitalItemContainer>
-            </HospitalListContainer>
-          </HospitalContainer>
-          <TouchableWithoutFeedback onPress={() => moveToReviewUpload()}>
-            <ReviewUploadButton style={{marginTop: 50}}>
-              <ReviewUploadText>리뷰 작성하기</ReviewUploadText>
-            </ReviewUploadButton>
-          </TouchableWithoutFeedback>
+    const moveToReviewUpload = () => {
+        navigation.navigate("ReviewUploadStackScreen", {
+            screen: "ReceiptRegisterScreen"
+        });
+    }
 
-          <ToothCareButton style={{marginTop: 20}}>
-            <ToothCareText>치아 관리하러 가기</ToothCareText>
-          </ToothCareButton>
-        </BodyContainer>
-      </ScrollView>
-    </Container>
-  );
-};
+    return (
+        <Container>
+            <HeaderBar>
+                <HeaderLeftContainer>
+                    <HeaderEmptyContainer>
+                    </HeaderEmptyContainer>
+                </HeaderLeftContainer>
+                <HeaderTitleText>Home</HeaderTitleText>
+                <HeaderRightContainer>
+                    <HeaderEmptyContainer>
+                    </HeaderEmptyContainer>
+                </HeaderRightContainer>
+            </HeaderBar>
+            <ScrollView showsVerticalScrollIndicator={false}>
+            <BodyContainer>
+                <ReviewContainer>
+                    <ReviewHeaderContainer>
+                        <ReviewLabelText>인기 리뷰 TEST</ReviewLabelText>
+                        <TouchableWithoutFeedback onPress={() => moveToReviewList()}>
+                        <MoreViewContainer>
+                            <MoreViewText>더보기</MoreViewText>
+                        </MoreViewContainer>
+                        </TouchableWithoutFeedback>
+                    </ReviewHeaderContainer>
+                    <ReviewListContainer>
+                        <ReviewItemContainer>
+                        </ReviewItemContainer>
+                    </ReviewListContainer>
+                </ReviewContainer>
+                <HospitalContainer style={{marginTop: 24}}>
+                    <HospitalHeaderContainer>
+                        <HospitalLabelText>인기 병원</HospitalLabelText>
+                        <MoreViewContainer>
+                            <MoreViewText>더보기</MoreViewText>
+                        </MoreViewContainer>
+                    </HospitalHeaderContainer>
+                    <HospitalListContainer>
+                        <HospitalItemContainer>
+                        </HospitalItemContainer>
+                    </HospitalListContainer>
+                </HospitalContainer>
+                <TouchableWithoutFeedback onPress={() => moveToReviewUpload()}>
+                <ReviewUploadButton style={{marginTop: 50}}>
+                    <ReviewUploadText>
+                        리뷰 작성하기
+                    </ReviewUploadText>
+                </ReviewUploadButton>
+                </TouchableWithoutFeedback>
+                <ToothCareButton style={{marginTop: 20}}>
+                    <ToothCareText>
+                        치아 관리하러 가기 
+                    </ToothCareText>
+                </ToothCareButton>
+            </BodyContainer>
+            </ScrollView>
+        </Container>
+    )
+}
 
-export default HomeScreen;
+export default HomeScreen
+
+
