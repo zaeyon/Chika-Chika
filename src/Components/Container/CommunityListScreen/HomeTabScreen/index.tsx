@@ -80,14 +80,17 @@ const HomeTabScreen = ({navigation, route}: Props) => {
   };
 
   const renderPosts = ({item, index}: any) => (
-    <PostItem key={index} mode={'Card'} navigation={navigation} data={item} />
+    <PostItem
+      mode={'Card'}
+      navigation={navigation}
+      data={item}
+      mediaFiles={item.community_imgs}
+    />
   );
 
-  const getItemKey = (item: any) => item.id;
+  const getItemKey = (item: any) => String(item.id);
 
   const onEndReached = (info: any) => {
-    console.log(info.distanceFromEnd);
-
     if (!isEndReached) {
       setIsEndReached(true);
       const newPageIndex = pageIndex + 1;
@@ -180,6 +183,9 @@ const HomeTabScreen = ({navigation, route}: Props) => {
             flex: 1,
             padding: 9,
             borderRadius: 100,
+          }}
+          onPress={() => {
+            navigation.navigate('CommunityPostUploadStackScreen');
           }}>
           <Text>글 작성하기</Text>
         </TouchableOpacity>

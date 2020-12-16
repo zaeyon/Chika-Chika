@@ -13,16 +13,17 @@ import {
 
 const ContainerView = Styled.View`
 flex: 1;
-background: #EEEEEE;
+background: #F8F8F8;
 `;
 
 const ReservationItemContinerView = Styled.View`
 width: auto;
 height: ${hp('24.019%')}px;
-margin: 18px;
-padding: 26px;
+margin: 16px;
+padding: 24px;
 border-radius: 8px;
 background: white;
+justify-content: space-between;
 `;
 
 const ReservationItemContentView = Styled.View`
@@ -40,8 +41,8 @@ margin-bottom: 8px;
 
 const ReservationItemTitleText = Styled.Text`
 font-weight: bold;
-font-size: 22px;
-line-height: 26px;
+font-size: 20px;
+line-height: 24px;
 color: #595959;
 `;
 
@@ -54,20 +55,20 @@ margin-top: auto;
 `;
 
 const ReservationItemDateText = Styled.Text`
-font-size: 18px;
-line-height: 21px;
+font-size: 16px;
+line-height: 19px;
 margin-right: 16px;
 color: #7A7A7A;
 `;
 const ReservationItemTimeText = Styled.Text`
-font-size: 18px;
-line-height: 21px;
+font-size: 16px;
+line-height: 19px;
 color: #7A7A7A;
 `;
 
 const ReservationButtonContainerView = Styled.View`
 width: 100%;
-flex: 1;
+height: ${hp('5.882%')}px;
 flex-direction: row;
 `;
 
@@ -82,8 +83,8 @@ justify-content: center;
 align-items: center;
 `;
 const CreateReviewText = Styled.Text`
-font-size: 18px;
-line-height: 21px;
+font-size: 16px;
+line-height: 19px;
 color: #595959;
 `;
 const ReReservationTouchableOpacity = Styled(
@@ -99,15 +100,15 @@ justify-content: center;
 align-items: center;
 `;
 const ReReservationText = Styled.Text`
-font-size: 18px;
-line-height: 21px;
+font-size: 16px;
+line-height: 19px;
 color: #595959;
 `;
 
 const ArrowIconView = Styled.View`
-width: 6px;
-height: 10px;
-margin-left: 10px;
+width: 4px;
+height: 8px;
+margin-left: 8px;
 
 `;
 
@@ -116,8 +117,8 @@ width: 100%;
 height: 100%;
 `;
 const InfoIconView = Styled.View`
-width: 14px;
-height: 16px;
+width: 12px;
+height: 14px;
 margin-left: auto;
 `;
 
@@ -127,7 +128,7 @@ height: 100%;
 `;
 
 const Line = Styled.View`
-margin: 26px 0px;
+margin: 24px 0px;
 height: 1px;
 background: #EEEEEE;
 `;

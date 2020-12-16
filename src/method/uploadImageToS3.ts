@@ -2,7 +2,6 @@
 import {RNS3} from 'react-native-upload-aws-s3';
 
 export async function uploadImageToS3(imageFile: any) {
-
     const imageId = String(imageFile.uri).replace("ph://", "")
     const imageIdArray = imageId.split("/");
     const filenameArray = imageFile.filename.split(".");
@@ -11,7 +10,6 @@ export async function uploadImageToS3(imageFile: any) {
     const imageSize = imageFile.fileSize
 
     const originalName = Date.now() + imageIdArray[0] + "." + filenameArray[1]
-    console.log("originalname", originalName);
 
     const file = {
         uri: imagePath,

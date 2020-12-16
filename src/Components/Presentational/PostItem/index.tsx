@@ -99,6 +99,7 @@ line-height: 24px;
 
 const ImageContainerView = Styled.View`
 margin: 8px 0px;
+margin-right: auto;
 width: 100%;
 height: auto;
 `;
@@ -139,13 +140,12 @@ const HashTagText = Styled.Text`
   color: #0075FF;
 `;
 interface Props {
-  key: any;
   mode: string;
   navigation: any;
   data: any;
 }
 
-const PostItem = ({key, mode, data, navigation}: Props) => {
+const PostItem = ({mode, data, navigation}: Props) => {
   const {user, createdAt, description, postLikeNum, postCommentsNum} = data;
   const tagList = ['임플란트', '충치'];
   const mediaFiles = data.community_imgs;
@@ -234,14 +234,36 @@ const PostItem = ({key, mode, data, navigation}: Props) => {
     description,
   ]);
 
-  return (
-    <ContainerView
-      style={{
-        height: 'auto',
-      }}>
+  const renderImagesCallback = useCallback(
+    ({item, index}) => (
       <TouchableWithoutFeedback
+        key={'TouchableImage' + index}
         onPress={() => {
-          moveToCommunityDetail();
+          mode === 'Detail'
+            ? moveToFullImages(item.img_url)
+            : moveToCommunityDetail();
+        }}>
+        <ImageView
+          isFirst={index}
+          key={'image' + index}
+          source={{
+            url: item.img_url,
+            cache: 'force-cache',
+          }}
+        />
+      </TouchableWithoutFeedback>
+    ),
+    [mediaFiles],
+  );
+
+  return (
+    <TouchableWithoutFeedback
+      onPress={() => {
+        moveToCommunityDetail();
+      }}>
+      <ContainerView
+        style={{
+          height: 'auto',
         }}>
         <BodyContainerView>
           <TouchableWithoutFeedback
@@ -279,39 +301,19 @@ const PostItem = ({key, mode, data, navigation}: Props) => {
             )}
           </ContentView>
         </BodyContainerView>
-      </TouchableWithoutFeedback>
-      {mediaFiles.length > 0 ? (
-        <ImageContainerView>
-          <ImageFlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            data={mediaFiles}
-            keyExtractor={(item) => item.id}
-            renderItem={({item, index}) => (
-              <TouchableWithoutFeedback
-                key={'TouchableImage' + index}
-                onPress={() => {
-                  mode === 'Detail'
-                    ? moveToFullImages(item.img_url)
-                    : moveToCommunityDetail();
-                }}>
-                <ImageView
-                  isFirst={index}
-                  key={'image' + index}
-                  source={{
-                    url: item.img_url,
-                    cache: 'force-cache',
-                  }}
-                />
-              </TouchableWithoutFeedback>
-            )}></ImageFlatList>
-        </ImageContainerView>
-      ) : null}
-      {mode === 'Detail' ? null : (
-        <TouchableWithoutFeedback
-          onPress={() => {
-            moveToCommunityDetail();
-          }}>
+
+        {mediaFiles.length > 0 ? (
+          <ImageContainerView>
+            <ImageFlatList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              alwaysBounceHorizontal={false}
+              data={mediaFiles}
+              keyExtractor={(item) => item.id}
+              renderItem={renderImagesCallback}></ImageFlatList>
+          </ImageContainerView>
+        ) : null}
+        {mode === 'Detail' ? null : (
           <SocialInfoContainerView>
             <TouchableOpacity
               style={{
@@ -348,9 +350,9 @@ const PostItem = ({key, mode, data, navigation}: Props) => {
               </SocialInfoView>
             </TouchableOpacity>
           </SocialInfoContainerView>
-        </TouchableWithoutFeedback>
-      )}
-    </ContainerView>
+        )}
+      </ContainerView>
+    </TouchableWithoutFeedback>
   );
 };
 

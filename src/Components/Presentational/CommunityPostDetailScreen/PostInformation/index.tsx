@@ -22,12 +22,13 @@ flex-direction: row;
 `;
 
 const HeaderContentView = Styled.View`
-display: flex;
+width: auto;
+height: 100%;
 flex-direction: row;
 margin-left: auto;
 `;
 const HeaderContentText = Styled.Text`
-display: flex;
+
 font-style: normal;
 font-weight: bold;
 font-size: 18px;
@@ -37,9 +38,15 @@ line-height: 40px;
 
 interface Props {
   navigation: any;
+  onPressEditPost: any;
+  onPressDeletePost: any;
 }
 
-const PostInformation = ({navigation}: Props) => {
+const PostInformation = ({
+  navigation,
+  onPressEditPost,
+  onPressDeletePost,
+}: Props) => {
   return (
     <HeaderConatinerView>
       <TouchableOpacity
@@ -56,10 +63,28 @@ const PostInformation = ({navigation}: Props) => {
       </TouchableOpacity>
       <HeaderContentText>수다방</HeaderContentText>
       <HeaderContentView>
+        <TouchableOpacity onPress={() => onPressEditPost()}>
+          <HeaderContentText
+            style={{
+              textAlignVertical: 'center',
+            }}>
+            수정
+          </HeaderContentText>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => onPressDeletePost()}>
+          <HeaderContentText
+            style={{
+              textAlignVertical: 'center',
+              marginLeft: 8,
+            }}>
+            삭제
+          </HeaderContentText>
+        </TouchableOpacity>
         <TouchableOpacity>
           <HeaderContentText
             style={{
               textAlignVertical: 'center',
+              marginLeft: 8,
             }}>
             신고
           </HeaderContentText>

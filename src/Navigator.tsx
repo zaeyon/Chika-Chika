@@ -86,10 +86,11 @@ import RelatedDiseaseScreen from '~/Components/Container/TeethCareScreen/TimerTa
 import BrushDetritionCamera from '~/Components/Container/BrushDetritionCamera';
 import MeasuredBrushPictureScreen from '~/Components/Container/BrushDetritionCamera/MeasuredBrushPictureScreen';
 
-// Hometown Setting Screen 
+// Hometown Setting Screen
 import HometownSettingScreen from '~/Components/Container/HometownSettingScreen';
 
-
+// Keyword Search Screen
+import KeywordSearchScreen from '~/Components/Container/KeywordSearchScreen';
 
 const Tab = createBottomTabNavigator();
 const AuthStack = createStackNavigator();
@@ -103,6 +104,7 @@ const CommunityStack = createStackNavigator();
 const CommunityPostUploadStack = createStackNavigator();
 const DentalClinicStack = createStackNavigator();
 const TeethCareStack = createStackNavigator();
+const KeywordSearchStack = createStackNavigator();
 
 const staticConfig = {
   animation: 'timing',
@@ -362,12 +364,15 @@ function SettingStackScreen() {
   );
 }
 
-function CommunityPostUploadStackScreen() {
+function CommunityPostUploadStackScreen({route}: any) {
   return (
     <CommunityPostUploadStack.Navigator headerMode="none">
       <CommunityPostUploadStack.Screen
         name="CommunityPostUploadScreen"
         component={CommunityPostUploadScreen}
+        initialParams={{
+          data: route.params && route.params.data,
+        }}
       />
       <CommunityPostUploadStack.Screen
         name="CommunityCamera"
@@ -384,6 +389,9 @@ function CommunityStackScreen() {
   return (
     <CommunityStack.Navigator headerMode="none">
       <CommunityStack.Screen
+        options={{
+          gestureEnabled: false,
+        }}
         name="CommunityListScreen"
         component={CommunityListScreen}
       />
@@ -406,7 +414,22 @@ function CommunityStackScreen() {
         name="FullImagesScreen"
         component={FullImagesScreen}
       />
+      <CommunityStack.Screen
+        name="KeywordSearchStackScreen"
+        component={KeywordSearchStackScreen}
+      />
     </CommunityStack.Navigator>
+  );
+}
+
+function KeywordSearchStackScreen() {
+  return (
+    <KeywordSearchStack.Navigator headerMode="none">
+      <KeywordSearchStack.Screen
+        name="KeywordSearchScreen"
+        component={KeywordSearchScreen}
+      />
+    </KeywordSearchStack.Navigator>
   );
 }
 
@@ -512,33 +535,33 @@ function BottomTab() {
         labelStyle: styles.tabLabel,
         style: styles.tabBar,
       }}>
-      <Tab.Screen 
-      name="홈" 
-      component={HomeStackScreen}
-      options={({route}) => ({
-        tabBarVisible: getHomeBottomTabBarVisibility(route)
-      })}
+      <Tab.Screen
+        name="홈"
+        component={HomeStackScreen}
+        options={({route}) => ({
+          tabBarVisible: getHomeBottomTabBarVisibility(route),
+        })}
       />
       <Tab.Screen
-      name="지도"
-      component={DentalClinicStackScreen}
-      options={({route}) => ({
-        tabBarVisible: getDentalBottomTabBarVisibility(route)
-      })}
+        name="지도"
+        component={DentalClinicStackScreen}
+        options={({route}) => ({
+          tabBarVisible: getDentalBottomTabBarVisibility(route),
+        })}
       />
       <Tab.Screen
-      name="관리"
-      component={TeethCareStackScreen}
-      options={({route}) => ({
-        tabBarVisible: getTeethCareBottomTabVisibility(route)
-      })}
+        name="관리"
+        component={TeethCareStackScreen}
+        options={({route}) => ({
+          tabBarVisible: getTeethCareBottomTabVisibility(route),
+        })}
       />
       <Tab.Screen
-      name="수다방"
-      component={CommunityStackScreen}
-      options={({route}) => ({
-        tabBarVisible: getCommunityBottomTabBarVisibility(route)
-        /*
+        name="수다방"
+        component={CommunityStackScreen}
+        options={({route}) => ({
+          tabBarVisible: getCommunityBottomTabBarVisibility(route),
+          /*
         tabBarIcon: ({focused}: {focused: boolean}) => (
         
           <Image
@@ -547,12 +570,13 @@ function BottomTab() {
           }/>
         )
         */
-      })}/>
-      <Tab.Screen 
-      name="마이" 
-      component={MyProfileStackScreen}
-      options={({route}) => ({
-        /*
+        })}
+      />
+      <Tab.Screen
+        name="마이"
+        component={MyProfileStackScreen}
+        options={({route}) => ({
+          /*
         tabBarIcon: ({focused}: {focused: boolean}) => (
           <Image
             source={
@@ -596,14 +620,14 @@ const Navigator = () => {
 };
 
 const styles = StyleSheet.create({
-    tabBar: {
-      paddingTop: isIphoneX() ? 10 : 0,
-      height: DeviceInfo.hasNotch() ? hp("9.6%") : hp("9.6%"),
-      position: 'absolute',
-    },
-    tabLabel: {
-      fontSize: 13
-    }
-  });
+  tabBar: {
+    paddingTop: isIphoneX() ? 10 : 0,
+    height: DeviceInfo.hasNotch() ? hp('9.6%') : hp('9.6%'),
+    position: 'absolute',
+  },
+  tabLabel: {
+    fontSize: 13,
+  },
+});
 
-export default Navigator
+export default Navigator;

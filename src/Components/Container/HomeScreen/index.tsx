@@ -2,8 +2,8 @@ import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback, FlatList, ScrollView} from 'react-native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {isIphoneX} from 'react-native-iphone-x-helper';
 import {useSelector, useDispatch} from 'react-redux';
@@ -22,7 +22,6 @@ const HeaderBar = Styled.View`
  justify-content: space-between;
  background-color:#ffffff;
 `;
-
 
 const HeaderLeftContainer = Styled.View`
 padding: 7px 16px 13px 15px;
@@ -94,7 +93,6 @@ border-width: 1px;
 border-color: #c4c4c4;
 `;
 
-
 const HospitalContainer = Styled.View`
 `;
 
@@ -139,7 +137,6 @@ color: #000000;
 font-size: 18px;
 `;
 
-
 const ToothCareButton = Styled.View`
 width: ${wp('87.2%')}px;
 height: ${wp('24.416%')}px;
@@ -157,7 +154,7 @@ font-size: 18px;
 `;
 
 interface Props {
-    navigation: any,
+  navigation: any;
 }
 
 const HomeScreen = ({navigation}: Props) => {

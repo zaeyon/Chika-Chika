@@ -103,7 +103,7 @@ width: 24px;
 height: 24px;
 align-items: center;
 justify-content: center;
-border: 1px solid #C4C4C4;
+border: 1px #C4C4C4;
 border-radius: 4px;
 `;
 const CheckBoxItemText = Styled.Text`
@@ -113,7 +113,6 @@ line-height: 24px;
 
 const GalleryContainerView = Styled.View`
 width: 100%;
-height: ${hp('11.82%')}px;
 flex-direction: row;
 align-items: flex-end;
 padding-left: 16px;
@@ -180,6 +179,7 @@ interface Props {
   searchQuery: any;
   setSearchQuery: any;
   suggestionList: any;
+  category: string;
   setCategory: any;
   imageDataList: any;
   setImageDataList: any;
@@ -201,6 +201,7 @@ const CommunityCreatePostScreen = ({
   searchQuery,
   setSearchQuery,
   suggestionList,
+  category,
   setCategory,
   imageDataList,
   setImageDataList,
@@ -211,13 +212,17 @@ const CommunityCreatePostScreen = ({
   isPopupShown,
   setIsPopupShown,
 }: Props) => {
-  const [imageRenderList, setImageRenderList] = useState<string[]>([]);
+  const [imageRenderList, setImageRenderList] = useState<string[]>(
+    imageDataList,
+  );
   const [cursorIndex, setCursorIndex] = useState(0);
   const [currentHashTagInfo, setCurrentHashTagInfo] = useState({
     startIndex: 0,
     endIndex: 0,
   });
-  const categoryIndex = useRef(new Animated.Value(0)).current;
+  const categoryIndex = useRef(
+    new Animated.Value(categoryList.indexOf(category)),
+  ).current;
   const textInputRef = useRef();
   const actionSheetRef = useRef();
   const actionSheetItemList = ['취소', '카메라', '앨범'];
@@ -227,7 +232,6 @@ const CommunityCreatePostScreen = ({
     let newImageList = imageDataList.concat(newImages.concat());
     setImageRenderList(newImageList);
     setImageDataList(newImageList);
-    console.log(selectedImages);
   }, [selectedImages]);
 
   const DismissKeyboard = ({children}: any) => (
@@ -245,11 +249,14 @@ const CommunityCreatePostScreen = ({
         break;
     }
   };
-  const deleteImageByFilename = (filename: string) => {
+  const deleteImageByFilename = (item: any) => {
     let newImageList = imageDataList
       .concat()
-      .filter((image: any) => image.filename !== filename);
-    console.log(newImageList);
+      .filter(
+        (image: any) =>
+          image.filename !== item.filename ||
+          image.img_filename !== item.img_filename,
+      );
     setImageDataList(newImageList);
   };
 
@@ -277,7 +284,6 @@ const CommunityCreatePostScreen = ({
               useNativeDriver: false,
             }).start();
             setCategory(categoryList[index]);
-            console.log(index);
           }}
           style={{
             width: wp('16.53%'),
@@ -295,8 +301,6 @@ const CommunityCreatePostScreen = ({
   };
 
   const completeCurrentHashTag = (selectedHashTag: any) => {
-    console.log(paragraph.slice(0, currentHashTagInfo.startIndex));
-    console.log(paragraph.slice(currentHashTagInfo.endIndex));
     const newParagraph =
       paragraph.charAt(currentHashTagInfo.endIndex) === ' '
         ? paragraph.slice(0, currentHashTagInfo.startIndex + 1) +
@@ -316,7 +320,6 @@ const CommunityCreatePostScreen = ({
     let searchStartIndex = index - 1;
     let searchEndIndex = index - 1;
     let isTag = false;
-    console.log('end', field.charAt(searchEndIndex));
     while (searchStartIndex >= 0) {
       if (field.charAt(searchStartIndex) == '#') {
         isTag = true;
@@ -439,7 +442,6 @@ const CommunityCreatePostScreen = ({
                 setCursorIndex(startIndex);
                 const cursorInfo = getCursorInfo(startIndex);
                 if (cursorInfo.isTag) {
-                  console.log('tag');
                   const query = paragraph.slice(
                     cursorInfo.startIndex + 1,
                     cursorInfo.endIndex,

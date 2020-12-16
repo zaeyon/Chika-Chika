@@ -14,7 +14,7 @@ const ContainerView = Styled.SafeAreaView`
 const ProfileContainerView = Styled.View`
 width: ${wp('100%')}px;
 height: ${hp('12.8%')}px
-margin-top: 27px;
+margin-top: 24px;
 padding: 18px 16px;
 flex-direction: row;
 `;
@@ -29,15 +29,12 @@ border-radius: 100px;
 const ProfileInfoView = Styled.View`
 justify-content: center;
 margin: 0px 16px;
-height: 100%
 `;
 
 const ProfileNameText = Styled.Text`
 font-weight: bold;
 font-size: 16px;
 line-height: 24px;
-margin-bottom: 4px;
-
 `;
 
 const ProfileLocationText = Styled.Text`
