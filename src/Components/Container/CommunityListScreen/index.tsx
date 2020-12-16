@@ -31,7 +31,7 @@ const ContainerView = Styled.SafeAreaView`
 
 const HeaderConatinerView = Styled.View`
 width: ${wp('100%')}px;
-height: 40;
+height: 40px;
 flex-direction: row;
 padding: 0px 16px;
 margin-top: ${isIphoneX() ? 10 : 20}px;
@@ -111,10 +111,7 @@ const CommunityListScreen = ({navigation, route}: Props) => {
           }}>
           <CommunityTopTab.Screen name="전체" component={HomeTabScreen} />
           <CommunityTopTab.Screen name="질문" component={QuestionTabScreen} />
-          <CommunityTopTab.Screen
-            name="자유수다"
-            component={GeneralTabScreen}
-          />
+          <CommunityTopTab.Screen name="자유" component={GeneralTabScreen} />
         </CommunityTopTab.Navigator>
       </BodyContainerView>
     </ContainerView>
