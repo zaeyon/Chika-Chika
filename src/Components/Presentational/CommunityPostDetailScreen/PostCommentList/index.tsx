@@ -36,7 +36,7 @@ interface Props {
 }
 
 const ReviewCommentList = ({commentList}: Props) => {
-  const renderCommentItem = ({item, index}: any) => {
+  const renderCommentItem = (item: any, index: number) => {
     return (
       <CommentItem
         commentId={item.id}
@@ -55,7 +55,7 @@ const ReviewCommentList = ({commentList}: Props) => {
         <HeaderCommentCountText>댓글</HeaderCommentCountText>
       </HeaderContainer>
       <CommentListContainer>
-        <FlatList data={commentList} renderItem={renderCommentItem} />
+        {commentList.map(renderCommentItem)}
       </CommentListContainer>
     </Container>
   );

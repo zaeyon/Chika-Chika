@@ -26,7 +26,6 @@ height: 16px;
 const GalleryContentImage = Styled.Image`
 width: ${wp('15%')}px;
 height: ${wp('15%')}px;
-
 border-radius: 10px;
 
 `;
@@ -42,6 +41,7 @@ const ImageContentView = ({item, index, deleteImageByFilename}: Props) => {
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     scaleX.setValue(wp('16.8%'));
+    console.log(item);
   }, [item]);
   return (
     <Animated.View
@@ -76,7 +76,7 @@ const ImageContentView = ({item, index, deleteImageByFilename}: Props) => {
             duration: 80,
             useNativeDriver: false,
           }).start(() => {
-            deleteImageByFilename(item.filename);
+            deleteImageByFilename(item);
           });
         }}>
         <DeleteImage
@@ -85,7 +85,7 @@ const ImageContentView = ({item, index, deleteImageByFilename}: Props) => {
       </TouchableOpacity>
 
       <GalleryContentImage
-        source={{uri: item.uri}}
+        source={{uri: item.uri || item.img_url, cache: 'force-cache'}}
         onLoadStart={() => {}}
         onLoadEnd={() => {}}
       />

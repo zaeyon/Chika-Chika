@@ -32,17 +32,16 @@ const ContainerView = Styled.SafeAreaView`
 const HeaderConatinerView = Styled.View`
 width: ${wp('100%')}px;
 height: 40;
-padding-left: 16px;
+flex-direction: row;
+padding: 0px 16px;
 margin-top: ${isIphoneX() ? 10 : 20}px;
 background: white;
 `;
 const HeaderContentText = Styled.Text`
-display: flex;
 font-style: normal;
 font-weight: bold;
 font-size: 18px;
 line-height: 40px;
-
 `;
 const BodyContainerView = Styled.View`
 flex: 1;
@@ -56,10 +55,23 @@ interface Props {
 const CommunityListScreen = ({navigation, route}: Props) => {
   const CommunityTopTab = createMaterialTopTabNavigator();
 
+  const moveToKeywordSearch = () => {
+    navigation.navigate('KeywordSearchStackScreen', {
+      screen: 'KeywordSearchScreen',
+    });
+  };
+
   return (
     <ContainerView>
       <HeaderConatinerView>
         <HeaderContentText>수다방</HeaderContentText>
+        <TouchableOpacity
+          style={{
+            marginLeft: 'auto',
+          }}
+          onPress={() => moveToKeywordSearch()}>
+          <HeaderContentText>검색</HeaderContentText>
+        </TouchableOpacity>
       </HeaderConatinerView>
       <BodyContainerView>
         <CommunityTopTab.Navigator

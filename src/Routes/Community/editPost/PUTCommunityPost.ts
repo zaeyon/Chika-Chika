@@ -10,9 +10,9 @@ interface postData {
     type: string;
 }
 
-const POSTCreateCommunityPost = (postData: postData) => {
+const PUTCommunityPost = (postData: postData, postId: string) => {
 
-    const uri = baseUri + "/api/v1/communities";
+    const uri = baseUri + "/api/v1/communities?postId=" + postId;
     let formData = new FormData();
     
     for (let key in postData) {
@@ -30,7 +30,7 @@ const POSTCreateCommunityPost = (postData: postData) => {
 
     return new Promise(function(resolve, reject) {
 
-        axios.post(uri, formData, {
+        axios.put(uri, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data', 
               'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZiMDYxN2IwLTMzYzAtMTFlYi05MmRlLWUzZmIzYjRlMDI2NCIsImlhdCI6MTYwNjgxODk1MCwiZXhwIjoxNjM4Mzc2NTUwfQ.3-PEUaAWAW6sjl7TuKNzSHlTlK8p7myWG8nedNZ3nFE',
@@ -44,11 +44,11 @@ const POSTCreateCommunityPost = (postData: postData) => {
             
         })
         .catch(function(error) {
-            console.log('POSTCreateCommunityPost error: ',error)
+            console.log('PUTCommunityPost error: ',error)
             reject(error.response);
         })
 
     })
 }
 
-export default POSTCreateCommunityPost;
+export default PUTCommunityPost;

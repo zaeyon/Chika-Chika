@@ -3,6 +3,7 @@ import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
+  TouchableHighlight,
   FlatList,
   View,
   Animated,
@@ -30,7 +31,7 @@ background: white;
 z-index: 2;
 `;
 
-const HashTagItemView = Styled(TouchableOpacity as new () => TouchableOpacity)`
+const HashTagItemView = Styled.View`
 width: 100%;
 height: ${hp('7.39%')}px;
 border-bottom-width: 1px;
@@ -118,24 +119,30 @@ const SuggestionBarView = ({
 
   const renderHashTagItemView = ({item, index}: any) => {
     return (
-      <HashTagItemView
+      <TouchableHighlight
+        activeOpacity={1}
+        underlayColor="#EEEEEE"
         onPress={() => {
           completeCurrentHashTag(item.name);
         }}>
-        <HashTagItemIconImage
-          source={require('~/Assets/Images/Category/hospital.png')}
-        />
-        <HashTagItemNameText>
-          <HashTagItemNameText
-            style={{
-              color: '#0075FF',
-            }}>
-            {searchQuery}
+        <HashTagItemView>
+          <HashTagItemIconImage
+            source={require('~/Assets/Images/Category/hospital.png')}
+          />
+          <HashTagItemNameText>
+            <HashTagItemNameText
+              style={{
+                color: '#0075FF',
+              }}>
+              {searchQuery}
+            </HashTagItemNameText>
+            {item.name.slice(searchQuery.length)}
           </HashTagItemNameText>
-          {item.name.slice(searchQuery.length)}
-        </HashTagItemNameText>
-        <HashTagItemLocationText>{item.location}</HashTagItemLocationText>
-      </HashTagItemView>
+          <HashTagItemLocationText>
+            {item.address?.split(' ').slice(0, 2).join(' ')}
+          </HashTagItemLocationText>
+        </HashTagItemView>
+      </TouchableHighlight>
     );
   };
 

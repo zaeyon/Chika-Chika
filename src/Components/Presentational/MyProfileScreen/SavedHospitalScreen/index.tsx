@@ -13,7 +13,7 @@ import {
 
 const ContainerView = Styled.View`
 flex: 1;
-background: #EEEEEE;
+background: #F8F8F8;
 `;
 
 const SavedHospitalItemContinerView = Styled.View`
@@ -23,6 +23,7 @@ margin: 16px;
 padding: 24px;
 border-radius: 8px;
 background: white;
+justify-content: space-between;
 `;
 
 const SavedHospitalItemContentView = Styled.View`
@@ -67,7 +68,7 @@ color: #7A7A7A;
 
 const SavedHospitalButtonContainerView = Styled.View`
 width: 100%;
-flex: 1;
+height: ${hp('5.882%')}px;
 flex-direction: row;
 `;
 
@@ -75,7 +76,7 @@ const ReservationTouchableOpacity = Styled(
   TouchableOpacity as new () => TouchableOpacity,
 )`
 width: 100%;
-height: auto;
+height: 100%;
 border: 1px solid #C4C4C4;
 border-radius: 8px;
 background: white;
