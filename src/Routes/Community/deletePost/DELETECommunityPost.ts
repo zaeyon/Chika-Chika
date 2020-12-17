@@ -3,7 +3,7 @@ import serverConfig from '../../server.config';
 
 const baseUri = serverConfig.baseUri
 
-const DELETECommunityPost = (postId: string) => {
+const DELETECommunityPost = (jwtToken: string, postId: string) => {
 
     const uri = baseUri + "/api/v1/communities?postId=" + postId;
 
@@ -11,7 +11,7 @@ const DELETECommunityPost = (postId: string) => {
 
         axios.delete(uri, {
             headers: {
-              'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZiMDYxN2IwLTMzYzAtMTFlYi05MmRlLWUzZmIzYjRlMDI2NCIsImlhdCI6MTYwNjgxODk1MCwiZXhwIjoxNjM4Mzc2NTUwfQ.3-PEUaAWAW6sjl7TuKNzSHlTlK8p7myWG8nedNZ3nFE',
+              'Authorization': jwtToken,
               Accept: "*/*"
             },
 

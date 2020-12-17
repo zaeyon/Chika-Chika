@@ -1,6 +1,13 @@
 import React, {useEffect, useState, useRef} from 'react';
 import Styled from 'styled-components/native';
-import {Text, TouchableWithoutFeedback, StyleSheet, Alert, ActivityIndicator, Keyboard} from 'react-native';
+import {
+  Text,
+  TouchableWithoutFeedback,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+  Keyboard,
+} from 'react-native';
 import axios from 'axios';
 import {resolvePlugin} from '@babel/core';
 import {useSelector, useDispatch} from 'react-redux';
@@ -11,7 +18,7 @@ import {
 } from 'react-native-responsive-screen';
 import AboveKeyboard from 'react-native-above-keyboard';
 //import {getStatusBarHeight} from 'react-native-status-bar-height'
-import {getStatusBarHeight} from 'react-native-iphone-x-helper'
+import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 
 // Async Storage
 import {storeUserInfo} from '~/storage/currentUser';
@@ -114,7 +121,6 @@ font-size: 16px;
 color: #ffffff;
 `;
 
-
 const AbledLoginButton = Styled.View`
 width: ${wp('91.46%')}px;
 height: 50px;
@@ -212,8 +218,8 @@ justify-content: center;
 `;
 
 interface Props {
-    navigation: any,
-    route: any,
+  navigation: any;
+  route: any;
 }
 
 var limitTime = 300;
@@ -226,18 +232,24 @@ const LoginScreen = ({navigation}: Props) => {
   const [validNumber, setValidNumber] = useState<boolean>(false);
   const [invalidPhoneNumber, setInvalidPhoneNumber] = useState<boolean>(false);
   const [invalidAuthCode, setInvalidAuthCode] = useState<boolean>(false);
-  const [numberInputState, setNumberInputState] = useState<string>("noInput");
+  const [numberInputState, setNumberInputState] = useState<string>('noInput');
   const [numberInputFocus, setNumberInputFocus] = useState<boolean>(false);
   const [authCodeInputFocus, setAuthCodeInputFocus] = useState<boolean>(false);
   const [isUser, setIsUser] = useState<boolean>(false);
-  const [formattedNumber, setFormattedNumber] = useState<string>("")
+  const [formattedNumber, setFormattedNumber] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingVerify, setLoadingVerify] = useState<boolean>(false);
 
-  const [visibleAuthCodeInput, setVisibleAuthCodeInput] = useState<boolean>(false);
+  const [visibleAuthCodeInput, setVisibleAuthCodeInput] = useState<boolean>(
+    false,
+  );
 
-  const [limitMin, setLimitMin] = useState<number>(parseInt(String(limitTime/60)));
-  const [limitSec, setLimitSec] = useState<string>("0"+String(limitTime%60));
+  const [limitMin, setLimitMin] = useState<number>(
+    parseInt(String(limitTime / 60)),
+  );
+  const [limitSec, setLimitSec] = useState<string>(
+    '0' + String(limitTime % 60),
+  );
   const [timeOver, setTimeOver] = useState<boolean>(false);
 
   const currentUser = useSelector((state: any) => state.currentUser);
@@ -246,8 +258,8 @@ const LoginScreen = ({navigation}: Props) => {
   const numberInputRef = useRef(null);
   const authCodeInputRef = useRef(null);
 
-  let submitingNumber:any;
-  let submitingPassword:any;
+  let submitingNumber: any;
+  let submitingPassword: any;
 
   function checkNumber(str: string) {
     var regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
@@ -262,7 +274,6 @@ const LoginScreen = ({navigation}: Props) => {
       setValidNumber(true);
     }
   }
-  
 
   const onChangeNumberInput = (text: string) => {
     /*
@@ -280,208 +291,203 @@ const LoginScreen = ({navigation}: Props) => {
       setFormattedNumber(text)
     }
     */
-  }
+  };
 
- const onKeyPressNumberInput = (event: any) => {
-   var numberArray = formattedNumber.split("")
-   console.log("numberArray", numberArray);
-   console.log("event.nativeEvent", event.nativeEvent.key)
+  const onKeyPressNumberInput = (event: any) => {
+    var numberArray = formattedNumber.split('');
+    console.log('numberArray', numberArray);
+    console.log('event.nativeEvent', event.nativeEvent.key);
 
-   if(numberArray.length === 17 && event.nativeEvent.key !== "Backspace") {
-     return
-   }
-
-   if(!isNaN(event.nativeEvent.key)) {
-    // 입력값 숫자
-    numberArray.push(event.nativeEvent.key)
-    setFormattedNumber(numberArray.join(''))
-
-    if(numberArray.length === 4) {
-      numberArray.splice(3, 0, " ", "-", " ");
-      console.log("하이폰 추가", numberArray)
-      setFormattedNumber(numberArray.join(''))
-    } else if(numberArray.length === 11) {
-      numberArray.splice(10, 0, " ", "-", " ");
-      console.log("하이폰 추가", numberArray)
-      setFormattedNumber(numberArray.join(''))
+    if (numberArray.length === 17 && event.nativeEvent.key !== 'Backspace') {
+      return;
     }
-    
-  } else if(event.nativeEvent.key === "Backspace") {
-    // 입력값 Backspace 
-    
-    numberArray.pop()
-    setFormattedNumber(numberArray.join(''))
 
-    if(numberArray.length === 13) {
-      numberArray.splice(10, 3);
-      console.log("하이폰 제거", numberArray)
-      setFormattedNumber(numberArray.join(''))
-    } else if(numberArray.length === 6) {
-      numberArray.splice(3, 3);
-      console.log("하이폰 제거", numberArray)
-      setFormattedNumber(numberArray.join(''))
+    if (!isNaN(event.nativeEvent.key)) {
+      // 입력값 숫자
+      numberArray.push(event.nativeEvent.key);
+      setFormattedNumber(numberArray.join(''));
+
+      if (numberArray.length === 4) {
+        numberArray.splice(3, 0, ' ', '-', ' ');
+        console.log('하이폰 추가', numberArray);
+        setFormattedNumber(numberArray.join(''));
+      } else if (numberArray.length === 11) {
+        numberArray.splice(10, 0, ' ', '-', ' ');
+        console.log('하이폰 추가', numberArray);
+        setFormattedNumber(numberArray.join(''));
+      }
+    } else if (event.nativeEvent.key === 'Backspace') {
+      // 입력값 Backspace
+
+      numberArray.pop();
+      setFormattedNumber(numberArray.join(''));
+
+      if (numberArray.length === 13) {
+        numberArray.splice(10, 3);
+        console.log('하이폰 제거', numberArray);
+        setFormattedNumber(numberArray.join(''));
+      } else if (numberArray.length === 6) {
+        numberArray.splice(3, 3);
+        console.log('하이폰 제거', numberArray);
+        setFormattedNumber(numberArray.join(''));
+      }
     }
-  }
-}
+  };
 
   const startTimeout = () => {
-      timeout = setInterval(function() {
+    timeout = setInterval(function () {
       //console.log("시간제한 시작", limitTime)
-      setLimitMin((parseInt(String(limitTime/60))))
-      if(String(limitTime%60).length == 1) {
-        setLimitSec("0"+String(limitTime%60))
+      setLimitMin(parseInt(String(limitTime / 60)));
+      if (String(limitTime % 60).length == 1) {
+        setLimitSec('0' + String(limitTime % 60));
       } else {
-        setLimitSec(String(limitTime%60))
+        setLimitSec(String(limitTime % 60));
       }
 
-      limitTime = limitTime - 1
+      limitTime = limitTime - 1;
 
-
-      if(limitTime < 0) {
+      if (limitTime < 0) {
         clearInterval(timeout);
         setTimeOver(true);
       }
-    }, 1000)
-  }
-
-
+    }, 1000);
+  };
 
   const onFocusNumberInput = () => {
     setNumberInputFocus(true);
-  }
+  };
 
-  const onUnfocusNumberInput = (text:string) => {
+  const onUnfocusNumberInput = (text: string) => {
     setNumberInputFocus(false);
     checkNumber(text);
-  }
+  };
 
   const onFocusAuthCodeInput = () => {
     setAuthCodeInputFocus(true);
-  }
+  };
 
-  const onUnfocusAuthCodeInput = (text:string) => {
+  const onUnfocusAuthCodeInput = (text: string) => {
     setAuthCodeInputFocus(false);
-  }
+  };
 
   const onChangeAuthCodeInput = (text: string) => {
     setInvalidAuthCode(false);
     setAuthCode(text);
-  }
+  };
 
   const clickLoginButton = () => {
     Keyboard.dismiss();
     setLoadingVerify(true);
-    console.log("isUser", isUser);
+    console.log('isUser', isUser);
 
-    if(isUser) {
+    if (isUser) {
       const phoneNumber = String(number);
       login(phoneNumber, authCode);
     } else {
       POSTVerifyPhoneNumber(String(number), String(authCode))
-      .then(function(response: any) {
-        setLoadingVerify(false);
-        clearInterval(timeout)
-        console.log("POSTVerifyPhoneNumber response", response)
-        console.log("number", number);
-       
-        navigation.navigate("HometownSettingScreen", {
-          certifiedPhoneNumber: true,
-          provider: "local",
-          fcmToken: null,
-          userPhoneNumber: String(number),
-          nickname: "TEST" + String(Date.now()),
-          isUser: isUser,
+        .then(function (response: any) {
+          setLoadingVerify(false);
+          clearInterval(timeout);
+          console.log('POSTVerifyPhoneNumber response', response);
+          console.log('number', number);
+
+          navigation.navigate('HometownSettingScreen', {
+            certifiedPhoneNumber: true,
+            provider: 'local',
+            fcmToken: null,
+            userPhoneNumber: String(number),
+            nickname: 'TEST' + String(Date.now()),
+            isUser: isUser,
+          });
+        })
+        .catch(function (error) {
+          setLoadingVerify(false);
+          console.log('POSTVerifyPhoneNumber error', error);
         });
-      })
-      .catch(function(error) {
-        setLoadingVerify(false);
-        console.log("POSTVerifyPhoneNumber error", error);
-      })
     }
-  }
+  };
 
   const clickSendAuthCode = () => {
-    if(formattedNumber.split("").length === 17) {
+    if (formattedNumber.split('').length === 17) {
       setInvalidPhoneNumber(false);
       clearInterval(timeout);
       limitTime = 300;
 
-      var tmpNumber = formattedNumber.split(" - ");
-      var phoneNumber = tmpNumber.join("");
-      console.log("tmpNumber", tmpNumber.join(""));
+      var tmpNumber = formattedNumber.split(' - ');
+      var phoneNumber = tmpNumber.join('');
+      console.log('tmpNumber', tmpNumber.join(''));
 
-      setNumber(tmpNumber.join(""));
+      setNumber(tmpNumber.join(''));
       setInvalidAuthCode(false);
-      setTimeOver(false)
-      setVisibleAuthCodeInput(true)
-      startTimeout()
+      setTimeOver(false);
+      setVisibleAuthCodeInput(true);
+      startTimeout();
 
       POSTSendTokenToPhone(String(phoneNumber))
-      .then(function(response: any) {
-        console.log("POSTSendTokenToPhone response", response);
-        setIsUser(response.exist);
-      })
-      .catch(function(error) {
-        console.log("POSTSendTokenToPhone error", error);
-      })
+        .then(function (response: any) {
+          console.log('POSTSendTokenToPhone response', response);
+          setIsUser(response.exist);
+        })
+        .catch(function (error) {
+          console.log('POSTSendTokenToPhone error', error);
+        });
     } else {
-      setInvalidPhoneNumber(true)
+      setInvalidPhoneNumber(true);
       clearInterval(timeout);
-      Alert.alert("올바른 전화번호를 입력하세요!");
-      
+      Alert.alert('올바른 전화번호를 입력하세요!');
     }
-  }
+  };
 
   const login = (submitPhoneNumber: string, submitAuthCode: string) => {
-    
     const phoneNumber = submitPhoneNumber;
     const authCode = submitAuthCode;
 
     POSTLogin({phoneNumber, authCode})
-      .then(function(response: any) {
-        console.log("POSTLogin response", response)
-        if(response.statusText === "Accepted") {
+      .then(function (response: any) {
+        console.log('POSTLogin response', response);
+        if (response.statusText === 'Accepted') {
           setLoadingVerify(false);
           clearInterval(timeout);
 
           const userInfo = {
             jwtToken: response.token,
-            phoneNumber: phoneNumber
-          }
-          
+            phoneNumber: phoneNumber,
+          };
+
           storeUserInfo(userInfo);
           dispatch(allActions.userActions.setUser(userInfo));
         }
       })
-      .catch(function(error: any) {
+      .catch(function (error: any) {
         setLoadingVerify(false);
-        console.log("POSTLogin error", error);
-        console.log("error.status", error.status);
-        if(error.status == 401) {
+        console.log('POSTLogin error', error);
+        console.log('error.status', error.status);
+        if (error.status == 401) {
           setInvalidAuthCode(true);
         }
-      })
-  }
-
+      });
+  };
 
   const goBack = () => {
-   navigation.goBack()
-   clearInterval(timeout)
-   
-   limitTime = 300;
-  }
+    navigation.goBack();
+    clearInterval(timeout);
+
+    limitTime = 300;
+  };
 
   return (
     <Container>
       <HeaderBar>
-          <TouchableWithoutFeedback onPress={() => goBack()}>
-            <HeaderLeftContainer>
-          <HeaderBackIcon source={require('~/Assets/Images/HeaderBar/ic_back.png')} />
+        <TouchableWithoutFeedback onPress={() => goBack()}>
+          <HeaderLeftContainer>
+            <HeaderBackIcon
+              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
+            />
           </HeaderLeftContainer>
-          </TouchableWithoutFeedback>
-          <HeaderTitleText>본인인증</HeaderTitleText>
-          <HeaderRightContainer>
-        <HeaderEmptyContainer/>
+        </TouchableWithoutFeedback>
+        <HeaderTitleText>본인인증</HeaderTitleText>
+        <HeaderRightContainer>
+          <HeaderEmptyContainer />
         </HeaderRightContainer>
       </HeaderBar>
       <BodyContainer>
@@ -492,76 +498,112 @@ const LoginScreen = ({navigation}: Props) => {
         */}
         <ItemContainer style={{marginTop: 0}}>
           <ItemTextInput
-          ref={numberInputRef}
-          placeholder={" - 없이 번호 입력"}
-          placeholderTextColor={"#7e7e7e"}
-          style={[(numberInputState === "invalid" && {borderColor: '#FF3B30'}) || (numberInputFocus && {borderColor:'#267DFF', backgroundColor: '#FFFFFF'})]}
-          onChangeText={(text:string) => onChangeNumberInput(text)}
-          autoCapitalize={"none"}
-          onSubmitEditing={(text) => onUnfocusNumberInput(text.nativeEvent.text)}
-          keyboardType={"number-pad"}
-          onEndEditing={(text) => onUnfocusNumberInput(text.nativeEvent.text)}
-          onFocus={() => onFocusNumberInput()}
-          autoFocus={true}
-          value={formattedNumber}
-          onKeyPress={(event) => onKeyPressNumberInput(event)}
+            ref={numberInputRef}
+            placeholder={' - 없이 번호 입력'}
+            placeholderTextColor={'#7e7e7e'}
+            style={[
+              (numberInputState === 'invalid' && {borderColor: '#FF3B30'}) ||
+                (numberInputFocus && {
+                  borderColor: '#267DFF',
+                  backgroundColor: '#FFFFFF',
+                }),
+            ]}
+            onChangeText={(text: string) => onChangeNumberInput(text)}
+            autoCapitalize={'none'}
+            onSubmitEditing={(text) =>
+              onUnfocusNumberInput(text.nativeEvent.text)
+            }
+            keyboardType={'number-pad'}
+            onEndEditing={(text) => onUnfocusNumberInput(text.nativeEvent.text)}
+            onFocus={() => onFocusNumberInput()}
+            autoFocus={true}
+            value={formattedNumber}
+            onKeyPress={(event) => onKeyPressNumberInput(event)}
           />
           <TouchableWithoutFeedback onPress={() => clickSendAuthCode()}>
-          <VerifyTextContainer style={visibleAuthCodeInput ? {paddingLeft:10}: {paddingLeft: 20}}>
-          <VerifyText>{visibleAuthCodeInput ? "재전송" : "인증"}</VerifyText>
-          </VerifyTextContainer>
+            <VerifyTextContainer
+              style={
+                visibleAuthCodeInput ? {paddingLeft: 10} : {paddingLeft: 20}
+              }>
+              <VerifyText>
+                {visibleAuthCodeInput ? '재전송' : '인증'}
+              </VerifyText>
+            </VerifyTextContainer>
           </TouchableWithoutFeedback>
         </ItemContainer>
         {visibleAuthCodeInput && (
-        <ItemContainer style={{marginTop: 16}}>
-          <ItemTextInput
-          ref={authCodeInputRef}
-          style={(authCodeInputFocus && !timeOver && !invalidAuthCode && {borderColor:'#267DFF', backgroundColor: "#ffffff"}) || ((timeOver || invalidAuthCode) && {borderColor: '#FF5656', backgroundColor: "#ffffff"})}
-          onFocus={() => onFocusAuthCodeInput()}
-          onSubmitEditing={(text:any) => onUnfocusAuthCodeInput(text.nativeEvent.text)}
-          onEndEditing={(text:any) => onUnfocusAuthCodeInput(text.nativeEvent.text)}
-          onChangeText={(text: string) => onChangeAuthCodeInput(text)}
-          keyboardType={"number-pad"}
-          autoCapitalize={"none"}
-          clearButtonMode={timeOver ? "always" : "never"}
-          autoFocus={true}
-          />
-          <TimeLimitTextContainer>
-            {!timeOver && (
-            <TimeLimitText>{limitMin + ":" + limitSec}</TimeLimitText>
+          <ItemContainer style={{marginTop: 16}}>
+            <ItemTextInput
+              ref={authCodeInputRef}
+              style={
+                (authCodeInputFocus &&
+                  !timeOver &&
+                  !invalidAuthCode && {
+                    borderColor: '#267DFF',
+                    backgroundColor: '#ffffff',
+                  }) ||
+                ((timeOver || invalidAuthCode) && {
+                  borderColor: '#FF5656',
+                  backgroundColor: '#ffffff',
+                })
+              }
+              onFocus={() => onFocusAuthCodeInput()}
+              onSubmitEditing={(text: any) =>
+                onUnfocusAuthCodeInput(text.nativeEvent.text)
+              }
+              onEndEditing={(text: any) =>
+                onUnfocusAuthCodeInput(text.nativeEvent.text)
+              }
+              onChangeText={(text: string) => onChangeAuthCodeInput(text)}
+              keyboardType={'number-pad'}
+              autoCapitalize={'none'}
+              clearButtonMode={timeOver ? 'always' : 'never'}
+              autoFocus={true}
+            />
+            <TimeLimitTextContainer>
+              {!timeOver && (
+                <TimeLimitText>{limitMin + ':' + limitSec}</TimeLimitText>
+              )}
+            </TimeLimitTextContainer>
+            {timeOver && (
+              <InvalidInputText>
+                {'인증 기간이 만료되었습니다.'}
+              </InvalidInputText>
             )}
-          </TimeLimitTextContainer>
-          {timeOver && (
-            <InvalidInputText>{"인증 기간이 만료되었습니다."}</InvalidInputText>
-          )}
-          {invalidAuthCode && (
-            <InvalidInputText>{"인증번호가 일치하지 않습니다."}</InvalidInputText>
-          )}
-        </ItemContainer>
+            {invalidAuthCode && (
+              <InvalidInputText>
+                {'인증번호가 일치하지 않습니다.'}
+              </InvalidInputText>
+            )}
+          </ItemContainer>
         )}
         <FinishButtonContainer>
-        <AboveKeyboard>
+          <AboveKeyboard>
             <LoginButtonContainer>
-            {(number !== "" && authCode !== "" && !timeOver && !invalidPhoneNumber) && (
-            <TouchableWithoutFeedback onPress={() => clickLoginButton()}>
-            <AbledLoginButton>
-              <AbledLoginText>로그인</AbledLoginText>
-            </AbledLoginButton>
-            </TouchableWithoutFeedback>
-            )}
-            {((visibleAuthCodeInput && authCode == "") || (timeOver) || invalidPhoneNumber) && (
-            <DisabledLoginButton>
-              <DisabledLoginText>로그인</DisabledLoginText>
-            </DisabledLoginButton>
-            )}
+              {number !== '' &&
+                authCode !== '' &&
+                !timeOver &&
+                !invalidPhoneNumber && (
+                  <TouchableWithoutFeedback onPress={() => clickLoginButton()}>
+                    <AbledLoginButton>
+                      <AbledLoginText>로그인</AbledLoginText>
+                    </AbledLoginButton>
+                  </TouchableWithoutFeedback>
+                )}
+              {((visibleAuthCodeInput && authCode == '') ||
+                timeOver ||
+                invalidPhoneNumber) && (
+                <DisabledLoginButton>
+                  <DisabledLoginText>로그인</DisabledLoginText>
+                </DisabledLoginButton>
+              )}
             </LoginButtonContainer>
-        </AboveKeyboard>
+          </AboveKeyboard>
         </FinishButtonContainer>
       </BodyContainer>
       {(loading || loadingVerify) && (
         <LoadingContainer>
-          <ActivityIndicator
-          color={"#FFFFFF"}/>
+          <ActivityIndicator color={'#FFFFFF'} />
         </LoadingContainer>
       )}
     </Container>
@@ -569,4 +611,3 @@ const LoginScreen = ({navigation}: Props) => {
 };
 
 export default LoginScreen;
-
