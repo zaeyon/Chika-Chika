@@ -124,9 +124,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     <ContainerView>
       <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
         <BodyContainerScrollView
-          scrollIndicatorInsets={{
-            bottom: getBottomSpace() ? 0 : 11,
-          }}
+          showsVerticalScrollIndicator={false}
           ref={scrollView}
           scrollEventThrottle={16}
           onScroll={Animated.event(
