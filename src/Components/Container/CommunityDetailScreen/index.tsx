@@ -11,6 +11,7 @@ import {
   Easing,
   Text,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -43,6 +44,14 @@ margin-bottom: ${hp('100%') * 0.08}px;
 
 `;
 
+const ActivityIndicatorContianerView = Styled.View`
+width: 100%;
+height: 50px;
+
+align-items: center;
+justify-content: center;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -55,6 +64,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   const scrollY: Animated.Value = useRef(new Animated.Value(0)).current;
   const keyboardHeight: Animated.Value = useRef(new Animated.Value(0)).current;
   const [comments, setComments] = useState([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [formattedDescription, setFormattedDescription] = useState('');
   const currentUser = useSelector((state: any) => state.currentUser);
   const jwtToken = currentUser.user.jwtToken;
@@ -84,6 +94,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
 
   const fetchPostComments = (postId: string) => {
     GETCommunityPostComments(jwtToken, postId).then((response: any) => {
+      setIsLoading(false);
       setComments(response);
     });
   };
@@ -150,8 +161,13 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
             data={route.params.data}
           />
           <DentistComment />
-
-          <PostCommentList commentList={comments} />
+          {isLoading ? (
+            <ActivityIndicatorContianerView>
+              <ActivityIndicator size="small" />
+            </ActivityIndicatorContianerView>
+          ) : (
+            <PostCommentList commentList={comments} />
+          )}
         </BodyContainerScrollView>
       </KeyboardAvoidingView>
       <PostBottomBar
