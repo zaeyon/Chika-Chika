@@ -12,7 +12,10 @@ const POSTLogin = ({phoneNumber, authCode}: params) => {
     console.log("POSTLogin userPhoneNumber", phoneNumber);
     console.log("POSTLogin authCode", authCode);
 
-    const bodyParam = `{"userPhoneNumber": "${phoneNumber}","token": "${authCode}"}`
+    const bodyParam = `{
+        "userPhoneNumber": "${phoneNumber}",
+        "token": "${authCode}"
+    }`
 
     return new Promise(function(resolve, reject) {
 

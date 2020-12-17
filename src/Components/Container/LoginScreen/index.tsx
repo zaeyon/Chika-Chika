@@ -390,7 +390,6 @@ const LoginScreen = ({navigation}: Props) => {
           fcmToken: null,
           userPhoneNumber: String(number),
           nickname: "TEST" + String(Date.now()),
-          isUser: isUser,
         });
       })
       .catch(function(error) {

@@ -6,6 +6,7 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {isIphoneX} from 'react-native-iphone-x-helper';
+import {useSelector} from 'react-redux';
 
 // Local Component
 import ReviewItem from '~/Components/Presentational/ReviewItem';
@@ -306,6 +307,8 @@ const ReviewListScreen = ({navigation}: Props) => {
     const [reviewList, setReviewList] = useState<Array<ReviewData>>([]);
     const [loadingReviewList, setLoadingReviewList] = useState<boolean>(true);
     const [order, setOrder] = useState<string>("createdAt");
+    const currentUser = useSelector((state: any) => state.currentUser);
+    const jwtToken = currentUser.user.jwtTokwn;
 
     var offset = 0;
     var limit = 10;
@@ -315,7 +318,7 @@ const ReviewListScreen = ({navigation}: Props) => {
     }, [])
 
     const getReviewList = () => {
-        GETReviewList({order, offset, limit})
+        GETReviewList({jwtToken, order, offset, limit})
         .then((response: any) => {
             console.log("GETReviewList response", response);
             setReviewList(response);
