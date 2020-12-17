@@ -21,6 +21,7 @@ import CommunityCreatePostScreen from '~/Components/Presentational/CommunityCrea
 import GETAllTagSearch from '~/Routes/Search/GETAllTagSearch';
 import POSTCreateCommunityPost from '~/Routes/Community/createPost/POSTCreateCommunityPost';
 import PUTCommunityPost from '~/Routes/Community/editPost/PUTCommunityPost';
+import {useSelector} from 'react-redux';
 
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
@@ -41,6 +42,8 @@ interface imageItem {
 }
 
 const CommunityPostUploadScreen = ({navigation, route}: Props) => {
+  const currentUser = useSelector((state: any) => state.currentUser);
+  const jwtToken = currentUser.user.jwtToken;
   const prevData = route.params?.data;
   const mode = prevData ? 'edit' : 'create';
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,7 +53,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   const [description, setDescription] = useState<string>(
     prevData?.description || '',
   );
-  const [wantDentistHelp, setWantDentistHelp] = useState(
+  const [wantDentistHelp, setWantDentistHelp] = useState<boolean>(
     prevData?.wantDentistHelp || false,
   );
   const [category, setCategory] = useState(prevData?.type || '질문');
@@ -71,7 +74,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
       if (!incompleteKorean.test(searchQuery)) {
         if (searchQuery !== '') {
           setSuggestionList([]);
-          const response: any = await GETAllTagSearch(searchQuery);
+          const response: any = await GETAllTagSearch(jwtToken, searchQuery);
           setSearchQuery((prev) => {
             if (prev !== searchQuery) {
             } else {
@@ -149,6 +152,8 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
       return 'Question';
     } else if (oldCategory === '자유') {
       return 'FreeTalk';
+    } else {
+      return 'FreeTalk';
     }
   };
   const uploadPost = async () => {
@@ -167,7 +172,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         type: formattedCategory,
         images: formattedImages,
       };
-      POSTCreateCommunityPost(postData).then((response: any) => {
+      POSTCreateCommunityPost(jwtToken, postData).then((response: any) => {
         console.log(response);
         navigation.navigate('CommunityListScreen');
       });
@@ -190,10 +195,12 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         type: formattedCategory,
         images: formattedImages,
       };
-      PUTCommunityPost(postData, prevData.id).then((response: any) => {
-        console.log(response);
-        navigation.navigate('CommunityListScreen');
-      });
+      PUTCommunityPost(jwtToken, postData, prevData.id).then(
+        (response: any) => {
+          console.log(response);
+          navigation.navigate('CommunityListScreen');
+        },
+      );
     }
   };
   return (

@@ -23,6 +23,7 @@ import {
 import HomeTabScreen from './HomeTabScreen';
 import QuestionTabScreen from './QuestionTabScreen';
 import GeneralTabScreen from './GeneralTabScreen';
+import {useSelector} from 'react-redux';
 
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
@@ -54,7 +55,7 @@ interface Props {
 
 const CommunityListScreen = ({navigation, route}: Props) => {
   const CommunityTopTab = createMaterialTopTabNavigator();
-
+  const currentUser = useSelector((state: any) => state.currentUser);
   const moveToKeywordSearch = () => {
     navigation.navigate('KeywordSearchStackScreen', {
       screen: 'KeywordSearchScreen',
@@ -109,9 +110,21 @@ const CommunityListScreen = ({navigation, route}: Props) => {
               height: 2.5,
             },
           }}>
-          <CommunityTopTab.Screen name="전체" component={HomeTabScreen} />
-          <CommunityTopTab.Screen name="질문" component={QuestionTabScreen} />
-          <CommunityTopTab.Screen name="자유" component={GeneralTabScreen} />
+          <CommunityTopTab.Screen
+            name="전체"
+            component={HomeTabScreen}
+            initialParams={{currentUser: currentUser}}
+          />
+          <CommunityTopTab.Screen
+            name="질문"
+            component={QuestionTabScreen}
+            initialParams={{currentUser: currentUser}}
+          />
+          <CommunityTopTab.Screen
+            name="자유"
+            component={GeneralTabScreen}
+            initialParams={{currentUser: currentUser}}
+          />
         </CommunityTopTab.Navigator>
       </BodyContainerView>
     </ContainerView>

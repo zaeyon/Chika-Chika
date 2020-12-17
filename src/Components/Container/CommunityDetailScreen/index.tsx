@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
@@ -30,6 +30,7 @@ import {bindActionCreators} from 'redux';
 import GETCommunityPostComments from '~/Routes/Community/postDetail/GETCommunityPostComments';
 import POSTCommunityPostComment from '~/Routes/Community/postDetail/POSTCommunityPostComment';
 import DELETECommunityPost from '~/Routes/Community/deletePost/DELETECommunityPost';
+import {useSelector} from 'react-redux';
 
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
@@ -48,143 +49,121 @@ interface Props {
   key: any;
 }
 
-interface States {
-  scrollY: Animated.Value;
-  keyboardHeight: Animated.Value;
-  comments: any;
-  formattedDescription: string;
-}
+const CommunityDetailScreen = ({navigation, route, key}: Props) => {
+  const scrollView: any = useRef();
 
-export default class CommunityDetailScreen extends React.Component<
-  Props,
-  States
-> {
-  scrollView: any;
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      scrollY: new Animated.Value(0),
-      keyboardHeight: new Animated.Value(0),
-      comments: [],
-      formattedDescription: '',
-    };
+  const scrollY: Animated.Value = useRef(new Animated.Value(0)).current;
+  const keyboardHeight: Animated.Value = useRef(new Animated.Value(0)).current;
+  const [comments, setComments] = useState([]);
+  const [formattedDescription, setFormattedDescription] = useState('');
+  const currentUser = useSelector((state: any) => state.currentUser);
+  const jwtToken = currentUser.user.jwtToken;
 
-    this.toggleKeyboardAnimation = this.toggleKeyboardAnimation.bind(this);
-    this.uploadComment = this.uploadComment.bind(this);
-    this.fetchPostComments = this.fetchPostComments.bind(this);
-    this.onPressEditPost = this.onPressEditPost.bind(this);
-    this.onPressDeletePost = this.onPressDeletePost.bind(this);
-  }
+  useEffect(() => {
+    fetchPostComments(route.params.data.id);
+  }, []);
 
-  toggleKeyboardAnimation = (height: Number) => {
-    this.scrollView &&
-      this.scrollView.scrollTo({
-        y: (this.state.scrollY as any)._value + height,
+  const toggleKeyboardAnimation = (height: Number) => {
+    scrollView &&
+      scrollView.current.scrollTo({
+        y: (scrollY as any)._value + height,
       });
   };
 
-  uploadComment(comment: string) {
-    POSTCommunityPostComment(this.props.route.params.data.id, comment).then(
+  const uploadComment = (comment: string) => {
+    POSTCommunityPostComment(jwtToken, route.params.data.id, comment).then(
       (response: any) => {
         console.log(response);
         if (response.body.statusText === 'Created') {
           console.log('Created!');
-          this.fetchPostComments(this.props.route.params.data.id);
+          fetchPostComments(route.params.data.id);
         }
       },
     );
-  }
+  };
 
-  fetchPostComments(postId: string) {
-    GETCommunityPostComments(postId).then((response: any) => {
-      this.setState({
-        comments: response,
-      });
+  const fetchPostComments = (postId: string) => {
+    GETCommunityPostComments(jwtToken, postId).then((response: any) => {
+      setComments(response);
     });
-  }
+  };
 
-  onPressEditPost = () => {
-    this.props.navigation.navigate('CommunityPostUploadStackScreen', {
+  const onPressEditPost = () => {
+    navigation.navigate('CommunityPostUploadStackScreen', {
       data: {
-        ...this.props.route.params.data,
-        description: this.deorderDescription(
-          this.props.route.params.data.description,
-        ),
-        type: this.deorderType(this.props.route.params.data.type),
+        ...route.params.data,
+        description: deorderDescription(route.params.data.description),
+        type: deorderType(route.params.data.type),
       },
     });
   };
-  onPressDeletePost = () => {
-    DELETECommunityPost(this.props.route.params.data.id).then((response) => {
+  const onPressDeletePost = () => {
+    DELETECommunityPost(jwtToken, route.params.data.id).then((response) => {
       console.log(response);
-      this.props.navigation.goBack();
+      navigation.goBack();
       Alert.alert('게시글 삭제가 완료되었습니다.');
     });
   };
 
-  deorderDescription = (oldDescription: string) => {
+  const deorderDescription = (oldDescription: string) => {
     const newDescription = oldDescription
       .replace(/{{/gi, '#')
       .replace(/}}/gi, '');
     return newDescription;
   };
 
-  deorderType = (oldCategory: string) => {
+  const deorderType = (oldCategory: string) => {
     if (oldCategory === 'Question') {
       return '질문';
     } else if (oldCategory === 'FreeTalk') {
       return '자유';
     }
   };
-  componentDidMount() {
-    this.fetchPostComments(this.props.route.params.data.id);
-  }
-  render() {
-    return (
-      <ContainerView>
-        <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
-          <BodyContainerScrollView
-            scrollIndicatorInsets={{
-              bottom: getBottomSpace() ? 0 : 11,
-            }}
-            ref={(ref) => (this.scrollView = ref)}
-            scrollEventThrottle={16}
-            onScroll={Animated.event(
-              [
-                {
-                  nativeEvent: {
-                    contentOffset: {
-                      y: this.state.scrollY,
-                    },
+
+  return (
+    <ContainerView>
+      <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
+        <BodyContainerScrollView
+          scrollIndicatorInsets={{
+            bottom: getBottomSpace() ? 0 : 11,
+          }}
+          ref={scrollView}
+          scrollEventThrottle={16}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    y: scrollY,
                   },
                 },
-              ],
-              {useNativeDriver: false},
-            )}>
-            <PostInformation
-              navigation={this.props.navigation}
-              onPressEditPost={this.onPressEditPost}
-              onPressDeletePost={this.onPressDeletePost}
-            />
-            <PostItem
-              mode={'Detail'}
-              navigation={this.props.navigation}
-              data={this.props.route.params.data}
-            />
-            <DentistComment />
+              },
+            ],
+            {useNativeDriver: false},
+          )}>
+          <PostInformation
+            navigation={navigation}
+            onPressEditPost={onPressEditPost}
+            onPressDeletePost={onPressDeletePost}
+          />
+          <PostItem
+            mode={'Detail'}
+            navigation={navigation}
+            data={route.params.data}
+          />
+          <DentistComment />
 
-            <PostCommentList commentList={this.state.comments} />
-          </BodyContainerScrollView>
-        </KeyboardAvoidingView>
-        <PostBottomBar
-          toggleKeyboardAnimation={this.toggleKeyboardAnimation}
-          uploadComment={this.uploadComment}
-          postLikeNum={this.props.route.params.data.postLikeNum}
-          viewerLikeCommunityPost={
-            this.props.route.params.data.viewerLikeCommunityPost
-          }
-        />
-      </ContainerView>
-    );
-  }
-}
+          <PostCommentList commentList={comments} />
+        </BodyContainerScrollView>
+      </KeyboardAvoidingView>
+      <PostBottomBar
+        toggleKeyboardAnimation={toggleKeyboardAnimation}
+        uploadComment={uploadComment}
+        postLikeNum={route.params.data.postLikeNum}
+        viewerLikeCommunityPost={route.params.data.viewerLikeCommunityPost}
+      />
+    </ContainerView>
+  );
+};
+
+export default CommunityDetailScreen;

@@ -43,22 +43,23 @@ interface Props {
 const HomeTabScreen = ({navigation, route}: Props) => {
   const type = 'All';
   const limit = 10;
-  const [postData, setPostData] = useState([]);
+  const [postData, setPostData] = useState([] as any);
   const [refreshing, setRefreshing] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const [isEndReached, setIsEndReached] = useState(false);
   const [order, setOrder] = useState('createdAt');
-
+  const jwtToken = route.params.currentUser.user.jwtToken;
   const buttonY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    console.log(route);
     const form = {
       type: type,
       limit: limit,
       offset: pageIndex * limit,
       order: order,
     };
-    GETCommunityPosts(form).then((response: any) => {
+    GETCommunityPosts(jwtToken, form).then((response: any) => {
       setPostData(response);
       console.log('res', response.length);
     });
@@ -72,7 +73,7 @@ const HomeTabScreen = ({navigation, route}: Props) => {
       order: order,
     };
     setRefreshing(true);
-    GETCommunityPosts(form).then((response: any) => {
+    GETCommunityPosts(jwtToken, form).then((response: any) => {
       setPostData(response);
       setPageIndex(0);
       setRefreshing(false);
@@ -80,12 +81,7 @@ const HomeTabScreen = ({navigation, route}: Props) => {
   };
 
   const renderPosts = ({item, index}: any) => (
-    <PostItem
-      mode={'Card'}
-      navigation={navigation}
-      data={item}
-      mediaFiles={item.community_imgs}
-    />
+    <PostItem mode={'Card'} navigation={navigation} data={item} />
   );
 
   const getItemKey = (item: any) => String(item.id);
@@ -102,7 +98,7 @@ const HomeTabScreen = ({navigation, route}: Props) => {
         order: order,
       };
       setPageIndex((prev: any) => prev + 1);
-      GETCommunityPosts(form).then((response: any) => {
+      GETCommunityPosts(jwtToken, form).then((response: any) => {
         console.log(response.length);
         setPostData((prev: any) => {
           return [...prev, ...response];

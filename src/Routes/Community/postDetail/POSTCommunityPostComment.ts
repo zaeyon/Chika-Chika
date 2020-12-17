@@ -3,7 +3,7 @@ import serverConfig from '../../server.config';
 
 const baseUri = serverConfig.baseUri
 
-const POSTCommunityPostComment = (postId: string, comment: string) => {
+const POSTCommunityPostComment = (jwtToken: string, postId: string, comment: string) => {
     let formData = new FormData();
     const uri = baseUri + "/api/v1/comments?type=community&postId=" + postId;
     formData.append('description', comment);
@@ -12,7 +12,7 @@ const POSTCommunityPostComment = (postId: string, comment: string) => {
 
         axios.post(uri, formData, {
             headers: {
-              'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZiMDYxN2IwLTMzYzAtMTFlYi05MmRlLWUzZmIzYjRlMDI2NCIsImlhdCI6MTYwNjgxODk1MCwiZXhwIjoxNjM4Mzc2NTUwfQ.3-PEUaAWAW6sjl7TuKNzSHlTlK8p7myWG8nedNZ3nFE'
+              'Authorization': jwtToken,
             },
         })
         .then(function(response) {

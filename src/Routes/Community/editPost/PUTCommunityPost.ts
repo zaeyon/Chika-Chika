@@ -8,9 +8,10 @@ interface postData {
     description: string;
     wantDentistHelp: boolean;
     type: string;
+    images: any;
 }
 
-const PUTCommunityPost = (postData: postData, postId: string) => {
+const PUTCommunityPost = (jwtToken: string, postData: postData, postId: string) => {
 
     const uri = baseUri + "/api/v1/communities?postId=" + postId;
     let formData = new FormData();
@@ -33,7 +34,7 @@ const PUTCommunityPost = (postData: postData, postId: string) => {
         axios.put(uri, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data', 
-              'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZiMDYxN2IwLTMzYzAtMTFlYi05MmRlLWUzZmIzYjRlMDI2NCIsImlhdCI6MTYwNjgxODk1MCwiZXhwIjoxNjM4Mzc2NTUwfQ.3-PEUaAWAW6sjl7TuKNzSHlTlK8p7myWG8nedNZ3nFE',
+              'Authorization': jwtToken,
               Accept: "*/*"
             },
 

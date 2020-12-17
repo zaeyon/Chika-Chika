@@ -173,6 +173,7 @@ const SuggestionBarView = ({
         <HashTagItemFlatList
           keyboardShouldPersistTaps={'handled'}
           style={{
+            backgroundColor: 'white',
             height: Math.min(2, suggestionList.length) * hp('7.39%'),
           }}
           data={suggestionList}
