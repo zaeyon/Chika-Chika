@@ -307,7 +307,8 @@ const PostItem = ({mode, data, navigation}: Props) => {
               alwaysBounceHorizontal={false}
               data={mediaFiles}
               keyExtractor={(item) => String(item.id)}
-              renderItem={renderImagesCallback}></ImageFlatList>
+              renderItem={renderImagesCallback}
+            />
           </ImageContainerView>
         ) : null}
         {mode === 'Detail' ? null : (
