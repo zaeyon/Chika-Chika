@@ -188,4 +188,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.11,
   },
 });
+
 export default AIScreen;
