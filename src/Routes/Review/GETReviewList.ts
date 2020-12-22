@@ -2,12 +2,13 @@ import axios from 'axios';
 import serverConfig from '../server.config';
 
 interface params {
+    jwtToken: string,
     order: string,
     offset: any,
     limit: any,
 }
 
-const GETReviewList = ({order, offset, limit}: params) => {
+const GETReviewList = ({jwtToken, order, offset, limit}: params) => {
 
     console.log("GETReviewList order", order);
     console.log("GETReviewList offset limit", offset, limit);
@@ -18,7 +19,7 @@ const GETReviewList = ({order, offset, limit}: params) => {
         axios
         .get(uri, {
             headers: {
-                Authorization: serverConfig.jwtToken
+                Authorization: jwtToken,
             }
         })
         .then(function(response) {
