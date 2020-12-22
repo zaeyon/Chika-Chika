@@ -53,6 +53,7 @@
     "react-native-simple-radio-button": "^2.7.4",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-status-bar-height": "^2.5.0",
+    "react-native-swiper": "^1.6.0",
     "react-native-tab-view": "^2.15.2",
     "react-native-upload-aws-s3": "^0.8.1",
     "react-redux": "^7.2.1",

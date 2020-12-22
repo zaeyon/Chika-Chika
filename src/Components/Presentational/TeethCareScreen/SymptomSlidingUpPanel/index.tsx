@@ -1,19 +1,15 @@
 import React, {useRef, useState} from 'react';
 import Styled from 'styled-components/native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {
-    TouchableWithoutFeedback,
-    FlatList
-} from 'react-native';
+import {TouchableWithoutFeedback, FlatList} from 'react-native';
 import {isIphoneX} from 'react-native-iphone-x-helper';
 
 // Local Component
 import SlidingUpPanel from '~/Components/Presentational/TeethCareScreen/SymptomSlidingUpPanel/SlidingUpPanel/SlidingUpPanel';
 import SymptomItem from '~/Components/Presentational/TeethCareScreen/SymptomItem';
-
 
 const Container = Styled.View`
 width: ${wp('100%')};
@@ -68,102 +64,112 @@ const LookAtRelatedDiseaseText = Styled.Text`
 font-size: 16px;
 `;
 
-
-
 const TEST_SYMPTOM_DATA = [
-    {
-        name: "이시림",
-    },
-    {
-        name: "잇몸출혈",
-    },
-    {
-        name: "구취",
-    },
-    {
-        name: "에나멜 손상",
-    },
-    {
-        name: "치아 통증",
-    },
-    {
-        name: "턱 통증",
-    },
-    {
-        name: "흔들리는 이",
-    },
-    {
-        name: "고름",
-    },
-]
+  {
+    name: '이시림',
+  },
+  {
+    name: '잇몸출혈',
+  },
+  {
+    name: '구취',
+  },
+  {
+    name: '에나멜 손상',
+  },
+  {
+    name: '치아 통증',
+  },
+  {
+    name: '턱 통증',
+  },
+  {
+    name: '흔들리는 이',
+  },
+  {
+    name: '고름',
+  },
+];
 
 interface Props {
-    navigation: any,
-    route: any,
+  navigation: any;
+  route: any;
 }
 
 const SymptomSlidingUpPanel = ({navigation, route}: Props) => {
-    const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
-    const [symptomList, setSymptomList] = useState<Array<any>>(TEST_SYMPTOM_DATA);
-    const panelRef = useRef<any>(null)
+  const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false);
+  const [symptomList, setSymptomList] = useState<Array<any>>(TEST_SYMPTOM_DATA);
+  const panelRef = useRef<any>(null);
 
-    const openPanel = () => {
-        setIsPanelOpen(true)
-    }
+  const openPanel = () => {
+    setIsPanelOpen(true);
+  };
 
-    const hidePanel = () => {
-        setIsPanelOpen(false);
-    }
+  const hidePanel = () => {
+    setIsPanelOpen(false);
+  };
 
-    const moveToRelatedDisease = () => {
-        navigation.navigate("RelatedDiseaseScreen")
-    }
+  const moveToRelatedDisease = () => {
+    navigation.navigate('RelatedDiseaseScreen');
+  };
 
-    const renderSymptomItem = ({item, index}: any) => {
-        return (
-            <SymptomItemContainer style={index == 0 ? {paddingLeft: 16} : (index == symptomList.length - 1 ? {paddingRight: 16, paddingLeft: 16} : {paddingLeft: 16})}>
-                <SymptomItem
-                name={item.name}/>
-            </SymptomItemContainer>
-        )
-    }
-
+  const renderSymptomItem = ({item, index}: any) => {
     return (
-        <SlidingUpPanel
-        backdropOpacity={0.2}
-        ref={panelRef}
-        draggableRange={{top: wp('100%'), bottom: isIphoneX() ? (wp('40%')) : (wp('25%'))}}
-        openPanel={openPanel}
-        hidePanel={hidePanel}>
-        <Container>
-            <PanelHeaderContainer>
-                {!isPanelOpen && (
-                <UpArrowIcon
-                source={require('~/Assets/Images/Arrow/ic_upArrow.png')}/>
-                )}
-                {isPanelOpen && (
-                <UpArrowIcon
-                source={require('~/Assets/Images/Arrow/ic_downArrow.png')}/>
-                )}
-                <PanelHeaderTitleText>오늘은 어떤가요?</PanelHeaderTitleText>
-            </PanelHeaderContainer>
-            <SymptomListContainer>
-                <FlatList
-                showsHorizontalScrollIndicator={false}
-                horizontal={true}
-                data={symptomList}
-                renderItem={renderSymptomItem}/>
-            </SymptomListContainer>
-            <TouchableWithoutFeedback onPress={() => moveToRelatedDisease()}>
-            <LookAtRelatedDiseaseButton>
-                <LookAtRelatedDiseaseText>{"관련질병 확인하기"}</LookAtRelatedDiseaseText>
-            </LookAtRelatedDiseaseButton>
-            </TouchableWithoutFeedback>
-        </Container>
-        </SlidingUpPanel>
-    )
-}
+      <SymptomItemContainer
+        style={
+          index == 0
+            ? {paddingLeft: 16}
+            : index == symptomList.length - 1
+            ? {paddingRight: 16, paddingLeft: 16}
+            : {paddingLeft: 16}
+        }>
+        <SymptomItem name={item.name} />
+      </SymptomItemContainer>
+    );
+  };
 
-export default SymptomSlidingUpPanel
+  return (
+    <SlidingUpPanel
+      backdropOpacity={0.2}
+      ref={panelRef}
+      draggableRange={{
+        top: wp('100%'),
+        bottom: isIphoneX() ? wp('40%') : wp('25%'),
+      }}
+      openPanel={openPanel}
+      hidePanel={hidePanel}>
+      <Container>
+        <PanelHeaderContainer>
+          {!isPanelOpen && (
+            <UpArrowIcon
+              source={require('~/Assets/Images/Arrow/ic_upArrow.png')}
+            />
+          )}
+          {isPanelOpen && (
+            <UpArrowIcon
+              source={require('~/Assets/Images/Arrow/ic_downArrow.png')}
+            />
+          )}
+          <PanelHeaderTitleText>오늘은 어떤가요?</PanelHeaderTitleText>
+        </PanelHeaderContainer>
+        <SymptomListContainer>
+          <FlatList
+            showsHorizontalScrollIndicator={false}
+            horizontal={true}
+            data={symptomList}
+            renderItem={renderSymptomItem}
+          />
+        </SymptomListContainer>
+        <TouchableWithoutFeedback onPress={() => moveToRelatedDisease()}>
+          <LookAtRelatedDiseaseButton>
+            <LookAtRelatedDiseaseText>
+              {'관련질병 확인하기'}
+            </LookAtRelatedDiseaseText>
+          </LookAtRelatedDiseaseButton>
+        </TouchableWithoutFeedback>
+      </Container>
+    </SlidingUpPanel>
+  );
+};
 
-
+export default SymptomSlidingUpPanel;

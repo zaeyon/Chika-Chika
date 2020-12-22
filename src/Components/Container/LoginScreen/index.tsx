@@ -448,10 +448,12 @@ const LoginScreen = ({navigation}: Props) => {
         if (response.statusText === 'Accepted') {
           setLoadingVerify(false);
           clearInterval(timeout);
-
           const userInfo = {
             jwtToken: response.token,
             phoneNumber: phoneNumber,
+            userId: response.user.userId,
+            userNickname: response.user.userNickname,
+            userProfileImg: response.user.userProfileImg,
           };
 
           storeUserInfo(userInfo);
