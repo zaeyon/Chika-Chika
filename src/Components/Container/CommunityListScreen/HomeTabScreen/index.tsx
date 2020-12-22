@@ -16,8 +16,8 @@ import {
 } from 'react-native-responsive-screen';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 
-//local component
-import PostItem from '~/Components/Presentational/PostItem';
+//Local Component
+import CommunityPostList from '~/Components/Presentational/CommunityPostList';
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 
 const ContainerView = Styled.SafeAreaView`
@@ -25,16 +25,6 @@ const ContainerView = Styled.SafeAreaView`
  background-color: #FFFFFF;
 `;
 
-const BodyContainerFlatList = Styled(FlatList as new () => FlatList)`
-flex: 1;
-`;
-
-const ActivityIndicatorContianerView = Styled.View`
-width: ${wp('100%')}px;
-height: auto;
-align-items: center;
-padding: 10px 0px;
-`;
 interface Props {
   navigation: any;
   route: any;
@@ -43,13 +33,12 @@ interface Props {
 const HomeTabScreen = ({navigation, route}: Props) => {
   const type = 'All';
   const limit = 10;
+  const [order, setOrder] = useState('createdAt');
+  const [pageIndex, setPageIndex] = useState(0);
   const [postData, setPostData] = useState([] as any);
   const [refreshing, setRefreshing] = useState(false);
-  const [pageIndex, setPageIndex] = useState(0);
   const [isEndReached, setIsEndReached] = useState(false);
-  const [order, setOrder] = useState('createdAt');
   const jwtToken = route.params.currentUser.user.jwtToken;
-  const buttonY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     console.log(route);
@@ -80,12 +69,6 @@ const HomeTabScreen = ({navigation, route}: Props) => {
     });
   };
 
-  const renderPosts = ({item, index}: any) => (
-    <PostItem mode={'Card'} navigation={navigation} data={item} />
-  );
-
-  const getItemKey = (item: any) => String(item.id);
-
   const onEndReached = (info: any) => {
     if (!isEndReached) {
       setIsEndReached(true);
@@ -110,41 +93,14 @@ const HomeTabScreen = ({navigation, route}: Props) => {
 
   return (
     <ContainerView>
-      <BodyContainerFlatList
-        data={postData}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        keyExtractor={getItemKey}
-        scrollIndicatorInsets={{
-          bottom: isIphoneX() ? wp('13%') : wp('15%'),
-        }}
-        contentContainerStyle={{
-          paddingBottom: isIphoneX() ? wp('13%') : wp('15%'),
-        }}
-        renderItem={renderPosts}
-        onScroll={Animated.event(
-          [
-            {
-              nativeEvent: {
-                contentOffset: {
-                  y: buttonY,
-                },
-              },
-            },
-          ],
-          {useNativeDriver: false},
-        )}
-        scrollEventThrottle={16}
+      <CommunityPostList
+        navigation={navigation}
+        route={route}
+        postData={postData}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        isEndReached={isEndReached}
         onEndReached={onEndReached}
-        onEndReachedThreshold={5}
-        ListFooterComponent={
-          isEndReached ? (
-            <ActivityIndicatorContianerView>
-              <ActivityIndicator size="large" />
-            </ActivityIndicatorContianerView>
-          ) : null
-        }
       />
       <Animated.View
         style={{
@@ -158,21 +114,6 @@ const HomeTabScreen = ({navigation, route}: Props) => {
           height: 34,
           justifyContent: 'center',
           alignItems: 'center',
-          transform: [
-            {
-              translateY: buttonY.interpolate({
-                inputRange: [
-                  0,
-                  (getBottomSpace() ? wp('12%') : wp('15%')) + 23,
-                ],
-                outputRange: [
-                  0,
-                  (getBottomSpace() ? wp('12%') : wp('15%')) + 23,
-                ],
-                extrapolate: 'clamp',
-              }),
-            },
-          ],
         }}>
         <TouchableOpacity
           style={{
