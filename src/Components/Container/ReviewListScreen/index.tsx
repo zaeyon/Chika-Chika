@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList, ScrollView} from 'react-native';
+import {TouchableWithoutFeedback, FlatList, ScrollView, ActivityIndicator} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {isIphoneX} from 'react-native-iphone-x-helper';
+import {useSelector} from 'react-redux';
 
 // Local Component
 import ReviewItem from '~/Components/Presentational/ReviewItem';
@@ -164,6 +165,13 @@ color: #000000;
 font-size: 18px;
 `;
 
+const IndicatorContainer = Styled.View`
+flex: 1;
+background-color: #ffffff;
+align-items: center;
+justify-content: center;
+`;
+
 
 const TEST_REVIEW_DATA = [
     {
@@ -297,7 +305,10 @@ interface ReviewData {
 
 const ReviewListScreen = ({navigation}: Props) => {
     const [reviewList, setReviewList] = useState<Array<ReviewData>>([]);
+    const [loadingReviewList, setLoadingReviewList] = useState<boolean>(true);
     const [order, setOrder] = useState<string>("createdAt");
+    const currentUser = useSelector((state: any) => state.currentUser);
+    const jwtToken = currentUser.user.jwtTokwn;
 
     var offset = 0;
     var limit = 10;
@@ -307,10 +318,11 @@ const ReviewListScreen = ({navigation}: Props) => {
     }, [])
 
     const getReviewList = () => {
-        GETReviewList({order, offset, limit})
+        GETReviewList({jwtToken, order, offset, limit})
         .then((response: any) => {
             console.log("GETReviewList response", response);
             setReviewList(response);
+            setLoadingReviewList(false);
         })
         .catch((error) => {
             console.log("GETReviewList error", error)
@@ -359,6 +371,7 @@ const ReviewListScreen = ({navigation}: Props) => {
                     </HeaderEmptyContainer>
                 </HeaderRightContainer>
             </HeaderBar>
+            {!loadingReviewList && (
             <ReviewContainer>
             <ReviewListContainer>
                 <FlatList
@@ -368,6 +381,12 @@ const ReviewListScreen = ({navigation}: Props) => {
                 renderItem={renderReviewItem}/>
             </ReviewListContainer>
             </ReviewContainer>
+            )}
+            {loadingReviewList && (
+            <IndicatorContainer>
+                <ActivityIndicator/>
+            </IndicatorContainer>
+            )}
         </Container>
     )
 }

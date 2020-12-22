@@ -25,6 +25,7 @@ import {storeUserInfo} from '~/storage/currentUser';
 
 // Route
 import POSTRegister from '~/Routes/Auth/POSTRegister';
+import POSTSocialRegister from '~/Routes/Auth/POSTSocialRegister';
 import POSTReviewUpload from '~/Routes/Review/POSTReviewUpload';
 
 const Container = Styled.SafeAreaView`
@@ -176,6 +177,7 @@ const NMAP_CLIENT_SECRET = "6uL7bf7tRgcDr9a3IS70fiufg647gVXxlTVoctIO";
 const HometownSettingScreen = ({navigation, route}: Props) => {
     const [loadingGetHometown, setLoadingGetHometown] = useState<boolean>(false);
     const [loadingSignUp, setLoadingSignUp] = useState<boolean>(false);
+    const provider = route.params.provider;
     var curLocationHometown = "";
 
     useEffect(() => {
@@ -185,7 +187,6 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
             console.log("route.params.provider", route.params.provider);
             console.log("route.params.fcmToken", route.params.fcmToken);
             console.log("route.params.nickname", route.params.nickname);
-            console.log("route.params.isUser", route.params.isUser);
         }
 
     }, [route.params?.userPhoneNumber])
@@ -193,7 +194,11 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
     const dispatch = useDispatch();
 
     const selectHometownItem = (item: any) => {
-        signUp(item);
+        if(provider === "local") {
+            signUp(item);
+        } else {
+            signUpSocial(item);
+        }
     }
 
     async function setCurrentLocationHometown() {
@@ -236,7 +241,13 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
                             [
                                 {
                                 text: "확인",
-                                onPress: () => signUp(curLocationHometown),  
+                                onPress: () => {
+                                    if(provider === "local") {
+                                        signUp(curLocationHometown)
+                                    } else {
+                                        signUpSocial(curLocationHometown)
+                                    }
+                                },  
                                 },
                                 {
                                 text: "취소",
@@ -283,6 +294,34 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
         .catch((error) => {
             setLoadingSignUp(false);
             console.log("POSTRegister error", error);
+        })
+    }
+
+    const signUpSocial = (hometown: string) => {
+        setLoadingSignUp(true);
+
+        const birthdate = route.params.birthdate;
+        const profileImg = route.params.profileImg;
+        const nickname = route.params.nickname;
+        const phoneNumber = route.params.phoneNumber;
+        const fcmToken = route.params.fcmToken;
+        const email = route.params.email;
+        const provider = route.parmas.provider;
+        const socialId = route.params.socialId;
+
+        POSTSocialRegister({birthdate, profileImg, nickname, phoneNumber, fcmToken, email, provider, socialId})
+        .then((response: any) => {
+            console.log("POSTSocialRegister response", response);
+
+            const userInfo = {
+                jwtToken: response.token,
+            }
+
+            storeUserInfo(userInfo);
+            dispatch(allActions.userActions.setUser(userInfo));
+        })
+        .catch((error: any) => {
+            console.log("POSTSocialRegister error", error);
         })
     }
 

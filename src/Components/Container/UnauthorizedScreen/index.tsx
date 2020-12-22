@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, Alert} from 'react-native';
+import {TouchableWithoutFeedback, Alert, ActivityIndicator} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -15,6 +15,7 @@ import {
 // route
 import POSTLogin from '~/Routes/Auth/POSTLogin';
 import POSTRegister from '~/Routes/Auth/POSTRegister';
+import POSTSocialUserCheck from '~/Routes/Auth/POSTSocialUserCheck';
 
 const Container = Styled.View`
   width: ${wp('100%')}px;
@@ -111,6 +112,15 @@ font-size: 16px;
 color: #ffffff;
 `;
 
+const IndicatorContainer = Styled.View`
+position: absolute;
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
+background-color: #00000040;
+align-items: center;
+justify-content: center;
+`;
+
 
 interface Props {
     navigation: any,
@@ -118,6 +128,7 @@ interface Props {
 }
 
 const UnauthorizedScreen = ({navigation, route}: Props) => {
+    const [loadingSocial, setLoadingSocial] = useState<boolean>(false);
 
     GoogleSignin.configure();
 
@@ -133,19 +144,23 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
         if(!KakaoLogins) {
             console.log("카카오 모듈 연결안됨")
         } else {
+            setLoadingSocial(true);
             console.log("카카오 로그인 시도")
             KakaoLogins.login([KAKAO_AUTH_TYPES.Talk, KAKAO_AUTH_TYPES.Account])
             .then(result => {
                 console.log("카카오 로그인 성공 result", result)
                 KakaoLogins.getProfile()
-                .then(profile => {
+                .then((profile: any) => {
                     console.log("카카오 계정 프로필 불러오기 성공 profile", profile)
+                    progressSocialLogin("kakao", profile.email);
                 })
                 .catch(error => {
+                    setLoadingSocial(false);
                     console.log("카카오 계정 프로필 불러오기 실패 error", error)
                 })
             })
             .catch(error => {
+                setLoadingSocial(false);
                 console.log("카카오 로그인 실패 error", error)
             })
         }
@@ -187,6 +202,32 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
         console.log("appleAuthRequestResponse", appleAuthRequestResponse);
         Alert.alert("로그인성공");
       }
+    }
+
+    const progressSocialLogin = (provider: string, email: string, phoneNumber?: string) => {
+      POSTSocialUserCheck(provider, email)
+      .then((response: any) => {
+        console.log("POSTSocialUserCheck response", response)
+        setLoadingSocial(false);
+        if(response.status === 200) {
+          console.log("등록된 소셜 계정 존재");
+
+        }
+      })
+      .catch((error) => {
+        setLoadingSocial(false);
+        console.log("POSTSocialUserCheck error", error);
+        if(error.status === 401) {
+          console.log("등록된 소셜 계정 없음");
+          navigation.navigate("HometownSettingScreen", {
+            certifiedPhoneNumber: phoneNumber ? true : false,
+            provider: provider,
+            fcmToken: null,
+            userPhoneNumber: phoneNumber ? phoneNumber : null,
+            nickname: "TEST" + String(Date.now()),
+          });
+        }
+      })
     }
 
 
