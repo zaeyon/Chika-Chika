@@ -29,6 +29,7 @@ const ProfileImage = Styled.Image`
 width: ${wp('8.5%')};
 height: ${wp('8.5%')};
 border-radius: 100px;
+background-color: #ececec
 `;
 
 const NicknameText = Styled.Text`
@@ -43,15 +44,15 @@ font-size: 16px;
 color: #8D8D8D;
 `;
 
-const TagListContainer = Styled.View`
+const TreatmentListContainer = Styled.View`
 margin-top: 12px;
 flex-direction: row;
 `;
 
-const TagText = Styled.Text`
+const TreatmentText = Styled.Text`
 font-size: 20px;
 color: #267DFF;
-margin-right: 9px;
+margin-right: 5px;
 font-weight: 600;
 `;
 
@@ -86,36 +87,41 @@ font-size: 14px;
 `;
 
 interface Props {
-    user: any,
-    createdAt: string,
-    tagOne: string,
-    tagTwo: string,
-    rating: number,
+    writer: any,
+    createdDate: string,
+    treatmentDate: string,
+    treatmentArray: Array<any>,
+    avgRating: number,
     location: string,
-    treat_date: string, 
 }
 
-const ReviewInformation = ({user,createdAt, tagOne, tagTwo, rating, location, treat_date}: Props) => {
+const ReviewInformation = ({writer, createdDate, treatmentDate, treatmentArray, avgRating, location}: Props) => {
+    console.log("ReviewInformation tretmentArray", treatmentArray);
     return (
         <Container>
             <HeaderContainer>
+                {/*
                 <ProfileContainer>
                     <ProfileImage
-                    source={{uri: user.profile_image}}/>
-                    <NicknameText>{user.nickname}</NicknameText>
+                    source={{uri: writer.profileImage ? writer.profileImage : ""}}/>
+                    <NicknameText>{writer.nickname ? writer.nickname : ""}</NicknameText>
                 </ProfileContainer>
-                <CreatedAtText>{createdAt}</CreatedAtText>
+                */}
+                <CreatedAtText>{createdDate}</CreatedAtText>
             </HeaderContainer>
-            <TagListContainer>
-                <TagText>{tagOne}</TagText>
-                <TagText>{tagTwo}</TagText>
-            </TagListContainer>
+            <TreatmentListContainer>
+                {treatmentArray.map((item, index) => {
+                    return (
+                        <TreatmentText>{item.name}</TreatmentText>
+                    )
+                })}
+            </TreatmentListContainer>
             <MetaInfoContainer>
             <RatingStarIcon
             source={require('~/Assets/Images/Review/ic_newStar.png')}/>
-            <RatingText>{rating}</RatingText>
+            <RatingText>{avgRating}</RatingText>
             <DividerBar/>
-            <LocationDateText>{location +" ∙ " + treat_date}</LocationDateText>
+            <LocationDateText>{location +" ∙ " + treatmentDate}</LocationDateText>
             </MetaInfoContainer>
         </Container>
     )

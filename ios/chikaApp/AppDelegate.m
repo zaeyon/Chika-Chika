@@ -4,6 +4,7 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <KakaoOpenSDK/KakaoOpenSDK.h>
+
 @import UIKit;
 @import Firebase;
 
@@ -78,6 +79,7 @@ static void InitializeFlipper(UIApplication *application) {
   [self.window makeKeyAndVisible];
   [KOSession sharedSession].automaticPeriodicRefresh = YES;
   [FIRApp configure];
+
   return YES;
 }
 

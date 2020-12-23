@@ -292,13 +292,14 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
                 treatDate: route.params?.treatDate,
                 treatPrice: route.params?.treatPrice,
                 keyboardSetting: true,
-                requestPage: "treat"
+                requestPage: "treat",
+                requestType: route.params?.requestType,
             });
         } else if(route.params?.requestPage === "content") {
             console.log("리뷰 내용 작성 화면")
             navigation.navigate("ReviewContentScreen", {
                 selectedTreatList: selectedTreatList,
-                
+                requestType: route.params?.requestType,
             })
         }
     }

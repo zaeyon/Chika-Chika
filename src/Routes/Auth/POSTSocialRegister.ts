@@ -2,6 +2,7 @@ import axios from 'axios';
 import serverConfig from '../server.config';
 
 interface params {
+    certifiedPhoneNumber: string,
     birthdate?: string,
     profileImg?: string,
     nickname?: string,
@@ -12,11 +13,12 @@ interface params {
     socialId: string,
 }
 
-const POSTSocialRegister = ({birthdate, profileImg, nickname, phoneNumber, fcmToken, email, provider, socialId}: params) => {
+const POSTSocialRegister = ({certifiedPhoneNumber, birthdate, profileImg, nickname, phoneNumber, fcmToken, email, provider, socialId}: params) => {
 
     const uri = serverConfig.baseUri + "/social_login";
 
     const bodyParam = `{
+        "certifiedPhoneNumber": "${certifiedPhoneNumber}",
         "birthdate": "${birthdate}",
         "profileImg": "${profileImg}",
         "nickname": "${nickname}",
@@ -24,8 +26,10 @@ const POSTSocialRegister = ({birthdate, profileImg, nickname, phoneNumber, fcmTo
         "fcmToken": "${fcmToken}",
         "email": "${email}",
         "provider": "${provider}",
-        "socialId": "${socialId}",
+        "socialId": "${socialId}"
     }`
+
+    console.log("POSTSocialRegister bodyParam", bodyParam);
 
     return new Promise(function(resolve, reject) {
 
@@ -35,7 +39,7 @@ const POSTSocialRegister = ({birthdate, profileImg, nickname, phoneNumber, fcmTo
             resolve(response.data)
         })
         .catch((error) => {
-            reject(error);
+            reject(error.response);
         })
     })
 }

@@ -1,5 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import Styled from 'styled-components/native';
+import SafeAreaView from 'react-native-safe-area-view';
 import {
     TouchableWithoutFeedback,
     TouchableHighlight,
@@ -33,7 +34,7 @@ import DentalListSlidingUpPanel from '~/Components/Presentational/NearDentalMap/
 
 const mapHeight = hp('100%') - (wp('11.7%') - (isIphoneX() ? wp("21%") : wp("15%")))
 
-const Container = Styled.SafeAreaView`
+const Container = Styled.View`
 flex: 1;
 background-color: #ffffff;
 `;
@@ -810,6 +811,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
     }
 
     return (
+        <SafeAreaView style={styles.safeAreaStyle} forceInset={{ top: 'always'}}>
         <Container>
             <HeaderBar>
                 <TouchableWithoutFeedback onPress={() => moveToSearchDental()}>
@@ -946,6 +948,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
             isVisible={visibleDayFilterModal}
             style={styles.dayFilterModalView}
             onBackdropPress={() => cancelDayFilter()}
+            swipeDirection={['down']}
+            onSwipeComplete={() => setVisibleDayFilterModal(false)}
             backdropOpacity={0.25}>
             <DetailFilterModalContainer>
                 <DetailFilterHeaderContainer>
@@ -1019,6 +1023,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
             </DetailFilterModalContainer>
             </Modal>
         </Container>
+        </SafeAreaView>
     )
 }
 
@@ -1056,6 +1061,10 @@ const styles = StyleSheet.create({
         },
         shadowRadius: 6,
         shadowOpacity: 0.5
+    },
+    safeAreaStyle: {
+        flex: 1,
+        backgroundColor: "#ffffff"
     }
 })
 

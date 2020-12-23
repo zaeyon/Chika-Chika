@@ -173,7 +173,7 @@ const DetailPriceScreen = ({navigation, route}: Props) => {
     const [treatPrice, setTreatPrice] = useState<string>("")
     const [displayPrice, setDisplayPrice] = useState<any>();
     const [onFocusTreatPrice, setOnFocusTreatPrice] = useState<boolean>(false);
-    const [detailPriceList, setDetailPriceList] = useState<Array<object>>([]);
+    const [selectedTreatList, setSelectedTreatList] = useState<Array<object>>([]);
     const [changeDetailPriceList, setChangeDetailPriceList] = useState<boolean>(false);
     const priceInputRef = useRef<any>()    
     const [buttonBottomPadding, setButtonBottomPadding] = useState<number>(53);
@@ -187,37 +187,12 @@ const DetailPriceScreen = ({navigation, route}: Props) => {
         if(route.params?.selectedTreatList) {
             console.log("route.params.selectedTreatList", route.params?.selectedTreatList);
             
-            
-
-            setDetailPriceList(route.params?.selectedTreatList);
+            setSelectedTreatList(route.params?.selectedTreatList);
+            //setDetailPriceList(route.params?.selectedTreatList);
         }
-        
     }, [route.params?.selectedTreatList])
 
     
-    /*
-    useEffect(() => {
-
-            Keyboard.addListener("keyboardWillShow", onKeyboardWillShow);
-            Keyboard.addListener("keyboardWillHide", onKeyboardWillHide);
-    
-            return () => {
-                Keyboard.removeListener("keyboardWillShow", onKeyboardWillShow);
-                Keyboard.removeListener("keyboardWillHide", onKeyboardWillHide);
-            }
-
-    }, [])
-    */
-
-
-    const onKeyboardWillShow = () => {
-        setButtonBottomPadding(20);
-    }
-  
-    const onKeyboardWillHide = () => {
-        setButtonBottomPadding(53);
-    }
-
     const goBack = () => {
         navigation.goBack();
     }
@@ -235,12 +210,12 @@ const DetailPriceScreen = ({navigation, route}: Props) => {
 
   const onPressBackground = () => {
 
-    var tmpDetailPriceList = detailPriceList;
-    for (var i = 0; i < tmpDetailPriceList.length; i++) {
-        tmpDetailPriceList[i].focused = false
+    var tmpSelectedTreatList = selectedTreatList;
+    for (var i = 0; i < tmpSelectedTreatList.length; i++) {
+        tmpSelectedTreatList[i].focused = false
     }
 
-    setDetailPriceList(tmpDetailPriceList);
+    setSelectedTreatList(tmpSelectedTreatList);
     setChangeDetailPriceList(!changeDetailPriceList)
 
 
@@ -248,70 +223,76 @@ const DetailPriceScreen = ({navigation, route}: Props) => {
   }
 
   const onFocusDetailPriceInput = (index: number) => {
-      var tmpDetailPriceList = detailPriceList
+      var tmpSelectedTreatList = selectedTreatList
       
-      tmpDetailPriceList[index].focused = true
+      tmpSelectedTreatList[index].focused = true
 
-      for (var i = 0; i < tmpDetailPriceList.length; i++) {
+      for (var i = 0; i < tmpSelectedTreatList.length; i++) {
           if(i !== index) {
-              tmpDetailPriceList[i].focused = false
+              tmpSelectedTreatList[i].focused = false
           }
       }
-      setDetailPriceList(tmpDetailPriceList);
+
+      setSelectedTreatList(tmpSelectedTreatList);
       setChangeDetailPriceList(!changeDetailPriceList);
-      console.log("tmpDetailPriceList", tmpDetailPriceList);
+
+      console.log("tmpDetailPriceList", tmpSelectedTreatList);
       
   }
 
   const onSubmitDetailPriceInput = (index: number) => {
-      var tmpDetailPriceList = detailPriceList
+      var tmpSelectedTreatList = selectedTreatList
       
-      tmpDetailPriceList[index].focused = false
-      setDetailPriceList(tmpDetailPriceList);
+      tmpSelectedTreatList[index].focused = false
+      setSelectedTreatList(tmpSelectedTreatList);
       setChangeDetailPriceList(!changeDetailPriceList)
 
     }
 
   const onChangeDetailPriceInput = (text: string, index: number) => {
-      console.log("text", text)
-      console.log("index", index);
-      console.log("detailPriceList", detailPriceList);
-
-      var tmpDetailPriceList = detailPriceList
-
-      tmpDetailPriceList[index].displayPrice = (Number(text).toLocaleString() + "원")
-      tmpDetailPriceList[index].price = text
-      setDetailPriceList(tmpDetailPriceList)
-      setChangeDetailPriceList(!changeDetailPriceList)
+      if(text.length > 0) {
+        console.log("text", text)
+        console.log("index", index);
+        console.log("detailPriceList", selectedTreatList);
+  
+        var tmpSelectedTreatList = selectedTreatList;
+  
+        tmpSelectedTreatList[index].displayPrice = (Number(text).toLocaleString() + "원")
+        tmpSelectedTreatList[index].price = text
+        setSelectedTreatList(tmpSelectedTreatList)
+        setChangeDetailPriceList(!changeDetailPriceList)        
+      }
   }
 
   
   const onPressFinishButton = () => {
       let isDetailPrice = false
+      let detailPriceList = new Array()
 
-      detailPriceList.forEach((item, index) => {
+      selectedTreatList.map((item, index) => {
           console.log("item", item);
           if(item.price) {
-              isDetailPrice = true
+              detailPriceList.push(item);
           }
       })
 
-
       if(route.params?.requestPage === "treat") {
         navigation.navigate("RatingScreen", {
-            selectedTreatList: route.params?.selectedTreatList,
+            selectedTreatList: selectedTreatList,
             dentalClinic: route.params?.dentalClinic,
             treatDate: route.params?.treatDate,
             treatPrice: route.params?.treatPrice,
             detailPriceList: detailPriceList,
             isDetailPrice: isDetailPrice,
-            requestPage: "detailPrice"
+            requestPage: "detailPrice",
+            requestType: route.params?.requestType,
         });
       } else if(route.params?.requestPage === "content") {
         navigation.navigate("ReviewContentScreen", {
             treatPrice: route.params?.treatPrice,
             isDetailPrice: isDetailPrice,
             detailPriceList: detailPriceList,
+            requestType: route.params?.requestType,
         });
       }
   }
@@ -323,7 +304,8 @@ const DetailPriceScreen = ({navigation, route}: Props) => {
         treatDate: route.params?.treatDate,
         treatPrice: route.params?.treatPrice,
         detailPriceList: [],
-        requestPage: "detailPrice"
+        requestPage: "detailPrice",
+        requestType: route.params?.requestType,
     });
   }
 
@@ -331,7 +313,7 @@ const DetailPriceScreen = ({navigation, route}: Props) => {
       item.inputRef.current.focus()
   }
 
-  const renderDetailPriceItem = ({item, index}: any) => {
+  const renderSelectedTreatList = ({item, index}: any) => {
       console.log("item", item);
       return (
         <TouchableWithoutFeedback onPress={() => onClickDetailPriceItem(item, index)}>
@@ -378,8 +360,8 @@ const DetailPriceScreen = ({navigation, route}: Props) => {
             </HeaderBar>
             <BodyContainer>
                 <FlatList
-                data={detailPriceList}
-                renderItem={renderDetailPriceItem}/>
+                data={selectedTreatList}
+                renderItem={renderSelectedTreatList}/>
             </BodyContainer>
             <FooterContainer style={{bottom: buttonBottomPadding}}>
                 <AboveKeyboard>

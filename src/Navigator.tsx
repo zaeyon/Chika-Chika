@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {StyleSheet, Image} from 'react-native';
+import {StyleSheet, Image, Alert} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -10,6 +10,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 import DeviceInfo from 'react-native-device-info';
+import messaging from '@react-native-firebase/messaging';
 
 import allActions from '~/actions';
 
@@ -158,6 +159,10 @@ function ReviewStackScreen() {
       <ReviewStack.Screen
         name="FullImagesScreen"
         component={FullImagesScreen}
+      />
+      <ReviewStack.Screen
+        name="ReviewUploadStack"
+        component={ReviewUploadStackScreen}
       />
     </ReviewStack.Navigator>
   );
@@ -614,7 +619,14 @@ const Navigator = () => {
   const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
 
+  const getFcmToken = async () => {
+    const fcmToken = await messaging().getToken();
+    console.log("getFcmToken fcmToken", fcmToken);
+  }
+
   useEffect(() => {
+    
+    getFcmToken();
     getUserInfo()
       .then((response) => {
         console.log('getUserInfo response', response);
