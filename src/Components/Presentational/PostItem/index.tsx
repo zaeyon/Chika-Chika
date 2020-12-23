@@ -1,4 +1,4 @@
-import React, {useMemo, useCallback, useEffect} from 'react';
+import React, {useMemo, useCallback, useEffect, useState} from 'react';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
@@ -34,39 +34,35 @@ height: auto;
 margin-right: auto;
 flex-direction: row;
 align-items: center;
-
 `;
 
 const HashTagContainerView = Styled.View`
 width: 100%;
-height: 24px;
-margin-top: 16px;
-background-color: white;
-
-`;
-
-const HashTagFlatList = Styled(FlatList as new () => FlatList)`
-width: 100%;
 height: auto;
+padding: 0px 16px;
+flex-direction: row;
+flex-wrap: wrap;
+margin: 4px 0px;
 `;
 
-const HashTagIconView = Styled.View`
-display: flex;
+const HashTagIconView = Styled(TouchableOpacity as new () => TouchableOpacity)`
+width: auto;
+height: auto;
 flex-direction: row;
 align-items: center;
-padding: 2px 13px;
-height: 24px;
+margin: 4px 8px 4px 0px;
+padding: 8px;
 border: 1px solid #C4C4C4;
 border-radius: 4px;
-background-color: white;
+background-color: #C4C4C4;
 color: '#rgb(0, 0, 0)'
-margin-right: 8px;
 `;
 const HashTagIconText = Styled.Text`
+font-family: NanumSquare;
 font-style: normal;
 font-weight: normal;
 font-size: 14px;
-line-height: 20px;
+line-height: 16px;
 `;
 // View => Image when ready
 const ProfileImage = Styled.Image<{source: any}>`
@@ -75,13 +71,28 @@ height: 44px;
 background-color: grey;
 border-radius: 22px;
 `;
+
+const ProfileContentView = Styled.View`
+width: auto;
+height: auto;
+padding-left: 8px;
+`;
 const ProfileNameText = Styled.Text`
-font-size: 14px;
-margin: 0px 8px;
-line-height: 24px;
-background-color: white;
+font-family: NanumSquareR;
 font-style: normal;
 font-weight: bold;
+font-size: 14px;
+line-height: 16px;
+margin-bottom: 4px;
+`;
+
+const ProfileDescriptionText = Styled.Text`
+font-family: NanumSquareR;
+font-style: normal;
+font-weight: normal;
+font-size: 12px;
+line-height: 14px;
+color: #979797;
 `;
 const ContentView = Styled.View`
 width: 100%;
@@ -91,6 +102,7 @@ margin: 8px 0px;
 `;
 
 const ContentText = Styled.Text`
+font-family: NanumSquareR;
 font-style: normal;
 font-weight: normal;
 font-size: 14px;
@@ -146,15 +158,75 @@ interface Props {
 }
 
 const PostItem = ({mode, data, navigation}: Props) => {
-  const {user, createdAt, description, postLikeNum, postCommentsNum} = data;
-  const tagList = ['임플란트', '충치'];
+  const {
+    user,
+    createdAt,
+    updatedAt,
+    description,
+    postLikeNum,
+    postCommentsNum,
+  } = data;
+
+  const tagList = [
+    '임플란트',
+    '충치',
+    '임플란트',
+    '충치',
+    '임플란트',
+    '충치',
+    '임플란트',
+    '충치',
+  ];
   const mediaFiles = data.community_imgs;
   const proComments = [
     '안녕하세요 전윤정님. 저희 치과를 이용해주셔서 감사합니다. 어쩌구저쩌구 어쩌구저쩌구',
   ];
-  const formatHashTag = (text: string) => {
+  const [updatedAtData, setUpdatedAtData] = useState('');
+
+  const formatUpdatedAtDate = useCallback(
+    (updatedAt: string) => {
+      const currentDate = Date.now();
+      const updatedDate = new Date(updatedAt);
+
+      const diff = currentDate - updatedDate.getTime();
+
+      // if (diff / (24 * 3600 * 1000) > 1) {
+      //   return formatDate(updatedAt);
+      // }
+      if (diff / (24 * 3600 * 1000) >= 1) {
+        // in days
+        const day = Math.floor(diff / (24 * 3600 * 1000));
+        return `${day}일 전`;
+      } else if (diff / (3600 * 1000) >= 1) {
+        // in hours
+        const hour = Math.floor(diff / (3600 * 1000));
+        return `${hour}시간 전`;
+      } else if (diff / (60 * 1000) >= 1) {
+        // in minutes
+        const minute = Math.floor(diff / (60 * 1000));
+        return `${minute}분 전`;
+      } else {
+        // in seconds
+        const second = Math.floor(diff / 1000);
+        return `${second}초 전`;
+      }
+    },
+    [updatedAt],
+  );
+
+  const formatDate = useCallback((date: string) => {
+    const tmpDate = new Date(date);
+    let year = tmpDate.getFullYear(),
+      month = String(tmpDate.getMonth() + 1),
+      day = String(tmpDate.getDay());
+    month = Number(month) >= 10 ? month : '0' + month;
+    day = Number(day) >= 10 ? day : '0' + day;
+    return year + '년' + month + '월 ' + day + '일';
+  }, []);
+
+  const formatHashTag = (text: string, index: number) => {
     return (
-      <TouchableWithoutFeedback>
+      <TouchableWithoutFeedback key={text + index}>
         <HashTagText>{'#' + text}</HashTagText>
       </TouchableWithoutFeedback>
     );
@@ -175,6 +247,7 @@ const PostItem = ({mode, data, navigation}: Props) => {
           //isTag
           const formattedHashTag = formatHashTag(
             word.slice(2, word.length - 2),
+            formattedLine.length,
           );
           formattedLine.push(formattedHashTag);
         } else {
@@ -261,10 +334,7 @@ const PostItem = ({mode, data, navigation}: Props) => {
       onPress={() => {
         moveToCommunityDetail();
       }}>
-      <ContainerView
-        style={{
-          height: 'auto',
-        }}>
+      <ContainerView>
         <BodyContainerView>
           <TouchableWithoutFeedback
             onPress={() => {
@@ -277,22 +347,17 @@ const PostItem = ({mode, data, navigation}: Props) => {
                   cache: 'force-cache',
                 }}
               />
-
-              <ProfileNameText>{user.nickname}</ProfileNameText>
+              <ProfileContentView>
+                <ProfileNameText>{user.nickname}</ProfileNameText>
+                <ProfileDescriptionText>
+                  {updatedAt !== createdAt
+                    ? `${'3시간 전'} ･ 수정됨`
+                    : `${'3시간 전'}`}
+                </ProfileDescriptionText>
+              </ProfileContentView>
             </ProfileContainerView>
           </TouchableWithoutFeedback>
-          <HashTagContainerView>
-            <HashTagFlatList
-              horizontal={true}
-              data={tagList}
-              keyExtractor={(item) => item}
-              renderItem={({item, index}) => (
-                <HashTagIconView key={'hashtag' + index}>
-                  <HashTagIconText>{'#' + item}</HashTagIconText>
-                </HashTagIconView>
-              )}
-            />
-          </HashTagContainerView>
+
           <ContentView>
             {mode === 'Detail' ? (
               <ContentText>{formatDescription(description)}</ContentText>
@@ -309,10 +374,18 @@ const PostItem = ({mode, data, navigation}: Props) => {
               showsHorizontalScrollIndicator={false}
               alwaysBounceHorizontal={false}
               data={mediaFiles}
-              keyExtractor={(item) => item.id}
-              renderItem={renderImagesCallback}></ImageFlatList>
+              keyExtractor={(item) => String(item.id)}
+              renderItem={renderImagesCallback}
+            />
           </ImageContainerView>
         ) : null}
+        <HashTagContainerView>
+          {tagList.map((item, index) => (
+            <HashTagIconView>
+              <HashTagIconText>{'#' + item}</HashTagIconText>
+            </HashTagIconView>
+          ))}
+        </HashTagContainerView>
         {mode === 'Detail' ? null : (
           <SocialInfoContainerView>
             <TouchableOpacity

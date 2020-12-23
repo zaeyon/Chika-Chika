@@ -286,7 +286,7 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
             const userInfo = {
                 jwtToken: response.token,
                 phoneNumber: phoneNumber,
-                userId: response.user.userId,
+                id: response.user.userId,
                 nickname: response.user.userNickname,
                 profileImage: response.user.userProfileImg,
             }

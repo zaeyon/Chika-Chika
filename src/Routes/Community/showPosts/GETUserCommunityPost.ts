@@ -10,9 +10,9 @@ interface Props {
     order: string;
 }
 
-const GETCommunityPosts = (jwtToken: string, {type, limit, offset, order}: Props) => {
-    const uri = baseUri + `/api/v1/communities/lists?type=${type}&limit=${limit}&offset=${offset}&order=${order}`;
-
+const GETUserCommunityPosts = (jwtToken: string, nickname: string, {type, limit, offset, order}: Props) => {
+    const uri = baseUri + `/api/v1/users/${nickname}/communities?limit=${limit}&offset=${offset}&order=${order}&type=${type}`;
+    console.log(type, limit, offset, order);
     return new Promise(function(resolve, reject) {
 
         axios.get(uri, {
@@ -21,7 +21,7 @@ const GETCommunityPosts = (jwtToken: string, {type, limit, offset, order}: Props
             },
         })
         .then(function(response) {
-        
+            console.log('GETUserCommunityPosts SUCCESS',response)
             resolve(response.data);
             
         })
@@ -33,4 +33,5 @@ const GETCommunityPosts = (jwtToken: string, {type, limit, offset, order}: Props
     })
 }
 
-export default GETCommunityPosts;
+export default GETUserCommunityPosts;
+

@@ -11,6 +11,7 @@ import {
   LayoutAnimation,
   UIManager,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -24,6 +25,13 @@ border-top-width: 1px;
 border-color: #DADADA;
 `;
 
+const ActivityIndicatorContianerView = Styled.View`
+width: 100%;
+height: 50px;
+
+align-items: center;
+justify-content: center;
+`;
 const HashTagCategoryFlatList = Styled(FlatList as new () => FlatList)`
 height: ${hp('5.91%')}px;
 width: 100%;
@@ -77,6 +85,7 @@ interface Props {
   suggestionList: any;
   searchQuery: any;
   completeCurrentHashTag: any;
+  isLoading: boolean;
 }
 
 if (Platform.OS === 'android') {
@@ -89,6 +98,7 @@ const SuggestionBarView = ({
   suggestionList,
   searchQuery,
   completeCurrentHashTag,
+  isLoading,
 }: Props) => {
   const [bottomSpace, setBottomSpace] = useState(-(getBottomSpace() + 168));
 
@@ -155,16 +165,21 @@ const SuggestionBarView = ({
         width: '100%',
         flex: 1,
       }}>
-      {suggestionList.length > 0 && searchQuery !== '' ? (
+      {isLoading && searchQuery !== '' ? (
+        <ActivityIndicatorContianerView>
+          <ActivityIndicator size="small" />
+        </ActivityIndicatorContianerView>
+      ) : (
         <HashTagItemFlatList
           keyboardShouldPersistTaps={'handled'}
           style={{
+            backgroundColor: 'white',
             height: Math.min(2, suggestionList.length) * hp('7.39%'),
           }}
           data={suggestionList}
           renderItem={renderHashTagItemView}
         />
-      ) : null}
+      )}
     </View>
   );
 };

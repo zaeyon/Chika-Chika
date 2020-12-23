@@ -53,7 +53,7 @@ const ReviewCommentList = ({commentList}: Props) => {
   return (
     <Container>
       <HeaderContainer>
-        <HeaderCommentCountText>댓글</HeaderCommentCountText>
+        <HeaderCommentCountText>{`댓글 ${commentList.length}개`}</HeaderCommentCountText>
       </HeaderContainer>
       <CommentListContainer>
         {commentList.map(renderCommentItem)}

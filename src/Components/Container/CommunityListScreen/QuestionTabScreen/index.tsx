@@ -16,8 +16,8 @@ import {
 } from 'react-native-responsive-screen';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 
-//local component
-import PostItem from '~/Components/Presentational/PostItem';
+//Local Component
+import CommunityPostList from '~/Components/Presentational/CommunityPostList';
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 
 const ContainerView = Styled.SafeAreaView`
@@ -25,16 +25,6 @@ const ContainerView = Styled.SafeAreaView`
  background-color: #FFFFFF;
 `;
 
-const BodyContainerFlatList = Styled(FlatList as new () => FlatList)`
-flex: 1;
-`;
-
-const ActivityIndicatorContianerView = Styled.View`
-width: ${wp('100%')}px;
-height: auto;
-align-items: center;
-padding: 10px 0px;
-`;
 interface Props {
   navigation: any;
   route: any;
@@ -43,12 +33,12 @@ interface Props {
 const QuestionTabScreen = ({navigation, route}: Props) => {
   const type = 'Question';
   const limit = 10;
-  const [postData, setPostData] = useState([]);
+  const [postData, setPostData] = useState([] as any);
   const [refreshing, setRefreshing] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const [isEndReached, setIsEndReached] = useState(false);
   const [order, setOrder] = useState('createdAt');
-
+  const jwtToken = route.params.currentUser.user.jwtToken;
   const buttonY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -58,7 +48,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
       offset: pageIndex * limit,
       order: order,
     };
-    GETCommunityPosts(form).then((response: any) => {
+    GETCommunityPosts(jwtToken, form).then((response: any) => {
       setPostData(response);
       console.log('res', response.length);
     });
@@ -72,24 +62,12 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
       order: order,
     };
     setRefreshing(true);
-    GETCommunityPosts(form).then((response: any) => {
+    GETCommunityPosts(jwtToken, form).then((response: any) => {
       setPostData(response);
       setPageIndex(0);
       setRefreshing(false);
     });
   };
-
-  const renderPosts = ({item, index}: any) => (
-    <PostItem
-      key={index}
-      mode={'Card'}
-      navigation={navigation}
-      data={item}
-      mediaFiles={item.community_imgs}
-    />
-  );
-
-  const getItemKey = (item: any) => item.id;
 
   const onEndReached = (info: any) => {
     console.log(info.distanceFromEnd);
@@ -105,7 +83,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         order: order,
       };
       setPageIndex((prev: any) => prev + 1);
-      GETCommunityPosts(form).then((response: any) => {
+      GETCommunityPosts(jwtToken, form).then((response: any) => {
         console.log(response.length);
         setPostData((prev: any) => {
           return [...prev, ...response];
@@ -117,41 +95,14 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
 
   return (
     <ContainerView>
-      <BodyContainerFlatList
-        data={postData}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        keyExtractor={getItemKey}
-        scrollIndicatorInsets={{
-          bottom: isIphoneX() ? wp('13%') : wp('15%'),
-        }}
-        contentContainerStyle={{
-          paddingBottom: isIphoneX() ? wp('13%') : wp('15%'),
-        }}
-        renderItem={renderPosts}
-        onScroll={Animated.event(
-          [
-            {
-              nativeEvent: {
-                contentOffset: {
-                  y: buttonY,
-                },
-              },
-            },
-          ],
-          {useNativeDriver: false},
-        )}
-        scrollEventThrottle={16}
+      <CommunityPostList
+        navigation={navigation}
+        route={route}
+        postData={postData}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        isEndReached={isEndReached}
         onEndReached={onEndReached}
-        onEndReachedThreshold={5}
-        ListFooterComponent={
-          isEndReached ? (
-            <ActivityIndicatorContianerView>
-              <ActivityIndicator size="large" />
-            </ActivityIndicatorContianerView>
-          ) : null
-        }
       />
       <Animated.View
         style={{
