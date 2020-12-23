@@ -187,7 +187,7 @@ const ReviewContentView = Styled.View`
 width: 100%;
 height: auto;
 margin-top: 8px;
-padding: 24px 0px;
+padding: 24px 0px 0px 0px;
 background: white;
 `;
 
@@ -248,9 +248,34 @@ border-radius: 4px;
 margin-right: 16px;
 `;
 
+const ReviewUploadContainer = Styled.View`
+width: ${wp('100%')}px;
+background-color: #ffffff;
+align-items: center;
+justify-content: center;
+`;
+
+
+const ReviewUploadButton = Styled.View`
+width: ${wp('87.2%')}px;
+height: ${wp('24.416%')}px;
+border-radius: 8px;
+border-width: 1px;
+border-color: #C4C4C4;
+align-items: center;
+justify-content: center;
+`;
+
+const ReviewUploadText = Styled.Text`
+font-weight: 700;
+color: #000000;
+font-size: 18px;
+`;
+
+
 interface Props {
   navigation: any;
-  route: any;
+  route: any; 
 }
 
 const HomeMainScreen = ({navigation, route}: Props) => {
@@ -265,6 +290,20 @@ const HomeMainScreen = ({navigation, route}: Props) => {
     {id: 5, img_url: '~/Assets/Images/appIcon_chika.png'},
     {id: 6, img_url: '~/Assets/Images/appIcon_chika.png'},
   ]);
+
+  const moveToReviewList = () => {
+    navigation.navigate("ReviewStackScreen", {
+        screen: "ReviewListScreen"
+    });
+  }
+
+
+  const moveToReviewUpload = () => {  
+    navigation.navigate("ReviewUploadStackScreen", {
+        screen: "ReceiptRegisterScreen"
+    });
+  }
+
   const renderFlatListImagesCallback = useCallback(
     ({item, index}) => (
       <TouchableWithoutFeedback
@@ -368,9 +407,7 @@ const HomeMainScreen = ({navigation, route}: Props) => {
             <ReviewContentTitleText>충치</ReviewContentTitleText>
             <ReviewContentText>인기리뷰</ReviewContentText>
             <TouchableWithoutFeedback
-              onPress={() => {
-                console.log('detail');
-              }}>
+              onPress={() => moveToReviewList()}>
               <ReviewContentDetailButtonView>
                 <ReviewContentDetailButtonText>
                   더보기
@@ -390,6 +427,15 @@ const HomeMainScreen = ({navigation, route}: Props) => {
               }></ReviewContentImageFlatList>
           </ReviewContentImageContainerView>
         </ReviewContentView>
+        <ReviewUploadContainer>
+        <TouchableWithoutFeedback onPress={() => moveToReviewUpload()}>
+          <ReviewUploadButton style={{marginTop: 50}}>
+            <ReviewUploadText>
+              리뷰 작성하기
+            </ReviewUploadText>
+          </ReviewUploadButton>
+        </TouchableWithoutFeedback>
+        </ReviewUploadContainer>
       </BodyContainerView>
     </ContainerView>
   );
