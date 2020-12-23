@@ -2,29 +2,40 @@ import axios from 'axios';
 import serverConfig from '../server.config';
 
 interface params {
+    jwtToken: string,
     starRate_cost: number,
     starRate_treatment: number,
     starRate_service: number,
     certified_bill: boolean,
-    treatments: Array<object>,
+    formatedTreatmentArray: Array<object>,
     dentalClinicId: number,
-    paragraphs: Array<object>,
+    formatedParagraphArray: Array<object>,
+    totalPrice: number
 } 
 
-const POSTReviewUpload = ({starRate_cost, starRate_treatment, starRate_service, certified_bill, treatments, dentalClinicId, paragraphs}: params) => {
+const POSTReviewUpload = ({jwtToken, starRate_cost, starRate_treatment, starRate_service, certified_bill, formatedParagraphArray, dentalClinicId, formatedTreatmentArray, totalPrice}: params) => {
     console.log("serverConfig.jwtToken", serverConfig.jwtToken);
     const uri = serverConfig.baseUri + "/api/v1/reviews"
 
     console.log("POSTReviewUpload starRate_cost", starRate_cost);
     console.log("POSTReviewUpload starRate_treatment", starRate_treatment);
     console.log("POSTReviewUpload starRate_service", starRate_service);
-    console.log("POSTReviewUpload treatments", treatments);
+    console.log("POSTReviewUpload treatments", formatedTreatmentArray);
     console.log("POSTReviewUpload dentalClinicId", dentalClinicId);
-    console.log("POSTReviewUpload paragraphs", paragraphs);
+    console.log("POSTReviewUpload paragraphs", formatedParagraphArray);
+    console.log("POSTReviewUpload totalCost", totalPrice);
 
-    const body = `{"starRate_cost":${starRate_cost},"starRate_treatment":${starRate_treatment},"starRate_service":${starRate_service},"certified_bill":${certified_bill},"treatments":${JSON.stringify(treatments)},"dentalClinicId":${dentalClinicId}}`
+    const body = `{
+        "starRate_cost":${starRate_cost},
+        "starRate_treatment":${starRate_treatment},
+        "starRate_service":${starRate_service},
+        "certified_bill":${certified_bill},
+        "treatments":${JSON.stringify(formatedTreatmentArray)},
+        "dentalClinicId":${dentalClinicId},
+        "totalCost":${totalPrice}
+    }`
 
-    const stringfiedPara = JSON.stringify(paragraphs); 
+    const stringfiedPara = JSON.stringify(formatedParagraphArray); 
 
     console.log("body", body);
 
@@ -37,7 +48,7 @@ const POSTReviewUpload = ({starRate_cost, starRate_treatment, starRate_service, 
         .post(uri, formData, {
             headers: {
                 "Content-Type": "multipart/form-data;",
-                Authorization: serverConfig.jwtToken
+                Authorization: jwtToken,
             }
         })
         .then(function(response) {

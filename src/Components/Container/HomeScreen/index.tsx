@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList, ScrollView} from 'react-native';
+import {TouchableWithoutFeedback, FlatList, ScrollView, StyleSheet} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -8,8 +8,9 @@ import {
 import {isIphoneX} from 'react-native-iphone-x-helper';
 import {useSelector, useDispatch} from 'react-redux';
 import DeviceInfo from 'react-native-device-info'
+import SafeAreaView from 'react-native-safe-area-view';
 
-const Container = Styled.SafeAreaView`
+const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
 `;
@@ -174,6 +175,7 @@ const HomeScreen = ({navigation}: Props) => {
     }
 
     return (
+        <SafeAreaView style={styles.safeAreaStyle} forceInset={{ top: 'always'}}>
         <Container>
             <HeaderBar>
                 <HeaderLeftContainer>
@@ -229,8 +231,16 @@ const HomeScreen = ({navigation}: Props) => {
             </BodyContainer>
             </ScrollView>
         </Container>
+        </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    safeAreaStyle: {
+        flex: 1,
+        backgroundColor: "#ffffff"
+    }
+})
 
 export default HomeScreen
 

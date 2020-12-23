@@ -5,8 +5,11 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {useDispatch, useSelector} from 'react-redux';
+import messaging from '@react-native-firebase/messaging';
 import KakaoLogins, {KAKAO_AUTH_TYPES} from '@react-native-seoul/kakao-login';
 import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
+import allActions from '~/actions';
 
 import {
   appleAuth
@@ -50,7 +53,6 @@ const LocalLoginContainer = Styled.View`
 const LocalLoginText = Styled.Text`
  color: #ffffff;
  font-size: 16px;
- font-weight: bold;
 `;
 
 const LocalSignUpContainer = Styled.View`
@@ -74,7 +76,6 @@ justify-content: center;
 `;
 
 const KakaoLoginText = Styled.Text`
-font-weight: bold;
 font-size: 16px;
 color: #000000;
 `;
@@ -91,7 +92,6 @@ justify-content: center;
 `;
 
 const GoogleLoginText = Styled.Text`
-font-weight: bold;
 font-size: 16px;
 color: #000000;
 `;
@@ -107,7 +107,6 @@ justify-content: center;
 `;
 
 const AppleLoginText = Styled.Text`
-font-weight: bold;
 font-size: 16px;
 color: #ffffff;
 `;
@@ -129,6 +128,26 @@ interface Props {
 
 const UnauthorizedScreen = ({navigation, route}: Props) => {
     const [loadingSocial, setLoadingSocial] = useState<boolean>(false);
+    const dispatch = useDispatch();
+
+    let fcmToken = ""
+
+    useEffect(() => {
+      getFcmToken();
+    }, [])
+
+    const getFcmToken = async () => {
+      fcmToken = await messaging().getToken();
+    }
+
+
+    /*
+    const getFcmToken = async () => {
+      const fcmToken = await messaging().getToken();
+      console.log("getFcmToken", fcmToken);
+    }
+    */
+
 
     GoogleSignin.configure();
 
@@ -152,7 +171,17 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
                 KakaoLogins.getProfile()
                 .then((profile: any) => {
                     console.log("카카오 계정 프로필 불러오기 성공 profile", profile)
-                    progressSocialLogin("kakao", profile.email);
+
+                    const userProfile = {
+                      birthdate: profile.birthyear ? (profile.birthday ? (profile.birthyear + profile.birthday) : "") : "",
+                      profileImg: profile.profile_image_url ? profile.profile_image_url : "",
+                      nickname: profile.nickname ? profile.nickname : "TEST" + Date.now(),
+                      socialId: profile.id,
+                    }
+
+                    const phoneNumber = profile.phone_number ? profile.phone_number : "";
+
+                    progressSocialLogin("kakao", profile.email, phoneNumber, userProfile);
                 })
                 .catch(error => {
                     setLoadingSocial(false);
@@ -168,15 +197,32 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
 
     const loginWithGoogle = async () => {
         try {
+            setLoadingSocial(true);
             await GoogleSignin.hasPlayServices();
             const userInfo = await GoogleSignin.signIn();
             console.log("구글 로그인 성공 userInfo", userInfo);
+
+            if(userInfo) {
+              const userProfile = {
+                birthdate: "",
+                profileImg: userInfo.user.photo ? userInfo.user.photo : "",
+                nickname: userInfo.user.name ? userInfo.user.name : "",
+                socialId: userInfo.user.id,
+              }
+
+              const phoneNumber = "";
+
+              progressSocialLogin("google", userInfo.user.email, phoneNumber, userProfile);
+            }
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+              setLoadingSocial(false);
                 // user cancelled the login flow
               } else if (error.code === statusCodes.IN_PROGRESS) {
+              setLoadingSocial(false);
                 // operation (e.g. sign in) is in progress already
               } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+              setLoadingSocial(false);
                 // play services not available or outdated
               } else {
                 // some other error happened
@@ -185,6 +231,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
     }
 
     async function loginWithApple() {
+      setLoadingSocial(true);
       // performs login request
       const appleAuthRequestResponse = await appleAuth.performRequest({
         requestedOperation: appleAuth.Operation.LOGIN,
@@ -201,17 +248,33 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
         console.log("Apple Login Success credentialState", credentialState);
         console.log("appleAuthRequestResponse", appleAuthRequestResponse);
         Alert.alert("로그인성공");
+
+        const userProfile = {
+            birthdate: "",
+            profileImg: "",
+            nickname: appleAuthRequestResponse.fullName?.givenName ? (appleAuthRequestResponse.fullName.familyName ? (appleAuthRequestResponse.fullName.familyName + appleAuthRequestResponse.fullName.givenName) : appleAuthRequestResponse.fullName.givenName) : ("TEST" + Date.now()),
+            socialId: appleAuthRequestResponse.identityToken,
+        }
+
+        const email = appleAuthRequestResponse.email ? appleAuthRequestResponse.email : "";
+
+        progressAppleLogin("apple", email, userProfile)
       }
     }
 
-    const progressSocialLogin = (provider: string, email: string, phoneNumber?: string) => {
+    const progressSocialLogin = (provider: string, email: string, phoneNumber: string, userProfile: any) => {
       POSTSocialUserCheck(provider, email)
       .then((response: any) => {
         console.log("POSTSocialUserCheck response", response)
         setLoadingSocial(false);
-        if(response.status === 200) {
+        if(response.statusText === "Accepted") {
           console.log("등록된 소셜 계정 존재");
+          
+          const userInfo = {
+            jwtToken : response.token
+          }
 
+          dispatch(allActions.userActions.setUser(userInfo));
         }
       })
       .catch((error) => {
@@ -221,10 +284,49 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
           console.log("등록된 소셜 계정 없음");
           navigation.navigate("HometownSettingScreen", {
             certifiedPhoneNumber: phoneNumber ? true : false,
+            birthdate: userProfile.birthdate,
+            profileImg: userProfile.profileImg,
+            nickname: userProfile.nickname,
+            phoneNumber: phoneNumber,
+            fcmToken: fcmToken,
+            email: email,
             provider: provider,
-            fcmToken: null,
-            userPhoneNumber: phoneNumber ? phoneNumber : null,
-            nickname: "TEST" + String(Date.now()),
+            socialId: userProfile.socialId,
+          });
+        }
+      })
+    }
+
+    const progressAppleLogin = (provider: string, email: string, userProfile: any) => {
+      POSTSocialUserCheck(provider, userProfile.socialId)
+      .then((response: any) => {
+        console.log("POSTSocialUserCheck response", response)
+        setLoadingSocial(false);
+        if(response.statusText === "Accepted") {
+          console.log("등록된 애플 계정 존재");
+          
+          const userInfo = {
+            jwtToken : response.token
+          }
+
+          dispatch(allActions.userActions.setUser(userInfo));
+        }
+      })
+      .catch((error) => {
+        setLoadingSocial(false);
+        console.log("POSTSocialUserCheck error", error);
+        if(error.status === 401) {
+          console.log("등록된 소셜 계정 없음");
+          navigation.navigate("HometownSettingScreen", {
+            certifiedPhoneNumber: false,
+            birthdate: "",
+            profileImg: "",
+            nickname: userProfile.nickname,
+            phoneNumber: "",
+            fcmToken: fcmToken,
+            email: email,
+            provider: provider,
+            socialId: userProfile.socialId,
           });
         }
       })
@@ -263,6 +365,12 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
               </LocalLoginContainer>
               </TouchableWithoutFeedback>
             </LocalContainer>
+            {loadingSocial && (
+              <IndicatorContainer>
+                <ActivityIndicator
+                color={"#ffffff"}/>
+              </IndicatorContainer>
+            )}
         </Container>
     )
 }

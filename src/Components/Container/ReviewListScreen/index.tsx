@@ -10,6 +10,7 @@ import {useSelector} from 'react-redux';
 
 // Local Component
 import ReviewItem from '~/Components/Presentational/ReviewItem';
+import ReviewList from '~/Components/Presentational/ReviewList';
 
 // Route
 import GETReviewList from '~/Routes/Review/GETReviewList';
@@ -175,105 +176,147 @@ justify-content: center;
 
 const TEST_REVIEW_DATA = [
     {
-        user: {
-            profileImage: "http://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2020/03/27/5561b209-4809-4c6e-9f8b-33d0e7792de8.jpg",
-            nickname: "닉네임"
+        "TreatmentItems": [
+            {"name": "복합레진", "review_treatment_item": {"cost": 30000}}, {"name": "임플란트", "review_treatment_item": {"cost": 20000}}
+        ],
+        "certifiedBill": true,
+        "concsulationDate": "2020-12-17",
+        "createdAt": "2020-12-17T12:30:46.000Z",
+        "deletedAt": null,
+        "dentalClinicId": 43,
+        "dental_clinic": {
+          "id": 43,
+          "name": "시그마치과병원"
         },
-        createdAt: '2020-10-13',
-        reviewImages: [
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
-        ],
-        tags: [
-            "치아교정", "부정교합"
-        ],
-        date: "2020-09-24",
-        rating: "3.5",
-        description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
-        view: "300",
-        getInfo: "102",
-        like: "123",
-        comment: "24"
-    },
-    {
-        user: {
-            profileImage: "http://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2020/03/27/5561b209-4809-4c6e-9f8b-33d0e7792de8.jpg",
-            nickname: "닉네임2"
+        "hits": 0,
+        "id": 15,
+        "reviewCommentsNum": 0,
+        "reviewDescriptions": "1 2",
+        "reviewLikeNum": 0,
+        "reviewViewNum": 0,
+        "review_contents": [{"id": 14, "img_before_after": null, "img_url": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1607935712984D535E140-94A0-4647-8F0F-A60EF688F976.JPG", "index": 1}],
+        "starRate_cost": 5,
+        "starRate_service": 4,
+        "starRate_treatment": 4,
+        "updatedAt": "2020-12-17T12:30:46.000Z",
+        "user": {
+          "nickname": "jiwon11",
+          "profileImg": ""
         },
-        createdAt: '2020-10-13',
-        reviewImages: [
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
+        "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
+        "viewerLikedReview": 0
+      },
+      {
+        "TreatmentItems": [
+          [
+            Object
+          ]
         ],
-        tags: [
-            "치아교정", "부정교합"
-        ],
-        date: "2020-09-24",
-        rating: "3.5",
-        description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
-        view: "300",
-        getInfo: "102",
-        like: "123",
-        comment: "24"
-    },
-    {
-        user: {
-            profileImage: "http://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2020/03/27/5561b209-4809-4c6e-9f8b-33d0e7792de8.jpg",
-            nickname: "닉네임3"
+        "certifiedBill": false,
+        "concsulationDate": "2020-12-14",
+        "createdAt": "2020-12-14T08:48:37.000Z",
+        "deletedAt": null,
+        "dentalClinicId": 2697,
+        "dental_clinic": {
+          "id": 2697,
+          "name": "아너스치과교정과치과의원(강서구-화곡동)"
         },
-        createdAt: '2020-10-13',
-        reviewImages: [
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
+        "hits": 0,
+        "id": 14,
+        "reviewCommentsNum": 0,
+        "reviewDescriptions": "충cnd",
+        "reviewLikeNum": 0,
+        "reviewViewNum": 0,
+        "review_contents": [
+          [
+            Object
+          ]
         ],
-        tags: [
-            "치아교정", "부정교합"
-        ],
-        date: "2020-09-24",
-        rating: "3.5",
-        description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
-        view: "300",
-        getInfo: "102",
-        like: "123",
-        comment: "24"
-    },
-    {
-        user: {
-            profileImage: "http://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2020/03/27/5561b209-4809-4c6e-9f8b-33d0e7792de8.jpg",
-            nickname: "닉네임4"
+        "starRate_cost": 4.5,
+        "starRate_service": 3.5,
+        "starRate_treatment": 3,
+        "updatedAt": "2020-12-14T08:48:37.000Z",
+        "user": {
+          "nickname": "jiwon11",
+          "profileImg": ""
         },
-        createdAt: '2020-10-13',
-        reviewImages: [
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
-            {
-                uri: "http://cfs9.tistory.com/image/15/tistory/2008/09/26/14/31/48dc73c30853d"
-            },
+        "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
+        "viewerLikedReview": 0
+      },
+      {
+        "TreatmentItems": [
+          [
+            Object
+          ]
         ],
-        tags: [
-            "치아교정", "부정교합"
+        "certifiedBill": false,
+        "concsulationDate": "2020-12-14",
+        "createdAt": "2020-12-14T08:10:38.000Z",
+        "deletedAt": null,
+        "dentalClinicId": 4409,
+        "dental_clinic": {
+          "id": 4409,
+          "name": "충무로치과의원"
+        },
+        "hits": 0,
+        "id": 13,
+        "reviewCommentsNum": 0,
+        "reviewDescriptions": null,
+        "reviewLikeNum": 0,
+        "reviewViewNum": 0,
+        "review_contents": [
+          [
+            Object
+          ]
         ],
-        date: "2020-09-24",
-        rating: "3.5",
-        description: "교정치과에서 악궁확장장치를 달고 온 날이예요. 그 전에 공포의 파란 고무링을 어금니 사이마다 좌우 3개씩 총 6개를 2주 정도 끼워서 어금니 사이를 벌려요.",
-        view: "300",
-        getInfo: "102",
-        like: "123",
-        comment: "24"
-    }
+        "starRate_cost": 4,
+        "starRate_service": 3.5,
+        "starRate_treatment": 3,
+        "updatedAt": "2020-12-14T08:10:38.000Z",
+        "user": {
+          "nickname": "jiwon11",
+          "profileImg": ""
+        },
+        "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
+        "viewerLikedReview": 0
+      },
+      {
+        "TreatmentItems": [
+          [
+            Object
+          ]
+        ],
+        "certifiedBill": false,
+        "concsulationDate": "2020-12-14",
+        "createdAt": "2020-12-14T08:10:10.000Z",
+        "deletedAt": null,
+        "dentalClinicId": 75,
+        "dental_clinic": {
+          "id": 75,
+          "name": "Dr.서치과의원"
+        },
+        "hits": 0,
+        "id": 12,
+        "reviewCommentsNum": 0,
+        "reviewDescriptions": null,
+        "reviewLikeNum": 0,
+        "reviewViewNum": 0,
+        "review_contents": [
+          [
+            Object
+          ]
+        ],
+        "starRate_cost": 3,
+        "starRate_service": 3,
+        "starRate_treatment": 4,
+        "updatedAt": "2020-12-14T08:10:10.000Z",
+        "user": {
+          "nickname": "jiwon11",
+          "profileImg": ""
+        },
+        "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
+        "viewerLikedReview": 0
+      },
 ]
 
 interface Props {
@@ -303,28 +346,71 @@ interface ReviewData {
     viewerLikedReview: Number,
 }
 
+var offset = 0;
+var limit = 10;
+
 const ReviewListScreen = ({navigation}: Props) => {
     const [reviewList, setReviewList] = useState<Array<ReviewData>>([]);
     const [loadingReviewList, setLoadingReviewList] = useState<boolean>(true);
+    const [loadingMoreReview, setLoadingMoreReview] = useState<boolean>(false);
     const [order, setOrder] = useState<string>("createdAt");
+    const [refreshingReviewList, setRefreshingReviewList] = useState<boolean>(false);
+    const [changingReviewList, setChangingReviewList] = useState<boolean>(false);
+    
+    let noMoreReviewData = false;
     const currentUser = useSelector((state: any) => state.currentUser);
-    const jwtToken = currentUser.user.jwtTokwn;
+    const jwtToken = currentUser.user.jwtToken;
 
-    var offset = 0;
-    var limit = 10;
-
+  
     useEffect(() => {
-        getReviewList()
+        offset = 0;
+        getInitialReviewList()
     }, [])
 
-    const getReviewList = () => {
+    const getInitialReviewList = () => {
+      offset = 0;
+      
+      GETReviewList({jwtToken, order, offset, limit})
+      .then((response: any) => {
+          console.log("GETReviewList response", response);
+          console.log("offset", offset);
+
+          response.forEach((item: any, index: number) => {
+            console.log("item.review_contents", item.review_contents);
+          })
+          
+          setLoadingReviewList(false);
+          setRefreshingReviewList(false);
+          setChangingReviewList(!changingReviewList);
+          setReviewList(response);
+      })
+      .catch((error) => {
+          setLoadingMoreReview(false);
+          console.log("GETReviewList error", error)
+      })
+    }
+
+    const getMoreReviewList = () => {
+
         GETReviewList({jwtToken, order, offset, limit})
         .then((response: any) => {
             console.log("GETReviewList response", response);
-            setReviewList(response);
+            console.log("offset", offset);
+            setLoadingMoreReview(false);
+            if(response.length > 0) {
+              noMoreReviewData = false
+              setReviewList((prevState) => {
+                return [...prevState, ...response]
+              });
+
+            } else {
+              noMoreReviewData = true
+            }
             setLoadingReviewList(false);
+            setRefreshingReviewList(false);
         })
         .catch((error) => {
+            setLoadingMoreReview(false);
             console.log("GETReviewList error", error)
         })
     }
@@ -333,27 +419,65 @@ const ReviewListScreen = ({navigation}: Props) => {
        navigation.goBack()
     }
 
-    const renderReviewItem = ({item, index}: any) => {
+    const onRefreshReviewList = () => {
+      offset = 0;
+      setRefreshingReviewList(true);
+      getInitialReviewList();
 
-        const avgRating = ((item.starRate_cost + item.starRate_service + item.StarRate_treatment)/3).toFixed(1);
+      /*
+      GETReviewList({jwtToken, order, offset, limit})
+        .then((response: any) => {
+            console.log("offset", offset);
+            setLoadingMoreReview(false);
+            if(response.length > 0) {
+              noMoreReviewData = false
+              setReviewList(response)
+            } else {
+              noMoreReviewData = true
+            }
 
-        console.log("renderReviewItem item", item.review_contents);
+            setLoadingReviewList(false);
+            setRefreshingReviewList(false);
+        })
+        .catch((error) => {
+            setLoadingMoreReview(false);
+            setLoadingReviewList(false);
+            setRefreshingReviewList(false);
+            console.log("GETReviewList error", error)
+        })
+        */
 
-        return (
-            <ReviewItem
-            navigation={navigation}
-            writer={item.user}
-            createdAt={item.createdAt}
-            imageArray={item.reviewImages ? item.reviewImages : []}
-            treatmentArray={item.TreatmentItems}
-            treatmentDate={item.concsulationDate}
-            rating={item.avgRating}
-            description={item.description ? item.description : ""}
-            viewCount={item.reviewViewNum}
-            treatInfoCount={item.getInfo}
-            likeCount={item.reviewLikeNum}
-            commentCount={item.reviewCommentNum}/>
-        )
+    }
+
+    const onEndReachedReviewList = () => {
+      if(!noMoreReviewData && !loadingMoreReview) {
+        setLoadingMoreReview(true)
+        offset = offset + 10;
+        getMoreReviewList();
+      }
+    }
+
+    const moveToWriterProfile = () => {
+      navigation.navigate("AnotherProfileStackScreen", {
+          screen: "AnotherProfileScreen"
+      })
+  }
+
+    const moveToReviewDetail = (reviewId: number, writer: object, createdAt: string, treatmentArray: Array<object>, avgRating: number, treatmentDate: string, imageArray: Array<object>) => {
+      console.log("moveToReviewDetail reviewId", reviewId)
+
+      navigation.navigate("ReviewStackScreen", {
+         screen: "ReviewDetailScreen",
+         params: {
+           reviewId: reviewId,
+           writer: writer,
+           createdAt: createdAt,
+           treatmentArray: treatmentArray,
+           avgRating: avgRating,
+           treatmentDate: treatmentDate,
+           imageArray: imageArray
+         }
+      });
     }
 
     return (
@@ -372,15 +496,15 @@ const ReviewListScreen = ({navigation}: Props) => {
                 </HeaderRightContainer>
             </HeaderBar>
             {!loadingReviewList && (
-            <ReviewContainer>
             <ReviewListContainer>
-                <FlatList
-                horizontal={false}
-                showsVerticalScrollIndicator={false}
-                data={reviewList}
-                renderItem={renderReviewItem}/>
+              <ReviewList
+              loadingMoreReview={loadingMoreReview}
+              refreshingReviewList={refreshingReviewList}
+              onRefreshReviewList={onRefreshReviewList}
+              reviewList={reviewList}
+              moveToReviewDetail={moveToReviewDetail}
+              onEndReachedReviewList={onEndReachedReviewList}/>
             </ReviewListContainer>
-            </ReviewContainer>
             )}
             {loadingReviewList && (
             <IndicatorContainer>

@@ -26,6 +26,9 @@ const MetaInfoValueText = Styled.Text`
 margin-top: 3px;
 `;
 
+interface Props {
+}
+
 const DetailMetaInfo = ({}) => {
     return (
         <Container>

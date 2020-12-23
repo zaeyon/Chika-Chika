@@ -312,7 +312,8 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
               displayTreatPrice: displayPrice,
               treatPrice: treatPrice,
           },
-          requestPage: "metadata"
+          requestPage: "metadata",
+          requestType: route.params?.requestType,
       });
     } 
 

@@ -40,12 +40,13 @@ const ReviewCommentList = ({commentList}: Props) => {
     const renderCommentItem = ({item, index}: any) => {
         return (
             <CommentItem
-            commentId={item.commentId}
-            profileImage={item.user.profile_image}
+            userId={item.userId}
+            commentId={item.id}
+            profileImage={item.user.profileImg}
             nickname={item.user.nickname}
-            comment={item.comment}
-            createdAt={item.createdAt}
-            replys={item.replys}
+            description={item.description}
+            createdDate={item.createdAt}
+            replys={item.Replys}
             />
         )
     }
@@ -53,7 +54,7 @@ const ReviewCommentList = ({commentList}: Props) => {
     return (
         <Container>
             <HeaderContainer>
-                <HeaderCommentCountText>댓글</HeaderCommentCountText>
+                <HeaderCommentCountText>{`댓글(${commentList.length})`}</HeaderCommentCountText>
             </HeaderContainer>
             <CommentListContainer>
                 <FlatList
