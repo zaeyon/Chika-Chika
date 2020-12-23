@@ -40,4 +40,4 @@ const POSTSocialRegister = ({birthdate, profileImg, nickname, phoneNumber, fcmTo
     })
 }
 
-export default POSTSocial
+export default POSTSocialRegister

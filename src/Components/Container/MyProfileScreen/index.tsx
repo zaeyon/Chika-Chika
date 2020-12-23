@@ -42,7 +42,7 @@ const MyProfileScreen = ({navigation, route}: Props) => {
   const [refreshing, setRefreshing] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [closeModal, setCloseModal] = useState(false);
+  const [isModalClosed, setIsModalClosed] = useState(false);
   const [navigateName, setNavigateName] = useState('');
 
   const modalRef = useRef();
@@ -109,7 +109,7 @@ const MyProfileScreen = ({navigation, route}: Props) => {
   const renderContent = (disabled: boolean) => (
     <SlideUpPanel
       navigation={navigation}
-      closeModal={() => setCloseModal(true)}
+      closeModal={() => setIsModalClosed(true)}
       setNavigateName={setNavigateName}
       disabled={disabled}
     />
@@ -130,13 +130,12 @@ const MyProfileScreen = ({navigation, route}: Props) => {
         }}
       />
       <BottomSheet
-        navigation={navigation}
-        closeModal={closeModal}
-        setCloseModal={setCloseModal}
+        isModalClosed={isModalClosed}
+        setIsModalClosed={setIsModalClosed}
         isModalVisible={isModalVisible}
         setIsModalVisible={setIsModalVisible}
         renderContent={renderContent}
-        navigateName={navigateName}
+        visibleHeight={hp('55%')}
       />
     </ContainerView>
   );

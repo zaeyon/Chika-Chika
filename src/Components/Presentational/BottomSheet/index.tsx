@@ -2,17 +2,12 @@ import React, {Component} from 'react';
 import {
   Animated,
   StyleSheet,
-  Text,
-  View,
-  Dimensions,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Modal,
-  Easing,
 } from 'react-native';
 import {
   PanGestureHandler,
-  NativeViewGestureHandler,
   State,
   TapGestureHandler,
 } from 'react-native-gesture-handler';
@@ -21,15 +16,38 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-export default class BottomSheet extends Component {
-  masterdrawer = React.createRef();
-  drawer = React.createRef();
-  drawerheader = React.createRef();
-  scroll = React.createRef();
-  slideUpRef = React.createRef();
-  constructor(props) {
+interface IProps {
+  isModalClosed: boolean;
+  setIsModalClosed: any;
+  isModalVisible: boolean;
+  setIsModalVisible: any;
+  renderContent: any;
+  visibleHeight: number;
+}
+
+interface IState {
+  lastSnap: number;
+  disabled: boolean;
+}
+
+export default class BottomSheet extends Component<IProps, IState> {
+  private SNAP_POINTS_FROM_TOP: number[];
+  private _backgroundOpacity: Animated.Value;
+  private _lastScrollYValue: number;
+  private _lastScrollY: Animated.Value;
+  private _onRegisterLastScroll: (...args: any[]) => void;
+  private _dragY: Animated.Value;
+  private _onGestureEvent: (...args: any[]) => void;
+  private _reverseLastScrollY: Animated.AnimatedMultiplication;
+  private _translateYOffset: Animated.Value;
+  private _translateY: any;
+
+  constructor(props: IProps) {
     super(props);
-    this.SNAP_POINTS_FROM_TOP = [300, hp('100%')];
+    this.SNAP_POINTS_FROM_TOP = [
+      hp('100%') - this.props.visibleHeight,
+      hp('100%'),
+    ];
 
     const START = this.SNAP_POINTS_FROM_TOP[0];
     const END = this.SNAP_POINTS_FROM_TOP[this.SNAP_POINTS_FROM_TOP.length - 1];
@@ -38,7 +56,7 @@ export default class BottomSheet extends Component {
       lastSnap: START,
       disabled: false,
     };
-    this.backgroundOpacity = new Animated.Value(0);
+    this._backgroundOpacity = new Animated.Value(0);
     this._lastScrollYValue = 0;
     this._lastScrollY = new Animated.Value(0);
     this._onRegisterLastScroll = Animated.event(
@@ -68,21 +86,21 @@ export default class BottomSheet extends Component {
       this._translateYOffset,
       Animated.add(this._dragY, this._reverseLastScrollY),
     ).interpolate({
-      inputRange: [START, END],
-      outputRange: [START, END],
+      inputRange: [0, START, END],
+      outputRange: [START / 1.2, START, END],
       extrapolate: 'clamp',
     });
-    this._translateY.addListener(({value}) => {
-      this.backgroundOpacity.setValue(value);
+    this._translateY.addListener(({value}: any) => {
+      this._backgroundOpacity.setValue(value);
     });
   }
 
-  _setBackgroundValue = (e) => {
+  _setBackgroundValue = (e: any) => {
     console.log(e.nativeEvent.translationY);
-    this.backgroundOpacity.setValue(e.nativeEvent.translationY);
+    this._backgroundOpacity.setValue(e.nativeEvent.translationY);
   };
 
-  _onHeaderHandlerStateChange = ({nativeEvent}) => {
+  _onHeaderHandlerStateChange = ({nativeEvent}: any) => {
     if (nativeEvent.oldState === State.BEGAN) {
       this.setState({
         disabled: true,
@@ -95,7 +113,7 @@ export default class BottomSheet extends Component {
     }
     this._onHandlerStateChange({nativeEvent});
   };
-  _onHandlerStateChange = ({nativeEvent}) => {
+  _onHandlerStateChange = ({nativeEvent}: any) => {
     if (nativeEvent.oldState === State.ACTIVE) {
       let {velocityY, translationY} = nativeEvent;
       translationY -= this._lastScrollYValue;
@@ -128,17 +146,20 @@ export default class BottomSheet extends Component {
     }
   };
 
-  componentDidUpdate(prevState) {
+  componentDidUpdate(prevState: IProps) {
     if (!prevState.isModalVisible && this.props.isModalVisible) {
+      this._translateYOffset.setValue(hp('100%'));
+      console.log('open');
       Animated.spring(this._translateYOffset, {
         velocity: 0.01,
         tension: 68,
         friction: 12,
-        toValue: 301,
+        toValue: hp('100%') - this.props.visibleHeight + 1,
         useNativeDriver: true,
       }).start();
     }
-    if (this.props.closeModal) {
+    if (this.props.isModalClosed) {
+      console.log('close');
       Animated.spring(this._translateYOffset, {
         velocity: 40,
         tension: 138,
@@ -147,7 +168,7 @@ export default class BottomSheet extends Component {
         useNativeDriver: true,
       }).start(() => {
         // this.props.navigation.navigate(this.props.navigateName);
-        this.props.setCloseModal(false);
+        this.props.setIsModalClosed(false);
         this.props.setIsModalVisible(false);
       });
     }
@@ -158,11 +179,7 @@ export default class BottomSheet extends Component {
         visible={this.props.isModalVisible}
         transparent={true}
         style={{flex: 1}}>
-        <TapGestureHandler
-          onHandlerStateChange={this._onSingleTap}
-          maxDurationMs={100000}
-          ref={this.masterdrawer}
-          maxDeltaY={this.state.lastSnap - this.SNAP_POINTS_FROM_TOP[0]}>
+        <TapGestureHandler>
           <TouchableOpacity
             activeOpacity={1}
             style={{flex: 1}}
@@ -178,8 +195,11 @@ export default class BottomSheet extends Component {
             <Animated.View
               style={{
                 flex: 1,
-                backgroundColor: this.backgroundOpacity.interpolate({
-                  inputRange: [300, hp('100%')],
+                backgroundColor: this._backgroundOpacity.interpolate({
+                  inputRange: [
+                    hp('100%') - this.props.visibleHeight,
+                    hp('100%'),
+                  ],
                   outputRange: ['#00000099', '#00000000'],
                   extrapolate: 'clamp',
                 }),
@@ -194,7 +214,6 @@ export default class BottomSheet extends Component {
                     },
                   ]}>
                   <PanGestureHandler
-                    ref={this.drawerheader}
                     shouldCancelWhenOutside={false}
                     onGestureEvent={this._onGestureEvent}
                     onHandlerStateChange={this._onHeaderHandlerStateChange}>
