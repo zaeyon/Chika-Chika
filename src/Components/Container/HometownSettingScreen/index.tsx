@@ -181,15 +181,15 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
     var curLocationHometown = "";
 
     useEffect(() => {
-        if(route.params?.userPhoneNumber) {
-            console.log("route.params.userPhoneNumber", route.params.userPhoneNumber);
+        if(route.params?.provider) {
+            console.log("route.params.phoneNumber", route.params.phoneNumber);
             console.log("route.params.certifiedPhoneNumber", route.params.certifiedPhoneNumber);
             console.log("route.params.provider", route.params.provider);
             console.log("route.params.fcmToken", route.params.fcmToken);
             console.log("route.params.nickname", route.params.nickname);
         }
 
-    }, [route.params?.userPhoneNumber])
+    }, [route.params?.provider])
 
     const dispatch = useDispatch();
 
@@ -242,7 +242,7 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
                                 {
                                 text: "확인",
                                 onPress: () => {
-                                    if(provider === "local") {
+                                    if(provider == "local") {
                                         signUp(curLocationHometown)
                                     } else {
                                         signUpSocial(curLocationHometown)
@@ -286,6 +286,9 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
             const userInfo = {
                 jwtToken: response.token,
                 phoneNumber: phoneNumber,
+                userId: response.user.userId,
+                nickname: response.user.userNickname,
+                profileImage: response.user.userProfileImg,
             }
 
             storeUserInfo(userInfo)
@@ -300,27 +303,33 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
     const signUpSocial = (hometown: string) => {
         setLoadingSignUp(true);
 
+        const certifiedPhoneNumber = route.params.certifiedPhoneNumber;
         const birthdate = route.params.birthdate;
         const profileImg = route.params.profileImg;
         const nickname = route.params.nickname;
         const phoneNumber = route.params.phoneNumber;
         const fcmToken = route.params.fcmToken;
         const email = route.params.email;
-        const provider = route.parmas.provider;
+        const provider = route.params.provider;
         const socialId = route.params.socialId;
 
-        POSTSocialRegister({birthdate, profileImg, nickname, phoneNumber, fcmToken, email, provider, socialId})
+        POSTSocialRegister({certifiedPhoneNumber, birthdate, profileImg, nickname, phoneNumber, fcmToken, email, provider, socialId})
         .then((response: any) => {
+            setLoadingSignUp(false);
             console.log("POSTSocialRegister response", response);
 
             const userInfo = {
                 jwtToken: response.token,
+                userId: response.user.userId,
+                nickname: response.user.userNickname,
+                profileImage: response.user.userProfileImg,
             }
 
             storeUserInfo(userInfo);
             dispatch(allActions.userActions.setUser(userInfo));
         })
         .catch((error: any) => {
+            setLoadingSignUp(false);
             console.log("POSTSocialRegister error", error);
         })
     }

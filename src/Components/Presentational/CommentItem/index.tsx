@@ -99,11 +99,12 @@ color: #979797;
 `;
 
 interface Props {
+  userId: string
   commentId: number;
   profileImage: string;
   nickname: string;
-  comment: string;
-  createdAt: string;
+  description: string;
+  createdDate: string;
   replys: Array<Object>;
   clickToReply: (target: string, commentId: number) => void;
   navigation: any;
@@ -111,13 +112,14 @@ interface Props {
 }
 
 const CommentItem = ({
+  userId,
+  commentId,
   profileImage,
   nickname,
-  comment,
-  createdAt,
+  description,
+  createdDate,
   replys,
   clickToReply,
-  commentId,
   navigation,
   openCommentModal,
 }: Props) => {
@@ -165,13 +167,13 @@ const CommentItem = ({
           <HeaderContainer>
             <NicknameText>{nickname}</NicknameText>
           </HeaderContainer>
-          <CommentDescripText>{comment}</CommentDescripText>
+          <CommentDescripText>{description}</CommentDescripText>
           <FooterContainer>
             <TouchableWithoutFeedback
               onPress={() => clickToReply(nickname, commentId)}>
               <ReplyText>답글달기</ReplyText>
             </TouchableWithoutFeedback>
-            <CreateAtText>{getDateFormat(createdAt)}</CreateAtText>
+            <CreateAtText>{getDateFormat(createdDate)}</CreateAtText>
           </FooterContainer>
         </CommentRightContainer>
       </Container>

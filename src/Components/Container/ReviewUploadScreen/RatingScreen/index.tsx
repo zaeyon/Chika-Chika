@@ -233,9 +233,10 @@ const onPressFinishButton = () => {
                 serviceRating: serviceRating,
                 treatRating: treatRating,
                 priceRating: priceRating,
-                aveRating: ((serviceRating + treatRating + priceRating) / 3).toFixed(1)
+                avgRating: ((serviceRating + treatRating + priceRating) / 3).toFixed(1)
             },
             detailPriceList: route.params?.detailPriceList,
+            requestType: route.params?.requestType,
         });
         } else if(route.params?.requestPage === "content") {
             navigation.navigate("ReviewContentScreen", {
@@ -243,8 +244,9 @@ const onPressFinishButton = () => {
                     serviceRating: serviceRating,
                     treatRating: treatRating,
                     priceRating: priceRating,
-                    aveRating: ((serviceRating + treatRating + priceRating) / 3).toFixed(1)
-                }
+                    avgRating: ((serviceRating + treatRating + priceRating) / 3).toFixed(1)
+                },
+                requestType: route.params?.requestType,
             })
         }
     } else {

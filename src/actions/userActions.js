@@ -5,6 +5,13 @@ const setUser = (userObj) => {
     }
 }
 
+const setFcmToken = (fcmToken) => {
+    return {
+        type: "SET_FCMTOKEN",
+        payload: fcmToken,
+    }
+}
+
 const logOut = () => {
     return {
         type: "LOG_OUT"
@@ -14,4 +21,5 @@ const logOut = () => {
 export default {
     setUser,
     logOut,
+    setFcmToken,
 }

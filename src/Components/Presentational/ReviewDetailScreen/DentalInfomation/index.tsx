@@ -34,7 +34,9 @@ background-color: #c4c4c4;
 `;
 
 const DentalInfoContainer = Styled.View`
+width: ${wp('55%')}px;
 margin-left: 10px;
+background-color: #ffffff;
 `;
 
 const DentalNameText = Styled.Text`
@@ -65,7 +67,14 @@ width: 5px;
 height: 10px;
 `;
 
-const DentalInfomation = ({}) => {
+interface Props {
+    dentalInfo: any,
+    name: string,
+    address: string,
+    dentalId: number,
+}
+
+const DentalInfomation = ({dentalInfo}: Props) => {
     return (
         <Container>
             <DentalProfileContainer>
@@ -74,8 +83,8 @@ const DentalInfomation = ({}) => {
             </DentalImageContainer>
             <DentalInfoContainer>
                 <DentalNameText>{"병원이름"}</DentalNameText>
-                <DentalDescripText>{"아아아아병원"}</DentalDescripText>
-                <DentalAddressText>{"을지로 3가 동동동 기기기"}</DentalAddressText>
+                <DentalDescripText>{dentalInfo.name}</DentalDescripText>
+                <DentalAddressText>{dentalInfo.address}</DentalAddressText>
             </DentalInfoContainer>
             </DentalProfileContainer>
             <RightArrowContainer>

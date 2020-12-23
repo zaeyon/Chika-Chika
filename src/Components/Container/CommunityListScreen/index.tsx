@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
+import SafeAreaView from 'react-native-safe-area-view';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
@@ -7,6 +8,7 @@ import {
   View,
   Text,
   Animated,
+  StyleSheet
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -24,7 +26,7 @@ import HomeTabScreen from './HomeTabScreen';
 import QuestionTabScreen from './QuestionTabScreen';
 import GeneralTabScreen from './GeneralTabScreen';
 
-const ContainerView = Styled.SafeAreaView`
+const ContainerView = Styled.View`
  flex: 1;
  background: white;
 `;
@@ -62,6 +64,7 @@ const CommunityListScreen = ({navigation, route}: Props) => {
   };
 
   return (
+    <SafeAreaView style={styles.safeAreaStyle} forceInset={{top:'always'}}>
     <ContainerView>
       <HeaderConatinerView>
         <HeaderContentText>수다방</HeaderContentText>
@@ -118,7 +121,15 @@ const CommunityListScreen = ({navigation, route}: Props) => {
         </CommunityTopTab.Navigator>
       </BodyContainerView>
     </ContainerView>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  safeAreaStyle: {
+    flex: 1,
+    backgroundColor: "#ffffff"
+}
+})
 
 export default CommunityListScreen;

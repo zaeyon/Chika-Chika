@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, TouchableOpacity, View} from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view'
+import {TouchableWithoutFeedback, TouchableOpacity, View, StyleSheet} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-const ContainerView = Styled.SafeAreaView`
+const ContainerView = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
 `;
@@ -142,6 +143,7 @@ interface Props {
 
 const MyProfile = ({navigation, route}: Props) => {
   return (
+    <SafeAreaView style={styles.safeAreaStyle} forceInset={{top: 'always'}}>
     <ContainerView>
       <ProfileContainerView>
         <ProfileImageView
@@ -303,7 +305,15 @@ const MyProfile = ({navigation, route}: Props) => {
         </VerticalListView>
       </ContentContainerView>
     </ContainerView>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  safeAreaStyle: {
+    flex: 1,
+    backgroundColor: "#ffffff"
+}
+})
 
 export default MyProfile;
