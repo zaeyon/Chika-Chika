@@ -96,6 +96,9 @@ flex: 1;
 padding: ${hp('100%') * 0.01478}px ${hp('100%') * 0.0197}px ${
   hp('100%') * 0.01478 - 1
 }px ${hp('100%') * 0.0197}px;
+border-width: 1;
+border-color: #E9E9E9;
+background-color: white;
 `;
 
 const CommentUploadText = Styled.Text`
@@ -107,10 +110,14 @@ interface Props {
     likeCount: number,
     clickCommentIcon: () => void,
     isCommentInputFocused: boolean,
+    postReviewComment: (description: string) => void,
 }
 
-const ReviewBottomBar = ({likeCount, clickCommentIcon, isCommentInputFocused}: Props) => {
+const ReviewBottomBar = ({likeCount, clickCommentIcon, isCommentInputFocused, postReviewComment}: Props) => {
+
     const [isCommentInput, setIsCommentInput] = useState<boolean>(false);
+    const [commentDescrip, setCommentDescrip] = useState<string>("");
+
 
     /*
     useEffect(() => {
@@ -136,6 +143,15 @@ const ReviewBottomBar = ({likeCount, clickCommentIcon, isCommentInputFocused}: P
 
     const clickCommentIcon2 = () => {
         setIsCommentInput(true)
+    }
+
+    const onChangeCommentInput = (text: string) => {
+        setCommentDescrip(text);
+    }
+
+    const clickPostComment = () => {
+        postReviewComment(commentDescrip)
+        setCommentDescrip("")
     }
 
     return (
@@ -168,22 +184,20 @@ const ReviewBottomBar = ({likeCount, clickCommentIcon, isCommentInputFocused}: P
                     <CommentTextInput
                     multiline={true}
                     clearButtonMode="always" 
+                    autoCapitalize={false}
                     autoCorrect={false}
                     autoFocus={true}
                     placeholder="댓글 입력"
                     placeholderTextColor={'grey'}
-                    style={{
-                    borderWidth: 1,
-                    borderColor: '#E9E9E9',
-                    backgroundColor: 'white',
-                    }}
+                    value={commentDescrip}
+                    onChangeText={(text: string) => onChangeCommentInput(text)}
                     />
                     <TouchableOpacity
                       style={{
                         justifyContent: 'center',
                         marginLeft: 16,
                       }}
-                      onPress={() => {}}>
+                      onPress={() => clickPostComment()}>
                       <CommentUploadText>게시</CommentUploadText>
                     </TouchableOpacity>
                 </CommentInputContainer>

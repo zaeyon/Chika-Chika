@@ -133,7 +133,9 @@ const actionSheetRef = createRef();
     }
 
     const onPressSkip = () => {
-        navigation.navigate("ReviewMetaDataScreen")
+        navigation.navigate("ReviewMetaDataScreen", {
+            requestType: "post"
+        })
     }
 
     return (

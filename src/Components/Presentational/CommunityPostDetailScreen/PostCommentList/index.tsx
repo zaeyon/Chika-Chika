@@ -42,8 +42,9 @@ const ReviewCommentList = ({commentList}: Props) => {
         commentId={item.id}
         profileImage={item.user.profileImage}
         nickname={item.user.nickname}
-        comment={item.description}
-        createdAt={item.createdAt}
+        description={item.description}
+        createdDate={item.createdAt}
+        userId={item.userId}
         replys={item.Replys}
       />
     );

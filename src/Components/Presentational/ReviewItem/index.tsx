@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback} from 'react-native';
 import {
@@ -7,12 +7,14 @@ import {
 } from 'react-native-responsive-screen';
 import { FlatList } from 'react-native-gesture-handler';
 
+// Local Component
+import PreviewImages from '~/Components/Presentational/ReviewItem/PreviewImages';
+
 const Container = Styled.View`
  padding-top: 24px;
  padding-left: 16px;
  padding-right: 16px;
  padding-bottom: 10px;
- flex: 1;
  width: ${wp('100')}
  background-color: #FFFFFF;
  flex-direction: column;
@@ -41,6 +43,7 @@ const ProfileImage = Styled.Image`
  width: ${wp('10.66')}px;
  height: ${wp('10.66%')}px;
  border-radius: 40px;
+ background-color: #ececec;
 `;
 
 const NicknameCreatedAtContainer = Styled.View`
@@ -59,22 +62,8 @@ const CreatedAtText = Styled.Text`
  color: #a2a2a2;
 `;
 
-const ImageListContainer = Styled.View`
-margin-top: 8px;
-flex-direction: row;
-`;
-
-const FirstImage = Styled.Image`
- width: ${wp('45%')};
- height: ${wp('45%')};
- border-top-left-radius: 8px;
-`;
-
-const SecondImage = Styled.Image`
-margin-left: 5px;
-width: ${wp('45%')};
-height: ${wp('45%')};
-border-top-right-radius: 8px;
+const ImagesPreviewContainer = Styled.View`
+margin-top: 15px;
 `;
 
 const InfoContainer = Styled.View`
@@ -103,7 +92,7 @@ align-items: center;
 `;
 
 const DateRatingContainer = Styled.View`
-margin-top: 6px;
+margin-top: 8px;
 `;
 
 const InfoLabelBackground = Styled.View`
@@ -123,15 +112,16 @@ align-items: center;
 `;
 
 const InfoLabelText = Styled.Text`
-color: #a1a1a1;
+font-weight: 700;
+color: #878787;
 font-size: 14px;
 `;
 
 const InfoValueText = Styled.Text`
-margin-top: 2px;
+font-weight: 400;
 margin-left: 8px;
 font-size: 14px;
-color: #a1a1a1;
+color: #878787;
 `;
 
 const DescripContainer = Styled.View`
@@ -205,7 +195,7 @@ height: ${wp('6.4%')};
 `;
 
 const GetTreatInfoButton = Styled.View`
- width: ${wp('54%')};
+ width: ${wp('30%')};
  height: ${wp('10.33%')};
  background-color: #267DFF;
  border-radius: 4px;
@@ -228,78 +218,115 @@ const TreatDateContainer = Styled.View`
 flex-direction: row;
 `;
 
+
+
 interface UserData {
-    profileImg: string,
-    nickname: string
+    profileImage: string,
+    nickname: string,
+    userId: string,
 }
 
 
 interface Props {
-    navigation: any,
+    reviewId: number,
     writer: UserData,
     createdAt: string,
-    imageArray: Array<any>,
-    treatmentArray: Array<string>,
+    treatmentArray: Array<any>,
     treatmentDate: string,
-    rating: number,
-    description: string,
+    avgRating: number,
+    descriptions: string,
     viewCount: number,
     treatInfoCount: number,
     likeCount: number,
     commentCount: number,
+    imageArray: Array<any>,
+    moveToReviewDetail: (reviewId: number, writer: object, createdAt: string, treatmentArray: Array<any>, avgRating: number, treatmentDate: string, imageArray: Array<object>) => void,
 } 
 
-const ReviewItem = ({navigation, writer, createdAt, imageArray, treatmentArray, treatmentDate, rating, description, viewCount, treatInfoCount, likeCount, commentCount}: Props) => {
+const ReviewItem = ({reviewId, writer, createdAt, treatmentArray, treatmentDate, avgRating, descriptions, viewCount, treatInfoCount, likeCount, commentCount, imageArray, moveToReviewDetail}: Props) => {
 
+    const [descripPreview, setDescripPreview] = useState<string>("");
+    const [sortedImageArray, setSortedImageArray] = useState<Array<any>>(imageArray);
+    const [changeImageArray, setChangeImageArray] = useState<boolean>(false);
+
+    let formatedCreatedAtDate = "";
+    let formatedTreatmentDate = "";
+
+    //console.log("avgRating", avgRating);
     console.log("ReviewItem treatmentArray", treatmentArray);
+    //console.log("ReviewItem imageArray", imageArray);
 
-    const moveToReviewDetail = () => {
-        navigation.navigate("ReviewStackScreen", {
-           screen: "ReviewDetailScreen"
-        });
+    
+    imageArray.forEach((item, index) => {
+        if(item.img_before_after === "after") {
+            const tmp = item;
+            imageArray.splice(index, 1);
+            imageArray.unshift(tmp);
+        }
+    })
+
+    const cutDescriptionsOver = (descriptions: string) => {
+        if(descriptions.length > 100) {
+            return descriptions.substr(0, 100) + " ...";
+        } else {
+            return descriptions;
+        }
     }
 
-    const moveToAnotherProfile = () => {
-        navigation.navigate("AnotherProfileStackScreen", {
-            screen: "AnotherProfileScreen"
-        })
+    if(descriptions.length > 100) {
+        var tmpDescripPreview = descriptions.substr(0, 100);
     }
 
-    const formatDate = (date: string) => {
+
+    const formatCreatedAtDate = (date: string) => {
         const tmpDate = new Date(date);
 
         var year = tmpDate.getFullYear() + "",
             month = tmpDate.getMonth() + 1 + "",
-            day = tmpDate.getDay() + "";
-
+            day = tmpDate.getDate() + "";
+            
             month = Number(month) >= 10 ? month : '0' + month;
             day = Number(day) >= 10 ? day : '0' + day;
 
-            return year + "년 " + month + "월 " + day +"일"
+            const result = year + "년 " + month + "월 " + day +"일"
+
+            formatedCreatedAtDate = result;
+
+            return result
     }
+
+    const formatTreatmentDate = (date: string) => {
+
+        const dateArray = date.split("-")
+
+        const yearArray = dateArray[0].split("");
+        dateArray[1] = Number(dateArray[1]) < 10 ? ("0" + dateArray[1])  : (dateArray[1]);
+        dateArray[2] = Number(dateArray[2]) < 10 ? ("0" + dateArray[1]) : (dateArray[2]);
+
+        const result = yearArray[2] + yearArray[3] + "." + dateArray[1] + "." + dateArray[2];
+        formatedTreatmentDate = result;
+        return result
+    } 
 
     const renderTreatmentItem = ({item, index}: any) => {
         return (
             <TagBackground>
-                <TagText style={{fontSize: 14, fontWeight: "200", color: "#000000"}}>
-                {"# "}</TagText>
                 <TagText>{item.name}</TagText>
-                
             </TagBackground>
         )
     }
 
     return (
-        <TouchableWithoutFeedback onPress={() => moveToReviewDetail()}>
+        <TouchableWithoutFeedback onPress={() => moveToReviewDetail(reviewId, writer, formatedCreatedAtDate, treatmentArray, avgRating, formatedTreatmentDate, imageArray)}>
         <Container>
             <ProfileContainer>
                 <TouchableWithoutFeedback onPress={() => moveToAnotherProfile()}>
                 <ProfileLeftContainer>
                 <ProfileImage
-                source={{uri:writer.profileImg}}/>
+                source={{uri:writer.profileImage ? writer.profileImage : undefined}}/>
                 <NicknameCreatedAtContainer>
                     <NicknameText>{writer.nickname}</NicknameText>
-                    <CreatedAtText>{formatDate(createdAt)}</CreatedAtText>
+                    <CreatedAtText>{formatCreatedAtDate(createdAt)}</CreatedAtText>
                 </NicknameCreatedAtContainer>
                 </ProfileLeftContainer>
                 </TouchableWithoutFeedback>
@@ -309,39 +336,30 @@ const ReviewItem = ({navigation, writer, createdAt, imageArray, treatmentArray, 
                 </ProfileRightContainer>
                 </ProfileContainer>
                 <InfoContainer>
-                <ImageListContainer>
-                    {imageArray[0] && (
-                        <FirstImage
-                        source={{uri:imageArray[0].uri}}/>
-                    )}
-                    {imageArray[1] && (
-                        <SecondImage
-                        source={{uri:imageArray[1].uri}}/>
-                    )}
-                </ImageListContainer>
+                <ImagesPreviewContainer>
+                    <PreviewImages
+                    sortedImageArray={imageArray}/>
+                </ImagesPreviewContainer>
                     <TagListContainer>
                         <FlatList
+                        keyExtractor={(item, index) => `${index}`}
                         horizontal={true}
                         data={treatmentArray}
                         renderItem={renderTreatmentItem}/>
                     </TagListContainer>
                     <DateRatingContainer>
                         <InfoItemContainer>
-                            <InfoLabelText>날짜</InfoLabelText>
-                            <InfoValueText>{treatmentDate}</InfoValueText>
+                            <InfoLabelText>{"진료･치료시기"}</InfoLabelText>
+                            <InfoValueText>{formatTreatmentDate(treatmentDate)}</InfoValueText>
                         </InfoItemContainer>
-                        <InfoItemContainer >
+                        <InfoItemContainer style={{marginTop: 6}}>
                             <InfoLabelText>만족도</InfoLabelText>
-                        <RatingStarIcon
-                            style={{marginLeft: 4}}
-                            source={require('~/Assets/Images/Review/ic_newStar.png')}/>
-                        <InfoValueText>{rating}</InfoValueText>
+                            <InfoValueText>{avgRating}</InfoValueText>
                         </InfoItemContainer>
                     </DateRatingContainer>
                     <DescripContainer>
-                        <DescripText>{description}</DescripText>
+                        <DescripText>{cutDescriptionsOver(descriptions)}</DescripText>
                     </DescripContainer>
-                    <MoreViewText>더보기</MoreViewText>
                 </InfoContainer>
                 <ActionContainer>
                     <LikeScrapContainer>
@@ -353,7 +371,7 @@ const ReviewItem = ({navigation, writer, createdAt, imageArray, treatmentArray, 
                         <LikeValueText>{commentCount}</LikeValueText>
                     </LikeScrapContainer>
                         <GetTreatInfoButton>
-                            <GetTreatInfoText>시술 정보받기</GetTreatInfoText>
+                            <GetTreatInfoText>{"병원정보"}</GetTreatInfoText>
                         </GetTreatInfoButton>
                 </ActionContainer>
         </Container>
