@@ -25,6 +25,7 @@ import {
 import HomeTabScreen from './HomeTabScreen';
 import QuestionTabScreen from './QuestionTabScreen';
 import GeneralTabScreen from './GeneralTabScreen';
+import {useSelector} from 'react-redux';
 
 const ContainerView = Styled.View`
  flex: 1;
@@ -33,7 +34,7 @@ const ContainerView = Styled.View`
 
 const HeaderConatinerView = Styled.View`
 width: ${wp('100%')}px;
-height: 40;
+height: 40px;
 flex-direction: row;
 padding: 0px 16px;
 margin-top: ${isIphoneX() ? 10 : 20}px;
@@ -56,7 +57,7 @@ interface Props {
 
 const CommunityListScreen = ({navigation, route}: Props) => {
   const CommunityTopTab = createMaterialTopTabNavigator();
-
+  const currentUser = useSelector((state: any) => state.currentUser);
   const moveToKeywordSearch = () => {
     navigation.navigate('KeywordSearchStackScreen', {
       screen: 'KeywordSearchScreen',
@@ -112,11 +113,20 @@ const CommunityListScreen = ({navigation, route}: Props) => {
               height: 2.5,
             },
           }}>
-          <CommunityTopTab.Screen name="전체" component={HomeTabScreen} />
-          <CommunityTopTab.Screen name="질문" component={QuestionTabScreen} />
           <CommunityTopTab.Screen
-            name="자유수다"
+            name="전체"
+            component={HomeTabScreen}
+            initialParams={{currentUser: currentUser}}
+          />
+          <CommunityTopTab.Screen
+            name="질문"
+            component={QuestionTabScreen}
+            initialParams={{currentUser: currentUser}}
+          />
+          <CommunityTopTab.Screen
+            name="자유"
             component={GeneralTabScreen}
+            initialParams={{currentUser: currentUser}}
           />
         </CommunityTopTab.Navigator>
       </BodyContainerView>

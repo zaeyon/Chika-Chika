@@ -65,7 +65,7 @@ const HeaderIcon = Styled.Image`
 `;
 
 interface HeaderProps {
-  onPress: any;
+  onPress?: any;
   text: string;
 }
 

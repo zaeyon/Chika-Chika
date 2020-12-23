@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@invertase/react-native-apple-authentication": "^2.1.0",
-    "@react-native-async-storage/async-storage": "github:react-native-async-storage/async-storage",
+    "@react-native-async-storage/async-storage": "^1.13.2",
     "@react-native-community/cameraroll": "^4.0.1",
     "@react-native-community/datetimepicker": "^3.0.4",
     "@react-native-community/google-signin": "^5.0.0",
@@ -56,6 +56,7 @@
     "react-native-simple-radio-button": "^2.7.4",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-status-bar-height": "^2.5.0",
+    "react-native-swiper": "^1.6.0",
     "react-native-tab-view": "^2.15.2",
     "react-native-upload-aws-s3": "^0.8.1",
     "react-redux": "^7.2.1",

@@ -3,15 +3,19 @@ import serverConfig from '../../server.config';
 
 const baseUri = serverConfig.baseUri
 
-interface postData {
+interface User {
+    nickname: string;
+    profileImg: string;
+}
+interface PostData {
     [key: string] : any;
+    type: string;
     description: string;
     wantDentistHelp: boolean;
-    type: string;
+    images: any;
 }
 
-const POSTCreateCommunityPost = (postData: postData) => {
-
+const POSTCreateCommunityPost = (jwtToken: string, postData: PostData) => {
     const uri = baseUri + "/api/v1/communities";
     let formData = new FormData();
     
@@ -32,8 +36,8 @@ const POSTCreateCommunityPost = (postData: postData) => {
 
         axios.post(uri, formData, {
             headers: {
-                'Content-Type': 'multipart/form-data', 
-              'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZiMDYxN2IwLTMzYzAtMTFlYi05MmRlLWUzZmIzYjRlMDI2NCIsImlhdCI6MTYwNjgxODk1MCwiZXhwIjoxNjM4Mzc2NTUwfQ.3-PEUaAWAW6sjl7TuKNzSHlTlK8p7myWG8nedNZ3nFE',
+            'Content-Type': 'multipart/form-data', 
+              'Authorization': jwtToken,
               Accept: "*/*"
             },
 

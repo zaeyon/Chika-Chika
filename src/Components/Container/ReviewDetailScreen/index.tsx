@@ -294,7 +294,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     const avgRating = route.params?.avgRating;
     const createdDate = route.params?.createdAt;
     const imageArray = route.params?.imageArray;
-    const isOwnReview = (route.params?.writer.userId == currentUser.user.userId);
+    const isOwnReview = (route.params?.writer.userId == currentUser.user.id);
 
 
     // 화면에 표시되는 정보
@@ -306,7 +306,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     console.log("route.params?.imageArray", route.params?.imageArray);
     console.log("route.params?.writer", route.params?.writer);
     console.log("route.params?.writer.userId", route.params?.writer.userId);
-    console.log("currentUser.user.userId", currentUser.user.userId);
+    console.log("currentUser.user.id", currentUser.user.id);
 
     useEffect(() => {
         setLoadingReviewDetail(true);

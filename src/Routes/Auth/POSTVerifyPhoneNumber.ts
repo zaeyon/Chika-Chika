@@ -7,10 +7,7 @@ const POSTVerifyPhoneNumber = (phoneNumber: string, token: string) => {
 
     const uri = baseUri + "/verifyPhoneNumber";
 
-    const bodyParam = `{
-        "token": "${token}",
-        "userPhoneNumber":  "${phoneNumber}"
-    }`
+    const bodyParam = `{"token":"${token}","userPhoneNumber":"${phoneNumber}"}`
 
     console.log("bodyParam", bodyParam);
 

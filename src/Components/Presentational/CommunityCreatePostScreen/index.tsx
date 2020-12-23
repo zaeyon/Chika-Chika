@@ -80,7 +80,6 @@ line-height: 24px;`;
 const ParagraphTextInput = Styled.TextInput`
 width: 100%;
 padding: 0px 16px;
-margin-top: 16px;
 font-size: 16px;
 line-height: 28px;
 `;
@@ -117,7 +116,8 @@ flex-direction: row;
 align-items: flex-end;
 padding-left: 16px;
 padding-bottom: 24px;
-margin-bottom: 24px;
+margin-top: 16px;
+margin-bottom: ${hp('11%') - getBottomSpace()}px;
 `;
 
 const GalleryUploadTouchableOpacity = Styled(
@@ -189,6 +189,7 @@ interface Props {
   setWantDentistHelp: any;
   isPopupShown: any;
   setIsPopupShown: any;
+  isLoading: any;
 }
 
 const CommunityCreatePostScreen = ({
@@ -211,6 +212,7 @@ const CommunityCreatePostScreen = ({
   setWantDentistHelp,
   isPopupShown,
   setIsPopupShown,
+  isLoading,
 }: Props) => {
   const [imageRenderList, setImageRenderList] = useState<string[]>(
     imageDataList,
@@ -421,15 +423,13 @@ const CommunityCreatePostScreen = ({
             behavior="padding"
             style={{
               width: '100%',
-              height: isPopupShown ? hp('62%') : hp('72%'),
+              marginTop: 16,
+              height: isPopupShown ? hp('69%') : hp('80%'),
             }}>
             <ParagraphTextInput
               style={{
-                marginBottom:
-                  suggestionList.length === 0
-                    ? hp('14.5%')
-                    : hp('14.5%') +
-                      Math.min(suggestionList.length, 2) * hp('7.39%'),
+                flex: 1,
+                marginBottom: suggestionList.length > 2 ? 5 : 0,
               }}
               ref={textInputRef}
               placeholderTextColor="#C4C4C4"
@@ -477,40 +477,36 @@ const CommunityCreatePostScreen = ({
                 }
               }}
               autoCorrect={false}></ParagraphTextInput>
-          </KeyboardAvoidingView>
-          <GalleryContainerView
-            style={{
-              position: 'absolute',
-              bottom: -hp('2.6%'),
-            }}>
-            <GalleryUploadTouchableOpacity
-              onPress={() => {
-                actionSheetRef.current.show();
-              }}>
-              <GalleryStatusImage
-                source={require('~/Assets/Images/Picture/camera.png')}
-              />
-              <GalleryStatusText>
-                <GalleryStatusText style={{color: '#0075FF'}}>
-                  {imageDataList.length}
-                </GalleryStatusText>
-                /5
-              </GalleryStatusText>
-            </GalleryUploadTouchableOpacity>
-            <GalleryFlatList
-              data={imageRenderList}
-              horizontal
-              indicatorStyle="white"
-              keyExtractor={(item) => item.filename}
-              renderItem={({item, index}) => (
-                <ImageContentView
-                  item={item}
-                  index={index}
-                  deleteImageByFilename={deleteImageByFilename}
+            <GalleryContainerView>
+              <GalleryUploadTouchableOpacity
+                onPress={() => {
+                  actionSheetRef.current.show();
+                }}>
+                <GalleryStatusImage
+                  source={require('~/Assets/Images/Picture/camera.png')}
                 />
-              )}
-            />
-          </GalleryContainerView>
+                <GalleryStatusText>
+                  <GalleryStatusText style={{color: '#0075FF'}}>
+                    {imageDataList.length}
+                  </GalleryStatusText>
+                  /5
+                </GalleryStatusText>
+              </GalleryUploadTouchableOpacity>
+              <GalleryFlatList
+                data={imageRenderList}
+                horizontal
+                indicatorStyle="white"
+                keyExtractor={(item) => item.filename}
+                renderItem={({item, index}) => (
+                  <ImageContentView
+                    item={item}
+                    index={index}
+                    deleteImageByFilename={deleteImageByFilename}
+                  />
+                )}
+              />
+            </GalleryContainerView>
+          </KeyboardAvoidingView>
         </BodyContainerView>
         <FooterContainerView>
           <CheckBoxItemView>
@@ -531,6 +527,7 @@ const CommunityCreatePostScreen = ({
           suggestionList={suggestionList}
           searchQuery={searchQuery}
           completeCurrentHashTag={completeCurrentHashTag}
+          isLoading={isLoading}
         />
         <ActionSheet
           ref={actionSheetRef}

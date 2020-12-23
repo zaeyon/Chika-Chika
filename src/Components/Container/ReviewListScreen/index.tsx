@@ -423,30 +423,6 @@ const ReviewListScreen = ({navigation}: Props) => {
       offset = 0;
       setRefreshingReviewList(true);
       getInitialReviewList();
-
-      /*
-      GETReviewList({jwtToken, order, offset, limit})
-        .then((response: any) => {
-            console.log("offset", offset);
-            setLoadingMoreReview(false);
-            if(response.length > 0) {
-              noMoreReviewData = false
-              setReviewList(response)
-            } else {
-              noMoreReviewData = true
-            }
-
-            setLoadingReviewList(false);
-            setRefreshingReviewList(false);
-        })
-        .catch((error) => {
-            setLoadingMoreReview(false);
-            setLoadingReviewList(false);
-            setRefreshingReviewList(false);
-            console.log("GETReviewList error", error)
-        })
-        */
-
     }
 
     const onEndReachedReviewList = () => {

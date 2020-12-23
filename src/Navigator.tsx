@@ -115,36 +115,34 @@ const staticConfig = {
 };
 
 function AuthStackScreen() {
-    return (
-        <AuthStack.Navigator
-        headerMode="none">
-            <AuthStack.Screen
-            name="UnauthorizedScreen"
-            component={UnauthorizedScreen}
-            options={{
-              transitionSpec: {
-                open: staticConfig,
-                close: staticConfig,
-              }
-            }}
-            />
-            <AuthStack.Screen
-            name="LoginScreen"
-            component={LoginScreen}/>
-            <AuthStack.Screen
-            name="BasicInputScreen"
-            component={BasicInputScreen}/>
-            <AuthStack.Screen
-            name="ProfileInputScreen"
-            component={ProfileInputScreen}/>
-            <AuthStack.Screen
-            name="VerifyPhoneNumberScreen"
-            component={VerifyPhoneNumberScreen}/>
-            <AuthStack.Screen
-            name="HometownSettingScreen"
-            component={HometownSettingScreen}/>
-        </AuthStack.Navigator>
-    )
+  return (
+    <AuthStack.Navigator headerMode="none">
+      <AuthStack.Screen
+        name="UnauthorizedScreen"
+        component={UnauthorizedScreen}
+        options={{
+          transitionSpec: {
+            open: staticConfig,
+            close: staticConfig,
+          },
+        }}
+      />
+      <AuthStack.Screen name="LoginScreen" component={LoginScreen} />
+      <AuthStack.Screen name="BasicInputScreen" component={BasicInputScreen} />
+      <AuthStack.Screen
+        name="ProfileInputScreen"
+        component={ProfileInputScreen}
+      />
+      <AuthStack.Screen
+        name="VerifyPhoneNumberScreen"
+        component={VerifyPhoneNumberScreen}
+      />
+      <AuthStack.Screen
+        name="HometownSettingScreen"
+        component={HometownSettingScreen}
+      />
+    </AuthStack.Navigator>
+  );
 }
 
 function ReviewStackScreen() {
@@ -209,14 +207,15 @@ function DentalClinicStackScreen() {
         component={NearDentalMap}
       />
       <DentalClinicStack.Screen
-      name="DentalClinicListScreen"
-      component={DentalClinicListScreen}
-      options={{
-        transitionSpec: {
-          open: staticConfig,
-          close: staticConfig,
-        },
-      }}/>
+        name="DentalClinicListScreen"
+        component={DentalClinicListScreen}
+        options={{
+          transitionSpec: {
+            open: staticConfig,
+            close: staticConfig,
+          },
+        }}
+      />
       <DentalClinicStack.Screen
         name="DentalDetailScreen"
         component={DentalDetailScreen}
@@ -509,7 +508,7 @@ function BottomTab() {
     return true;
   };
 
-  const getTeethCareBottomTabVisibility = (route: any) => {
+  const getTeethCareBottomTabBarVisibility = (route: any) => {
     const routeName = route.state ? route.state.routes[route.state.index] : '';
 
     const stackRouteName = routeName.state
@@ -527,6 +526,23 @@ function BottomTab() {
     }
 
     if (stackRouteName === 'BrushDetritionCamera') {
+      return false;
+    }
+
+    return true;
+  };
+
+  const getMyProfileBottomTabBarVisibility = (route: any) => {
+    const routeName = route.state ? route.state.routes[route.state.index] : '';
+    const isSlideUp = route?.params?.isSlideUp;
+    const stackRouteName = routeName.state
+      ? routeName.state.routes[routeName.state.index].name
+      : '';
+
+    if (routeName.name === 'EditProfileTabScreen') {
+      return false;
+    }
+    if (isSlideUp) {
       return false;
     }
 
@@ -558,7 +574,7 @@ function BottomTab() {
         name="관리"
         component={TeethCareStackScreen}
         options={({route}) => ({
-          tabBarVisible: getTeethCareBottomTabVisibility(route),
+          tabBarVisible: getTeethCareBottomTabBarVisibility(route),
         })}
       />
       <Tab.Screen
@@ -581,6 +597,7 @@ function BottomTab() {
         name="마이"
         component={MyProfileStackScreen}
         options={({route}) => ({
+          tabBarVisible: getMyProfileBottomTabBarVisibility(route),
           /*
         tabBarIcon: ({focused}: {focused: boolean}) => (
           <Image
@@ -611,17 +628,16 @@ const Navigator = () => {
     
     getFcmToken();
     getUserInfo()
-    .then((response) => {
-      console.log("getUserInfo response", response);
-      if(response !== null) {
-        dispatch(allActions.userActions.setUser(response));
-      } 
-    })
-    .catch((error) => {
-      console.log("getUserInfo error", error);
-    })
-
-  }, [])
+      .then((response) => {
+        console.log('getUserInfo response', response);
+        if (response !== null) {
+          dispatch(allActions.userActions.setUser(response));
+        }
+      })
+      .catch((error) => {
+        console.log('getUserInfo error', error);
+      });
+  }, []);
 
   return (
     <NavigationContainer>
