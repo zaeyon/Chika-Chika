@@ -1,8 +1,10 @@
-import {combineReducers} from 'redux'
-import currentUser from './currentUser'
+import {combineReducers} from 'redux';
+import currentUser from './currentUser';
+import communityPostList from './communityPostList';
 
 const rootReducers = combineReducers({
-    currentUser,
-})
+  currentUser,
+  communityPostList,
+});
 
-export default rootReducers
+export default rootReducers;

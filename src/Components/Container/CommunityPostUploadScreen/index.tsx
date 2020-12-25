@@ -19,9 +19,12 @@ import {uploadImageToS3} from '~/method/uploadImageToS3';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import CommunityCreatePostScreen from '~/Components/Presentational/CommunityCreatePostScreen';
 import GETAllTagSearch from '~/Routes/Search/GETAllTagSearch';
+import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import POSTCreateCommunityPost from '~/Routes/Community/createPost/POSTCreateCommunityPost';
 import PUTCommunityPost from '~/Routes/Community/editPost/PUTCommunityPost';
-import {useSelector} from 'react-redux';
+// redux
+import {useSelector, useDispatch} from 'react-redux';
+import allActions from '~/actions';
 
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
@@ -42,21 +45,26 @@ interface imageItem {
 }
 
 const CommunityPostUploadScreen = ({navigation, route}: Props) => {
+  const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state.currentUser);
   const jwtToken = currentUser.user.jwtToken;
-  const prevData = route.params?.data;
+  const prevData = useSelector((state: any) =>
+    state.communityPostList.HomePosts.find(
+      (item: any) => item.id === route.params.data.id,
+    ),
+  );
+  const prevDescription = route.params.data.description;
+  const prevType = route.params.data.type;
   const mode = prevData ? 'edit' : 'create';
   const [searchQuery, setSearchQuery] = useState('');
   const [searchMode, setSearchMode] = useState(false);
   const [suggestionList, setSuggestionList] = useState([]);
 
-  const [description, setDescription] = useState<string>(
-    prevData?.description || '',
-  );
+  const [description, setDescription] = useState<string>(prevDescription || '');
   const [wantDentistHelp, setWantDentistHelp] = useState<boolean>(
     prevData?.wantDentistHelp || false,
   );
-  const [category, setCategory] = useState(prevData?.type || '질문');
+  const [category, setCategory] = useState(prevType || '질문');
   const [images, setImages] = useState(prevData?.community_imgs || []);
 
   const [categoryList, setCategoryList] = useState<string[]>(['질문', '자유']);
@@ -174,6 +182,20 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
       };
       POSTCreateCommunityPost(jwtToken, postData).then((response: any) => {
         console.log(response);
+        const form = {
+          type: formattedCategory,
+          limit: 10,
+          offset: 0,
+          order: 'createdAt',
+        };
+        GETCommunityPosts(jwtToken, form).then((response: any) => {
+          const data = {
+            type: formattedCategory,
+            posts: response,
+          };
+          dispatch(allActions.communityActions.setPosts(data));
+          console.log('res', response.length);
+        });
         navigation.navigate('CommunityListScreen');
       });
     }
@@ -197,8 +219,17 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
       };
       PUTCommunityPost(jwtToken, postData, prevData.id).then(
         (response: any) => {
-          console.log(response);
-          navigation.navigate('CommunityListScreen');
+          const form = {
+            id: prevData.id,
+            data: response.body.updateCommunityPost,
+          };
+          dispatch(allActions.communityActions.editPost(form));
+          route.params.reloadPostDetail(
+            String(response.body.updateCommunityPost.id),
+          );
+          navigation.navigate('CommunityDetailScreen', {
+            id: prevData.id,
+          });
         },
       );
     }

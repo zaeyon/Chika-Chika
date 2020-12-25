@@ -10,8 +10,8 @@ interface Props {
     order: string;
 }
 
-const GETUserCommunityPosts = (jwtToken: string, userId: string, {type, limit, offset, order}: Props) => {
-    const uri = baseUri + `/api/v1/users/${userId}/communities?limit=${limit}&offset=${offset}&order=${order}&type=${type}`;
+const GETUserReviewPosts = (jwtToken: string, userId: string, {type, limit, offset, order}: Props) => {
+    const uri = baseUri + `/api/v1/users/${userId}/reviews?limit=${limit}&offset=${offset}&order=${order}&type=${type}`;
     console.log(type, limit, offset, order);
     return new Promise(function(resolve, reject) {
 
@@ -21,7 +21,7 @@ const GETUserCommunityPosts = (jwtToken: string, userId: string, {type, limit, o
             },
         })
         .then(function(response) {
-            console.log('GETUserCommunityPosts SUCCESS',response)
+            console.log('GETUserReviewPosts SUCCESS',response)
             resolve(response.data);
             
         })
@@ -33,5 +33,5 @@ const GETUserCommunityPosts = (jwtToken: string, userId: string, {type, limit, o
     })
 }
 
-export default GETUserCommunityPosts;
+export default GETUserReviewPosts;
 

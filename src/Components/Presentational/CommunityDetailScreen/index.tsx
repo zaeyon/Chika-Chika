@@ -152,23 +152,59 @@ const HashTagText = Styled.Text`
   color: #0075FF;
 `;
 interface Props {
-  moveToFullImages: any;
+  mode: string;
+  moveToCommunityDetail: any;
   moveToAnotherProfile: any;
+  moveToFullImages: any;
   data: any;
 }
 
-const PostContent = ({data, moveToFullImages, moveToAnotherProfile}: Props) => {
-  const {
-    id,
+const PostItem = ({
+  mode,
+  data,
+  moveToCommunityDetail,
+  moveToAnotherProfile,
+  moveToFullImages,
+}: Props) => {
+  const [createdAt, setCreatedAt] = useState(data.createdAt);
+  const [updatedAt, setUpdatedAt] = useState(data.updatedAt);
+  const [description, setDescription] = useState(data.description);
+  const [postLikeNum, setPostLikeNum] = useState(data.postLikeNum);
+  const [postCommentsNum, setPostCommentsNum] = useState(data.postCommentsNum);
+  const [user, setUser] = useState(data.user);
+  const [tagList, setTagList] = useState(data.Clinics);
+  const [mediaFiles, setMediaFiles] = useState(data.community_imgs);
+  const [proComments, setProComments] = useState([
+    '안녕하세요 전윤정님. 저희 치과를 이용해주셔서 감사합니다. 어쩌구저쩌구 어쩌구저쩌구',
+  ]);
+
+  const currentData = {
+    ...data,
     createdAt,
     updatedAt,
     description,
     postLikeNum,
     postCommentsNum,
     user,
-    Clinics,
-    community_imgs,
-  } = data;
+    tagList,
+    mediaFiles,
+  };
+  useEffect(() => {
+    if (data) {
+      updateCommunityStates(data);
+    }
+  }, [data]);
+
+  const updateCommunityStates = (postData: any) => {
+    setCreatedAt(postData.createdAt);
+    setUpdatedAt(postData.updatedAt);
+    setDescription(postData.description);
+    setPostLikeNum(postData.postLikeNum);
+    setPostCommentsNum(postData.postCommentNum);
+    setUser(postData.user);
+    setTagList(postData.Clinics);
+    setMediaFiles(postData.community_imgs);
+  };
 
   const formatUpdatedAtDate = useCallback(
     (updatedAt: string) => {
@@ -218,7 +254,7 @@ const PostContent = ({data, moveToFullImages, moveToAnotherProfile}: Props) => {
       </TouchableWithoutFeedback>
     );
   };
-  const formatDescription = useCallback((oldDescription: string) => {
+  const formatDescription = (oldDescription: string) => {
     let formattedDescription: any[] = [];
     const lines = oldDescription.split(/\r\n|\r|\n/);
     for (let line of lines) {
@@ -257,7 +293,7 @@ const PostContent = ({data, moveToFullImages, moveToAnotherProfile}: Props) => {
     // let description = oldDescription.replace(/{{/gi, '#');
     // description = description.replace(/}}/gi, '');
     // return description;
-  }, []);
+  };
 
   const toggleSocialLike = () => {
     return;
@@ -269,12 +305,14 @@ const PostContent = ({data, moveToFullImages, moveToAnotherProfile}: Props) => {
     description,
   ]);
 
-  const renderImage = useCallback(
-    ({item, index}: any) => (
+  const renderImagesCallback = useCallback(
+    ({item, index}) => (
       <TouchableWithoutFeedback
         key={'TouchableImage' + index}
         onPress={() => {
-          moveToFullImages(community_imgs, item.img_url);
+          mode === 'Detail'
+            ? moveToFullImages(mediaFiles, item.img_url)
+            : moveToCommunityDetail(currentData, updateCommunityStates);
         }}>
         <ImageView
           isFirst={index}
@@ -286,60 +324,107 @@ const PostContent = ({data, moveToFullImages, moveToAnotherProfile}: Props) => {
         />
       </TouchableWithoutFeedback>
     ),
-    [],
+    [mediaFiles],
   );
 
   return (
-    <ContainerView>
-      <BodyContainerView>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            moveToAnotherProfile();
-          }}>
-          <ProfileContainerView>
-            <ProfileImage
-              source={{
-                url: user.profileImage,
-                cache: 'force-cache',
-              }}
+    <TouchableWithoutFeedback
+      onPress={() => {
+        moveToCommunityDetail(currentData, updateCommunityStates);
+      }}>
+      <ContainerView>
+        <BodyContainerView>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              moveToAnotherProfile();
+            }}>
+            <ProfileContainerView>
+              <ProfileImage
+                source={{
+                  url: user.profileImage,
+                  cache: 'force-cache',
+                }}
+              />
+              <ProfileContentView>
+                <ProfileNameText>{user.nickname}</ProfileNameText>
+                <ProfileDescriptionText>
+                  {updatedAt !== createdAt
+                    ? `${'3시간 전'} ･ 수정됨`
+                    : `${'3시간 전'}`}
+                </ProfileDescriptionText>
+              </ProfileContentView>
+            </ProfileContainerView>
+          </TouchableWithoutFeedback>
+
+          <ContentView>
+            {mode === 'Detail' ? (
+              <ContentText>{formatDescription(description)}</ContentText>
+            ) : (
+              <ContentText numberOfLines={2}>{memoDescription}</ContentText>
+            )}
+          </ContentView>
+        </BodyContainerView>
+
+        {mediaFiles.length > 0 ? (
+          <ImageContainerView>
+            <ImageFlatList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              alwaysBounceHorizontal={false}
+              data={mediaFiles}
+              keyExtractor={(item) => String(item.id)}
+              renderItem={renderImagesCallback}
             />
-            <ProfileContentView>
-              <ProfileNameText>{user.nickname}</ProfileNameText>
-              <ProfileDescriptionText>
-                {updatedAt !== createdAt
-                  ? `${'3시간 전'} ･ 수정됨`
-                  : `${'3시간 전'}`}
-              </ProfileDescriptionText>
-            </ProfileContentView>
-          </ProfileContainerView>
-        </TouchableWithoutFeedback>
+          </ImageContainerView>
+        ) : null}
+        <HashTagContainerView>
+          {tagList.map((item, index) => (
+            <HashTagIconView>
+              <HashTagIconText>{'#' + item}</HashTagIconText>
+            </HashTagIconView>
+          ))}
+        </HashTagContainerView>
+        {mode === 'Detail' ? null : (
+          <SocialInfoContainerView>
+            <TouchableOpacity
+              style={{
+                marginHorizontal: 16,
+              }}
+              onPress={() => {
+                toggleSocialLike();
+              }}>
+              <SocialInfoView>
+                <Image
+                  source={require('~/Assets/Images/Review/ic_like_inline.png')}
+                />
+                <SocialInfoText>{postLikeNum}</SocialInfoText>
+              </SocialInfoView>
+            </TouchableOpacity>
 
-        <ContentView>
-          <ContentText numberOfLines={2}>{memoDescription}</ContentText>
-        </ContentView>
-      </BodyContainerView>
+            <SocialInfoView>
+              <Image
+                source={require('~/Assets/Images/Review/ic_comment_inline.png')}
+              />
+              <SocialInfoText>{postCommentsNum}</SocialInfoText>
+            </SocialInfoView>
 
-      {community_imgs.length > 0 ? (
-        <ImageContainerView>
-          <ImageFlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            alwaysBounceHorizontal={false}
-            data={community_imgs}
-            keyExtractor={(item) => String(item.id)}
-            renderItem={renderImage}
-          />
-        </ImageContainerView>
-      ) : null}
-      {/* <HashTagContainerView>
-        {Clinics.map((item, index) => (
-          <HashTagIconView>
-            <HashTagIconText>{'#' + item}</HashTagIconText>
-          </HashTagIconView>
-        ))}
-      </HashTagContainerView> */}
-    </ContainerView>
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                right: 16,
+              }}
+              onPress={() => {
+                toggleSocialScrap();
+              }}>
+              <SocialInfoView>
+                <SocialInfoText>스크랩하기</SocialInfoText>
+              </SocialInfoView>
+            </TouchableOpacity>
+          </SocialInfoContainerView>
+        )}
+      </ContainerView>
+    </TouchableWithoutFeedback>
   );
 };
 
-export default React.memo(PostContent);
+export default PostItem;

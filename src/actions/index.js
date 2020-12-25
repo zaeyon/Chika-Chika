@@ -1,7 +1,9 @@
-import userActions from './userActions'
+import userActions from './userActions';
+import communityActions from './communityActions';
 
 const allActions = {
-    userActions
-}
+  userActions,
+  communityActions,
+};
 
-export default allActions
+export default allActions;

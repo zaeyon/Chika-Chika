@@ -7,6 +7,7 @@ import {
 } from 'react-native-responsive-screen';
 import {TouchableWithoutFeedback, FlatList, View} from 'react-native';
 import {isIphoneX} from 'react-native-iphone-x-helper';
+import SafeAreaView from 'react-native-safe-area-view';
 import Animated from 'react-native-reanimated';
 import {useSelector} from 'react-redux';
 //Local Component
@@ -14,9 +15,12 @@ import MyProfile from '~/Components/Presentational/MyProfileScreen';
 import BottomSheet from '~/Components/Presentational/BottomSheet';
 import SlideUpPanel from '~/Components/Presentational/MyProfileScreen/SlideUpPanel';
 //Routes
+import GETUserReviewPosts from '~/Routes/Community/showPosts/GETUserReviewPosts';
 import GETUserCommunityPosts from '~/Routes/Community/showPosts/GETUserCommunityPost';
 
-const ContainerView = Styled.SafeAreaView`
+const ContainerView = Styled(
+  (SafeAreaView as unknown) as new () => SafeAreaView,
+)`
 flex: 1;
 background: white;
 `;
@@ -39,13 +43,10 @@ const MyProfileScreen = ({navigation, route}: Props) => {
   const [pageIndex, setPageIndex] = useState(0);
   const [reviewPostData, setReviewPostData] = useState([] as any);
   const [communityPostData, setCommunityPostData] = useState([] as any);
-  const [refreshing, setRefreshing] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isModalClosed, setIsModalClosed] = useState(false);
-  const [navigateName, setNavigateName] = useState('');
-
-  const modalRef = useRef();
+  const [closeBottomSheet, setCloseBottomSheet] = useState(false);
 
   const currentUser = useSelector((state: any) => state.currentUser).user;
   const jwtToken = currentUser.jwtToken;
@@ -58,11 +59,11 @@ const MyProfileScreen = ({navigation, route}: Props) => {
       offset: 0,
       order: order,
     };
-    setRefreshing(true);
+    setIsRefreshing(true);
     fetchCommunityData(form, (response: any) => {
       setCommunityPostData(response);
       setPageIndex(0);
-      setRefreshing(false);
+      setIsRefreshing(false);
     });
   };
 
@@ -88,20 +89,14 @@ const MyProfileScreen = ({navigation, route}: Props) => {
     }
   };
 
-  useEffect(() => {
-    const form = {
-      type: type,
-      limit: limit,
-      offset: pageIndex * limit,
-      order: order,
-    };
-    fetchCommunityData(form, (response: any) => {
-      setCommunityPostData(response);
-    });
-  }, []);
-
   const fetchCommunityData = (form: Form, callback: any) => {
     GETUserCommunityPosts(jwtToken, userId, form).then((response) => {
+      callback(response);
+    });
+  };
+
+  const fetchReviewData = (form: Form, callback: any) => {
+    GETUserReviewPosts(jwtToken, userId, form).then((response) => {
       callback(response);
     });
   };
@@ -109,29 +104,98 @@ const MyProfileScreen = ({navigation, route}: Props) => {
   const renderContent = (disabled: boolean) => (
     <SlideUpPanel
       navigation={navigation}
-      closeModal={() => setIsModalClosed(true)}
-      setNavigateName={setNavigateName}
+      closeBottomSheet={() => setCloseBottomSheet(true)}
       disabled={disabled}
     />
   );
+
+  const openModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const moveToCommunityDetail = (postData: any) => {
+    navigation.navigate('CommunityDetailScreen', {data: postData});
+  };
+
+  const moveToAnotherProfile = () => {
+    navigation.navigate('AnotherProfileScreen');
+  };
+
+  const moveToFullImages = (mediaFiles: any, imageUri: string) => {
+    let index = mediaFiles.findIndex(
+      (image: any) => image.img_url === imageUri,
+    );
+
+    let imageUri_arr = mediaFiles.map((image: any) => {
+      return image.img_url;
+    });
+    console.log(mediaFiles);
+    console.log('선택한 사진의 mediaFiles index', index);
+
+    navigation.navigate('FullImagesScreen', {
+      imagesUrl_arr: imageUri_arr,
+      imageIndex: index,
+    });
+  };
+
+  const moveToReviewDetail = (
+    reviewId: number,
+    writer: object,
+    createdAt: string,
+    treatmentArray: Array<object>,
+    avgRating: number,
+    treatmentDate: string,
+    imageArray: Array<object>,
+  ) => {
+    console.log('moveToReviewDetail reviewId', reviewId);
+
+    navigation.navigate('ReviewDetailScreen', {
+      reviewId: reviewId,
+      writer: writer,
+      createdAt: createdAt,
+      treatmentArray: treatmentArray,
+      avgRating: avgRating,
+      treatmentDate: treatmentDate,
+      imageArray: imageArray,
+    });
+  };
+
+  useEffect(() => {
+    const form = {
+      type: type,
+      limit: limit,
+      offset: pageIndex * limit,
+      order: order,
+    };
+    fetchReviewData(form, (response: any) => {
+      setReviewPostData(response);
+    });
+    fetchCommunityData(form, (response: any) => {
+      setCommunityPostData(response);
+    });
+  }, []);
+
   return (
     <ContainerView>
       <MyProfile
         navigation={navigation}
         route={route}
+        reviewPostData={reviewPostData}
         communityPostData={communityPostData}
-        refreshing={refreshing}
+        isRefreshing={isRefreshing}
         onRefresh={onRefresh}
         isEndReached={isEndReached}
         onEndReached={onEndReached}
         currentUser={currentUser}
-        openModal={() => {
-          setIsModalVisible(true);
-        }}
+        openModal={openModal}
+        moveToCommunityDetail={moveToCommunityDetail}
+        moveToReviewDetail={moveToReviewDetail}
+        moveToAnotherProfile={moveToAnotherProfile}
+        moveToFullImages={moveToFullImages}
       />
       <BottomSheet
-        isModalClosed={isModalClosed}
-        setIsModalClosed={setIsModalClosed}
+        closeBottomSheet={closeBottomSheet}
+        setCloseBottomSheet={setCloseBottomSheet}
         isModalVisible={isModalVisible}
         setIsModalVisible={setIsModalVisible}
         renderContent={renderContent}

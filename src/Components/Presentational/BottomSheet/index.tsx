@@ -17,11 +17,11 @@ import {
 } from 'react-native-responsive-screen';
 
 interface IProps {
-  isModalClosed: boolean;
-  setIsModalClosed: any;
+  closeBottomSheet: boolean;
+  setCloseBottomSheet: (value: boolean) => void;
   isModalVisible: boolean;
-  setIsModalVisible: any;
-  renderContent: any;
+  setIsModalVisible: (value: boolean) => void;
+  renderContent: (disabled: boolean) => any;
   visibleHeight: number;
 }
 
@@ -158,7 +158,7 @@ export default class BottomSheet extends Component<IProps, IState> {
         useNativeDriver: true,
       }).start();
     }
-    if (this.props.isModalClosed) {
+    if (this.props.closeBottomSheet) {
       console.log('close');
       Animated.spring(this._translateYOffset, {
         velocity: 40,
@@ -168,7 +168,7 @@ export default class BottomSheet extends Component<IProps, IState> {
         useNativeDriver: true,
       }).start(() => {
         // this.props.navigation.navigate(this.props.navigateName);
-        this.props.setIsModalClosed(false);
+        this.props.setCloseBottomSheet(false);
         this.props.setIsModalVisible(false);
       });
     }

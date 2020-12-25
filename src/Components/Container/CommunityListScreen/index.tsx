@@ -8,7 +8,7 @@ import {
   View,
   Text,
   Animated,
-  StyleSheet
+  StyleSheet,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -65,72 +65,72 @@ const CommunityListScreen = ({navigation, route}: Props) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeAreaStyle} forceInset={{top:'always'}}>
-    <ContainerView>
-      <HeaderConatinerView>
-        <HeaderContentText>수다방</HeaderContentText>
-        <TouchableOpacity
-          style={{
-            marginLeft: 'auto',
-          }}
-          onPress={() => moveToKeywordSearch()}>
-          <HeaderContentText>검색</HeaderContentText>
-        </TouchableOpacity>
-      </HeaderConatinerView>
-      <BodyContainerView>
-        <CommunityTopTab.Navigator
-          style={{
-            flex: 1,
-          }}
-          tabBarOptions={{
-            style: {
-              marginLeft: 4,
-              marginTop: 9,
-              alignContent: 'center',
-              justifyContent: 'center',
-            },
-            labelStyle: {
-              fontSize: 18,
-              lineHeight: 24,
-              color: 'black',
-              margin: 0,
-            },
-            tabStyle: {
-              width: 'auto',
-              paddingHorizontal: 12,
-              paddingTop: 12,
-              paddingBottom: 3,
-              height: 41.5,
-              justifyContent: 'flex-start',
-            },
-            indicatorContainerStyle: {
-              justifyContent: 'center',
-              alignItems: 'center',
-            },
-            indicatorStyle: {
-              backgroundColor: '#000000',
+    <SafeAreaView style={styles.safeAreaStyle} forceInset={{top: 'always'}}>
+      <ContainerView>
+        <HeaderConatinerView>
+          <HeaderContentText>수다방</HeaderContentText>
+          <TouchableOpacity
+            style={{
+              marginLeft: 'auto',
+            }}
+            onPress={() => moveToKeywordSearch()}>
+            <HeaderContentText>검색</HeaderContentText>
+          </TouchableOpacity>
+        </HeaderConatinerView>
+        <BodyContainerView>
+          <CommunityTopTab.Navigator
+            style={{
+              flex: 1,
+            }}
+            tabBarOptions={{
+              style: {
+                marginLeft: 4,
+                marginTop: 9,
+                alignContent: 'center',
+                justifyContent: 'center',
+              },
+              labelStyle: {
+                fontSize: 18,
+                lineHeight: 24,
+                color: 'black',
+                margin: 0,
+              },
+              tabStyle: {
+                width: 'auto',
+                paddingHorizontal: 12,
+                paddingTop: 12,
+                paddingBottom: 3,
+                height: 41.5,
+                justifyContent: 'flex-start',
+              },
+              indicatorContainerStyle: {
+                justifyContent: 'center',
+                alignItems: 'center',
+              },
+              indicatorStyle: {
+                backgroundColor: '#000000',
 
-              height: 2.5,
-            },
-          }}>
-          <CommunityTopTab.Screen
-            name="전체"
-            component={HomeTabScreen}
-            initialParams={{currentUser: currentUser}}
-          />
-          <CommunityTopTab.Screen
-            name="질문"
-            component={QuestionTabScreen}
-            initialParams={{currentUser: currentUser}}
-          />
-          <CommunityTopTab.Screen
-            name="자유"
-            component={GeneralTabScreen}
-            initialParams={{currentUser: currentUser}}
-          />
-        </CommunityTopTab.Navigator>
-      </BodyContainerView>
-    </ContainerView>
+                height: 2.5,
+              },
+            }}>
+            <CommunityTopTab.Screen
+              name="전체"
+              component={HomeTabScreen}
+              initialParams={{currentUser: currentUser}}
+            />
+            <CommunityTopTab.Screen
+              name="질문"
+              component={QuestionTabScreen}
+              initialParams={{currentUser: currentUser}}
+            />
+            <CommunityTopTab.Screen
+              name="자유"
+              component={GeneralTabScreen}
+              initialParams={{currentUser: currentUser}}
+            />
+          </CommunityTopTab.Navigator>
+        </BodyContainerView>
+      </ContainerView>
     </SafeAreaView>
   );
 };
@@ -138,8 +138,8 @@ const CommunityListScreen = ({navigation, route}: Props) => {
 const styles = StyleSheet.create({
   safeAreaStyle: {
     flex: 1,
-    backgroundColor: "#ffffff"
-}
-})
+    backgroundColor: '#ffffff',
+  },
+});
 
 export default CommunityListScreen;

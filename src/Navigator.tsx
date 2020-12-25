@@ -346,6 +346,14 @@ function MyProfileStackScreen() {
         name="SavedHospitalTabScreen"
         component={SavedHospitalTabScreen}
       />
+      <MyProfileStack.Screen
+        name="CommunityDetailScreen"
+        component={CommunityDetailScreen}
+      />
+      <MyProfileStack.Screen
+        name="ReviewDetailScreen"
+        component={ReviewDetailScreen}
+      />
       {/* 
       <MyProfileStack.Screen
         name="EmailConsultingTabScreen"
@@ -376,6 +384,7 @@ function CommunityPostUploadStackScreen({route}: any) {
         component={CommunityPostUploadScreen}
         initialParams={{
           data: route.params && route.params.data,
+          reloadPostDetail: route.params && route.params.reloadPostDetail,
         }}
       />
       <CommunityPostUploadStack.Screen
@@ -621,11 +630,10 @@ const Navigator = () => {
 
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
-    console.log("getFcmToken fcmToken", fcmToken);
-  }
+    console.log('getFcmToken fcmToken', fcmToken);
+  };
 
   useEffect(() => {
-    
     getFcmToken();
     getUserInfo()
       .then((response) => {
