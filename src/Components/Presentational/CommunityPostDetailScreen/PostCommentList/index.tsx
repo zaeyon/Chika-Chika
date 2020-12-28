@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList} from 'react-native';
+import {LayoutAnimation} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -36,7 +36,7 @@ interface Props {
 }
 
 const ReviewCommentList = ({commentList}: Props) => {
-  const renderCommentItem = (item: any, index: number) => {
+  const renderCommentItem = useCallback((item: any, index: number) => {
     return (
       <CommentItem
         commentId={item.id}
@@ -48,7 +48,7 @@ const ReviewCommentList = ({commentList}: Props) => {
         replys={item.Replys}
       />
     );
-  };
+  }, []);
 
   return (
     <Container>
@@ -62,4 +62,4 @@ const ReviewCommentList = ({commentList}: Props) => {
   );
 };
 
-export default ReviewCommentList;
+export default React.memo(ReviewCommentList);

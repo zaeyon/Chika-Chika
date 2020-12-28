@@ -374,14 +374,15 @@ const PostItem = ({
               marginHorizontal: 16,
             }}
             onPress={() => {
-              toggleSocialLike(id, viewerLikeCommunityPost);
+              toggleSocialLike(id, viewerLikeCommunityPost, type);
             }}>
             <SocialInfoView>
-              {viewerLikeCommunityPost ? null : (
-                <Image
-                  source={require('~/Assets/Images/Review/ic_like_inline.png')}
-                />
-              )}
+              <Image
+                style={{
+                  tintColor: viewerLikeCommunityPost ? '#FF5656' : '#c3c3c3',
+                }}
+                source={require('~/Assets/Images/Review/ic_like_inline.png')}
+              />
               <SocialInfoText>{postLikeNum}</SocialInfoText>
             </SocialInfoView>
           </TouchableOpacity>
@@ -402,7 +403,9 @@ const PostItem = ({
               toggleSocialScrap();
             }}>
             <SocialInfoView>
-              <SocialInfoText>스크랩하기</SocialInfoText>
+              <Image
+                source={require('~/Assets/Images/Review/ic_scrap_inline.png')}
+              />
             </SocialInfoView>
           </TouchableOpacity>
         </SocialInfoContainerView>

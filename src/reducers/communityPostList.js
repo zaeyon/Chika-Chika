@@ -110,21 +110,85 @@ const communityPostList = (
     case 'TOGGLE_LIKE':
       switch (action.payload.type) {
         case 'Question':
-          const newQuestionPost = state.QuestionPosts.find(
+          console.log(action.payload.id);
+          const toggleLikeQuestionIndex = state.QuestionPosts.findIndex(
             (item) => item.id === action.payload.id,
           );
+          newQuestionPosts.splice(toggleLikeQuestionIndex, 1, {
+            ...state.QuestionPosts[toggleLikeQuestionIndex],
+            viewerLikeCommunityPost: !state.QuestionPosts[
+              toggleLikeQuestionIndex
+            ].viewerLikeCommunityPost,
+            postLikeNum:
+              state.QuestionPosts[toggleLikeQuestionIndex].postLikeNum +
+              (state.QuestionPosts[toggleLikeQuestionIndex]
+                .viewerLikeCommunityPost
+                ? -1
+                : 1),
+          });
+          console.log(newQuestionPosts);
           return {
-            ...newQuestionPost,
-            viewerLikeCommunityPost: !newQuestionPost.viewerLikeCommunityPost,
+            ...state,
+            QuestionPosts: newQuestionPosts,
           };
         case 'FreeTalk':
-          const newFreeTalkPost = state.FreeTalkPosts.find(
+          console.log(action.payload.id);
+          const toggleLikeFreeTalkIndex = state.FreeTalkPosts.findIndex(
             (item) => item.id === action.payload.id,
           );
+          newFreeTalkPosts.splice(toggleLikeFreeTalkIndex, 1, {
+            ...state.FreeTalkPosts[toggleLikeFreeTalkIndex],
+            viewerLikeCommunityPost: !state.FreeTalkPosts[
+              toggleLikeFreeTalkIndex
+            ].viewerLikeCommunityPost,
+            postLikeNum:
+              state.FreeTalkPosts[toggleLikeFreeTalkIndex].postLikeNum +
+              (state.FreeTalkPosts[toggleLikeFreeTalkIndex]
+                .viewerLikeCommunityPost
+                ? -1
+                : 1),
+          });
           return {
-            ...newFreeTalkPost,
-            viewerLikeCommunityPost: !newFreeTalkPost.viewerLikeCommunityPost,
+            ...state,
+            FreeTalkPosts: newFreeTalkPosts,
           };
+      }
+    case 'CREATE_COMMENT':
+      switch (action.payload.type) {
+        case 'Question':
+          const createCommentQuestionIndex = state.QuestionPosts.findIndex(
+            (item) => item.id === action.payload.id,
+          );
+          newQuestionPosts.splice(createCommentQuestionIndex, 1, {
+            ...state.QuestionPosts[createCommentQuestionIndex],
+            postCommentsNum:
+              state.QuestionPosts[createCommentQuestionIndex].postCommentsNum +
+              1,
+          });
+          return {
+            ...state,
+            QuestionPosts: newQuestionPosts,
+          };
+        case 'FreeTalk':
+          const createCommentFreeTalkIndex = state.FreeTalkPosts.findIndex(
+            (item) => item.id === action.payload.id,
+          );
+          newFreeTalkPosts.splice(createCommentFreeTalkIndex, 1, {
+            ...state.FreeTalkPosts[createCommentFreeTalkIndex],
+            postCommentsNum:
+              state.FreeTalkPosts[createCommentFreeTalkIndex].postCommentsNum +
+              1,
+          });
+          return {
+            ...state,
+            FreeTalkPosts: newFreeTalkPosts,
+          };
+      }
+    case 'REFRESH_DETAIL':
+      switch (action.payload.type) {
+        case 'Question':
+
+        case 'FreeTalk':
       }
     default:
       return state;

@@ -81,12 +81,7 @@ const CommunityPostList = ({
   toggleSocialLike,
   toggleSocialScrap,
 }: Props) => {
-  useEffect(() => {
-    console.log('list changed', postData);
-  }, [postData]);
-
   const renderPosts = useCallback(({item, index}: any) => {
-    console.log(index);
     return (
       <PostItem
         data={item}

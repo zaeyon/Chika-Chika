@@ -4,13 +4,13 @@ import serverConfig from '../../server.config';
 const baseUri = serverConfig.baseUri
 
 const DELETESocialLike = (jwtToken: string, postId: string) => {
-    const uri = baseUri + "/like/communityPost?postId=" + postId;
+    const uri = baseUri + `/like/communityPost?postId=${postId}`;
     
     return new Promise(function(resolve, reject) {
 
         axios.delete(uri, {
             headers: {
-              'Authentication': jwtToken,
+              'Authorization': jwtToken,
             },
         })
         .then(function(response) {

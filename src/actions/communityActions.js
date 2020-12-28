@@ -32,10 +32,18 @@ const toggleLike = (data) => {
     payload: data,
   };
 };
+
+const createComment = (data) => {
+  return {
+    type: 'CREATE_COMMENT',
+    payload: data,
+  };
+};
 export default {
   createPost,
   editPost,
   deletePost,
   setPosts,
   toggleLike,
+  createComment,
 };

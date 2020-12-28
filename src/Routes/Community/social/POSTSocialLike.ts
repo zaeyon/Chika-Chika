@@ -4,13 +4,13 @@ import serverConfig from '../../server.config';
 const baseUri = serverConfig.baseUri
 
 const POSTSocialLike = (jwtToken: string, postId: string) => {
-    const uri = baseUri + "/like/communityPost?postId=" + postId;
-    console.log(jwtToken)
+    const uri = baseUri + `/like/communityPost?postId=${postId}`;
+    const formData = new FormData();
     return new Promise(function(resolve, reject) {
 
-        axios.post(uri, {
+        axios.post(uri, formData, {
             headers: {
-              'Authentication': jwtToken,
+              'Authorization': jwtToken,
             },
         })
         .then(function(response) {

@@ -1,5 +1,5 @@
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -9,7 +9,8 @@ import {TouchableWithoutFeedback, FlatList, View} from 'react-native';
 import {isIphoneX} from 'react-native-iphone-x-helper';
 import SafeAreaView from 'react-native-safe-area-view';
 import Animated from 'react-native-reanimated';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import allActions from '~/actions';
 //Local Component
 import MyProfile from '~/Components/Presentational/MyProfileScreen';
 import BottomSheet from '~/Components/Presentational/BottomSheet';
@@ -17,6 +18,8 @@ import SlideUpPanel from '~/Components/Presentational/MyProfileScreen/SlideUpPan
 //Routes
 import GETUserReviewPosts from '~/Routes/Community/showPosts/GETUserReviewPosts';
 import GETUserCommunityPosts from '~/Routes/Community/showPosts/GETUserCommunityPost';
+import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
+import DELETESocialLike from '~/Routes/Community/social/DELETESocialLike';
 
 const ContainerView = Styled(
   (SafeAreaView as unknown) as new () => SafeAreaView,
@@ -49,11 +52,12 @@ const MyProfileScreen = ({navigation, route}: Props) => {
 
   const bottomSheetRef = useRef<any>();
 
+  const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state.currentUser).user;
   const jwtToken = currentUser.jwtToken;
-  const userId = currentUser.userId;
+  const userId = currentUser.id;
 
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     const form = {
       type: type,
       limit: limit,
@@ -66,55 +70,64 @@ const MyProfileScreen = ({navigation, route}: Props) => {
       setPageIndex(0);
       setIsRefreshing(false);
     });
-  };
+  }, [jwtToken, order]);
 
-  const onEndReached = (info: any) => {
-    if (!isEndReached) {
-      setIsEndReached(true);
-      const newPageIndex = pageIndex + 1;
+  const onEndReached = useCallback(
+    (info: any) => {
+      if (!isEndReached) {
+        setIsEndReached(true);
+        const newPageIndex = pageIndex + 1;
 
-      const form = {
-        type: type,
-        limit: limit,
-        offset: newPageIndex * limit,
-        order: order,
-      };
-      setPageIndex((prev: any) => prev + 1);
-      fetchCommunityData(form, (response: any) => {
-        console.log(response.length);
-        setCommunityPostData((prev: any) => {
-          return [...prev, ...response];
+        const form = {
+          type: type,
+          limit: limit,
+          offset: newPageIndex * limit,
+          order: order,
+        };
+        setPageIndex((prev: any) => prev + 1);
+        fetchCommunityData(form, (response: any) => {
+          console.log(response.length);
+          setCommunityPostData((prev: any) => {
+            return [...prev, ...response];
+          });
+          setIsEndReached(false);
         });
-        setIsEndReached(false);
+      }
+    },
+    [isEndReached, pageIndex, order, jwtToken],
+  );
+
+  const fetchCommunityData = useCallback(
+    (form: Form, callback: any) => {
+      GETUserCommunityPosts(jwtToken, userId, form).then((response) => {
+        callback(response);
       });
-    }
-  };
+    },
+    [jwtToken, userId],
+  );
 
-  const fetchCommunityData = (form: Form, callback: any) => {
-    GETUserCommunityPosts(jwtToken, userId, form).then((response) => {
-      callback(response);
-    });
-  };
+  const fetchReviewData = useCallback(
+    (form: Form, callback: any) => {
+      GETUserReviewPosts(jwtToken, userId, form).then((response) => {
+        callback(response);
+      });
+    },
+    [jwtToken, userId],
+  );
 
-  const fetchReviewData = (form: Form, callback: any) => {
-    GETUserReviewPosts(jwtToken, userId, form).then((response) => {
-      callback(response);
-    });
-  };
-
-  const openModal = () => {
+  const openModal = useCallback(() => {
     bottomSheetRef.current && bottomSheetRef.current.open();
-  };
+  }, []);
 
-  const moveToCommunityDetail = (postData: any) => {
+  const moveToCommunityDetail = useCallback((postData: any) => {
     navigation.navigate('CommunityDetailScreen', {data: postData});
-  };
+  }, []);
 
-  const moveToAnotherProfile = () => {
+  const moveToAnotherProfile = useCallback(() => {
     navigation.navigate('AnotherProfileScreen');
-  };
+  }, []);
 
-  const moveToFullImages = (mediaFiles: any, imageUri: string) => {
+  const moveToFullImages = useCallback((mediaFiles: any, imageUri: string) => {
     let index = mediaFiles.findIndex(
       (image: any) => image.img_url === imageUri,
     );
@@ -129,29 +142,59 @@ const MyProfileScreen = ({navigation, route}: Props) => {
       imagesUrl_arr: imageUri_arr,
       imageIndex: index,
     });
-  };
+  }, []);
 
-  const moveToReviewDetail = (
-    reviewId: number,
-    writer: object,
-    createdAt: string,
-    treatmentArray: Array<object>,
-    avgRating: number,
-    treatmentDate: string,
-    imageArray: Array<object>,
-  ) => {
-    console.log('moveToReviewDetail reviewId', reviewId);
+  const moveToReviewDetail = useCallback(
+    (
+      reviewId: number,
+      writer: object,
+      createdAt: string,
+      treatmentArray: Array<object>,
+      avgRating: number,
+      treatmentDate: string,
+      imageArray: Array<object>,
+    ) => {
+      console.log('moveToReviewDetail reviewId', reviewId);
 
-    navigation.navigate('ReviewDetailScreen', {
-      reviewId: reviewId,
-      writer: writer,
-      createdAt: createdAt,
-      treatmentArray: treatmentArray,
-      avgRating: avgRating,
-      treatmentDate: treatmentDate,
-      imageArray: imageArray,
-    });
-  };
+      navigation.navigate('ReviewDetailScreen', {
+        reviewId: reviewId,
+        writer: writer,
+        createdAt: createdAt,
+        treatmentArray: treatmentArray,
+        avgRating: avgRating,
+        treatmentDate: treatmentDate,
+        imageArray: imageArray,
+      });
+    },
+    [],
+  );
+
+  const toggleSocialLike = useCallback(
+    (postId: number, prevState: number, type: string) => {
+      console.log(type);
+      const form = {
+        type,
+        id: postId,
+      };
+      if (prevState) {
+        // true
+        DELETESocialLike(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+            dispatch(allActions.communityActions.toggleLike(form));
+          }
+        });
+      } else {
+        POSTSocialLike(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+            dispatch(allActions.communityActions.toggleLike(form));
+          }
+        });
+      }
+    },
+    [],
+  );
+
+  const toggleSocialScrap = useCallback(() => {}, []);
 
   useEffect(() => {
     const form = {
@@ -168,12 +211,17 @@ const MyProfileScreen = ({navigation, route}: Props) => {
     });
   }, []);
 
-  const renderBottomSheet = (onSwipe: boolean) => (
-    <SlideUpPanel
-      navigation={navigation}
-      closeBottomSheet={() => bottomSheetRef && bottomSheetRef.current.close()}
-      disabled={onSwipe}
-    />
+  const renderBottomSheet = useCallback(
+    (onSwipe: boolean) => (
+      <SlideUpPanel
+        navigation={navigation}
+        closeBottomSheet={() =>
+          bottomSheetRef && bottomSheetRef.current.close()
+        }
+        disabled={onSwipe}
+      />
+    ),
+    [bottomSheetRef],
   );
   return (
     <ContainerView>
@@ -191,6 +239,8 @@ const MyProfileScreen = ({navigation, route}: Props) => {
         moveToCommunityDetail={moveToCommunityDetail}
         moveToReviewDetail={moveToReviewDetail}
         moveToAnotherProfile={moveToAnotherProfile}
+        toggleSocialLike={toggleSocialLike}
+        toggleSocialScrap={toggleSocialScrap}
       />
       <BottomSheet
         ref={bottomSheetRef}

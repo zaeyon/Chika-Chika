@@ -109,26 +109,28 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
     navigation.navigate('AnotherProfileScreen');
   }, []);
 
-  const toggleSocialLike = useCallback((postId: number, prevState: number) => {
-    const form = {
-      type: 'Question',
-      id: postId,
-    };
-    if (prevState) {
-      // true
-      DELETESocialLike(jwtToken, String(postId)).then((response: any) => {
-        if (response.statusText === 'OK') {
-          dispatch(allActions.communityActions.toggleLike(form));
-        }
-      });
-    } else {
-      POSTSocialLike(jwtToken, String(postId)).then((response: any) => {
-        if (response.statusText === 'OK') {
-          dispatch(allActions.communityActions.toggleLike(form));
-        }
-      });
-    }
-  }, []);
+  const toggleSocialLike = useCallback(
+    (postId: number, prevState: number, type: string) => {
+      const form = {
+        type,
+        id: postId,
+      };
+      dispatch(allActions.communityActions.toggleLike(form));
+      if (prevState) {
+        // true
+        DELETESocialLike(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      } else {
+        POSTSocialLike(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      }
+    },
+    [],
+  );
 
   const toggleSocialScrap = useCallback(() => {}, []);
 

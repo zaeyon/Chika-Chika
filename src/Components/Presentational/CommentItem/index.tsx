@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -99,7 +99,7 @@ color: #979797;
 `;
 
 interface Props {
-  userId: string
+  userId: string;
   commentId: number;
   profileImage: string;
   nickname: string;
@@ -108,7 +108,11 @@ interface Props {
   replys: Array<Object>;
   clickReply: (target: string, commentId: number) => void;
   navigation: any;
-  openCommentActionSheet: (userId: string, nickname: string, commentId: number) => void;
+  openCommentActionSheet: (
+    userId: string,
+    nickname: string,
+    commentId: number,
+  ) => void;
 }
 
 const CommentItem = ({
@@ -151,11 +155,13 @@ const CommentItem = ({
   };
 
   const onLongPressComment = () => {
-    openCommentActionSheet(userId, nickname, commentId)
+    openCommentActionSheet(userId, nickname, commentId);
   };
 
   return (
-    <TouchableOpacity onLongPress={() => onLongPressComment()} delayLongPress={300}>
+    <TouchableOpacity
+      onLongPress={() => onLongPressComment()}
+      delayLongPress={300}>
       <Container>
         <TouchableWithoutFeedback onPress={() => moveToUserProfile()}>
           <ProfileImageContainer>
