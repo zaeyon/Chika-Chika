@@ -6,10 +6,8 @@ import {
   KeyboardAvoidingView,
   View,
   Animated,
-  Keyboard,
   LayoutAnimation,
-  Easing,
-  Text,
+  RefreshControl,
   Alert,
   ActivityIndicator,
 } from 'react-native';
@@ -30,6 +28,8 @@ import GETCommunityPostDetail from '~/Routes/Community/postDetail/GETCommunityPo
 import GETCommunityPostComments from '~/Routes/Community/postDetail/GETCommunityPostComments';
 import POSTCommunityPostComment from '~/Routes/Community/postDetail/POSTCommunityPostComment';
 import DELETECommunityPost from '~/Routes/Community/deletePost/DELETECommunityPost';
+import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
+import DELETESocialLike from '~/Routes/Community/social/DELETESocialLike';
 // redux
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
@@ -66,6 +66,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [formattedDescription, setFormattedDescription] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
   const currentUser = useSelector((state: any) => state.currentUser);
   const postList = useSelector((state: any) => {
     if (route.params.type === 'Question') {
@@ -87,7 +88,12 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setPostData(postList.find((item: any) => item.id === route.params.id));
+    const newPostData = postList.find(
+      (item: any) => item.id === route.params.id,
+    );
+    if (newPostData) {
+      setPostData(newPostData);
+    }
   }, [postList]);
 
   useEffect(() => {
@@ -112,6 +118,11 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
           console.log(response);
           if (response.body.statusText === 'Created') {
             console.log('Created!');
+            const form = {
+              type: postData.type,
+              id: postData.id,
+            };
+            dispatch(allActions.communityActions.createComment(form));
             fetchPostComments(postData.id);
           }
         },
@@ -130,17 +141,6 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     [jwtToken],
   );
 
-  const reloadPostDetail = useCallback(
-    (postId: string) => {
-      GETCommunityPostDetail(jwtToken, postId).then((response: any) => {
-        console.log(response);
-        setPostData(response.communityPost);
-        setComments(response.communityComments);
-      });
-    },
-    [jwtToken],
-  );
-
   const onPressEditPost = useCallback(() => {
     navigation.navigate('CommunityPostUploadStackScreen', {
       data: {
@@ -148,7 +148,6 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
         description: deorderDescription(postData.description),
         type: deorderType(postData.type),
       },
-      reloadPostDetail: reloadPostDetail,
     });
   }, [postData]);
 
@@ -197,6 +196,45 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     });
   }, []);
 
+  const toggleSocialLike = useCallback(
+    (postId: number, prevState: number, type: string) => {
+      const form = {
+        type,
+        id: postId,
+      };
+      dispatch(allActions.communityActions.toggleLike(form));
+      if (prevState) {
+        // true
+        DELETESocialLike(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      } else {
+        POSTSocialLike(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      }
+    },
+    [],
+  );
+
+  const toggleSocialScrap = useCallback(() => {}, []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    GETCommunityPostDetail(jwtToken, String(postData.id)).then(
+      (response: any) => {
+        console.log(response);
+        setRefreshing(false);
+        const form = {
+          id: postData.id,
+          data: response,
+        };
+        dispatch(allActions.communityActions.editPost(form));
+      },
+    );
+  }, []);
   if (postData) {
     return (
       <ContainerView>
@@ -216,7 +254,10 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
                 },
               ],
               {useNativeDriver: false},
-            )}>
+            )}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
             <PostInformation
               navigation={navigation}
               onPressEditPost={onPressEditPost}
@@ -240,8 +281,9 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
         <PostBottomBar
           toggleKeyboardAnimation={toggleKeyboardAnimation}
           uploadComment={uploadComment}
-          postLikeNum={postData.postLikeNum}
-          viewerLikeCommunityPost={postData.viewerLikeCommunityPost}
+          toggleSocialLike={toggleSocialLike}
+          toggleSocialScrap={toggleSocialScrap}
+          data={postData}
         />
       </ContainerView>
     );

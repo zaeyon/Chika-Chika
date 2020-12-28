@@ -69,11 +69,11 @@ margin-left: auto;
 const HeaderIconTouchableOpacity = Styled(
   TouchableOpacity as new () => TouchableOpacity,
 )`
-width: 40px;
-height: 40px;
+width: 30px;
+height: 30px;
 margin-left: 16px;
 background: grey;
-border-radius: 8px;
+border-radius: 15px;
 `;
 
 const FloatingView = Styled(ReAnimated.View as new () => ReAnimated.View)`
@@ -173,7 +173,8 @@ interface Props {
   moveToCommunityDetail: any;
   moveToReviewDetail: any;
   moveToAnotherProfile: any;
-  moveToFullImages: any;
+  toggleSocialLike: any;
+  toggleSocialScrap: any;
 }
 
 interface State {
@@ -184,11 +185,11 @@ interface State {
 }
 
 interface User {
-  userId: string;
-  userNickname: string;
-  userProfileImg: string;
   jwtToken: string;
   phoneNumber: string;
+  id: string;
+  nickname: string;
+  profileImage: string;
 }
 
 export default class MyProfile extends React.Component<Props, State> {
@@ -235,10 +236,11 @@ export default class MyProfile extends React.Component<Props, State> {
 
   renderPost = ({item, index}: any) => (
     <PostItem
+      data={item}
       moveToCommunityDetail={this.props.moveToCommunityDetail}
       moveToAnotherProfile={this.props.moveToAnotherProfile}
-      moveToFullImages={this.props.moveToFullImages}
-      data={item}
+      toggleSocialLike={this.props.toggleSocialLike}
+      toggleSocialScrap={this.props.toggleSocialScrap}
     />
   );
 
@@ -276,7 +278,7 @@ export default class MyProfile extends React.Component<Props, State> {
       <ContainerView>
         <HeaderContainerView>
           <HeaderNicknameText>
-            {this.props.currentUser.userNickname}
+            {this.props.currentUser.nickname}
           </HeaderNicknameText>
           <HeaderLocationText>
             {/* {this.props.currentUser.location} */ '광교동'}

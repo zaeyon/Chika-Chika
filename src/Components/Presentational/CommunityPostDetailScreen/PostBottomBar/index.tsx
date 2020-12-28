@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
@@ -62,15 +62,25 @@ line-height: 16px;
 `;
 
 const CommentSubmitText = Styled.Text``;
+
+interface Props {
+  toggleKeyboardAnimation: any;
+  uploadComment: any;
+  toggleSocialLike: any;
+  toggleSocialScrap: any;
+  data: any;
+}
 const PostBottomBar = ({
   toggleKeyboardAnimation,
   uploadComment,
-  postLikeNum,
-  viewerLikeCommunityPost,
-}: any) => {
+  toggleSocialLike,
+  toggleSocialScrap,
+  data,
+}: Props) => {
   const [isFocused, setIsFocused] = useState(false);
   const [commentText, setCommentText] = useState('');
 
+  const {id, type, postLikeNum, viewerLikeCommunityPost} = data;
   useEffect(() => {
     Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
     Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
@@ -82,14 +92,14 @@ const PostBottomBar = ({
     };
   }, []);
 
-  const _keyboardWillShow = (e: any) => {
+  const _keyboardWillShow = useCallback((e: any) => {
     toggleKeyboardAnimation(e.endCoordinates.height - getBottomSpace());
-  };
-  const _keyboardWillHide = (e: any) => {
+  }, []);
+  const _keyboardWillHide = useCallback((e: any) => {
     toggleKeyboardAnimation(-(e.endCoordinates.height - getBottomSpace()));
 
     setIsFocused(false);
-  };
+  }, []);
   return (
     <KeyboardAvoidingView
       behavior="position"
@@ -108,10 +118,13 @@ const PostBottomBar = ({
                 marginRight: 16,
               }}
               onPress={() => {
-                console.log(hp('100%'));
+                toggleSocialLike(id, viewerLikeCommunityPost, type);
               }}>
               <SocialInfoView>
                 <Image
+                  style={{
+                    tintColor: viewerLikeCommunityPost ? '#FF5656' : '#c3c3c3',
+                  }}
                   source={require('~/Assets/Images/Review/ic_like_inline.png')}
                 />
                 <SoicalInfoText>{postLikeNum}</SoicalInfoText>
@@ -166,4 +179,4 @@ const PostBottomBar = ({
   );
 };
 
-export default PostBottomBar;
+export default React.memo(PostBottomBar);

@@ -81,17 +81,14 @@ const CommunityPostList = ({
   toggleSocialLike,
   toggleSocialScrap,
 }: Props) => {
-  useEffect(() => {
-    console.log('list changed', postData);
-  }, [postData]);
-
   const renderPosts = useCallback(({item, index}: any) => {
-    console.log(index);
     return (
       <PostItem
+        data={item}
         moveToCommunityDetail={moveToCommunityDetail}
         moveToAnotherProfile={moveToAnotherProfile}
-        data={item}
+        toggleSocialLike={toggleSocialLike}
+        toggleSocialScrap={toggleSocialScrap}
       />
     );
   }, []);

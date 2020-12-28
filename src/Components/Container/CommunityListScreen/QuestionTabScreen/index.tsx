@@ -20,6 +20,10 @@ import allActions from '~/actions';
 //Local Component
 import CommunityPostList from '~/Components/Presentational/CommunityPostList';
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
+import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
+import DELETESocialLike from '~/Routes/Community/social/DELETESocialLike';
+import DELETECommunityPost from '~/Routes/Community/deletePost/DELETECommunityPost';
+import communityActions from '~/actions/communityActions';
 
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
@@ -105,7 +109,28 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
     navigation.navigate('AnotherProfileScreen');
   }, []);
 
-  const toggleSocialLike = useCallback(() => {}, []);
+  const toggleSocialLike = useCallback(
+    (postId: number, prevState: number, type: string) => {
+      const form = {
+        type,
+        id: postId,
+      };
+      dispatch(allActions.communityActions.toggleLike(form));
+      if (prevState) {
+        // true
+        DELETESocialLike(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      } else {
+        POSTSocialLike(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      }
+    },
+    [],
+  );
 
   const toggleSocialScrap = useCallback(() => {}, []);
 

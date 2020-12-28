@@ -48,11 +48,19 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state.currentUser);
   const jwtToken = currentUser.user.jwtToken;
-  const prevData = useSelector((state: any) =>
-    state.communityPostList.HomePosts.find(
-      (item: any) => item.id === route.params.data.id,
-    ),
-  );
+  const prevData = useSelector((state: any) => {
+    if (route.params.data.type === '질문') {
+      return state.communityPostList.QuestionPosts.find(
+        (item: any) => item.id === route.params.data.id,
+      );
+    } else if (route.params.data.type === '자유') {
+      return state.communityPostList.FreeTalkPosts.find(
+        (item: any) => item.id === route.params.data.id,
+      );
+    } else {
+      return false;
+    }
+  });
   const prevDescription = route.params.data.description;
   const prevType = route.params.data.type;
   const mode = prevData ? 'edit' : 'create';
@@ -224,11 +232,9 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
             data: response.body.updateCommunityPost,
           };
           dispatch(allActions.communityActions.editPost(form));
-          route.params.reloadPostDetail(
-            String(response.body.updateCommunityPost.id),
-          );
           navigation.navigate('CommunityDetailScreen', {
             id: prevData.id,
+            type: formattedCategory,
           });
         },
       );

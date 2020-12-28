@@ -129,14 +129,8 @@ function AuthStackScreen() {
           },
         }}
       />
-      <AuthStack.Screen 
-        name="LoginScreen" 
-        component={LoginScreen}
-      />
-      <AuthStack.Screen
-        name="BasicInputScreen" 
-        component={BasicInputScreen} 
-      />
+      <AuthStack.Screen name="LoginScreen" component={LoginScreen} />
+      <AuthStack.Screen name="BasicInputScreen" component={BasicInputScreen} />
       <AuthStack.Screen
         name="ProfileInputScreen"
         component={ProfileInputScreen}
@@ -174,7 +168,8 @@ function ReviewStackScreen() {
       />
       <ReviewStack.Screen
         name="DentalClinicStack"
-        component={DentalClinicStackScreen}/>
+        component={DentalClinicStackScreen}
+      />
     </ReviewStack.Navigator>
   );
 }
@@ -212,27 +207,27 @@ function HomeStackScreen() {
 
 function NearDentalMapStackScreen() {
   return (
-  <NearDentalMapStack.Navigator
-  headerMode="none">
-    <NearDentalMapStack.Screen
-      name="NearDentalMap"
-      component={NearDentalMap}
-    />
-    <NearDentalMapStack.Screen
-      name="DentalClinicListScreen"
-      component={DentalClinicListScreen}
-      options={{
-        transitionSpec: {
-          open: staticConfig,
-          close: staticConfig,
-        },
-      }}
-    />
-    <NearDentalMapStack.Screen
-      name="DentalClinicStack"
-      component={DentalClinicStackScreen}/>
-  </NearDentalMapStack.Navigator>
-);
+    <NearDentalMapStack.Navigator headerMode="none">
+      <NearDentalMapStack.Screen
+        name="NearDentalMap"
+        component={NearDentalMap}
+      />
+      <NearDentalMapStack.Screen
+        name="DentalClinicListScreen"
+        component={DentalClinicListScreen}
+        options={{
+          transitionSpec: {
+            open: staticConfig,
+            close: staticConfig,
+          },
+        }}
+      />
+      <NearDentalMapStack.Screen
+        name="DentalClinicStack"
+        component={DentalClinicStackScreen}
+      />
+    </NearDentalMapStack.Navigator>
+  );
 }
 
 function DentalClinicStackScreen() {
@@ -370,7 +365,8 @@ function MyProfileStackScreen() {
       />
       <MyProfileStack.Screen
         name="PhoneVerifyScreen"
-        component={PhoneVerifyScreen}/>
+        component={PhoneVerifyScreen}
+      />
       <MyProfileStack.Screen
         name="CommunityDetailScreen"
         component={CommunityDetailScreen}
@@ -409,7 +405,6 @@ function CommunityPostUploadStackScreen({route}: any) {
         component={CommunityPostUploadScreen}
         initialParams={{
           data: route.params && route.params.data,
-          reloadPostDetail: route.params && route.params.reloadPostDetail,
         }}
       />
       <CommunityPostUploadStack.Screen
@@ -455,6 +450,26 @@ function CommunityStackScreen() {
       <CommunityStack.Screen
         name="KeywordSearchStackScreen"
         component={KeywordSearchStackScreen}
+        options={() => ({
+          gestureEnabled: false,
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {duration: 150},
+            },
+            close: {
+              animation: 'timing',
+              config: {duration: 150},
+            },
+          },
+          cardStyleInterpolator: ({current: {progress}}) => {
+            return {
+              cardStyle: {
+                opacity: progress,
+              },
+            };
+          },
+        })}
       />
     </CommunityStack.Navigator>
   );
@@ -654,11 +669,10 @@ const Navigator = () => {
 
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
-    console.log("getFcmToken fcmToken", fcmToken);
-  }
+    console.log('getFcmToken fcmToken', fcmToken);
+  };
 
   useEffect(() => {
-    
     getFcmToken();
     getUserInfo()
       .then((response) => {
