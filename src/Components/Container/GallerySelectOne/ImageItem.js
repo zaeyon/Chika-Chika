@@ -92,11 +92,18 @@ class ImageItem extends Component {
     this.props.onClick(item);
     console.log('item @@:', item);
     console.log("this.props.requestType", this.props.requestType);
-    
 
+    if(this.props.requestType === "reviewImage") {
+      this.props.navigation.navigate("ContentPostScreen", {
+        selectedImage: item,
+        changeExistingImage: true,
+      })
+
+    } else {
       this.props.navigation.navigate('TakenPictureScreen', {
         selectedImage: item
       });
+    }
     
   }
 

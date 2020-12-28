@@ -106,9 +106,9 @@ interface Props {
   description: string;
   createdDate: string;
   replys: Array<Object>;
-  clickToReply: (target: string, commentId: number) => void;
+  clickReply: (target: string, commentId: number) => void;
   navigation: any;
-  openCommentModal: (nickname: string, commentId: number) => void;
+  openCommentActionSheet: (userId: string, nickname: string, commentId: number) => void;
 }
 
 const CommentItem = ({
@@ -119,9 +119,8 @@ const CommentItem = ({
   description,
   createdDate,
   replys,
-  clickToReply,
-  navigation,
-  openCommentModal,
+  clickReply,
+  openCommentActionSheet,
 }: Props) => {
   const currentUser = useSelector((state: any) => state.currentUser);
 
@@ -152,11 +151,11 @@ const CommentItem = ({
   };
 
   const onLongPressComment = () => {
-    //openCommentModal(nickname, commentId)
+    openCommentActionSheet(userId, nickname, commentId)
   };
 
   return (
-    <TouchableOpacity onLongPress={() => onLongPressComment()}>
+    <TouchableOpacity onLongPress={() => onLongPressComment()} delayLongPress={300}>
       <Container>
         <TouchableWithoutFeedback onPress={() => moveToUserProfile()}>
           <ProfileImageContainer>
@@ -170,7 +169,7 @@ const CommentItem = ({
           <CommentDescripText>{description}</CommentDescripText>
           <FooterContainer>
             <TouchableWithoutFeedback
-              onPress={() => clickToReply(nickname, commentId)}>
+              onPress={() => clickReply(nickname, commentId)}>
               <ReplyText>답글달기</ReplyText>
             </TouchableWithoutFeedback>
             <CreateAtText>{getDateFormat(createdDate)}</CreateAtText>

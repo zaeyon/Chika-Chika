@@ -180,11 +180,13 @@ justify-content: center;
 
 interface Props {
     reviewList: Array<ReviewData>,
-    moveToReviewDetail: (reviewId: number, writer: object, createdAt: string, treatmentArray: Array<object>, avgRating: number, treatmentDate: string, imageArray: Array<object>) => void,
     refreshingReviewList: boolean,
     onRefreshReviewList: () => void,
     onEndReachedReviewList: () => void,
     loadingMoreReview: boolean,
+    moveToWriterProfile: (userId: number) => void,
+    moveToReviewDetail: (reviewId: number, writer: object, createdAt: string, treatmentArray: Array<object>, ratingObj: Object, treatmentDate: string, imageArray: Array<object>, isCurUserLike: boolean, likeCount: number, commentCount: number, isCurUserScrap: boolean, dentalObj: object) => void,
+    moveToDentalDetail: (dentalId: number) => void,
 }
 
 interface ReviewData {
@@ -198,7 +200,7 @@ interface ReviewData {
     dentalClinicId: Number,
     dental_clinic: Object,
     hits: Number,
-    concsulationDate: String,
+    treatmentDate: String,
     reviewCommentNum: Number,
     reivewLikeNum: Number,
     reviewViewNum: Number,
@@ -210,7 +212,7 @@ interface ReviewData {
     viewerLikedReview: Number,
 }
 
-const ReviewList = ({reviewList, moveToReviewDetail, refreshingReviewList, onRefreshReviewList, onEndReachedReviewList, loadingMoreReview}: Props) => {
+const ReviewList = ({reviewList, moveToReviewDetail, refreshingReviewList, onRefreshReviewList, onEndReachedReviewList, loadingMoreReview, moveToWriterProfile, moveToDentalDetail}: Props) => {
     const currentUser = useSelector((state: any) => state.currentUser);
     const jwtToken = currentUser.user.jwtToken;
 
@@ -236,7 +238,31 @@ const ReviewList = ({reviewList, moveToReviewDetail, refreshingReviewList, onRef
 
     const renderReviewItem = ({item, index}: any) => {
 
-        const avgRating = Number(((Number(item.starRate_cost) + Number(item.starRate_service) + Number(item.starRate_treatment))/3).toFixed(1));
+        const isCurUserLikeProp = item.viewerLikedReview === 1 ? true : false
+        const isCurUserScrapProp = item.viewerScrapedReview === 1 ? true : false
+        const likeArray = new Array();
+        const scrapArray = new Array();
+  
+        if(item.viewerLikedReview === 1) {
+          likeArray.push({
+            nickname: currentUser.user.nickname
+          })       
+        }
+
+        if(item.viewerScrapedReview === 1) {
+            scrapArray.push({
+                nickname: currentUser.user.nickname
+            })
+        }
+
+
+
+        const ratingObj = {
+            avgRating: Number(((Number(item.starRate_cost) + Number(item.starRate_service) + Number(item.starRate_treatment))/3).toFixed(1)),
+            priceRating: Number(item.starRate_cost),
+            serviceRating: Number(item.starRate_service),
+            treatRating: Number(item.starRate_treatment),
+        }
 
         const writer = {
             nickname: item.user.nickname,
@@ -244,23 +270,53 @@ const ReviewList = ({reviewList, moveToReviewDetail, refreshingReviewList, onRef
             userId: item.userId
         }
 
+        let elapsedTimeText = ""
+        let visibleElapsedTime = false
+
+        const elapsedMin = item['createdDiff(second)'] / 60
+        const elapsedHour = item['createdDiff(second)'] / 3600
+        const elapsedDay = item['createdDiff(second)'] / 86400
+        
+        if(elapsedMin < 1) {
+            elapsedTimeText = "방금 전"
+            visibleElapsedTime = true
+        } else if(1 <= elapsedMin && elapsedHour < 1) {
+            elapsedTimeText = `${Math.floor(elapsedMin)}분 전`
+            visibleElapsedTime = true
+        } else if(1 <= elapsedHour && elapsedDay < 1) {
+            elapsedTimeText = `${Math.floor(elapsedHour)}시간 전`
+            visibleElapsedTime = true
+        } else if(elapsedDay >= 1) {
+            visibleElapsedTime = false
+        }
+
         return (
             <ReviewItem
             reviewId={item.id}
             writer={writer}
             createdAt={item.createdAt}
+            elapsedTimeText={elapsedTimeText}
+            visibleElapsedTime={visibleElapsedTime}
             treatmentArray={item.TreatmentItems}
-            treatmentDate={item.concsulationDate}
-            avgRating={avgRating}
+            treatmentDate={item.treatmentDate ? item.treatmentDate : ""}
+            dentalObj={item.dental_clinic}
+            ratingObj={ratingObj}
             viewCount={item.reviewViewNum}
             treatInfoCount={item.getInfo}
-            likeCount={item.reviewLikeNum}
+            likeCountProp={item.reviewLikeNum}
             commentCount={item.reviewCommentsNum}
             imageArray={item.review_contents}
             descriptions={item.reviewDescriptions ? item.reviewDescriptions : ""}
-            moveToReviewDetail={moveToReviewDetail}/>
+            moveToReviewDetail={moveToReviewDetail}
+            moveToWriterProfile={moveToWriterProfile}
+            isCurUserLikeProp={isCurUserLikeProp}
+            isCurUserScrapProp={isCurUserScrapProp}
+            likeArray={likeArray}
+            scrapArray={scrapArray}
+            refreshingReviewList={refreshingReviewList}
+            moveToDentalDetail={moveToDentalDetail}/>
             )
-        }
+      }
 
     return (
         <Container>

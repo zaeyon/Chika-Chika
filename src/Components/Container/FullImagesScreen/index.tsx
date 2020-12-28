@@ -6,6 +6,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import ImageViewer from 'react-native-image-zoom-viewer';
+
 const Container = Styled.SafeAreaView`
  flex: 1;
  background-color: #000000;
@@ -50,19 +52,14 @@ interface Props {
 
 
 const FullImagesScreen = ({route, navigation}: Props) => {
-  const [images, setImages] = useState([
-    'https://source.unsplash.com/1024x768/?nature',
-    'https://source.unsplash.com/1024x768/?water',
-    'https://source.unsplash.com/1024x768/?girl',
-    'https://source.unsplash.com/1024x768/?tree',
-  ]);
-  const {imagesUrl_arr} = route.params;
+  const {imageArray} = route.params;
   const {imageIndex} = route.params;
-  //  const newUrl_arr = imagesUrl_arr.slice(0, imagesUrl_arr.length - 1);
-  //  console.log('newUrl_arr : ', newUrl_arr);
-  console.log('imageIndex');
+
+  console.log('imageIndex', imageIndex);
+  console.log("imageArray", imageArray);
 
   useEffect(() => {
+
     const backAction = () => {
       navigation.goBack();
       return true;
@@ -88,7 +85,7 @@ const FullImagesScreen = ({route, navigation}: Props) => {
       </HeaderContainer>
       <ImagesContainer>
       <SliderBox
-        images={imagesUrl_arr}
+        images={imageArray}
         disableOnPress={true}
         resizeMode="contain"
         sliderBoxHeight={hp('88%')}
@@ -96,6 +93,7 @@ const FullImagesScreen = ({route, navigation}: Props) => {
         dotColor="#267DFF"
         inactiveDotColor="#cccccc"
       />
+    
       </ImagesContainer>
     </Container>
   );

@@ -181,7 +181,7 @@
      const [changeImageArray, setChangeImageArray] = useState<boolean>(false);
      const [remainCount, setRemainCount] = useState<number>(sortedImageArray.length-6);
 
-     console.log("PreviewImages", sortedImageArray);
+    //console.log("PreviewImages", sortedImageArray);
 
     // 치료후 사진을 리뷰 이미지 배열의 앞 순서로 정렬하기
     /*

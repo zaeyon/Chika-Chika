@@ -10,10 +10,11 @@ interface params {
     formatedTreatmentArray: Array<object>,
     dentalClinicId: number,
     formatedParagraphArray: Array<object>,
-    totalPrice: number
+    totalPrice: number,
+    treatmentDate: string,
 } 
 
-const POSTReviewUpload = ({jwtToken, starRate_cost, starRate_treatment, starRate_service, certified_bill, formatedParagraphArray, dentalClinicId, formatedTreatmentArray, totalPrice}: params) => {
+const POSTReviewUpload = ({jwtToken, starRate_cost, starRate_treatment, starRate_service, certified_bill, formatedParagraphArray, dentalClinicId, formatedTreatmentArray, totalPrice, treatmentDate}: params) => {
     console.log("serverConfig.jwtToken", serverConfig.jwtToken);
     const uri = serverConfig.baseUri + "/api/v1/reviews"
 
@@ -24,6 +25,8 @@ const POSTReviewUpload = ({jwtToken, starRate_cost, starRate_treatment, starRate
     console.log("POSTReviewUpload dentalClinicId", dentalClinicId);
     console.log("POSTReviewUpload paragraphs", formatedParagraphArray);
     console.log("POSTReviewUpload totalCost", totalPrice);
+    console.log("POSTReviewUpload treatmentDate", treatmentDate);
+
 
     const body = `{
         "starRate_cost":${starRate_cost},
@@ -32,7 +35,8 @@ const POSTReviewUpload = ({jwtToken, starRate_cost, starRate_treatment, starRate
         "certified_bill":${certified_bill},
         "treatments":${JSON.stringify(formatedTreatmentArray)},
         "dentalClinicId":${dentalClinicId},
-        "totalCost":${totalPrice}
+        "totalCost":${totalPrice},
+        "treatmentDate":"${treatmentDate}"
     }`
 
     const stringfiedPara = JSON.stringify(formatedParagraphArray); 

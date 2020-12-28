@@ -1,12 +1,14 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, createRef} from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback, FlatList, ScrollView, KeyboardAvoidingView, Keyboard, View, ActivityIndicator, RefreshControl, Alert} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp
 } from 'react-native-responsive-screen';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import allActions from '~/actions';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import ActionSheet from 'react-native-actionsheet';
 
 import ReviewInformation from '~/Components/Presentational/ReviewDetailScreen/ReviewInformation';
 import ReviewContent from '~/Components/Presentational/ReviewDetailScreen/ReviewContent';
@@ -18,7 +20,13 @@ import DetailMetaInfo from '~/Components/Presentational/ReviewDetailScreen/Detai
 // Route
 import GETReviewDetail from '~/Routes/Review/GETReviewDetail';
 import POSTComment from '~/Routes/Comment/POSTComment';
+import DELETEComment from '~/Routes/Comment/DELETEComment';
+import POSTReply from '~/Routes/Comment/POSTReply';
 import DELETEReview from '~/Routes/Review/DELETEReview';
+import POSTReviewLike from '~/Routes/Review/POSTReviewLike';
+import DELETEReviewLike from '~/Routes/Review/DELETEReviewLike';
+import POSTReviewScrap from '~/Routes/Review/POSTReviewScrap';
+import DELETEReviewScrap from '~/Routes/Review/DELETEReviewScrap';
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -248,25 +256,28 @@ interface WriterObj {
 interface DentalObj {
     name: string,
     address: string,
-    dentalId: any,
+    id: any,
+}
+
+interface RatingObj {
+    avgRating: number,
+    serviceRating: number,
+    treatRating: number,
+    priceRating: number,
 }
 
 
-
+let selectedCommentId: number;
 
 const ReviewDetailScreen = ({navigation, route}: Props) => {
     const [paragraphArray, setParagraphArray] = useState<Array<any>>([]);
-    const [dentalInfo, setDentalInfo] = useState<DentalObj>({
-        name: "",
-        address: "",
-        id: null,
-    });
+    const [dentalInfo, setDentalInfo] = useState<DentalObj>(route.params?.dentalObj);
 
-    const [reviewDetailData, setReviewDetailData] = useState<any>();
-    const [reviewIndicator, setReviewIndicator] = useState<object>({
-        likeCount: null,
-        viewCount: null
-    })
+    const [isCurUserLike, setIsCurUserLike] = useState<boolean>(route.params?.isCurUserLike);
+    const [isCurUserScrap, setIsCurUserScrap] = useState<boolean>(route.params?.isCurUserScrap);
+    const [likeCount, setLikeCount] = useState<number>(route.params?.likeCount);
+    const [commentCount, setCommentCount] = useState<number>(route.params?.commentCount);
+    const [viewCount, setViewCount] = useState<number>(0);
 
     const [commentArray, setCommentArray] = useState<Array<any>>([]);
     const [isCommentInputFocused, setIsCommentInputFocused] = useState<boolean>(false);
@@ -278,27 +289,31 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
     const [treatmentDate, setTreatmentDate] = useState<any>({});
     const [treatmentList, setTreatmentList] = useState<Array<object>>([]);
-    const [rating, setRating] = useState<Object>({});
+    const [rating, setRating] = useState<RatingObj>(route.params?.ratingObj);
+    const [totalPrice, setTotalPrice] = useState<number>();
     const [detailPriceList, setDetailPriceList] = useState<Array<object>>([]);
-    const [paragraphDisplay, setParagraphDisplay] = useState<Array<object>>([]);
 
+    // 화면에 표시되는 정보
+    const [paragraphArrayDisplay, setParagraphArrayDisplay] = useState<Array<any>>([]);
+    const [treatmentArrayDisplay, setTreatmentArrayDisplay] = useState<Array<any>>(route.params?.treatmentArray);
+    const [treatmentDateDisplay, setTreatmentDateDisplay] = useState<String>(route.params?.treatmentDate);
+    
     const scrollViewRef = useRef<any>();
     const reviewScrollViewRef = useRef<any>(null);
-    const currentUser = useSelector((state:any) => state.currentUser)
+    const commentActionSheetRef = createRef<any>();
+
+    const dispatch = useDispatch();
+    const currentUser = useSelector((state:any) => state.currentUser);
+    const reviewList = useSelector((state: any) => state.reviewList);
     const jwtToken = currentUser.user.jwtToken;
 
     const reviewId = route.params?.reviewId;
     const writerInfo = route.params?.writer;
 
-    const treatmentArray = route.params?.treatmentArray;
     const avgRating = route.params?.avgRating;
     const createdDate = route.params?.createdAt;
     const imageArray = route.params?.imageArray;
     const isOwnReview = (route.params?.writer.userId == currentUser.user.id);
-
-
-    // 화면에 표시되는 정보
-    const treatmentDateDisplay = route.params?.treatmentDate;
 
 
 
@@ -307,12 +322,38 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     console.log("route.params?.writer", route.params?.writer);
     console.log("route.params?.writer.userId", route.params?.writer.userId);
     console.log("currentUser.user.id", currentUser.user.id);
+    console.log("route.params?.ratingObj", route.params?.ratingObj);
+    console.log("route.params?.dentalObj", route.params?.dentalObj);
+    console.log("route.params?.treatmentDate", route.params.treatmentDate);
 
     useEffect(() => {
         setLoadingReviewDetail(true);
         getReviewDetail();
 
     }, [])
+
+    useEffect(() => {
+        console.log("리뷰수정 취소", route.params?.isCancelRevise);
+        if(route.params?.isCancelRevise) {
+            reviewScrollViewRef.current.scrollTo({x: 0, y: 0, animated: false});
+            route.params.isCancelRevise = !route.params.isCancelRevise
+        }
+
+    }, [route.params?.isCancelRevise])
+    
+
+    useEffect(() => {
+        if(route.params?.isRevised) {
+            route.params.isRevised = !route.params.isRevised;
+            reviewScrollViewRef.current.scrollTo({x: 0, y: 0, animated: false});
+            console.log("route.params?.revisedParagraphArray", route.params.paragraphArray);
+            setParagraphArrayDisplay(route.params.paragraphArray);
+            setTreatmentArrayDisplay(route.params.treatmentArray);
+            setTreatmentDateDisplay(route.params.treatmentDate);
+            setRating(route.params.ratingObj)
+            setDentalInfo(route.params.dentalObj);
+        }
+    }, [route.params?.isrRevised, route.params?.paragraphArray, route.params?.treatmentArray, route.params?.ratingObj, route.params?.dentalObj])
 
     
     useEffect(() => {
@@ -334,14 +375,22 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
     const _keyboardDidShow = (e: any) => {
         //setPaddingBottom(e.endCoordinates.height);
-        reviewScrollViewRef.current.scrollToEnd({animated: true})
+        if(route.params?.isCancelRevise == true) {
+            reviewScrollViewRef.current.scrollTo({x: 0, y: 0, animated: false});
+        } else {
+            reviewScrollViewRef.current.scrollToEnd({animated: true})
+        }
     }
 
     const _keyboardWillHide = () => {
         setPaddingBottom(hp('8%'));
         setIsCommentInputFocused(false);
         setTimeout(() => {
-            reviewScrollViewRef.current.scrollToEnd({animated: true})
+            if(route.params?.isCancelRevise == true) {
+                reviewScrollViewRef.current.scrollTo({x: 0, y: 0, animated: false});
+            } else {
+                reviewScrollViewRef.current.scrollToEnd({animated: true})
+            }
         }, 0)
     }
 
@@ -350,15 +399,15 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         .then((response: any) => {
             console.log("GETReviewDetail response", response)
             console.log("GETReviewDetail response.reviewBody.TreatmentItems", response.reviewBody.TreatmentItems);
+            console.log("GETReviewDetail response.reviewBody.review_contents", response.reviewBody.review_contents);
+            setTotalPrice(response.reviewBody.totalCost);
             setLoadingReviewDetail(false);
             setRefreshingReviewDetail(false);
 
-
-            
             // 현재 사용자의 리뷰일때 리뷰 수정용 데이터 변환 작업
             if(isOwnReview) {
-                const tmpTreatmentDate = new Date(response.reviewBody.concsulationDate)
-                const splitedTreatmentDate = response.reviewBody.concsulationDate.split("-");
+                const tmpTreatmentDate = new Date(response.reviewBody.treatmentDate)
+                const splitedTreatmentDate = response.reviewBody.treatmentDate.split("-");
                 const tmpDisplayTreatDate = splitedTreatmentDate[0] + "년 " + splitedTreatmentDate[1] + "월 " + splitedTreatmentDate[2] + "일"
     
                 const treatmentObj = {
@@ -368,59 +417,23 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
                 const tmpTreatmentList = response.reviewBody.TreatmentItems.map((item: any, index: number) => {
                     let tmpTreatmentObj;
-                    if(item.review_treatment_item !== null) {
+                    if(item.review_treatment_item.cost !== null) {
                         tmpTreatmentObj = {
                             name: item.name,
-                            price: item.review_treatment_item.price,
-                            displayPrice: Number(item.review_treatment_item.price).toLocaleString + "원"
+                            price: item.review_treatment_item.cost,
+                            displayPrice: Number(item.review_treatment_item.cost).toLocaleString() + "원",
+                            id: item.id
                         }
                     } else {
                         tmpTreatmentObj = {
-                            name: item.name
+                            name: item.name,
+                            id: item.id
                         }
                     }
                     
                     return tmpTreatmentObj;
                 })
-
-                const tmpRating = {
-                    avgRating: ((response.reviewBody.starRate_cost + response.reviewBody.starRate_treatment + response.reviewBody.starRate_service)/3).toFixed(1),
-                    priceRating: response.reviewBody.starRate_cost,
-                    treatRating: response.reviewBody.starRate_treatment,
-                    serviceRating: response.reviewBody.starRate_service
-                }
-
-                const tmpParagraphArray = response.reviewBody.review_contents.map((item: any, index: number) => {
-                    let paraObj = new Object();
-    
-                    if(item.img_url) {
-                        paraObj = {
-                            id: item.id,
-                            index: item.index,
-                            image: {
-                                uri: item.img_url,
-                                name: item.img_name,
-                                size: item.img_size,
-                                mimeType: item.mime_type,
-                            },
-                            description: item.description,
-                            order: item.img_before_after
-                        }
-    
-                        return paraObj
-    
-                    } else {
-                        paraObj = {
-                            id: item.id,
-                            index: item.index,
-                            description: item.description,
-                        }
-                    }
-    
-                    return paraObj
-                })
-    
-
+                
                 const tmpDetailPriceList = new Array();
 
                 response.reviewBody.TreatmentItems.forEach((item: any, index: number) => {
@@ -430,13 +443,43 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
                 })
 
                 setTimeout(() => {
-                    setParagraphArray(tmpParagraphArray);
                     setDetailPriceList(tmpDetailPriceList);
                     setTreatmentList(tmpTreatmentList);
                     setTreatmentDate(treatmentObj);
-                    setRating(tmpRating);
+                    //setRating(tmpRating);
                 }, 10)
             }
+
+            const tmpParagraphArray = response.reviewBody.review_contents.map((item: any, index: number) => {
+                let paraObj = new Object();
+
+                if(item.img_url) {
+                    paraObj = {
+                        id: item.id,
+                        index: item.index,
+                        image: {
+                            uri: item.img_url,
+                            name: item.img_name,
+                            size: item.img_size,
+                            mimeType: item.mime_type,
+                        },
+                        description: item.description,
+                        order: item.img_before_after,
+                        isPreExis: true,
+                    }
+
+                    return paraObj
+
+                } else {
+                    paraObj = {
+                        id: item.id,
+                        index: item.index,
+                        description: item.description,
+                    }
+                }
+
+                return paraObj
+            })
 
             // 글 작성자 정보
             const userObj = {
@@ -451,16 +494,19 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
                 id: response.reviewBody.dentalClinicId,
             }
 
-            const indicatorObj = {
-                likeCount: response.reviewLikeNum,
-                viewCount: response.reviewViewerNum,
+            if(response.viewerLikeReview) {
+                setIsCurUserLike(true)
+            } else {
+                setIsCurUserLike(false)
             }
 
             //setWriterInfo(tmpUserObj)
-            setParagraphDisplay(response.reviewBody.review_contents)
+            setLikeCount(response.reviewLikeNum);
+            setViewCount(response.reviewViewerNum);
+            setParagraphArray(tmpParagraphArray);
+            setParagraphArrayDisplay(response.reviewBody.review_contents);
             setDentalInfo(dentalObj);
             setCommentArray(response.reviewComments);
-            setReviewIndicator(indicatorObj);
         })
         .catch((error) => {
             console.log("GETReviewDetail error", error);
@@ -469,17 +515,20 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     }
 
     const moveToFullImages = (imageUri:string) => {
+    
+    console.log("moveToFullImages imageArray", imageArray);
 
     var index = imageArray.findIndex((image: any) => image.img_url === imageUri);
 
-    var imageUri_arr = imageArray.map((image: any) => {
-      return image.img_url
+    var tmpImageArray = imageArray.map((image: any) => {
+    
+        return image.img_url
     })
 
     console.log("선택한 사진의 mediaFiles index", index);
 
         navigation.navigate("FullImagesScreen", {
-            imagesUrl_arr : imageUri_arr,
+            imageArray : tmpImageArray,
             imageIndex: index,
         })
     }
@@ -490,6 +539,143 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
     const clickCommentIcon = () => {
         setIsCommentInputFocused(true)
+    }
+
+    
+
+    const onRefreshReviewDetail = () => {
+        setRefreshingReviewDetail(true);
+        getReviewDetail();   
+    }
+
+    const clickReviseReview = () => {
+        console.log("dentalInfo", dentalInfo);
+        const submitParagraphArray = paragraphArray;
+
+        navigation.navigate("ReviewUploadStack", {
+            screen: "ContentPostScreen",
+            params: {
+                requestType: "revise",
+                paragraphArray: submitParagraphArray, 
+                dentalClinic: {
+                    name: dentalInfo.name,
+                    address: dentalInfo.address,
+                    id: dentalInfo.id,
+                },
+                treatDate: {
+                    displayTreatDate: treatmentDate.displayTreatDate,
+                    treatDate: treatmentDate.treatDate
+                },
+                selectedTreatList: treatmentList,
+                rating: {
+                    avgRating: rating.avgRating,
+                    priceRating: rating.priceRating,
+                    serviceRating: rating.serviceRating,
+                    treatRating: rating.treatRating,
+                },
+                detailPriceList: detailPriceList,
+                reviewId: reviewId,
+                totalPrice: totalPrice,
+            }
+        });
+    }
+
+    const clickDeleteReview = () => {
+        Alert.alert("정말 리뷰를 삭제하실건가요?", '', [
+            {
+                text: "확인",
+                onPress: () => deleteReview()
+            },
+            {
+                text: '취소',
+                onPress: () => 0,
+                style: 'cancel',
+            }
+        ])
+    }
+
+    const deleteReview = () => {
+        DELETEReview({jwtToken, reviewId})
+        .then((response) => {
+            console.log("DELTEReview response", response);
+            const tmpReviewList = reviewList.mainReviewList;
+            const deleteIndex = tmpReviewList.findIndex((item: any, index: number) => {
+                if(item.id === reviewId) {
+                    return true
+                }
+            })
+
+            console.log("deleteIndex", deleteIndex)
+            tmpReviewList.splice(deleteIndex, 1);
+
+            dispatch(allActions.reviewListAction.setMainReviewList(tmpReviewList));
+            navigation.goBack();
+        })
+        .catch((error) => {
+            console.log("DELETEReview error", error);
+        })
+    }
+
+    const clickReviewLike = () => {
+        if(isCurUserLike) {
+            deleteReviewLike()
+        } else {
+            postReviewLike()
+        }
+    }
+
+    const postReviewLike = () => {
+        setIsCurUserLike(true);
+        setLikeCount((prevState) => prevState + 1)
+        POSTReviewLike({jwtToken, reviewId})
+        .then((response) => {
+            console.log("POSTReviewLike response", response);
+        })
+        .catch((error) => {
+            console.log("POSTReviewLike error", error);
+        })
+    }
+
+    const deleteReviewLike = () => {
+        setIsCurUserLike(false);
+        setLikeCount((prevState) => prevState - 1)
+        DELETEReviewLike({jwtToken, reviewId})
+        .then((response) => {
+            console.log("DELETEReviewLike response", response);
+        })
+        .catch((error) => {
+            console.log("DELETEReviewLike error", error);
+        })
+    }
+
+    const clickReviewScrap = () => {
+        if(isCurUserScrap) {
+            deleteReviewScrap()
+        } else {
+            postReviewScrap()
+        }
+    }
+
+    const postReviewScrap = () => {
+        setIsCurUserScrap(true);
+        POSTReviewScrap({jwtToken, reviewId})
+        .then((response) => {
+            console.log("POSTReviewScrap response", response);
+        })
+        .catch((error) => {
+            console.log("POSTReviewScrap error", error);
+        })
+    }
+
+    const deleteReviewScrap = () => {
+        setIsCurUserScrap(false);
+        DELETEReviewScrap({jwtToken, reviewId})
+        .then((response) => {
+            console.log("DELETEReviewScrap response", response)
+        })
+        .catch((error) => {
+            console.log("DELETEReviewScrap error", error);
+        })
     }
 
     const postReviewComment = (description: string) => {
@@ -518,69 +704,56 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
             })
         .catch((error) => {
             console.log("POSTReviewComment error", error);
+            setLoadingCommentPost(false);
         })
     }
 
-    const onRefreshReviewDetail = () => {
-        setRefreshingReviewDetail(true);
-        getReviewDetail();   
-    }
+    const deleteReviewComment = () => {
+        setLoadingCommentPost(true);
+        const commentId = selectedCommentId;
+        const type = "review";
 
-    const clickReviseReview = () => {
-        console.log("dentalInfo", dentalInfo);
-        const submitParagraphArray = paragraphArray;
-
-        navigation.navigate("ReviewUploadStack", {
-            screen: "ReviewContentScreen",
-            params: {
-                requestType: "revise",
-                paragraphArray: submitParagraphArray, 
-                dentalClinic: {
-                    name: dentalInfo.name,
-                    address: dentalInfo.address,
-                    id: dentalInfo.id,
-                },
-                treatDate: {
-                    displayTreatDate: treatmentDate.displayTreatDate,
-                    treatDate: treatmentDate.treatDate
-                },
-                selectedTreatList: treatmentList,
-                rating: {
-                    avgRating: rating.avgRating,
-                    priceRating: rating.priceRating,
-                    serviceRating: rating.serviceRating,
-                    treatRating: rating.treatRating,
-                },
-                detailPriceList: detailPriceList,
-            }
-        });
-
-    }
-
-    const clickDeleteReview = () => {
-        Alert.alert("정말 리뷰를 삭제하실건가요?", '', [
-            {
-                text: "확인",
-                onPress: () => deleteReview()
-            },
-            {
-                text: '취소',
-                onPress: () => 0,
-                style: 'cancel',
-            }
-        ])
-    }
-
-    const deleteReview = () => {
-        DELETEReview({jwtToken, reviewId})
+        DELETEComment({jwtToken, commentId, type})
         .then((response) => {
-            console.log("DELTEReview response", response);
+            console.log("DELETEComment response", response);
+            GETReviewDetail(jwtToken, reviewId)
+            .then((response: any) => {
+                console.log("GETReviewDetail response", response)
+                console.log("GETReviewDetail response.reviewComments", response.reviewComments)
+                setLoadingCommentPost(false);
+                setCommentArray(response.reviewComments);
 
-            navigation.goBack();
-        })
+                setTimeout(() => {
+                    reviewScrollViewRef.current.scrollToEnd({animated: true})
+                }, 10)
+            })
+            .catch((error) => {
+                console.log("GETReviewDetail error", error);
+                setLoadingCommentPost(false);
+            })
+            })
         .catch((error) => {
-            console.log("DELETEReview error", error);
+            console.log("DELETEComment error", error);
+            setLoadingCommentPost(false);
         })
+    }
+
+    const openCommentActionSheet = (userId: string, nickname: string, commentId: number) => {
+        selectedCommentId = commentId;
+
+        if(userId === currentUser.user.id) {
+            commentActionSheetRef.current.show()
+        }
+    }
+
+    const onPressCommentActionSheet = (index: number) => {
+        if(index === 1) {
+            deleteReviewComment()
+        }
+    }
+
+    const clickReply = () => {
+        setIsCommentInputFocused(true);
     }
 
     return (
@@ -623,16 +796,16 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
             <ReviewInformation
                 writer={writerInfo}
                 createdDate={createdDate}
-                treatmentArray={treatmentArray}
-                avgRating={avgRating}
-                location={TEST_REVIEW_DETAIL_DATA.location}
+                treatmentArray={treatmentArrayDisplay}
+                avgRating={rating.avgRating}
+                dental={dentalInfo}
                 treatmentDate={treatmentDateDisplay}/>
             {!loadingReviewDetail && (
             <BodyContainer
             style={{paddingBottom: paddingBottom}}>
                 <ReviewContent
                 moveToFullImages={moveToFullImages}
-                paragraphArray={paragraphDisplay}/>
+                paragraphArray={paragraphArrayDisplay}/>
                 <DentalInfoContainer>
                     <DentalInfomation
                     dentalInfo={dentalInfo}/>
@@ -642,6 +815,8 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
                 </DetailMetaInfoContainer>
                 <CommentListContainer>
                 <ReviewCommentList
+                clickReply={clickReply}
+                openCommentActionSheet={openCommentActionSheet}
                 commentList={commentArray}/>
                 </CommentListContainer>
             </BodyContainer>
@@ -656,12 +831,22 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
             behavior={"position"}>
             <BottomBarContainer>
                 <ReviewBottomBar
+                isCurUserLike={isCurUserLike}
+                isCurUserScrap={isCurUserScrap}
+                clickReviewLike={clickReviewLike}
+                clickReviewScrap={clickReviewScrap}
                 postReviewComment={postReviewComment}
                 isCommentInputFocused={isCommentInputFocused}
                 clickCommentIcon={clickCommentIcon}
-                likeCount={reviewIndicator.likeCount}/>
+                likeCount={likeCount}/>
             </BottomBarContainer>
             </KeyboardAvoidingView>
+            <ActionSheet
+            ref={commentActionSheetRef}
+            options={['취소', '댓글 삭제']}
+            cancelButtonIndex={0}
+            detructiveButtonIndex={1}
+            onPress={(index: any) => onPressCommentActionSheet(index)}/>
             {loadingCommentPost && (
             <TransIndicatorContainer>
                 <ActivityIndicator

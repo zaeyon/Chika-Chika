@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, createRef} from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback, FlatList, ScrollView, Keyboard, StyleSheet, Alert, View, ActivityIndicator} from 'react-native';
 import {
@@ -8,13 +8,15 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
-import {useSelector} from 'react-redux'; 
-import {RNS3} from 'react-native-upload-aws-s3';
+import {useSelector} from 'react-redux';
+import ActionSheet from 'react-native-actionsheet';
+
 
 import {uploadImageToS3} from '~/method/uploadImageToS3';
 
 // route
 import POSTReviewUpload from '~/Routes/Review/POSTReviewUpload';
+import PUTReviewRevise from '~/Routes/Review/PUTReviewRevise';
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -290,7 +292,9 @@ interface Props {
     route: any,
 }
 
-const ReviewContentScreen = ({navigation, route}: Props) => {
+var selectedParaIndex: number;
+
+const ContentPostScreen = ({navigation, route}: Props) => {
     const [dentalClinic, setDentalClinic] = useState<object>({});
     const [treatDate, setTreatDate] = useState<object>({});
     const [treatPrice, setTreatPrice] = useState<object>({});
@@ -309,6 +313,7 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
     const [uploadLoading, setUploadLoading] = useState<boolean>(false);
 
     const totalPriceInputRef = useRef()
+    const scrollViewRef = useRef<any>();
     let descripInputRef = useRef<any>();
 
     const [selectedImageList, setSelectedImageList] = useState<Array<any>>([]);
@@ -323,12 +328,18 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
     
     const currentUser = useSelector((state:any) => state.currentUser);
     const jwtToken = currentUser.user.jwtToken;
+    let reviewId = route.params?.reviewId;
+
+    const insertedImageActionSheetRef = createRef<any>();
     
     useEffect(() => {
         if(route.params.requestType === "revise") {
             console.log("route.params.paragraphArray", route.params.paragraphArray);
             const tmpParagraphArray = route.params.paragraphArray;
             setParagraphList(tmpParagraphArray);
+            setTotalPrice(route.params?.totalPrice);
+            reviewId = route.params?.reviewId;
+            
         }
     }, [])
 
@@ -400,7 +411,7 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                     paraObj = tmpParagraphList[route.params?.startIndex]
                     paraObj.image = item
                     paraObj.order = "before",
-
+                    
                     tmpParagraphList[route.params?.startIndex] = paraObj
                     setChangeParagraphList(!changeParagraphList)
 
@@ -424,8 +435,24 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
     }, [route.params?.selectedImages])
 
     useEffect(() => {
+        if(route.params?.changeExistingImage) {
+            let tmpParagraphList = paragraphList;
 
-    })
+            const paraObj = {
+                index: selectedParaIndex,
+                image: route.params.selectedImage,
+                description: paragraphList[selectedParaIndex].description,
+                order: paragraphList[selectedParaIndex].order
+            }
+
+            tmpParagraphList[selectedParaIndex] = paraObj
+
+            setParagraphList(tmpParagraphList);
+            setChangeParagraphList(!changeParagraphList);
+            route.params.changeExistingImage = false
+        }
+
+    }, [route.params?.changeExistingImage])
 
     const openCamera = () => {
         navigation.navigate("Camera");
@@ -435,30 +462,6 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
         navigation.navigate("Gallery");
     }
 
-    const goBack = () => {
-        if(route.params?.requestType === "post") {
-            Alert.alert(
-                '게시글 작성을 취소하시겠어요?',
-                '',
-                [
-                    {
-                        text: '확인',
-                        onPress: () => {
-                            navigation.navigate("HomeScreen")
-                        }
-                    },
-                    {
-                        text: '취소',
-                        onPress: () => 0,
-                        style: 'cancel'
-                    }
-                ]
-            )
-        } else if(route.params?.requestType === "revise") {
-            descripInputRef.current.clear();
-            navigation.pop();
-        }
-    }
 
     const moveToDentalClinicSearch = () => {
         navigation.push("DentalClinicSearchScreen", {
@@ -478,9 +481,11 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
     }
 
     const applyTreatDate = () => {
+
         console.log("date", treatDate);
         var tmpTreatDate: any = treatDate;
         tmpTreatDate.displayTreatDate = convertDisplayDate(treatDate.treatDate);
+        tmpTreatDate.treatDate = convertSubmitDate(treatDate.treatDate);
 
         setTreatDate(tmpTreatDate);
         setVisibleDatePicker(false);
@@ -496,6 +501,22 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
         if(day.length < 2) day = "0" + day;
 
         return year + "년" + " " + month + "월" + " " + day + "일"
+    }
+
+
+    const convertSubmitDate = (date: any) => {
+        console.log("convertDisplayDate date", date);
+
+        var tmpDate = new Date(date),
+            month = '' + (tmpDate.getMonth() + 1),
+            day = '' + tmpDate.getDate(),
+            year = '' + tmpDate.getFullYear()
+
+            if(month.length < 2) month = "0" + month;
+            if(day.length < 2) day = "0" + day;
+
+            return year + "-" + month + "-" + day
+
     }
 
     const onPressTreatPrice = () => {
@@ -595,7 +616,49 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
         setChangeParagraphList(!changeParagraphList)
     }
 
+    const clickUpload = () => {
+        if(route.params.requestType === "post") {
+            uploadReview()
+        } else if(route.params.requestType === "revise") {
+            reviseReview()
+        }
+    }
+
+    const goBack = () => {
+        if(route.params?.requestType === "post") {
+            Alert.alert(
+                '게시글 작성을 취소하시겠어요?',
+                '',
+                [
+                    {
+                        text: '확인',
+                        onPress: () => {
+                            navigation.navigate("HomeScreen")
+                        }
+                    },
+                    {
+                        text: '취소',
+                        onPress: () => 0,
+                        style: 'cancel'
+                    }
+                ]
+            )
+        } else if(route.params?.requestType === "revise") {
+            
+            
+            Keyboard.dismiss();
+
+            setTimeout(() => {
+                navigation.navigate("ReviewDetailScreen", {
+                    isCancelRevise: true
+                });
+            }, 10)
+            
+        }
+    }
+
     const uploadReview = async () => {
+        Keyboard.dismiss();
         setUploadLoading(true);
         console.log("dentalClinicId", dentalClinic.id);
         console.log("uploadReview totalPrice", totalPrice);
@@ -608,6 +671,7 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
         const starRate_service = rating.serviceRating;
         const certified_bill = certifiedBill;
         const dentalClinicId = dentalClinic.id; 
+        const treatmentDate= treatDate.treatDate
 
 
         const formatedParagraphArray = await formatParagraph(tmpParagraphList);
@@ -615,7 +679,7 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
         console.log("uploadReview formatedParagraph", formatedParagraphArray);
         console.log("uploadReview formatedTreatment", formatedTreatmentArray);
 
-        POSTReviewUpload({jwtToken, starRate_cost, starRate_treatment, starRate_service, certified_bill, formatedTreatmentArray, dentalClinicId, formatedParagraphArray, totalPrice})
+        POSTReviewUpload({jwtToken, starRate_cost, starRate_treatment, starRate_service, certified_bill, formatedTreatmentArray, dentalClinicId, formatedParagraphArray, totalPrice, treatmentDate})
         .then((response) => {
             setUploadLoading(false);
             console.log("POSTReviewUpload response", response);   
@@ -625,101 +689,93 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
             setUploadLoading(false);
             console.log("POSTReviewUpload error", error);
         })
+    }
 
-        /*
-        tmpParagraphList.forEach((item: any, paraIndex: number) => {
-            console.log("item", item);
-            if(item.image) {
-                uploadImageToS3(item.image)
-                .then((res: any) => {
-                    console.log("uploadImageToS3 res", res)
+    const reviseReview = async () => {
+        Keyboard.dismiss();
+        console.log("reviewRevise reviewId", reviewId);
 
-                        const paraObj = {
-                            index: paraIndex,
-                            description: item.description ? item.description : null,
-                            location: res.response.location,
-                            key: res.response.key,
-                            contentType: res.type,
-                            originalName: res.originalName,
-                            size: res.size,
-                            imgBeforeAfter: item.order,
-                        }
-                        
-                        paragraphs.push(paraObj)
-                
-                    if(paraIndex == paragraphList.length - 1) {
-                        setTimeout(() => {
-                            POSTReviewUpload({jwtToken, starRate_cost, starRate_treatment, starRate_service, certified_bill, treatments, dentalClinicId, paragraphs, totalPrice})
-                            .then((response) => {
-                                setUploadLoading(false);
-                                console.log("POSTReviewUpload response", response);   
-                                navigation.navigate("HomeScreen")
-                            })
-                            .catch((error) => {
-                                setUploadLoading(false);
-                                console.log("POSTReviewUpload error", error);
-                            })
-                        }, 100)
-                    }
-                })
-                .catch((err) => {
-                    console.log("upload s3 err", err);
-                })
-            } else {
-                    
-                const paraObj = {
-                    index: paraIndex,
-                    description: item.description ? item.description : null,
-                    location: null,
-                    key: null,
-                    mimeType: null,
-                    originalName: null,
-                    size: null,
-                    imgBeforeAfters: null
-                    }
+        setUploadLoading(true);
+        const tmpParagraphList = paragraphList;
+        const tmpTreatmentArray = selectedTreatList;
 
-                    paragraphs.push(paraObj)
+        const starRate_cost = rating.priceRating;
+        const starRate_treatment = rating.treatRating;
+        const starRate_service = rating.serviceRating;
+        const certified_bill = certifiedBill;
+        const dentalClinicId = dentalClinic.id; 
+        const treatmentDate= String(treatDate.treatDate)
 
-                    if(paraIndex == paragraphList.length - 1) {
-                        setTimeout(() => {
-                            POSTReviewUpload({jwtToken, starRate_cost, starRate_treatment, starRate_service, certified_bill, treatments, dentalClinicId, paragraphs, totalPrice})
-                            .then((response) => {
-                                setUploadLoading(false);
-                                console.log("POSTReviewUpload response", response);   
-                                navigation.navigate("HomeScreen")
-                            })
-                            .catch((error) => {
-                                setUploadLoading(false);
-                                console.log("POSTReviewUpload error", error);
-                            })
-                        }, 100)
-                    }
-                }
+        const formatedParagraphArray = await formatParagraph(tmpParagraphList);
+        const formatedTreatmentArray = await formatTreatment(tmpTreatmentArray);
+        console.log("reviseReview formatedParagraph", formatedParagraphArray);
+        console.log("reviseReview formatedTreatment", formatedTreatmentArray);
+
+        PUTReviewRevise({jwtToken, reviewId, starRate_cost, starRate_treatment, starRate_service, certified_bill, formatedTreatmentArray, dentalClinicId, formatedParagraphArray, totalPrice, treatmentDate})
+        .then((response: any) => {
+            setUploadLoading(false);
+            console.log("PUTReviewRevise response", response);
+            console.log("PUTReviswRevise response.updateReview.reviewBody.TreatmentItems",response.updateReview.reviewBody.TreatmentItems);
+
+            const tmpRating = {
+                avgRating: ((response.updateReview.reviewBody.starRate_cost + response.updateReview.reviewBody.starRate_service + response.updateReview.reviewBody.starRate_treatment)/3).toFixed(1),
+                serviceRating: response.updateReview.reviewBody.starRate_service,
+                priceRating: response.updateReview.reviewBody.starRate_cost,
+                treatRating: response.updateReview.reviewBody.starRate_treatment
+            }
+
+            navigation.navigate("ReviewDetailScreen", {
+                isRevised: true,
+                paragraphArray: response.updateReview.reviewBody.review_contents,
+                treatmentArray: response.updateReview.reviewBody.TreatmentItems,
+                ratingObj: tmpRating,
+                dentalObj: response.updateReview.reviewBody.dental_clinic,
+                treatmentDate: response.updateReview.reviewBody.treatmentDate,
             })
-            */
-            
+
+        })
+        .catch((error) => {
+            setUploadLoading(false);
+            console.log("POSTReviewUpload error", error);
+        })
     }
 
     const formatParagraph = async (paragraphArray: Array<any>) => {
         const tmpParagraphArray = await Promise.all(
             paragraphArray.map( async (item: any, index: number) => {
                 if(item.image) {
+                    console.log("formatParagraph item", item);
 
-                    const result: any = await uploadImageToS3(item.image);
-
-                    const paragraphObj = {
-                        index: index,
-                        location: result.response.location,
-                        key: result.response.key,
-                        contentType: result.type,
-                        originalName: result.originalName,
-                        size: result.size,
-                        description: item.description ? item.description : null,
-                        imgBeforeAfter: item.order,
-                    }
-
+                    if(item.isPreExis) {
+                        const paragraphObj = {
+                            index: item.index,
+                            location: item.image.uri,
+                            key: item.id,
+                            contentType: item.mimeType,
+                            originalName: item.image.name,
+                            size: item.image.size,
+                            description: item.description ? item.description : null,
+                            imgBeforeAfter: item.order,
+                        }
+                    
                     return paragraphObj
 
+                    } else {
+                        const result: any = await uploadImageToS3(item.image);
+
+                        const paragraphObj = {
+                            index: index,
+                            location: result.response.location,
+                            key: result.response.key,
+                            contentType: result.type,
+                            originalName: result.originalName,
+                            size: result.size,
+                            description: item.description ? item.description : null,
+                            imgBeforeAfter: item.order,
+                        }
+
+                    return paragraphObj
+                    }
                 } else {
 
                     const paragraphObj = {
@@ -743,7 +799,7 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
     }
 
     const formatTreatment = async (treatmentArray: Array<any>) => {
-        const tmpTreatmentArray = selectedTreatList.map((item: any, index) => {
+        const tmpTreatmentArray = treatmentArray.map((item: any, index) => {
             if(item.price) {
                 const tmpObj = {
                     id: item.id,
@@ -764,6 +820,29 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
         return tmpTreatmentArray;
     }
 
+    const clickInsertedImage = (index: number) => {
+        selectedParaIndex = index;
+        insertedImageActionSheetRef.current.show();
+    }
+
+    const onPressInsertedImageActionSheet = (index: number) => {
+        console.log("onPressInsertedImageActionSheet index", index);
+
+        if(index === 1) {
+            navigation.navigate("GallerySelectOne", {
+                requestType: "reviewImage",
+            })
+        } else if(index === 2) {
+            let tmpParagraphArray = paragraphList;
+            console.log("tmpParagraphArray[selectedParaIndex]", tmpParagraphArray[selectedParaIndex]);
+            delete tmpParagraphArray[selectedParaIndex].image;
+            delete tmpParagraphArray[selectedParaIndex].order;
+
+            setParagraphList(tmpParagraphArray);
+            setChangeParagraphList(!changeParagraphList);
+        }
+    }
+
     const renderParaUnitItem = ({item, index}: any) => {
         console.log("renderParaUnitItem item", item);
 
@@ -772,8 +851,10 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
             <ParaUnitContainer style={styles.paragraphShadow}>
                 {item.image && (
                     <ParaImageContainer>
+                    <TouchableWithoutFeedback onLongPress={() => clickInsertedImage(index)} delayLongPress={300}>
                     <ParaImage
                     source={{uri: item.image.uri}}/>
+                    </TouchableWithoutFeedback>
                     <SelectOrderContainer>
                         <TouchableWithoutFeedback onPress={() => changeImageOrder("before", index)}>
                         <SelectOrderButton style={item.order === "before" ? {backgroundColor: "#D1D1D1"} : {backgroundColor: "#ffffff", borderWidth: 1, borderColor: "#d1d1d1"}}>
@@ -857,7 +938,7 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                 </HeaderLeftContainer>
                 </TouchableWithoutFeedback>
                 <HeaderTitleText>{route.params?.requestType === "post" ? "작성" : "수정"}</HeaderTitleText>
-                <TouchableWithoutFeedback onPress={() => uploadReview()}>
+                <TouchableWithoutFeedback onPress={() => clickUpload()}>
                 <HeaderRightContainer>
                     <HeaderEmptyContainer/>
                     <HeaderUploadText>
@@ -868,7 +949,10 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
             </HeaderBar>
             <BodyContainer>
                 <MetaInfoContainer>
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                <ScrollView 
+                ref={scrollViewRef}
+                horizontal={true} 
+                showsHorizontalScrollIndicator={false}>
                     <FirstMetaDataListContainer>
                     <TouchableWithoutFeedback onPress={() => moveToDentalClinicSearch()}>
                     <MetaInfoItemBackground style={[{marginLeft: 16}]}>
@@ -1010,6 +1094,13 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                     />
             </DateModalContainer>
             )}
+            <ActionSheet
+            ref={insertedImageActionSheetRef}
+            options={['취소', '사진 변경', '사진 삭제']}
+            cancelButtonIndex={0}
+            destructiveButtonIndex={2}
+            onPress={(index: any) => onPressInsertedImageActionSheet(index)}
+            />
             {uploadLoading && (
             <IndicatorContainer>
                 <ActivityIndicator
@@ -1020,7 +1111,7 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
     )
 }
 
-export default ReviewContentScreen
+export default ContentPostScreen
 
 const styles = StyleSheet.create({
     paragraphShadow: {

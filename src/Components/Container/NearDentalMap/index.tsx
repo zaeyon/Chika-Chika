@@ -20,6 +20,7 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {useSelector} from 'react-redux';
 
 import NaverMapView, {Circle, Marker, Path, Polyline, Polygon} from "react-native-nmap";
 import {isIphoneX} from 'react-native-iphone-x-helper';
@@ -31,6 +32,10 @@ import Modal from 'react-native-modal';
 // Local Component
 import DentalCarouselItem from '~/Components/Presentational/NearDentalMap/DentalCarouselItem';
 import DentalListSlidingUpPanel from '~/Components/Presentational/NearDentalMap/DentalListSlidingUpPanel'
+import TouchBloackIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
+
+// Route
+import GETAroundDental from '~/Routes/Dental/GETAroundDental';
 
 const mapHeight = hp('100%') - (wp('11.7%') - (isIphoneX() ? wp("21%") : wp("15%")))
 
@@ -468,7 +473,7 @@ const TEST_NEAR_DENTAL_DATA = [
 const NearDentalMap = ({navigation, route}: Props) => {
     const [currentLocation, setCurrentLocation] = useState<Coord>({latitude: 37.564362, longitude: 126.977011});
     const [cameraLocation, setCameraLocation] = useState<Coord>({latitude: 37.564362, longitude: 126.977011});
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loadingGetDental, setLoadingGetDental] = useState<boolean>(true);
     const [visibleSelectedDentalItem, setVisibleSelectedDentalItem] = useState<boolean>(false)
     const [visibleDetailFilterList, setVisibleDetailFilterList] = useState<boolean>(false);
     const [visibleTimeFilterModal, setVisibleTimeFilterModal] = useState<boolean>(false);
@@ -480,38 +485,42 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const [selectedDayFilterIndicator, setSelectedDayFilterIndicator] = useState<Array<any>>([]);
     const [keyboardHeight, setKeyboardHeight] = useState<number>(0);
     const [selectedTimeType, setSelectedTimeType] = useState<string>("AM");
-    const [holidayFilter, setHolidayFilter] = useState<boolean>(false);
-    const [parkingFilter, setParkingFilter] = useState<boolean>(false);
+
+    const [sort, setSort] = useState<string>("d");
+    const [time, setTime] = useState<string>("");
+    const [days, setDays] = useState<string>("");
+    const [openHoliday, setOpenHoliday] = useState<boolean>(false);
+    const [wantParking, setWantParking] = useState<string>("n");
     const [carouselIndex, setCarouselIndex] = useState<number>(0);
     const [dayFilterList, setDayFilterList] = useState<Array<any>>([
         {
             day: "월",
-            en: "monday", 
+            en: "mon", 
             selected: false
         },
         {
             day: "화",
-            en: "tuseday",
+            en: "tus",
             selected: false
         },
         {
             day: "수",
-            en: "wednesday",
+            en: "wed",
             selected: false
         },
         {
             day: "목",
-            en: "thursday",
+            en: "thu",
             selected: false
         },
         {
             day: "금",
-            en: "friday",
+            en: "fri",
             selected: false
         },
         {
             day: "토",
-            en: "saturday",
+            en: "sat",
             selected: false
         },
         {
@@ -538,12 +547,16 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
     useEffect(() => {
         mapRef.current.setLocationTrackingMode(2)
-        
-        if(Platform.OS == 'android') {
-            hasAndroidPermission()
-        } else if(Platform.OS == 'ios') {
-            hasIosPermission()
+
+        const getInitialNearDental = async () => {
+            if(Platform.OS == 'android') {
+                getAndroidInitialNearDental()
+            } else if(Platform.OS == 'ios') {
+                getIosInitialNearDental()
+            }
         }
+
+        getInitialNearDental();
     }, [])
 
     useEffect(() => {
@@ -559,13 +572,15 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const dentalFlatListRef = useRef<any>(null); 
     const dentalCarouselRef = useRef<any>(null);
     const timeTextInputRef = useRef<any>(null);
+    const currentUser = useSelector((state: any) => state.currentUser);
+    const jwtToken = currentUser.user.jwtToken;
 
     const onKeyboardWillShow = (event: any) => {
         console.log("event", event.endCoordinates.height)
         setKeyboardHeight(event.endCoordinates.height);
     }
     
-    async function hasAndroidPermission() {
+    async function getAndroidInitialNearDental() {
         const permission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
         const hasLocationPermission = await PermissionsAndroid.check(permission);
         if(hasLocationPermission) {
@@ -577,11 +592,27 @@ const NearDentalMap = ({navigation, route}: Props) => {
                       latitude: position.coords.latitude,
                       longitude: position.coords.longitude,
                   })
-                  setLoading(false);
+
+                  const lat = position.coords.latitude;
+                    const long = position.coords.longitude;
+
+                    GETAroundDental({jwtToken, lat, long, sort, time, days, wantParking})
+                    .then((response) => {
+                    console.log("GETAroundDental response", response);
+                    setLoadingGetDental(false);
+                    })
+                    .catch((error) => {
+                    console.log("GETAroundDental error", error);
+                    setLoadingGetDental(false);
+                    })
+
+                  return position;
                 },
                 (error) => {
                   console.log("사용자 현재 위치 불러오기 실패", error.code, error.message);
-                  setLoading(false);
+                  setLoadingGetDental(false);
+
+                  return false;
                 },
                 { enableHighAccuracy: false, timeout: 10000, maximumAge: 10000 }
             );
@@ -592,7 +623,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
         }
     }
 
-    function hasIosPermission() {
+    async function getIosInitialNearDental() {
         const hasLocationPermission = true;
         if(hasLocationPermission) {
             Geolocation.getCurrentPosition(
@@ -602,15 +633,43 @@ const NearDentalMap = ({navigation, route}: Props) => {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
                     })
-                    setLoading(false);
+
+                    const lat = position.coords.latitude;
+                    const long = position.coords.longitude;
+
+                    GETAroundDental({jwtToken, lat, long, sort, time, days, wantParking})
+                    .then((response) => {
+                    console.log("GETAroundDental response", response);
+                    setLoadingGetDental(false);
+                    })
+                    .catch((error) => {
+                    console.log("GETAroundDental error", error);
+                    setLoadingGetDental(false);
+                    })
+
+                    return position;
                 },
                 (error) => {
                     console.log("사용자 현재 위치 불러오기 실패", error)
-                    setLoading(false);
+                    setLoadingGetDental(false);
+
+                    return false;
                 },
                 {enableHighAccuracy: false, timeout: 10000, maximumAge: 10000}
             )
         }
+    }
+
+    const getNearDental = () => {
+        const lat = currentLocation.latitude;
+        const long = currentLocation.longitude;
+        GETAroundDental({jwtToken, lat, long, sort, time, days, wantParking})
+        .then((response) => {
+            console.log("GETAroundDental response", response);
+        })
+        .catch((error) => {
+            console.log("GETAroundDental error", error);
+        })
     }
     
 
@@ -621,7 +680,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
     }
 
     const moveToSearchDental = () => {
-        navigation.navigate("DentalClinicListScreen")
+        navigation.navigate("DentalClinicListScreen", {
+            currentLocation: currentLocation
+        })
     }
 
     const clickDentalMarker = (selectedIndex: number) => {
@@ -663,7 +724,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
     }
 
     const moveToDentalDetail = () => {
-        navigation.navigate("DentalDetailScreen")
+        navigation.navigate("DentalClinicStack", {
+            screen: "DentalDetailScreen"
+        })
     }
 
     const clickMyLocationTrackingButton = () => {
@@ -687,11 +750,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
     }
 
     const changeHolidayFilter = () => {
-        setHolidayFilter(!holidayFilter)
     }
 
     const changeParkingFilter = () => {
-        setParkingFilter(!parkingFilter);
     }
 
     const cancelDayFilter = () => {
@@ -738,10 +799,12 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
         tmpDayFilterList.forEach((item, index) => {
             if(item.selected) {
-                tmpSelectedDayFilter.push(item)
+                tmpSelectedDayFilter.push(item.en)
                 tmpSelectedDayFilterIndicator.push(item.day)
             }
         })
+
+        console.log("tmpSelectedDayFilter", tmpSelectedDayFilter); 
 
         setSelectedDayFilter(tmpSelectedDayFilter);
         setSelectedDayFilterIndicator(tmpSelectedDayFilterIndicator);
@@ -830,7 +893,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 showsMyLocationButton={false}
                 center={{...cameraLocation, zoom: 16}}
                 onMapClick={(e:any) => clickMapBackground()}
-                zoomControl={true}>
+                zoomControl={false}>
                 {nearDentalList.map((item, index) => {
                     return (
                         <Marker
@@ -889,13 +952,13 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     </FilterItemContainer>
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={() => changeHolidayFilter()}>
-                    <FilterItemContainer style={[{marginLeft: 12}, holidayFilter && {backgroundColor: "#2998FF"}]}>
-                        <FilterItemText style={holidayFilter && {color: "#FFFFFF"}}>{"일요일･공휴일 휴진"}</FilterItemText>
+                    <FilterItemContainer style={[{marginLeft: 12}, openHoliday && {backgroundColor: "#2998FF"}]}>
+                        <FilterItemText style={openHoliday && {color: "#FFFFFF"}}>{"일요일･공휴일 휴진"}</FilterItemText>
                     </FilterItemContainer>
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={() => changeParkingFilter()}>
-                    <FilterItemContainer style={[{marginLeft: 12, marginRight: 16}, parkingFilter && {backgroundColor: "#2998FF"}]}>
-                        <FilterItemText style={parkingFilter && {color: "#FFFFFF"}}>{"주차가능"}</FilterItemText>
+                    <FilterItemContainer style={[{marginLeft: 12, marginRight: 16}, (wantParking === "y") && {backgroundColor: "#2998FF"}]}>
+                        <FilterItemText style={(wantParking === "y") && {color: "#FFFFFF"}}>{"주차가능"}</FilterItemText>
                     </FilterItemContainer>
                     </TouchableWithoutFeedback>
                 </ScrollView>
@@ -969,6 +1032,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     <FlatList
                     columnWrapperStyle={{justifyContent:"space-between", marginTop: 12}}
                     data={dayFilterList}
+                    keyExtractor={(item, index) => `${index}`}
                     numColumns={5}
                     renderItem={renderDayFilterItem}/>
                 </DetailFilterListContainer>
@@ -1022,6 +1086,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 </DeleteTimeFilterButton>
             </DetailFilterModalContainer>
             </Modal>
+            <TouchBloackIndicatorCover
+            loading={loadingGetDental}/>
         </Container>
         </SafeAreaView>
     )

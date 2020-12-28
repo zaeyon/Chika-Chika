@@ -297,7 +297,7 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
             });
         } else if(route.params?.requestPage === "content") {
             console.log("리뷰 내용 작성 화면")
-            navigation.navigate("ReviewContentScreen", {
+            navigation.navigate("ContentPostScreen", {
                 selectedTreatList: selectedTreatList,
                 requestType: route.params?.requestType,
             })
@@ -336,8 +336,7 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
             </TreatItemContainer>
         )
     }
-
-
+    
     return (
         <Container>
             <HeaderBar>

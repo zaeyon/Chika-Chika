@@ -288,7 +288,7 @@ const DetailPriceScreen = ({navigation, route}: Props) => {
             requestType: route.params?.requestType,
         });
       } else if(route.params?.requestPage === "content") {
-        navigation.navigate("ReviewContentScreen", {
+        navigation.navigate("ContentPostScreen", {
             treatPrice: route.params?.treatPrice,
             isDetailPrice: isDetailPrice,
             detailPriceList: detailPriceList,

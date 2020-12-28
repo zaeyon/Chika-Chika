@@ -92,10 +92,10 @@ interface Props {
     treatmentDate: string,
     treatmentArray: Array<any>,
     avgRating: number,
-    location: string,
+    dental: object,
 }
 
-const ReviewInformation = ({writer, createdDate, treatmentDate, treatmentArray, avgRating, location}: Props) => {
+const ReviewInformation = ({writer, createdDate, treatmentDate, treatmentArray, avgRating, dental}: Props) => {
     console.log("ReviewInformation tretmentArray", treatmentArray);
     return (
         <Container>
@@ -121,7 +121,7 @@ const ReviewInformation = ({writer, createdDate, treatmentDate, treatmentArray, 
             source={require('~/Assets/Images/Review/ic_newStar.png')}/>
             <RatingText>{avgRating}</RatingText>
             <DividerBar/>
-            <LocationDateText>{location +" ∙ " + treatmentDate}</LocationDateText>
+            <LocationDateText>{dental.name +" ∙ " + treatmentDate}</LocationDateText>
             </MetaInfoContainer>
         </Container>
     )

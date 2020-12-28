@@ -36,7 +36,7 @@ align-items: center;
 `;
 
 const LikeContainer = Styled.View`
-padding: 16px 8px 16px 0px;
+padding: 16px 25px 16px 0px;
 flex-direction: row;
 align-items: center;
 background-color: #ffffff;
@@ -58,6 +58,8 @@ height: ${wp('6.4%')};
 `;
 
 const LikeCountText = Styled.Text`
+position: absolute;
+left: ${wp('6.4%')}px;
 margin-left: 4px;
 font-weight: 400;
 font-size: 14px;
@@ -111,35 +113,17 @@ interface Props {
     clickCommentIcon: () => void,
     isCommentInputFocused: boolean,
     postReviewComment: (description: string) => void,
+    clickReviewLike: () => void,
+    clickReviewScrap: () => void,
+    isCurUserLike: boolean,
+    isCurUserScrap: boolean,
+
 }
 
-const ReviewBottomBar = ({likeCount, clickCommentIcon, isCommentInputFocused, postReviewComment}: Props) => {
+const ReviewBottomBar = ({likeCount, clickCommentIcon, isCommentInputFocused, postReviewComment, clickReviewLike, clickReviewScrap, isCurUserLike, isCurUserScrap}: Props) => {
 
     const [isCommentInput, setIsCommentInput] = useState<boolean>(false);
     const [commentDescrip, setCommentDescrip] = useState<string>("");
-
-
-    /*
-    useEffect(() => {
-        Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
-        Keyboard.addListener("keyboardWillHide", _keyboardWillHide);
-
-        // cleanup function
-        return () => {
-            Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
-            Keyboard.removeListener("keyboardWillHide", _keyboardWillHide);
-        }
-    }, [])
-
-    const _keyboardDidShow = (e: any) => {
-        //setPaddingBottom(e.endCoordinates.height);
-        //scrollViewRef.current.scrollToEnd({animated: false})
-    }
-
-    const _keyboardWillHide = () => {
-        setIsCommentInput(false);
-    }
-    */
 
     const clickCommentIcon2 = () => {
         setIsCommentInput(true)
@@ -159,15 +143,21 @@ const ReviewBottomBar = ({likeCount, clickCommentIcon, isCommentInputFocused, po
             {!isCommentInputFocused ? (
             <DefaultContainer>
                 <SocialInfoListContainer>
+                    <TouchableWithoutFeedback onPress={() => clickReviewLike()}>
                     <LikeContainer>
                         <LikeIcon
+                        style={isCurUserLike ? {tintColor: "#FF5656"} : {tintColor: "#000000"}}
                         source={require('~/Assets/Images/Indicator/ic_like.png')}/>
                     <LikeCountText>{likeCount}</LikeCountText>
                     </LikeContainer>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => clickReviewScrap()}>
                     <ScrapContainer>
                         <ScrapIcon
+                        style={isCurUserScrap ? {tintColor: "#FFE600"} : {tintColor: "#000000"}}
                         source={require('~/Assets/Images/Indicator/ic_scrap.png')}/>
                     </ScrapContainer>
+                    </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={() => clickCommentIcon()}>
                     <CommentContainer>
                         <CommentIcon

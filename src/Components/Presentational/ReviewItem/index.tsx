@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useLayoutEffect} from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback} from 'react-native';
 import {
@@ -6,9 +6,16 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { FlatList } from 'react-native-gesture-handler';
+import {useSelector} from 'react-redux';
 
 // Local Component
 import PreviewImages from '~/Components/Presentational/ReviewItem/PreviewImages';
+
+// Route
+import POSTReviewLike from '~/Routes/Review/POSTReviewLike';
+import DELETEReviewLike from '~/Routes/Review/DELETEReviewLike';
+import POSTReviewScrap from '~/Routes/Review/POSTReviewScrap';
+import DELETEReviewScrap from '~/Routes/Review/DELETEReviewScrap';
 
 const Container = Styled.View`
  padding-top: 24px;
@@ -34,7 +41,8 @@ const ProfileLeftContainer = Styled.View`
  background-color: #ffffff;
 `;
 
-const ProfileRightContainer = Styled.View`
+const ScrapContainer = Styled.View`
+padding: 10px;
 align-items: center;
 justify-content: center;
 `;
@@ -172,15 +180,24 @@ const LikeIcon = Styled.Image`
  height: ${wp('6.4%')};
 `;
 
-const LikeValueText = Styled.Text`
- margin-left: 4px;
+const IndicatorCountText = Styled.Text`
+ position: absolute;
+ left: ${wp('7%')}px;
  color: #56575C;
  font-size: 16px;
 `;
 
-const ScrapContainer = Styled.View`
+const LikeContainer = Styled.View`
 align-items: center;
 justify-content: center;
+flex-direction: row;
+`;
+
+const CommentContainer = Styled.View`
+margin-left: 20px;
+align-items: center;
+justify-content: center;
+flex-direction: row;
 `;
 
 const ScrapIcon = Styled.Image`
@@ -189,7 +206,6 @@ const ScrapIcon = Styled.Image`
 `;
 
 const CommentIcon = Styled.Image`
-margin-left: 16px;
 width: ${wp('6.4%')};
 height: ${wp('6.4%')};
 `;
@@ -220,41 +236,98 @@ flex-direction: row;
 
 
 
-interface UserData {
+interface UserObj {
     profileImage: string,
     nickname: string,
     userId: string,
 }
 
+interface RatingObj {
+    avgRating: number,
+    serviceRating: number,
+    treatRating: number,
+    priceRating: number, 
+}
+
+interface DentalObj {
+    id: number,
+    name: string,
+    address: string,
+}
+
 
 interface Props {
     reviewId: number,
-    writer: UserData,
+    writer: UserObj,
     createdAt: string,
+    elapsedTimeText: string,
+    visibleElapsedTime: boolean,
     treatmentArray: Array<any>,
     treatmentDate: string,
-    avgRating: number,
+    ratingObj: RatingObj,
     descriptions: string,
     viewCount: number,
     treatInfoCount: number,
-    likeCount: number,
+    likeCountProp: number,
     commentCount: number,
     imageArray: Array<any>,
-    moveToReviewDetail: (reviewId: number, writer: object, createdAt: string, treatmentArray: Array<any>, avgRating: number, treatmentDate: string, imageArray: Array<object>) => void,
+    isCurUserLikeProp: boolean,
+    isCurUserScrapProp: boolean,
+    likeArray: Array<any>,
+    scrapArray: Array<any>,
+    refreshingReviewList: boolean,
+    dentalObj: DentalObj,
+    moveToReviewDetail: (reviewId: number, writer: UserObj, createdAt: string,treatmentArray: Array<any>, ratingObj: RatingObj, treatmentDate: string, imageArray: Array<object>, isCurUserLike: boolean, likeCount: number, commentCount: number, isCurUserScrap: boolean, dentalObj: DentalObj) => void,
+    moveToWriterProfile: (userId: number) => void,
+    moveToDentalDetail: (dentalId: number) => void,
 } 
 
-const ReviewItem = ({reviewId, writer, createdAt, treatmentArray, treatmentDate, avgRating, descriptions, viewCount, treatInfoCount, likeCount, commentCount, imageArray, moveToReviewDetail}: Props) => {
+const ReviewItem = ({reviewId, writer, createdAt, elapsedTimeText, visibleElapsedTime, treatmentArray, treatmentDate, ratingObj, descriptions, viewCount, treatInfoCount, likeCountProp, commentCount, imageArray, moveToReviewDetail, moveToWriterProfile, isCurUserLikeProp, isCurUserScrapProp, likeArray, scrapArray, refreshingReviewList, dentalObj, moveToDentalDetail}: Props) => {
 
-    const [descripPreview, setDescripPreview] = useState<string>("");
-    const [sortedImageArray, setSortedImageArray] = useState<Array<any>>(imageArray);
-    const [changeImageArray, setChangeImageArray] = useState<boolean>(false);
+
+    const [isCurUserLike, setIsCurUserLike] = useState<boolean>(isCurUserLikeProp);
+    const [isCurUserScrap, setIsCurUserScrap] = useState<boolean>(isCurUserScrapProp);
+    const [changeState, setChangeState] = useState<boolean>(false);
+    const [likeCount, setLikeCount] = useState<number>(likeCountProp);
+    const currentUser = useSelector((state: any) => state.currentUser);
+    const jwtToken = currentUser.user.jwtToken;
 
     let formatedCreatedAtDate = "";
     let formatedTreatmentDate = "";
 
-    //console.log("avgRating", avgRating);
-    console.log("ReviewItem treatmentArray", treatmentArray);
-    //console.log("ReviewItem imageArray", imageArray);
+
+    useLayoutEffect(() => {
+        console.log("likeArray 변경", likeArray);
+        if(writer.nickname === "TEST1608115556040") {
+        console.log("좋아요 Props 변함22", isCurUserLikeProp, likeCountProp);
+        }
+
+
+        if(!refreshingReviewList) {
+            console.log("refreshingReviewList", refreshingReviewList)
+            if(likeArray[0]) {
+                if(isCurUserLikeProp) {
+                    setIsCurUserLike(true);
+                }
+                setLikeCount(likeCountProp);
+            } else {
+                if(!isCurUserLikeProp) {
+                    setIsCurUserLike(false);
+                }
+                setLikeCount(likeCountProp);
+            }
+
+            if(scrapArray[0]) {
+                if(isCurUserScrapProp) {
+                    setIsCurUserScrap(true);
+                }
+            } else {
+                if(!isCurUserScrapProp) {
+                    setIsCurUserScrap(false);
+                }
+            }
+        }
+    }, [likeCountProp, isCurUserLikeProp, isCurUserScrapProp, likeArray, scrapArray])
 
     
     imageArray.forEach((item, index) => {
@@ -300,13 +373,79 @@ const ReviewItem = ({reviewId, writer, createdAt, treatmentArray, treatmentDate,
         const dateArray = date.split("-")
 
         const yearArray = dateArray[0].split("");
-        dateArray[1] = Number(dateArray[1]) < 10 ? ("0" + dateArray[1])  : (dateArray[1]);
-        dateArray[2] = Number(dateArray[2]) < 10 ? ("0" + dateArray[1]) : (dateArray[2]);
 
         const result = yearArray[2] + yearArray[3] + "." + dateArray[1] + "." + dateArray[2];
         formatedTreatmentDate = result;
         return result
-    } 
+    }
+
+    const clickLike = () => {
+        if(isCurUserLike) {
+            deleteReviewLike()
+        } else {
+            postReviewLike()
+        }
+    }
+
+    const clickScrap = () => {
+        if(isCurUserScrap) {
+            deleteReviewScrap()
+        } else {
+            postReviewScrap()
+        }
+    }
+
+
+    
+    const postReviewLike = () => {
+        setIsCurUserLike(true);
+        setLikeCount((prevState) => prevState + 1)
+        isCurUserLikeProp = true;
+        likeCountProp = likeCountProp + 1;
+        POSTReviewLike({jwtToken, reviewId})
+        .then((response) => {
+            console.log("POSTReviewLike response", response);
+        })
+        .catch((error) => {
+            console.log("POSTReviewLike error", error);
+        })
+    }
+
+    const deleteReviewLike = () => {
+        setIsCurUserLike(false);
+        isCurUserLikeProp = false;
+        likeCountProp = likeCountProp - 1;
+        setLikeCount((prevState) => prevState - 1)
+        DELETEReviewLike({jwtToken, reviewId})
+        .then((response) => {
+            console.log("DELETEReviewLike response", response);
+        })
+        .catch((error) => {
+            console.log("DELETEReviewLike error", error);
+        })
+    }
+
+    const postReviewScrap = () => {
+        setIsCurUserScrap(true);
+        POSTReviewScrap({jwtToken, reviewId})
+        .then((response) => {
+            console.log("POSTReviewScrap response", response);
+        })
+        .catch((error) => {
+            console.log("POSTReviewScrap error", error);
+        })
+    }
+
+    const deleteReviewScrap = () => {
+        setIsCurUserScrap(false);
+        DELETEReviewScrap({jwtToken, reviewId})
+        .then((response) => {
+            console.log("DELETEReviewScrap response", response)
+        })
+        .catch((error) => {
+            console.log("DELETEReviewScrap error", error);
+        })
+    }
 
     const renderTreatmentItem = ({item, index}: any) => {
         return (
@@ -317,25 +456,28 @@ const ReviewItem = ({reviewId, writer, createdAt, treatmentArray, treatmentDate,
     }
 
     return (
-        <TouchableWithoutFeedback onPress={() => moveToReviewDetail(reviewId, writer, formatedCreatedAtDate, treatmentArray, avgRating, formatedTreatmentDate, imageArray)}>
+        <TouchableWithoutFeedback onPress={() => moveToReviewDetail(reviewId, writer, formatedCreatedAtDate, treatmentArray, ratingObj, formatedTreatmentDate, imageArray, isCurUserLike, likeCount, commentCount, isCurUserScrap, dentalObj)}>
         <Container>
             <ProfileContainer>
-                <TouchableWithoutFeedback onPress={() => moveToAnotherProfile()}>
+                <TouchableWithoutFeedback onPress={() => moveToWriterProfile(writer.id)}>
                 <ProfileLeftContainer>
                 <ProfileImage
                 source={{uri:writer.profileImage ? writer.profileImage : undefined}}/>
                 <NicknameCreatedAtContainer>
                     <NicknameText>{writer.nickname}</NicknameText>
-                    <CreatedAtText>{formatCreatedAtDate(createdAt)}</CreatedAtText>
+                    <CreatedAtText>{visibleElapsedTime ? elapsedTimeText : formatCreatedAtDate(createdAt)}</CreatedAtText>
                 </NicknameCreatedAtContainer>
                 </ProfileLeftContainer>
                 </TouchableWithoutFeedback>
-                <ProfileRightContainer>
+                <TouchableWithoutFeedback onPress={() => clickScrap()}>
+                <ScrapContainer>
                     <ScrapIcon
+                    style={isCurUserScrap ? {tintColor: "#FFE600"} : {tintColor: "#C3C3C3"}}
                     source={require('~/Assets/Images/Review/ic_scrap_inline.png')}/>
-                </ProfileRightContainer>
-                </ProfileContainer>
-                <InfoContainer>
+                </ScrapContainer>
+                </TouchableWithoutFeedback>
+            </ProfileContainer>
+            <InfoContainer>
                 <ImagesPreviewContainer>
                     <PreviewImages
                     sortedImageArray={imageArray}/>
@@ -354,25 +496,34 @@ const ReviewItem = ({reviewId, writer, createdAt, treatmentArray, treatmentDate,
                         </InfoItemContainer>
                         <InfoItemContainer style={{marginTop: 6}}>
                             <InfoLabelText>만족도</InfoLabelText>
-                            <InfoValueText>{avgRating}</InfoValueText>
+                            <InfoValueText>{ratingObj.avgRating}</InfoValueText>
                         </InfoItemContainer>
                     </DateRatingContainer>
                     <DescripContainer>
                         <DescripText>{cutDescriptionsOver(descriptions)}</DescripText>
                     </DescripContainer>
-                </InfoContainer>
+            </InfoContainer>
                 <ActionContainer>
                     <LikeScrapContainer>
+                        <TouchableWithoutFeedback onPress={() => clickLike()}>
+                        <LikeContainer>
                         <LikeIcon
+                        style={isCurUserLike ? {tintColor: "#FF5656"} : {tintColor: "#c3c3c3"}}
                         source={require('~/Assets/Images/Review/ic_like_inline.png')}/>
-                        <LikeValueText>{likeCount}</LikeValueText>
+                        <IndicatorCountText>{likeCount}</IndicatorCountText>
+                        </LikeContainer>
+                        </TouchableWithoutFeedback>
+                        <CommentContainer>
                         <CommentIcon
                         source={require('~/Assets/Images/Review/ic_comment_inline.png')}/>
-                        <LikeValueText>{commentCount}</LikeValueText>
+                        <IndicatorCountText>{commentCount}</IndicatorCountText>
+                        </CommentContainer>
                     </LikeScrapContainer>
+                        <TouchableWithoutFeedback onPress={() => moveToDentalDetail()}>
                         <GetTreatInfoButton>
                             <GetTreatInfoText>{"병원정보"}</GetTreatInfoText>
                         </GetTreatInfoButton>
+                        </TouchableWithoutFeedback>
                 </ActionContainer>
         </Container>
         </TouchableWithoutFeedback>

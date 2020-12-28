@@ -52,8 +52,8 @@ interface Props {
     moveToFullImages: (imageUri:string) => void,
 }
 
-const ReviewContent = ({paragraphArray, commentList, moveToFullImages}: Props) => {
-    console.log("ReviewContent paragraphArray", paragraphArray);
+const ReviewContent = ({paragraphArray, moveToFullImages}: Props) => {
+    console.log("paragraphArray", paragraphArray);
 
     const renderParagraphItem = ({item, index}: any) => {
             return (

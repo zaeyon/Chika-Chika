@@ -33,20 +33,27 @@ padding-bottom: 16px;
 
 interface Props {
     commentList: Array<object>,
+    clickReply: () => void,
+    openCommentActionSheet: (userId: string, nickname: string, commentId: number) => void;
 }
 
-const ReviewCommentList = ({commentList}: Props) => {
+const ReviewCommentList = ({commentList, clickReply, openCommentActionSheet}: Props) => {
     
     const renderCommentItem = ({item, index}: any) => {
+
+        console.log("renderCommentItem item", item);
+
         return (
             <CommentItem
-            userId={item.userId}
+            userId={item.user.id}
             commentId={item.id}
             profileImage={item.user.profileImg}
             nickname={item.user.nickname}
             description={item.description}
             createdDate={item.createdAt}
             replys={item.Replys}
+            clickReply={clickReply}
+            openCommentActionSheet={openCommentActionSheet}
             />
         )
     }

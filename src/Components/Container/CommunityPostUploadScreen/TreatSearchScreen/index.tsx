@@ -261,7 +261,7 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
                 selectedTreatList: selectedTreatList,
             });
         } else if(route.params?.requestPage === "content") {
-            navigation.navigate("ReviewContentScreen", {
+            navigation.navigate("ContentPostScreen", {
                 selectedTreatList: selectedTreatList,
             })
         }

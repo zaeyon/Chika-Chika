@@ -236,7 +236,7 @@ const DentalClinicSearchScreen = ({navigation, route}: Props) => {
                 dentalClinic: selectedDental
             })
         } else if(route.params?.requestPage === "content") {
-            navigation.navigate("ReviewContentScreen", {
+            navigation.navigate("ContentPostScreen", {
                 dentalClinic: selectedDental
             })
         }

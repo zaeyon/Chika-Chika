@@ -1,7 +1,9 @@
 import userActions from './userActions'
+import reviewListAction from './reviewListAction'
 
 const allActions = {
-    userActions
+    userActions,
+    reviewListAction,
 }
 
 export default allActions
