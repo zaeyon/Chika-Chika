@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
@@ -63,6 +63,10 @@ interface Props {
   onRefresh: any;
   isEndReached: boolean;
   onEndReached: any;
+  moveToCommunityDetail: any;
+  moveToAnotherProfile: any;
+  toggleSocialLike: any;
+  toggleSocialScrap: any;
 }
 const CommunityPostList = ({
   navigation,
@@ -72,12 +76,27 @@ const CommunityPostList = ({
   onRefresh,
   isEndReached,
   onEndReached,
+  moveToCommunityDetail,
+  moveToAnotherProfile,
+  toggleSocialLike,
+  toggleSocialScrap,
 }: Props) => {
-  const renderPosts = ({item, index}: any) => (
-    <PostItem mode={'Card'} navigation={navigation} data={item} />
-  );
+  useEffect(() => {
+    console.log('list changed', postData);
+  }, [postData]);
 
-  const getItemKey = (item: any) => String(item.id);
+  const renderPosts = useCallback(({item, index}: any) => {
+    console.log(index);
+    return (
+      <PostItem
+        moveToCommunityDetail={moveToCommunityDetail}
+        moveToAnotherProfile={moveToAnotherProfile}
+        data={item}
+      />
+    );
+  }, []);
+
+  const getItemKey = useCallback((item: any) => String(item.id), []);
 
   return (
     <BodyContainerFlatList

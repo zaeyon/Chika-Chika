@@ -3,15 +3,8 @@ import serverConfig from '../../server.config';
 
 const baseUri = serverConfig.baseUri;
 
-interface Props {
-    type: string;
-    limit: number;
-    offset: number;
-    order: string;
-}
-
-const GETCommunityPosts = (jwtToken: string, {type, limit, offset, order}: Props) => {
-    const uri = baseUri + `/api/v1/communities/lists?type=${type}&limit=${limit}&offset=${offset}&order=${order}`;
+const GETCommunityPostDetail = (jwtToken: string, postId: string) => {
+    const uri = baseUri + `/api/v1/communities?postId=${postId}`;
 
     return new Promise(function(resolve, reject) {
 
@@ -22,6 +15,7 @@ const GETCommunityPosts = (jwtToken: string, {type, limit, offset, order}: Props
         })
         .then(function(response) {
             resolve(response.data);
+            
         })
         .catch(function(error) {
             console.log('fail',error)
@@ -31,4 +25,4 @@ const GETCommunityPosts = (jwtToken: string, {type, limit, offset, order}: Props
     })
 }
 
-export default GETCommunityPosts;
+export default GETCommunityPostDetail;

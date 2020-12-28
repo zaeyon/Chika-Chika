@@ -174,7 +174,7 @@ const ReviewBottomBar = ({likeCount, clickCommentIcon, isCommentInputFocused, po
                     <CommentTextInput
                     multiline={true}
                     clearButtonMode="always" 
-                    autoCapitalize={false}
+                    autoCapitalize={"none"}
                     autoCorrect={false}
                     autoFocus={true}
                     placeholder="댓글 입력"

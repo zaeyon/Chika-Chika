@@ -368,9 +368,16 @@ function MyProfileStackScreen() {
         name="SavedHospitalTabScreen"
         component={SavedHospitalTabScreen}
       />
-      <AuthStack.Screen
+      <MyProfileStack.Screen
         name="PhoneVerifyScreen"
-        component={PhoneVerifyScreen}
+        component={PhoneVerifyScreen}/>
+      <MyProfileStack.Screen
+        name="CommunityDetailScreen"
+        component={CommunityDetailScreen}
+      />
+      <MyProfileStack.Screen
+        name="ReviewDetailScreen"
+        component={ReviewDetailScreen}
       />
       {/* 
       <MyProfileStack.Screen
@@ -402,6 +409,7 @@ function CommunityPostUploadStackScreen({route}: any) {
         component={CommunityPostUploadScreen}
         initialParams={{
           data: route.params && route.params.data,
+          reloadPostDetail: route.params && route.params.reloadPostDetail,
         }}
       />
       <CommunityPostUploadStack.Screen
@@ -565,7 +573,7 @@ function BottomTab() {
       ? routeName.state.routes[routeName.state.index].name
       : '';
 
-    if (routeName.name === 'EditProfileTabScreen' || routeName.name === 'PhoneVerifyScreen') {
+    if (routeName.name === 'EditProfileTabScreen') {
       return false;
     }
     if (isSlideUp) {
@@ -574,7 +582,6 @@ function BottomTab() {
 
     return true;
   };
-
   return (
     <Tab.Navigator
       tabBarOptions={{

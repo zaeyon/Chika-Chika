@@ -17,14 +17,13 @@ import {
 
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
- height: ${hp('8%')}px;
- padding-top: 7px;
+ height: ${hp('8.25%')}px;
  flex-direction: row;
  align-items: center;
  justify-content: space-between;
- background-color: white;
  border-bottom-width: 1px;
  border-color: #eeeeee;
+ background: white;
 `;
 
 const HeaderText = Styled.Text`
@@ -40,10 +39,11 @@ padding: 0px 16px;
 `;
 
 const HeaderTitleContainer = Styled.View`
-height: ${wp('13.8%')}px;
+height: auto;
 justify-content: center;
 `;
 const HeaderTitleText = Styled.Text`
+font-family: NanumSquareR;
 font-weight: bold;
 font-size: 18px; 
 `;

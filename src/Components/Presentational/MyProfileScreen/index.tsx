@@ -16,12 +16,11 @@ import {
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import Swiper from 'react-native-swiper';
 import ReAnimated from 'react-native-reanimated';
-import Modal from 'react-native-modal';
 //Local Component
-import SlideUpPanel from '~/Components/Presentational/MyProfileScreen/SlideUpPanel';
 import PostItem from '~/Components/Presentational/PostItem';
+import ReviewItem from '~/Components/Presentational/ReviewItem';
 
-const HEADERHEIGHT = 67;
+const HEADERHEIGHT = hp('8.25%');
 const PROFILEHEIGHT = 88;
 
 const AnimatedFlatList = ReAnimated.createAnimatedComponent(FlatList);
@@ -29,18 +28,13 @@ const AnimatedFlatList = ReAnimated.createAnimatedComponent(FlatList);
 const ContainerView = Styled.View`
 flex: 1;
  background-color: #FFFFFF;
-
 `;
-
-// `
-
-// `;
 
 const HeaderContainerView = Styled.View`
 width: ${wp('100%')}px;
-height: ${HEADERHEIGHT + getStatusBarHeight()}px;
+height: ${hp('8.25%') + getStatusBarHeight()}px;
 flex-direction: row;
-margin-top: ${-getStatusBarHeight()};
+margin-top: ${-getStatusBarHeight()}
 padding: ${getStatusBarHeight()}px 16px 0px 16px;
 align-items: center;
 background: white;
@@ -165,35 +159,21 @@ justify-content: center;
 align-items: center;
 `;
 
-const TabBarItemText = Styled(Animated.Text as new () => Animated.Text)`
-font-family: NanumSquare;
-font-style: normal;
-font-weight: bold;
-font-size: 14px;
-line-height: 16px;
-`;
-
-const TabBarHorizontalIndicatorView = Styled(
-  Animated.View as new () => Animated.View,
-)`
-width: ${wp('50%') - 32}px;
-height: 3px;
-position: absolute;
-bottom: 0;
-left: 16;
-background: #2998FF
-`;
-
 interface Props {
   navigation: any;
   route: any;
   reviewPostData: any;
   communityPostData: any;
-  refreshing: boolean;
+  isRefreshing: boolean;
   onRefresh: any;
   isEndReached: boolean;
   onEndReached: any;
   currentUser: User;
+  openModal: any;
+  moveToCommunityDetail: any;
+  moveToReviewDetail: any;
+  moveToAnotherProfile: any;
+  moveToFullImages: any;
 }
 
 interface State {
@@ -212,6 +192,11 @@ interface User {
 }
 
 export default class MyProfile extends React.Component<Props, State> {
+  minusValue: ReAnimated.Value<-1>;
+  headerHeightValue: ReAnimated.Value<number>;
+  swiperRef: any;
+  reviewRef: any;
+  communityRef: any;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -248,9 +233,43 @@ export default class MyProfile extends React.Component<Props, State> {
 
   onRefresh = () => {};
 
-  renderPosts = ({item, index}: any) => (
-    <PostItem mode={'Card'} navigation={this.props.navigation} data={item} />
+  renderPost = ({item, index}: any) => (
+    <PostItem
+      moveToCommunityDetail={this.props.moveToCommunityDetail}
+      moveToAnotherProfile={this.props.moveToAnotherProfile}
+      moveToFullImages={this.props.moveToFullImages}
+      data={item}
+    />
   );
+
+  renderReview = ({item, index}: any) => {
+    const writer = {
+      nickname: item.user.nickname,
+      profileImage: item.user.profileImg,
+      userId: item.userId,
+    };
+
+    const avgRating =
+      (item.starRate_cost + item.starRate_treatment + item.starRate_service) /
+      3;
+    return (
+      <ReviewItem
+        reviewId={item.id}
+        writer={writer}
+        createdAt={item.createdAt}
+        treatmentArray={item.TreatmentItems}
+        treatmentDate={item.treatmentDate}
+        avgRating={avgRating}
+        viewCount={item.reviewViewNum}
+        treatInfoCount={item.getInfo}
+        likeCount={item.reviewLikeNum}
+        commentCount={item.reviewCommentsNum}
+        imageArray={item.review_contents}
+        descriptions={item.reviewDescriptions ? item.reviewDescriptions : ''}
+        moveToReviewDetail={this.props.moveToReviewDetail}
+      />
+    );
+  };
 
   render() {
     return (
@@ -308,25 +327,41 @@ export default class MyProfile extends React.Component<Props, State> {
           </ProfileContainerView>
           <TabBarConatiner>
             <TabBarItemTouchableOpacity onPress={() => this.scrollToIndex(0)}>
-              <TabBarItemText
+              <Animated.Text
                 style={{
+                  fontFamily: 'NanumSquare',
+                  fontStyle: 'normal',
+                  fontWeight: 'bold',
+                  fontSize: 14,
+                  lineHeight: 16,
                   color: this.state.scrollX.interpolate({
                     inputRange: [0, wp('100%')],
                     outputRange: ['#2998FF', '#C4C4C4'],
                   }),
-                }}>{`내가 쓴 후기`}</TabBarItemText>
+                }}>{`내가 쓴 후기`}</Animated.Text>
             </TabBarItemTouchableOpacity>
             <TabBarItemTouchableOpacity onPress={() => this.scrollToIndex(1)}>
-              <TabBarItemText
+              <Animated.Text
                 style={{
+                  fontFamily: 'NanumSquare',
+                  fontStyle: 'normal',
+                  fontWeight: 'bold',
+                  fontSize: 14,
+                  lineHeight: 16,
                   color: this.state.scrollX.interpolate({
                     inputRange: [0, wp('100%')],
                     outputRange: ['#C4C4C4', '#2998FF'],
                   }),
-                }}>{`내가 쓴 수다글`}</TabBarItemText>
+                }}>{`내가 쓴 수다글`}</Animated.Text>
             </TabBarItemTouchableOpacity>
-            <TabBarHorizontalIndicatorView
+            <Animated.View
               style={{
+                width: wp('50%') - 32,
+                height: 3,
+                position: 'absolute',
+                bottom: 0,
+                left: 16,
+                backgroundColor: '#2998FF',
                 transform: [
                   {
                     translateX: this.state.scrollX.interpolate({
@@ -367,7 +402,7 @@ export default class MyProfile extends React.Component<Props, State> {
               minHeight: hp('100%') - PROFILEHEIGHT + getStatusBarHeight() - 1,
               paddingTop: HEADERHEIGHT + getStatusBarHeight() + 1 + hp('7%'),
             }}
-            ref={(ref) => (this.reviewRef = ref)}
+            ref={(ref: any) => (this.reviewRef = ref)}
             scrollEventThrottle={16}
             scrollIndicatorInsets={{
               top: PROFILEHEIGHT + hp('7%'),
@@ -377,11 +412,11 @@ export default class MyProfile extends React.Component<Props, State> {
                 {
                   nativeEvent: {
                     contentOffset: {
-                      y: (y) =>
+                      y: (y: number) =>
                         ReAnimated.block([
                           ReAnimated.set(this.state.currentScrollY, y),
                           ReAnimated.call([y], ([offsetY]) => {
-                            if (this.state.currentIndex === 0) {
+                            if (this.state.scrollX._value === 0) {
                               this.communityRef &&
                                 this.communityRef.getNode().scrollToOffset({
                                   offset: Math.min(PROFILEHEIGHT, offsetY),
@@ -398,20 +433,11 @@ export default class MyProfile extends React.Component<Props, State> {
                 useNativeDriver: true,
               },
             )}
-            data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
-            renderItem={({item, index}) => (
-              <View
-                style={{
-                  width: '100%',
-                  height: 100,
-                  backgroundColor: 'red',
-                  borderWidth: 1,
-                }}
-              />
-            )}
+            data={[]}
+            renderItem={this.renderReview}
             refreshControl={
               <RefreshControl
-                refreshing={this.state.isRefreshing}
+                refreshing={this.props.isRefreshing}
                 onRefresh={() => this.onRefresh()}
               />
             }
@@ -425,7 +451,7 @@ export default class MyProfile extends React.Component<Props, State> {
               minHeight: hp('100%') - PROFILEHEIGHT + getStatusBarHeight() - 1,
               paddingTop: HEADERHEIGHT + getStatusBarHeight() + 1 + hp('7%'),
             }}
-            ref={(ref) => (this.communityRef = ref)}
+            ref={(ref: any) => (this.communityRef = ref)}
             scrollEventThrottle={16}
             scrollIndicatorInsets={{
               top: PROFILEHEIGHT + hp('7%'),
@@ -435,11 +461,11 @@ export default class MyProfile extends React.Component<Props, State> {
                 {
                   nativeEvent: {
                     contentOffset: {
-                      y: (y) =>
+                      y: (y: number) =>
                         ReAnimated.block([
                           ReAnimated.set(this.state.currentScrollY, y),
                           ReAnimated.call([y], ([offsetY]) => {
-                            if (this.state.currentIndex === 1) {
+                            if (this.state.scrollX._value === wp('100%')) {
                               this.reviewRef &&
                                 this.reviewRef.getNode().scrollToOffset({
                                   offset: Math.min(PROFILEHEIGHT, offsetY),
@@ -457,10 +483,10 @@ export default class MyProfile extends React.Component<Props, State> {
               },
             )}
             data={this.props.communityPostData}
-            renderItem={this.renderPosts}
+            renderItem={this.renderPost}
             refreshControl={
               <RefreshControl
-                refreshing={this.state.isRefreshing}
+                refreshing={this.props.isRefreshing}
                 onRefresh={() => this.onRefresh()}
               />
             }

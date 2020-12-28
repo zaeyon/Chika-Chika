@@ -16,7 +16,7 @@ import {
 const ContainerView = Styled.View`
 width: ${wp('100%')};
 height: auto;
-padding-top: 24px;
+margin-top: 32px;
 background-color: white
 
 `;
@@ -25,7 +25,6 @@ const BodyContainerView = Styled.View`
 display: flex;
 width: 100%;
 padding: 0px 16px;
-
 `;
 
 const ProfileContainerView = Styled.View`
@@ -34,6 +33,7 @@ height: auto;
 margin-right: auto;
 flex-direction: row;
 align-items: center;
+padding: 8px 0px;
 `;
 
 const HashTagContainerView = Styled.View`
@@ -42,7 +42,7 @@ height: auto;
 padding: 0px 16px;
 flex-direction: row;
 flex-wrap: wrap;
-margin: 4px 0px;
+margin-top: 4px;
 `;
 
 const HashTagIconView = Styled(TouchableOpacity as new () => TouchableOpacity)`
@@ -110,7 +110,7 @@ line-height: 24px;
 `;
 
 const ImageContainerView = Styled.View`
-margin: 8px 0px;
+margin-top: 4px;
 margin-right: auto;
 width: 100%;
 height: auto;
@@ -124,14 +124,17 @@ width: 130px;
 height: 130px;
 background-color: grey;
 border-radius: 4px;
-margin-right: 16px;
+margin-right: 5px;
 margin-left: ${(props) => (props.isFirst ? '0px' : '16px')}
 `;
 const SocialInfoContainerView = Styled.View`
 width: ${wp('100%')};
-height: 56px;
+height: 57px;
 align-items: center;
 flex-direction: row;
+margin-top: 4px;
+border-bottom-width: 1px;
+border-color: #ECECEC;
 `;
 const SocialInfoView = Styled.View`
 flex-direction: row;
@@ -152,36 +155,35 @@ const HashTagText = Styled.Text`
   color: #0075FF;
 `;
 interface Props {
-  mode: string;
-  navigation: any;
   data: any;
+  moveToCommunityDetail: any;
+  moveToAnotherProfile: any;
+  toggleSocialLike: any;
+  toggleSocialScrap: any;
 }
 
-const PostItem = ({mode, data, navigation}: Props) => {
+const PostItem = ({
+  data,
+  moveToCommunityDetail,
+  moveToAnotherProfile,
+  toggleSocialLike,
+  toggleSocialScrap,
+}: Props) => {
   const {
-    user,
+    id,
+    type,
     createdAt,
     updatedAt,
     description,
     postLikeNum,
     postCommentsNum,
+    user,
+    Clinics,
+    GeneralTags,
+    SymptomItems,
+    TreatmentItems,
+    community_imgs,
   } = data;
-
-  const tagList = [
-    '임플란트',
-    '충치',
-    '임플란트',
-    '충치',
-    '임플란트',
-    '충치',
-    '임플란트',
-    '충치',
-  ];
-  const mediaFiles = data.community_imgs;
-  const proComments = [
-    '안녕하세요 전윤정님. 저희 치과를 이용해주셔서 감사합니다. 어쩌구저쩌구 어쩌구저쩌구',
-  ];
-  const [updatedAtData, setUpdatedAtData] = useState('');
 
   const formatUpdatedAtDate = useCallback(
     (updatedAt: string) => {
@@ -231,7 +233,7 @@ const PostItem = ({mode, data, navigation}: Props) => {
       </TouchableWithoutFeedback>
     );
   };
-  const formatDescription = (oldDescription: string) => {
+  const formatDescription = useCallback((oldDescription: string) => {
     let formattedDescription: any[] = [];
     const lines = oldDescription.split(/\r\n|\r|\n/);
     for (let line of lines) {
@@ -270,51 +272,18 @@ const PostItem = ({mode, data, navigation}: Props) => {
     // let description = oldDescription.replace(/{{/gi, '#');
     // description = description.replace(/}}/gi, '');
     // return description;
-  };
-  const moveToCommunityDetail = () => {
-    navigation.navigate('CommunityDetailScreen', {data: data});
-  };
-
-  const moveToAnotherProfile = () => {
-    navigation.navigate('AnotherProfileStackScreen', {
-      screen: 'AnotherProfileScreen',
-    });
-  };
-
-  const moveToFullImages = (imageUri: string) => {
-    let index = mediaFiles.findIndex(
-      (image: any) => image.img_url === imageUri,
-    );
-
-    let imageUri_arr = mediaFiles.map((image: any) => {
-      return image.img_url;
-    });
-    console.log(mediaFiles);
-    console.log('선택한 사진의 mediaFiles index', index);
-
-    navigation.navigate('FullImagesScreen', {
-      imagesUrl_arr: imageUri_arr,
-      imageIndex: index,
-    });
-  };
-  const toggleSocialLike = () => {
-    return;
-  };
-
-  const toggleSocialScrap = () => {};
+  }, []);
 
   const memoDescription = useMemo(() => formatDescription(description), [
     description,
   ]);
 
-  const renderImagesCallback = useCallback(
-    ({item, index}) => (
+  const renderImage = useCallback(
+    ({item, index}: any) => (
       <TouchableWithoutFeedback
         key={'TouchableImage' + index}
         onPress={() => {
-          mode === 'Detail'
-            ? moveToFullImages(item.img_url)
-            : moveToCommunityDetail();
+          moveToCommunityDetail(id, type);
         }}>
         <ImageView
           isFirst={index}
@@ -326,13 +295,13 @@ const PostItem = ({mode, data, navigation}: Props) => {
         />
       </TouchableWithoutFeedback>
     ),
-    [mediaFiles],
+    [],
   );
 
   return (
     <TouchableWithoutFeedback
       onPress={() => {
-        moveToCommunityDetail();
+        moveToCommunityDetail(id, type);
       }}>
       <ContainerView>
         <BodyContainerView>
@@ -359,74 +328,84 @@ const PostItem = ({mode, data, navigation}: Props) => {
           </TouchableWithoutFeedback>
 
           <ContentView>
-            {mode === 'Detail' ? (
-              <ContentText>{formatDescription(description)}</ContentText>
-            ) : (
-              <ContentText numberOfLines={2}>{memoDescription}</ContentText>
-            )}
+            <ContentText numberOfLines={2}>{memoDescription}</ContentText>
           </ContentView>
         </BodyContainerView>
 
-        {mediaFiles.length > 0 ? (
+        {community_imgs.length > 0 ? (
           <ImageContainerView>
             <ImageFlatList
               horizontal
               showsHorizontalScrollIndicator={false}
               alwaysBounceHorizontal={false}
-              data={mediaFiles}
+              data={community_imgs}
               keyExtractor={(item) => String(item.id)}
-              renderItem={renderImagesCallback}
+              renderItem={renderImage}
             />
           </ImageContainerView>
         ) : null}
         <HashTagContainerView>
-          {tagList.map((item, index) => (
-            <HashTagIconView>
-              <HashTagIconText>{'#' + item}</HashTagIconText>
+          {Clinics.map((item: any) => (
+            <HashTagIconView key={String(item.id)}>
+              <HashTagIconText>{'#' + item.name}</HashTagIconText>
+            </HashTagIconView>
+          ))}
+          {GeneralTags.map((item: any) => (
+            <HashTagIconView key={String(item.id)}>
+              <HashTagIconText>{'#' + item.name}</HashTagIconText>
+            </HashTagIconView>
+          ))}
+          {SymptomItems.map((item: any) => (
+            <HashTagIconView key={String(item.id)}>
+              <HashTagIconText>{'#' + item.name}</HashTagIconText>
+            </HashTagIconView>
+          ))}
+          {TreatmentItems.map((item: any) => (
+            <HashTagIconView key={String(item.id)}>
+              <HashTagIconText>{'#' + item.name}</HashTagIconText>
             </HashTagIconView>
           ))}
         </HashTagContainerView>
-        {mode === 'Detail' ? null : (
-          <SocialInfoContainerView>
-            <TouchableOpacity
-              style={{
-                marginHorizontal: 16,
-              }}
-              onPress={() => {
-                toggleSocialLike();
-              }}>
-              <SocialInfoView>
-                <Image
-                  source={require('~/Assets/Images/Review/ic_like_inline.png')}
-                />
-                <SocialInfoText>{postLikeNum}</SocialInfoText>
-              </SocialInfoView>
-            </TouchableOpacity>
 
+        <SocialInfoContainerView>
+          <TouchableOpacity
+            style={{
+              marginHorizontal: 16,
+            }}
+            onPress={() => {
+              toggleSocialLike();
+            }}>
             <SocialInfoView>
               <Image
-                source={require('~/Assets/Images/Review/ic_comment_inline.png')}
+                source={require('~/Assets/Images/Review/ic_like_inline.png')}
               />
-              <SocialInfoText>{postCommentsNum}</SocialInfoText>
+              <SocialInfoText>{postLikeNum}</SocialInfoText>
             </SocialInfoView>
+          </TouchableOpacity>
 
-            <TouchableOpacity
-              style={{
-                position: 'absolute',
-                right: 16,
-              }}
-              onPress={() => {
-                toggleSocialScrap();
-              }}>
-              <SocialInfoView>
-                <SocialInfoText>스크랩하기</SocialInfoText>
-              </SocialInfoView>
-            </TouchableOpacity>
-          </SocialInfoContainerView>
-        )}
+          <SocialInfoView>
+            <Image
+              source={require('~/Assets/Images/Review/ic_comment_inline.png')}
+            />
+            <SocialInfoText>{postCommentsNum}</SocialInfoText>
+          </SocialInfoView>
+
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              right: 16,
+            }}
+            onPress={() => {
+              toggleSocialScrap();
+            }}>
+            <SocialInfoView>
+              <SocialInfoText>스크랩하기</SocialInfoText>
+            </SocialInfoView>
+          </TouchableOpacity>
+        </SocialInfoContainerView>
       </ContainerView>
     </TouchableWithoutFeedback>
   );
 };
 
-export default PostItem;
+export default React.memo(PostItem);

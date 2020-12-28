@@ -8,7 +8,7 @@ import {
   View,
   Text,
   Animated,
-  StyleSheet
+  StyleSheet,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -21,30 +21,65 @@ import {
   getStatusBarHeight,
 } from 'react-native-iphone-x-helper';
 
+// Routes
+import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 // Local Component
 import HomeTabScreen from './HomeTabScreen';
 import QuestionTabScreen from './QuestionTabScreen';
 import GeneralTabScreen from './GeneralTabScreen';
-import {useSelector} from 'react-redux';
+// Redux
+import {useSelector, useDispatch} from 'react-redux';
+import allActions from '~/actions';
 
 const ContainerView = Styled.View`
  flex: 1;
  background: white;
 `;
 
-const HeaderConatinerView = Styled.View`
+const HeaderContainerView = Styled.View`
 width: ${wp('100%')}px;
-height: 40px;
+height: ${hp('8.25%') + getStatusBarHeight()}px;
 flex-direction: row;
-padding: 0px 16px;
-margin-top: ${isIphoneX() ? 10 : 20}px;
+margin-top: ${-getStatusBarHeight()}
+padding: ${getStatusBarHeight()}px 16px 0px 16px;
+align-items: center;
 background: white;
+z-index: 2;
 `;
-const HeaderContentText = Styled.Text`
+
+const HeaderNicknameText = Styled.Text`
+font-family: NanumSquareR;
 font-style: normal;
 font-weight: bold;
-font-size: 18px;
-line-height: 40px;
+font-size: 20px;
+line-height: 32px;
+margin-right: 8px;
+`;
+
+const HeaderLocationText = Styled.Text`
+font-family: NanumSquareR;
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+line-height: 32px;
+color: #8C8C8C;
+`;
+
+const HeaderIconContainerView = Styled.View`
+width: auto
+height: auto;
+flex-direction: row;
+margin-left: auto;
+`;
+
+const HeaderIconTouchableOpacity = Styled(
+  TouchableOpacity as new () => TouchableOpacity,
+)`
+width: 40px;
+height: 40px;
+margin-left: 16px;
+background: grey;
+border-radius: 8px;
 `;
 const BodyContainerView = Styled.View`
 flex: 1;
@@ -57,80 +92,103 @@ interface Props {
 
 const CommunityListScreen = ({navigation, route}: Props) => {
   const CommunityTopTab = createMaterialTopTabNavigator();
+
+  const dispatch = useDispatch();
+
   const currentUser = useSelector((state: any) => state.currentUser);
+  const jwtToken = currentUser.user.jwtToken;
+
   const moveToKeywordSearch = () => {
     navigation.navigate('KeywordSearchStackScreen', {
       screen: 'KeywordSearchScreen',
     });
   };
 
-  return (
-    <SafeAreaView style={styles.safeAreaStyle} forceInset={{top:'always'}}>
-    <ContainerView>
-      <HeaderConatinerView>
-        <HeaderContentText>수다방</HeaderContentText>
-        <TouchableOpacity
-          style={{
-            marginLeft: 'auto',
-          }}
-          onPress={() => moveToKeywordSearch()}>
-          <HeaderContentText>검색</HeaderContentText>
-        </TouchableOpacity>
-      </HeaderConatinerView>
-      <BodyContainerView>
-        <CommunityTopTab.Navigator
-          style={{
-            flex: 1,
-          }}
-          tabBarOptions={{
-            style: {
-              marginLeft: 4,
-              marginTop: 9,
-              alignContent: 'center',
-              justifyContent: 'center',
-            },
-            labelStyle: {
-              fontSize: 18,
-              lineHeight: 24,
-              color: 'black',
-              margin: 0,
-            },
-            tabStyle: {
-              width: 'auto',
-              paddingHorizontal: 12,
-              paddingTop: 12,
-              paddingBottom: 3,
-              height: 41.5,
-              justifyContent: 'flex-start',
-            },
-            indicatorContainerStyle: {
-              justifyContent: 'center',
-              alignItems: 'center',
-            },
-            indicatorStyle: {
-              backgroundColor: '#000000',
+  useEffect(() => {
+    const questionform = {
+      type: 'Question',
+      limit: 10,
+      offset: 0,
+      order: 'createdAt',
+    };
+    const freetalkform = {
+      type: 'FreeTalk',
+      limit: 10,
+      offset: 0,
+      order: 'createdAt',
+    };
+    GETCommunityPosts(jwtToken, questionform).then((response: any) => {
+      const data = {
+        type: 'Question',
+        posts: response,
+      };
+      dispatch(allActions.communityActions.setPosts(data));
+      console.log('res', response.length);
+    });
+    GETCommunityPosts(jwtToken, freetalkform).then((response: any) => {
+      const data = {
+        type: 'FreeTalk',
+        posts: response,
+      };
+      dispatch(allActions.communityActions.setPosts(data));
+      console.log('res', response.length);
+    });
+  }, []);
 
-              height: 2.5,
-            },
-          }}>
-          <CommunityTopTab.Screen
-            name="전체"
-            component={HomeTabScreen}
-            initialParams={{currentUser: currentUser}}
-          />
-          <CommunityTopTab.Screen
-            name="질문"
-            component={QuestionTabScreen}
-            initialParams={{currentUser: currentUser}}
-          />
-          <CommunityTopTab.Screen
-            name="자유"
-            component={GeneralTabScreen}
-            initialParams={{currentUser: currentUser}}
-          />
-        </CommunityTopTab.Navigator>
-      </BodyContainerView>
-    </ContainerView>
+  return (
+    <SafeAreaView style={styles.safeAreaStyle} forceInset={{top: 'always'}}>
+      <ContainerView>
+        <HeaderContainerView>
+          <HeaderNicknameText>{'커뮤니티'}</HeaderNicknameText>
+          <HeaderLocationText>
+            {/* {this.props.currentUser.location} */ '광교동'}
+          </HeaderLocationText>
+          <HeaderIconContainerView>
+            <HeaderIconTouchableOpacity />
+            <HeaderIconTouchableOpacity />
+          </HeaderIconContainerView>
+        </HeaderContainerView>
+        <BodyContainerView>
+          <CommunityTopTab.Navigator
+            style={{
+              flex: 1,
+            }}
+            tabBarOptions={{
+              activeTintColor: '#2998FF',
+              inactiveTintColor: '#848484',
+              labelStyle: {
+                fontFamily: 'NanumSquareR',
+                fontWeight: 'bold',
+                fontSize: 14,
+                lineHeight: 16,
+              },
+              indicatorStyle: {
+                backgroundColor: '#2998FF',
+                height: 3,
+              },
+              indicatorContainerStyle: {
+                borderBottomColor: '#C4C4C4',
+                borderBottomWidth: 1,
+              },
+            }}>
+            <CommunityTopTab.Screen
+              name="전체"
+              component={HomeTabScreen}
+              initialParams={{currentUser: currentUser}}
+            />
+            <CommunityTopTab.Screen
+              name="질문"
+              component={QuestionTabScreen}
+              initialParams={{currentUser: currentUser}}
+            />
+            <CommunityTopTab.Screen
+              name="자유"
+              component={GeneralTabScreen}
+              initialParams={{currentUser: currentUser}}
+            />
+          </CommunityTopTab.Navigator>
+        </BodyContainerView>
+      </ContainerView>
     </SafeAreaView>
   );
 };
@@ -138,8 +196,8 @@ const CommunityListScreen = ({navigation, route}: Props) => {
 const styles = StyleSheet.create({
   safeAreaStyle: {
     flex: 1,
-    backgroundColor: "#ffffff"
-}
-})
+    backgroundColor: '#ffffff',
+  },
+});
 
 export default CommunityListScreen;

@@ -255,7 +255,6 @@ align-items: center;
 justify-content: center;
 `;
 
-
 const ReviewUploadButton = Styled.View`
 width: ${wp('87.2%')}px;
 height: ${wp('24.416%')}px;
@@ -272,10 +271,9 @@ color: #000000;
 font-size: 18px;
 `;
 
-
 interface Props {
   navigation: any;
-  route: any; 
+  route: any;
 }
 
 const HomeMainScreen = ({navigation, route}: Props) => {
@@ -292,17 +290,16 @@ const HomeMainScreen = ({navigation, route}: Props) => {
   ]);
 
   const moveToReviewList = () => {
-    navigation.navigate("ReviewStackScreen", {
-        screen: "ReviewListScreen"
+    navigation.navigate('ReviewStackScreen', {
+      screen: 'ReviewListScreen',
     });
-  }
+  };
 
-
-  const moveToReviewUpload = () => {  
-    navigation.navigate("ReviewUploadStackScreen", {
-        screen: "ReceiptRegisterScreen"
+  const moveToReviewUpload = () => {
+    navigation.navigate('ReviewUploadStackScreen', {
+      screen: 'ReceiptRegisterScreen',
     });
-  }
+  };
 
   const renderFlatListImagesCallback = useCallback(
     ({item, index}) => (
@@ -406,8 +403,7 @@ const HomeMainScreen = ({navigation, route}: Props) => {
           <ReviewContentTitleView>
             <ReviewContentTitleText>충치</ReviewContentTitleText>
             <ReviewContentText>인기리뷰</ReviewContentText>
-            <TouchableWithoutFeedback
-              onPress={() => moveToReviewList()}>
+            <TouchableWithoutFeedback onPress={() => moveToReviewList()}>
               <ReviewContentDetailButtonView>
                 <ReviewContentDetailButtonText>
                   더보기
@@ -428,13 +424,11 @@ const HomeMainScreen = ({navigation, route}: Props) => {
           </ReviewContentImageContainerView>
         </ReviewContentView>
         <ReviewUploadContainer>
-        <TouchableWithoutFeedback onPress={() => moveToReviewUpload()}>
-          <ReviewUploadButton style={{marginTop: 50}}>
-            <ReviewUploadText>
-              리뷰 작성하기
-            </ReviewUploadText>
-          </ReviewUploadButton>
-        </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => moveToReviewUpload()}>
+            <ReviewUploadButton style={{marginTop: 50}}>
+              <ReviewUploadText>리뷰 작성하기</ReviewUploadText>
+            </ReviewUploadButton>
+          </TouchableWithoutFeedback>
         </ReviewUploadContainer>
       </BodyContainerView>
     </ContainerView>

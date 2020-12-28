@@ -1,10 +1,12 @@
 import {combineReducers} from 'redux';
 import currentUser from './currentUser';
 import reviewList from './reviewList'; 
+import communityPostList from './communityPostList';
 
 const rootReducers = combineReducers({
-    currentUser,
-    reviewList,
-})
+  currentUser,
+  communityPostList,
+  reviewList,
+});
 
-export default rootReducers
+export default rootReducers;

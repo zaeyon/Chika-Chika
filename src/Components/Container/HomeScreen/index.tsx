@@ -9,7 +9,9 @@ import {
 //Local Component
 import HomeMainScreen from '~/Components/Presentational/HomeScreen';
 
-const ContainerView = Styled.View`
+const ContainerView = Styled(
+  (SafeAreaView as unknown) as new () => SafeAreaView,
+)`
 flex: 1;
 background: white;
 `;
@@ -21,21 +23,11 @@ interface Props {
 
 const HomeScreen = ({navigation, route}: Props) => {
   return (
-    <SafeAreaView style={styles.safeAreaStyle} forceInset={{top: 'always'}}>
-    <ContainerView>
+    <ContainerView forceInset={{top: 'always'}}>
       <HomeMainScreen navigation={navigation} route={route} />
     </ContainerView>
-    </SafeAreaView>
   );
 };
-
-
-const styles = StyleSheet.create({
-    safeAreaStyle: {
-        flex: 1,
-        backgroundColor: "#ffffff"
-    }
-})
 
 export default HomeScreen;
 

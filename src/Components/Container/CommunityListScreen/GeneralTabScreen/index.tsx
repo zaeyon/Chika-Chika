@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
@@ -15,7 +15,8 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
-
+import {useSelector, useDispatch} from 'react-redux';
+import allActions from '~/actions';
 //Local Component
 import CommunityPostList from '~/Components/Presentational/CommunityPostList';
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
@@ -33,28 +34,18 @@ interface Props {
 const GeneralTabScreen = ({navigation, route}: Props) => {
   const type = 'FreeTalk';
   const limit = 10;
-  const [postData, setPostData] = useState([] as any);
   const [refreshing, setRefreshing] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const [isEndReached, setIsEndReached] = useState(false);
   const [order, setOrder] = useState('createdAt');
   const jwtToken = route.params.currentUser.user.jwtToken;
+  const postData = useSelector(
+    (state: any) => state.communityPostList.FreeTalkPosts,
+  );
+  const dispatch = useDispatch();
   const buttonY = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    const form = {
-      type: type,
-      limit: limit,
-      offset: pageIndex * limit,
-      order: order,
-    };
-    GETCommunityPosts(jwtToken, form).then((response: any) => {
-      setPostData(response);
-      console.log('res', response.length);
-    });
-  }, []);
-
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     const form = {
       type: type,
       limit: limit,
@@ -63,35 +54,74 @@ const GeneralTabScreen = ({navigation, route}: Props) => {
     };
     setRefreshing(true);
     GETCommunityPosts(jwtToken, form).then((response: any) => {
-      setPostData(response);
+      const data = {
+        type,
+        posts: response,
+      };
+      dispatch(allActions.communityActions.setPosts(data));
       setPageIndex(0);
       setRefreshing(false);
     });
-  };
+  }, [jwtToken, order]);
 
-  const onEndReached = (info: any) => {
-    console.log(info.distanceFromEnd);
+  const onEndReached = useCallback(
+    (info: any) => {
+      return; //!!
+      if (!isEndReached) {
+        setIsEndReached(true);
+        const newPageIndex = pageIndex + 1;
 
-    if (!isEndReached && postData.length > 9) {
-      setIsEndReached(true);
-      const newPageIndex = pageIndex + 1;
-
-      const form = {
-        type: type,
-        limit: limit,
-        offset: newPageIndex * limit,
-        order: order,
-      };
-      setPageIndex((prev: any) => prev + 1);
-      GETCommunityPosts(jwtToken, form).then((response: any) => {
-        console.log(response.length);
-        setPostData((prev: any) => {
-          return [...prev, ...response];
+        const form = {
+          type: type,
+          limit: limit,
+          offset: newPageIndex * limit,
+          order: order,
+        };
+        setPageIndex((prev: any) => prev + 1);
+        GETCommunityPosts(jwtToken, form).then((response: any) => {
+          console.log(response.length);
+          const data = {
+            type,
+            posts: [...postData, ...response],
+          };
+          dispatch(allActions.communityActions.setPosts(data));
+          setIsEndReached(false);
         });
-        setIsEndReached(false);
+      }
+    },
+    [isEndReached, pageIndex, postData, order, jwtToken],
+  );
+
+  const moveToCommunityDetail = useCallback(
+    (postId: number, postType: string) => {
+      navigation.navigate('CommunityDetailScreen', {
+        id: postId,
+        type: postType,
       });
-    }
-  };
+    },
+    [],
+  );
+
+  const moveToAnotherProfile = useCallback(() => {
+    navigation.navigate('AnotherProfileScreen');
+  }, []);
+
+  const moveToFullImages = useCallback((mediaFiles: any, imageUri: string) => {
+    let index = mediaFiles.findIndex(
+      (image: any) => image.img_url === imageUri,
+    );
+
+    let imageUri_arr = mediaFiles.map((image: any) => {
+      return image.img_url;
+    });
+    console.log(mediaFiles);
+    console.log('선택한 사진의 mediaFiles index', index);
+
+    navigation.navigate('FullImagesScreen', {
+      imagesUrl_arr: imageUri_arr,
+      imageIndex: index,
+    });
+  }, []);
 
   return (
     <ContainerView>
@@ -103,6 +133,9 @@ const GeneralTabScreen = ({navigation, route}: Props) => {
         onRefresh={onRefresh}
         isEndReached={isEndReached}
         onEndReached={onEndReached}
+        moveToCommunityDetail={moveToCommunityDetail}
+        moveToAnotherProfile={moveToAnotherProfile}
+        moveToFullImages={moveToFullImages}
       />
       <Animated.View
         style={{
@@ -139,7 +172,11 @@ const GeneralTabScreen = ({navigation, route}: Props) => {
             borderRadius: 100,
           }}
           onPress={() => {
-            navigation.navigate('CommunityPostUploadStackScreen');
+            navigation.navigate('CommunityPostUploadStackScreen', {
+              data: {
+                id: -1,
+              },
+            });
           }}>
           <Text>글 작성하기</Text>
         </TouchableOpacity>

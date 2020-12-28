@@ -10,8 +10,8 @@ interface Props {
     order: string;
 }
 
-const GETUserCommunityPosts = (jwtToken: string, nickname: string, {type, limit, offset, order}: Props) => {
-    const uri = baseUri + `/api/v1/users/${nickname}/communities?limit=${limit}&offset=${offset}&order=${order}&type=${type}`;
+const GETUserCommunityPosts = (jwtToken: string, userId: string, {type, limit, offset, order}: Props) => {
+    const uri = baseUri + `/api/v1/users/${userId}/communities?limit=${limit}&offset=${offset}&order=${order}&type=${type}`;
     console.log(type, limit, offset, order);
     return new Promise(function(resolve, reject) {
 

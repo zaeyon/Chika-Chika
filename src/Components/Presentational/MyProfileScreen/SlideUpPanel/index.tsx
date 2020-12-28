@@ -66,21 +66,11 @@ background: #ECECEC;
 
 interface Props {
   navigation: any;
-  closeModal: any;
-  isModalVisible: boolean;
-  setIsModalVisible: any;
-  setNavigateName: any;
+  closeBottomSheet: any;
   disabled: boolean;
 }
 
-const SlideUpPanel = ({
-  navigation,
-  closeModal,
-  isModalVisible,
-  setIsModalVisible,
-  setNavigateName,
-  disabled,
-}: Props) => {
+const SlideUpPanel = ({navigation, closeBottomSheet, disabled}: Props) => {
   const contents = [
     {title: '스크랩한 글', name: ''},
     {title: '좋아요한 글', name: ''},
@@ -98,7 +88,7 @@ const SlideUpPanel = ({
           disabled={disabled}
           onPress={() => {
             if (!disabled) {
-              closeModal();
+              closeBottomSheet();
               setTimeout(() => navigation.navigate(item.name), 400);
 
               // setNavigateName(item.name);
@@ -113,9 +103,6 @@ const SlideUpPanel = ({
       </View>
     ));
 
-  useEffect(() => {
-    console.log(disabled);
-  }, [disabled]);
   return (
     <ContainerView>
       <TopIndicatorView />
