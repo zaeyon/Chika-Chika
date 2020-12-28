@@ -191,7 +191,6 @@ const MyProfileScreen = ({navigation, route}: Props) => {
         moveToCommunityDetail={moveToCommunityDetail}
         moveToReviewDetail={moveToReviewDetail}
         moveToAnotherProfile={moveToAnotherProfile}
-        moveToFullImages={moveToFullImages}
       />
       <BottomSheet
         ref={bottomSheetRef}

@@ -430,6 +430,26 @@ function CommunityStackScreen() {
       <CommunityStack.Screen
         name="KeywordSearchStackScreen"
         component={KeywordSearchStackScreen}
+        options={() => ({
+          gestureEnabled: false,
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {duration: 150},
+            },
+            close: {
+              animation: 'timing',
+              config: {duration: 150},
+            },
+          },
+          cardStyleInterpolator: ({current: {progress}}) => {
+            return {
+              cardStyle: {
+                opacity: progress,
+              },
+            };
+          },
+        })}
       />
     </CommunityStack.Navigator>
   );

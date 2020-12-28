@@ -89,9 +89,11 @@ const CommunityPostList = ({
     console.log(index);
     return (
       <PostItem
+        data={item}
         moveToCommunityDetail={moveToCommunityDetail}
         moveToAnotherProfile={moveToAnotherProfile}
-        data={item}
+        toggleSocialLike={toggleSocialLike}
+        toggleSocialScrap={toggleSocialScrap}
       />
     );
   }, []);

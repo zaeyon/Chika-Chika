@@ -106,6 +106,26 @@ const communityPostList = (
             FreeTalkPosts: action.payload.posts,
           };
       }
+
+    case 'TOGGLE_LIKE':
+      switch (action.payload.type) {
+        case 'Question':
+          const newQuestionPost = state.QuestionPosts.find(
+            (item) => item.id === action.payload.id,
+          );
+          return {
+            ...newQuestionPost,
+            viewerLikeCommunityPost: !newQuestionPost.viewerLikeCommunityPost,
+          };
+        case 'FreeTalk':
+          const newFreeTalkPost = state.FreeTalkPosts.find(
+            (item) => item.id === action.payload.id,
+          );
+          return {
+            ...newFreeTalkPost,
+            viewerLikeCommunityPost: !newFreeTalkPost.viewerLikeCommunityPost,
+          };
+      }
     default:
       return state;
   }

@@ -177,6 +177,7 @@ const PostItem = ({
     description,
     postLikeNum,
     postCommentsNum,
+    viewerLikeCommunityPost,
     user,
     Clinics,
     GeneralTags,
@@ -373,12 +374,14 @@ const PostItem = ({
               marginHorizontal: 16,
             }}
             onPress={() => {
-              toggleSocialLike();
+              toggleSocialLike(id, viewerLikeCommunityPost);
             }}>
             <SocialInfoView>
-              <Image
-                source={require('~/Assets/Images/Review/ic_like_inline.png')}
-              />
+              {viewerLikeCommunityPost ? null : (
+                <Image
+                  source={require('~/Assets/Images/Review/ic_like_inline.png')}
+                />
+              )}
               <SocialInfoText>{postLikeNum}</SocialInfoText>
             </SocialInfoView>
           </TouchableOpacity>

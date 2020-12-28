@@ -25,9 +25,17 @@ const setPosts = (data) => {
     payload: data,
   };
 };
+
+const toggleLike = (data) => {
+  return {
+    type: 'TOGGLE_LIKE',
+    payload: data,
+  };
+};
 export default {
   createPost,
   editPost,
   deletePost,
   setPosts,
+  toggleLike,
 };
