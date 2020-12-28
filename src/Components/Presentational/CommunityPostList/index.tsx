@@ -65,7 +65,8 @@ interface Props {
   onEndReached: any;
   moveToCommunityDetail: any;
   moveToAnotherProfile: any;
-  moveToFullImages: any;
+  toggleSocialLike: any;
+  toggleSocialScrap: any;
 }
 const CommunityPostList = ({
   navigation,
@@ -77,7 +78,8 @@ const CommunityPostList = ({
   onEndReached,
   moveToCommunityDetail,
   moveToAnotherProfile,
-  moveToFullImages,
+  toggleSocialLike,
+  toggleSocialScrap,
 }: Props) => {
   useEffect(() => {
     console.log('list changed', postData);

@@ -16,7 +16,7 @@ import {
 const ContainerView = Styled.View`
 width: ${wp('100%')};
 height: auto;
-padding-top: 24px;
+margin-top: 32px;
 background-color: white
 
 `;
@@ -25,7 +25,6 @@ const BodyContainerView = Styled.View`
 display: flex;
 width: 100%;
 padding: 0px 16px;
-
 `;
 
 const ProfileContainerView = Styled.View`
@@ -34,6 +33,7 @@ height: auto;
 margin-right: auto;
 flex-direction: row;
 align-items: center;
+padding: 8px 0px;
 `;
 
 const HashTagContainerView = Styled.View`
@@ -42,7 +42,7 @@ height: auto;
 padding: 0px 16px;
 flex-direction: row;
 flex-wrap: wrap;
-margin: 4px 0px;
+margin-top: 4px;
 `;
 
 const HashTagIconView = Styled(TouchableOpacity as new () => TouchableOpacity)`
@@ -110,7 +110,7 @@ line-height: 24px;
 `;
 
 const ImageContainerView = Styled.View`
-margin: 8px 0px;
+margin-top: 4px;
 margin-right: auto;
 width: 100%;
 height: auto;
@@ -124,14 +124,17 @@ width: 130px;
 height: 130px;
 background-color: grey;
 border-radius: 4px;
-margin-right: 16px;
+margin-right: 5px;
 margin-left: ${(props) => (props.isFirst ? '0px' : '16px')}
 `;
 const SocialInfoContainerView = Styled.View`
 width: ${wp('100%')};
-height: 56px;
+height: 57px;
 align-items: center;
 flex-direction: row;
+margin-top: 4px;
+border-bottom-width: 1px;
+border-color: #ECECEC;
 `;
 const SocialInfoView = Styled.View`
 flex-direction: row;
@@ -152,18 +155,23 @@ const HashTagText = Styled.Text`
   color: #0075FF;
 `;
 interface Props {
+  data: any;
   moveToCommunityDetail: any;
   moveToAnotherProfile: any;
-  data: any;
+  toggleSocialLike: any;
+  toggleSocialScrap: any;
 }
 
 const PostItem = ({
   data,
   moveToCommunityDetail,
   moveToAnotherProfile,
+  toggleSocialLike,
+  toggleSocialScrap,
 }: Props) => {
   const {
     id,
+    type,
     createdAt,
     updatedAt,
     description,
@@ -171,6 +179,9 @@ const PostItem = ({
     postCommentsNum,
     user,
     Clinics,
+    GeneralTags,
+    SymptomItems,
+    TreatmentItems,
     community_imgs,
   } = data;
 
@@ -263,12 +274,6 @@ const PostItem = ({
     // return description;
   }, []);
 
-  const toggleSocialLike = () => {
-    return;
-  };
-
-  const toggleSocialScrap = () => {};
-
   const memoDescription = useMemo(() => formatDescription(description), [
     description,
   ]);
@@ -278,7 +283,7 @@ const PostItem = ({
       <TouchableWithoutFeedback
         key={'TouchableImage' + index}
         onPress={() => {
-          moveToCommunityDetail(id);
+          moveToCommunityDetail(id, type);
         }}>
         <ImageView
           isFirst={index}
@@ -296,7 +301,7 @@ const PostItem = ({
   return (
     <TouchableWithoutFeedback
       onPress={() => {
-        moveToCommunityDetail(id);
+        moveToCommunityDetail(id, type);
       }}>
       <ContainerView>
         <BodyContainerView>
@@ -340,9 +345,24 @@ const PostItem = ({
           </ImageContainerView>
         ) : null}
         <HashTagContainerView>
-          {Clinics.map((item, index) => (
-            <HashTagIconView>
-              <HashTagIconText>{'#' + item}</HashTagIconText>
+          {Clinics.map((item: any) => (
+            <HashTagIconView key={String(item.id)}>
+              <HashTagIconText>{'#' + item.name}</HashTagIconText>
+            </HashTagIconView>
+          ))}
+          {GeneralTags.map((item: any) => (
+            <HashTagIconView key={String(item.id)}>
+              <HashTagIconText>{'#' + item.name}</HashTagIconText>
+            </HashTagIconView>
+          ))}
+          {SymptomItems.map((item: any) => (
+            <HashTagIconView key={String(item.id)}>
+              <HashTagIconText>{'#' + item.name}</HashTagIconText>
+            </HashTagIconView>
+          ))}
+          {TreatmentItems.map((item: any) => (
+            <HashTagIconView key={String(item.id)}>
+              <HashTagIconText>{'#' + item.name}</HashTagIconText>
             </HashTagIconView>
           ))}
         </HashTagContainerView>

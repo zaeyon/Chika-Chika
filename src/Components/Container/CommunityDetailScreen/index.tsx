@@ -67,27 +67,32 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [formattedDescription, setFormattedDescription] = useState('');
   const currentUser = useSelector((state: any) => state.currentUser);
-  const homePosts = useSelector(
-    (state: any) => state.communityPostList.HomePosts,
-  );
+  const postList = useSelector((state: any) => {
+    if (route.params.type === 'Question') {
+      console.log('Q');
+      return state.communityPostList.QuestionPosts;
+    } else if (route.params.type === 'FreeTalk') {
+      console.log('F');
+      return state.communityPostList.FreeTalkPosts;
+    } else {
+      console.log('A');
+      return state.communityPostList.HomePosts;
+    }
+  });
   const [postData, setPostData] = useState(
-    homePosts.find((item: any) => item.id === route.params.id),
+    postList.find((item: any) => item.id === route.params.id),
   );
 
   const jwtToken = currentUser.user.jwtToken;
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(
-      'changed',
-      homePosts.find((item: any) => item.id === route.params.id),
-    );
-    setPostData(homePosts.find((item: any) => item.id === route.params.id));
-  }, [homePosts]);
+    setPostData(postList.find((item: any) => item.id === route.params.id));
+  }, [postList]);
 
   useEffect(() => {
-    console.log('fetch commnets');
-    fetchPostComments(postData.id);
+    console.log('fetch commnets', route.params.id);
+    fetchPostComments(route.params.id);
   }, []);
 
   const toggleKeyboardAnimation = useCallback(
@@ -192,55 +197,57 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     });
   }, []);
 
-  return postData ? (
-    <ContainerView>
-      <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
-        <BodyContainerScrollView
-          showsVerticalScrollIndicator={false}
-          ref={scrollView}
-          scrollEventThrottle={16}
-          onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    y: scrollY,
+  if (postData) {
+    return (
+      <ContainerView>
+        <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
+          <BodyContainerScrollView
+            showsVerticalScrollIndicator={false}
+            ref={scrollView}
+            scrollEventThrottle={16}
+            onScroll={Animated.event(
+              [
+                {
+                  nativeEvent: {
+                    contentOffset: {
+                      y: scrollY,
+                    },
                   },
                 },
-              },
-            ],
-            {useNativeDriver: false},
-          )}>
-          <PostInformation
-            navigation={navigation}
-            onPressEditPost={onPressEditPost}
-            onPressDeletePost={onPressDeletePost}
-          />
-          <PostContent
-            moveToAnotherProfile={moveToAnotherProfile}
-            moveToFullImages={moveToFullImages}
-            data={postData}
-          />
-          <DentistComment />
-          {isLoading ? (
-            <ActivityIndicatorContianerView>
-              <ActivityIndicator size="small" />
-            </ActivityIndicatorContianerView>
-          ) : (
-            <PostCommentList commentList={comments} />
-          )}
-        </BodyContainerScrollView>
-      </KeyboardAvoidingView>
-      <PostBottomBar
-        toggleKeyboardAnimation={toggleKeyboardAnimation}
-        uploadComment={uploadComment}
-        postLikeNum={postData.postLikeNum}
-        viewerLikeCommunityPost={postData.viewerLikeCommunityPost}
-      />
-    </ContainerView>
-  ) : (
-    <ContainerView></ContainerView>
-  );
+              ],
+              {useNativeDriver: false},
+            )}>
+            <PostInformation
+              navigation={navigation}
+              onPressEditPost={onPressEditPost}
+              onPressDeletePost={onPressDeletePost}
+            />
+            <PostContent
+              moveToAnotherProfile={moveToAnotherProfile}
+              moveToFullImages={moveToFullImages}
+              data={postData}
+            />
+            <DentistComment />
+            {isLoading ? (
+              <ActivityIndicatorContianerView>
+                <ActivityIndicator size="small" />
+              </ActivityIndicatorContianerView>
+            ) : (
+              <PostCommentList commentList={comments} />
+            )}
+          </BodyContainerScrollView>
+        </KeyboardAvoidingView>
+        <PostBottomBar
+          toggleKeyboardAnimation={toggleKeyboardAnimation}
+          uploadComment={uploadComment}
+          postLikeNum={postData.postLikeNum}
+          viewerLikeCommunityPost={postData.viewerLikeCommunityPost}
+        />
+      </ContainerView>
+    );
+  } else {
+    return <ContainerView></ContainerView>;
+  }
 };
 
 export default CommunityDetailScreen;

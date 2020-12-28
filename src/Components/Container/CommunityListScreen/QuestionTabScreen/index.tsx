@@ -45,23 +45,6 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
   const buttonY = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    const form = {
-      type: type,
-      limit: limit,
-      offset: pageIndex * limit,
-      order: order,
-    };
-    GETCommunityPosts(jwtToken, form).then((response: any) => {
-      const data = {
-        type,
-        posts: response,
-      };
-      dispatch(allActions.communityActions.setPosts(data));
-      console.log('res', response.length);
-    });
-  }, []);
-
   const onRefresh = useCallback(() => {
     const form = {
       type: type,
@@ -108,32 +91,23 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
     [isEndReached, pageIndex, postData, order, jwtToken],
   );
 
-  const moveToCommunityDetail = useCallback((postId: number) => {
-    navigation.navigate('CommunityDetailScreen', {
-      id: postId,
-    });
-  }, []);
+  const moveToCommunityDetail = useCallback(
+    (postId: number, postType: string) => {
+      navigation.navigate('CommunityDetailScreen', {
+        id: postId,
+        type: postType,
+      });
+    },
+    [],
+  );
 
   const moveToAnotherProfile = useCallback(() => {
     navigation.navigate('AnotherProfileScreen');
   }, []);
 
-  const moveToFullImages = useCallback((mediaFiles: any, imageUri: string) => {
-    let index = mediaFiles.findIndex(
-      (image: any) => image.img_url === imageUri,
-    );
+  const toggleSocialLike = useCallback(() => {}, []);
 
-    let imageUri_arr = mediaFiles.map((image: any) => {
-      return image.img_url;
-    });
-    console.log(mediaFiles);
-    console.log('선택한 사진의 mediaFiles index', index);
-
-    navigation.navigate('FullImagesScreen', {
-      imagesUrl_arr: imageUri_arr,
-      imageIndex: index,
-    });
-  }, []);
+  const toggleSocialScrap = useCallback(() => {}, []);
 
   return (
     <ContainerView>
@@ -147,7 +121,8 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         onEndReached={onEndReached}
         moveToCommunityDetail={moveToCommunityDetail}
         moveToAnotherProfile={moveToAnotherProfile}
-        moveToFullImages={moveToFullImages}
+        toggleSocialLike={toggleSocialLike}
+        toggleSocialScrap={toggleSocialScrap}
       />
       <Animated.View
         style={{
@@ -184,7 +159,11 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
             borderRadius: 100,
           }}
           onPress={() => {
-            navigation.navigate('CommunityPostUploadStackScreen');
+            navigation.navigate('CommunityPostUploadStackScreen', {
+              data: {
+                id: -1,
+              },
+            });
           }}>
           <Text>글 작성하기</Text>
         </TouchableOpacity>

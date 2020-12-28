@@ -18,7 +18,7 @@ import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 //Local Component
-import CommunityPostList from '~/Components/Presentational/CommunityPostList';
+import CommunityHomeScreen from '~/Components/Presentational/CommunityHomeScreen';
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 
 const ContainerView = Styled.SafeAreaView`
@@ -44,24 +44,6 @@ const HomeTabScreen = ({navigation, route}: Props) => {
     (state: any) => state.communityPostList.HomePosts,
   );
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    console.log(route);
-    const form = {
-      type: type,
-      limit: limit,
-      offset: pageIndex * limit,
-      order: order,
-    };
-    GETCommunityPosts(jwtToken, form).then((response: any) => {
-      const data = {
-        type,
-        posts: response,
-      };
-      dispatch(allActions.communityActions.setPosts(data));
-      console.log('res', response.length);
-    });
-  }, []);
 
   const onRefresh = useCallback(() => {
     const form = {
@@ -109,11 +91,15 @@ const HomeTabScreen = ({navigation, route}: Props) => {
     [isEndReached, pageIndex, postData, order, jwtToken],
   );
 
-  const moveToCommunityDetail = useCallback((postId: number) => {
-    navigation.navigate('CommunityDetailScreen', {
-      id: postId,
-    });
-  }, []);
+  const moveToCommunityDetail = useCallback(
+    (postId: number, postType: string) => {
+      navigation.navigate('CommunityDetailScreen', {
+        id: postId,
+        type: postType,
+      });
+    },
+    [],
+  );
 
   const moveToAnotherProfile = useCallback(() => {
     navigation.navigate('AnotherProfileScreen');
@@ -138,18 +124,7 @@ const HomeTabScreen = ({navigation, route}: Props) => {
 
   return (
     <ContainerView>
-      <CommunityPostList
-        navigation={navigation}
-        route={route}
-        postData={postData}
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        isEndReached={isEndReached}
-        onEndReached={onEndReached}
-        moveToCommunityDetail={moveToCommunityDetail}
-        moveToAnotherProfile={moveToAnotherProfile}
-        moveToFullImages={moveToFullImages}
-      />
+      <CommunityHomeScreen />
       <Animated.View
         style={{
           position: 'absolute',

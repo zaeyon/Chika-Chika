@@ -45,23 +45,6 @@ const GeneralTabScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
   const buttonY = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    const form = {
-      type: type,
-      limit: limit,
-      offset: pageIndex * limit,
-      order: order,
-    };
-    GETCommunityPosts(jwtToken, form).then((response: any) => {
-      const data = {
-        type,
-        posts: response,
-      };
-      dispatch(allActions.communityActions.setPosts(data));
-      console.log('res', response.length);
-    });
-  }, []);
-
   const onRefresh = useCallback(() => {
     const form = {
       type: type,
@@ -109,11 +92,15 @@ const GeneralTabScreen = ({navigation, route}: Props) => {
     [isEndReached, pageIndex, postData, order, jwtToken],
   );
 
-  const moveToCommunityDetail = useCallback((postId: number) => {
-    navigation.navigate('CommunityDetailScreen', {
-      id: postId,
-    });
-  }, []);
+  const moveToCommunityDetail = useCallback(
+    (postId: number, postType: string) => {
+      navigation.navigate('CommunityDetailScreen', {
+        id: postId,
+        type: postType,
+      });
+    },
+    [],
+  );
 
   const moveToAnotherProfile = useCallback(() => {
     navigation.navigate('AnotherProfileScreen');
@@ -185,7 +172,11 @@ const GeneralTabScreen = ({navigation, route}: Props) => {
             borderRadius: 100,
           }}
           onPress={() => {
-            navigation.navigate('CommunityPostUploadStackScreen');
+            navigation.navigate('CommunityPostUploadStackScreen', {
+              data: {
+                id: -1,
+              },
+            });
           }}>
           <Text>글 작성하기</Text>
         </TouchableOpacity>

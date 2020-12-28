@@ -163,8 +163,6 @@ const PostContent = ({data, moveToFullImages, moveToAnotherProfile}: Props) => {
     createdAt,
     updatedAt,
     description,
-    postLikeNum,
-    postCommentsNum,
     user,
     Clinics,
     community_imgs,
@@ -259,12 +257,6 @@ const PostContent = ({data, moveToFullImages, moveToAnotherProfile}: Props) => {
     // return description;
   }, []);
 
-  const toggleSocialLike = () => {
-    return;
-  };
-
-  const toggleSocialScrap = () => {};
-
   const memoDescription = useMemo(() => formatDescription(description), [
     description,
   ]);
@@ -286,7 +278,7 @@ const PostContent = ({data, moveToFullImages, moveToAnotherProfile}: Props) => {
         />
       </TouchableWithoutFeedback>
     ),
-    [],
+    [community_imgs],
   );
 
   return (
@@ -315,7 +307,7 @@ const PostContent = ({data, moveToFullImages, moveToAnotherProfile}: Props) => {
         </TouchableWithoutFeedback>
 
         <ContentView>
-          <ContentText numberOfLines={2}>{memoDescription}</ContentText>
+          <ContentText>{memoDescription}</ContentText>
         </ContentView>
       </BodyContainerView>
 

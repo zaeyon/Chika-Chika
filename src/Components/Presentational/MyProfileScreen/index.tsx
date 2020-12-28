@@ -235,7 +235,6 @@ export default class MyProfile extends React.Component<Props, State> {
 
   renderPost = ({item, index}: any) => (
     <PostItem
-      mode={'Card'}
       moveToCommunityDetail={this.props.moveToCommunityDetail}
       moveToAnotherProfile={this.props.moveToAnotherProfile}
       moveToFullImages={this.props.moveToFullImages}
@@ -259,7 +258,7 @@ export default class MyProfile extends React.Component<Props, State> {
         writer={writer}
         createdAt={item.createdAt}
         treatmentArray={item.TreatmentItems}
-        treatmentDate={item.concsulationDate}
+        treatmentDate={item.treatmentDate}
         avgRating={avgRating}
         viewCount={item.reviewViewNum}
         treatInfoCount={item.getInfo}
@@ -434,7 +433,7 @@ export default class MyProfile extends React.Component<Props, State> {
                 useNativeDriver: true,
               },
             )}
-            data={this.props.reviewPostData}
+            data={[]}
             renderItem={this.renderReview}
             refreshControl={
               <RefreshControl

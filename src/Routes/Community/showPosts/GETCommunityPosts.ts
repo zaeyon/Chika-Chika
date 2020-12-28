@@ -21,9 +21,7 @@ const GETCommunityPosts = (jwtToken: string, {type, limit, offset, order}: Props
             },
         })
         .then(function(response) {
-        
             resolve(response.data);
-            
         })
         .catch(function(error) {
             console.log('fail',error)

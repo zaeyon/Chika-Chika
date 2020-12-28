@@ -45,8 +45,9 @@ const MyProfileScreen = ({navigation, route}: Props) => {
   const [communityPostData, setCommunityPostData] = useState([] as any);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [closeBottomSheet, setCloseBottomSheet] = useState(false);
+  const [onSwipe, setOnSwipe] = useState(false);
+
+  const bottomSheetRef = useRef<any>();
 
   const currentUser = useSelector((state: any) => state.currentUser).user;
   const jwtToken = currentUser.jwtToken;
@@ -101,16 +102,8 @@ const MyProfileScreen = ({navigation, route}: Props) => {
     });
   };
 
-  const renderContent = (disabled: boolean) => (
-    <SlideUpPanel
-      navigation={navigation}
-      closeBottomSheet={() => setCloseBottomSheet(true)}
-      disabled={disabled}
-    />
-  );
-
   const openModal = () => {
-    setIsModalVisible(true);
+    bottomSheetRef.current && bottomSheetRef.current.open();
   };
 
   const moveToCommunityDetail = (postData: any) => {
@@ -175,6 +168,13 @@ const MyProfileScreen = ({navigation, route}: Props) => {
     });
   }, []);
 
+  const renderBottomSheet = (onSwipe: boolean) => (
+    <SlideUpPanel
+      navigation={navigation}
+      closeBottomSheet={() => bottomSheetRef && bottomSheetRef.current.close()}
+      disabled={onSwipe}
+    />
+  );
   return (
     <ContainerView>
       <MyProfile
@@ -194,11 +194,8 @@ const MyProfileScreen = ({navigation, route}: Props) => {
         moveToFullImages={moveToFullImages}
       />
       <BottomSheet
-        closeBottomSheet={closeBottomSheet}
-        setCloseBottomSheet={setCloseBottomSheet}
-        isModalVisible={isModalVisible}
-        setIsModalVisible={setIsModalVisible}
-        renderContent={renderContent}
+        ref={bottomSheetRef}
+        renderContent={renderBottomSheet}
         visibleHeight={hp('55%')}
       />
     </ContainerView>
