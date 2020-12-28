@@ -1,22 +1,28 @@
 import React, {useEffect, useState, useRef} from 'react';
+import SafeAreaView from 'react-native-safe-area-view';
 import Styled from 'styled-components/native';
 import {
     TouchableWithoutFeedback,
     FlatList,
     ScrollView,
     Keyboard,
+    StyleSheet
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
+import {useSelector} from 'react-redux';
 import AboveKeyboard from 'react-native-above-keyboard';
 
 import {isIphoneX} from 'react-native-iphone-x-helper'
 
 // Local Component
 import DentalListItem from '~/Components/Presentational/DentalListItem'
+
+// Route
+import GETDentalMainSearch from '~/Routes/Search/GETDentalMainSearch';
 
 const Container = Styled.SafeAreaView`
 flex: 1;
@@ -95,14 +101,20 @@ padding-left: 10px;
 border-radius: 4px;
 `;
 
+const SearchIcon = Styled.Image`
+width: ${wp("6.4%")}px;
+height: ${wp('6.4%')}px;
+`;
+
 const SearchTextInput = Styled.TextInput`
+flex: 1;
 padding-left: 12px;
 font-size: 16px;
-color: #979797;
+color: #000000;
 `;
 
 const AboveKeyboardContainer = Styled.View`
-width: ${wp('100%')};
+width: ${wp('100%')}px;
 position: absolute;
 bottom: 0;
 padding-top: 10px;
@@ -130,10 +142,6 @@ font-weight: 400;
 color: #000000;
 `;
 
-const SearchIcon = Styled.Image`
-width: ${wp("6.4%")}px;
-height: ${wp('6.4%')}px;
-`;
 
 const FilterListContainer = Styled.View`
 flex-direction: row;
@@ -198,7 +206,11 @@ const DentalClinicListScreen = ({navigation, route}: Props) => {
     const [selectedDayFilterIndicator, setSelectedDayFilterIndicator] = useState<Array<any>>([]);
     const [bottomPadding, setBottomPadding] = useState<number>(40);
 
+    const currentUser = useSelector((state: any) => state.currentUser);
+    const jwtToken = currentUser.user.jwtToken;
+
     useEffect(() => {
+        console.log("route.params?.currentLocation", route.params.currentLocation);
         Keyboard.addListener("keyboardWillShow", onKeyboardDidShow);
         Keyboard.addListener("keyboardDidHide", onKeyboardDidHide);
 
@@ -206,7 +218,6 @@ const DentalClinicListScreen = ({navigation, route}: Props) => {
             Keyboard.removeListener("keyboardWillShow", onKeyboardDidShow);
             Keyboard.removeListener("keyboardDidHide", onKeyboardDidHide);
         }
-
     }, [])
 
     const onKeyboardDidShow = () => {
@@ -245,17 +256,37 @@ const DentalClinicListScreen = ({navigation, route}: Props) => {
         //timeTextInputRef.current.focus()
     }
 
+    const onSubmitSearchInput = (keyword: string) => {
+        console.log("onSubmitSearchInput keyword", keyword);
+        searchDental(keyword)
+    }
+
+    const searchDental = (query: string) => {
+
+        const long = route.params?.currentLocation.longitude;
+        const lat = route.params?.currentLocation.latitude;
+
+        GETDentalMainSearch({jwtToken, query, long, lat})
+        .then((response: any) => {
+            console.log("GETDentalMainSearch response", response)
+        })
+        .catch((error: any) => {
+            console.log("GETDentalMainSearch error", error);
+        })
+    }
+
     return (
+        <SafeAreaView style={styles.safeAreaStyle} forceInset={{top: 'always'}}> 
         <Container>
             <HeaderBar>
                 <SearchInputContainer>
                     <SearchIcon
                     source={require('~/Assets/Images/Search/ic_search.png')}/>
                     <SearchTextInput
+                    autoFocus={true}
                     placeholder={"병원, 지역을 검색해 보세요."}
                     placeholderTextColor={"#979797"}
-                    editable={true}
-                    autoFocus={true}/>
+                    onSubmitEditing={(event: any) => onSubmitSearchInput(event.nativeEvent.text)}/>
                 </SearchInputContainer>
             </HeaderBar>
             <BodyContainer>
@@ -293,7 +324,6 @@ const DentalClinicListScreen = ({navigation, route}: Props) => {
                 </ScrollView>
                 </FilterListContainer>
                 <KeyboardAwareFlatList
-                keyboardShouldPersistTaps={"always"}
                 showsVerticalScrollIndicator={false}
                 data={dentalList}
                 renderItem={renderDentalItem}/>
@@ -310,7 +340,15 @@ const DentalClinicListScreen = ({navigation, route}: Props) => {
                 </AboveKeyboard>
                 </AboveKeyboardContainer>
         </Container>
+        </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    safeAreaStyle: {
+        flex: 1,
+        backgroundColor: "#ffffff"
+    }
+})
 
 export default DentalClinicListScreen;

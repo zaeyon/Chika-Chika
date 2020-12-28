@@ -11,9 +11,10 @@ interface params {
     email: string,
     provider: string,
     socialId: string,
+    cityId: number,
 }
 
-const POSTSocialRegister = ({certifiedPhoneNumber, birthdate, profileImg, nickname, phoneNumber, fcmToken, email, provider, socialId}: params) => {
+const POSTSocialRegister = ({certifiedPhoneNumber, birthdate, profileImg, nickname, phoneNumber, fcmToken, email, provider, socialId, cityId}: params) => {
 
     const uri = serverConfig.baseUri + "/social_login";
 
@@ -26,7 +27,8 @@ const POSTSocialRegister = ({certifiedPhoneNumber, birthdate, profileImg, nickna
         "fcmToken": "${fcmToken}",
         "email": "${email}",
         "provider": "${provider}",
-        "socialId": "${socialId}"
+        "socialId": "${socialId}",
+        "cityId": "${cityId}"
     }`
 
     console.log("POSTSocialRegister bodyParam", bodyParam);

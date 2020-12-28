@@ -1,15 +1,14 @@
 import axios from 'axios';
 import serverConfig from '../server.config';
 
-interface params {
+interface Props {
     jwtToken: string,
-    commentId: number,
-    type: string,
+    reviewId: number,
 }
 
-const DELETEComment = ({jwtToken, commentId, type}: params) => {
+const DELETEReviewLike = ({jwtToken, reviewId}: Props) => {
 
-    const uri = serverConfig.baseUri + `/api/v1/comments?type=${type}&commentId=${commentId}`
+    const uri = serverConfig.baseUri + `/like/review?reviewId=${reviewId}`
 
     return new Promise((resolve, reject) => {
         
@@ -20,12 +19,12 @@ const DELETEComment = ({jwtToken, commentId, type}: params) => {
             }
         })
         .then((response) => {
-            resolve(response.data);
+            resolve(response)
         })
         .catch((error) => {
-            resolve(error.response)
+            reject(error)
         })
     })
 }
 
-export default DELETEComment;
+export default DELETEReviewLike;

@@ -260,6 +260,8 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     }
 
     const convertDisplayDate = (date: any) => {
+        console.log("convertDisplayDate date", date);
+
         var tmpDate = new Date(date),
             month = '' + (tmpDate.getMonth() + 1),
             day = '' + tmpDate.getDate(),
@@ -268,7 +270,24 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
             if(month.length < 2) month = "0" + month;
             if(day.length < 2) day = "0" + day;
 
+            console.log("convertDisplayDate day", day);
+
             return year + "년" + " " + month + "월" + " " + day + "일"
+    }
+
+    const convertSubmitDate = (date: any) => {
+        console.log("convertDisplayDate date", date);
+
+        var tmpDate = new Date(date),
+            month = '' + (tmpDate.getMonth() + 1),
+            day = '' + tmpDate.getDate(),
+            year = '' + tmpDate.getFullYear()
+
+            if(month.length < 2) month = "0" + month;
+            if(day.length < 2) day = "0" + day;
+
+            return year + "-" + month + "-" + day
+
     }
 
 
@@ -277,10 +296,10 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }
 
   const applyTreatDate = () => {
-    console.log("date", date);
+    console.log("applyTreatDate date", date);
     setDisplayDate(convertDisplayDate(date));
-    setTreatDate(date);
-    setOnFocusTreatDate(false)
+    setTreatDate(convertSubmitDate(date));
+    setOnFocusTreatDate(false);
   }
 
   const onFocusPriceInput = () => {

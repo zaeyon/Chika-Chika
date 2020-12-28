@@ -19,12 +19,13 @@ import {getUserInfo} from '~/storage/currentUser';
 
 // ReUsable Components
 import InstantCamera from './Components/Container/InstantCamera';
+
 // Auth Stack Screen
 import UnauthorizedScreen from '~/Components/Container/UnauthorizedScreen';
 import LoginScreen from '~/Components/Container/LoginScreen';
 import ProfileInputScreen from '~/Components/Container/SignUpScreen/ProfileInputScreen';
 import BasicInputScreen from './Components/Container/SignUpScreen/BasicInputScreen';
-import VerifyPhoneNumberScreen from '~/Components/Container/VerifyPhoneNumberScreen';
+import PhoneVerifyScreen from '~/Components/Container/PhoneVerifyScreen';
 
 // Home Stack Screee
 import HomeScreen from '~/Components/Container/HomeScreen';
@@ -37,7 +38,7 @@ import FullImagesScreen from '~/Components/Container/FullImagesScreen';
 // Review Upload Stack Screen
 import ReviewUploadScreen from '~/Components/Container/ReviewUploadScreen';
 import ReviewMetaDataScreen from '~/Components/Container/ReviewUploadScreen/ReviewMetaDataScreen';
-import ReviewContentScreen from '~/Components/Container/ReviewUploadScreen/ReviewContentScreen';
+import ContentPostScreen from '~/Components/Container/ReviewUploadScreen/ContentPostScreen';
 import TeethCamera from '~/Components/Container/TeethCamera';
 import Gallery from '~/Components/Container/Gallery';
 import GallerySelectOne from '~/Components/Container/GallerySelectOne';
@@ -96,6 +97,7 @@ import KeywordSearchScreen from '~/Components/Container/KeywordSearchScreen';
 const Tab = createBottomTabNavigator();
 const AuthStack = createStackNavigator();
 const HomeStack = createStackNavigator();
+const NearDentalMapStack = createStackNavigator();
 const ReviewUploadStack = createStackNavigator();
 const MyProfileStack = createStackNavigator();
 const ReviewStack = createStackNavigator();
@@ -127,15 +129,21 @@ function AuthStackScreen() {
           },
         }}
       />
-      <AuthStack.Screen name="LoginScreen" component={LoginScreen} />
-      <AuthStack.Screen name="BasicInputScreen" component={BasicInputScreen} />
+      <AuthStack.Screen 
+        name="LoginScreen" 
+        component={LoginScreen}
+      />
+      <AuthStack.Screen
+        name="BasicInputScreen" 
+        component={BasicInputScreen} 
+      />
       <AuthStack.Screen
         name="ProfileInputScreen"
         component={ProfileInputScreen}
       />
       <AuthStack.Screen
-        name="VerifyPhoneNumberScreen"
-        component={VerifyPhoneNumberScreen}
+        name="PhoneVerifyScreen"
+        component={PhoneVerifyScreen}
       />
       <AuthStack.Screen
         name="HometownSettingScreen"
@@ -164,6 +172,9 @@ function ReviewStackScreen() {
         name="ReviewUploadStack"
         component={ReviewUploadStackScreen}
       />
+      <ReviewStack.Screen
+        name="DentalClinicStack"
+        component={DentalClinicStackScreen}/>
     </ReviewStack.Navigator>
   );
 }
@@ -199,23 +210,34 @@ function HomeStackScreen() {
   );
 }
 
+function NearDentalMapStackScreen() {
+  return (
+  <NearDentalMapStack.Navigator
+  headerMode="none">
+    <NearDentalMapStack.Screen
+      name="NearDentalMap"
+      component={NearDentalMap}
+    />
+    <NearDentalMapStack.Screen
+      name="DentalClinicListScreen"
+      component={DentalClinicListScreen}
+      options={{
+        transitionSpec: {
+          open: staticConfig,
+          close: staticConfig,
+        },
+      }}
+    />
+    <NearDentalMapStack.Screen
+      name="DentalClinicStack"
+      component={DentalClinicStackScreen}/>
+  </NearDentalMapStack.Navigator>
+);
+}
+
 function DentalClinicStackScreen() {
   return (
     <DentalClinicStack.Navigator headerMode="none">
-      <DentalClinicStack.Screen
-        name="NearDentalMap"
-        component={NearDentalMap}
-      />
-      <DentalClinicStack.Screen
-        name="DentalClinicListScreen"
-        component={DentalClinicListScreen}
-        options={{
-          transitionSpec: {
-            open: staticConfig,
-            close: staticConfig,
-          },
-        }}
-      />
       <DentalClinicStack.Screen
         name="DentalDetailScreen"
         component={DentalDetailScreen}
@@ -280,8 +302,8 @@ function ReviewUploadStackScreen() {
         component={ReviewMetaDataScreen}
       />
       <ReviewUploadStack.Screen
-        name="ReviewContentScreen"
-        component={ReviewContentScreen}
+        name="ContentPostScreen"
+        component={ContentPostScreen}
       />
       <ReviewUploadStack.Screen name="TeethCamera" component={TeethCamera} />
       <ReviewUploadStack.Screen name="Gallery" component={Gallery} />
@@ -346,6 +368,9 @@ function MyProfileStackScreen() {
         name="SavedHospitalTabScreen"
         component={SavedHospitalTabScreen}
       />
+      <MyProfileStack.Screen
+        name="PhoneVerifyScreen"
+        component={PhoneVerifyScreen}/>
       <MyProfileStack.Screen
         name="CommunityDetailScreen"
         component={CommunityDetailScreen}
@@ -577,7 +602,6 @@ function BottomTab() {
 
     return true;
   };
-
   return (
     <Tab.Navigator
       tabBarOptions={{
@@ -594,7 +618,7 @@ function BottomTab() {
       />
       <Tab.Screen
         name="지도"
-        component={DentalClinicStackScreen}
+        component={NearDentalMapStackScreen}
         options={({route}) => ({
           tabBarVisible: getDentalBottomTabBarVisibility(route),
         })}
@@ -650,10 +674,11 @@ const Navigator = () => {
 
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
-    console.log('getFcmToken fcmToken', fcmToken);
-  };
+    console.log("getFcmToken fcmToken", fcmToken);
+  }
 
   useEffect(() => {
+    
     getFcmToken();
     getUserInfo()
       .then((response) => {

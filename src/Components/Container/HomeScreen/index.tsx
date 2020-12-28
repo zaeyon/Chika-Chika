@@ -1,12 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {
-  TouchableWithoutFeedback,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import {TouchableWithoutFeedback, FlatList, ScrollView, StyleSheet} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,

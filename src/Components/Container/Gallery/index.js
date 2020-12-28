@@ -407,7 +407,7 @@ class Gallery extends Component {
 
     if (this.props.route.params?.requestType === 'review') {
       let _selectedImages = this.state.selected.slice(0);
-      this.props.navigation.navigate('ReviewContentScreen', {
+      this.props.navigation.navigate('ContentPostScreen', {
         selectedImages: _selectedImages,
         startIndex: this.props.route.params?.startIndex,
       });

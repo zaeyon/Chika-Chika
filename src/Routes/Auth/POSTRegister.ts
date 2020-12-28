@@ -7,9 +7,10 @@ interface params {
     fcmToken: string,
     phoneNumber: string,
     nickname: string,
+    cityId: number,
 }
 
-const POSTRegister = ({certifiedPhoneNumber, provider, fcmToken, phoneNumber, nickname}: params) => {
+const POSTRegister = ({certifiedPhoneNumber, provider, fcmToken, phoneNumber, nickname, cityId}: params) => {
     const uri = serverConfig.baseUri + "/register";
 
     console.log("POSTRegister certifiedPhoneNumber", certifiedPhoneNumber);
@@ -17,8 +18,16 @@ const POSTRegister = ({certifiedPhoneNumber, provider, fcmToken, phoneNumber, ni
     console.log("POSTRegister fcmToken", fcmToken);
     console.log("POSTRegister phoneNumber", phoneNumber);
     console.log("POSTRegister nickname", nickname);
+    console.log("POSTRegister cityId", cityId);
 
-    const bodyParamsStr = `{"certifiedPhoneNumber":"${certifiedPhoneNumber}","provider":"${provider}","fcmToken":"${"test"}","userPhoneNumber":"${phoneNumber}","nickname":"${nickname}"}`
+    const bodyParamsStr = `{
+        "certifiedPhoneNumber":"${certifiedPhoneNumber}",
+        "provider":"${provider}",
+        "fcmToken":"${"test"}",
+        "userPhoneNumber":"${phoneNumber}",
+        "nickname":"${nickname}",
+        "cityId":"${cityId}"
+    }`
 
     return new Promise(function(resolve, reject) {
         axios

@@ -224,7 +224,7 @@ const movingPriceRating = (rating: any) => {
 const onPressFinishButton = () => {
     if(serviceRating > 0 && treatRating > 0 && priceRating > 0) {
         if(route.params.requestPage === "detailPrice") {
-            navigation.navigate("ReviewContentScreen", {
+            navigation.navigate("ContentPostScreen", {
             selectedTreatList: route.params?.selectedTreatList,
             dentalClinic: route.params?.dentalClinic,
             treatDate: route.params?.treatDate,
@@ -239,7 +239,7 @@ const onPressFinishButton = () => {
             requestType: route.params?.requestType,
         });
         } else if(route.params?.requestPage === "content") {
-            navigation.navigate("ReviewContentScreen", {
+            navigation.navigate("ContentPostScreen", {
                 rating: {
                     serviceRating: serviceRating,
                     treatRating: treatRating,

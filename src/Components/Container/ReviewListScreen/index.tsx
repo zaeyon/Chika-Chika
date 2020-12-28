@@ -6,7 +6,8 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {isIphoneX} from 'react-native-iphone-x-helper';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import allActions from '~/actions';
 
 // Local Component
 import ReviewItem from '~/Components/Presentational/ReviewItem';
@@ -174,13 +175,21 @@ justify-content: center;
 `;
 
 
+const EndReachedIndicatorContainer = Styled.View`
+height: ${hp('9%')}px;
+background-color: #ffffff;
+align-items: center;
+justify-content: center;
+`;
+
+
 const TEST_REVIEW_DATA = [
     {
         "TreatmentItems": [
             {"name": "복합레진", "review_treatment_item": {"cost": 30000}}, {"name": "임플란트", "review_treatment_item": {"cost": 20000}}
         ],
         "certifiedBill": true,
-        "concsulationDate": "2020-12-17",
+        "treatmentDate": "2020-12-17",
         "createdAt": "2020-12-17T12:30:46.000Z",
         "deletedAt": null,
         "dentalClinicId": 43,
@@ -213,7 +222,7 @@ const TEST_REVIEW_DATA = [
           ]
         ],
         "certifiedBill": false,
-        "concsulationDate": "2020-12-14",
+        "treatmentDate": "2020-12-14",
         "createdAt": "2020-12-14T08:48:37.000Z",
         "deletedAt": null,
         "dentalClinicId": 2697,
@@ -250,7 +259,7 @@ const TEST_REVIEW_DATA = [
           ]
         ],
         "certifiedBill": false,
-        "concsulationDate": "2020-12-14",
+        "treatmentDate": "2020-12-14",
         "createdAt": "2020-12-14T08:10:38.000Z",
         "deletedAt": null,
         "dentalClinicId": 4409,
@@ -287,7 +296,7 @@ const TEST_REVIEW_DATA = [
           ]
         ],
         "certifiedBill": false,
-        "concsulationDate": "2020-12-14",
+        "treatmentDate": "2020-12-14",
         "createdAt": "2020-12-14T08:10:10.000Z",
         "deletedAt": null,
         "dentalClinicId": 75,
@@ -334,7 +343,7 @@ interface ReviewData {
     dentalClinicId: Number,
     dental_clinic: Object,
     hits: Number,
-    concsulationDate: String,
+    treatmentDate: String,
     reviewCommentNum: Number,
     reivewLikeNum: Number,
     reviewViewNum: Number,
@@ -350,7 +359,7 @@ var offset = 0;
 var limit = 10;
 
 const ReviewListScreen = ({navigation}: Props) => {
-    const [reviewList, setReviewList] = useState<Array<ReviewData>>([]);
+    //const [reviewList, setReviewList] = useState<Array<ReviewData>>([]);
     const [loadingReviewList, setLoadingReviewList] = useState<boolean>(true);
     const [loadingMoreReview, setLoadingMoreReview] = useState<boolean>(false);
     const [order, setOrder] = useState<string>("createdAt");
@@ -358,7 +367,9 @@ const ReviewListScreen = ({navigation}: Props) => {
     const [changingReviewList, setChangingReviewList] = useState<boolean>(false);
     
     let noMoreReviewData = false;
+    const dispatch = useDispatch();
     const currentUser = useSelector((state: any) => state.currentUser);
+    const reviewList = useSelector((state: any) => state.reviewList);
     const jwtToken = currentUser.user.jwtToken;
 
   
@@ -373,16 +384,13 @@ const ReviewListScreen = ({navigation}: Props) => {
       GETReviewList({jwtToken, order, offset, limit})
       .then((response: any) => {
           console.log("GETReviewList response", response);
-          console.log("offset", offset);
-
-          response.forEach((item: any, index: number) => {
-            console.log("item.review_contents", item.review_contents);
-          })
+          //console.log("offset", offset);
           
           setLoadingReviewList(false);
           setRefreshingReviewList(false);
           setChangingReviewList(!changingReviewList);
-          setReviewList(response);
+          //setReviewList(response);
+          dispatch(allActions.reviewListAction.setMainReviewList(response));
       })
       .catch((error) => {
           setLoadingMoreReview(false);
@@ -399,9 +407,13 @@ const ReviewListScreen = ({navigation}: Props) => {
             setLoadingMoreReview(false);
             if(response.length > 0) {
               noMoreReviewData = false
+              /*
               setReviewList((prevState) => {
                 return [...prevState, ...response]
               });
+              */
+
+              dispatch(allActions.reviewListAction.setMainReviewList(reviewList.mainReviewList.concat(response)))
 
             } else {
               noMoreReviewData = true
@@ -437,9 +449,17 @@ const ReviewListScreen = ({navigation}: Props) => {
       navigation.navigate("AnotherProfileStackScreen", {
           screen: "AnotherProfileScreen"
       })
-  }
+    }
 
-    const moveToReviewDetail = (reviewId: number, writer: object, createdAt: string, treatmentArray: Array<object>, avgRating: number, treatmentDate: string, imageArray: Array<object>) => {
+    const moveToDentalDetail = () => {
+      navigation.navigate("DentalClinicStack", {
+        screen: "DentalDetailScreen"
+      })
+    }
+
+  
+
+    const moveToReviewDetail = (reviewId: number, writer: object, createdAt: string, treatmentArray: Array<object>, ratingObj: object, treatmentDate: string, imageArray: Array<object>, isCurUserLike: boolean, likeCount: number, commentCount: number, isCurUserScrap: boolean, dentalObj: object) => {
       console.log("moveToReviewDetail reviewId", reviewId)
 
       navigation.navigate("ReviewStackScreen", {
@@ -449,9 +469,14 @@ const ReviewListScreen = ({navigation}: Props) => {
            writer: writer,
            createdAt: createdAt,
            treatmentArray: treatmentArray,
-           avgRating: avgRating,
+           ratingObj: ratingObj,
            treatmentDate: treatmentDate,
-           imageArray: imageArray
+           imageArray: imageArray,
+           isCurUserLike: isCurUserLike,
+           isCurUserScrap: isCurUserScrap,
+           likeCount: likeCount,
+           commentCount: commentCount,
+           dentalObj: dentalObj,
          }
       });
     }
@@ -472,14 +497,16 @@ const ReviewListScreen = ({navigation}: Props) => {
                 </HeaderRightContainer>
             </HeaderBar>
             {!loadingReviewList && (
-            <ReviewListContainer>
+            <ReviewListContainer>          
               <ReviewList
               loadingMoreReview={loadingMoreReview}
               refreshingReviewList={refreshingReviewList}
               onRefreshReviewList={onRefreshReviewList}
-              reviewList={reviewList}
+              reviewList={reviewList.mainReviewList}
               moveToReviewDetail={moveToReviewDetail}
-              onEndReachedReviewList={onEndReachedReviewList}/>
+              moveToWriterProfile={moveToWriterProfile}
+              onEndReachedReviewList={onEndReachedReviewList}
+              moveToDentalDetail={moveToDentalDetail}/>
             </ReviewListContainer>
             )}
             {loadingReviewList && (

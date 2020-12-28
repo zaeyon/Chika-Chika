@@ -110,7 +110,10 @@ interface Prop {
 const DentalListItem = ({name, address, navigation, route}: Prop) => {
 
     const moveToDentalDetail = () => {
-        navigation.navigate("DentalDetailScreen")
+        
+        navigation.navigate("DentalClinicStack", {
+            screen: "DentalDetailScreen"
+        })
     }
 
     return (

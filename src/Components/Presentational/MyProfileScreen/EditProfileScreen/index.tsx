@@ -212,6 +212,11 @@ const EditProfileScreen = ({
         break;
     }
   };
+
+  const moveToPhoneVerify = () => {
+    navigation.navigate("PhoneVerifyScreen")
+  }
+
   return (
     <ContainerView>
       <ProfileContainerView>
@@ -278,7 +283,7 @@ const EditProfileScreen = ({
           <InterLockIconView></InterLockIconView>
           <ContentText>카카오 로그인</ContentText>
         </ContentTouchableOpacity>
-        <ContentTouchableOpacity>
+        <ContentTouchableOpacity onPress={() => moveToPhoneVerify()}>
           <ContentTitleText>본인 인증</ContentTitleText>
           <VerificatedView>
             <VerificatedText>미인증</VerificatedText>
