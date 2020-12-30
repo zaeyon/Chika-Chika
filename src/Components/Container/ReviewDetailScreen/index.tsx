@@ -608,7 +608,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
             console.log("deleteIndex", deleteIndex)
             tmpReviewList.splice(deleteIndex, 1);
 
-            dispatch(allActions.reviewListAction.setMainReviewList(tmpReviewList));
+            dispatch(allActions.reviewListActions.setMainReviewList(tmpReviewList));
             navigation.goBack();
         })
         .catch((error) => {
@@ -617,6 +617,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     }
 
     const clickReviewLike = () => {
+        dispatch(allActions.reviewListActions.toggleReviewLike(reviewId))
         if(isCurUserLike) {
             deleteReviewLike()
         } else {
@@ -649,6 +650,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     }
 
     const clickReviewScrap = () => {
+        dispatch(allActions.reviewListActions.toggleReviewScrap(reviewId))
         if(isCurUserScrap) {
             deleteReviewScrap()
         } else {

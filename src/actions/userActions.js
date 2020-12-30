@@ -18,8 +18,16 @@ const logOut = () => {
     }
 }
 
+const setCurrentLocation = (locationObj) => {
+    return {
+        type: "SET_CURRENT_LOCATION",
+        payload: locationObj
+    }
+}
+
 export default {
     setUser,
     logOut,
     setFcmToken,
+    setCurrentLocation,
 }

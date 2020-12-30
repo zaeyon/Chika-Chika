@@ -6,22 +6,25 @@ interface params {
     lat: number,
     long: number,
     sort: string,
-    time?: string,
-    days?: string,
-    wantParking: string,
+    timeFilter?: string,
+    dayFilter?: any,
+    parkingFilter: string,
 }
 
-const GETAroundDental = ({jwtToken, lat, long, sort, time, days, wantParking}: params) => {
+const GETAroundDental = ({jwtToken, lat, long, sort, timeFilter, dayFilter, parkingFilter}: params) => {
 
     console.log("GETAroundDental lat", lat);
     console.log("GETAroundDental long", long);
     console.log("GETAroundDental sort", sort);
-    console.log("GETAroundDental time", time);
-    console.log("GETAroundDental days", days);
-    console.log("GETAroundDental wantParking", wantParking);
+    console.log("GETAroundDental time", timeFilter);
+    console.log("GETAroundDental dayFilter", dayFilter);
+    console.log("GETAroundDental wantParking", parkingFilter);
 
+    // TEST 서울 시청 위도, 경도
+    lat = 37.566515657875435
+    long = 126.9781164904998
 
-    const uri = serverConfig.baseUri + `/around/clinics?lat=${lat}&long=${long}&wantParking=${wantParking}&sort=${sort}&days=${days}&time=${time}`;
+    const uri = serverConfig.baseUri + `/around/clinics?lat=${lat}&long=${long}&wantParking=${parkingFilter}&sort=${sort}&days=${dayFilter}&time=${timeFilter}`;
 
     console.log("GETAroundDental uri", uri);
 

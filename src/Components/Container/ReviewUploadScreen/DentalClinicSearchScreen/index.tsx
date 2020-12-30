@@ -140,7 +140,7 @@ font-weight: 300;
 font-size: 16px;
 `;
 
-const DentalClinicListContainer = Styled.View`
+const DentalListContainer = Styled.View`
 `;
 
 const DentalClinicItemContainer = Styled.View`
@@ -293,13 +293,13 @@ const DentalClinicSearchScreen = ({navigation, route}: Props) => {
                 </HeaderRightContainer>
             </HeaderBar>
             <BodyContainer>
-                <DentalClinicListContainer>
+                <DentalListContainer>
                     <KeyboardAwareFlatList
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps={"always"}
                     data={autoCompletedDentalList}
                     renderItem={renderDentalClinicItem}/>
-                </DentalClinicListContainer>
+                </DentalListContainer>
             </BodyContainer>
         </Container>
     )

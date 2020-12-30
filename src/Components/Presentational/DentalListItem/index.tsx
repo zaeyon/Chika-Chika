@@ -101,35 +101,37 @@ color: #000000;
 `;
 
 interface Prop {
+    dentalId: number,
+    isOpen: boolean,
+    isLunchTime: boolean,
+    rating: number,
+    reviewCount: number,
     name: string,
     address: string,
-    navigation: any,
-    route: any
+    lunchTime: string,
+    openTime: string,
+    closeTime: string,
+    moveToDentalDetail:(dentalId: number) => void,
+
 }
 
-const DentalListItem = ({name, address, navigation, route}: Prop) => {
-
-    const moveToDentalDetail = () => {
-        
-        navigation.navigate("DentalClinicStack", {
-            screen: "DentalDetailScreen"
-        })
-    }
-
+const DentalListItem = ({dentalId, name, address, isOpen, isLunchTime, rating, reviewCount, lunchTime, openTime, closeTime, moveToDentalDetail}: Prop) => {
     return (
-        <TouchableWithoutFeedback onPress={() => moveToDentalDetail()}>
+        <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalId)}>
         <Container>
-            <CurrentStatusContainer>
-                <OpenStatusContainer>
-                    <CurrentStatusText>{"진료중"}</CurrentStatusText>
-                </OpenStatusContainer>
-                <LauchTimeStatusContainer>
-                    <CurrentStatusText>{"점심시간"}</CurrentStatusText>
-                </LauchTimeStatusContainer>
-            </CurrentStatusContainer>
+                <CurrentStatusContainer>
+                    <OpenStatusContainer style={isOpen ? {backgroundColor: "#0075FF"} : {backgroundColor: "#ffffff"}}>
+                        <CurrentStatusText style={isOpen ? {color: "#ffffff"} : {color: "#7a7a7a"}}>{"진료중"}</CurrentStatusText>
+                    </OpenStatusContainer>
+                    <LauchTimeStatusContainer style={isLunchTime ? {backgroundColor: "#0075FF"} : {backgroundColor: "#ffffff"}}>
+                        <CurrentStatusText style={isLunchTime ? {color: "#ffffff"} : {color: "#7a7a7a"}}>
+                        {"점심시간"}
+                        </CurrentStatusText>
+                    </LauchTimeStatusContainer>
+                </CurrentStatusContainer>
             <DentalNameText>{name}</DentalNameText>
             <ReviewRatingContainer>
-                <ReviewRatingText>{"3.6"}</ReviewRatingText>
+                <ReviewRatingText>{rating}</ReviewRatingText>
                 <RatingStarIcon
                 source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
                 <RatingStarIcon
@@ -140,12 +142,11 @@ const DentalListItem = ({name, address, navigation, route}: Prop) => {
                 source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
                 <RatingStarIcon
                 source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
-                <ReviewCountText style={{marginLeft: 4}}>{"리뷰 2"}</ReviewCountText>
+                <ReviewCountText style={{marginLeft: 4}}>{`리뷰 ${reviewCount}`}</ReviewCountText>
             </ReviewRatingContainer>
             <DentalAddressText>{address}</DentalAddressText>
             <CallAppointmentButton>
                 <CallAppointmentText>{"예약전화"}</CallAppointmentText>
-
             </CallAppointmentButton>
         </Container>
         </TouchableWithoutFeedback>

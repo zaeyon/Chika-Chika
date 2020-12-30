@@ -34,7 +34,6 @@ flex: 1;
 background-color: #ffffff;
 `;
 
-
 const HeaderLeftContainer = Styled.View`
 `;
 
