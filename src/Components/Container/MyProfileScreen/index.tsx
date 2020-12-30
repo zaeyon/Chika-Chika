@@ -45,14 +45,15 @@ const MyProfileScreen = ({navigation, route}: Props) => {
   const [order, setOrder] = useState('createdAt');
   const [pageIndex, setPageIndex] = useState(0);
   const [reviewPostData, setReviewPostData] = useState([] as any);
-  const [communityPostData, setCommunityPostData] = useState([] as any);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
-  const [onSwipe, setOnSwipe] = useState(false);
 
   const bottomSheetRef = useRef<any>();
 
   const dispatch = useDispatch();
+  const communityPostData = useSelector(
+    (state: any) => state.communityPostList.MyPosts,
+  );
   const currentUser = useSelector((state: any) => state.currentUser).user;
   const jwtToken = currentUser.jwtToken;
   const userId = currentUser.id;
@@ -66,7 +67,11 @@ const MyProfileScreen = ({navigation, route}: Props) => {
     };
     setIsRefreshing(true);
     fetchCommunityData(form, (response: any) => {
-      setCommunityPostData(response);
+      const form = {
+        type,
+        posts: response,
+      };
+      dispatch(allActions.communityActions.setPosts(form));
       setPageIndex(0);
       setIsRefreshing(false);
     });
@@ -87,9 +92,11 @@ const MyProfileScreen = ({navigation, route}: Props) => {
         setPageIndex((prev: any) => prev + 1);
         fetchCommunityData(form, (response: any) => {
           console.log(response.length);
-          setCommunityPostData((prev: any) => {
-            return [...prev, ...response];
-          });
+          const form = {
+            type,
+            posts: [...communityPostData, ...response],
+          };
+          dispatch(allActions.communityActions.setPosts(form));
           setIsEndReached(false);
         });
       }
@@ -123,27 +130,6 @@ const MyProfileScreen = ({navigation, route}: Props) => {
     navigation.navigate('CommunityDetailScreen', {data: postData});
   }, []);
 
-  const moveToAnotherProfile = useCallback(() => {
-    navigation.navigate('AnotherProfileScreen');
-  }, []);
-
-  const moveToFullImages = useCallback((mediaFiles: any, imageUri: string) => {
-    let index = mediaFiles.findIndex(
-      (image: any) => image.img_url === imageUri,
-    );
-
-    let imageUri_arr = mediaFiles.map((image: any) => {
-      return image.img_url;
-    });
-    console.log(mediaFiles);
-    console.log('선택한 사진의 mediaFiles index', index);
-
-    navigation.navigate('FullImagesScreen', {
-      imagesUrl_arr: imageUri_arr,
-      imageIndex: index,
-    });
-  }, []);
-
   const moveToReviewDetail = useCallback(
     (
       reviewId: number,
@@ -168,6 +154,18 @@ const MyProfileScreen = ({navigation, route}: Props) => {
     },
     [],
   );
+
+  const moveToAnotherProfile = useCallback(() => {
+    navigation.navigate('AnotherProfileScreen');
+  }, []);
+
+  const moveToReservationTabScreen = useCallback(() => {
+    navigation.navigate('ReservationTabScreen');
+  }, []);
+
+  const moveToSavedHospitalTabScreen = useCallback(() => {
+    navigation.navigate('SavedHospitalTabScreen');
+  }, []);
 
   const toggleSocialLike = useCallback(
     (postId: number, prevState: number, type: string) => {
@@ -207,7 +205,11 @@ const MyProfileScreen = ({navigation, route}: Props) => {
       setReviewPostData(response);
     });
     fetchCommunityData(form, (response: any) => {
-      setCommunityPostData(response);
+      const form = {
+        type,
+        posts: [...communityPostData, ...response],
+      };
+      dispatch(allActions.communityActions.setPosts(form));
     });
   }, []);
 
@@ -229,7 +231,6 @@ const MyProfileScreen = ({navigation, route}: Props) => {
         navigation={navigation}
         route={route}
         reviewPostData={reviewPostData}
-        communityPostData={communityPostData}
         isRefreshing={isRefreshing}
         onRefresh={onRefresh}
         isEndReached={isEndReached}
@@ -237,8 +238,11 @@ const MyProfileScreen = ({navigation, route}: Props) => {
         currentUser={currentUser}
         openModal={openModal}
         moveToCommunityDetail={moveToCommunityDetail}
+        communityPostData={communityPostData}
         moveToReviewDetail={moveToReviewDetail}
         moveToAnotherProfile={moveToAnotherProfile}
+        moveToReservationTabScreen={moveToReservationTabScreen}
+        moveToSavedHospitalTabScreen={moveToSavedHospitalTabScreen}
         toggleSocialLike={toggleSocialLike}
         toggleSocialScrap={toggleSocialScrap}
       />

@@ -52,12 +52,9 @@ import RatingScreen from '~/Components/Container/ReviewUploadScreen/RatingScreen
 
 // My Profile Stack Screen
 import MyProfileScreen from '~/Components/Container/MyProfileScreen';
-import ActivityHistoryTabScreen from '~/Components/Container/MyProfileScreen/ActivityHistoryTabScreen';
-import AlertSettingTabScreen from '~/Components/Container/MyProfileScreen/AlertSettingTabScreen';
 import EditProfileTabScreen from '~/Components/Container/MyProfileScreen/EditProfileTabScreen';
 import EmailConsultingTabScreen from '~/Components/Container/MyProfileScreen/EmailConsultingTabScreen';
 import GeneralSettingTabScreen from '~/Components/Container/MyProfileScreen/GeneralSettingTabScreen';
-import LocationSettingTabScreen from '~/Components/Container/MyProfileScreen/LocationSettingTabScreen';
 import ReservationTabScreen from '~/Components/Container/MyProfileScreen/ReservationTabScreen';
 import SavedHospitalTabScreen from '~/Components/Container/MyProfileScreen/SavedHospitalTabScreen';
 
@@ -108,6 +105,7 @@ const CommunityPostUploadStack = createStackNavigator();
 const DentalClinicStack = createStackNavigator();
 const TeethCareStack = createStackNavigator();
 const KeywordSearchStack = createStackNavigator();
+const EditProfileStack = createStackNavigator();
 
 const staticConfig = {
   animation: 'timing',
@@ -331,6 +329,21 @@ function ReviewUploadStackScreen() {
   );
 }
 
+function EditProfileStackScreen() {
+  return (
+    <EditProfileStack.Navigator headerMode="none">
+      <EditProfileStack.Screen
+        name="EditProfileTabScreen"
+        component={EditProfileTabScreen}
+      />
+      <EditProfileStack.Screen
+        name="EditProfileGallery"
+        component={GallerySelectOne}
+      />
+    </EditProfileStack.Navigator>
+  );
+}
+
 function MyProfileStackScreen() {
   return (
     <MyProfileStack.Navigator headerMode="none">
@@ -339,18 +352,9 @@ function MyProfileStackScreen() {
         component={MyProfileScreen}
       />
       <MyProfileStack.Screen
-        name="EditProfileTabScreen"
-        component={EditProfileTabScreen}
+        name="EditProfileStackScreen"
+        component={EditProfileStackScreen}
       />
-      <MyProfileStack.Screen
-        name="AlertSettingTabScreen"
-        component={AlertSettingTabScreen}
-      />
-      <MyProfileStack.Screen
-        name="ActivityHistoryTabScreen"
-        component={ActivityHistoryTabScreen}
-      />
-
       <MyProfileStack.Screen
         name="GeneralSettingTabScreen"
         component={GeneralSettingTabScreen}
@@ -375,16 +379,6 @@ function MyProfileStackScreen() {
         name="ReviewDetailScreen"
         component={ReviewDetailScreen}
       />
-      {/* 
-      <MyProfileStack.Screen
-        name="EmailConsultingTabScreen"
-        component={EmailConsultingTabScreen}
-      />
-      <MyProfileStack.Screen
-        name="LocationSettingTabScreen"
-        component={LocationSettingTabScreen}
-      />
-       */}
     </MyProfileStack.Navigator>
   );
 }

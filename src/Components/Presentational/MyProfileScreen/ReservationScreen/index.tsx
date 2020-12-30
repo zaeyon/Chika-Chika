@@ -16,9 +16,8 @@ flex: 1;
 background: #F8F8F8;
 `;
 
-const ReservationItemContinerView = Styled.View`
+const ReservationItemContainerView = Styled.View`
 width: auto;
-height: ${hp('24.019%')}px;
 margin: 16px;
 padding: 24px;
 border-radius: 8px;
@@ -28,7 +27,6 @@ justify-content: space-between;
 
 const ReservationItemContentView = Styled.View`
 width: 100%
-height: ${hp('6.25%')}px;
 `;
 
 const ReservationItemTitleView = Styled.View`
@@ -40,10 +38,11 @@ margin-bottom: 8px;
 `;
 
 const ReservationItemTitleText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
 font-weight: bold;
-font-size: 20px;
+font-size: 18px;
 line-height: 24px;
-color: #595959;
 `;
 
 const ReservationItemDetailView = Styled.View`
@@ -54,16 +53,29 @@ align-items: center;
 margin-top: auto;
 `;
 
-const ReservationItemDateText = Styled.Text`
-font-size: 16px;
-line-height: 19px;
-margin-right: 16px;
-color: #7A7A7A;
+const ReservationItemLocationText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+line-height: 16px;
+margin-bottom: 8px;
 `;
+
+const ReservationItemDateText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 24px;
+`;
+
 const ReservationItemTimeText = Styled.Text`
-font-size: 16px;
-line-height: 19px;
-color: #7A7A7A;
+font-family: NanumSquare;
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 24px;
 `;
 
 const ReservationButtonContainerView = Styled.View`
@@ -133,6 +145,13 @@ height: 1px;
 background: #EEEEEE;
 `;
 
+const DateTimeDivider = Styled.View`
+width: 1px;
+height: 8px;
+background: #C4C4C4;
+margin: 0px 8px;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -142,18 +161,10 @@ interface Props {
 const ReservationScreen = ({navigation, route, reservations}: Props) => {
   const renderReservationItemView = ({item, index}: any) => {
     return (
-      <ReservationItemContinerView>
+      <ReservationItemContainerView>
         <ReservationItemContentView>
           <ReservationItemTitleView>
-            <ReservationItemTitleText>예쁜이치과</ReservationItemTitleText>
-            <ArrowIconView>
-              <ArrowIconImage
-                style={{
-                  resizeMode: 'contain',
-                }}
-                source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
-              />
-            </ArrowIconView>
+            <ReservationItemTitleText>{'예쁜이치과'}</ReservationItemTitleText>
             <InfoIconView>
               <InfoIconImage
                 style={{
@@ -163,21 +174,25 @@ const ReservationScreen = ({navigation, route, reservations}: Props) => {
               />
             </InfoIconView>
           </ReservationItemTitleView>
+          <ReservationItemLocationText>
+            {'경기도 수원시 영통구 이의동'}
+          </ReservationItemLocationText>
           <ReservationItemDetailView>
-            <ReservationItemDateText>20.12.1.화</ReservationItemDateText>
-            <ReservationItemTimeText>오후 3:00</ReservationItemTimeText>
+            <ReservationItemDateText>{'20.12.1.화'}</ReservationItemDateText>
+            <DateTimeDivider />
+            <ReservationItemTimeText>{'오후 3:00'}</ReservationItemTimeText>
           </ReservationItemDetailView>
         </ReservationItemContentView>
         <Line />
         <ReservationButtonContainerView>
           <CreateReviewTouchableOpacity>
-            <CreateReviewText>리뷰작성</CreateReviewText>
+            <CreateReviewText>{'리뷰작성'}</CreateReviewText>
           </CreateReviewTouchableOpacity>
           <ReReservationTouchableOpacity>
-            <ReReservationText>다시예약</ReReservationText>
+            <ReReservationText>{'다시예약'}</ReReservationText>
           </ReReservationTouchableOpacity>
         </ReservationButtonContainerView>
-      </ReservationItemContinerView>
+      </ReservationItemContainerView>
     );
   };
 
@@ -186,6 +201,7 @@ const ReservationScreen = ({navigation, route, reservations}: Props) => {
       <FlatList
         data={reservations}
         keyExtractor={(item) => item.id}
+        alwaysBounceVertical={false}
         renderItem={renderReservationItemView}
       />
     </ContainerView>

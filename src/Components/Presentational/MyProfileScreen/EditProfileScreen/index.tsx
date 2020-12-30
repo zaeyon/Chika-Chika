@@ -1,10 +1,12 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   TouchableHighlight,
   View,
+  Modal,
+  ScrollView,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -15,6 +17,7 @@ import ActionSheet from 'react-native-actionsheet';
 const ContainerView = Styled.ScrollView`
 flex: 1;
 background: #EEEEEE;
+margin-bottom: ${hp('9.6%')}px;
 `;
 
 const ProfileContainerView = Styled.View`
@@ -29,6 +32,9 @@ background: white;
 const ProfileContentView = Styled.View`
 width: auto;
 height: auto;
+padding: 4px 16px;
+border-bottom-width: 1px;
+border-color: #C4C4C4;
 align-items: center;
 `;
 const ProfileImageView = Styled.View`
@@ -36,13 +42,13 @@ width: ${wp('15%')}px;
 height: ${wp('15%')}px;
 margin-top: 8px;
 background: #ECECEC;
-border-radius: 8px;
+border-radius: 20px;
 `;
 
 const ProfileImage = Styled.Image`
 width: 100%;
 height: 100%;
-border-radius: 8px;
+border-radius: 20px;
 `;
 
 const ProfileNicknameText = Styled.Text`
@@ -51,7 +57,8 @@ font-style: normal;
 font-weight: bold;
 font-size: 16px;
 line-height: 24px;
-margin-top: 8px;
+margin-top: 16px;
+color: #9E9E9E;
 `;
 
 const EditProfileTouchableHighlight = Styled(
@@ -181,58 +188,209 @@ width: 100%;
 height: 100%;
 border-radius: 8px;
 `;
+
+const ModalContainerView = Styled.View`
+flex: 1;
+background: #00000070;
+align-items: center;
+justify-content: center;
+`;
+
+const ModalContentView = Styled.View`
+width: ${wp('74%')}px;
+height: ${hp('28%')}px;
+align-items: center;
+background: rgba(255, 255, 255, 0.9);
+border-radius: 16px;
+overflow: hidden;
+`;
+
+const ModalTitleText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
+font-size: 18px;
+line-height: 24px;
+margin-top: 24px;
+`;
+
+const ModalDescriptionText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: normal;
+font-size: 12px;
+line-height: 24px;
+color: #808080;
+margin-top: 4px;
+`;
+
+const ModalTextInput = Styled.TextInput`
+width: 90%;
+height: 40px;
+border: 0.25px solid #898989;
+border-radius: 8px;
+background: #FFFFFF;
+margin-top: 16px;
+text-align: center;
+`;
+
+const ModalButtonContainerView = Styled.View`
+width: 100%;
+height: 50px;
+background: #C4C4C4;
+flex-direction: row;
+margin-top: auto;
+`;
+
+const ModalButtonItemView = Styled.TouchableHighlight`
+flex: 1;
+height: 100%;
+background: rgba(255, 255, 255, 0.9);
+align-items: center;
+justify-content: center;
+border-top-width: 1px;
+border-color: #C4C4C4;
+`;
+
+const ModalButtonText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
+font-size: 16px;
+line-height: 24px;
+color: #2998FF;
+`;
+
 interface Props {
-  navigation: any;
-  route: any;
-  userData: any;
-  setUserData: any;
+  moveToGallery: any;
+  currentUser: any;
+  changeProfileNickname: (nickname: string) => void;
+  changeProfileGender: (gender: string) => void;
+  changeProfileBirthdate: (birthdate: string) => void;
 }
 
 const EditProfileScreen = ({
-  navigation,
-  route,
-  userData,
-  setUserData,
+  moveToGallery,
+  currentUser,
+  changeProfileNickname,
+  changeProfileGender,
+  changeProfileBirthdate,
 }: Props) => {
+  const [textInput, setTextInput] = useState('');
+  const [nickname, setNickname] = useState(currentUser.nickname);
+  const [gender, setGender] = useState(currentUser.gender);
+  const [birthday, setBirthday] = useState(currentUser.birth);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const genderActionSheetRef: any = useRef();
+  const imageActionSheetRef: any = useRef();
+
   const genderActionSheetItemList = ['취소', '남성', '여성'];
-  const onPressGenderActionSheet = (index: number) => {
+  const imageActionSheetItemList = ['취소', '카메라', '앨범'];
+
+  useEffect(() => {
+    console.log(currentUser);
+  }, [currentUser]);
+
+  const onPressGenderActionSheet = useCallback((index: number) => {
     switch (genderActionSheetItemList[index]) {
       case '남성':
-        setUserData((prev: any) => ({
-          ...prev,
-          gender: '남성',
-        }));
+        changeProfileGender('남성');
         break;
       case '여성':
-        setUserData((prev: any) => ({
-          ...prev,
-          gender: '여성',
-        }));
+        changeProfileGender('여성');
         break;
     }
-  };
+  }, []);
 
-  const moveToPhoneVerify = () => {
-    navigation.navigate("PhoneVerifyScreen")
-  }
+  const onPressImageActionSheet = useCallback((index: number) => {
+    switch (imageActionSheetItemList[index]) {
+      case '카메라':
+        console.log('open camera');
+        break;
+      case '앨범':
+        console.log('open gallery');
+        moveToGallery();
+        break;
+    }
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setIsModalVisible(false);
+  }, []);
+
+  const setUserNickname = useCallback(() => {
+    changeProfileNickname(textInput);
+    setIsModalVisible(false);
+    setTextInput('');
+  }, [textInput]);
+
+  const onChangeText = useCallback((input: string) => setTextInput(input), []);
 
   return (
-    <ContainerView>
+    <ContainerView
+      keyboardShouldPersistTaps={'always'}
+      showsVerticalScrollIndicator={false}>
+      <Modal animationType="fade" transparent={true} visible={isModalVisible}>
+        <ModalContainerView>
+          <ModalContentView>
+            <ModalTitleText>{'닉네임 변경'}</ModalTitleText>
+            <ModalDescriptionText>
+              {'10자 이내로 입력이 가능합니다.'}
+            </ModalDescriptionText>
+            <ModalTextInput
+              autoFocus={true}
+              autoCorrect={false}
+              maxLength={10}
+              autoCapitalize="none"
+              onChangeText={onChangeText}
+              value={textInput}
+            />
+            <ModalButtonContainerView>
+              <ModalButtonItemView
+                activeOpacity={1}
+                underlayColor="#DDDDDD"
+                onPress={closeModal}
+                style={{
+                  marginRight: 0.5,
+                }}>
+                <ModalButtonText>{'취소'}</ModalButtonText>
+              </ModalButtonItemView>
+              <ModalButtonItemView
+                activeOpacity={1}
+                underlayColor="#DDDDDD"
+                onPress={setUserNickname}
+                style={{
+                  marginLeft: 0.5,
+                }}>
+                <ModalButtonText>{'변경'}</ModalButtonText>
+              </ModalButtonItemView>
+            </ModalButtonContainerView>
+          </ModalContentView>
+        </ModalContainerView>
+      </Modal>
       <ProfileContainerView>
         <ProfileContentView>
-          <ProfileImageView>
-            <ProfileImage
-              source={require('~/Assets/Images/appIcon_chika.png')}
-            />
-          </ProfileImageView>
-          <ProfileNicknameText>{userData.nickname}</ProfileNicknameText>
-          <EditProfileTouchableHighlight
-            activeOpacity={1}
-            underlayColor="#EEEEEE"
-            onPress={() => {}}>
-            <EditProfileText>{`프로필 수정하기`}</EditProfileText>
-          </EditProfileTouchableHighlight>
+          <TouchableOpacity
+            onPress={() => {
+              console.log('profile image clicked');
+              imageActionSheetRef.current.show();
+            }}>
+            <ProfileImageView>
+              <ProfileImage
+                source={{
+                  uri: currentUser.profileImage,
+                }}
+              />
+            </ProfileImageView>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              console.log('profile nickname clicked');
+              setIsModalVisible(true);
+            }}>
+            <ProfileNicknameText>{currentUser.nickname}</ProfileNicknameText>
+          </TouchableOpacity>
         </ProfileContentView>
       </ProfileContainerView>
       <LocationSettingView>
@@ -262,16 +420,16 @@ const EditProfileScreen = ({
         </SettingTitleView>
         <ContentTouchableOpacity>
           <ContentTitleText>전화번호</ContentTitleText>
-          <ContentText>010-1234-1232</ContentText>
+          <ContentText>{currentUser.phoneNumber}</ContentText>
         </ContentTouchableOpacity>
         <ContentTouchableOpacity
           onPress={() => genderActionSheetRef.current.show()}>
           <ContentTitleText>성별</ContentTitleText>
-          <ContentText>{userData.gender}</ContentText>
+          <ContentText>{currentUser.gender || '미등록'}</ContentText>
         </ContentTouchableOpacity>
         <ContentTouchableOpacity>
           <ContentTitleText>생일</ContentTitleText>
-          <ContentText>{userData.birthday}</ContentText>
+          <ContentText>{currentUser.birthday || '미등록'}</ContentText>
         </ContentTouchableOpacity>
       </PrivacySettingView>
       <UserSettingView>
@@ -303,6 +461,12 @@ const EditProfileScreen = ({
         options={genderActionSheetItemList}
         cancelButtonIndex={0}
         onPress={(index: any) => onPressGenderActionSheet(index)}
+      />
+      <ActionSheet
+        ref={imageActionSheetRef}
+        options={imageActionSheetItemList}
+        cancelButtonIndex={0}
+        onPress={(index: any) => onPressImageActionSheet(index)}
       />
     </ContainerView>
   );
