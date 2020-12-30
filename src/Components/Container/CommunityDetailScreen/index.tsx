@@ -97,7 +97,6 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   }, [postList]);
 
   useEffect(() => {
-    console.log('fetch commnets', route.params.id);
     fetchPostComments(route.params.id);
   }, []);
 
@@ -133,6 +132,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
 
   const fetchPostComments = useCallback(
     (postId: string) => {
+      console.log('fetch comments', postId);
       GETCommunityPostComments(jwtToken, postId).then((response: any) => {
         setIsLoading(false);
         setComments(response);
@@ -180,6 +180,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   }, []);
 
   const moveToFullImages = useCallback((mediaFiles: any, imageUri: string) => {
+    console.log(mediaFiles, imageUri);
     let index = mediaFiles.findIndex(
       (image: any) => image.img_url === imageUri,
     );
@@ -191,7 +192,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     console.log('선택한 사진의 mediaFiles index', index);
 
     navigation.navigate('FullImagesScreen', {
-      imagesUrl_arr: imageUri_arr,
+      imageArray: imageUri_arr,
       imageIndex: index,
     });
   }, []);
@@ -223,6 +224,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+    fetchPostComments(String(postData.id));
     GETCommunityPostDetail(jwtToken, String(postData.id)).then(
       (response: any) => {
         console.log(response);

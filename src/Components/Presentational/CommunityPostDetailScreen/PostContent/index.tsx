@@ -291,7 +291,7 @@ const PostContent = ({data, moveToFullImages, moveToAnotherProfile}: Props) => {
           <ProfileContainerView>
             <ProfileImage
               source={{
-                url: user.profileImage,
+                url: user.profileImg,
                 cache: 'force-cache',
               }}
             />

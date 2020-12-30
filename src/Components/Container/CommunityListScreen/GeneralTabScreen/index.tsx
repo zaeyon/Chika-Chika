@@ -20,6 +20,10 @@ import allActions from '~/actions';
 //Local Component
 import CommunityPostList from '~/Components/Presentational/CommunityPostList';
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
+import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
+import DELETESocialLike from '~/Routes/Community/social/DELETESocialLike';
+import DELETECommunityPost from '~/Routes/Community/deletePost/DELETECommunityPost';
+import communityActions from '~/actions/communityActions';
 
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
@@ -31,7 +35,7 @@ interface Props {
   route: any;
 }
 
-const GeneralTabScreen = ({navigation, route}: Props) => {
+const FreeTalkTabScreen = ({navigation, route}: Props) => {
   const type = 'FreeTalk';
   const limit = 10;
   const [refreshing, setRefreshing] = useState(false);
@@ -66,7 +70,7 @@ const GeneralTabScreen = ({navigation, route}: Props) => {
 
   const onEndReached = useCallback(
     (info: any) => {
-      return; //!!
+      return 0; // depa
       if (!isEndReached) {
         setIsEndReached(true);
         const newPageIndex = pageIndex + 1;
@@ -106,22 +110,30 @@ const GeneralTabScreen = ({navigation, route}: Props) => {
     navigation.navigate('AnotherProfileScreen');
   }, []);
 
-  const moveToFullImages = useCallback((mediaFiles: any, imageUri: string) => {
-    let index = mediaFiles.findIndex(
-      (image: any) => image.img_url === imageUri,
-    );
+  const toggleSocialLike = useCallback(
+    (postId: number, prevState: number, type: string) => {
+      const form = {
+        type,
+        id: postId,
+      };
+      dispatch(allActions.communityActions.toggleLike(form));
+      if (prevState) {
+        // true
+        DELETESocialLike(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      } else {
+        POSTSocialLike(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      }
+    },
+    [],
+  );
 
-    let imageUri_arr = mediaFiles.map((image: any) => {
-      return image.img_url;
-    });
-    console.log(mediaFiles);
-    console.log('선택한 사진의 mediaFiles index', index);
-
-    navigation.navigate('FullImagesScreen', {
-      imagesUrl_arr: imageUri_arr,
-      imageIndex: index,
-    });
-  }, []);
+  const toggleSocialScrap = useCallback(() => {}, []);
 
   return (
     <ContainerView>
@@ -135,7 +147,8 @@ const GeneralTabScreen = ({navigation, route}: Props) => {
         onEndReached={onEndReached}
         moveToCommunityDetail={moveToCommunityDetail}
         moveToAnotherProfile={moveToAnotherProfile}
-        moveToFullImages={moveToFullImages}
+        toggleSocialLike={toggleSocialLike}
+        toggleSocialScrap={toggleSocialScrap}
       />
       <Animated.View
         style={{
@@ -185,4 +198,4 @@ const GeneralTabScreen = ({navigation, route}: Props) => {
   );
 };
 
-export default GeneralTabScreen;
+export default FreeTalkTabScreen;

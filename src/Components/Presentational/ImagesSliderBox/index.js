@@ -88,7 +88,11 @@ export class SliderBox extends Component {
               },
               ImageComponentStyle,
             ]}
-            source={typeof item === 'string' ? {uri: item} : item}
+            source={
+              typeof item === 'string'
+                ? {uri: item, cache: 'force-cache'}
+                : item
+            }
             resizeMethod={resizeMethod || 'resize'}
             resizeMode={resizeMode || 'cover'}
             onLoad={() => {}}

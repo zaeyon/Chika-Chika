@@ -16,9 +16,8 @@ flex: 1;
 background: #F8F8F8;
 `;
 
-const SavedHospitalItemContinerView = Styled.View`
+const SavedHospitalItemContainerView = Styled.View`
 width: auto;
-height: ${hp('24.02%')}px;
 margin: 16px;
 padding: 24px;
 border-radius: 8px;
@@ -28,7 +27,6 @@ justify-content: space-between;
 
 const SavedHospitalItemContentView = Styled.View`
 width: 100%
-height: ${hp('6.25%')}px;
 background: white;
 `;
 
@@ -41,10 +39,11 @@ margin-bottom: 8px;
 `;
 
 const SavedHospitalItemTitleText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
 font-weight: bold;
-font-size: 20px;
+font-size: 18px;
 line-height: 24px;
-color: #595959;
 `;
 
 const SavedHospitalItemDetailView = Styled.View`
@@ -54,16 +53,29 @@ flex-direction: row;
 align-items: center;
 `;
 
-const SavedHospitalItemDateText = Styled.Text`
-font-size: 16px;
-line-height: 19px;
-margin-right: 16px;
-color: #7A7A7A;
+const SavedHospitalItemLocationText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+line-height: 16px;
+margin-bottom: 8px;
 `;
+
+const SavedHospitalItemDateText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 24px;
+`;
+
 const SavedHospitalItemTimeText = Styled.Text`
-font-size: 16px;
-line-height: 19px;
-color: #7A7A7A;
+font-family: NanumSquare;
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 24px;
 `;
 
 const SavedHospitalButtonContainerView = Styled.View`
@@ -106,6 +118,13 @@ height: 1px;
 background: #EEEEEE;
 `;
 
+const DateTimeDivider = Styled.View`
+width: 1px;
+height: 8px;
+background: #C4C4C4;
+margin: 0px 8px;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -115,7 +134,7 @@ interface Props {
 const SavedHospitalScreen = ({navigation, route, hospitals}: Props) => {
   const renderSavedHospitalItemView = ({item, index}: any) => {
     return (
-      <SavedHospitalItemContinerView>
+      <SavedHospitalItemContainerView>
         <SavedHospitalItemContentView>
           <SavedHospitalItemTitleView>
             <SavedHospitalItemTitleText>예쁜이치과</SavedHospitalItemTitleText>
@@ -128,8 +147,12 @@ const SavedHospitalScreen = ({navigation, route, hospitals}: Props) => {
               />
             </InfoIconView>
           </SavedHospitalItemTitleView>
+          <SavedHospitalItemLocationText>
+            {'경기도 수원시 영통구 이의동'}
+          </SavedHospitalItemLocationText>
           <SavedHospitalItemDetailView>
             <SavedHospitalItemDateText>20.12.1.화</SavedHospitalItemDateText>
+            <DateTimeDivider />
             <SavedHospitalItemTimeText>오후 3:00</SavedHospitalItemTimeText>
           </SavedHospitalItemDetailView>
         </SavedHospitalItemContentView>
@@ -139,7 +162,7 @@ const SavedHospitalScreen = ({navigation, route, hospitals}: Props) => {
             <ReservationText>예약하기</ReservationText>
           </ReservationTouchableOpacity>
         </SavedHospitalButtonContainerView>
-      </SavedHospitalItemContinerView>
+      </SavedHospitalItemContainerView>
     );
   };
 
@@ -148,6 +171,7 @@ const SavedHospitalScreen = ({navigation, route, hospitals}: Props) => {
       <FlatList
         data={hospitals}
         keyExtractor={(item) => item.id}
+        alwaysBounceVertical={false}
         renderItem={renderSavedHospitalItemView}
       />
     </ContainerView>

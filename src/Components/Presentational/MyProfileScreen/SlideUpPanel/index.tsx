@@ -75,7 +75,7 @@ const SlideUpPanel = ({navigation, closeBottomSheet, disabled}: Props) => {
     {title: '스크랩한 글', name: ''},
     {title: '좋아요한 글', name: ''},
     {title: '내가 댓글 단 글', name: ''},
-    {title: '내 정보 수정', name: 'EditProfileTabScreen'},
+    {title: '내 정보 수정', name: 'EditProfileStackScreen'},
     {title: '설정', name: 'GeneralSettingTabScreen'},
   ];
 

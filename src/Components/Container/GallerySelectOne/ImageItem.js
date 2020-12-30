@@ -13,7 +13,6 @@ import {
 } from 'react-native-responsive-screen';
 import Styled from 'styled-components/native';
 
-
 const ImageUnselectedButton = Styled.View`
  width: ${wp('5.5%')};
  height: ${wp('5.5%')};
@@ -91,20 +90,23 @@ class ImageItem extends Component {
   handleClick(item) {
     this.props.onClick(item);
     console.log('item @@:', item);
-    console.log("this.props.requestType", this.props.requestType);
+    console.log('this.props.requestType', this.props.requestType);
 
-    if(this.props.requestType === "reviewImage") {
-      this.props.navigation.navigate("ContentPostScreen", {
+    if (this.props.requestType === 'reviewImage') {
+      this.props.navigation.navigate('ContentPostScreen', {
         selectedImage: item,
         changeExistingImage: true,
-      })
-
+      });
+    } else if (this.props.requestType === 'EditProfileTabScreen') {
+      this.props.navigation.navigate('EditProfileTabScreen', {
+        selectedImage: item,
+        changeExistingImage: true,
+      });
     } else {
       this.props.navigation.navigate('TakenPictureScreen', {
-        selectedImage: item
+        selectedImage: item,
       });
     }
-    
   }
 
   render() {
