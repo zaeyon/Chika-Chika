@@ -160,20 +160,20 @@ align-items: center;
 
 const TabBarItemText = Styled(Animated.Text as new () => Animated.Text)`
 fontFamily: NanumSquare;
-                  font-style: normal;
-                  font-weight: bold;
-                  font-size: 14px;
-                  line-height: 16px;
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+line-height: 16px;
 `;
 
 const TabBarIndicatorView = Styled(Animated.View as new () => Animated.View)`
 width: ${wp('50%') - 32}px;
-                height: 3px;
-                position: absolute;
-                bottom: 0px;
-                left: 16px;
-                background: #2998FF;
-                `;
+height: 3px;
+position: absolute;
+bottom: 0px;
+left: 16px;
+background: #2998FF;
+`;
 
 interface Props {
   navigation: any;
