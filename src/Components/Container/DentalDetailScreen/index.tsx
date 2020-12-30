@@ -17,6 +17,9 @@ const Container = Styled.View`
  background-color: #FFFFFF;
 `;
 
+const HeaderContainer = Styled.View`
+`;
+
 const HeaderBar = Styled.View`
  position: absolute;
  top: ${getStatusBarHeight()}
@@ -40,31 +43,6 @@ width: ${wp('6.4%')}px;
 height: ${wp('6.4%')}px;
 `;
 
-const HeaderTitleText = Styled.Text`
-margin-top: 5px;
-font-weight: 700;
-font-size: 18px;
-color: #000000;
-`;
-
-const HeaderRightContainer = Styled.View`
-height: ${wp('13.8%')}px;
-padding: 0px 16px 0px 15px;
- align-items: center;
- justify-content: center;
- flex-direction: row;
-`;
-
-const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
-`;
-
-
-const BodyContainer = Styled.View`
-flex: 1;
-`;
-
 const CoverImageContainer = Styled.View`
 width: ${wp('100%')};
 height: ${hp('31.5%')};
@@ -73,6 +51,17 @@ height: ${hp('31.5%')};
 const CoverImage = Styled.Image`
 width: ${wp('100%')};
 height: ${hp('31.5%')};
+`;
+
+const RepresentingKeywordContainer = Styled.View`
+padding: 24px 16px 24px 16px;
+flex-direction: row;
+align-items: center;
+`;
+
+const RepresentingKeywordItemContainer = Styled.View`
+border-radius: 100px;
+padding: 8px 12px 
 `;
 
 const ContentContainer = Styled.View`
@@ -85,6 +74,29 @@ padding-top: 24px;
 padding-left: 16px;
 padding-right: 16px;
 padding-bottom: 24px;
+`;
+
+const BasicInfoItemContainer = Styled.View`
+padding-top: 16px;
+padding-bottom: 16px;
+padding-left: 16px;
+padding-right: 16px;
+flex-direction: row;
+align-items: center;
+border-top-width: 1px;
+border-color: #F0F0F0; 
+`;
+
+const BasicInfoLabelText = Styled.Text`
+color: #000000;
+font-weight: 400;
+font-size: 14px;
+`;
+
+const BasicInfoValueText = Styled.Text`
+color: #000000;
+font-weight: bold;
+font-size: 14px;
 `;
 
 const BasicHeaderContainer = Styled.View`
@@ -511,6 +523,7 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
     
     return (
         <Container>
+            <HeaderContainer>
             <CoverImageContainer>
                 <CoverImage
                 source={{uri:dentalDetailInfo.coverImage.uri}}/>
@@ -523,23 +536,10 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
                     </TouchableWithoutFeedback>
                 </HeaderBar>
             </CoverImageContainer>
-            <ScrollView
-            showsVerticalScrollIndicator={false}>
-                
-            <ContentContainer>
-                <BasicInfoContainer>
-                    <BasicHeaderContainer>
-                        <NameRatingContainer>
-                        <DentalNameText>{dentalDetailInfo.name}
-                        </DentalNameText>
-                        <RatingText>
-                            {"★5.0"}
-                        </RatingText>
-                        </NameRatingContainer>
-                        <HomePageLinkText>
-                        {"홈페이지"}
-                        </HomePageLinkText>
-                    </BasicHeaderContainer>
+            <BasicInfoContainer>
+                <DentalNameText>{dentalDetailInfo.name}</DentalNameText>
+                <RatingText>{"★5.0"}</RatingText>
+                <HomePageLinkText>{"홈페이지"}</HomePageLinkText>
                     <BasicBodyContainer>
                         <DentalAddressText>{dentalDetailInfo.address}</DentalAddressText>
                     </BasicBodyContainer>
@@ -553,6 +553,10 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
                         </TagListContainer>
                     </BasicFooterContainer>
                 </BasicInfoContainer>
+            </HeaderContainer>
+            <ScrollView
+            showsVerticalScrollIndicator={false}>    
+            <ContentContainer>
                 <SelectInfoTypeContainer>
                     <TouchableWithoutFeedback onPress={() => clickDetailInfoType()}>
                     <SelectInfoTypeText>{"상세정보"}</SelectInfoTypeText>
