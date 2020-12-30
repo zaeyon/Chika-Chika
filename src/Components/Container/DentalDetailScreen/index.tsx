@@ -6,27 +6,25 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import axios from 'axios';
-import { FlingGestureHandler } from 'react-native-gesture-handler';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 // Local Component
 import ReviewItem from '~/Components/Presentational/ReviewItem';
 import {callPhoneNumber} from '~/method/callPhoneNumber';
 
-const Container = Styled.SafeAreaView`
+const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
 `;
 
 const HeaderBar = Styled.View`
+ position: absolute;
+ top: ${getStatusBarHeight()}
  width: ${wp('100%')}px;
  height: ${wp('13.8%')}px;
  flex-direction: row;
  align-items: center;
  justify-content: space-between;
- background-color:#ffffff;
- border-bottom-width: 0.6px;
- border-color: #ECECEE;
 `;
 
 const HeaderLeftContainer = Styled.View`
@@ -69,12 +67,12 @@ flex: 1;
 
 const CoverImageContainer = Styled.View`
 width: ${wp('100%')};
-height: ${wp('64%')};
+height: ${hp('31.5%')};
 `;
 
 const CoverImage = Styled.Image`
 width: ${wp('100%')};
-height: ${wp('64%')};
+height: ${hp('31.5%')};
 `;
 
 const ContentContainer = Styled.View`
@@ -451,14 +449,10 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
     const [locationMapBase64, setLocationMapBase64] = useState<any>(null);
     const [infoType, setInfoType] = useState<string>("detailInfo");
 
-    const nMapClientId = "htnc7h3vi5"
-
-    var base64Icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAwBQTFRF7c5J78kt+/Xm78lQ6stH5LI36bQh6rcf7sQp671G89ZZ8c9V8c5U9+u27MhJ/Pjv9txf8uCx57c937Ay5L1n58Nb67si8tVZ5sA68tJX/Pfr7dF58tBG9d5e8+Gc6chN6LM+7spN1pos6rYs6L8+47hE7cNG6bQc9uFj7sMn4rc17cMx3atG8duj+O7B686H7cAl7cEm7sRM26cq/vz5/v767NFY7tJM78Yq8s8y3agt9dte6sVD/vz15bY59Nlb8txY9+y86LpA5LxL67pE7L5H05Ai2Z4m58Vz89RI7dKr+/XY8Ms68dx/6sZE7sRCzIEN0YwZ67wi6rk27L4k9NZB4rAz7L0j5rM66bMb682a5sJG6LEm3asy3q0w3q026sqC8cxJ6bYd685U5a457cIn7MBJ8tZW7c1I7c5K7cQ18Msu/v3678tQ3aMq7tNe6chu6rgg79VN8tNH8c0w57Q83akq7dBb9Nld9d5g6cdC8dyb675F/v327NB6////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/LvB3QAAAMFJREFUeNpiqIcAbz0ogwFKm7GgCjgyZMihCLCkc0nkIAnIMVRw2UhDBGp5fcurGOyLfbhVtJwLdJkY8oscZCsFPBk5spiNaoTC4hnqk801Qi2zLQyD2NlcWWP5GepN5TOtSxg1QwrV01itpECG2kaLy3AYiCWxcRozQWyp9pNMDWePDI4QgVpbx5eo7a+mHFOqAxUQVeRhdrLjdFFQggqo5tqVeSS456UEQgWE4/RBboxyC4AKCEI9Wu9lUl8PEGAAV7NY4hyx8voAAAAASUVORK5CYII=';
-
     useEffect(() => {
-        getDentalLocationMap()
     }, [])
 
+    /*
     const getDentalLocationMap = () => {
         axios
         .get(`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster?w=300&h=300&center=127.1054221,37.3591614&level=16`,
@@ -477,6 +471,7 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
 
         })
     }
+    */
 
     const moveToDentalInfoEdit = () => {
         navigation.navigate("DentalInfoEditRequestScreen");
@@ -516,20 +511,21 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
     
     return (
         <Container>
-            <HeaderBar>
-                <TouchableWithoutFeedback onPress={() => goBack()}>
-                <HeaderLeftContainer>
-                    <HeaderBackIcon
-                    source={require('~/Assets/Images/HeaderBar/ic_back.png')}/>
-                </HeaderLeftContainer>
-                </TouchableWithoutFeedback>
-            </HeaderBar>
-            <ScrollView
-            showsVerticalScrollIndicator={false}>
             <CoverImageContainer>
                 <CoverImage
                 source={{uri:dentalDetailInfo.coverImage.uri}}/>
+                <HeaderBar>
+                    <TouchableWithoutFeedback onPress={() => goBack()}>
+                    <HeaderLeftContainer>
+                        <HeaderBackIcon
+                        source={require('~/Assets/Images/HeaderBar/ic_back.png')}/>
+                    </HeaderLeftContainer>
+                    </TouchableWithoutFeedback>
+                </HeaderBar>
             </CoverImageContainer>
+            <ScrollView
+            showsVerticalScrollIndicator={false}>
+                
             <ContentContainer>
                 <BasicInfoContainer>
                     <BasicHeaderContainer>

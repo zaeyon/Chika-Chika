@@ -6,7 +6,8 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { FlatList } from 'react-native-gesture-handler';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import allActions from '~/actions';
 
 // Local Component
 import PreviewImages from '~/Components/Presentational/ReviewItem/PreviewImages';
@@ -290,6 +291,7 @@ const ReviewItem = ({reviewId, writer, createdAt, elapsedTimeText, visibleElapse
     const [changeState, setChangeState] = useState<boolean>(false);
     const [likeCount, setLikeCount] = useState<number>(likeCountProp);
     const currentUser = useSelector((state: any) => state.currentUser);
+    const dispatch = useDispatch();
     const jwtToken = currentUser.user.jwtToken;
 
     let formatedCreatedAtDate = "";
@@ -380,6 +382,7 @@ const ReviewItem = ({reviewId, writer, createdAt, elapsedTimeText, visibleElapse
     }
 
     const clickLike = () => {
+        dispatch(allActions.reviewListActions.toggleReviewLike(reviewId))
         if(isCurUserLike) {
             deleteReviewLike()
         } else {
@@ -388,6 +391,7 @@ const ReviewItem = ({reviewId, writer, createdAt, elapsedTimeText, visibleElapse
     }
 
     const clickScrap = () => {
+        dispatch(allActions.reviewListActions.toggleReviewScrap(reviewId))
         if(isCurUserScrap) {
             deleteReviewScrap()
         } else {

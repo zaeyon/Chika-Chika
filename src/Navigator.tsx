@@ -71,7 +71,7 @@ import CommunityPostUploadScreen from '~/Components/Container/CommunityPostUploa
 import CommunityTreatSearchScreen from '~/Components/Container/CommunityPostUploadScreen/TreatSearchScreen';
 // Dental Clinic Stack Screen
 import NearDentalMap from '~/Components/Container/NearDentalMap';
-import DentalClinicListScreen from '~/Components/Container/DentalClinicListScreen';
+import DentalListScreen from '~/Components/Container/DentalListScreen';
 import DentalDetailScreen from '~/Components/Container/DentalDetailScreen';
 import DentalInfoEditRequestScreen from '~/Components/Container/DentalDetailScreen/DentalInfoEditRequestScreen';
 
@@ -209,10 +209,13 @@ function NearDentalMapStackScreen() {
       <NearDentalMapStack.Screen
         name="NearDentalMap"
         component={NearDentalMap}
+        initialParams={{
+          isOpenDentalList: false,
+        }}
       />
       <NearDentalMapStack.Screen
-        name="DentalClinicListScreen"
-        component={DentalClinicListScreen}
+        name="DentalListScreen"
+        component={DentalListScreen}
         options={{
           transitionSpec: {
             open: staticConfig,
@@ -507,13 +510,20 @@ function BottomTab() {
   };
 
   const getDentalBottomTabBarVisibility = (route: any) => {
+    console.log('getDentalBottomTabBarVisibility route22', route);
+    console.log(
+      'getDentalBottomTabBarVisibility route.state22',
+      route.state?.routes,
+    );
+
     const routeName = route.state ? route.state.routes[route.state.index] : '';
+    const isOpenDentalList = routeName.params?.isOpenDentalList;
 
     const stackRouteName = routeName.state
       ? routeName.state.routes[routeName.state.index].name
       : '';
 
-    if (routeName.name === 'DentalClinicListScreen') {
+    if (routeName.name === 'DentalListScreen' || isOpenDentalList) {
       return false;
     }
 

@@ -1,4 +1,12 @@
-const currentUser = (state = {}, action) => {
+const currentUser = (
+  state = {
+    currentLocation: {
+      latitude: 37.566515657875435,
+      longitude: 126.9781164904998,
+    },
+  },
+  action,
+) => {
   switch (action.type) {
     case 'SET_USER':
       return {
@@ -11,6 +19,11 @@ const currentUser = (state = {}, action) => {
         ...state,
         user: {},
         loggedIn: false,
+      };
+    case 'SET_CURRENT_LOCATION':
+      return {
+        ...state,
+        currentLocation: action.payload,
       };
     case 'PUT_PROFILE_IMG':
       return {

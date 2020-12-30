@@ -390,7 +390,7 @@ const ReviewListScreen = ({navigation}: Props) => {
           setRefreshingReviewList(false);
           setChangingReviewList(!changingReviewList);
           //setReviewList(response);
-          dispatch(allActions.reviewListAction.setMainReviewList(response));
+          dispatch(allActions.reviewListActions.setMainReviewList(response));
       })
       .catch((error) => {
           setLoadingMoreReview(false);
@@ -413,7 +413,7 @@ const ReviewListScreen = ({navigation}: Props) => {
               });
               */
 
-              dispatch(allActions.reviewListAction.setMainReviewList(reviewList.mainReviewList.concat(response)))
+              dispatch(allActions.reviewListActions.setMainReviewList(reviewList.mainReviewList.concat(response)))
 
             } else {
               noMoreReviewData = true

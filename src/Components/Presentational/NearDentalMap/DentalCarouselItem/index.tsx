@@ -156,9 +156,10 @@ interface Props {
     address: string,
     lunchTime: string,
     openTime: string,
+    closeTime: string,
 }
 
-const DentalCarouselItem = ({isOpen, isLunchTime, rating, reviewCount, name, address, lunchTime, openTime}: Props) => {
+const DentalCarouselItem = ({isOpen, isLunchTime, rating, reviewCount, name, address, lunchTime, openTime, closeTime}: Props) => {
     return (
         <Container>
             <HeaderContainer>
@@ -186,7 +187,7 @@ const DentalCarouselItem = ({isOpen, isLunchTime, rating, reviewCount, name, add
                 <DentalNameText>{name}</DentalNameText>
                 <DentalAddressText>{address}</DentalAddressText>
                 <LauchTimeText>{"점심시간  " + lunchTime}</LauchTimeText>
-                <OpenTimeText>{"영업시간  " + openTime}</OpenTimeText>
+                <OpenTimeText>{"영업시간  " + openTime + "~" + closeTime}</OpenTimeText>
             </DentalInfoContainer>
         </Container>
     )
