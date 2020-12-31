@@ -14,6 +14,8 @@ import messaging from '@react-native-firebase/messaging';
 
 import allActions from '~/actions';
 
+// Routes
+import GETUserInfo from '~/Routes/Auth/GETUserInfo';
 // Async Storage
 import {getUserInfo} from '~/storage/currentUser';
 
@@ -57,6 +59,9 @@ import EmailConsultingTabScreen from '~/Components/Container/MyProfileScreen/Ema
 import GeneralSettingTabScreen from '~/Components/Container/MyProfileScreen/GeneralSettingTabScreen';
 import ReservationTabScreen from '~/Components/Container/MyProfileScreen/ReservationTabScreen';
 import SavedHospitalTabScreen from '~/Components/Container/MyProfileScreen/SavedHospitalTabScreen';
+import LikedPostsTabScreen from '~/Components/Container/MyProfileScreen/LikedPostsTabScreen';
+import ScrapedPostsTabScreen from '~/Components/Container/MyProfileScreen/ScrapedPostsTabScreen';
+import CommentedPostsTabScreen from '~/Components/Container/MyProfileScreen/CommentedPostsTabScreen';
 
 // Another Profile Stack Screen
 import AnotherProfileScreen from '~/Components/Container/AnotherProfileScreen';
@@ -371,6 +376,18 @@ function MyProfileStackScreen() {
         component={SavedHospitalTabScreen}
       />
       <MyProfileStack.Screen
+        name="LikedPostsTabScreen"
+        component={LikedPostsTabScreen}
+      />
+      <MyProfileStack.Screen
+        name="ScrapedPostsTabScreen"
+        component={ScrapedPostsTabScreen}
+      />
+      <MyProfileStack.Screen
+        name="CommentedPostsTabScreen"
+        component={CommentedPostsTabScreen}
+      />
+      <MyProfileStack.Screen
         name="PhoneVerifyScreen"
         component={PhoneVerifyScreen}
       />
@@ -592,13 +609,33 @@ function BottomTab() {
       ? routeName.state.routes[routeName.state.index].name
       : '';
 
-    if (routeName.name === 'EditProfileTabScreen') {
-      return false;
-    }
-    if (isSlideUp) {
+    if (routeName.name === 'EditProfileStackScreen') {
       return false;
     }
 
+    if (routeName.name === 'GeneralSettingTabScreen') {
+      return false;
+    }
+
+    if (routeName.name === 'ReservationTabScreen') {
+      return false;
+    }
+
+    if (routeName.name === 'SavedHospitalTabScreen') {
+      return false;
+    }
+
+    if (routeName.name === 'LikedPostsTabScreen') {
+      return false;
+    }
+
+    if (routeName.name === 'ScrapedPostsTabScreen') {
+      return false;
+    }
+
+    if (routeName.name === 'CommentedPostsTabScreen') {
+      return false;
+    }
     return true;
   };
   return (
@@ -679,11 +716,21 @@ const Navigator = () => {
   useEffect(() => {
     getFcmToken();
     getUserInfo()
-      .then((response) => {
-        console.log('getUserInfo response', response);
-        if (response !== null) {
-          dispatch(allActions.userActions.setUser(response));
-        }
+      .then((jwtToken) => {
+        console.log('getUserInfo response', jwtToken);
+        GETUserInfo(jwtToken)
+          .then((response: any) => {
+            const profile = response;
+            dispatch(
+              allActions.userActions.setUser({
+                jwtToken,
+                profile,
+              }),
+            );
+          })
+          .catch((error: any) => {
+            console.log('user error');
+          });
       })
       .catch((error) => {
         console.log('getUserInfo error', error);

@@ -6,8 +6,7 @@ import {
   View,
   TouchableOpacity,
   Text,
-  RefreshControl,
-  ActivityIndicator,
+  LayoutAnimation,
   Animated,
 } from 'react-native';
 import {
@@ -42,7 +41,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   const [pageIndex, setPageIndex] = useState(0);
   const [isEndReached, setIsEndReached] = useState(false);
   const [order, setOrder] = useState('createdAt');
-  const jwtToken = route.params.currentUser.user.jwtToken;
+  const jwtToken = route.params.jwtToken;
   const postData = useSelector(
     (state: any) => state.communityPostList.QuestionPosts,
   );
@@ -62,7 +61,24 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         type,
         posts: response,
       };
-      dispatch(allActions.communityActions.setPosts(data));
+      if (
+        postData &&
+        JSON.stringify(response).replace(
+          /"createdDiff\(second\)\"\:\d*\,/gi,
+          '',
+        ) !==
+          JSON.stringify(postData).replace(
+            /"createdDiff\(second\)\"\:\d*\,/gi,
+            '',
+          )
+      ) {
+        console.log('liked post diff');
+        LayoutAnimation.configureNext(
+          LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+        );
+
+        dispatch(allActions.communityActions.setPosts(data));
+      }
       setPageIndex(0);
       setRefreshing(false);
     });
@@ -137,7 +153,6 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   return (
     <ContainerView>
       <CommunityPostList
-        navigation={navigation}
         route={route}
         postData={postData}
         refreshing={refreshing}

@@ -7,6 +7,7 @@ import {
   View,
   Text,
   Alert,
+  LayoutAnimation,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -47,7 +48,7 @@ interface imageItem {
 const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.user.jwtToken;
+  const jwtToken = currentUser.jwtToken;
   const prevData = useSelector((state: any) => {
     if (route.params.data.type === '질문') {
       return state.communityPostList.QuestionPosts.find(
@@ -201,10 +202,27 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
             type: formattedCategory,
             posts: response,
           };
-          dispatch(allActions.communityActions.setPosts(data));
+          if (
+            JSON.stringify(response).replace(
+              /"createdDiff\(second\)\"\:\d*\,/gi,
+              '',
+            ) !==
+            JSON.stringify(postData).replace(
+              /"createdDiff\(second\)\"\:\d*\,/gi,
+              '',
+            )
+          ) {
+            console.log('liked post diff');
+            LayoutAnimation.configureNext(
+              LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+            );
+
+            dispatch(allActions.communityActions.setPosts(data));
+          }
           console.log('res', response.length);
         });
         navigation.navigate('CommunityListScreen');
+        console.log('call layout animation');
       });
     }
   };

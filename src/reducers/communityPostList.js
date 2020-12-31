@@ -3,12 +3,16 @@ const communityPostList = (
     MyPosts: [],
     QuestionPosts: [],
     FreeTalkPosts: [],
+    LikedCommunityPosts: [],
+    LikedReviews: [],
   },
   action,
 ) => {
   const newMyPosts = state.MyPosts.concat();
   const newQuestionPosts = state.QuestionPosts.concat();
   const newFreeTalkPosts = state.FreeTalkPosts.concat();
+  const newLikedCommunityPosts = state.LikedCommunityPosts.concat();
+
   switch (action.type) {
     case 'CREATE_POST':
       switch (action.payload.type) {
@@ -54,6 +58,7 @@ const communityPostList = (
         );
       }
       return {
+        ...state,
         MyPosts: newMyPosts,
         QuestionPosts: newQuestionPosts,
         FreeTalkPosts: newFreeTalkPosts,
@@ -70,7 +75,7 @@ const communityPostList = (
       );
       console.log('delete', deleteTargetMyPostIndex);
       if (deleteTargetMyPostIndex >= 0) {
-        newMyPosts.splice(deleteTargetHomePostIndex, 1);
+        newMyPosts.splice(deleteTargetMyPostIndex, 1);
       }
       if (deleteTargetQuestionPostIndex >= 0) {
         newQuestionPosts.splice(deleteTargetQuestionPostIndex, 1);
@@ -80,6 +85,7 @@ const communityPostList = (
       }
 
       return {
+        ...state,
         MyPosts: newMyPosts,
         QuestionPosts: newQuestionPosts,
         FreeTalkPosts: newFreeTalkPosts,
@@ -102,10 +108,18 @@ const communityPostList = (
             ...state,
             FreeTalkPosts: action.payload.posts,
           };
+        case 'Community':
+          return {
+            ...state,
+            LikedCommunityPosts: action.payload.posts,
+          };
       }
 
     case 'TOGGLE_LIKE':
       const toggleLikeMyPostIndex = state.MyPosts.findIndex(
+        (item) => item.id === action.payload.id,
+      );
+      const toggleLikeLikedCommunityPostIndex = state.LikedCommunityPosts.findIndex(
         (item) => item.id === action.payload.id,
       );
       if (toggleLikeMyPostIndex >= 0) {
@@ -116,6 +130,21 @@ const communityPostList = (
           postLikeNum:
             state.MyPosts[toggleLikeMyPostIndex].postLikeNum +
             (state.MyPosts[toggleLikeMyPostIndex].viewerLikeCommunityPost
+              ? -1
+              : 1),
+        });
+      }
+      if (toggleLikeLikedCommunityPostIndex >= 0) {
+        newLikedCommunityPosts.splice(toggleLikeLikedCommunityPostIndex, 1, {
+          ...state.LikedCommunityPosts[toggleLikeLikedCommunityPostIndex],
+          viewerLikeCommunityPost: !state.LikedCommunityPosts[
+            toggleLikeLikedCommunityPostIndex
+          ].viewerLikeCommunityPost,
+          postLikeNum:
+            state.LikedCommunityPosts[toggleLikeLikedCommunityPostIndex]
+              .postLikeNum +
+            (state.LikedCommunityPosts[toggleLikeLikedCommunityPostIndex]
+              .viewerLikeCommunityPost
               ? -1
               : 1),
         });
@@ -142,6 +171,7 @@ const communityPostList = (
           }
           return {
             ...state,
+            LikedCommunityPosts: newLikedCommunityPosts,
             MyPosts: newMyPosts,
             QuestionPosts: newQuestionPosts,
           };
@@ -166,6 +196,7 @@ const communityPostList = (
           }
           return {
             ...state,
+            LikedCommunityPosts: newLikedCommunityPosts,
             MyPosts: newMyPosts,
             FreeTalkPosts: newFreeTalkPosts,
           };

@@ -54,9 +54,10 @@ const MyProfileScreen = ({navigation, route}: Props) => {
   const communityPostData = useSelector(
     (state: any) => state.communityPostList.MyPosts,
   );
-  const currentUser = useSelector((state: any) => state.currentUser).user;
+  const currentUser = useSelector((state: any) => state.currentUser);
   const jwtToken = currentUser.jwtToken;
-  const userId = currentUser.id;
+  const profile = currentUser.profile;
+  const userId = profile.id;
 
   const onRefresh = useCallback(() => {
     const form = {
@@ -169,22 +170,20 @@ const MyProfileScreen = ({navigation, route}: Props) => {
 
   const toggleSocialLike = useCallback(
     (postId: number, prevState: number, type: string) => {
-      console.log(type);
       const form = {
         type,
         id: postId,
       };
+      dispatch(allActions.communityActions.toggleLike(form));
       if (prevState) {
         // true
         DELETESocialLike(jwtToken, String(postId)).then((response: any) => {
           if (response.statusText === 'OK') {
-            dispatch(allActions.communityActions.toggleLike(form));
           }
         });
       } else {
         POSTSocialLike(jwtToken, String(postId)).then((response: any) => {
           if (response.statusText === 'OK') {
-            dispatch(allActions.communityActions.toggleLike(form));
           }
         });
       }
@@ -235,7 +234,7 @@ const MyProfileScreen = ({navigation, route}: Props) => {
         onRefresh={onRefresh}
         isEndReached={isEndReached}
         onEndReached={onEndReached}
-        currentUser={currentUser}
+        currentUser={profile}
         openModal={openModal}
         moveToCommunityDetail={moveToCommunityDetail}
         communityPostData={communityPostData}

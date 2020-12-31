@@ -45,6 +45,14 @@ const putProfileBirthdate = (birthdate) => {
     payload: birthdate,
   };
 };
+
+const setCurrentLocation = (currentLocation) => {
+  return {
+    type: 'SET_CURRENT_LOCATION',
+    payload: currentLocation,
+  };
+};
+
 export default {
   setUser,
   logOut,
@@ -53,4 +61,5 @@ export default {
   putProfileNickname,
   putProfileGender,
   putProfileBirthdate,
+  setCurrentLocation,
 };

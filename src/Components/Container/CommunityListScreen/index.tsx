@@ -96,7 +96,7 @@ const CommunityListScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
 
   const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.user.jwtToken;
+  const jwtToken = currentUser.jwtToken;
 
   const moveToKeywordSearch = () => {
     navigation.navigate('KeywordSearchStackScreen', {
@@ -174,17 +174,17 @@ const CommunityListScreen = ({navigation, route}: Props) => {
             <CommunityTopTab.Screen
               name="전체"
               component={HomeTabScreen}
-              initialParams={{currentUser: currentUser}}
+              initialParams={{jwtToken: jwtToken}}
             />
             <CommunityTopTab.Screen
               name="질문"
               component={QuestionTabScreen}
-              initialParams={{currentUser: currentUser}}
+              initialParams={{jwtToken: jwtToken}}
             />
             <CommunityTopTab.Screen
               name="자유"
               component={GeneralTabScreen}
-              initialParams={{currentUser: currentUser}}
+              initialParams={{jwtToken: jwtToken}}
             />
           </CommunityTopTab.Navigator>
         </BodyContainerView>

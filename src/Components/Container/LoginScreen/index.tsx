@@ -458,16 +458,25 @@ const LoginScreen = ({navigation}: Props) => {
         if (response.statusText === 'Accepted') {
           setLoadingVerify(false);
           clearInterval(timeout);
-          const userInfo = {
-            jwtToken: response.token,
+          const jwtToken = response.token;
+          const profile = {
             phoneNumber: phoneNumber,
             id: response.user.userId,
             nickname: response.user.userNickname,
             profileImage: response.user.userProfileImg,
+            gender: response.user.userGender,
+            birthdate: response.user.userBirthdate,
+            provider: response.user.userProvider,
+            residences: response.user.userResidences,
           };
 
-          storeUserInfo(userInfo);
-          dispatch(allActions.userActions.setUser(userInfo));
+          storeUserInfo(jwtToken);
+          dispatch(
+            allActions.userActions.setUser({
+              jwtToken,
+              profile,
+            }),
+          );
         }
       })
       .catch(function (error: any) {

@@ -11,51 +11,20 @@ const currentUser = (
     case 'SET_USER':
       return {
         ...state,
-        user: action.payload,
+        jwtToken: action.payload.jwtToken || state.jwtToken,
+        profile: action.payload.profile,
         loggedIn: true,
       };
     case 'LOG_OUT':
       return {
         ...state,
-        user: {},
+        profile: {},
         loggedIn: false,
       };
     case 'SET_CURRENT_LOCATION':
       return {
         ...state,
         currentLocation: action.payload,
-      };
-    case 'PUT_PROFILE_IMG':
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          profileImage: action.payload,
-        },
-      };
-    case 'PUT_PROFILE_NICKNAME':
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          nickname: action.payload,
-        },
-      };
-    case 'PUT_PROFILE_GENDER':
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          gender: action.payload,
-        },
-      };
-    case 'PUT_PROFILE_BIRTHDATE':
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          birthdate: action.payload,
-        },
       };
     default:
       return state;

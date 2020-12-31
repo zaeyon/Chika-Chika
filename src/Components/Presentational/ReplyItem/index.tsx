@@ -1,12 +1,15 @@
 import React from 'react';
 import Styled from 'styled-components/native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp 
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {TouchableWithoutFeedback, FlatList, TouchableOpacity} from 'react-native';
+import {
+  TouchableWithoutFeedback,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import {useSelector} from 'react-redux';
-
 
 const Container = Styled.View`
  width: ${wp('100%')};
@@ -88,31 +91,39 @@ color: #979797;
 `;
 
 interface Props {
-    navigation: any,
-    replyId: number,
-    profileImage: string,
-    nickname: string,
-    description: string,
-    createAt: string,
-    openCommentModal: (nickname:string, commentId:number) => void,
+  navigation: any;
+  replyId: number;
+  profileImage: string;
+  nickname: string;
+  description: string;
+  createAt: string;
+  openCommentModal: (nickname: string, commentId: number) => void;
 }
 
-const ReplyItem = ({navigation, profileImage, nickname, description, createAt, replyId, openCommentModal}: Props) => {
-    const currentUser = useSelector((state: any) => state.currentUser);
+const ReplyItem = ({
+  navigation,
+  profileImage,
+  nickname,
+  description,
+  createAt,
+  replyId,
+  openCommentModal,
+}: Props) => {
+  const currentUser = useSelector((state: any) => state.currentUser);
+  const userProfile = currentUser.profile;
 
-    function getDateFormat(date) {
-        var year = date.getFullYear();
-        var month = (1+ date.getMonth());
-        month = month >= 10 ? month : '0' + month;
-        var day = date.getDate();
-        day = day >= 10 ? day : '0' + day;
-        return year + '/' + month + '/' + day;
-    }
-    
+  function getDateFormat(date) {
+    var year = date.getFullYear();
+    var month = 1 + date.getMonth();
+    month = month >= 10 ? month : '0' + month;
+    var day = date.getDate();
+    day = day >= 10 ? day : '0' + day;
+    return year + '/' + month + '/' + day;
+  }
 
-    const moveToUserProfile = () => {
-        /*
-        if(currentUser.user?.nickname === nickname) {
+  const moveToUserProfile = () => {
+    /*
+        if(userProfile?.nickname === nickname) {
             navigation.push("AnotherUserProfileStack", {
                 screen: "AnotherUserProfileScreen",
                 params: {requestedUserNickname: nickname}
@@ -124,38 +135,33 @@ const ReplyItem = ({navigation, profileImage, nickname, description, createAt, r
             });
         }
         */
-      }
+  };
 
-    const onLongPressComment = () => {
-        //console.log("replyId", replyId);
-        //openCommentModal(nickname, replyId)
-    }
+  const onLongPressComment = () => {
+    //console.log("replyId", replyId);
+    //openCommentModal(nickname, replyId)
+  };
 
-    return (
-        <TouchableOpacity onLongPress={() => onLongPressComment()}>
-        <Container>
-            <TouchableWithoutFeedback onPress={() => moveToUserProfile()}>
-            <ProfileImageContainer>
-                <ProfileImage
-                source={{uri:profileImage}}/>
-            </ProfileImageContainer>
-            </TouchableWithoutFeedback>
-            <CommentRightContainer>
-                <HeaderContainer>
-                    <NicknameText>{nickname}</NicknameText>
-                </HeaderContainer>
-                <CommentDescripText>{description}</CommentDescripText>
-                <FooterContainer>
-                    <CreateAtText>{createAt}</CreateAtText>
-                </FooterContainer>
-            </CommentRightContainer>
-        </Container>
-        </TouchableOpacity>
-    )
-}
+  return (
+    <TouchableOpacity onLongPress={() => onLongPressComment()}>
+      <Container>
+        <TouchableWithoutFeedback onPress={() => moveToUserProfile()}>
+          <ProfileImageContainer>
+            <ProfileImage source={{uri: profileImage}} />
+          </ProfileImageContainer>
+        </TouchableWithoutFeedback>
+        <CommentRightContainer>
+          <HeaderContainer>
+            <NicknameText>{nickname}</NicknameText>
+          </HeaderContainer>
+          <CommentDescripText>{description}</CommentDescripText>
+          <FooterContainer>
+            <CreateAtText>{createAt}</CreateAtText>
+          </FooterContainer>
+        </CommentRightContainer>
+      </Container>
+    </TouchableOpacity>
+  );
+};
 
 export default ReplyItem;
-
-
-
-

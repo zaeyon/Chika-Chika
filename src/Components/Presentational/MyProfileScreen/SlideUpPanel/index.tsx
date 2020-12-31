@@ -72,9 +72,9 @@ interface Props {
 
 const SlideUpPanel = ({navigation, closeBottomSheet, disabled}: Props) => {
   const contents = [
-    {title: '스크랩한 글', name: ''},
-    {title: '좋아요한 글', name: ''},
-    {title: '내가 댓글 단 글', name: ''},
+    {title: '좋아요한 글', name: 'LikedPostsTabScreen'},
+    {title: '스크랩한 글', name: 'ScrapedPostsTabScreen'},
+    {title: '내가 댓글 단 글', name: 'CommentedPostsTabScreen'},
     {title: '내 정보 수정', name: 'EditProfileStackScreen'},
     {title: '설정', name: 'GeneralSettingTabScreen'},
   ];
@@ -89,7 +89,7 @@ const SlideUpPanel = ({navigation, closeBottomSheet, disabled}: Props) => {
           onPress={() => {
             if (!disabled) {
               closeBottomSheet();
-              setTimeout(() => navigation.navigate(item.name), 400);
+              setTimeout(() => navigation.navigate(item.name), 200);
 
               // setNavigateName(item.name);
             }

@@ -127,6 +127,7 @@ const CommentItem = ({
   openCommentActionSheet,
 }: Props) => {
   const currentUser = useSelector((state: any) => state.currentUser);
+  const userProfile = currentUser.profile;
 
   function getDateFormat(dateStr: string) {
     const date = new Date(dateStr);
@@ -140,7 +141,7 @@ const CommentItem = ({
 
   const moveToUserProfile = () => {
     /*
-        if(currentUser.user?.nickname === nickname) {
+        if(userProfile?.nickname === nickname) {
             navigation.push("AnotherUserProfileStack", {
                 screen: "AnotherUserProfileScreen",
                 params: {requestedUserNickname: nickname}

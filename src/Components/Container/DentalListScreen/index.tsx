@@ -310,7 +310,7 @@ const DentalListScreen = ({navigation, route}: Props) => {
     const currentUser = useSelector((state: any) => state.currentUser);
     const currentLocation = useSelector((state: any) => state.currentUser).currentLocation;
     const dispatch = useDispatch();
-    const jwtToken = currentUser.user.jwtToken;
+    const jwtToken = currentUser.jwtToken;
     const todayIndex = new Date().getDay();
 
     // 방문일 설정 redux state

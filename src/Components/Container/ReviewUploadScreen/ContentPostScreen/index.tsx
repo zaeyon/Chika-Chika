@@ -327,7 +327,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     ]);
     
     const currentUser = useSelector((state:any) => state.currentUser);
-    const jwtToken = currentUser.user.jwtToken;
+    const jwtToken = currentUser.jwtToken;
     let reviewId = route.params?.reviewId;
 
     const insertedImageActionSheetRef = createRef<any>();

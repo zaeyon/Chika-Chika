@@ -84,7 +84,8 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     postList.find((item: any) => item.id === route.params.id),
   );
 
-  const jwtToken = currentUser.user.jwtToken;
+  const jwtToken = currentUser.jwtToken;
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -152,12 +153,25 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   }, [postData]);
 
   const onPressDeletePost = useCallback(() => {
-    DELETECommunityPost(jwtToken, postData.id).then((response) => {
-      console.log(response);
-      navigation.goBack();
-      dispatch(allActions.communityActions.deletePost(postData.id));
-      Alert.alert('게시글 삭제가 완료되었습니다.');
-    });
+    Alert.alert('게시글 삭제', '수다방 글을 삭제하시겠습니까?', [
+      {
+        text: '취소',
+        onPress: () => console.log('cancled delete post'),
+        style: 'cancel',
+      },
+      {
+        text: '확인',
+        onPress: () =>
+          DELETECommunityPost(jwtToken, postData.id).then((response) => {
+            console.log(response);
+            navigation.goBack();
+            LayoutAnimation.configureNext(
+              LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+            );
+            dispatch(allActions.communityActions.deletePost(postData.id));
+          }),
+      },
+    ]);
   }, [jwtToken, postData]);
 
   const deorderDescription = useCallback((oldDescription: string) => {
@@ -237,6 +251,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
       },
     );
   }, []);
+
   if (postData) {
     return (
       <ContainerView>

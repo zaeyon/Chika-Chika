@@ -17,7 +17,6 @@ import ActionSheet from 'react-native-actionsheet';
 const ContainerView = Styled.ScrollView`
 flex: 1;
 background: #EEEEEE;
-margin-bottom: ${hp('9.6%')}px;
 `;
 
 const ProfileContainerView = Styled.View`
@@ -379,7 +378,7 @@ const EditProfileScreen = ({
             <ProfileImageView>
               <ProfileImage
                 source={{
-                  uri: currentUser.profileImage,
+                  uri: currentUser.profileImg,
                 }}
               />
             </ProfileImageView>

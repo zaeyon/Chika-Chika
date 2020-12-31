@@ -42,7 +42,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
   const [pageIndex, setPageIndex] = useState(0);
   const [isEndReached, setIsEndReached] = useState(false);
   const [order, setOrder] = useState('createdAt');
-  const jwtToken = route.params.currentUser.user.jwtToken;
+  const jwtToken = route.params.jwtToken;
   const postData = useSelector(
     (state: any) => state.communityPostList.FreeTalkPosts,
   );

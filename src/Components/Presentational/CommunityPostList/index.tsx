@@ -9,6 +9,7 @@ import {
   RefreshControl,
   ActivityIndicator,
   Animated,
+  LayoutAnimation,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -56,8 +57,6 @@ interface PostData {
 }
 
 interface Props {
-  navigation: any;
-  route: any;
   postData: Array<PostData>;
   refreshing: boolean;
   onRefresh: any;
@@ -69,8 +68,6 @@ interface Props {
   toggleSocialScrap: any;
 }
 const CommunityPostList = ({
-  navigation,
-  route,
   postData,
   refreshing,
   onRefresh,

@@ -12,6 +12,7 @@ import allActions from '~/actions';
 import {uploadImageToS3} from '~/method/uploadImageToS3';
 // Routes
 import PUTEditProfile from '~/Routes/User/PUTEditProfile';
+import GETUserInfo from '~/Routes/Auth/GETUserInfo';
 
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
@@ -32,8 +33,9 @@ interface Form {
 const EditProfileTabScreen = ({navigation, route}: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const currentUser = useSelector((state: any) => state.currentUser).user;
+  const currentUser = useSelector((state: any) => state.currentUser);
   const jwtToken = currentUser.jwtToken;
+  const profile = currentUser.profile;
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -42,11 +44,18 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
     }
   }, [route]);
 
-  const updateUserProfile = useCallback((form: Form, callback: any) => {
+  const updateUserProfile = useCallback((form: Form, callback?: any) => {
     PUTEditProfile(jwtToken, form)
       .then((response: any) => {
-        console.log(response.body.message);
-        Alert.alert('변경 성공', '닉네임이 변경되었습니다.');
+        console.log('프로필 변경 성공', response.body.message);
+        GETUserInfo(jwtToken).then((response: any) => {
+          dispatch(
+            allActions.userActions.setUser({
+              profile: response,
+            }),
+          );
+          setIsLoading(false);
+        });
         callback();
       })
       .catch((e) => {
@@ -80,12 +89,10 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
         profileImg: res.response.location,
       };
       updateUserProfile(form, () => {
-        dispatch(allActions.userActions.putProfileImage(res.response.location));
-        setIsLoading(false);
-      });
-      navigation.setParams({
-        changeExistingImage: false,
-        selectedImage: null,
+        navigation.setParams({
+          changeExistingImage: false,
+          selectedImage: null,
+        });
       });
     });
   }, []);
@@ -95,10 +102,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
     const form = {
       nickname,
     };
-    updateUserProfile(form, () => {
-      dispatch(allActions.userActions.putProfileNickname(nickname));
-      setIsLoading(false);
-    });
+    updateUserProfile(form);
   }, []);
 
   const changeProfileBirthdate = useCallback((birthdate: string) => {
@@ -106,10 +110,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
     const form = {
       birthdate,
     };
-    updateUserProfile(form, () => {
-      dispatch(allActions.userActions.putProfileBirthdate(birthdate));
-      setIsLoading(false);
-    });
+    updateUserProfile(form);
   }, []);
 
   const changeProfileGender = useCallback((gender: string) => {
@@ -117,10 +118,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
     const form = {
       gender,
     };
-    updateUserProfile(form, () => {
-      dispatch(allActions.userActions.putProfileGender(gender));
-      setIsLoading(false);
-    });
+    updateUserProfile(form);
   }, []);
 
   const headerLeftAction = useCallback(() => {
@@ -148,7 +146,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
       />
       <EditProfileScreen
         moveToGallery={moveToGallery}
-        currentUser={currentUser}
+        currentUser={profile}
         changeProfileNickname={changeProfileNickname}
         changeProfileGender={changeProfileGender}
         changeProfileBirthdate={changeProfileBirthdate}

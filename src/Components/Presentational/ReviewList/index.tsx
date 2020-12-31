@@ -1,9 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList, ScrollView, ActivityIndicator} from 'react-native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  TouchableWithoutFeedback,
+  FlatList,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {useSelector} from 'react-redux';
 
@@ -12,7 +17,6 @@ import ReviewItem from '~/Components/Presentational/ReviewItem';
 
 // Route
 import GETReviewList from '~/Routes/Review/GETReviewList';
-
 
 const Container = Styled.SafeAreaView`
  background-color: #FFFFFF;
@@ -26,7 +30,6 @@ const HeaderBar = Styled.View`
  justify-content: space-between;
  background-color:#ffffff;
 `;
-
 
 const HeaderLeftContainer = Styled.View`
 padding: 7px 16px 13px 15px;
@@ -102,7 +105,6 @@ border-width: 1px;
 border-color: #c4c4c4;
 `;
 
-
 const HospitalContainer = Styled.View`
 `;
 
@@ -147,7 +149,6 @@ color: #000000;
 font-size: 18px;
 `;
 
-
 const ToothCareButton = Styled.View`
 width: ${wp('87.2%')};
 height: ${wp('24.416%')};
@@ -179,164 +180,190 @@ justify-content: center;
 `;
 
 interface Props {
-    reviewList: Array<ReviewData>,
-    refreshingReviewList: boolean,
-    onRefreshReviewList: () => void,
-    onEndReachedReviewList: () => void,
-    loadingMoreReview: boolean,
-    moveToWriterProfile: (userId: number) => void,
-    moveToReviewDetail: (reviewId: number, writer: object, createdAt: string, treatmentArray: Array<object>, ratingObj: Object, treatmentDate: string, imageArray: Array<object>, isCurUserLike: boolean, likeCount: number, commentCount: number, isCurUserScrap: boolean, dentalObj: object) => void,
-    moveToDentalDetail: (dentalId: number) => void,
+  reviewList: Array<ReviewData>;
+  refreshingReviewList: boolean;
+  onRefreshReviewList: () => void;
+  onEndReachedReviewList: () => void;
+  loadingMoreReview: boolean;
+  moveToWriterProfile: (userId: number) => void;
+  moveToReviewDetail: (
+    reviewId: number,
+    writer: object,
+    createdAt: string,
+    treatmentArray: Array<object>,
+    ratingObj: Object,
+    treatmentDate: string,
+    imageArray: Array<object>,
+    isCurUserLike: boolean,
+    likeCount: number,
+    commentCount: number,
+    isCurUserScrap: boolean,
+    dentalObj: object,
+  ) => void;
+  moveToDentalDetail: (dentalId: number) => void;
 }
 
 interface ReviewData {
-    id: Number,
-    user: Object,
-    userId: String,
-    TreatmentItems: Array<Object>,
-    certifiedBill: Boolean,
-    createdAt: String,
-    deletedAt: String,
-    dentalClinicId: Number,
-    dental_clinic: Object,
-    hits: Number,
-    treatmentDate: String,
-    reviewCommentNum: Number,
-    reivewLikeNum: Number,
-    reviewViewNum: Number,
-    review_contents: Array<Object>,
-    starRate_cost: Number,
-    starRate_service: Number,
-    starRate_treatment: Number,
-    updatedAt: String,
-    viewerLikedReview: Number,
+  id: Number;
+  user: Object;
+  userId: String;
+  TreatmentItems: Array<Object>;
+  certifiedBill: Boolean;
+  createdAt: String;
+  deletedAt: String;
+  dentalClinicId: Number;
+  dental_clinic: Object;
+  hits: Number;
+  treatmentDate: String;
+  reviewCommentNum: Number;
+  reivewLikeNum: Number;
+  reviewViewNum: Number;
+  review_contents: Array<Object>;
+  starRate_cost: Number;
+  starRate_service: Number;
+  starRate_treatment: Number;
+  updatedAt: String;
+  viewerLikedReview: Number;
 }
 
-const ReviewList = ({reviewList, moveToReviewDetail, refreshingReviewList, onRefreshReviewList, onEndReachedReviewList, loadingMoreReview, moveToWriterProfile, moveToDentalDetail}: Props) => {
-    const currentUser = useSelector((state: any) => state.currentUser);
-    const jwtToken = currentUser.user.jwtToken;
+const ReviewList = ({
+  reviewList,
+  moveToReviewDetail,
+  refreshingReviewList,
+  onRefreshReviewList,
+  onEndReachedReviewList,
+  loadingMoreReview,
+  moveToWriterProfile,
+  moveToDentalDetail,
+}: Props) => {
+  const currentUser = useSelector((state: any) => state.currentUser);
+  const jwtToken = currentUser.jwtToken;
+  const userProfile = currentUser.profile;
 
-    var offset = 0;
-    var limit = 10;
+  var offset = 0;
+  var limit = 10;
 
+  const renderEndRecahedIndicator = ({item, index}: any) => {
+    console.log(
+      'renderEndRecahedIndicator loadingMoreReview',
+      loadingMoreReview,
+    );
+    if (loadingMoreReview) {
+      return (
+        <EndReachedIndicatorContainer>
+          <ActivityIndicator />
+        </EndReachedIndicatorContainer>
+      );
+    } else {
+      return <EndReachedIndicatorContainer style={{height: 10}} />;
+    }
+  };
 
-    const renderEndRecahedIndicator = ({item, index}: any) => {
-        console.log("renderEndRecahedIndicator loadingMoreReview", loadingMoreReview);
-        if(loadingMoreReview) {
-            return (
-                <EndReachedIndicatorContainer>
-                    <ActivityIndicator/>
-                </EndReachedIndicatorContainer>
-            )
-        } else {
-            return (
-                <EndReachedIndicatorContainer
-                style={{height: 10}}/>
-            )
-        }
+  const renderReviewItem = ({item, index}: any) => {
+    const isCurUserLikeProp = item.viewerLikedReview === 1 ? true : false;
+    const isCurUserScrapProp = item.viewerScrapedReview === 1 ? true : false;
+    const likeArray = new Array();
+    const scrapArray = new Array();
+
+    if (item.viewerLikedReview === 1) {
+      likeArray.push({
+        nickname: userProfile.nickname,
+      });
     }
 
-    const renderReviewItem = ({item, index}: any) => {
+    if (item.viewerScrapedReview === 1) {
+      scrapArray.push({
+        nickname: userProfile.nickname,
+      });
+    }
 
-        const isCurUserLikeProp = item.viewerLikedReview === 1 ? true : false
-        const isCurUserScrapProp = item.viewerScrapedReview === 1 ? true : false
-        const likeArray = new Array();
-        const scrapArray = new Array();
-  
-        if(item.viewerLikedReview === 1) {
-          likeArray.push({
-            nickname: currentUser.user.nickname
-          })       
-        }
+    const ratingObj = {
+      avgRating: Number(
+        (
+          (Number(item.starRate_cost) +
+            Number(item.starRate_service) +
+            Number(item.starRate_treatment)) /
+          3
+        ).toFixed(1),
+      ),
+      priceRating: Number(item.starRate_cost),
+      serviceRating: Number(item.starRate_service),
+      treatRating: Number(item.starRate_treatment),
+    };
 
-        if(item.viewerScrapedReview === 1) {
-            scrapArray.push({
-                nickname: currentUser.user.nickname
-            })
-        }
+    const writer = {
+      nickname: item.user.nickname,
+      profileImage: item.user.profileImg,
+      userId: item.userId,
+    };
 
+    let elapsedTimeText = '';
+    let visibleElapsedTime = false;
 
+    const elapsedMin = item['createdDiff(second)'] / 60;
+    const elapsedHour = item['createdDiff(second)'] / 3600;
+    const elapsedDay = item['createdDiff(second)'] / 86400;
 
-        const ratingObj = {
-            avgRating: Number(((Number(item.starRate_cost) + Number(item.starRate_service) + Number(item.starRate_treatment))/3).toFixed(1)),
-            priceRating: Number(item.starRate_cost),
-            serviceRating: Number(item.starRate_service),
-            treatRating: Number(item.starRate_treatment),
-        }
-
-        const writer = {
-            nickname: item.user.nickname,
-            profileImage: item.user.profileImg,
-            userId: item.userId
-        }
-
-        let elapsedTimeText = ""
-        let visibleElapsedTime = false
-
-        const elapsedMin = item['createdDiff(second)'] / 60
-        const elapsedHour = item['createdDiff(second)'] / 3600
-        const elapsedDay = item['createdDiff(second)'] / 86400
-        
-        if(elapsedMin < 1) {
-            elapsedTimeText = "방금 전"
-            visibleElapsedTime = true
-        } else if(1 <= elapsedMin && elapsedHour < 1) {
-            elapsedTimeText = `${Math.floor(elapsedMin)}분 전`
-            visibleElapsedTime = true
-        } else if(1 <= elapsedHour && elapsedDay < 1) {
-            elapsedTimeText = `${Math.floor(elapsedHour)}시간 전`
-            visibleElapsedTime = true
-        } else if(elapsedDay >= 1) {
-            visibleElapsedTime = false
-        }
-
-        return (
-            <ReviewItem
-            reviewId={item.id}
-            writer={writer}
-            createdAt={item.createdAt}
-            elapsedTimeText={elapsedTimeText}
-            visibleElapsedTime={visibleElapsedTime}
-            treatmentArray={item.TreatmentItems}
-            treatmentDate={item.treatmentDate ? item.treatmentDate : ""}
-            dentalObj={item.dental_clinic}
-            ratingObj={ratingObj}
-            viewCount={item.reviewViewNum}
-            treatInfoCount={item.getInfo}
-            likeCountProp={item.reviewLikeNum}
-            commentCount={item.reviewCommentsNum}
-            imageArray={item.review_contents}
-            descriptions={item.reviewDescriptions ? item.reviewDescriptions : ""}
-            moveToReviewDetail={moveToReviewDetail}
-            moveToWriterProfile={moveToWriterProfile}
-            isCurUserLikeProp={isCurUserLikeProp}
-            isCurUserScrapProp={isCurUserScrapProp}
-            likeArray={likeArray}
-            scrapArray={scrapArray}
-            refreshingReviewList={refreshingReviewList}
-            moveToDentalDetail={moveToDentalDetail}/>
-            )
-      }
+    if (elapsedMin < 1) {
+      elapsedTimeText = '방금 전';
+      visibleElapsedTime = true;
+    } else if (1 <= elapsedMin && elapsedHour < 1) {
+      elapsedTimeText = `${Math.floor(elapsedMin)}분 전`;
+      visibleElapsedTime = true;
+    } else if (1 <= elapsedHour && elapsedDay < 1) {
+      elapsedTimeText = `${Math.floor(elapsedHour)}시간 전`;
+      visibleElapsedTime = true;
+    } else if (elapsedDay >= 1) {
+      visibleElapsedTime = false;
+    }
 
     return (
-        <Container>
-            <ReviewListContainer>
-                <FlatList
-                keyExtractor={(item ,index) => `${index}`}
-                refreshing={refreshingReviewList}
-                onRefresh={onRefreshReviewList}
-                horizontal={false}
-                showsVerticalScrollIndicator={true}
-                data={reviewList}
-                renderItem={renderReviewItem}
-                onEndReached={onEndReachedReviewList}
-                onEndReachedThreshold={0.5}
-                ListFooterComponent={renderEndRecahedIndicator}/>
-            </ReviewListContainer>
-        </Container>
-    )
-}
+      <ReviewItem
+        reviewId={item.id}
+        writer={writer}
+        createdAt={item.createdAt}
+        elapsedTimeText={elapsedTimeText}
+        visibleElapsedTime={visibleElapsedTime}
+        treatmentArray={item.TreatmentItems}
+        treatmentDate={item.treatmentDate ? item.treatmentDate : ''}
+        dentalObj={item.dental_clinic}
+        ratingObj={ratingObj}
+        viewCount={item.reviewViewNum}
+        treatInfoCount={item.getInfo}
+        likeCountProp={item.reviewLikeNum}
+        commentCount={item.reviewCommentsNum}
+        imageArray={item.review_contents}
+        descriptions={item.reviewDescriptions ? item.reviewDescriptions : ''}
+        moveToReviewDetail={moveToReviewDetail}
+        moveToWriterProfile={moveToWriterProfile}
+        isCurUserLikeProp={isCurUserLikeProp}
+        isCurUserScrapProp={isCurUserScrapProp}
+        likeArray={likeArray}
+        scrapArray={scrapArray}
+        refreshingReviewList={refreshingReviewList}
+        moveToDentalDetail={moveToDentalDetail}
+      />
+    );
+  };
 
+  return (
+    <Container>
+      <ReviewListContainer>
+        <FlatList
+          keyExtractor={(item, index) => `${index}`}
+          refreshing={refreshingReviewList}
+          onRefresh={onRefreshReviewList}
+          horizontal={false}
+          showsVerticalScrollIndicator={true}
+          data={reviewList}
+          renderItem={renderReviewItem}
+          onEndReached={onEndReachedReviewList}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderEndRecahedIndicator}
+        />
+      </ReviewListContainer>
+    </Container>
+  );
+};
 
-export default ReviewList
-
+export default ReviewList;

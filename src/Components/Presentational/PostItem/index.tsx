@@ -6,6 +6,7 @@ import {
   Text,
   View,
   Image,
+  LayoutAnimation,
 } from 'react-native';
 import Styled from 'styled-components/native';
 import {
@@ -312,10 +313,14 @@ const PostItem = ({
             }}>
             <ProfileContainerView>
               <ProfileImage
-                source={{
-                  uri: user.profileImg,
-                  cache: 'force-cache',
-                }}
+                source={
+                  user.profileImg
+                    ? {
+                        uri: user.profileImg,
+                        cache: 'force-cache',
+                      }
+                    : require('~/Assets/Images/appIcon_chika.png')
+                }
               />
               <ProfileContentView>
                 <ProfileNameText>{user.nickname}</ProfileNameText>

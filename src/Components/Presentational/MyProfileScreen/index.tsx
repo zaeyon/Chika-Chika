@@ -207,7 +207,7 @@ interface User {
   phoneNumber: string;
   id: string;
   nickname: string;
-  profileImage: string;
+  profileImg: string;
 }
 
 export default class MyProfile extends React.PureComponent<Props, State> {
@@ -459,7 +459,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
               <ProfileImageView>
                 <ProfileImage
                   source={{
-                    uri: this.props.currentUser.profileImage,
+                    uri: this.props.currentUser.profileImg,
                     cache: 'force-cache',
                   }}
                 />

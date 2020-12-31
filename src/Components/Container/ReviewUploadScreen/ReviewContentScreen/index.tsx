@@ -1,14 +1,23 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList, ScrollView, Keyboard, StyleSheet, Alert, View, ActivityIndicator} from 'react-native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  TouchableWithoutFeedback,
+  FlatList,
+  ScrollView,
+  Keyboard,
+  StyleSheet,
+  Alert,
+  View,
+  ActivityIndicator,
+} from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { NavigationContainer } from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
-import {useSelector} from 'react-redux'; 
+import {useSelector} from 'react-redux';
 import {RNS3} from 'react-native-upload-aws-s3';
 
 import {uploadImageToS3} from '~/method/uploadImageToS3';
@@ -133,7 +142,6 @@ const RatingStarIcon = Styled.Image`
 width: ${wp('3.266%')}px;
 height: ${wp('3.266%')}px;
 `;
-
 
 const DateModalContainer = Styled.View`
 width: ${wp('100%')}px;
@@ -283,350 +291,357 @@ color: #ffffff;
 font-weight: 300;
 `;
 
-
-
 interface Props {
-    navigation: any,
-    route: any,
+  navigation: any;
+  route: any;
 }
 
 const ReviewContentScreen = ({navigation, route}: Props) => {
-    const [dentalClinic, setDentalClinic] = useState<object>({});
-    const [treatDate, setTreatDate] = useState<object>({});
-    const [treatPrice, setTreatPrice] = useState<object>({});
-    const [detailPriceList, setDetailPriceList] = useState<Array<object>>([]);
-    const [selectedTreatList, setSelectedTreatList] = useState<Array<object>>([]);
-    const [rating, setRating] = useState<object>({}); 
-    const [isDetailPrice, setIsDetailPrice] = useState<boolean>(false);
+  const [dentalClinic, setDentalClinic] = useState<object>({});
+  const [treatDate, setTreatDate] = useState<object>({});
+  const [treatPrice, setTreatPrice] = useState<object>({});
+  const [detailPriceList, setDetailPriceList] = useState<Array<object>>([]);
+  const [selectedTreatList, setSelectedTreatList] = useState<Array<object>>([]);
+  const [rating, setRating] = useState<object>({});
+  const [isDetailPrice, setIsDetailPrice] = useState<boolean>(false);
 
-    const [displayTotalPrice, setDisplayTotalPrice] = useState<string>();
-    const [totalPrice, setTotalPrice] = useState<any>();
+  const [displayTotalPrice, setDisplayTotalPrice] = useState<string>();
+  const [totalPrice, setTotalPrice] = useState<any>();
 
-    const [changeMetaInfo, setChangeMetaInfo] = useState<boolean>(false);
-    const [visibleDatePicker, setVisibleDatePicker] = useState<boolean>(false);
-    const [changeParagraphList, setChangeParagraphList] = useState<boolean>(false);
-    const [certifiedBill, setCertifiedBill] = useState<boolean>(false);
-    const [uploadLoading, setUploadLoading] = useState<boolean>(false);
+  const [changeMetaInfo, setChangeMetaInfo] = useState<boolean>(false);
+  const [visibleDatePicker, setVisibleDatePicker] = useState<boolean>(false);
+  const [changeParagraphList, setChangeParagraphList] = useState<boolean>(
+    false,
+  );
+  const [certifiedBill, setCertifiedBill] = useState<boolean>(false);
+  const [uploadLoading, setUploadLoading] = useState<boolean>(false);
 
-    const totalPriceInputRef = useRef()
-    let descripInputRef = useRef<any>();
+  const totalPriceInputRef = useRef();
+  let descripInputRef = useRef<any>();
 
-    const [selectedImageList, setSelectedImageList] = useState<Array<any>>([]);
+  const [selectedImageList, setSelectedImageList] = useState<Array<any>>([]);
 
-    const [paragraphList, setParagraphList] = useState<Array<object>>([
-        {
-            index: 1,
-            image: null,
-            description: null,
-        }
-    ]);
-    
-    const currentUser = useSelector((state:any) => state.currentUser);
-    const jwtToken = currentUser.user.jwtToken;
-    
-    useEffect(() => {
-        if(route.params.requestType === "revise") {
-            console.log("route.params.paragraphArray", route.params.paragraphArray);
-            const tmpParagraphArray = route.params.paragraphArray;
-            setParagraphList(tmpParagraphArray);
-        }
-    }, [])
+  const [paragraphList, setParagraphList] = useState<Array<object>>([
+    {
+      index: 1,
+      image: null,
+      description: null,
+    },
+  ]);
 
-    useEffect(() => {
-        if(route.params?.dentalClinic) {
-            console.log("route.params?.dentalClinic", route.params.dentalClinic);
-            setDentalClinic(route.params?.dentalClinic)
-        }
-    }, [route.params?.dentalClinic])
+  const currentUser = useSelector((state: any) => state.currentUser);
+  const jwtToken = currentUser.jwtToken;
 
-    useEffect(() => {
-        if(route.params?.treatDate) {
-            console.log("route.params?.treatDate", route.params?.treatDate);
-            setTreatDate(route.params?.treatDate)
-        }
-    }, [route.params?.treatDate])
-
-    useEffect(() => {
-        if(route.params?.treatPrice) {
-            console.log("route.params.treatPrice", route.params.treatPrice);
-            setTreatPrice(route.params?.treatPrice);
-            setDisplayTotalPrice(route.params?.treatPrice.displayTreatPrice);
-            setTotalPrice(route.params?.treatPrice.treatPrice);
-        }
-    }, [route.params?.treatPrice])
-
-    useEffect(() => {
-        if(route.params?.selectedTreatList) {
-            console.log("route.params.selectedTreatList", route.params.selectedTreatList);
-            console.log("route.params.detailPriceList", route.params.detailPriceList)
-            setSelectedTreatList(route.params?.selectedTreatList)
-
-        }
-    }, [route.params?.selectedTreatList])
-
-    useEffect(() => {
-        if(route.params?.rating) {
-            console.log("route.params.rating", route.params?.rating);
-            setRating(route.params?.rating)
-        }
-    }, [route.params?.rating])
-
-    useEffect(() => {
-        if(route.params?.isDetailPrice) {
-            console.log("route.params.isDetailPrice", route.params?.isDetailPrice);
-            setIsDetailPrice(route.params.isDetailPrice);
-        }
-    }, [route.params?.isDetailPrice])
-
-    useEffect(() => {
-        if(route.params?.detailPriceList) {
-            console.log("route.params.detailPriceList", route.params.detailPriceList)
-            setDetailPriceList(route.params.detailPriceList);
-        }
-    }, [route.params?.detailPriceList])
-
-    useEffect(() => {
-        if(route.params?.selectedImages) {
-            console.log("리뷰 업로드 route.params.selectedImages", route.params.selectedImages)
-
-            route.params.selectedImages.forEach((item: any, index: number) => {
-                console.log("선택된 사진 item", item)
-                
-                var tmpParagraphList = paragraphList
-                var tmpSelectedImageList = selectedImageList
-                var paraObj: any
-
-                if(index == 0) {
-                    paraObj = tmpParagraphList[route.params?.startIndex]
-                    paraObj.image = item
-                    paraObj.order = "before",
-
-                    tmpParagraphList[route.params?.startIndex] = paraObj
-                    setChangeParagraphList(!changeParagraphList)
-
-
-                } else {
-                    paraObj = {
-                     index: paragraphList.length + index,
-                     image: item,
-                     description: "",
-                     order: "before",
-                    }
-                    
-                    tmpParagraphList.push(paraObj)  
-                }
-
-                if(index == route.params.selectedImages.length-1) {
-                    setParagraphList(tmpParagraphList)
-                }
-            })
-        }
-    }, [route.params?.selectedImages])
-
-    useEffect(() => {
-
-    })
-
-    const openCamera = () => {
-        navigation.navigate("Camera");
+  useEffect(() => {
+    if (route.params.requestType === 'revise') {
+      console.log('route.params.paragraphArray', route.params.paragraphArray);
+      const tmpParagraphArray = route.params.paragraphArray;
+      setParagraphList(tmpParagraphArray);
     }
+  }, []);
 
-    const moveToGallery = () => {
-        navigation.navigate("Gallery");
+  useEffect(() => {
+    if (route.params?.dentalClinic) {
+      console.log('route.params?.dentalClinic', route.params.dentalClinic);
+      setDentalClinic(route.params?.dentalClinic);
     }
+  }, [route.params?.dentalClinic]);
 
-    const goBack = () => {
-        if(route.params?.requestType === "post") {
-            Alert.alert(
-                '게시글 작성을 취소하시겠어요?',
-                '',
-                [
-                    {
-                        text: '확인',
-                        onPress: () => {
-                            navigation.navigate("HomeScreen")
-                        }
-                    },
-                    {
-                        text: '취소',
-                        onPress: () => 0,
-                        style: 'cancel'
-                    }
-                ]
-            )
-        } else if(route.params?.requestType === "revise") {
-            descripInputRef.current.clear();
-            navigation.pop();
-        }
+  useEffect(() => {
+    if (route.params?.treatDate) {
+      console.log('route.params?.treatDate', route.params?.treatDate);
+      setTreatDate(route.params?.treatDate);
     }
+  }, [route.params?.treatDate]);
 
-    const moveToDentalClinicSearch = () => {
-        navigation.push("DentalClinicSearchScreen", {
-            requestPage: "content",
-            requestType: route.params?.requestType,
-        })
+  useEffect(() => {
+    if (route.params?.treatPrice) {
+      console.log('route.params.treatPrice', route.params.treatPrice);
+      setTreatPrice(route.params?.treatPrice);
+      setDisplayTotalPrice(route.params?.treatPrice.displayTreatPrice);
+      setTotalPrice(route.params?.treatPrice.treatPrice);
     }
+  }, [route.params?.treatPrice]);
 
-    const onPressTreatDate = () => {
-        setVisibleDatePicker(true)
+  useEffect(() => {
+    if (route.params?.selectedTreatList) {
+      console.log(
+        'route.params.selectedTreatList',
+        route.params.selectedTreatList,
+      );
+      console.log('route.params.detailPriceList', route.params.detailPriceList);
+      setSelectedTreatList(route.params?.selectedTreatList);
     }
+  }, [route.params?.selectedTreatList]);
 
-    const onChangeDatePicker = (event: any, date: any) => {
-        var tmpTreatDate = treatDate
-        tmpTreatDate.treatDate = date
-        setTreatDate(tmpTreatDate)
+  useEffect(() => {
+    if (route.params?.rating) {
+      console.log('route.params.rating', route.params?.rating);
+      setRating(route.params?.rating);
     }
+  }, [route.params?.rating]);
 
-    const applyTreatDate = () => {
-        console.log("date", treatDate);
-        var tmpTreatDate: any = treatDate;
-        tmpTreatDate.displayTreatDate = convertDisplayDate(treatDate.treatDate);
-
-        setTreatDate(tmpTreatDate);
-        setVisibleDatePicker(false);
+  useEffect(() => {
+    if (route.params?.isDetailPrice) {
+      console.log('route.params.isDetailPrice', route.params?.isDetailPrice);
+      setIsDetailPrice(route.params.isDetailPrice);
     }
+  }, [route.params?.isDetailPrice]);
 
-    const convertDisplayDate = (date: any) => {
-        var tmpDate = new Date(date),
-        month = '' + (tmpDate.getMonth() + 1),
-        day = '' + tmpDate.getDate(),
-        year = '' + tmpDate.getFullYear()
-
-        if(month.length < 2) month = "0" + month;
-        if(day.length < 2) day = "0" + day;
-
-        return year + "년" + " " + month + "월" + " " + day + "일"
+  useEffect(() => {
+    if (route.params?.detailPriceList) {
+      console.log('route.params.detailPriceList', route.params.detailPriceList);
+      setDetailPriceList(route.params.detailPriceList);
     }
+  }, [route.params?.detailPriceList]);
 
-    const onPressTreatPrice = () => {
-        totalPriceInputRef.current.focus()   
-    }
+  useEffect(() => {
+    if (route.params?.selectedImages) {
+      console.log(
+        '리뷰 업로드 route.params.selectedImages',
+        route.params.selectedImages,
+      );
 
-    const onChangePriceInput = (text: string) => {
+      route.params.selectedImages.forEach((item: any, index: number) => {
+        console.log('선택된 사진 item', item);
 
-        console.log("text", text);
-        console.log("treatPrice", treatPrice);
+        var tmpParagraphList = paragraphList;
+        var tmpSelectedImageList = selectedImageList;
+        var paraObj: any;
 
-        if(text.trim() === "") {
-            setTotalPrice("")
-            setDisplayTotalPrice("")
+        if (index == 0) {
+          paraObj = tmpParagraphList[route.params?.startIndex];
+          paraObj.image = item;
+          (paraObj.order = 'before'),
+            (tmpParagraphList[route.params?.startIndex] = paraObj);
+          setChangeParagraphList(!changeParagraphList);
         } else {
-            setTotalPrice(text);
-            setDisplayTotalPrice(Number(text).toLocaleString() + "원")
-        }
-    }
+          paraObj = {
+            index: paragraphList.length + index,
+            image: item,
+            description: '',
+            order: 'before',
+          };
 
-    const moveToTreatSearch = () => {
-        navigation.push("TreatSearchScreen", {
-            requestPage: "content",
-            selectedTreatList: selectedTreatList,
-            requestType: route.params?.requestType,
-        })
-    }
-
-    const moveToDetailPrice = () => {
-        navigation.push("DetailPriceScreen", {
-            requestPage: "content",
-            selectedTreatList: selectedTreatList,
-            treatPrice: treatPrice,
-            requestType: route.params?.requestType,
-        })
-    }
-
-    const moveToRating = () => {
-        navigation.push("RatingScreen", {
-            requestPage: "content",
-            inputedRating: rating,
-            requestType: route.params?.requestType,
-        })
-    }
-
-    const onPressBackground = () => {
-        Keyboard.dismiss();
-    }
-
-    const onPressAddImage = (index: number) => {
-        navigation.navigate("Gallery", {
-            requestType: "review",
-            startIndex: index
-        })
-    }
-
-    const onPressAddPara = () => {
-        var tmpParagraphList = paragraphList;
-        var paraObj = {
-            index: tmpParagraphList.length,
-            image: null,
-            description: null,
+          tmpParagraphList.push(paraObj);
         }
 
-        tmpParagraphList.push(paraObj)
-        setParagraphList(tmpParagraphList);
-        setChangeParagraphList(!changeParagraphList)
+        if (index == route.params.selectedImages.length - 1) {
+          setParagraphList(tmpParagraphList);
+        }
+      });
     }
+  }, [route.params?.selectedImages]);
 
-    const onSubmitParaDescripInput = (text: string, index: number, type: string) => {
-        console.log("submitParaDescrip type", type);
-        console.log("inputParaDescrip text", text);
+  useEffect(() => {});
 
-        var tmpParagraphList = paragraphList;
-        tmpParagraphList[index].description = text;
+  const openCamera = () => {
+    navigation.navigate('Camera');
+  };
 
-        setParagraphList(tmpParagraphList);
-        setChangeParagraphList(!changeParagraphList)
+  const moveToGallery = () => {
+    navigation.navigate('Gallery');
+  };
+
+  const goBack = () => {
+    if (route.params?.requestType === 'post') {
+      Alert.alert('게시글 작성을 취소하시겠어요?', '', [
+        {
+          text: '확인',
+          onPress: () => {
+            navigation.navigate('HomeScreen');
+          },
+        },
+        {
+          text: '취소',
+          onPress: () => 0,
+          style: 'cancel',
+        },
+      ]);
+    } else if (route.params?.requestType === 'revise') {
+      descripInputRef.current.clear();
+      navigation.pop();
     }
+  };
 
-    const onChangeParaDescripInput = (text: string, index: number) => {
-        
-        var tmpParagraphList = paragraphList;
-        tmpParagraphList[index].description = text;
+  const moveToDentalClinicSearch = () => {
+    navigation.push('DentalClinicSearchScreen', {
+      requestPage: 'content',
+      requestType: route.params?.requestType,
+    });
+  };
 
-        setParagraphList(tmpParagraphList);
-        setChangeParagraphList(!changeParagraphList);
+  const onPressTreatDate = () => {
+    setVisibleDatePicker(true);
+  };
+
+  const onChangeDatePicker = (event: any, date: any) => {
+    var tmpTreatDate = treatDate;
+    tmpTreatDate.treatDate = date;
+    setTreatDate(tmpTreatDate);
+  };
+
+  const applyTreatDate = () => {
+    console.log('date', treatDate);
+    var tmpTreatDate: any = treatDate;
+    tmpTreatDate.displayTreatDate = convertDisplayDate(treatDate.treatDate);
+
+    setTreatDate(tmpTreatDate);
+    setVisibleDatePicker(false);
+  };
+
+  const convertDisplayDate = (date: any) => {
+    var tmpDate = new Date(date),
+      month = '' + (tmpDate.getMonth() + 1),
+      day = '' + tmpDate.getDate(),
+      year = '' + tmpDate.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return year + '년' + ' ' + month + '월' + ' ' + day + '일';
+  };
+
+  const onPressTreatPrice = () => {
+    totalPriceInputRef.current.focus();
+  };
+
+  const onChangePriceInput = (text: string) => {
+    console.log('text', text);
+    console.log('treatPrice', treatPrice);
+
+    if (text.trim() === '') {
+      setTotalPrice('');
+      setDisplayTotalPrice('');
+    } else {
+      setTotalPrice(text);
+      setDisplayTotalPrice(Number(text).toLocaleString() + '원');
     }
+  };
 
-    const changeImageOrder = (order: string, index: number) => {
-        console.log("changeImageOrder index", index);
+  const moveToTreatSearch = () => {
+    navigation.push('TreatSearchScreen', {
+      requestPage: 'content',
+      selectedTreatList: selectedTreatList,
+      requestType: route.params?.requestType,
+    });
+  };
 
-        var tmpParagraphList = paragraphList;
-        tmpParagraphList[index].order = order;
-        
-        setParagraphList(tmpParagraphList)
-        setChangeParagraphList(!changeParagraphList)
-    }
+  const moveToDetailPrice = () => {
+    navigation.push('DetailPriceScreen', {
+      requestPage: 'content',
+      selectedTreatList: selectedTreatList,
+      treatPrice: treatPrice,
+      requestType: route.params?.requestType,
+    });
+  };
 
-    const uploadReview = async () => {
-        setUploadLoading(true);
-        console.log("dentalClinicId", dentalClinic.id);
-        console.log("uploadReview totalPrice", totalPrice);
+  const moveToRating = () => {
+    navigation.push('RatingScreen', {
+      requestPage: 'content',
+      inputedRating: rating,
+      requestType: route.params?.requestType,
+    });
+  };
 
-        const tmpParagraphList = paragraphList;
-        const tmpTreatmentArray = selectedTreatList;
+  const onPressBackground = () => {
+    Keyboard.dismiss();
+  };
 
-        const starRate_cost = rating.priceRating;
-        const starRate_treatment = rating.treatRating;
-        const starRate_service = rating.serviceRating;
-        const certified_bill = certifiedBill;
-        const dentalClinicId = dentalClinic.id; 
+  const onPressAddImage = (index: number) => {
+    navigation.navigate('Gallery', {
+      requestType: 'review',
+      startIndex: index,
+    });
+  };
 
+  const onPressAddPara = () => {
+    var tmpParagraphList = paragraphList;
+    var paraObj = {
+      index: tmpParagraphList.length,
+      image: null,
+      description: null,
+    };
 
-        const formatedParagraphArray = await formatParagraph(tmpParagraphList);
-        const formatedTreatmentArray = await formatTreatment(tmpTreatmentArray);
-        console.log("uploadReview formatedParagraph", formatedParagraphArray);
-        console.log("uploadReview formatedTreatment", formatedTreatmentArray);
+    tmpParagraphList.push(paraObj);
+    setParagraphList(tmpParagraphList);
+    setChangeParagraphList(!changeParagraphList);
+  };
 
-        POSTReviewUpload({jwtToken, starRate_cost, starRate_treatment, starRate_service, certified_bill, formatedTreatmentArray, dentalClinicId, formatedParagraphArray, totalPrice})
-        .then((response) => {
-            setUploadLoading(false);
-            console.log("POSTReviewUpload response", response);   
-            navigation.navigate("HomeScreen")
-        })
-        .catch((error) => {
-            setUploadLoading(false);
-            console.log("POSTReviewUpload error", error);
-        })
+  const onSubmitParaDescripInput = (
+    text: string,
+    index: number,
+    type: string,
+  ) => {
+    console.log('submitParaDescrip type', type);
+    console.log('inputParaDescrip text', text);
 
-        /*
+    var tmpParagraphList = paragraphList;
+    tmpParagraphList[index].description = text;
+
+    setParagraphList(tmpParagraphList);
+    setChangeParagraphList(!changeParagraphList);
+  };
+
+  const onChangeParaDescripInput = (text: string, index: number) => {
+    var tmpParagraphList = paragraphList;
+    tmpParagraphList[index].description = text;
+
+    setParagraphList(tmpParagraphList);
+    setChangeParagraphList(!changeParagraphList);
+  };
+
+  const changeImageOrder = (order: string, index: number) => {
+    console.log('changeImageOrder index', index);
+
+    var tmpParagraphList = paragraphList;
+    tmpParagraphList[index].order = order;
+
+    setParagraphList(tmpParagraphList);
+    setChangeParagraphList(!changeParagraphList);
+  };
+
+  const uploadReview = async () => {
+    setUploadLoading(true);
+    console.log('dentalClinicId', dentalClinic.id);
+    console.log('uploadReview totalPrice', totalPrice);
+
+    const tmpParagraphList = paragraphList;
+    const tmpTreatmentArray = selectedTreatList;
+
+    const starRate_cost = rating.priceRating;
+    const starRate_treatment = rating.treatRating;
+    const starRate_service = rating.serviceRating;
+    const certified_bill = certifiedBill;
+    const dentalClinicId = dentalClinic.id;
+
+    const formatedParagraphArray = await formatParagraph(tmpParagraphList);
+    const formatedTreatmentArray = await formatTreatment(tmpTreatmentArray);
+    console.log('uploadReview formatedParagraph', formatedParagraphArray);
+    console.log('uploadReview formatedTreatment', formatedTreatmentArray);
+
+    POSTReviewUpload({
+      jwtToken,
+      starRate_cost,
+      starRate_treatment,
+      starRate_service,
+      certified_bill,
+      formatedTreatmentArray,
+      dentalClinicId,
+      formatedParagraphArray,
+      totalPrice,
+    })
+      .then((response) => {
+        setUploadLoading(false);
+        console.log('POSTReviewUpload response', response);
+        navigation.navigate('HomeScreen');
+      })
+      .catch((error) => {
+        setUploadLoading(false);
+        console.log('POSTReviewUpload error', error);
+      });
+
+    /*
         tmpParagraphList.forEach((item: any, paraIndex: number) => {
             console.log("item", item);
             if(item.image) {
@@ -697,342 +712,395 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                 }
             })
             */
-            
-    }
+  };
 
-    const formatParagraph = async (paragraphArray: Array<any>) => {
-        const tmpParagraphArray = await Promise.all(
-            paragraphArray.map( async (item: any, index: number) => {
-                if(item.image) {
+  const formatParagraph = async (paragraphArray: Array<any>) => {
+    const tmpParagraphArray = await Promise.all(
+      paragraphArray.map(async (item: any, index: number) => {
+        if (item.image) {
+          const result: any = await uploadImageToS3(item.image);
 
-                    const result: any = await uploadImageToS3(item.image);
+          const paragraphObj = {
+            index: index,
+            location: result.response.location,
+            key: result.response.key,
+            contentType: result.type,
+            originalName: result.originalName,
+            size: result.size,
+            description: item.description ? item.description : null,
+            imgBeforeAfter: item.order,
+          };
 
-                    const paragraphObj = {
-                        index: index,
-                        location: result.response.location,
-                        key: result.response.key,
-                        contentType: result.type,
-                        originalName: result.originalName,
-                        size: result.size,
-                        description: item.description ? item.description : null,
-                        imgBeforeAfter: item.order,
-                    }
+          return paragraphObj;
+        } else {
+          const paragraphObj = {
+            index: index,
+            description: item.description ? item.description : null,
+            location: null,
+            key: null,
+            mimeType: null,
+            originalName: null,
+            size: null,
+            imgBeforeAfters: null,
+          };
 
-                    return paragraphObj
+          return paragraphObj;
+        }
+      }),
+    );
 
-                } else {
+    return tmpParagraphArray;
+  };
 
-                    const paragraphObj = {
-                        index: index,
-                        description: item.description ? item.description : null,
-                        location: null,
-                        key: null,
-                        mimeType: null,
-                        originalName: null,
-                        size: null,
-                        imgBeforeAfters: null
-                    }
+  const formatTreatment = async (treatmentArray: Array<any>) => {
+    const tmpTreatmentArray = selectedTreatList.map((item: any, index) => {
+      if (item.price) {
+        const tmpObj = {
+          id: item.id,
+          cost: item.price,
+        };
 
-                    return paragraphObj
+        return tmpObj;
+      } else {
+        const tmpObj = {
+          id: item.id,
+          cost: null,
+        };
 
-                } 
-            })
-        );
+        return tmpObj;
+      }
+    });
 
-        return tmpParagraphArray
-    }
+    return tmpTreatmentArray;
+  };
 
-    const formatTreatment = async (treatmentArray: Array<any>) => {
-        const tmpTreatmentArray = selectedTreatList.map((item: any, index) => {
-            if(item.price) {
-                const tmpObj = {
-                    id: item.id,
-                    cost: item.price,
-                }
+  const renderParaUnitItem = ({item, index}: any) => {
+    console.log('renderParaUnitItem item', item);
 
-                return tmpObj
-            } else {
-                const tmpObj = {
-                    id: item.id,
-                    cost: null,
-                }
-
-                return tmpObj
-            }
-        })
-
-        return tmpTreatmentArray;
-    }
-
-    const renderParaUnitItem = ({item, index}: any) => {
-        console.log("renderParaUnitItem item", item);
-
-        return (
-        <EntireParaUnitContainer>
-            <ParaUnitContainer style={styles.paragraphShadow}>
-                {item.image && (
-                    <ParaImageContainer>
-                    <ParaImage
-                    source={{uri: item.image.uri}}/>
-                    <SelectOrderContainer>
-                        <TouchableWithoutFeedback onPress={() => changeImageOrder("before", index)}>
-                        <SelectOrderButton style={item.order === "before" ? {backgroundColor: "#D1D1D1"} : {backgroundColor: "#ffffff", borderWidth: 1, borderColor: "#d1d1d1"}}>
-                            <SelectOrderText style={item.order === "before" ? {color: "#ffffff"} : {color: "#d1d1d1"}}>{"치료전"}</SelectOrderText>
-                        </SelectOrderButton>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback onPress={() => changeImageOrder("after", index)}>
-                        <SelectOrderButton style={[{marginLeft: 6}, item.order === "after" ? {backgroundColor: "#D1D1D1"} : {backgroundColor: "#ffffff", borderWidth: 1, borderColor: "#d1d1d1"}]}>
-                            <SelectOrderText style={item.order === "after" ? {color: "#ffffff"} : {color: "#d1d1d1"}}>{"치료후"}</SelectOrderText>
-                        </SelectOrderButton>
-                        </TouchableWithoutFeedback>
-                    </SelectOrderContainer>
-                    </ParaImageContainer>
-                )}
-                {!item.image && (
-                <TouchableWithoutFeedback onPress={() => onPressAddImage(index)}>
-                <AddImageButton>
-                  <AddImageContainer>
-                    <AddImageIcon
-                    source={require('~/Assets/Images/Upload/ic_addImage.png')}/>
-                    <AddImageText>
-                        사진 추가하기(선택)
-                    </AddImageText>
-                    </AddImageContainer>
-                </AddImageButton>
+    return (
+      <EntireParaUnitContainer>
+        <ParaUnitContainer style={styles.paragraphShadow}>
+          {item.image && (
+            <ParaImageContainer>
+              <ParaImage source={{uri: item.image.uri}} />
+              <SelectOrderContainer>
+                <TouchableWithoutFeedback
+                  onPress={() => changeImageOrder('before', index)}>
+                  <SelectOrderButton
+                    style={
+                      item.order === 'before'
+                        ? {backgroundColor: '#D1D1D1'}
+                        : {
+                            backgroundColor: '#ffffff',
+                            borderWidth: 1,
+                            borderColor: '#d1d1d1',
+                          }
+                    }>
+                    <SelectOrderText
+                      style={
+                        item.order === 'before'
+                          ? {color: '#ffffff'}
+                          : {color: '#d1d1d1'}
+                      }>
+                      {'치료전'}
+                    </SelectOrderText>
+                  </SelectOrderButton>
                 </TouchableWithoutFeedback>
-                )}
-                <ParaTextInput
-                ref={descripInputRef}
-                value={item.description ? item.description : ""}
-                multiline={true}
-                placeholder={"내용을 입력해 주세요 !"}
-                placeholderTextColor={"#BFBFBF"}
-                autoCapitalize={"none"}
-                onSubmitEditing={(response: any) => onSubmitParaDescripInput(response.nativeEvent.text, index, "submit")}
-                onEndEditing={(response: any) => onSubmitParaDescripInput(response.nativeEvent.text, index, "end")}
-                onChangeText={(text: string) => onChangeParaDescripInput(text, index)}/>
-            </ParaUnitContainer>
-            </EntireParaUnitContainer>
-        )
-    }
+                <TouchableWithoutFeedback
+                  onPress={() => changeImageOrder('after', index)}>
+                  <SelectOrderButton
+                    style={[
+                      {marginLeft: 6},
+                      item.order === 'after'
+                        ? {backgroundColor: '#D1D1D1'}
+                        : {
+                            backgroundColor: '#ffffff',
+                            borderWidth: 1,
+                            borderColor: '#d1d1d1',
+                          },
+                    ]}>
+                    <SelectOrderText
+                      style={
+                        item.order === 'after'
+                          ? {color: '#ffffff'}
+                          : {color: '#d1d1d1'}
+                      }>
+                      {'치료후'}
+                    </SelectOrderText>
+                  </SelectOrderButton>
+                </TouchableWithoutFeedback>
+              </SelectOrderContainer>
+            </ParaImageContainer>
+          )}
+          {!item.image && (
+            <TouchableWithoutFeedback onPress={() => onPressAddImage(index)}>
+              <AddImageButton>
+                <AddImageContainer>
+                  <AddImageIcon
+                    source={require('~/Assets/Images/Upload/ic_addImage.png')}
+                  />
+                  <AddImageText>사진 추가하기(선택)</AddImageText>
+                </AddImageContainer>
+              </AddImageButton>
+            </TouchableWithoutFeedback>
+          )}
+          <ParaTextInput
+            ref={descripInputRef}
+            value={item.description ? item.description : ''}
+            multiline={true}
+            placeholder={'내용을 입력해 주세요 !'}
+            placeholderTextColor={'#BFBFBF'}
+            autoCapitalize={'none'}
+            onSubmitEditing={(response: any) =>
+              onSubmitParaDescripInput(
+                response.nativeEvent.text,
+                index,
+                'submit',
+              )
+            }
+            onEndEditing={(response: any) =>
+              onSubmitParaDescripInput(response.nativeEvent.text, index, 'end')
+            }
+            onChangeText={(text: string) =>
+              onChangeParaDescripInput(text, index)
+            }
+          />
+        </ParaUnitContainer>
+      </EntireParaUnitContainer>
+    );
+  };
 
-    const renderAddParaUnitItem = () => {
-        return (
-        <TouchableWithoutFeedback onPress={() => onPressAddPara()}>
+  const renderAddParaUnitItem = () => {
+    return (
+      <TouchableWithoutFeedback onPress={() => onPressAddPara()}>
         <EntireParaUnitContainer>
-        <ParaUnitContainer style={[styles.paragraphShadow, {opacity:0.15, shadowOpacity: 0.6}]}>
+          <ParaUnitContainer
+            style={[
+              styles.paragraphShadow,
+              {opacity: 0.15, shadowOpacity: 0.6},
+            ]}>
             <AddImageButton>
               <AddImageContainer>
                 <AddImageIcon
-                source={require('~/Assets/Images/Upload/ic_addImage.png')}/>
-                <AddImageText>
-                    사진 추가하기(선택)
-                </AddImageText>
-                </AddImageContainer>
+                  source={require('~/Assets/Images/Upload/ic_addImage.png')}
+                />
+                <AddImageText>사진 추가하기(선택)</AddImageText>
+              </AddImageContainer>
             </AddImageButton>
             <ParaTextInput
-            editable={false}
-            multiline={true}
-            placeholder={"내용을 입력해 주세요 !"}
-            placeholderTextColor={"#BFBFBF"}
-            autoCapitalize={"none"}/>
-        </ParaUnitContainer>
-        <AddNewParaUnitContainer>
+              editable={false}
+              multiline={true}
+              placeholder={'내용을 입력해 주세요 !'}
+              placeholderTextColor={'#BFBFBF'}
+              autoCapitalize={'none'}
+            />
+          </ParaUnitContainer>
+          <AddNewParaUnitContainer>
             <AddNewParaUnitButton
-            source={require('~/Assets/Images/Upload/ic_addPara.png')}/>
-        </AddNewParaUnitContainer>
+              source={require('~/Assets/Images/Upload/ic_addPara.png')}
+            />
+          </AddNewParaUnitContainer>
         </EntireParaUnitContainer>
+      </TouchableWithoutFeedback>
+    );
+  };
+
+  return (
+    <Container>
+      <HeaderBar>
+        <TouchableWithoutFeedback onPress={() => goBack()}>
+          <HeaderLeftContainer>
+            <HeaderBackIcon
+              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
+            />
+          </HeaderLeftContainer>
         </TouchableWithoutFeedback>
-
-        )
-    }
-    
-    return (
-        <Container>
-            <HeaderBar>
-               <TouchableWithoutFeedback onPress={() => goBack()}>
-                <HeaderLeftContainer>
-                    <HeaderBackIcon
-                    source={require('~/Assets/Images/HeaderBar/ic_back.png')}/>
-                </HeaderLeftContainer>
-                </TouchableWithoutFeedback>
-                <HeaderTitleText>{route.params?.requestType === "post" ? "작성" : "수정"}</HeaderTitleText>
-                <TouchableWithoutFeedback onPress={() => uploadReview()}>
-                <HeaderRightContainer>
-                    <HeaderEmptyContainer/>
-                    <HeaderUploadText>
-                    올리기
-                    </HeaderUploadText>
-                </HeaderRightContainer>
-                </TouchableWithoutFeedback>
-            </HeaderBar>
-            <BodyContainer>
-                <MetaInfoContainer>
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                    <FirstMetaDataListContainer>
-                    <TouchableWithoutFeedback onPress={() => moveToDentalClinicSearch()}>
-                    <MetaInfoItemBackground style={[{marginLeft: 16}]}>
-                        <MetaInfoItemText>
-                        {dentalClinic.name ? dentalClinic.name : "병원"}
-                        </MetaInfoItemText>
-                    </MetaInfoItemBackground>
-                    </TouchableWithoutFeedback>
-                    {treatDate.displayTreatDate != "" && (
-                    <TouchableWithoutFeedback onPress={() => onPressTreatDate()}>
-                    <MetaInfoItemBackground style={{marginLeft: 8}}>
-                        <MetaInfoItemText>
-                        {treatDate.displayTreatDate}
-                        </MetaInfoItemText>
-                    </MetaInfoItemBackground>
-                    </TouchableWithoutFeedback>
-                    )}
-                    {treatDate.displayTreatDate == "" && (
-                    <TouchableWithoutFeedback onPress={() => onPressTreatDate()}>
-                    <MetaInfoItemBackground style={{marginLeft: 8, backgroundColor: "#F3F3F3"}}>
-                        <MetaInfoItemText style={{color :"#BCBCBC"}}>
-                        {"날짜"}
-                        </MetaInfoItemText>
-                    </MetaInfoItemBackground>
-                    </TouchableWithoutFeedback>
-                    )}
-                    <TouchableWithoutFeedback onPress={() => onPressTreatPrice()}>
-                    <MetaInfoItemBackground style={[{marginLeft: 8, marginRight: 16}, !displayTotalPrice && {backgroundColor: "#f3f3f3"}]}>
-                        <TotalPriceInput
-                        style={{paddingLeft: 8, paddingRight: 8}}
-                        ref={totalPriceInputRef}
-                        value={totalPrice}
-                        keyboardType={"number-pad"}
-                        caretHidden={true}
-                        onChangeText={(text:string) => onChangePriceInput(text)}
-                        />
-                    <TotalPriceContainer>
-                    <MetaInfoItemText style={!displayTotalPrice && {color: "#bcbcbc"}}>
-                    {displayTotalPrice ? displayTotalPrice : "비용"}
+        <HeaderTitleText>
+          {route.params?.requestType === 'post' ? '작성' : '수정'}
+        </HeaderTitleText>
+        <TouchableWithoutFeedback onPress={() => uploadReview()}>
+          <HeaderRightContainer>
+            <HeaderEmptyContainer />
+            <HeaderUploadText>올리기</HeaderUploadText>
+          </HeaderRightContainer>
+        </TouchableWithoutFeedback>
+      </HeaderBar>
+      <BodyContainer>
+        <MetaInfoContainer>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+            <FirstMetaDataListContainer>
+              <TouchableWithoutFeedback
+                onPress={() => moveToDentalClinicSearch()}>
+                <MetaInfoItemBackground style={[{marginLeft: 16}]}>
+                  <MetaInfoItemText>
+                    {dentalClinic.name ? dentalClinic.name : '병원'}
+                  </MetaInfoItemText>
+                </MetaInfoItemBackground>
+              </TouchableWithoutFeedback>
+              {treatDate.displayTreatDate != '' && (
+                <TouchableWithoutFeedback onPress={() => onPressTreatDate()}>
+                  <MetaInfoItemBackground style={{marginLeft: 8}}>
+                    <MetaInfoItemText>
+                      {treatDate.displayTreatDate}
                     </MetaInfoItemText>
-                    </TotalPriceContainer>
-                    </MetaInfoItemBackground>
-                    </TouchableWithoutFeedback>
-                    </FirstMetaDataListContainer>
-                </ScrollView>
-                <ScrollView 
-                horizontal={true} 
-                showsHorizontalScrollIndicator={false}>
-                <SecondMetaDataListContainer style={{marginTop: 8}}>
-                    {selectedTreatList.length === 0 && (
-                    <TouchableWithoutFeedback onPress={() => moveToTreatSearch()}>
-                    <MetaInfoItemBackground style={{marginLeft: 16, backgroundColor: "#f3f3f3"}}>
-                        <MetaInfoItemText style={{color: "#bcbcbc"}}>{"진료항목"}</MetaInfoItemText>
-                    </MetaInfoItemBackground>
-                    </TouchableWithoutFeedback>
-                    )}
-                    {selectedTreatList.length > 0 && (
-                    <TouchableWithoutFeedback onPress={() => moveToTreatSearch()}>
-                    <MetaInfoItemBackground style={{marginLeft: 16}}>
-                        <MetaInfoItemTextList>
-                        {selectedTreatList.map((treat: any, index: number) => {
-                        if(index === selectedTreatList.length - 1) {
-                            return (
-                                <MetaInfoItemText>
-                                {treat.name}
-                                </MetaInfoItemText>
-                            )   
+                  </MetaInfoItemBackground>
+                </TouchableWithoutFeedback>
+              )}
+              {treatDate.displayTreatDate == '' && (
+                <TouchableWithoutFeedback onPress={() => onPressTreatDate()}>
+                  <MetaInfoItemBackground
+                    style={{marginLeft: 8, backgroundColor: '#F3F3F3'}}>
+                    <MetaInfoItemText style={{color: '#BCBCBC'}}>
+                      {'날짜'}
+                    </MetaInfoItemText>
+                  </MetaInfoItemBackground>
+                </TouchableWithoutFeedback>
+              )}
+              <TouchableWithoutFeedback onPress={() => onPressTreatPrice()}>
+                <MetaInfoItemBackground
+                  style={[
+                    {marginLeft: 8, marginRight: 16},
+                    !displayTotalPrice && {backgroundColor: '#f3f3f3'},
+                  ]}>
+                  <TotalPriceInput
+                    style={{paddingLeft: 8, paddingRight: 8}}
+                    ref={totalPriceInputRef}
+                    value={totalPrice}
+                    keyboardType={'number-pad'}
+                    caretHidden={true}
+                    onChangeText={(text: string) => onChangePriceInput(text)}
+                  />
+                  <TotalPriceContainer>
+                    <MetaInfoItemText
+                      style={!displayTotalPrice && {color: '#bcbcbc'}}>
+                      {displayTotalPrice ? displayTotalPrice : '비용'}
+                    </MetaInfoItemText>
+                  </TotalPriceContainer>
+                </MetaInfoItemBackground>
+              </TouchableWithoutFeedback>
+            </FirstMetaDataListContainer>
+          </ScrollView>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+            <SecondMetaDataListContainer style={{marginTop: 8}}>
+              {selectedTreatList.length === 0 && (
+                <TouchableWithoutFeedback onPress={() => moveToTreatSearch()}>
+                  <MetaInfoItemBackground
+                    style={{marginLeft: 16, backgroundColor: '#f3f3f3'}}>
+                    <MetaInfoItemText style={{color: '#bcbcbc'}}>
+                      {'진료항목'}
+                    </MetaInfoItemText>
+                  </MetaInfoItemBackground>
+                </TouchableWithoutFeedback>
+              )}
+              {selectedTreatList.length > 0 && (
+                <TouchableWithoutFeedback onPress={() => moveToTreatSearch()}>
+                  <MetaInfoItemBackground style={{marginLeft: 16}}>
+                    <MetaInfoItemTextList>
+                      {selectedTreatList.map((treat: any, index: number) => {
+                        if (index === selectedTreatList.length - 1) {
+                          return (
+                            <MetaInfoItemText>{treat.name}</MetaInfoItemText>
+                          );
                         } else {
-                            return (
-                                <MetaInfoItemText>
-                                {treat.name + ","}
-                                </MetaInfoItemText>
-                            )
+                          return (
+                            <MetaInfoItemText>
+                              {treat.name + ','}
+                            </MetaInfoItemText>
+                          );
                         }
-                        })
-                        }
-                        </MetaInfoItemTextList>
-                    </MetaInfoItemBackground>
-                    </TouchableWithoutFeedback>
-                    )}
-                    <TouchableWithoutFeedback onPress={() => moveToRating()}>
-                    <MetaInfoItemBackground style={{marginLeft: 8}}>
-                        <RatingStarIcon
-                        source={require('~/Assets/Images/Upload/ic_ratingStar.png')}/>
-                        <MetaInfoItemText style={{marginLeft: 2}}>
-                        {rating.avgRating}
-                        </MetaInfoItemText>
-                    </MetaInfoItemBackground>
-                    </TouchableWithoutFeedback>
-                    {(detailPriceList.length === 0) && (
-                    <TouchableWithoutFeedback onPress={() => moveToDetailPrice()}>
-                    <MetaInfoItemBackground style={{marginLeft: 8, marginRight: 16, backgroundColor: "#f3f3f3"}}>
-                        <MetaInfoItemText style={{color: "#bcbcbc"}}>
-                        {"상세비용"}
-                        </MetaInfoItemText>
-                    </MetaInfoItemBackground>
-                    </TouchableWithoutFeedback>
-                    )}
-                    {(detailPriceList.length > 0) && (
-                    <TouchableWithoutFeedback onPress={() => moveToDetailPrice()}>
-                    <MetaInfoItemBackground style={{marginLeft: 8, marginRight: 16}}>
-                        <MetaInfoItemText>
-                        {"상세비용"}
-                        </MetaInfoItemText>
-                    </MetaInfoItemBackground>
-                    </TouchableWithoutFeedback>
-                    )}
-                </SecondMetaDataListContainer>
-                </ScrollView>
-                </MetaInfoContainer>
-                <ContentContainer>
-                    <KeyboardAwareFlatList
-                    scrollEnabled={true}
-                    showsVerticalScrollIndicator={false}
-                    data={paragraphList}
-                    renderItem={renderParaUnitItem}
-                    ListFooterComponent={renderAddParaUnitItem}/>
-                </ContentContainer>
-            </BodyContainer>
-            {visibleDatePicker && (
-            <DateModalContainer>
-                <ModalHeaderContainer>
-                    <TouchableWithoutFeedback onPress={() => applyTreatDate()}>
-                    <ModalFinishContainer>
-                        <ModalFinishText>완료</ModalFinishText>
-                    </ModalFinishContainer>
-                    </TouchableWithoutFeedback>
-                </ModalHeaderContainer>
-                    <DateTimePicker
-                    locale={'ko_KR.UTF-8'}
-                    style={{flex:1}}
-                    testID="datePicker"
-                    value={treatDate.treatDate}
-                    onChange={(event,date) => onChangeDatePicker(event,date)}
-                    mode={'date'}
-                    display='spinner'
-                    is24Hour={true}
-                    maximumDate={new Date()}
-                    />
-            </DateModalContainer>
-            )}
-            {uploadLoading && (
-            <IndicatorContainer>
-                <ActivityIndicator
-                color={"#ffffff"}/>
-            </IndicatorContainer>
-            )}
-        </Container>
-    )
-}
+                      })}
+                    </MetaInfoItemTextList>
+                  </MetaInfoItemBackground>
+                </TouchableWithoutFeedback>
+              )}
+              <TouchableWithoutFeedback onPress={() => moveToRating()}>
+                <MetaInfoItemBackground style={{marginLeft: 8}}>
+                  <RatingStarIcon
+                    source={require('~/Assets/Images/Upload/ic_ratingStar.png')}
+                  />
+                  <MetaInfoItemText style={{marginLeft: 2}}>
+                    {rating.avgRating}
+                  </MetaInfoItemText>
+                </MetaInfoItemBackground>
+              </TouchableWithoutFeedback>
+              {detailPriceList.length === 0 && (
+                <TouchableWithoutFeedback onPress={() => moveToDetailPrice()}>
+                  <MetaInfoItemBackground
+                    style={{
+                      marginLeft: 8,
+                      marginRight: 16,
+                      backgroundColor: '#f3f3f3',
+                    }}>
+                    <MetaInfoItemText style={{color: '#bcbcbc'}}>
+                      {'상세비용'}
+                    </MetaInfoItemText>
+                  </MetaInfoItemBackground>
+                </TouchableWithoutFeedback>
+              )}
+              {detailPriceList.length > 0 && (
+                <TouchableWithoutFeedback onPress={() => moveToDetailPrice()}>
+                  <MetaInfoItemBackground
+                    style={{marginLeft: 8, marginRight: 16}}>
+                    <MetaInfoItemText>{'상세비용'}</MetaInfoItemText>
+                  </MetaInfoItemBackground>
+                </TouchableWithoutFeedback>
+              )}
+            </SecondMetaDataListContainer>
+          </ScrollView>
+        </MetaInfoContainer>
+        <ContentContainer>
+          <KeyboardAwareFlatList
+            scrollEnabled={true}
+            showsVerticalScrollIndicator={false}
+            data={paragraphList}
+            renderItem={renderParaUnitItem}
+            ListFooterComponent={renderAddParaUnitItem}
+          />
+        </ContentContainer>
+      </BodyContainer>
+      {visibleDatePicker && (
+        <DateModalContainer>
+          <ModalHeaderContainer>
+            <TouchableWithoutFeedback onPress={() => applyTreatDate()}>
+              <ModalFinishContainer>
+                <ModalFinishText>완료</ModalFinishText>
+              </ModalFinishContainer>
+            </TouchableWithoutFeedback>
+          </ModalHeaderContainer>
+          <DateTimePicker
+            locale={'ko_KR.UTF-8'}
+            style={{flex: 1}}
+            testID="datePicker"
+            value={treatDate.treatDate}
+            onChange={(event, date) => onChangeDatePicker(event, date)}
+            mode={'date'}
+            display="spinner"
+            is24Hour={true}
+            maximumDate={new Date()}
+          />
+        </DateModalContainer>
+      )}
+      {uploadLoading && (
+        <IndicatorContainer>
+          <ActivityIndicator color={'#ffffff'} />
+        </IndicatorContainer>
+      )}
+    </Container>
+  );
+};
 
-export default ReviewContentScreen
+export default ReviewContentScreen;
 
 const styles = StyleSheet.create({
-    paragraphShadow: {
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowRadius: 8,
-        shadowOpacity: 0.09
-    }
-})
-
+  paragraphShadow: {
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowRadius: 8,
+    shadowOpacity: 0.09,
+  },
+});
 
 /*
 <FlatList
