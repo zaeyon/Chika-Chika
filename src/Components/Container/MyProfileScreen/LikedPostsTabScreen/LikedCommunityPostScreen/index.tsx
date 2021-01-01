@@ -56,7 +56,7 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
     setIsRefreshing(true);
     fetchLikedPosts(form, (response: any) => {
       const form = {
-        type: 'Community',
+        type: 'Liked',
         posts: response,
       };
       if (
@@ -94,7 +94,7 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
         setPageIndex((prev: any) => prev + 1);
         fetchLikedPosts(form, (response: any) => {
           const data = {
-            type: 'Community',
+            type: 'Liked',
             posts: [...postData, ...response],
           };
           dispatch(allActions.communityActions.setPosts(data));
@@ -152,7 +152,7 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
     };
     fetchLikedPosts(form, (response: any) => {
       const form = {
-        type: 'Community',
+        type: 'Liked',
         posts: response,
       };
       if (
@@ -182,7 +182,7 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
       };
       fetchLikedPosts(form, (response: any) => {
         const form = {
-          type: 'Community',
+          type: 'Liked',
           posts: response,
         };
         dispatch(allActions.communityActions.setPosts(form));

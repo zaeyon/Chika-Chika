@@ -86,6 +86,9 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
 
   const onEndReached = useCallback(
     (info: any) => {
+      if (!postData.length || postData.length % limit !== 0) {
+        return;
+      }
       if (!isEndReached) {
         setIsEndReached(true);
         const newPageIndex = pageIndex + 1;
@@ -153,7 +156,6 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   return (
     <ContainerView>
       <CommunityPostList
-        route={route}
         postData={postData}
         refreshing={refreshing}
         onRefresh={onRefresh}

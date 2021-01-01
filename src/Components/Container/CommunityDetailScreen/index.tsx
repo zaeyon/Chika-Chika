@@ -75,9 +75,9 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     } else if (route.params.type === 'FreeTalk') {
       console.log('F');
       return state.communityPostList.FreeTalkPosts;
-    } else {
-      console.log('A');
-      return state.communityPostList.HomePosts;
+    } else if (route.params.type === 'MyPosts') {
+      console.log('My');
+      return state.communityPostList.MyPosts;
     }
   });
   const [postData, setPostData] = useState(

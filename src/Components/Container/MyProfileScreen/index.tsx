@@ -43,14 +43,17 @@ const MyProfileScreen = ({navigation, route}: Props) => {
   const type = 'All';
   const limit = 10;
   const [order, setOrder] = useState('createdAt');
-  const [pageIndex, setPageIndex] = useState(0);
-  const [reviewPostData, setReviewPostData] = useState([] as any);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isEndReached, setIsEndReached] = useState(false);
+  const [communityPageIndex, setCommunityPageIndex] = useState(0);
+  const [isCommunityRefreshing, setIsCommunityRefreshing] = useState(false);
+  const [isCommunityEndReached, setIsCommunityEndReached] = useState(false);
+  const [reviewPageIndex, setReviewPageIndex] = useState(0);
+  const [isReviewRefreshing, setIsReviewRefreshing] = useState(false);
+  const [isReviewEndReached, setIsReviewEndReached] = useState(false);
 
   const bottomSheetRef = useRef<any>();
 
   const dispatch = useDispatch();
+  const reviewData = useSelector((state: any) => state.reviewList.MyReviews);
   const communityPostData = useSelector(
     (state: any) => state.communityPostList.MyPosts,
   );
@@ -59,30 +62,29 @@ const MyProfileScreen = ({navigation, route}: Props) => {
   const profile = currentUser.profile;
   const userId = profile.id;
 
-  const onRefresh = useCallback(() => {
+  const onReviewRefresh = useCallback(() => {
     const form = {
       type: type,
       limit: limit,
       offset: 0,
       order: order,
     };
-    setIsRefreshing(true);
-    fetchCommunityData(form, (response: any) => {
-      const form = {
-        type,
-        posts: response,
-      };
-      dispatch(allActions.communityActions.setPosts(form));
-      setPageIndex(0);
-      setIsRefreshing(false);
+    setIsReviewRefreshing(true);
+    fetchReviewData(form, (response: any) => {
+      dispatch(allActions.reviewListActions.setMyReviews(response));
+      setReviewPageIndex(0);
+      setIsReviewRefreshing(false);
     });
   }, [jwtToken, order]);
 
-  const onEndReached = useCallback(
+  const onReviewEndReached = useCallback(
     (info: any) => {
-      if (!isEndReached) {
-        setIsEndReached(true);
-        const newPageIndex = pageIndex + 1;
+      if (!reviewData.length || reviewData.length % limit !== 0) {
+        return;
+      }
+      if (!isReviewEndReached) {
+        setIsReviewEndReached(true);
+        const newPageIndex = reviewPageIndex + 1;
 
         const form = {
           type: type,
@@ -90,19 +92,69 @@ const MyProfileScreen = ({navigation, route}: Props) => {
           offset: newPageIndex * limit,
           order: order,
         };
-        setPageIndex((prev: any) => prev + 1);
-        fetchCommunityData(form, (response: any) => {
-          console.log(response.length);
-          const form = {
-            type,
-            posts: [...communityPostData, ...response],
-          };
-          dispatch(allActions.communityActions.setPosts(form));
-          setIsEndReached(false);
+        setReviewPageIndex((prev: any) => prev + 1);
+        fetchReviewData(form, (response: any) => {
+          dispatch(allActions.reviewListActions.setMyReviews(response));
+          setIsReviewEndReached(false);
         });
       }
     },
-    [isEndReached, pageIndex, order, jwtToken],
+    [reviewData, isReviewEndReached, reviewPageIndex, order, jwtToken],
+  );
+
+  const onCommunityRefresh = useCallback(() => {
+    const form = {
+      type: type,
+      limit: limit,
+      offset: 0,
+      order: order,
+    };
+    setIsCommunityRefreshing(true);
+    fetchCommunityData(form, (response: any) => {
+      const form = {
+        type: 'My',
+        posts: response,
+      };
+      dispatch(allActions.communityActions.setPosts(form));
+      setCommunityPageIndex(0);
+      setIsCommunityRefreshing(false);
+    });
+  }, [jwtToken, order]);
+
+  const onCommunityEndReached = useCallback(
+    (info: any) => {
+      if (!communityPostData.length || communityPostData.length % limit !== 0) {
+        return;
+      }
+      if (!isCommunityEndReached) {
+        setIsCommunityEndReached(true);
+        const newPageIndex = communityPageIndex + 1;
+
+        const form = {
+          type: type,
+          limit: limit,
+          offset: newPageIndex * limit,
+          order: order,
+        };
+        setCommunityPageIndex((prev: any) => prev + 1);
+        fetchCommunityData(form, (response: any) => {
+          console.log(response.length);
+          const form = {
+            type: 'My',
+            posts: [...communityPostData, ...response],
+          };
+          dispatch(allActions.communityActions.setPosts(form));
+          setIsCommunityEndReached(false);
+        });
+      }
+    },
+    [
+      communityPostData,
+      isCommunityEndReached,
+      communityPageIndex,
+      order,
+      jwtToken,
+    ],
   );
 
   const fetchCommunityData = useCallback(
@@ -127,9 +179,15 @@ const MyProfileScreen = ({navigation, route}: Props) => {
     bottomSheetRef.current && bottomSheetRef.current.open();
   }, []);
 
-  const moveToCommunityDetail = useCallback((postData: any) => {
-    navigation.navigate('CommunityDetailScreen', {data: postData});
-  }, []);
+  const moveToCommunityDetail = useCallback(
+    (postId: number, postType: string) => {
+      navigation.navigate('CommunityDetailScreen', {
+        id: postId,
+        type: 'MyPosts',
+      });
+    },
+    [],
+  );
 
   const moveToReviewDetail = useCallback(
     (
@@ -197,15 +255,15 @@ const MyProfileScreen = ({navigation, route}: Props) => {
     const form = {
       type: type,
       limit: limit,
-      offset: pageIndex * limit,
+      offset: communityPageIndex * limit,
       order: order,
     };
     fetchReviewData(form, (response: any) => {
-      setReviewPostData(response);
+      dispatch(allActions.reviewListActions.setMyReviews(response));
     });
     fetchCommunityData(form, (response: any) => {
       const form = {
-        type,
+        type: 'My',
         posts: [...communityPostData, ...response],
       };
       dispatch(allActions.communityActions.setPosts(form));
@@ -229,15 +287,19 @@ const MyProfileScreen = ({navigation, route}: Props) => {
       <MyProfile
         navigation={navigation}
         route={route}
-        reviewPostData={reviewPostData}
-        isRefreshing={isRefreshing}
-        onRefresh={onRefresh}
-        isEndReached={isEndReached}
-        onEndReached={onEndReached}
+        reviewData={reviewData}
+        isReviewRefreshing={isReviewRefreshing}
+        onReviewRefresh={onReviewRefresh}
+        isReviewEndReached={isReviewEndReached}
+        onReviewEndReached={onReviewEndReached}
+        communityPostData={communityPostData}
+        isCommunityRefreshing={isCommunityRefreshing}
+        onCommunityRefresh={onCommunityRefresh}
+        isCommunityEndReached={isCommunityEndReached}
+        onCommunityEndReached={onCommunityEndReached}
         currentUser={profile}
         openModal={openModal}
         moveToCommunityDetail={moveToCommunityDetail}
-        communityPostData={communityPostData}
         moveToReviewDetail={moveToReviewDetail}
         moveToAnotherProfile={moveToAnotherProfile}
         moveToReservationTabScreen={moveToReservationTabScreen}

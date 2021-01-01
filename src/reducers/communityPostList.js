@@ -93,7 +93,7 @@ const communityPostList = (
 
     case 'SET_POSTS':
       switch (action.payload.type) {
-        case 'All':
+        case 'My':
           return {
             ...state,
             MyPosts: action.payload.posts,
@@ -108,7 +108,7 @@ const communityPostList = (
             ...state,
             FreeTalkPosts: action.payload.posts,
           };
-        case 'Community':
+        case 'Liked':
           return {
             ...state,
             LikedCommunityPosts: action.payload.posts,

@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {StyleSheet, Image, Alert} from 'react-native';
+import {StyleSheet, StatusBar} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -636,6 +636,11 @@ function BottomTab() {
     if (routeName.name === 'CommentedPostsTabScreen') {
       return false;
     }
+
+    if (routeName.name === 'CommunityDetailScreen') {
+      return false;
+    }
+
     return true;
   };
   return (
@@ -739,6 +744,7 @@ const Navigator = () => {
 
   return (
     <NavigationContainer>
+      <StatusBar barStyle="dark-content" />
       {currentUser.loggedIn ? <BottomTab /> : <AuthStackScreen />}
     </NavigationContainer>
   );

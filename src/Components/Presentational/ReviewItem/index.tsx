@@ -23,7 +23,7 @@ const Container = Styled.View`
  padding-left: 16px;
  padding-right: 16px;
  padding-bottom: 10px;
- width: ${wp('100')}
+ width: ${wp('100')}px;
  background-color: #FFFFFF;
  flex-direction: column;
  border-bottom-width: 1px;
@@ -177,8 +177,8 @@ const LikeScrapContainer = Styled.View`
 `;
 
 const LikeIcon = Styled.Image`
- width: ${wp('6.4%')};
- height: ${wp('6.4%')};
+ width: ${wp('6.4%')}px;
+ height: ${wp('6.4%')}px;
 `;
 
 const IndicatorCountText = Styled.Text`
@@ -202,18 +202,18 @@ flex-direction: row;
 `;
 
 const ScrapIcon = Styled.Image`
- width: ${wp('6.4%')};
- height: ${wp('6.4%')};
+ width: ${wp('6.4%')}px;
+ height: ${wp('6.4%')}px;
 `;
 
 const CommentIcon = Styled.Image`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const GetTreatInfoButton = Styled.View`
- width: ${wp('30%')};
- height: ${wp('10.33%')};
+ width: ${wp('30%')}px;
+ height: ${wp('10.33%')}px;
  background-color: #267DFF;
  border-radius: 4px;
  align-items: center;
@@ -227,8 +227,8 @@ const GetTreatInfoText = Styled.Text`
 `;
 
 const RatingStarIcon = Styled.Image`
- width: ${wp('3.2%')};
- height: ${wp('3.2%')};
+ width: ${wp('3.2%')}px;
+ height: ${wp('3.2%')}px;
 `;
 
 const TreatDateContainer = Styled.View`
