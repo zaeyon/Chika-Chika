@@ -70,7 +70,9 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
 
   const onEndReached = useCallback(
     (info: any) => {
-      return 0; // depa
+      if (!postData.length || postData.length % limit !== 0) {
+        return;
+      }
       if (!isEndReached) {
         setIsEndReached(true);
         const newPageIndex = pageIndex + 1;

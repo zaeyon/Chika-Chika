@@ -21,7 +21,7 @@ const GETUserCommunityPosts = (jwtToken: string, userId: string, {type, limit, o
             },
         })
         .then(function(response) {
-            console.log('GETUserCommunityPosts SUCCESS',response)
+            console.log('GETUserCommunityPosts SUCCESS')
             resolve(response.data);
             
         })

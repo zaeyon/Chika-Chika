@@ -21,7 +21,6 @@ const GETUserReviewPosts = (jwtToken: string, userId: string, {type, limit, offs
             },
         })
         .then(function(response) {
-            console.log('GETUserReviewPosts SUCCESS',response)
             resolve(response.data);
             
         })

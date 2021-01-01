@@ -124,6 +124,7 @@ const CommunityHomeScreen = () => {
 
   const renderHospitalItem = (item: any, index: number) => (
     <HospitalItemContainerView
+      key={String(index)}
       style={{
         paddingLeft: index % 2 === 0 ? 16 : 6,
         paddingRight: index % 2 === 0 ? 6 : 16,
@@ -150,6 +151,7 @@ const CommunityHomeScreen = () => {
           snapToInterval={wp('75%') + 16}
           decelerationRate={'fast'}
           data={[0, 1, 2]}
+          keyExtractor={(item: any, index: number) => String(index)}
           ListFooterComponent={renderTabPreviewFooter()}
           renderItem={renderTabPreviewItem}
         />
@@ -162,6 +164,7 @@ const CommunityHomeScreen = () => {
           snapToInterval={wp('75%') + 16}
           decelerationRate={'fast'}
           data={[0, 1, 2]}
+          keyExtractor={(item: any, index: number) => String(index)}
           ListFooterComponent={renderTabPreviewFooter()}
           renderItem={renderTabPreviewItem}
         />

@@ -40,7 +40,7 @@ const HeaderContainerView = Styled.View`
 width: ${wp('100%')}px;
 height: ${hp('8.25%') + getStatusBarHeight()}px;
 flex-direction: row;
-margin-top: ${-getStatusBarHeight()}
+margin-top: ${-getStatusBarHeight()}px;
 padding: ${getStatusBarHeight()}px 16px 0px 16px;
 align-items: center;
 background: white;
