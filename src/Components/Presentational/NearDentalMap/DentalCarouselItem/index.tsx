@@ -176,7 +176,7 @@ const DentalCarouselItem = ({isOpen, isLunchTime, rating, reviewCount, name, add
                 <ReviewRatingContainer>
                     <RatingContainer>
                     <RatingStarIcon
-                    source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
+                    source={require('~/Assets/Images/Indicator/ic_starRating.png')}/>
                     <RatingText>{rating}</RatingText>
                     </RatingContainer>
                     <DividerBar/>

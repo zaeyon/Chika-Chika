@@ -177,6 +177,7 @@ const PostItem = ({
     description,
     postLikeNum,
     postCommentsNum,
+    viewerLikeCommunityPost,
     user,
     Clinics,
     GeneralTags,
@@ -312,7 +313,7 @@ const PostItem = ({
             <ProfileContainerView>
               <ProfileImage
                 source={{
-                  url: user.profileImage,
+                  uri: user.profileImg,
                   cache: 'force-cache',
                 }}
               />
@@ -373,10 +374,13 @@ const PostItem = ({
               marginHorizontal: 16,
             }}
             onPress={() => {
-              toggleSocialLike();
+              toggleSocialLike(id, viewerLikeCommunityPost, type);
             }}>
             <SocialInfoView>
               <Image
+                style={{
+                  tintColor: viewerLikeCommunityPost ? '#FF5656' : '#c3c3c3',
+                }}
                 source={require('~/Assets/Images/Review/ic_like_inline.png')}
               />
               <SocialInfoText>{postLikeNum}</SocialInfoText>
@@ -399,7 +403,9 @@ const PostItem = ({
               toggleSocialScrap();
             }}>
             <SocialInfoView>
-              <SocialInfoText>스크랩하기</SocialInfoText>
+              <Image
+                source={require('~/Assets/Images/Review/ic_scrap_inline.png')}
+              />
             </SocialInfoView>
           </TouchableOpacity>
         </SocialInfoContainerView>

@@ -75,11 +75,11 @@ margin-left: auto;
 const HeaderIconTouchableOpacity = Styled(
   TouchableOpacity as new () => TouchableOpacity,
 )`
-width: 40px;
-height: 40px;
+width: 30px;
+height: 30px;
 margin-left: 16px;
 background: grey;
-border-radius: 8px;
+border-radius: 15px;
 `;
 const BodyContainerView = Styled.View`
 flex: 1;
@@ -144,7 +144,7 @@ const CommunityListScreen = ({navigation, route}: Props) => {
             {/* {this.props.currentUser.location} */ '광교동'}
           </HeaderLocationText>
           <HeaderIconContainerView>
-            <HeaderIconTouchableOpacity />
+            <HeaderIconTouchableOpacity onPress={moveToKeywordSearch} />
             <HeaderIconTouchableOpacity />
           </HeaderIconContainerView>
         </HeaderContainerView>

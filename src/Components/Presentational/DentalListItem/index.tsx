@@ -133,15 +133,15 @@ const DentalListItem = ({dentalId, name, address, isOpen, isLunchTime, rating, r
             <ReviewRatingContainer>
                 <ReviewRatingText>{rating}</ReviewRatingText>
                 <RatingStarIcon
-                source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
+                source={require('~/Assets/Images/Indicator/ic_starRating.png')}/>
                 <RatingStarIcon
-                source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
+                source={require('~/Assets/Images/Indicator/ic_starRating.png')}/>
                 <RatingStarIcon
-                source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
+                source={require('~/Assets/Images/Indicator/ic_starRating.png')}/>
                 <RatingStarIcon
-                source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
+                source={require('~/Assets/Images/Indicator/ic_starRating.png')}/>
                 <RatingStarIcon
-                source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
+                source={require('~/Assets/Images/Indicator/ic_starRating.png')}/>
                 <ReviewCountText style={{marginLeft: 4}}>{`리뷰 ${reviewCount}`}</ReviewCountText>
             </ReviewRatingContainer>
             <DentalAddressText>{address}</DentalAddressText>

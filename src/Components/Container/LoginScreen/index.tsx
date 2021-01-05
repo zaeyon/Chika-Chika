@@ -253,21 +253,20 @@ const LoginScreen = ({navigation}: Props) => {
   );
   const [timeOver, setTimeOver] = useState<boolean>(false);
 
-
   const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
 
   const numberInputRef = useRef(null);
   const authCodeInputRef = useRef(null);
-  let fcmToken = ""
+  let fcmToken = '';
 
   useEffect(() => {
     getFcmToken();
-  }, [])
+  }, []);
 
   const getFcmToken = async () => {
     fcmToken = await messaging().getToken();
-  }
+  };
 
   let submitingNumber: any;
   let submitingPassword: any;
@@ -465,8 +464,8 @@ const LoginScreen = ({navigation}: Props) => {
             id: response.user.userId,
             nickname: response.user.userNickname,
             profileImage: response.user.userProfileImg,
-          }
-          
+          };
+
           storeUserInfo(userInfo);
           dispatch(allActions.userActions.setUser(userInfo));
         }

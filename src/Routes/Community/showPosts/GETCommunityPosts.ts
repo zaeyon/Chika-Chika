@@ -12,7 +12,6 @@ interface Props {
 
 const GETCommunityPosts = (jwtToken: string, {type, limit, offset, order}: Props) => {
     const uri = baseUri + `/api/v1/communities/lists?type=${type}&limit=${limit}&offset=${offset}&order=${order}`;
-
     return new Promise(function(resolve, reject) {
 
         axios.get(uri, {

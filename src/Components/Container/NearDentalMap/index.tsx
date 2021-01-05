@@ -351,6 +351,7 @@ const TEST_NEAR_DENTAL_DATA = [
         openTime: "12:30~12:30",
         geographLat: 37.29440,
         geographLong: 127.04547,
+        selected: true,
     },
     {
         index: 2,
@@ -364,6 +365,7 @@ const TEST_NEAR_DENTAL_DATA = [
         openTime: "12:30~12:30",
         geographLat: 37.29404,
         geographLong: 127.04458,
+        selected: false,
     },
     {
         index: 3,
@@ -377,6 +379,7 @@ const TEST_NEAR_DENTAL_DATA = [
         openTime: "12:30~12:30",
         geographLat: 37.29370,
         geographLong: 127.04638,
+        selected: false,
     },
 ]
 
@@ -396,7 +399,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const [visibleDayFilterModal, setVisibleDayFilterModal] = useState<boolean>(false);
 
     const [isOpenDentalList, setIsOpenDentalList] = useState<boolean>(false);
-    // const [nearDentalList, setNearDentalList] = useState<Array<any>>(TEST_NEAR_DENTAL_DATA);
+    //const [nearDentalList, setNearDentalList] = useState<Array<any>>(TEST_NEAR_DENTAL_DATA);
     const [currentCarouselIndex, setCurrentCarouselIndex] = useState<number>(0); 
     const [keyboardHeight, setKeyboardHeight] = useState<number>(0);
 
@@ -408,6 +411,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
     const [changeDentalList, setChangeDentalList] = useState<boolean>(false);
     const [changeDayFilter, setChangeDayFilter] = useState<boolean>(false);
+
+    const [selectedDentalIndex, setSelectedDentalIndex] = useState<number>(0);
 
     const mapRef = useRef<any>(null);
     const dentalCarouselRef = useRef<any>(null);
@@ -553,9 +558,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     //const slicedDentalList = response.slice(0, 70);
                     //slicedDentalList[0].selected = true;
                     //setNearDentalList(response);
-                    
-
                     dispatch(allActions.dentalListActions.setNearDentalList(response))
+                    setSelectedDentalId(response[0].id)
                     })
                     .catch((error) => {
                     console.log("GETAroundDental error", error);
@@ -609,20 +613,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
     const clickDentalMarker = (selectedIndex: number) => {
 
-        console.log("clickDentalMarker selectedIndex", selectedIndex);
-        
-        var tmpNearDentalList = nearDentalList;
-        tmpNearDentalList.forEach((item: any, index: number) => {
-            if(index == selectedIndex) {
-                tmpNearDentalList[index].selected = true;
-            } else {
-                tmpNearDentalList[index].selected = false;
-            }
-        })
-        
-        //setNearDentalList(nearDentalList);
-        dispatch(allActions.dentalListActions.setNearDentalList(tmpNearDentalList));
-        setCurrentCarouselIndex(selectedIndex);
+        setSelectedDentalIndex(selectedIndex);
         dentalCarouselRef.current.snapToItem(selectedIndex);
         
     }
@@ -657,21 +648,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const onSnapToDentalCarouselItem = (selectedIndex: number) => {
         console.log("onSnapToDentalCarouselItem index", selectedIndex);
         //mapRef.current.animateToCoordinate(nearDentalList[index].location);
-        var tmpNearDentalList = nearDentalList;
-
-        tmpNearDentalList.forEach((item, index) => {
-            
-            tmpNearDentalList[index].selected = false;
-            
-            if(index === selectedIndex) {
-                tmpNearDentalList[index].selected = true;
-            } 
-        })
-        
-        //setNearDentalList(tmpNearDentalList);
-        dispatch(allActions.dentalListActions.setNearDentalList(tmpNearDentalList));
-        setCurrentCarouselIndex(selectedIndex);
-        //setCameraLocation(nearDentalList[selectedIndex].location)
+        setSelectedDentalIndex(selectedIndex);
     }
 
     const changeHolidayFilter = () => {
@@ -882,7 +859,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
                         <Marker
                         coordinate={{latitude: Number(item.geographLat), longitude: Number(item.geographLong)}}
                         onClick={() => clickDentalMarker(index)}
-                        image={item.selected ? require('~/Assets/Images/Map/ic_dentalMarker_selected.png') : require('~/Assets/Images/Map/ic_dentalMarker_unselected.png')}/>
+                        image={(index == selectedDentalIndex) ? require('~/Assets/Images/Map/ic_dentalMarker_selected.png') : require('~/Assets/Images/Map/ic_dentalMarker_unselected.png')}/>
                     )
                 })
                 }
@@ -974,6 +951,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 */}
                 <MapInsetBottomShadow
                 style={styles.insetShadow}/>
+                {!loadingGetDental && (
                 <DentalCarouselListContainer>
                     <Carousel
                     contentContainerCustomStyle={{justifyContent: "center"}}
@@ -987,10 +965,11 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     sliderWidth={wp('100%')}
                     itemWidth={wp('87.2%')}/>
                     <CarouselIndexContainer>
-                        <CarouselIndexText style={styles.carouselIndexShadow}>{currentCarouselIndex+1 + " / " + nearDentalList.length}
+                        <CarouselIndexText style={styles.carouselIndexShadow}>{selectedDentalIndex+1 + " / " + nearDentalList.length}
                         </CarouselIndexText>
                     </CarouselIndexContainer>
                 </DentalCarouselListContainer>
+                )}
             </MapContainer>
             <Modal
             isVisible={visibleDayFilterModal}

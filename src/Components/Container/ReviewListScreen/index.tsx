@@ -499,6 +499,7 @@ const ReviewListScreen = ({navigation}: Props) => {
             {!loadingReviewList && (
             <ReviewListContainer>          
               <ReviewList
+              scrollEnabled={true}
               loadingMoreReview={loadingMoreReview}
               refreshingReviewList={refreshingReviewList}
               onRefreshReviewList={onRefreshReviewList}

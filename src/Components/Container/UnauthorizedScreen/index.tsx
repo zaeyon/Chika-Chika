@@ -175,7 +175,8 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
                     const userProfile = {
                       birthdate: profile.birthyear ? (profile.birthday ? (profile.birthyear + profile.birthday) : "") : "",
                       profileImg: profile.profile_image_url ? profile.profile_image_url : "",
-                      nickname: profile.nickname ? profile.nickname : "TEST" + Date.now(),
+                      //nickname: profile.nickname ? profile.nickname : "TEST" + Date.now(),
+                      nickname: "TEST" + Date.now(),
                       socialId: profile.id,
                     }
 
@@ -206,7 +207,8 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
               const userProfile = {
                 birthdate: "",
                 profileImg: userInfo.user.photo ? userInfo.user.photo : "",
-                nickname: userInfo.user.name ? userInfo.user.name : "",
+                //nickname: userInfo.user.name ? userInfo.user.name : "",
+                nickname: "TEST" + Date.now(),
                 socialId: userInfo.user.id,
               }
 
@@ -254,7 +256,8 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
           const userProfile = {
               birthdate: "",
               profileImg: "",
-              nickname: appleAuthRequestResponse.fullName?.givenName ? (appleAuthRequestResponse.fullName.familyName ? (appleAuthRequestResponse.fullName.familyName + appleAuthRequestResponse.fullName.givenName) : appleAuthRequestResponse.fullName.givenName) : ("TEST" + Date.now()),
+              //nickname: appleAuthRequestResponse.fullName?.givenName ? (appleAuthRequestResponse.fullName.familyName ? (appleAuthRequestResponse.fullName.familyName + appleAuthRequestResponse.fullName.givenName) : appleAuthRequestResponse.fullName.givenName) : ("TEST" + Date.now()),
+              nickname: "TEST" + Date.now(),
               socialId: appleAuthRequestResponse.identityToken,
           }
   
@@ -287,18 +290,20 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
         setLoadingSocial(false);
         console.log("POSTSocialUserCheck error", error);
         if(error.status === 401) {
-          console.log("등록된 소셜 계정 없음");
-          navigation.navigate("HometownSettingScreen", {
-            certifiedPhoneNumber: phoneNumber ? true : false,
-            birthdate: userProfile.birthdate,
-            profileImg: userProfile.profileImg,
-            nickname: userProfile.nickname,
-            phoneNumber: phoneNumber,
-            fcmToken: fcmToken,
-            email: email,
-            provider: provider,
-            socialId: userProfile.socialId,
-          });
+          if(error.data.message === "user is not defined") {
+            console.log("등록된 소셜 계정 없음");
+            navigation.navigate("HometownSettingScreen", {
+              certifiedPhoneNumber: phoneNumber ? true : false,
+              birthdate: userProfile.birthdate,
+              profileImg: userProfile.profileImg,
+              nickname: userProfile.nickname,
+              phoneNumber: phoneNumber,
+              fcmToken: fcmToken,
+              email: email,
+              provider: provider,
+              socialId: userProfile.socialId,
+            });
+          }
         }
       })
     }
@@ -322,18 +327,20 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
         setLoadingSocial(false);
         console.log("POSTSocialUserCheck error", error);
         if(error.status === 401) {
-          console.log("등록된 소셜 계정 없음");
-          navigation.navigate("HometownSettingScreen", {
-            certifiedPhoneNumber: false,
-            birthdate: "",
-            profileImg: "",
-            nickname: userProfile.nickname,
-            phoneNumber: "",
-            fcmToken: fcmToken,
-            email: email,
-            provider: provider,
-            socialId: userProfile.socialId,
-          });
+          if(error.message === "user is not defined") {
+            console.log("등록된 소셜 계정 없음");
+            navigation.navigate("HometownSettingScreen", {
+              certifiedPhoneNumber: phoneNumber ? true : false,
+              birthdate: userProfile.birthdate,
+              profileImg: userProfile.profileImg,
+              nickname: userProfile.nickname,
+              phoneNumber: phoneNumber,
+              fcmToken: fcmToken,
+              email: email,
+              provider: provider,
+              socialId: userProfile.socialId,
+            });
+          }
         }
       })
     }

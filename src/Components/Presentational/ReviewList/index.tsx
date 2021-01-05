@@ -180,10 +180,11 @@ justify-content: center;
 
 interface Props {
     reviewList: Array<ReviewData>,
-    refreshingReviewList: boolean,
-    onRefreshReviewList: () => void,
-    onEndReachedReviewList: () => void,
-    loadingMoreReview: boolean,
+    refreshingReviewList?: boolean,
+    onRefreshReviewList?: () => void,
+    onEndReachedReviewList?: () => void,
+    loadingMoreReview?: boolean,
+    scrollEnabled?: boolean,
     moveToWriterProfile: (userId: number) => void,
     moveToReviewDetail: (reviewId: number, writer: object, createdAt: string, treatmentArray: Array<object>, ratingObj: Object, treatmentDate: string, imageArray: Array<object>, isCurUserLike: boolean, likeCount: number, commentCount: number, isCurUserScrap: boolean, dentalObj: object) => void,
     moveToDentalDetail: (dentalId: number) => void,
@@ -212,7 +213,7 @@ interface ReviewData {
     viewerLikedReview: Number,
 }
 
-const ReviewList = ({reviewList, moveToReviewDetail, refreshingReviewList, onRefreshReviewList, onEndReachedReviewList, loadingMoreReview, moveToWriterProfile, moveToDentalDetail}: Props) => {
+const ReviewList = ({reviewList, scrollEnabled, moveToReviewDetail, refreshingReviewList, onRefreshReviewList, onEndReachedReviewList, loadingMoreReview, moveToWriterProfile, moveToDentalDetail}: Props) => {
     const currentUser = useSelector((state: any) => state.currentUser);
     const jwtToken = currentUser.user.jwtToken;
 
@@ -322,6 +323,7 @@ const ReviewList = ({reviewList, moveToReviewDetail, refreshingReviewList, onRef
         <Container>
             <ReviewListContainer>
                 <FlatList
+                scrollEnabled={scrollEnabled}
                 keyExtractor={(item ,index) => `${index}`}
                 refreshing={refreshingReviewList}
                 onRefresh={onRefreshReviewList}

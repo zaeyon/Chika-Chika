@@ -28,9 +28,8 @@ border-color: #EEEEEE;
 const BackIconTouchableOpacity = Styled(
   TouchableOpacity as new () => TouchableOpacity,
 )`
-background: red;
 padding: 0px 16px 0px 16px;
-height: 24px;
+height: 40px;
 `;
 
 const BackIconView = Styled.View`

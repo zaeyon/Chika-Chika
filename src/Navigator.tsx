@@ -52,12 +52,9 @@ import RatingScreen from '~/Components/Container/ReviewUploadScreen/RatingScreen
 
 // My Profile Stack Screen
 import MyProfileScreen from '~/Components/Container/MyProfileScreen';
-import ActivityHistoryTabScreen from '~/Components/Container/MyProfileScreen/ActivityHistoryTabScreen';
-import AlertSettingTabScreen from '~/Components/Container/MyProfileScreen/AlertSettingTabScreen';
 import EditProfileTabScreen from '~/Components/Container/MyProfileScreen/EditProfileTabScreen';
 import EmailConsultingTabScreen from '~/Components/Container/MyProfileScreen/EmailConsultingTabScreen';
 import GeneralSettingTabScreen from '~/Components/Container/MyProfileScreen/GeneralSettingTabScreen';
-import LocationSettingTabScreen from '~/Components/Container/MyProfileScreen/LocationSettingTabScreen';
 import ReservationTabScreen from '~/Components/Container/MyProfileScreen/ReservationTabScreen';
 import SavedHospitalTabScreen from '~/Components/Container/MyProfileScreen/SavedHospitalTabScreen';
 
@@ -108,6 +105,7 @@ const CommunityPostUploadStack = createStackNavigator();
 const DentalClinicStack = createStackNavigator();
 const TeethCareStack = createStackNavigator();
 const KeywordSearchStack = createStackNavigator();
+const EditProfileStack = createStackNavigator();
 
 const staticConfig = {
   animation: 'timing',
@@ -129,14 +127,8 @@ function AuthStackScreen() {
           },
         }}
       />
-      <AuthStack.Screen 
-        name="LoginScreen" 
-        component={LoginScreen}
-      />
-      <AuthStack.Screen
-        name="BasicInputScreen" 
-        component={BasicInputScreen} 
-      />
+      <AuthStack.Screen name="LoginScreen" component={LoginScreen} />
+      <AuthStack.Screen name="BasicInputScreen" component={BasicInputScreen} />
       <AuthStack.Screen
         name="ProfileInputScreen"
         component={ProfileInputScreen}
@@ -174,7 +166,8 @@ function ReviewStackScreen() {
       />
       <ReviewStack.Screen
         name="DentalClinicStack"
-        component={DentalClinicStackScreen}/>
+        component={DentalClinicStackScreen}
+      />
     </ReviewStack.Navigator>
   );
 }
@@ -212,30 +205,30 @@ function HomeStackScreen() {
 
 function NearDentalMapStackScreen() {
   return (
-  <NearDentalMapStack.Navigator
-  headerMode="none">
-    <NearDentalMapStack.Screen
-      name="NearDentalMap"
-      component={NearDentalMap}
-      initialParams={{
-        isOpenDentalList: false,
-      }}
-    />
-    <NearDentalMapStack.Screen
-      name="DentalListScreen"
-      component={DentalListScreen}
-      options={{
-        transitionSpec: {
-          open: staticConfig,
-          close: staticConfig,
-        },
-      }}
-    />
-    <NearDentalMapStack.Screen
-      name="DentalClinicStack"
-      component={DentalClinicStackScreen}/>
-  </NearDentalMapStack.Navigator>
-);
+    <NearDentalMapStack.Navigator headerMode="none">
+      <NearDentalMapStack.Screen
+        name="NearDentalMap"
+        component={NearDentalMap}
+        initialParams={{
+          isOpenDentalList: false,
+        }}
+      />
+      <NearDentalMapStack.Screen
+        name="DentalListScreen"
+        component={DentalListScreen}
+        options={{
+          transitionSpec: {
+            open: staticConfig,
+            close: staticConfig,
+          },
+        }}
+      />
+      <NearDentalMapStack.Screen
+        name="DentalClinicStack"
+        component={DentalClinicStackScreen}
+      />
+    </NearDentalMapStack.Navigator>
+  );
 }
 
 function DentalClinicStackScreen() {
@@ -339,6 +332,21 @@ function ReviewUploadStackScreen() {
   );
 }
 
+function EditProfileStackScreen() {
+  return (
+    <EditProfileStack.Navigator headerMode="none">
+      <EditProfileStack.Screen
+        name="EditProfileTabScreen"
+        component={EditProfileTabScreen}
+      />
+      <EditProfileStack.Screen
+        name="EditProfileGallery"
+        component={GallerySelectOne}
+      />
+    </EditProfileStack.Navigator>
+  );
+}
+
 function MyProfileStackScreen() {
   return (
     <MyProfileStack.Navigator headerMode="none">
@@ -347,18 +355,9 @@ function MyProfileStackScreen() {
         component={MyProfileScreen}
       />
       <MyProfileStack.Screen
-        name="EditProfileTabScreen"
-        component={EditProfileTabScreen}
+        name="EditProfileStackScreen"
+        component={EditProfileStackScreen}
       />
-      <MyProfileStack.Screen
-        name="AlertSettingTabScreen"
-        component={AlertSettingTabScreen}
-      />
-      <MyProfileStack.Screen
-        name="ActivityHistoryTabScreen"
-        component={ActivityHistoryTabScreen}
-      />
-
       <MyProfileStack.Screen
         name="GeneralSettingTabScreen"
         component={GeneralSettingTabScreen}
@@ -373,7 +372,8 @@ function MyProfileStackScreen() {
       />
       <MyProfileStack.Screen
         name="PhoneVerifyScreen"
-        component={PhoneVerifyScreen}/>
+        component={PhoneVerifyScreen}
+      />
       <MyProfileStack.Screen
         name="CommunityDetailScreen"
         component={CommunityDetailScreen}
@@ -382,16 +382,6 @@ function MyProfileStackScreen() {
         name="ReviewDetailScreen"
         component={ReviewDetailScreen}
       />
-      {/* 
-      <MyProfileStack.Screen
-        name="EmailConsultingTabScreen"
-        component={EmailConsultingTabScreen}
-      />
-      <MyProfileStack.Screen
-        name="LocationSettingTabScreen"
-        component={LocationSettingTabScreen}
-      />
-       */}
     </MyProfileStack.Navigator>
   );
 }
@@ -412,7 +402,6 @@ function CommunityPostUploadStackScreen({route}: any) {
         component={CommunityPostUploadScreen}
         initialParams={{
           data: route.params && route.params.data,
-          reloadPostDetail: route.params && route.params.reloadPostDetail,
         }}
       />
       <CommunityPostUploadStack.Screen
@@ -458,6 +447,26 @@ function CommunityStackScreen() {
       <CommunityStack.Screen
         name="KeywordSearchStackScreen"
         component={KeywordSearchStackScreen}
+        options={() => ({
+          gestureEnabled: false,
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {duration: 150},
+            },
+            close: {
+              animation: 'timing',
+              config: {duration: 150},
+            },
+          },
+          cardStyleInterpolator: ({current: {progress}}) => {
+            return {
+              cardStyle: {
+                opacity: progress,
+              },
+            };
+          },
+        })}
       />
     </CommunityStack.Navigator>
   );
@@ -501,9 +510,12 @@ function BottomTab() {
   };
 
   const getDentalBottomTabBarVisibility = (route: any) => {
-    console.log("getDentalBottomTabBarVisibility route22", route);
-    console.log("getDentalBottomTabBarVisibility route.state22", route.state?.routes);
-    
+    console.log('getDentalBottomTabBarVisibility route22', route);
+    console.log(
+      'getDentalBottomTabBarVisibility route.state22',
+      route.state?.routes,
+    );
+
     const routeName = route.state ? route.state.routes[route.state.index] : '';
     const isOpenDentalList = routeName.params?.isOpenDentalList;
 
@@ -511,7 +523,7 @@ function BottomTab() {
       ? routeName.state.routes[routeName.state.index].name
       : '';
 
-    if (routeName.name === 'DentalListScreen' || isOpenDentalList) {
+    if (routeName.name === 'DentalListScreen' || routeName.name === 'DentalClinicStack' || isOpenDentalList) {
       return false;
     }
 
@@ -661,11 +673,10 @@ const Navigator = () => {
 
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
-    console.log("getFcmToken fcmToken", fcmToken);
-  }
+    console.log('getFcmToken fcmToken', fcmToken);
+  };
 
   useEffect(() => {
-    
     getFcmToken();
     getUserInfo()
       .then((response) => {

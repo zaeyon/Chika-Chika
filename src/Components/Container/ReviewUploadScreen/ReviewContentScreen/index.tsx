@@ -952,7 +952,7 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                     <TouchableWithoutFeedback onPress={() => moveToRating()}>
                     <MetaInfoItemBackground style={{marginLeft: 8}}>
                         <RatingStarIcon
-                        source={require('~/Assets/Images/Upload/ic_ratingStar.png')}/>
+                        source={require('~/Assets/Images/Upload/ic_starRating.png')}/>
                         <MetaInfoItemText style={{marginLeft: 2}}>
                         {rating.avgRating}
                         </MetaInfoItemText>
