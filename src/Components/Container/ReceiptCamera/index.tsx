@@ -4,11 +4,11 @@ import Styled from 'styled-components/native';
 import {RNCamera} from 'react-native-camera';
 import CameraRoll from '@react-native-community/cameraroll';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
-import ImageEditor from "@react-native-community/image-editor";
+import ImageEditor from '@react-native-community/image-editor';
 
 let {width, height} = Dimensions.get('window');
 const Container = Styled.View`
@@ -34,8 +34,8 @@ justify-content: center;
 `;
 
 const HeaderBackIcon = Styled.Image`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const HeaderRightContainer = Styled.View`
@@ -50,25 +50,25 @@ const ChangeCameraTypeText = Styled.Text`
 const CameraCuideContainer = Styled.View`
 position: absolute;
 background-color: transparent;
-border-width: ${wp('100%')/2};
-border-radius: ${wp('100%')};
+border-width: ${wp('100%') / 2};
+border-radius: ${wp('100%')}px;
 border-color: #000000;
-top: ${-wp('100%')/2 + 100},
-left: ${-wp('100%')/2 + 50},
-right: ${-wp('100%')/2 + 50},
-bottom: ${-wp('100%')/2 + 200},
+top: ${-wp('100%') / 2 + 100},
+left: ${-wp('100%') / 2 + 50},
+right: ${-wp('100%') / 2 + 50},
+bottom: ${-wp('100%') / 2 + 200},
 opacity: 0.3;
 `;
 
 const CameraGuideInnerContainer = Styled.View`
-width: ${wp('70%')};
-height: ${hp('70%')};
+width: ${wp('70%')}px;
+height: ${hp('70%')}px;
 background-color: #ffffff00;
 `;
 
 const TakePictureContainer = Styled.View`
 position: absolute;
-width: ${wp('100%')};
+width: ${wp('100%')}px;
 justify-content: center;
 align-items: center;
 bottom: 30;
@@ -85,7 +85,7 @@ bottom: 0;
 `;
 
 const CameraGuideTextContainer = Styled.Text`
-width: ${wp('100%')};
+width: ${wp('100%')}px;
 padding-top: 80;
 position: absolute;
 align-items: center;
@@ -101,87 +101,90 @@ font-size: 20px;
 
 const Touchable = Styled.TouchableOpacity``;
 
-
 interface Props {
-    navigation: any,
-    route: any,
+  navigation: any;
+  route: any;
 }
 
 const ReceiptCamera = ({navigation, route}: Props) => {
-    const [cameraType, setCameraType] = useState<string>("back");
-    
-    const cameraRef = React.useRef<any>(null); // useRef로 camera를 위한 ref를 하나 만들어 주고
+  const [cameraType, setCameraType] = useState<string>('back');
 
-    const takePicture = async () => {
-        console.log('cameraRef', cameraRef);
-        if(cameraRef) {
-            const data = await cameraRef.current.takePictureAsync({
-                quality: 1,
-                exif: true,
-                doNotSave: false,
+  const cameraRef = React.useRef<any>(null); // useRef로 camera를 위한 ref를 하나 만들어 주고
+
+  const takePicture = async () => {
+    console.log('cameraRef', cameraRef);
+    if (cameraRef) {
+      const data = await cameraRef.current.takePictureAsync({
+        quality: 1,
+        exif: true,
+        doNotSave: false,
+      });
+      console.log('촬영한 사진 data', data);
+      if (data) {
+        CameraRoll.save(data.uri)
+          .then((result) => {
+            console.log('사진 저장 성공 result', result);
+            navigation.navigate('TakenPictureScreen', {
+              takenPictureUri: result,
             });
-            console.log('촬영한 사진 data', data);
-            if(data) {
-                
-                CameraRoll.save(data.uri)
-                .then((result) => {
-                    console.log("사진 저장 성공 result", result);
-                    navigation.navigate("TakenPictureScreen", {
-                        takenPictureUri: result
-                    })
-                        
-                })
-                .catch((error) => {
-                    console.log("사진 저장 실패 error", error);
-                })
-                
-            }
-        }
-    };
-
-    const changeCameraType = () => {
-        if(cameraType === "front") {
-            setCameraType("back")
-        } else if(cameraType === "back") {
-            setCameraType("front")
-        }
+          })
+          .catch((error) => {
+            console.log('사진 저장 실패 error', error);
+          });
+      }
     }
+  };
 
-    const goBack = () => {
-        navigation.goBack()
+  const changeCameraType = () => {
+    if (cameraType === 'front') {
+      setCameraType('back');
+    } else if (cameraType === 'back') {
+      setCameraType('front');
     }
+  };
 
-    return (
-        <Container>
-            <RNCamera
-            ref={cameraRef}
-            style={{
-                width: wp('100%'),
-                height: hp('100%'),
-            }}
-            captureAudio={false}
-            type={cameraType === "front" ? RNCamera.Constants.Type.front : (cameraType === "back" ? RNCamera.Constants.Type.back : RNCamera.Constants.Type.front)}
+  const goBack = () => {
+    navigation.goBack();
+  };
+
+  return (
+    <Container>
+      <RNCamera
+        ref={cameraRef}
+        style={{
+          width: wp('100%'),
+          height: hp('100%'),
+        }}
+        captureAudio={false}
+        type={
+          cameraType === 'front'
+            ? RNCamera.Constants.Type.front
+            : cameraType === 'back'
+            ? RNCamera.Constants.Type.back
+            : RNCamera.Constants.Type.front
+        }
+      />
+      <TakePictureContainer>
+        <TouchableWithoutFeedback onPress={() => takePicture()}>
+          <TakePictureButton />
+        </TouchableWithoutFeedback>
+      </TakePictureContainer>
+      <HeaderBar>
+        <TouchableWithoutFeedback onPress={() => goBack()}>
+          <HeaderLeftContainer>
+            <HeaderBackIcon
+              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
             />
-            <TakePictureContainer>
-            <TouchableWithoutFeedback onPress={() => takePicture()}>
-            <TakePictureButton/>
-            </TouchableWithoutFeedback>
-            </TakePictureContainer>
-            <HeaderBar>
-                <TouchableWithoutFeedback onPress={() => goBack()}>
-                <HeaderLeftContainer>
-                    <HeaderBackIcon
-                    source={require('~/Assets/Images/HeaderBar/ic_back.png')}/>
-                </HeaderLeftContainer>
-                </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() =>changeCameraType()}>
-                <HeaderRightContainer>
-                    <ChangeCameraTypeText>카메라 전환</ChangeCameraTypeText>
-                </HeaderRightContainer>
-                </TouchableWithoutFeedback>
-            </HeaderBar>
-        </Container>
-    )
-}
+          </HeaderLeftContainer>
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={() => changeCameraType()}>
+          <HeaderRightContainer>
+            <ChangeCameraTypeText>카메라 전환</ChangeCameraTypeText>
+          </HeaderRightContainer>
+        </TouchableWithoutFeedback>
+      </HeaderBar>
+    </Container>
+  );
+};
 
 export default ReceiptCamera;

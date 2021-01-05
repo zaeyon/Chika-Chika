@@ -2,10 +2,10 @@ import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback, FlatList} from 'react-native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { NavigationContainer } from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import DeviceInfo from 'react-native-device-info';
 
@@ -28,7 +28,6 @@ const HeaderBar = Styled.View`
  border-color: #ECECEE;
 `;
 
-
 const HeaderLeftContainer = Styled.View`
 height: ${wp('13.8%')}px;
 padding: 0px 16px 0px 16px;
@@ -38,8 +37,8 @@ padding: 0px 16px 0px 16px;
 `;
 
 const HeaderCancelIcon = Styled.Image`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const HeaderTitleText = Styled.Text`
@@ -64,8 +63,8 @@ color: #000000;
 `;
 
 const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const BodyContainer = Styled.View`
@@ -82,8 +81,8 @@ margin-top: 30px;
 `;
 
 const MetaDataItemContainer = Styled.View`
-width: ${wp('91.46%')};
-height: ${wp('12.799%')};
+width: ${wp('91.46%')}px;
+height: ${wp('12.799%')}px;
 background-color: #F0F6FC;
 border-radius: 8px;
 justify-content: center;
@@ -104,8 +103,8 @@ bottom: 53px;
 `;
 
 const FinishButton = Styled.View`
-width: ${wp('91.46%')};
-height: ${wp('12.799%')};
+width: ${wp('91.46%')}px;
+height: ${wp('12.799%')}px;
 border-radius: 8px;
 background-color: #0075FF;
 align-items: center;
@@ -119,8 +118,8 @@ color: #ffffff;
 `;
 
 const SearchInputContainer = Styled.View`
-width: ${wp('71.73%')};
-height: ${wp('10.666%')};
+width: ${wp('71.73%')}px;
+height: ${wp('10.666%')}px;
 border-radius: 8px;
 background-color: #F6F7F8;
 flex-direction: row;
@@ -129,13 +128,13 @@ padding-left: 12px;
 `;
 
 const SearchIcon = Styled.Image`
-width: ${wp('4.2%')};
-height: ${wp('4.2%')};
+width: ${wp('4.2%')}px;
+height: ${wp('4.2%')}px;
 `;
 
 const SearchTextInput = Styled.TextInput`
 margin-left: 8px;
-width: ${wp('65%')};
+width: ${wp('65%')}px;
 font-weight: 300;
 font-size: 16px;
 `;
@@ -163,148 +162,149 @@ font-size: 13px;
 color: #9a9a9a;
 `;
 
-
 const DENTALCLINIC_TEST_DATA = [
-    {
-        name: "연세 좋은 이웃 치과의원",
-        address: "서울특별시 동대문구 왕산로 193 193 4층 (청량리동)"
-    },
-    {
-        name: "재미있는 치과의원",
-        address: "서울특별시 중구 을지로 3가 홍원빌딩"
-    },
-    {
-        name: "아름다운 치과의원",
-        address: "서울특별시 동대문구 왕산로 193 193 5층 (청량리동)"
-    },
-    {
-        name: "연세 좋은 이웃 치과의원",
-        address: "서울특별시 동대문구 왕산로 193 193 4층 (청량리동)"
-    },
-    {
-        name: "재미있는 치과의원",
-        address: "서울특별시 중구 을지로 3가 홍원빌딩"
-    },
-    {
-        name: "아름다운 치과의원",
-        address: "서울특별시 동대문구 왕산로 193 193 5층 (청량리동)"
-    },
-    {
-        name: "연세 좋은 이웃 치과의원",
-        address: "서울특별시 동대문구 왕산로 193 193 4층 (청량리동)"
-    },
-    {
-        name: "재미있는 치과의원",
-        address: "서울특별시 중구 을지로 3가 홍원빌딩"
-    },
-    {
-        name: "아름다운 치과의원",
-        address: "서울특별시 동대문구 왕산로 193 193 5층 (청량리동)"
-    },
-    {
-        name: "재미있는 치과의원",
-        address: "서울특별시 중구 을지로 3가 홍원빌딩"
-    },
-    {
-        name: "아름다운 치과의원",
-        address: "서울특별시 동대문구 왕산로 193 193 5층 (청량리동)"
-    }
-]
+  {
+    name: '연세 좋은 이웃 치과의원',
+    address: '서울특별시 동대문구 왕산로 193 193 4층 (청량리동)',
+  },
+  {
+    name: '재미있는 치과의원',
+    address: '서울특별시 중구 을지로 3가 홍원빌딩',
+  },
+  {
+    name: '아름다운 치과의원',
+    address: '서울특별시 동대문구 왕산로 193 193 5층 (청량리동)',
+  },
+  {
+    name: '연세 좋은 이웃 치과의원',
+    address: '서울특별시 동대문구 왕산로 193 193 4층 (청량리동)',
+  },
+  {
+    name: '재미있는 치과의원',
+    address: '서울특별시 중구 을지로 3가 홍원빌딩',
+  },
+  {
+    name: '아름다운 치과의원',
+    address: '서울특별시 동대문구 왕산로 193 193 5층 (청량리동)',
+  },
+  {
+    name: '연세 좋은 이웃 치과의원',
+    address: '서울특별시 동대문구 왕산로 193 193 4층 (청량리동)',
+  },
+  {
+    name: '재미있는 치과의원',
+    address: '서울특별시 중구 을지로 3가 홍원빌딩',
+  },
+  {
+    name: '아름다운 치과의원',
+    address: '서울특별시 동대문구 왕산로 193 193 5층 (청량리동)',
+  },
+  {
+    name: '재미있는 치과의원',
+    address: '서울특별시 중구 을지로 3가 홍원빌딩',
+  },
+  {
+    name: '아름다운 치과의원',
+    address: '서울특별시 동대문구 왕산로 193 193 5층 (청량리동)',
+  },
+];
 
 interface Props {
-    navigation: any,
-    route: any,
+  navigation: any;
+  route: any;
 }
 
 interface Dental {
-    name: string,
-    address: string,
-    id: number,
-
+  name: string;
+  address: string;
+  id: number;
 }
 
 const DentalClinicSearchScreen = ({navigation, route}: Props) => {
-    const [autoCompletedDentalList, setAutoCompletedDentalList] = useState<Array<Dental>>([]);
-    
-    const goBack = () => {
-        navigation.goBack();
+  const [autoCompletedDentalList, setAutoCompletedDentalList] = useState<
+    Array<Dental>
+  >([]);
+
+  const goBack = () => {
+    navigation.goBack();
+  };
+
+  const onPressDentalClinicItem = (selectedDental: object) => {
+    if (route.params?.requestPage === 'metadata') {
+      navigation.navigate('ReviewMetaDataScreen', {
+        dentalClinic: selectedDental,
+      });
+    } else if (route.params?.requestPage === 'content') {
+      navigation.navigate('ContentPostScreen', {
+        dentalClinic: selectedDental,
+      });
     }
+  };
 
-    const onPressDentalClinicItem = (selectedDental: object) => {
-        if(route.params?.requestPage === "metadata") {
-            navigation.navigate("ReviewMetaDataScreen",{
-                dentalClinic: selectedDental
-            })
-        } else if(route.params?.requestPage === "content") {
-            navigation.navigate("ContentPostScreen", {
-                dentalClinic: selectedDental
-            })
-        }
-
-    }
-
-    const renderDentalClinicItem = ({item, index}: any) => {
-        return (
-            <TouchableWithoutFeedback onPress={() => onPressDentalClinicItem(item)}>
-            <DentalClinicItemContainer>
-                <DentalClinicNameText>{item.name}</DentalClinicNameText>
-                <DentalClinicAddressText>{item.address}</DentalClinicAddressText>
-            </DentalClinicItemContainer>
-            </TouchableWithoutFeedback>
-        )
-    }
-
-    const onChangeDentalInput = (text: string) => {
-        if(text.trim() === "") {
-            setAutoCompletedDentalList([])
-        } else {
-            GETDentalSearch(text)
-            .then(function(response: any) {
-                console.log("GETDentalSearch response", response)
-                setAutoCompletedDentalList(response);
-            })
-            .catch(function(error: any) {
-                console.log("GETDentalSearch error", error);
-            })
-        } 
-    }
-
+  const renderDentalClinicItem = ({item, index}: any) => {
     return (
-        <Container>
-            <HeaderBar>
-               <TouchableWithoutFeedback onPress={() => goBack()}>
-                <HeaderLeftContainer>
-                    <HeaderCancelIcon
-                    source={require('~/Assets/Images/HeaderBar/ic_X.png')}/>
-                </HeaderLeftContainer>
-                </TouchableWithoutFeedback>
-                <SearchInputContainer>
-                    <SearchIcon
-                    source={require('~/Assets/Images/HeaderBar/ic_search.png')}/>
-                    <SearchTextInput
-                    autoCapitalize={"none"}
-                    autoFocus={true}
-                    placeholder={"병원 검색"}
-                    placeholderTextColor={"#ABA5A5"}
-                    onChangeText={(text: string) => onChangeDentalInput(text)}/>
-                </SearchInputContainer>
-                <HeaderRightContainer>
-                    <HeaderSearchText>검색</HeaderSearchText>
-                </HeaderRightContainer>
-            </HeaderBar>
-            <BodyContainer>
-                <DentalListContainer>
-                    <KeyboardAwareFlatList
-                    showsVerticalScrollIndicator={false}
-                    keyboardShouldPersistTaps={"always"}
-                    data={autoCompletedDentalList}
-                    renderItem={renderDentalClinicItem}/>
-                </DentalListContainer>
-            </BodyContainer>
-        </Container>
-    )
-}
+      <TouchableWithoutFeedback onPress={() => onPressDentalClinicItem(item)}>
+        <DentalClinicItemContainer>
+          <DentalClinicNameText>{item.name}</DentalClinicNameText>
+          <DentalClinicAddressText>{item.address}</DentalClinicAddressText>
+        </DentalClinicItemContainer>
+      </TouchableWithoutFeedback>
+    );
+  };
 
-export default DentalClinicSearchScreen
+  const onChangeDentalInput = (text: string) => {
+    if (text.trim() === '') {
+      setAutoCompletedDentalList([]);
+    } else {
+      GETDentalSearch(text)
+        .then(function (response: any) {
+          console.log('GETDentalSearch response', response);
+          setAutoCompletedDentalList(response);
+        })
+        .catch(function (error: any) {
+          console.log('GETDentalSearch error', error);
+        });
+    }
+  };
 
+  return (
+    <Container>
+      <HeaderBar>
+        <TouchableWithoutFeedback onPress={() => goBack()}>
+          <HeaderLeftContainer>
+            <HeaderCancelIcon
+              source={require('~/Assets/Images/HeaderBar/ic_X.png')}
+            />
+          </HeaderLeftContainer>
+        </TouchableWithoutFeedback>
+        <SearchInputContainer>
+          <SearchIcon
+            source={require('~/Assets/Images/HeaderBar/ic_search.png')}
+          />
+          <SearchTextInput
+            autoCapitalize={'none'}
+            autoFocus={true}
+            placeholder={'병원 검색'}
+            placeholderTextColor={'#ABA5A5'}
+            onChangeText={(text: string) => onChangeDentalInput(text)}
+          />
+        </SearchInputContainer>
+        <HeaderRightContainer>
+          <HeaderSearchText>검색</HeaderSearchText>
+        </HeaderRightContainer>
+      </HeaderBar>
+      <BodyContainer>
+        <DentalListContainer>
+          <KeyboardAwareFlatList
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps={'always'}
+            data={autoCompletedDentalList}
+            renderItem={renderDentalClinicItem}
+          />
+        </DentalListContainer>
+      </BodyContainer>
+    </Container>
+  );
+};
 
+export default DentalClinicSearchScreen;

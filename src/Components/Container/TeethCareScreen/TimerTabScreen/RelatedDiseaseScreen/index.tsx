@@ -1,8 +1,8 @@
 import React from 'react';
 import Styled from 'styled-components/native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 const Container = Styled.SafeAreaView`
@@ -18,7 +18,6 @@ const HeaderBar = Styled.View`
  justify-content: space-between;
  background-color:#ffffff;
 `;
-
 
 const HeaderLeftContainer = Styled.View`
 height: ${wp('11.7%')}px;
@@ -42,8 +41,8 @@ padding: 7px 16px 13px 15px;
 `;
 
 const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const BodyContainer = Styled.View`
@@ -52,21 +51,20 @@ background-color: #ffffff;
 `;
 
 const RelatedDiseaseScreen = ({}) => {
-    return (
-        <Container>
-            <HeaderBar>
-                <HeaderLeftContainer>
-                    <HeaderEmptyContainer/>
-                </HeaderLeftContainer>
-                <HeaderTitleText>{"오늘은 어떤가요?"}</HeaderTitleText>
-                <HeaderRightContainer>
-                    <HeaderEmptyContainer/>
-                </HeaderRightContainer>
-            </HeaderBar>
-            <BodyContainer>
-            </BodyContainer>
-        </Container>
-    )
-}
+  return (
+    <Container>
+      <HeaderBar>
+        <HeaderLeftContainer>
+          <HeaderEmptyContainer />
+        </HeaderLeftContainer>
+        <HeaderTitleText>{'오늘은 어떤가요?'}</HeaderTitleText>
+        <HeaderRightContainer>
+          <HeaderEmptyContainer />
+        </HeaderRightContainer>
+      </HeaderBar>
+      <BodyContainer></BodyContainer>
+    </Container>
+  );
+};
 
 export default RelatedDiseaseScreen;

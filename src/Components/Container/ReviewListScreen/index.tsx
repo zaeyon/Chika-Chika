@@ -43,7 +43,7 @@ padding: 7px 16px 13px 15px;
 `;
 
 const HeaderBackIcon = Styled.Image`
-width: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
 height: %{wp('6.4%)};
 `;
 
@@ -59,8 +59,8 @@ padding: 7px 16px 13px 15px;
 `;
 
 const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const BodyContainer = Styled.View`
@@ -102,8 +102,8 @@ color: #000000;
 
 const ReviewItemContainer = Styled.View`
 margin-top: 8px;
-width: ${wp('87.2%')};
-height: ${wp('40%')};
+width: ${wp('87.2%')}px;
+height: ${wp('40%')}px;
 border-radius: 8px;
 border-width: 1px;
 border-color: #c4c4c4;
@@ -130,16 +130,16 @@ color: #000000;
 
 const HospitalItemContainer = Styled.View`
 margin-top: 8px;
-width: ${wp('87.2%')};
-height: ${wp('40%')};
+width: ${wp('87.2%')}px;
+height: ${wp('40%')}px;
 border-radius: 8px;
 border-width: 1px;
 border-color: #c4c4c4;
 `;
 
 const ReviewUploadButton = Styled.View`
-width: ${wp('87.2%')};
-height: ${wp('24.416%')};
+width: ${wp('87.2%')}px;
+height: ${wp('24.416%')}px;
 border-radius: 8px;
 border-width: 1px;
 border-color: #C4C4C4;
@@ -154,8 +154,8 @@ font-size: 18px;
 `;
 
 const ToothCareButton = Styled.View`
-width: ${wp('87.2%')};
-height: ${wp('24.416%')};
+width: ${wp('87.2%')}px;
+height: ${wp('24.416%')}px;
 border-radius: 8px;
 border-width: 1px;
 border-color: #C4C4C4;
@@ -440,7 +440,7 @@ const ReviewListScreen = ({navigation}: Props) => {
   };
 
   const moveToDentalDetail = () => {
-    navigation.navigate('DentalClinicStack', {
+    navigation.navigate('DentalClinicStackScreen', {
       screen: 'DentalDetailScreen',
     });
   };

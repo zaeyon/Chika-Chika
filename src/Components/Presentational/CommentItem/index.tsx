@@ -15,15 +15,15 @@ import {useSelector} from 'react-redux';
 import ReplyItem from '~/Components/Presentational/ReplyItem';
 
 const Container = Styled.View`
- width: ${wp('100%')};
+ width: ${wp('100%')}px;
  margin-bottom: 2px;
  flex-direction: row;
  padding-right: 0px;
 `;
 
 const ProfileImageContainer = Styled.View`
-width: ${wp('9.6%')};
- height: ${wp('9.6%')};
+width: ${wp('9.6%')}px;
+ height: ${wp('9.6%')}px;
 
 margin-top: 15px;
 margin-left: 16px;

@@ -5,14 +5,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 //Local Component
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import LikedCommunityPostScreen from '~/Components/Container/MyProfileScreen/LikedPostsTabScreen/LikedCommunityPostScreen';
-// Redux
-import {useSelector, useDispatch} from 'react-redux';
-import allActions from '~/actions';
-// Method
-// Routes
-import GETUserLikedPosts from '~/Routes/User/GETUserLikedPosts';
-import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
-import DELETESocialLike from '~/Routes/Community/social/DELETESocialLike';
+import LikedReviewScreen from '~/Components/Container/MyProfileScreen/LikedPostsTabScreen/LikedReviewScreen';
 
 const ContainerView = Styled(
   (SafeAreaView as unknown) as new () => SafeAreaView,
@@ -27,27 +20,6 @@ interface Props {
 
 const LikedPostsTabScreen = ({navigation, route}: Props) => {
   const Tab = createMaterialTopTabNavigator();
-  const limit = 10;
-  const [isReviewRefreshing, setIsReviewRefreshing] = useState(false);
-  const [isCommunityRefreshing, setIsCommunityRefreshing] = useState(false);
-
-  const [reviewPageIndex, setReviewPageIndex] = useState(0);
-  const [communityPageIndex, setCommunityPageIndex] = useState(0);
-
-  const [isReviewEndReached, setIsReviewEndReached] = useState(false);
-  const [isCommunityEndReached, setIsCommunityEndReached] = useState(false);
-
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.jwtToken;
-
-  const reviewData = useSelector(
-    (state: any) => state.communityPostList.LikedReviews,
-  );
-  const communityPostData = useSelector(
-    (state: any) => state.communityPostList.LikedCommunityPosts,
-  );
-
-  const dispatch = useDispatch();
 
   const headerLeftAction = () => {
     navigation.goBack();
@@ -62,7 +34,26 @@ const LikedPostsTabScreen = ({navigation, route}: Props) => {
         }}
         headerTitle="좋아요한 글"
       />
-      <Tab.Navigator>
+      <Tab.Navigator
+        tabBarOptions={{
+          activeTintColor: '#2998FF',
+          inactiveTintColor: '#848484',
+          labelStyle: {
+            fontFamily: 'NanumSquareR',
+            fontWeight: 'bold',
+            fontSize: 14,
+            lineHeight: 16,
+          },
+          indicatorStyle: {
+            backgroundColor: '#2998FF',
+            height: 3,
+          },
+          indicatorContainerStyle: {
+            borderBottomColor: '#C4C4C4',
+            borderBottomWidth: 1,
+          },
+        }}>
+        <Tab.Screen name="후기글" component={LikedReviewScreen} />
         <Tab.Screen name="수다글" component={LikedCommunityPostScreen} />
       </Tab.Navigator>
     </ContainerView>

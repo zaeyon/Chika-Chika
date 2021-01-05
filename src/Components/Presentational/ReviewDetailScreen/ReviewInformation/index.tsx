@@ -1,8 +1,8 @@
 import React from 'react';
 import Styled from 'styled-components/native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 const Container = Styled.View`
@@ -26,8 +26,8 @@ align-items: center;
 `;
 
 const ProfileImage = Styled.Image`
-width: ${wp('8.5%')};
-height: ${wp('8.5%')};
+width: ${wp('8.5%')}px;
+height: ${wp('8.5%')}px;
 border-radius: 100px;
 background-color: #ececec
 `;
@@ -63,8 +63,8 @@ margin-top: 12px;
 `;
 
 const RatingStarIcon = Styled.Image`
-width: ${wp('3.2%')};
-height: ${wp('3.2%')};
+width: ${wp('3.2%')}px;
+height: ${wp('3.2%')}px;
 `;
 
 const RatingText = Styled.Text`
@@ -87,45 +87,52 @@ font-size: 14px;
 `;
 
 interface Props {
-    writer: any,
-    createdDate: string,
-    treatmentDate: string,
-    treatmentArray: Array<any>,
-    avgRating: number,
-    dental: object,
+  writer: any;
+  createdDate: string;
+  treatmentDate: string;
+  treatmentArray: Array<any>;
+  avgRating: number;
+  dental: object;
 }
 
-const ReviewInformation = ({writer, createdDate, treatmentDate, treatmentArray, avgRating, dental}: Props) => {
-    console.log("ReviewInformation tretmentArray", treatmentArray);
-    return (
-        <Container>
-            <HeaderContainer>
-                {/*
+const ReviewInformation = ({
+  writer,
+  createdDate,
+  treatmentDate,
+  treatmentArray,
+  avgRating,
+  dental,
+}: Props) => {
+  console.log('ReviewInformation tretmentArray', treatmentArray);
+  return (
+    <Container>
+      <HeaderContainer>
+        {/*
                 <ProfileContainer>
                     <ProfileImage
                     source={{uri: writer.profileImage ? writer.profileImage : ""}}/>
                     <NicknameText>{writer.nickname ? writer.nickname : ""}</NicknameText>
                 </ProfileContainer>
                 */}
-                <CreatedAtText>{createdDate}</CreatedAtText>
-            </HeaderContainer>
-            <TreatmentListContainer>
-                {treatmentArray.map((item, index) => {
-                    return (
-                        <TreatmentText>{item.name}</TreatmentText>
-                    )
-                })}
-            </TreatmentListContainer>
-            <MetaInfoContainer>
-            <RatingStarIcon
-            source={require('~/Assets/Images/Review/ic_newStar.png')}/>
-            <RatingText>{avgRating}</RatingText>
-            <DividerBar/>
-            <LocationDateText>{dental.name +" ∙ " + treatmentDate}</LocationDateText>
-            </MetaInfoContainer>
-        </Container>
-    )
-}
+        <CreatedAtText>{createdDate}</CreatedAtText>
+      </HeaderContainer>
+      <TreatmentListContainer>
+        {treatmentArray.map((item, index) => {
+          return <TreatmentText>{item.name}</TreatmentText>;
+        })}
+      </TreatmentListContainer>
+      <MetaInfoContainer>
+        <RatingStarIcon
+          source={require('~/Assets/Images/Review/ic_newStar.png')}
+        />
+        <RatingText>{avgRating}</RatingText>
+        <DividerBar />
+        <LocationDateText>
+          {dental.name + ' ∙ ' + treatmentDate}
+        </LocationDateText>
+      </MetaInfoContainer>
+    </Container>
+  );
+};
 
 export default ReviewInformation;
-

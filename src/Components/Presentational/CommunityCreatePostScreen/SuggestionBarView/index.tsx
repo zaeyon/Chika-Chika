@@ -128,12 +128,15 @@ const SuggestionBarView = ({
   };
 
   const renderHashTagItemView = ({item, index}: any) => {
+    console.log(item);
     return (
       <TouchableHighlight
         activeOpacity={1}
         underlayColor="#EEEEEE"
         onPress={() => {
-          completeCurrentHashTag(item.name);
+          completeCurrentHashTag(
+            item.category === 'city' ? item.fullCityName : item.name,
+          );
         }}>
         <HashTagItemView>
           <HashTagItemIconImage
@@ -146,10 +149,14 @@ const SuggestionBarView = ({
               }}>
               {searchQuery}
             </HashTagItemNameText>
-            {item.name.slice(searchQuery.length)}
+            {item.category === 'city'
+              ? item.fullCityName?.slice(searchQuery.length)
+              : item.name?.slice(searchQuery.length)}
           </HashTagItemNameText>
           <HashTagItemLocationText>
-            {item.address?.split(' ').slice(0, 2).join(' ')}
+            {item.category === 'city'
+              ? item.sido + ' ' + item.sigungu + ' ' + item.adCity
+              : item.address?.split(' ').slice(0, 2).join(' ')}
           </HashTagItemLocationText>
         </HashTagItemView>
       </TouchableHighlight>

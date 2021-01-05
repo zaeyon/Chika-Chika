@@ -21,14 +21,34 @@ import CommunityPostList from '~/Components/Presentational/CommunityPostList';
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
 import DELETESocialLike from '~/Routes/Community/social/DELETESocialLike';
-import DELETECommunityPost from '~/Routes/Community/deletePost/DELETECommunityPost';
-import communityActions from '~/actions/communityActions';
+import POSTSocialScrap from '~/Routes/Community/social/POSTSocialScrap';
+import DELETESocialScrap from '~/Routes/Community/social/DELETESocialScrap';
 
-const ContainerView = Styled.SafeAreaView`
+const ContainerView = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
 `;
 
+const CreatePostView = Styled.View`
+width: ${wp('30%')}px;
+height: auto;
+padding: 10px 27px;
+background: #FFFFFF;
+border: 1px solid #C3C3C3;
+box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.12);
+border-radius: 100px;
+position: absolute;
+left: ${wp('35%')}px;
+bottom: ${getBottomSpace() + hp('9.6%') + 20}px;
+`;
+
+const CreatePostText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+line-height: 16px;
+`;
 interface Props {
   navigation: any;
   route: any;
@@ -37,8 +57,8 @@ interface Props {
 const QuestionTabScreen = ({navigation, route}: Props) => {
   const type = 'Question';
   const limit = 10;
+  const [isDataFinish, setIsDataFinish] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [pageIndex, setPageIndex] = useState(0);
   const [isEndReached, setIsEndReached] = useState(false);
   const [order, setOrder] = useState('createdAt');
   const jwtToken = route.params.jwtToken;
@@ -57,6 +77,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
     };
     setRefreshing(true);
     GETCommunityPosts(jwtToken, form).then((response: any) => {
+      setIsDataFinish(false);
       const data = {
         type,
         posts: response,
@@ -79,7 +100,6 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
 
         dispatch(allActions.communityActions.setPosts(data));
       }
-      setPageIndex(0);
       setRefreshing(false);
     });
   }, [jwtToken, order]);
@@ -90,18 +110,21 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         return;
       }
       if (!isEndReached) {
+        console.log(postData.length);
         setIsEndReached(true);
-        const newPageIndex = pageIndex + 1;
+        const pageIndex = Math.floor(postData.length / 10);
 
         const form = {
           type: type,
           limit: limit,
-          offset: newPageIndex * limit,
+          offset: pageIndex * limit,
           order: order,
         };
-        setPageIndex((prev: any) => prev + 1);
         GETCommunityPosts(jwtToken, form).then((response: any) => {
           console.log(response.length);
+          if (response.length === 0) {
+            setIsDataFinish(true);
+          }
           const data = {
             type,
             posts: [...postData, ...response],
@@ -111,7 +134,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         });
       }
     },
-    [isEndReached, pageIndex, postData, order, jwtToken],
+    [isEndReached, postData, order, jwtToken],
   );
 
   const moveToCommunityDetail = useCallback(
@@ -151,7 +174,28 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
     [],
   );
 
-  const toggleSocialScrap = useCallback(() => {}, []);
+  const toggleSocialScrap = useCallback(
+    (postId: number, prevState: number, type: string) => {
+      const form = {
+        type,
+        id: postId,
+      };
+      dispatch(allActions.communityActions.toggleScrap(form));
+      if (prevState) {
+        // true
+        DELETESocialScrap(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      } else {
+        POSTSocialScrap(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      }
+    },
+    [],
+  );
 
   return (
     <ContainerView>
@@ -166,50 +210,18 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         toggleSocialLike={toggleSocialLike}
         toggleSocialScrap={toggleSocialScrap}
       />
-      <Animated.View
-        style={{
-          position: 'absolute',
-          zIndex: 3,
-          right: wp('50%') - 45,
-          bottom: (getBottomSpace() ? wp('12%') : wp('15%')) + 23,
-          backgroundColor: '#C4C4C4',
-          borderRadius: 100,
-          width: 90,
-          height: 34,
-          justifyContent: 'center',
-          alignItems: 'center',
-          transform: [
-            {
-              translateY: buttonY.interpolate({
-                inputRange: [
-                  0,
-                  (getBottomSpace() ? wp('12%') : wp('15%')) + 23,
-                ],
-                outputRange: [
-                  0,
-                  (getBottomSpace() ? wp('12%') : wp('15%')) + 23,
-                ],
-                extrapolate: 'clamp',
-              }),
+      <TouchableWithoutFeedback
+        onPress={() =>
+          navigation.navigate('CommunityPostUploadStackScreen', {
+            data: {
+              id: -1,
             },
-          ],
-        }}>
-        <TouchableOpacity
-          style={{
-            flex: 1,
-            padding: 9,
-            borderRadius: 100,
-          }}
-          onPress={() => {
-            navigation.navigate('CommunityPostUploadStackScreen', {
-              data: {
-                id: -1,
-              },
-            });
-          }}>
-          <Text>글 작성하기</Text>
-        </TouchableOpacity>
-      </Animated.View>
+          })
+        }>
+        <CreatePostView>
+          <CreatePostText>{'글 작성하기'}</CreatePostText>
+        </CreatePostView>
+      </TouchableWithoutFeedback>
     </ContainerView>
   );
 };

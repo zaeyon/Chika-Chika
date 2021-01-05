@@ -4,10 +4,6 @@ import SafeAreaView from 'react-native-safe-area-view';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
-  FlatList,
-  View,
-  Text,
-  Animated,
   StyleSheet,
 } from 'react-native';
 import {
@@ -31,7 +27,9 @@ import GeneralTabScreen from './GeneralTabScreen';
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 
-const ContainerView = Styled.View`
+const ContainerView = Styled(
+  (SafeAreaView as unknown) as new () => SafeAreaView,
+)`
  flex: 1;
  background: white;
 `;
@@ -136,60 +134,58 @@ const CommunityListScreen = ({navigation, route}: Props) => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.safeAreaStyle} forceInset={{top: 'always'}}>
-      <ContainerView>
-        <HeaderContainerView>
-          <HeaderNicknameText>{'커뮤니티'}</HeaderNicknameText>
-          <HeaderLocationText>
-            {/* {this.props.currentUser.location} */ '광교동'}
-          </HeaderLocationText>
-          <HeaderIconContainerView>
-            <HeaderIconTouchableOpacity onPress={moveToKeywordSearch} />
-            <HeaderIconTouchableOpacity />
-          </HeaderIconContainerView>
-        </HeaderContainerView>
-        <BodyContainerView>
-          <CommunityTopTab.Navigator
-            style={{
-              flex: 1,
-            }}
-            tabBarOptions={{
-              activeTintColor: '#2998FF',
-              inactiveTintColor: '#848484',
-              labelStyle: {
-                fontFamily: 'NanumSquareR',
-                fontWeight: 'bold',
-                fontSize: 14,
-                lineHeight: 16,
-              },
-              indicatorStyle: {
-                backgroundColor: '#2998FF',
-                height: 3,
-              },
-              indicatorContainerStyle: {
-                borderBottomColor: '#C4C4C4',
-                borderBottomWidth: 1,
-              },
-            }}>
-            <CommunityTopTab.Screen
-              name="전체"
-              component={HomeTabScreen}
-              initialParams={{jwtToken: jwtToken}}
-            />
-            <CommunityTopTab.Screen
-              name="질문"
-              component={QuestionTabScreen}
-              initialParams={{jwtToken: jwtToken}}
-            />
-            <CommunityTopTab.Screen
-              name="자유"
-              component={GeneralTabScreen}
-              initialParams={{jwtToken: jwtToken}}
-            />
-          </CommunityTopTab.Navigator>
-        </BodyContainerView>
-      </ContainerView>
-    </SafeAreaView>
+    <ContainerView forceInset={{top: 'always'}}>
+      <HeaderContainerView>
+        <HeaderNicknameText>{'커뮤니티'}</HeaderNicknameText>
+        <HeaderLocationText>
+          {/* {this.props.currentUser.location} */ '광교동'}
+        </HeaderLocationText>
+        <HeaderIconContainerView>
+          <HeaderIconTouchableOpacity onPress={moveToKeywordSearch} />
+          <HeaderIconTouchableOpacity />
+        </HeaderIconContainerView>
+      </HeaderContainerView>
+      <BodyContainerView>
+        <CommunityTopTab.Navigator
+          style={{
+            flex: 1,
+          }}
+          tabBarOptions={{
+            activeTintColor: '#2998FF',
+            inactiveTintColor: '#848484',
+            labelStyle: {
+              fontFamily: 'NanumSquareR',
+              fontWeight: 'bold',
+              fontSize: 14,
+              lineHeight: 16,
+            },
+            indicatorStyle: {
+              backgroundColor: '#2998FF',
+              height: 3,
+            },
+            indicatorContainerStyle: {
+              borderBottomColor: '#C4C4C4',
+              borderBottomWidth: 1,
+            },
+          }}>
+          <CommunityTopTab.Screen
+            name="전체"
+            component={HomeTabScreen}
+            initialParams={{jwtToken: jwtToken}}
+          />
+          <CommunityTopTab.Screen
+            name="질문"
+            component={QuestionTabScreen}
+            initialParams={{jwtToken: jwtToken}}
+          />
+          <CommunityTopTab.Screen
+            name="자유"
+            component={GeneralTabScreen}
+            initialParams={{jwtToken: jwtToken}}
+          />
+        </CommunityTopTab.Navigator>
+      </BodyContainerView>
+    </ContainerView>
   );
 };
 

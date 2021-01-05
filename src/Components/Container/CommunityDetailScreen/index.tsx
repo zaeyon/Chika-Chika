@@ -30,6 +30,8 @@ import POSTCommunityPostComment from '~/Routes/Community/postDetail/POSTCommunit
 import DELETECommunityPost from '~/Routes/Community/deletePost/DELETECommunityPost';
 import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
 import DELETESocialLike from '~/Routes/Community/social/DELETESocialLike';
+import POSTSocialScrap from '~/Routes/Community/social/POSTSocialScrap';
+import DELETESocialScrap from '~/Routes/Community/social/DELETESocialScrap';
 // redux
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
@@ -78,6 +80,15 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     } else if (route.params.type === 'MyPosts') {
       console.log('My');
       return state.communityPostList.MyPosts;
+    } else if (route.params.type === 'Liked') {
+      console.log('Liked');
+      return state.communityPostList.LikedCommunityPosts;
+    } else if (route.params.type === 'Scraped') {
+      console.log('Scraped');
+      return state.communityPostList.ScrapedCommunityPosts;
+    } else if (route.params.type === 'Commented') {
+      console.log('Commented');
+      return state.communityPostList.CommentedCommunityPosts;
     }
   });
   const [postData, setPostData] = useState(
@@ -148,6 +159,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
         id: postData.id,
         description: deorderDescription(postData.description),
         type: deorderType(postData.type),
+        routeType: route.params.type,
       },
     });
   }, [postData]);
@@ -234,7 +246,28 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     [],
   );
 
-  const toggleSocialScrap = useCallback(() => {}, []);
+  const toggleSocialScrap = useCallback(
+    (postId: number, prevState: number, type: string) => {
+      const form = {
+        type,
+        id: postId,
+      };
+      dispatch(allActions.communityActions.toggleScrap(form));
+      if (prevState) {
+        // true
+        DELETESocialScrap(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      } else {
+        POSTSocialScrap(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      }
+    },
+    [],
+  );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);

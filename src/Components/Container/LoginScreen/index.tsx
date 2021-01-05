@@ -199,8 +199,8 @@ left: ${wp('73.46%')}px;
 `;
 
 const FinishButtonContainer = Styled.View`
-width: ${wp('100%')};
-padding-left: ${wp('4.2%')};
+width: ${wp('100%')}px;
+padding-left: ${wp('4.2%')}px;
 position:absolute;
 bottom: 16px;
 background-color : #707070;
@@ -463,7 +463,7 @@ const LoginScreen = ({navigation}: Props) => {
             phoneNumber: phoneNumber,
             id: response.user.userId,
             nickname: response.user.userNickname,
-            profileImage: response.user.userProfileImg,
+            profileImg: response.user.userProfileImg,
             gender: response.user.userGender,
             birthdate: response.user.userBirthdate,
             provider: response.user.userProvider,

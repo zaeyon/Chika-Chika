@@ -8,7 +8,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 // Method
 // Routes
-import GETUserLikedPosts from '~/Routes/User/GETUserLikedPosts';
+import GETUserScrapedPosts from '~/Routes/User/GETUserScrapedPosts';
 import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
 import DELETESocialLike from '~/Routes/Community/social/DELETESocialLike';
 import POSTSocialScrap from '~/Routes/Community/social/POSTSocialScrap';
@@ -24,7 +24,7 @@ interface Props {
   route: any;
 }
 
-const LikedCommunityPostScreen = ({navigation, route}: Props) => {
+const ScrapedCommunityPostScreen = ({navigation, route}: Props) => {
   const limit = 10;
   const [isDataFinish, setIsDataFinish] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -34,14 +34,13 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
   const jwtToken = currentUser.jwtToken;
 
   const postData = useSelector(
-    (state: any) => state.communityPostList.LikedCommunityPosts,
+    (state: any) => state.communityPostList.ScrapedCommunityPosts,
   );
-
   const dispatch = useDispatch();
 
-  const fetchLikedPosts = useCallback(
+  const fetchScrapedPosts = useCallback(
     (form: any, callback: any) => {
-      GETUserLikedPosts(jwtToken, form).then((response: any) => {
+      GETUserScrapedPosts(jwtToken, form).then((response: any) => {
         callback(response);
       });
     },
@@ -56,10 +55,10 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
       offset: 0,
     };
     setIsRefreshing(true);
-    fetchLikedPosts(form, (response: any) => {
+    fetchScrapedPosts(form, (response: any) => {
       setIsDataFinish(false);
       const form = {
-        type: 'Liked',
+        type: 'Scraped',
         posts: response,
       };
       if (
@@ -72,7 +71,7 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
           '',
         )
       ) {
-        console.log('liked post diff');
+        console.log('Scraped post diff');
         LayoutAnimation.configureNext(
           LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
         );
@@ -93,12 +92,12 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
           limit: limit,
           offset: pageIndex * limit,
         };
-        fetchLikedPosts(form, (response: any) => {
+        fetchScrapedPosts(form, (response: any) => {
           if (response.length === 0) {
             setIsDataFinish(true);
           }
           const data = {
-            type: 'Liked',
+            type: 'Scraped',
             posts: [...postData, ...response],
           };
           dispatch(allActions.communityActions.setPosts(data));
@@ -115,7 +114,7 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
         screen: 'CommunityDetailScreen',
         params: {
           id: postId,
-          type: 'Liked',
+          type: 'Scraped',
         },
       });
     },
@@ -178,9 +177,9 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
       limit,
       offset: 0,
     };
-    fetchLikedPosts(form, (response: any) => {
+    fetchScrapedPosts(form, (response: any) => {
       const form = {
-        type: 'Liked',
+        type: 'Scraped',
         posts: response,
       };
       if (
@@ -194,7 +193,7 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
             '',
           )
       ) {
-        console.log('liked post diff');
+        console.log('Scraped post diff');
         LayoutAnimation.configureNext(
           LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
         );
@@ -208,9 +207,9 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
         limit,
         offset: 0,
       };
-      fetchLikedPosts(form, (response: any) => {
+      fetchScrapedPosts(form, (response: any) => {
         const form = {
-          type: 'Liked',
+          type: 'Scraped',
           posts: response,
         };
         dispatch(allActions.communityActions.setPosts(form));
@@ -235,4 +234,4 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
   );
 };
 
-export default LikedCommunityPostScreen;
+export default ScrapedCommunityPostScreen;

@@ -1,8 +1,8 @@
 import React from 'react';
 import Styled from 'styled-components/native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {TouchableWithoutFeedback} from 'react-native';
 
@@ -31,13 +31,13 @@ flex-direction: row;
 `;
 
 const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const HeaderBackIcon = Styled.Image`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const HeaderTitleText = Styled.Text`
@@ -54,8 +54,8 @@ padding: 0px 16px 0px 16px;
 `;
 
 const HeaderCloseIcon = Styled.Image`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const BodyContainer = Styled.View`
@@ -63,34 +63,33 @@ flex: 1;
 `;
 
 interface Props {
-    navigation: any,
-    route: any,
+  navigation: any;
+  route: any;
 }
 
 const AIReportScreen = ({navigation, route}: Props) => {
+  const goBack = () => {
+    navigation.goBack();
+  };
 
-    const goBack = () => {
-        navigation.goBack()
-    }
+  return (
+    <Container>
+      <HeaderBar>
+        <HeaderLeftContainer>
+          <HeaderEmptyContainer />
+        </HeaderLeftContainer>
+        <HeaderTitleText>교정･미백</HeaderTitleText>
+        <TouchableWithoutFeedback onPress={() => goBack()}>
+          <HeaderRightContainer>
+            <HeaderCloseIcon
+              source={require('~/Assets/Images/HeaderBar/ic_X.png')}
+            />
+          </HeaderRightContainer>
+        </TouchableWithoutFeedback>
+      </HeaderBar>
+      <BodyContainer></BodyContainer>
+    </Container>
+  );
+};
 
-    return (
-        <Container>
-            <HeaderBar>
-                <HeaderLeftContainer>
-                    <HeaderEmptyContainer/>
-                </HeaderLeftContainer>
-                <HeaderTitleText>교정･미백</HeaderTitleText>
-                <TouchableWithoutFeedback onPress={() => goBack()}>
-                <HeaderRightContainer>
-                    <HeaderCloseIcon
-                    source={require('~/Assets/Images/HeaderBar/ic_X.png')}/>
-                </HeaderRightContainer>
-                </TouchableWithoutFeedback>
-            </HeaderBar>
-            <BodyContainer>
-            </BodyContainer>
-        </Container>
-    )
-}
-
-export default AIReportScreen
+export default AIReportScreen;

@@ -33,6 +33,13 @@ const toggleLike = (data) => {
   };
 };
 
+const toggleScrap = (data) => {
+  return {
+    type: 'TOGGLE_SCRAP',
+    payload: data,
+  };
+};
+
 const createComment = (data) => {
   return {
     type: 'CREATE_COMMENT',
@@ -45,5 +52,6 @@ export default {
   deletePost,
   setPosts,
   toggleLike,
+  toggleScrap,
   createComment,
 };

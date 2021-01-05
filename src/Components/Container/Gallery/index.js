@@ -41,8 +41,8 @@ const Container = Styled.SafeAreaView`
 `;
 
 const HeaderContainer = Styled.View`
- width: ${wp('100%')};
- height: ${wp('11.7%')};
+ width: ${wp('100%')}px;
+ height: ${wp('11.7%')}px;
  background-color: #FFFFFF;
  justify-content: space-between;
  align-items: center;
@@ -78,14 +78,14 @@ color: #C6C7CC;
 `;
 
 const CloseButton = Styled.Image`
- width: ${wp('6.4%')};
- height: ${wp('4%')};
+ width: ${wp('6.4%')}px;
+ height: ${wp('4%')}px;
  tint-color: #707070;
 `;
 
 const FinishButton = Styled.Image`
- width: ${wp('5.5%')};
- height: ${wp('4%')};
+ width: ${wp('5.5%')}px;
+ height: ${wp('4%')}px;
  tint-color: #707070;
 `;
 
@@ -98,8 +98,8 @@ const AlbumNameText = Styled.Text`
 const DropdownIcon = Styled.Image`
  margin-left: 7px;
  margin-bottom: 3px;
- width: ${wp('3.2%')};
- height: ${wp('3.2%')};
+ width: ${wp('3.2%')}px;
+ height: ${wp('3.2%')}px;
 `;
 
 const HeaderCenterContainer = Styled.View`
@@ -117,9 +117,9 @@ const ImageListContainer = Styled.View`
 
 const LoadingContainer = Styled.View`
 position: absolute;
-top: ${wp('11.7%')};
-width: ${wp('100%')};
-height: ${hp('100%')};
+top: ${wp('11.7%')}px;
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
 align-items: center;
 justify-content: center;
 background-color: #ffffff;

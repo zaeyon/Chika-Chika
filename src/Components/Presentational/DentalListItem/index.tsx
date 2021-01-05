@@ -1,15 +1,13 @@
 import React from 'react';
 import Styled from 'styled-components/native';
+import {TouchableWithoutFeedback} from 'react-native';
 import {
-    TouchableWithoutFeedback
-} from 'react-native';
-import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 const Container = Styled.View`
-width: ${wp('100%')};\
+width: ${wp('100%')}px;\
 padding: 16px;
 background-color: #ffffff;
 border-bottom-width: 2px;
@@ -101,56 +99,87 @@ color: #000000;
 `;
 
 interface Prop {
-    dentalId: number,
-    isOpen: boolean,
-    isLunchTime: boolean,
-    rating: number,
-    reviewCount: number,
-    name: string,
-    address: string,
-    lunchTime: string,
-    openTime: string,
-    closeTime: string,
-    moveToDentalDetail:(dentalId: number) => void,
-
+  dentalId: number;
+  isOpen: boolean;
+  isLunchTime: boolean;
+  rating: number;
+  reviewCount: number;
+  name: string;
+  address: string;
+  lunchTime: string;
+  openTime: string;
+  closeTime: string;
+  moveToDentalDetail: (dentalId: number) => void;
 }
 
-const DentalListItem = ({dentalId, name, address, isOpen, isLunchTime, rating, reviewCount, lunchTime, openTime, closeTime, moveToDentalDetail}: Prop) => {
-    return (
-        <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalId)}>
-        <Container>
-                <CurrentStatusContainer>
-                    <OpenStatusContainer style={isOpen ? {backgroundColor: "#0075FF"} : {backgroundColor: "#ffffff"}}>
-                        <CurrentStatusText style={isOpen ? {color: "#ffffff"} : {color: "#7a7a7a"}}>{"진료중"}</CurrentStatusText>
-                    </OpenStatusContainer>
-                    <LauchTimeStatusContainer style={isLunchTime ? {backgroundColor: "#0075FF"} : {backgroundColor: "#ffffff"}}>
-                        <CurrentStatusText style={isLunchTime ? {color: "#ffffff"} : {color: "#7a7a7a"}}>
-                        {"점심시간"}
-                        </CurrentStatusText>
-                    </LauchTimeStatusContainer>
-                </CurrentStatusContainer>
-            <DentalNameText>{name}</DentalNameText>
-            <ReviewRatingContainer>
-                <ReviewRatingText>{rating}</ReviewRatingText>
-                <RatingStarIcon
-                source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
-                <RatingStarIcon
-                source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
-                <RatingStarIcon
-                source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
-                <RatingStarIcon
-                source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
-                <RatingStarIcon
-                source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
-                <ReviewCountText style={{marginLeft: 4}}>{`리뷰 ${reviewCount}`}</ReviewCountText>
-            </ReviewRatingContainer>
-            <DentalAddressText>{address}</DentalAddressText>
-            <CallAppointmentButton>
-                <CallAppointmentText>{"예약전화"}</CallAppointmentText>
-            </CallAppointmentButton>
-        </Container>
-        </TouchableWithoutFeedback>
-    )
-}
+const DentalListItem = ({
+  dentalId,
+  name,
+  address,
+  isOpen,
+  isLunchTime,
+  rating,
+  reviewCount,
+  lunchTime,
+  openTime,
+  closeTime,
+  moveToDentalDetail,
+}: Prop) => {
+  return (
+    <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalId)}>
+      <Container>
+        <CurrentStatusContainer>
+          <OpenStatusContainer
+            style={
+              isOpen
+                ? {backgroundColor: '#0075FF'}
+                : {backgroundColor: '#ffffff'}
+            }>
+            <CurrentStatusText
+              style={isOpen ? {color: '#ffffff'} : {color: '#7a7a7a'}}>
+              {'진료중'}
+            </CurrentStatusText>
+          </OpenStatusContainer>
+          <LauchTimeStatusContainer
+            style={
+              isLunchTime
+                ? {backgroundColor: '#0075FF'}
+                : {backgroundColor: '#ffffff'}
+            }>
+            <CurrentStatusText
+              style={isLunchTime ? {color: '#ffffff'} : {color: '#7a7a7a'}}>
+              {'점심시간'}
+            </CurrentStatusText>
+          </LauchTimeStatusContainer>
+        </CurrentStatusContainer>
+        <DentalNameText>{name}</DentalNameText>
+        <ReviewRatingContainer>
+          <ReviewRatingText>{rating}</ReviewRatingText>
+          <RatingStarIcon
+            source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}
+          />
+          <RatingStarIcon
+            source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}
+          />
+          <RatingStarIcon
+            source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}
+          />
+          <RatingStarIcon
+            source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}
+          />
+          <RatingStarIcon
+            source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}
+          />
+          <ReviewCountText
+            style={{marginLeft: 4}}>{`리뷰 ${reviewCount}`}</ReviewCountText>
+        </ReviewRatingContainer>
+        <DentalAddressText>{address}</DentalAddressText>
+        <CallAppointmentButton>
+          <CallAppointmentText>{'예약전화'}</CallAppointmentText>
+        </CallAppointmentButton>
+      </Container>
+    </TouchableWithoutFeedback>
+  );
+};
 
-export default DentalListItem
+export default DentalListItem;

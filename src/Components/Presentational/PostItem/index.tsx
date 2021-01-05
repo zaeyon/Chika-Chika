@@ -28,7 +28,7 @@ padding: 0px 16px;
 `;
 
 const ProfileContainerView = Styled.View`
-width: 100%;
+width: auto;
 height: auto;
 margin-right: auto;
 flex-direction: row;
@@ -179,11 +179,13 @@ const PostItem = ({
     postLikeNum,
     postCommentsNum,
     viewerLikeCommunityPost,
+    viewerScrapCommunityPost,
     user,
     Clinics,
     GeneralTags,
     SymptomItems,
     TreatmentItems,
+    CityTags,
     community_imgs,
   } = data;
 
@@ -275,7 +277,6 @@ const PostItem = ({
   const renderImage = useCallback(
     ({item, index}: any) => (
       <TouchableWithoutFeedback
-        key={'TouchableImage' + index}
         onPress={() => {
           moveToCommunityDetail(id, type);
         }}>
@@ -344,22 +345,27 @@ const PostItem = ({
         <HashTagContainerView>
           {Clinics.map((item: any) => (
             <HashTagIconView key={String(item.id)}>
-              <HashTagIconText>{'#' + item.name}</HashTagIconText>
+              <HashTagIconText>{item.name}</HashTagIconText>
             </HashTagIconView>
           ))}
           {GeneralTags.map((item: any) => (
             <HashTagIconView key={String(item.id)}>
-              <HashTagIconText>{'#' + item.name}</HashTagIconText>
+              <HashTagIconText>{item.name}</HashTagIconText>
             </HashTagIconView>
           ))}
           {SymptomItems.map((item: any) => (
             <HashTagIconView key={String(item.id)}>
-              <HashTagIconText>{'#' + item.name}</HashTagIconText>
+              <HashTagIconText>{item.name}</HashTagIconText>
             </HashTagIconView>
           ))}
           {TreatmentItems.map((item: any) => (
             <HashTagIconView key={String(item.id)}>
-              <HashTagIconText>{'#' + item.name}</HashTagIconText>
+              <HashTagIconText>{item.name}</HashTagIconText>
+            </HashTagIconView>
+          ))}
+          {CityTags.map((item: any) => (
+            <HashTagIconView key={String(item.id)}>
+              <HashTagIconText>{item.fullCityName}</HashTagIconText>
             </HashTagIconView>
           ))}
         </HashTagContainerView>
@@ -396,10 +402,13 @@ const PostItem = ({
               right: 16,
             }}
             onPress={() => {
-              toggleSocialScrap();
+              toggleSocialScrap(id, viewerScrapCommunityPost, type);
             }}>
             <SocialInfoView>
               <Image
+                style={{
+                  tintColor: viewerScrapCommunityPost ? '#000000' : '#c3c3c3',
+                }}
                 source={require('~/Assets/Images/Review/ic_scrap_inline.png')}
               />
             </SocialInfoView>

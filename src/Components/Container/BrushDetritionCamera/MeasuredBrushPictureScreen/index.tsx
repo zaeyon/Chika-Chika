@@ -4,8 +4,8 @@ import Styled from 'styled-components/native';
 import {RNCamera} from 'react-native-camera';
 import CameraRoll from '@react-native-community/cameraroll';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {isIphoneX} from 'react-native-iphone-x-helper';
@@ -20,7 +20,7 @@ height: ${hp('100%')}px;
 
 const HeaderBar = Styled.View`
 position: absolute;
-top: ${DeviceInfo.hasNotch() ? hp('5%')  : hp('4%')}
+top: ${DeviceInfo.hasNotch() ? hp('5%') : hp('4%')}
 width: ${wp('100%')}px;
 height: ${wp('13.8%')}px;
 flex-direction: row;
@@ -79,16 +79,16 @@ position: absolute;
 `;
 
 const ResultCircle = Styled.View`
-width: ${wp('31.2%')};
-height: ${wp('31.2%')};
+width: ${wp('31.2%')}px;
+height: ${wp('31.2%')}px;
 border-width: 1px;
 border-color: #c4c4c4;
 border-radius: 100px;
 `;
 
 const ResultContainer = Styled.View`
-width: ${wp('100%')};
-padding-top: ${hp('15.28%')};
+width: ${wp('100%')}px;
+padding-top: ${hp('15.28%')}px;
 align-items: center;
 `;
 
@@ -128,64 +128,63 @@ font-size: 14px;
 `;
 
 interface Props {
-    navigation: any,
-    route: any,
+  navigation: any;
+  route: any;
 }
 
 const MeasuredBrushPictureScreen = ({navigation, route}: Props) => {
+  console.log('DeviceInfo.hasNotch()', DeviceInfo.hasNotch());
 
-    console.log("DeviceInfo.hasNotch()", DeviceInfo.hasNotch())
+  console.log(
+    'MeasuredBrushPictureScreen route.params.takenPicture',
+    route.params.takenPicture,
+  );
 
-    console.log("MeasuredBrushPictureScreen route.params.takenPicture", route.params.takenPicture);
+  const moveToBrushDetritionCamera = () => {
+    navigation.push('BrushDetritionCamera', {
+      remeasure: true,
+    });
+  };
 
-    const moveToBrushDetritionCamera = () => {
-        navigation.push("BrushDetritionCamera", {
-            remeasure: true,
-        })
-    }
-  
-    const goBack = () => {
-        navigation.navigate("TeethCareScreen")
-    }
+  const goBack = () => {
+    navigation.navigate('TeethCareScreen');
+  };
 
-    return (
-        <Container>
-            <TakenPictureImage
-            source={{uri: route.params.takenPicture}}/>
-            <TakenPictureBackground/>
-            <TakenPictureCover>
-                <ResultContainer>
-                    <ResultCircle/>
-                    <ResultTextContainer>
-                        <MainResultText>{"당신의 칫솔 안녕하신가유"}</MainResultText>
-                        <SubResultText>{"오늘도 오셨군요!"}</SubResultText>
-                    </ResultTextContainer>
-                    <TouchableWithoutFeedback onPress={() => moveToBrushDetritionCamera()}>
-                    <RemeasureButton>
-                        <RemeasureText>{"다시 측정하기"}</RemeasureText>
-                    </RemeasureButton>
-                    </TouchableWithoutFeedback>
-                </ResultContainer>
-                <MeasuredBrushSlidingUpPanel
-                navigation={navigation}
-                route={route}
-                />
-            </TakenPictureCover>
-            <HeaderBar>
-                <HeaderLeftContainer>
-                    <HeaderEmptyContainer/>
-                </HeaderLeftContainer>
-                <HeaderTitleText>측정하기</HeaderTitleText>
-                <TouchableWithoutFeedback onPress={() => goBack()}>
-                <HeaderRightContainer>
-                    <HeaderCancelIcon
-                    source={require('~/Assets/Images/HeaderBar/ic_X.png')}/>
-                </HeaderRightContainer>
-                </TouchableWithoutFeedback>
-            </HeaderBar>
-        </Container>
-     
-    )
-}
+  return (
+    <Container>
+      <TakenPictureImage source={{uri: route.params.takenPicture}} />
+      <TakenPictureBackground />
+      <TakenPictureCover>
+        <ResultContainer>
+          <ResultCircle />
+          <ResultTextContainer>
+            <MainResultText>{'당신의 칫솔 안녕하신가유'}</MainResultText>
+            <SubResultText>{'오늘도 오셨군요!'}</SubResultText>
+          </ResultTextContainer>
+          <TouchableWithoutFeedback
+            onPress={() => moveToBrushDetritionCamera()}>
+            <RemeasureButton>
+              <RemeasureText>{'다시 측정하기'}</RemeasureText>
+            </RemeasureButton>
+          </TouchableWithoutFeedback>
+        </ResultContainer>
+        <MeasuredBrushSlidingUpPanel navigation={navigation} route={route} />
+      </TakenPictureCover>
+      <HeaderBar>
+        <HeaderLeftContainer>
+          <HeaderEmptyContainer />
+        </HeaderLeftContainer>
+        <HeaderTitleText>측정하기</HeaderTitleText>
+        <TouchableWithoutFeedback onPress={() => goBack()}>
+          <HeaderRightContainer>
+            <HeaderCancelIcon
+              source={require('~/Assets/Images/HeaderBar/ic_X.png')}
+            />
+          </HeaderRightContainer>
+        </TouchableWithoutFeedback>
+      </HeaderBar>
+    </Container>
+  );
+};
 
 export default MeasuredBrushPictureScreen;
