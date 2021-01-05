@@ -1,10 +1,16 @@
 import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {TouchableWithoutFeedback, View, TouchableOpacity, Keyboard, KeyboardAvoidingView} from 'react-native'
+import {
+  TouchableWithoutFeedback,
+  View,
+  TouchableOpacity,
+  Keyboard,
+  KeyboardAvoidingView,
+} from 'react-native';
 import {getBottomSpace} from 'react-native-iphone-x-helper';
 import DeviceInfo from 'react-native-device-info';
 
@@ -53,8 +59,8 @@ padding: 16px 8px 16px 16px;
 `;
 
 const LikeIcon = Styled.Image`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const LikeCountText = Styled.Text`
@@ -67,13 +73,13 @@ color: #000000;
 `;
 
 const ScrapIcon = Styled.Image`
-width: ${wp('4.53%')};
-height: ${wp('4.53%')};
+width: ${wp('4.53%')}px;
+height: ${wp('4.53%')}px;
 `;
 
 const CommentIcon = Styled.Image`
-width: ${wp('5.3%')};
-height: ${wp('5.3%')};
+width: ${wp('5.3%')}px;
+height: ${wp('5.3%')}px;
 `;
 
 const SeeDentalInfoButton = Styled.View`
@@ -109,91 +115,109 @@ line-height: 16px;
 `;
 
 interface Props {
-    likeCount: number,
-    clickCommentIcon: () => void,
-    isCommentInputFocused: boolean,
-    postReviewComment: (description: string) => void,
-    clickReviewLike: () => void,
-    clickReviewScrap: () => void,
-    isCurUserLike: boolean,
-    isCurUserScrap: boolean,
-
+  likeCount: number;
+  clickCommentIcon: () => void;
+  isCommentInputFocused: boolean;
+  postReviewComment: (description: string) => void;
+  clickReviewLike: () => void;
+  clickReviewScrap: () => void;
+  isCurUserLike: boolean;
+  isCurUserScrap: boolean;
 }
 
-const ReviewBottomBar = ({likeCount, clickCommentIcon, isCommentInputFocused, postReviewComment, clickReviewLike, clickReviewScrap, isCurUserLike, isCurUserScrap}: Props) => {
+const ReviewBottomBar = ({
+  likeCount,
+  clickCommentIcon,
+  isCommentInputFocused,
+  postReviewComment,
+  clickReviewLike,
+  clickReviewScrap,
+  isCurUserLike,
+  isCurUserScrap,
+}: Props) => {
+  const [isCommentInput, setIsCommentInput] = useState<boolean>(false);
+  const [commentDescrip, setCommentDescrip] = useState<string>('');
 
-    const [isCommentInput, setIsCommentInput] = useState<boolean>(false);
-    const [commentDescrip, setCommentDescrip] = useState<string>("");
+  const clickCommentIcon2 = () => {
+    setIsCommentInput(true);
+  };
 
-    const clickCommentIcon2 = () => {
-        setIsCommentInput(true)
-    }
+  const onChangeCommentInput = (text: string) => {
+    setCommentDescrip(text);
+  };
 
-    const onChangeCommentInput = (text: string) => {
-        setCommentDescrip(text);
-    }
+  const clickPostComment = () => {
+    postReviewComment(commentDescrip);
+    setCommentDescrip('');
+  };
 
-    const clickPostComment = () => {
-        postReviewComment(commentDescrip)
-        setCommentDescrip("")
-    }
-
-    return (
-        <Container>
-            {!isCommentInputFocused ? (
-            <DefaultContainer>
-                <SocialInfoListContainer>
-                    <TouchableWithoutFeedback onPress={() => clickReviewLike()}>
-                    <LikeContainer>
-                        <LikeIcon
-                        style={isCurUserLike ? {tintColor: "#FF5656"} : {tintColor: "#000000"}}
-                        source={require('~/Assets/Images/Indicator/ic_like.png')}/>
-                    <LikeCountText>{likeCount}</LikeCountText>
-                    </LikeContainer>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => clickReviewScrap()}>
-                    <ScrapContainer>
-                        <ScrapIcon
-                        style={isCurUserScrap ? {tintColor: "#FFE600"} : {tintColor: "#000000"}}
-                        source={require('~/Assets/Images/Indicator/ic_scrap.png')}/>
-                    </ScrapContainer>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => clickCommentIcon()}>
-                    <CommentContainer>
-                        <CommentIcon
-                        source={require('~/Assets/Images/Indicator/ic_comment.png')}/>
-                    </CommentContainer>
-                    </TouchableWithoutFeedback>
-                </SocialInfoListContainer>
-                <SeeDentalInfoButton>
-                    <SeeDentalInfoText>{"병원정보 보러가기"}</SeeDentalInfoText>
-                </SeeDentalInfoButton>
-            </DefaultContainer>
-            ) : (
-                <CommentInputContainer>
-                    <CommentTextInput
-                    multiline={true}
-                    clearButtonMode="always" 
-                    autoCapitalize={"none"}
-                    autoCorrect={false}
-                    autoFocus={true}
-                    placeholder="댓글 입력"
-                    placeholderTextColor={'grey'}
-                    value={commentDescrip}
-                    onChangeText={(text: string) => onChangeCommentInput(text)}
-                    />
-                    <TouchableOpacity
-                      style={{
-                        justifyContent: 'center',
-                        marginLeft: 16,
-                      }}
-                      onPress={() => clickPostComment()}>
-                      <CommentUploadText>게시</CommentUploadText>
-                    </TouchableOpacity>
-                </CommentInputContainer>
-            )}
-        </Container>
-    )
-}
+  return (
+    <Container>
+      {!isCommentInputFocused ? (
+        <DefaultContainer>
+          <SocialInfoListContainer>
+            <TouchableWithoutFeedback onPress={() => clickReviewLike()}>
+              <LikeContainer>
+                <LikeIcon
+                  style={
+                    isCurUserLike
+                      ? {tintColor: '#FF5656'}
+                      : {tintColor: '#000000'}
+                  }
+                  source={require('~/Assets/Images/Indicator/ic_like.png')}
+                />
+                <LikeCountText>{likeCount}</LikeCountText>
+              </LikeContainer>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => clickReviewScrap()}>
+              <ScrapContainer>
+                <ScrapIcon
+                  style={
+                    isCurUserScrap
+                      ? {tintColor: '#FFE600'}
+                      : {tintColor: '#000000'}
+                  }
+                  source={require('~/Assets/Images/Indicator/ic_scrap.png')}
+                />
+              </ScrapContainer>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => clickCommentIcon()}>
+              <CommentContainer>
+                <CommentIcon
+                  source={require('~/Assets/Images/Indicator/ic_comment.png')}
+                />
+              </CommentContainer>
+            </TouchableWithoutFeedback>
+          </SocialInfoListContainer>
+          <SeeDentalInfoButton>
+            <SeeDentalInfoText>{'병원정보 보러가기'}</SeeDentalInfoText>
+          </SeeDentalInfoButton>
+        </DefaultContainer>
+      ) : (
+        <CommentInputContainer>
+          <CommentTextInput
+            multiline={true}
+            clearButtonMode="always"
+            autoCapitalize={'none'}
+            autoCorrect={false}
+            autoFocus={true}
+            placeholder="댓글 입력"
+            placeholderTextColor={'grey'}
+            value={commentDescrip}
+            onChangeText={(text: string) => onChangeCommentInput(text)}
+          />
+          <TouchableOpacity
+            style={{
+              justifyContent: 'center',
+              marginLeft: 16,
+            }}
+            onPress={() => clickPostComment()}>
+            <CommentUploadText>게시</CommentUploadText>
+          </TouchableOpacity>
+        </CommentInputContainer>
+      )}
+    </Container>
+  );
+};
 
 export default ReviewBottomBar;

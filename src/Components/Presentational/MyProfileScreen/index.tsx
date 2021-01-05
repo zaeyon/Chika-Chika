@@ -34,7 +34,7 @@ const HeaderContainerView = Styled.View`
 width: ${wp('100%')}px;
 height: ${hp('8.25%') + getStatusBarHeight()}px;
 flex-direction: row;
-margin-top: ${-getStatusBarHeight()}
+margin-top: ${-getStatusBarHeight()}px;
 padding: ${getStatusBarHeight()}px 16px 0px 16px;
 align-items: center;
 background: #FFFFFF;
@@ -121,7 +121,6 @@ height: auto;
 align-items: center;
 justify-content: center;
 margin: 0px 16px;
-
 `;
 
 const ProfileReservationTitleText = Styled.Text`
@@ -159,9 +158,18 @@ align-items: center;
 padding: 10px 0px;
 `;
 
+const InitializingView = Styled.View`
+flex: 1;
+background: rgba(200, 200, 200, 0.1);
+justify-content: center;
+align-items: center;
+`;
+
 interface Props {
   navigation: any;
   route: any;
+  isReviewInitializing: boolean;
+  isCommunityInitializing: boolean;
   reviewData: any;
   isReviewRefreshing: boolean;
   onReviewRefresh: any;
@@ -175,12 +183,14 @@ interface Props {
   currentUser: User;
   openModal: any;
   moveToCommunityDetail: any;
-  moveToReviewDetail: any;
   moveToReservationTabScreen: any;
   moveToSavedHospitalTabScreen: any;
   moveToAnotherProfile: any;
   toggleSocialLike: any;
   toggleSocialScrap: any;
+  moveToReviewDetail: any;
+  moveToWriterProfile: any;
+  moveToDentalDetail: any;
 }
 
 interface State {
@@ -260,23 +270,6 @@ export default class MyProfile extends React.PureComponent<Props, State> {
   };
 
   renderReviewItem = ({item, index}: any) => {
-    const isCurUserLikeProp = item.viewerLikedReview === 1 ? true : false;
-    const isCurUserScrapProp = item.viewerScrapedReview === 1 ? true : false;
-    const likeArray = new Array();
-    const scrapArray = new Array();
-
-    if (item.viewerLikedReview === 1) {
-      likeArray.push({
-        nickname: this.props.currentUser.nickname,
-      });
-    }
-
-    if (item.viewerScrapedReview === 1) {
-      scrapArray.push({
-        nickname: this.props.currentUser.nickname,
-      });
-    }
-
     const ratingObj = {
       avgRating: Number(
         (
@@ -334,131 +327,147 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         commentCount={item.reviewCommentsNum}
         imageArray={item.review_contents}
         descriptions={item.reviewDescriptions ? item.reviewDescriptions : ''}
-        isCurUserLikeProp={isCurUserLikeProp}
-        isCurUserScrapProp={isCurUserScrapProp}
-        likeArray={likeArray}
-        scrapArray={scrapArray}
+        isCurUserLikeProp={item.viewerLikedReview}
+        isCurUserScrapProp={item.viewerScrapedReview}
+        refreshingReviewList={this.props.isReviewRefreshing}
+        moveToReviewDetail={this.props.moveToReviewDetail}
+        moveToWriterProfile={this.props.moveToWriterProfile}
+        moveToDentalDetail={this.props.moveToDentalDetail}
       />
     );
   };
 
-  renderPostFlatList = () => (
-    <AnimatedFlatList
-      style={{
-        flex: 1,
-        marginBottom: hp('9.6%'),
-      }}
-      contentContainerStyle={{
-        minHeight: hp('100%') - PROFILEHEIGHT + getStatusBarHeight() - 1,
-        paddingTop: PROFILEHEIGHT + hp('7%'),
-      }}
-      ref={(ref: any) => (this.communityRef = ref)}
-      scrollEventThrottle={16}
-      onScroll={Animated.event(
-        [
-          {
-            nativeEvent: {
-              contentOffset: {
-                y: (y: number) =>
-                  Animated.block([
-                    Animated.set(this.currentScrollY, y),
-                    Animated.call([y], ([offsetY]) => {
-                      if (this.state.index === 1) {
-                        this.reviewRef &&
-                          this.reviewRef.getNode().scrollToOffset({
-                            offset: Math.min(PROFILEHEIGHT, offsetY),
-                            animated: false,
-                          });
-                      }
-                    }),
-                  ]),
+  renderPostFlatList = () => {
+    return this.props.isCommunityInitializing ? (
+      <InitializingView>
+        <ActivityIndicator />
+      </InitializingView>
+    ) : (
+      <AnimatedFlatList
+        style={{
+          flex: 1,
+          marginBottom: hp('9.6%'),
+        }}
+        scrollIndicatorInsets={{top: PROFILEHEIGHT + hp('7%')}}
+        contentContainerStyle={{
+          minHeight: hp('100%') - PROFILEHEIGHT + getStatusBarHeight() - 1,
+          paddingTop: PROFILEHEIGHT + hp('7%'),
+        }}
+        ref={(ref: any) => (this.communityRef = ref)}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {
+                contentOffset: {
+                  y: (y: number) =>
+                    Animated.block([
+                      Animated.set(this.currentScrollY, y),
+                      Animated.call([y], ([offsetY]) => {
+                        if (this.state.index === 1) {
+                          this.reviewRef &&
+                            this.reviewRef.getNode().scrollToOffset({
+                              offset: Math.min(PROFILEHEIGHT, offsetY),
+                              animated: false,
+                            });
+                        }
+                      }),
+                    ]),
+                },
               },
             },
+          ],
+          {
+            useNativeDriver: true,
           },
-        ],
-        {
-          useNativeDriver: true,
-        },
-      )}
-      onEndReached={this.props.onCommunityEndReached}
-      onEndReachedThreshold={5}
-      ListFooterComponent={
-        this.props.isCommunityEndReached ? (
-          <ActivityIndicatorContianerView>
-            <ActivityIndicator size="large" />
-          </ActivityIndicatorContianerView>
-        ) : null
-      }
-      data={this.props.communityPostData}
-      renderItem={this.renderPostItem}
-      keyExtractor={(item: any, index: number) => String(index)}
-      refreshControl={
-        <RefreshControl
-          refreshing={this.props.isCommunityRefreshing}
-          onRefresh={() => this.props.onCommunityRefresh()}
-        />
-      }
-    />
-  );
+        )}
+        onEndReached={this.props.onCommunityEndReached}
+        onEndReachedThreshold={5}
+        ListFooterComponent={
+          this.props.isCommunityEndReached ? (
+            <ActivityIndicatorContianerView>
+              <ActivityIndicator size="large" />
+            </ActivityIndicatorContianerView>
+          ) : null
+        }
+        data={this.props.communityPostData}
+        renderItem={this.renderPostItem}
+        keyExtractor={(item: any, index: number) => String(index)}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.props.isCommunityRefreshing}
+            onRefresh={() => this.props.onCommunityRefresh()}
+          />
+        }
+      />
+    );
+  };
 
-  renderReviewFlatList = () => (
-    <AnimatedFlatList
-      style={{
-        flex: 1,
-        marginBottom: hp('9.6%'),
-      }}
-      contentContainerStyle={{
-        minHeight: hp('100%') - PROFILEHEIGHT + getStatusBarHeight() - 1,
-        paddingTop: PROFILEHEIGHT + hp('7%'),
-      }}
-      ref={(ref: any) => (this.reviewRef = ref)}
-      scrollEventThrottle={16}
-      onScroll={Animated.event(
-        [
-          {
-            nativeEvent: {
-              contentOffset: {
-                y: (y: number) =>
-                  Animated.block([
-                    Animated.set(this.currentScrollY, y),
-                    Animated.call([y], ([offsetY]) => {
-                      if (this.state.index === 0) {
-                        this.communityRef &&
-                          this.communityRef.getNode().scrollToOffset({
-                            offset: Math.min(PROFILEHEIGHT, offsetY),
-                            animated: false,
-                          });
-                      }
-                    }),
-                  ]),
+  renderReviewFlatList = () => {
+    return this.props.isReviewInitializing ? (
+      <InitializingView>
+        <ActivityIndicator />
+      </InitializingView>
+    ) : (
+      <AnimatedFlatList
+        style={{
+          flex: 1,
+          marginBottom: hp('9.6%'),
+        }}
+        scrollIndicatorInsets={{top: PROFILEHEIGHT + hp('7%')}}
+        contentContainerStyle={{
+          minHeight: hp('100%') - PROFILEHEIGHT + getStatusBarHeight() - 1,
+          paddingTop: PROFILEHEIGHT + hp('7%'),
+        }}
+        ref={(ref: any) => (this.reviewRef = ref)}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {
+                contentOffset: {
+                  y: (y: number) =>
+                    Animated.block([
+                      Animated.set(this.currentScrollY, y),
+                      Animated.call([y], ([offsetY]) => {
+                        if (this.state.index === 0) {
+                          this.communityRef &&
+                            this.communityRef.getNode().scrollToOffset({
+                              offset: Math.min(PROFILEHEIGHT, offsetY),
+                              animated: false,
+                            });
+                        }
+                      }),
+                    ]),
+                },
               },
             },
+          ],
+          {
+            useNativeDriver: true,
           },
-        ],
-        {
-          useNativeDriver: true,
-        },
-      )}
-      onEndReached={this.props.onReviewEndReached}
-      onEndReachedThreshold={5}
-      ListFooterComponent={
-        this.props.isReviewEndReached ? (
-          <ActivityIndicatorContianerView>
-            <ActivityIndicator size="large" />
-          </ActivityIndicatorContianerView>
-        ) : null
-      }
-      data={this.props.reviewData}
-      renderItem={this.renderReviewItem}
-      keyExtractor={(item: any, index: number) => String(index)}
-      refreshControl={
-        <RefreshControl
-          refreshing={this.props.isReviewRefreshing}
-          onRefresh={() => this.props.onReviewRefresh()}
-        />
-      }
-    />
-  );
+        )}
+        onEndReached={this.props.onReviewEndReached}
+        onEndReachedThreshold={5}
+        ListFooterComponent={
+          this.props.isReviewEndReached ? (
+            <ActivityIndicatorContianerView>
+              <ActivityIndicator size="large" />
+            </ActivityIndicatorContianerView>
+          ) : null
+        }
+        data={this.props.reviewData}
+        renderItem={this.renderReviewItem}
+        keyExtractor={(item: any, index: number) => String(index)}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.props.isReviewRefreshing}
+            onRefresh={() => this.props.onReviewRefresh()}
+          />
+        }
+      />
+    );
+  };
 
   renderScene = ({route}: any) => {
     switch (route.key) {
@@ -476,10 +485,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           {
             translateY: Animated.multiply(
               this.minusValue,
-              Animated.min(
-                this.headerHeightValue,
-                Animated.max(this.currentScrollY, 0),
-              ),
+              Animated.min(this.headerHeightValue, this.currentScrollY),
             ),
           },
         ],
@@ -534,10 +540,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
               {
                 translateY: Animated.multiply(
                   this.minusValue,
-                  Animated.min(
-                    this.headerHeightValue,
-                    Animated.max(this.currentScrollY, 0),
-                  ),
+                  Animated.min(this.headerHeightValue, this.currentScrollY),
                 ),
               },
             ],

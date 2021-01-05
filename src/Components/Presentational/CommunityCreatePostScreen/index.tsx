@@ -517,9 +517,7 @@ const CommunityCreatePostScreen = ({
               }}
               onPress={() => {
                 setWantDentistHelp((prev: any) => !prev);
-              }}>
-              <CheckBoxImage />
-            </TouchableOpacity>
+              }}></TouchableOpacity>
             <CheckBoxItemText>의사에게 물어보기</CheckBoxItemText>
           </CheckBoxItemView>
         </FooterContainerView>

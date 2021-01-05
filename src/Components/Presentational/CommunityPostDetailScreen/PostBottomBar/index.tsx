@@ -80,7 +80,13 @@ const PostBottomBar = ({
   const [isFocused, setIsFocused] = useState(false);
   const [commentText, setCommentText] = useState('');
 
-  const {id, type, postLikeNum, viewerLikeCommunityPost} = data;
+  const {
+    id,
+    type,
+    postLikeNum,
+    viewerLikeCommunityPost,
+    viewerScrapCommunityPost,
+  } = data;
   useEffect(() => {
     Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
     Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
@@ -130,14 +136,22 @@ const PostBottomBar = ({
                 <SoicalInfoText>{postLikeNum}</SoicalInfoText>
               </SocialInfoView>
             </TouchableOpacity>
-            <SocialInfoView
-              style={{
-                marginRight: 24,
+            <TouchableOpacity
+              onPress={() => {
+                toggleSocialScrap(id, viewerScrapCommunityPost, type);
               }}>
-              <Image
-                source={require('~/Assets/Images/Review/ic_scrap_inline.png')}
-              />
-            </SocialInfoView>
+              <SocialInfoView
+                style={{
+                  marginRight: 24,
+                }}>
+                <Image
+                  style={{
+                    tintColor: viewerScrapCommunityPost ? '#000000' : '#c3c3c3',
+                  }}
+                  source={require('~/Assets/Images/Review/ic_scrap_inline.png')}
+                />
+              </SocialInfoView>
+            </TouchableOpacity>
           </SocialInfoContainerView>
         )}
 

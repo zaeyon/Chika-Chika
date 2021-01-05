@@ -2,8 +2,8 @@ import React from 'react';
 import {TouchableWithoutFeedback, FlatList} from 'react-native';
 import Styled from 'styled-components/native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 const Container = Styled.View`
@@ -28,8 +28,8 @@ const ProfileImageContainer = Styled.View`
 `;
 
 const ProfileImage = Styled.Image`
-width: ${wp('10.6%')};
-height: ${wp('10.6%')};
+width: ${wp('10.6%')}px;
+height: ${wp('10.6%')}px;
 border-radius: 100px;
 `;
 
@@ -105,74 +105,71 @@ color: #828282;
 `;
 
 interface Props {
-    profileImageUri: string
-    nickname: string
-    category: string
-    createdAt: string
-    tagList: Array<string>
-    description: string
-    likeCount: number
-    commentCount: number
+  profileImageUri: string;
+  nickname: string;
+  category: string;
+  createdAt: string;
+  tagList: Array<string>;
+  description: string;
+  likeCount: number;
+  commentCount: number;
 }
 
-const PostCardItem = ({profileImageUri, nickname, category, createdAt, tagList, description, likeCount, commentCount}: Props) => {
-
-    const renderTagItem = ({item, index}: any) => {
-        return (
-          <TagItemContainer>
-            <TagText>ss</TagText>
-            </TagItemContainer>
-        )
-    }
-
+const PostCardItem = ({
+  profileImageUri,
+  nickname,
+  category,
+  createdAt,
+  tagList,
+  description,
+  likeCount,
+  commentCount,
+}: Props) => {
+  const renderTagItem = ({item, index}: any) => {
     return (
-        <Container>
-          <ProfileContainer>
-            <ProfileImageContainer>
-              <ProfileImage
-              source={{uri: profileImageUri}}/>
-            </ProfileImageContainer>
-            <ProfileRightContainer>
-              <NicknameText>
-              {nickname}
-              </NicknameText>
-              <CategoryCreatedAtContainer>
-                <CategoryText>{category}</CategoryText>
-                <CreatedAtText>{createdAt}</CreatedAtText>
-              </CategoryCreatedAtContainer>        
-            </ProfileRightContainer>
-          </ProfileContainer>
-          <TagListContainer>
-            <TagText>
-              {tagList.map((tag, index) => {
-                if(index == 0) {
-                  return (
-                    <TagText>{"#" + tag}</TagText>
-                  )
-                } else {
-                  return (
-                    <TagText>{" #" + tag}</TagText>
-                  )
-                }
-              })}
-            </TagText>
-          </TagListContainer>
-          <DescripContainer>
-              <DescripText>
-                  {description}
-                  <MoreViewText> 더보기</MoreViewText>
-              </DescripText>
-          </DescripContainer>
-          <SocialInfoContainer>
-            <SocialInfoText>{"좋아요 " + likeCount + "개"}</SocialInfoText>
-            <SocialInfoText>{"댓글 " + commentCount + "개"}</SocialInfoText>
-          </SocialInfoContainer>
-        </Container>
-    )
-}
+      <TagItemContainer>
+        <TagText>ss</TagText>
+      </TagItemContainer>
+    );
+  };
 
-export default PostCardItem
+  return (
+    <Container>
+      <ProfileContainer>
+        <ProfileImageContainer>
+          <ProfileImage source={{uri: profileImageUri}} />
+        </ProfileImageContainer>
+        <ProfileRightContainer>
+          <NicknameText>{nickname}</NicknameText>
+          <CategoryCreatedAtContainer>
+            <CategoryText>{category}</CategoryText>
+            <CreatedAtText>{createdAt}</CreatedAtText>
+          </CategoryCreatedAtContainer>
+        </ProfileRightContainer>
+      </ProfileContainer>
+      <TagListContainer>
+        <TagText>
+          {tagList.map((tag, index) => {
+            if (index == 0) {
+              return <TagText>{'#' + tag}</TagText>;
+            } else {
+              return <TagText>{' #' + tag}</TagText>;
+            }
+          })}
+        </TagText>
+      </TagListContainer>
+      <DescripContainer>
+        <DescripText>
+          {description}
+          <MoreViewText> 더보기</MoreViewText>
+        </DescripText>
+      </DescripContainer>
+      <SocialInfoContainer>
+        <SocialInfoText>{'좋아요 ' + likeCount + '개'}</SocialInfoText>
+        <SocialInfoText>{'댓글 ' + commentCount + '개'}</SocialInfoText>
+      </SocialInfoContainer>
+    </Container>
+  );
+};
 
-
-
-
+export default PostCardItem;

@@ -248,8 +248,8 @@ flex: 1;
 `;
 
 const AddNewParaUnitButton = Styled.Image`
-width: ${wp('10.13%')};
-height: ${wp('10.13%')};
+width: ${wp('10.13%')}px;
+height: ${wp('10.13%')}px;
 `;
 
 const ParaImage = Styled.Image`

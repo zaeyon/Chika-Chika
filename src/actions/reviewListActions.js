@@ -26,9 +26,32 @@ const setMyReviews = (reviewList) => {
   };
 };
 
+const setLikedReviews = (reviewList) => {
+  return {
+    type: 'SET_LIKED_REVIEWS',
+    payload: reviewList,
+  };
+};
+
+const setScrapedReviews = (reviewList) => {
+  return {
+    type: 'SET_SCRAPED_REVIEWS',
+    payload: reviewList,
+  };
+};
+
+const setCommentedReviews = (reviewList) => {
+  return {
+    type: 'SET_COMMENTED_REVIEWS',
+    payload: reviewList,
+  };
+};
 export default {
   setMainReviewList,
   toggleReviewLike,
   toggleReviewScrap,
   setMyReviews,
+  setLikedReviews,
+  setScrapedReviews,
+  setCommentedReviews,
 };

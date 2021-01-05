@@ -55,10 +55,10 @@ const DentalListContainer = Styled.View`
 margin-top: ${hp('6.6%')}px;
 `;
 const LoadingContainer = Styled.View`
-width: ${wp('100%')};
-height: ${hp('100%')};
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
 position: absolute;
-top: ${wp('11.7%')};
+top: ${wp('11.7%')}px;
 align-items: center;
 justify-content: center;
 `;
@@ -81,7 +81,7 @@ const SearchTextInput = Styled.TextInput`
 const SelectedDentalContainer = Styled.View`
 position: absolute;
 bottom: 0;
-width: ${wp('100%')};
+width: ${wp('100%')}px;
 padding-bottom: 16px;
 align-items: center;
 `;
@@ -94,8 +94,8 @@ align-items: center;
 const DentalCarouselItemContainer = Styled.View`
 `;
 const SelectedDentalItemContainer = Styled.View`
-width: ${wp('87.2%')};
-height: ${wp('41.6%')};
+width: ${wp('87.2%')}px;
+height: ${wp('41.6%')}px;
 background-color: #ffffff;
 border-width: 1px;
 border-color: #c4c4c4;
@@ -107,12 +107,12 @@ flex-direction: row;
 align-items: center;
 `;
 const DentalImageContainer = Styled.View`
-width: ${wp('25%')};
-height: ${wp('25%')};
+width: ${wp('25%')}px;
+height: ${wp('25%')}px;
 `;
 const DentalImage = Styled.Image`
-width: ${wp('25%')};
-height: ${wp('25%')};
+width: ${wp('25%')}px;
+height: ${wp('25%')}px;
 `;
 const DentalInfoContainer = Styled.View`
 margin-left: 16px;

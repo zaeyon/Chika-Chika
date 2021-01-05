@@ -125,14 +125,18 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
     navigation.goBack();
   }, []);
 
-  const headerRightAction = useCallback(() => {
-    navigation.goBack();
+  const moveToPhoneVerify = useCallback(() => {
+    navigation.navigate('PhoneVerifyScreen');
   }, []);
 
   const moveToGallery = useCallback(() => {
     navigation.navigate('EditProfileGallery', {
       requestType: 'EditProfileTabScreen',
     });
+  }, []);
+
+  const moveToHomeTownSetting = useCallback(() => {
+    navigation.navigate('HometownSettingScreen', profile);
   }, []);
 
   return (
@@ -146,6 +150,8 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
       />
       <EditProfileScreen
         moveToGallery={moveToGallery}
+        moveToHomeTownSetting={moveToHomeTownSetting}
+        moveToPhoneVerify={moveToPhoneVerify}
         currentUser={profile}
         changeProfileNickname={changeProfileNickname}
         changeProfileGender={changeProfileGender}

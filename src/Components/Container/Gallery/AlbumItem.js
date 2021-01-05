@@ -2,13 +2,13 @@ import React from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback} from 'react-native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 const Container = Styled.View`
- width: ${wp('100%')};
- height: ${wp('26.6%')};
+ width: ${wp('100%')}px;
+ height: ${wp('26.6%')}px;
  background-color: #ffffff;
  flex-direction: row;
 `;
@@ -21,8 +21,8 @@ const ThumbnailContainer = Styled.View`
 `;
 
 const ThumbnailImage = Styled.Image`
- width: ${wp('20%')};
- height: ${wp('20%')};
+ width: ${wp('20%')}px;
+ height: ${wp('20%')}px;
 `;
 
 const AlbumInfoContainer = Styled.View`
@@ -46,24 +46,19 @@ color: #979797;
 `;
 
 const AlbumItem = ({albumTitle, albumCount, albumThumbnail, selectAlbum}) => {
-    return (
-        <TouchableWithoutFeedback onPress={() => selectAlbum(albumTitle)}>
-        <Container>
-            <ThumbnailContainer>
-                <ThumbnailImage
-                source={{uri:albumThumbnail}}/>
-            </ThumbnailContainer>
-            <AlbumInfoContainer>
-                <AlbumTitleText>
-                    {albumTitle}
-                </AlbumTitleText>
-                <AlbumCountText>
-                    {albumCount}
-                </AlbumCountText>
-            </AlbumInfoContainer>
-        </Container>
-        </TouchableWithoutFeedback>
-    )
-}
+  return (
+    <TouchableWithoutFeedback onPress={() => selectAlbum(albumTitle)}>
+      <Container>
+        <ThumbnailContainer>
+          <ThumbnailImage source={{uri: albumThumbnail}} />
+        </ThumbnailContainer>
+        <AlbumInfoContainer>
+          <AlbumTitleText>{albumTitle}</AlbumTitleText>
+          <AlbumCountText>{albumCount}</AlbumCountText>
+        </AlbumInfoContainer>
+      </Container>
+    </TouchableWithoutFeedback>
+  );
+};
 
 export default AlbumItem;

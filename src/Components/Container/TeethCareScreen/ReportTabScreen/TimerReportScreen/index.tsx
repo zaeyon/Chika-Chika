@@ -1,10 +1,16 @@
 import React, {useRef, useState} from 'react';
 import Styled from 'styled-components/native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {TouchableWithoutFeedback, Animated, StyleSheet, FlatList, ScrollView} from 'react-native';
+import {
+  TouchableWithoutFeedback,
+  Animated,
+  StyleSheet,
+  FlatList,
+  ScrollView,
+} from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
 // Local Component
@@ -36,13 +42,13 @@ flex-direction: row;
 `;
 
 const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const HeaderBackIcon = Styled.Image`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const HeaderTitleText = Styled.Text`
@@ -59,8 +65,8 @@ padding: 0px 16px 0px 16px;
 `;
 
 const HeaderCloseIcon = Styled.Image`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const BodyContainer = Styled.View`
@@ -71,7 +77,6 @@ padding-bottom: ${DeviceInfo.hasNotch() ? hp('6%') : hp('14%')}px;
 const SelectDateContainer = Styled.View`
 padding: 16px 15px 16px 15px;
 `;
-
 
 const SelectDateUnitContainer = Styled.View`
 width: ${wp('91.46%')}px;
@@ -142,8 +147,8 @@ font-size: 24px;
 `;
 
 const GraphCoordinateAxisContainer = Styled.View`
-width: ${wp('81%')};
-height: ${wp('31.17%')};
+width: ${wp('81%')}px;
+height: ${wp('31.17%')}px;
 border-bottom-width: 1px;
 border-left-width: 1px;
 border-right-width: 1px;
@@ -174,192 +179,212 @@ color: #595959;
 `;
 
 const TEST_AVERAGE_RUNNING_TIME_DATA = [
-    {
-        unit: "하루",
-        value: "4분 24초"
-    },
-    {
-        unit: "한주",
-        value: "3분 24초"
-    },
-    {
-        unit: "한달",
-        value: "4분 10초"
-    }
-]
+  {
+    unit: '하루',
+    value: '4분 24초',
+  },
+  {
+    unit: '한주',
+    value: '3분 24초',
+  },
+  {
+    unit: '한달',
+    value: '4분 10초',
+  },
+];
 
 const TEST_AVERAGE_RUNNING_COUNT_DATA = [
-    {
-        unit: "하루",
-        value: "4회",
-    },
-    {
-        unit: "한주",
-        value: "16회"
-    },
-    {
-        unit: "한달",
-        value: "30회"
-    }
-]
+  {
+    unit: '하루',
+    value: '4회',
+  },
+  {
+    unit: '한주',
+    value: '16회',
+  },
+  {
+    unit: '한달',
+    value: '30회',
+  },
+];
 
 interface Props {
-    navigation: any,
-    route: any,
+  navigation: any;
+  route: any;
 }
 
 const TimerReportScreen = ({navigation, route}: Props) => {
-    const [selectedDateUnit, setSelectedDateUnit] = useState<string>("day");
-    const [visibleFirstDivider, setVisibleFirstDivider] = useState<boolean>(false);
-    const [visibleSecondDivider, setVisibleSecondDivider] = useState<boolean>(false);
+  const [selectedDateUnit, setSelectedDateUnit] = useState<string>('day');
+  const [visibleFirstDivider, setVisibleFirstDivider] = useState<boolean>(
+    false,
+  );
+  const [visibleSecondDivider, setVisibleSecondDivider] = useState<boolean>(
+    false,
+  );
 
-    const dateUnitAnimValue = useRef(new Animated.ValueXY()).current;
+  const dateUnitAnimValue = useRef(new Animated.ValueXY()).current;
 
-    const selectMonthUnitAnim = Animated.timing(dateUnitAnimValue, {
-        toValue: wp('60%'),
-        duration: 500,
-        useNativeDriver: true,
-    })
+  const selectMonthUnitAnim = Animated.timing(dateUnitAnimValue, {
+    toValue: wp('60%'),
+    duration: 500,
+    useNativeDriver: true,
+  });
 
-    const selectDayUnitAnim = Animated.timing(dateUnitAnimValue, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-    })
+  const selectDayUnitAnim = Animated.timing(dateUnitAnimValue, {
+    toValue: 0,
+    duration: 500,
+    useNativeDriver: true,
+  });
 
-    const selectWeekUnitAnim = Animated.timing(dateUnitAnimValue, {
-        toValue: wp('30%'),
-        duration: 500,
-        useNativeDriver: true,
-    })
+  const selectWeekUnitAnim = Animated.timing(dateUnitAnimValue, {
+    toValue: wp('30%'),
+    duration: 500,
+    useNativeDriver: true,
+  });
 
-    const selectDayUnit = () => {
-        if(selectedDateUnit !== "day") {
-            setSelectedDateUnit("day");
-            selectDayUnitAnim.start()
-        }
+  const selectDayUnit = () => {
+    if (selectedDateUnit !== 'day') {
+      setSelectedDateUnit('day');
+      selectDayUnitAnim.start();
     }
+  };
 
-    const selectWeekUnit = () => {
-        if(selectedDateUnit !== "week") {
-            setSelectedDateUnit("week");
-            selectWeekUnitAnim.start();
-        }
+  const selectWeekUnit = () => {
+    if (selectedDateUnit !== 'week') {
+      setSelectedDateUnit('week');
+      selectWeekUnitAnim.start();
     }
+  };
 
-    const selectMonthUnit = () => {
-        if(selectedDateUnit !== "month") {
-            setSelectedDateUnit("month");
-            selectMonthUnitAnim.start()
-        }
+  const selectMonthUnit = () => {
+    if (selectedDateUnit !== 'month') {
+      setSelectedDateUnit('month');
+      selectMonthUnitAnim.start();
     }
+  };
 
-    const goBack = () => {
-        navigation.goBack()
-    }
+  const goBack = () => {
+    navigation.goBack();
+  };
 
-    const renderRunningTimeItem = ({item, index}: any) => {
-        return (
-            <TimerReportItem
-            style={[{marginLeft: 16}, index === TEST_AVERAGE_RUNNING_TIME_DATA.length-1 && {marginRight: 16}]}
-            label={item.unit}
-            value={item.value}/>
-        )
-    }
-
-    const renderRunningCountItem = ({item, index}: any) => {
-        return (
-            <TimerReportItem
-            style={[{marginLeft: 16}, index === TEST_AVERAGE_RUNNING_COUNT_DATA.length-1 && {marginRight: 16}]}
-            label={item.unit}
-            value={item.value}/>
-        )
-    }
-
+  const renderRunningTimeItem = ({item, index}: any) => {
     return (
-        <Container>
-            <HeaderBar>
-                <HeaderLeftContainer>
-                    <HeaderEmptyContainer/>
-                </HeaderLeftContainer>
-                <HeaderTitleText>타이머</HeaderTitleText>
-                <TouchableWithoutFeedback onPress={() => goBack()}>
-                <HeaderRightContainer>
-                    <HeaderCloseIcon
-                    source={require('~/Assets/Images/HeaderBar/ic_X.png')}/>
-                </HeaderRightContainer>
-                </TouchableWithoutFeedback>
-            </HeaderBar>
-            <BodyContainer>
-                <SelectDateContainer>
-                <SelectDateUnitContainer>
-                    <Animated.View
-                    style={{
-                        transform: [{translateX: dateUnitAnimValue.x}],position: "absolute"
-                    }}>   
-                    <SelectDateUnitButtonContainer style={styles.dateUnitButtonShadow}>
-                        <SelectDateUnitButton/> 
-                    </SelectDateUnitButtonContainer>
-                    </Animated.View>
-                    <TouchableWithoutFeedback onPress={() => selectDayUnit()}>
-                    <DateUnitEmptyContainer>
-                        <SelectDateUnitText>일</SelectDateUnitText>
-                    </DateUnitEmptyContainer>
-                    </TouchableWithoutFeedback>
-                    <SelectDateUnitDivider style={{zIndex: -1}}/>
-                    <TouchableWithoutFeedback onPress={() => selectWeekUnit()}>
-                    <DateUnitEmptyContainer>
-                        <SelectDateUnitText>주</SelectDateUnitText>
-                    </DateUnitEmptyContainer>
-                    </TouchableWithoutFeedback>
-                    <SelectDateUnitDivider style={{zIndex: -1}}/>
-                    <TouchableWithoutFeedback onPress={() => selectMonthUnit()}>
-                    <DateUnitEmptyContainer>
-                        <SelectDateUnitText>월</SelectDateUnitText>
-                    </DateUnitEmptyContainer>
-                    </TouchableWithoutFeedback>
-                </SelectDateUnitContainer>
-                </SelectDateContainer>
-                <ScrollView
-                showsVerticalScrollIndicator={false}>
-                <TimerGraphContainer>
-                    <TimerGraph/>
-                </TimerGraphContainer>
-                <ReportLabelContainer>
-                    <ReportLabelText>{"평균 실행 시간"}</ReportLabelText>
-                </ReportLabelContainer>
-                <ReportValueContainer>
-                    <FlatList
-                    showsHorizontalScrollIndicator={false}
-                    horizontal={true}
-                    data={TEST_AVERAGE_RUNNING_TIME_DATA}
-                    renderItem={renderRunningTimeItem}/>
-                </ReportValueContainer>
-                <ReportLabelContainer>
-                    <ReportLabelText>{"평균 실행 횟수"}</ReportLabelText>
-                </ReportLabelContainer>
-                <ReportValueContainer>
-                    <FlatList
-                    showsHorizontalScrollIndicator={false}
-                    horizontal={true}
-                    data={TEST_AVERAGE_RUNNING_COUNT_DATA}
-                    renderItem={renderRunningCountItem}/>
-                </ReportValueContainer>
-                </ScrollView>
-            </BodyContainer>
-        </Container>
-    )
-}
+      <TimerReportItem
+        style={[
+          {marginLeft: 16},
+          index === TEST_AVERAGE_RUNNING_TIME_DATA.length - 1 && {
+            marginRight: 16,
+          },
+        ]}
+        label={item.unit}
+        value={item.value}
+      />
+    );
+  };
+
+  const renderRunningCountItem = ({item, index}: any) => {
+    return (
+      <TimerReportItem
+        style={[
+          {marginLeft: 16},
+          index === TEST_AVERAGE_RUNNING_COUNT_DATA.length - 1 && {
+            marginRight: 16,
+          },
+        ]}
+        label={item.unit}
+        value={item.value}
+      />
+    );
+  };
+
+  return (
+    <Container>
+      <HeaderBar>
+        <HeaderLeftContainer>
+          <HeaderEmptyContainer />
+        </HeaderLeftContainer>
+        <HeaderTitleText>타이머</HeaderTitleText>
+        <TouchableWithoutFeedback onPress={() => goBack()}>
+          <HeaderRightContainer>
+            <HeaderCloseIcon
+              source={require('~/Assets/Images/HeaderBar/ic_X.png')}
+            />
+          </HeaderRightContainer>
+        </TouchableWithoutFeedback>
+      </HeaderBar>
+      <BodyContainer>
+        <SelectDateContainer>
+          <SelectDateUnitContainer>
+            <Animated.View
+              style={{
+                transform: [{translateX: dateUnitAnimValue.x}],
+                position: 'absolute',
+              }}>
+              <SelectDateUnitButtonContainer
+                style={styles.dateUnitButtonShadow}>
+                <SelectDateUnitButton />
+              </SelectDateUnitButtonContainer>
+            </Animated.View>
+            <TouchableWithoutFeedback onPress={() => selectDayUnit()}>
+              <DateUnitEmptyContainer>
+                <SelectDateUnitText>일</SelectDateUnitText>
+              </DateUnitEmptyContainer>
+            </TouchableWithoutFeedback>
+            <SelectDateUnitDivider style={{zIndex: -1}} />
+            <TouchableWithoutFeedback onPress={() => selectWeekUnit()}>
+              <DateUnitEmptyContainer>
+                <SelectDateUnitText>주</SelectDateUnitText>
+              </DateUnitEmptyContainer>
+            </TouchableWithoutFeedback>
+            <SelectDateUnitDivider style={{zIndex: -1}} />
+            <TouchableWithoutFeedback onPress={() => selectMonthUnit()}>
+              <DateUnitEmptyContainer>
+                <SelectDateUnitText>월</SelectDateUnitText>
+              </DateUnitEmptyContainer>
+            </TouchableWithoutFeedback>
+          </SelectDateUnitContainer>
+        </SelectDateContainer>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <TimerGraphContainer>
+            <TimerGraph />
+          </TimerGraphContainer>
+          <ReportLabelContainer>
+            <ReportLabelText>{'평균 실행 시간'}</ReportLabelText>
+          </ReportLabelContainer>
+          <ReportValueContainer>
+            <FlatList
+              showsHorizontalScrollIndicator={false}
+              horizontal={true}
+              data={TEST_AVERAGE_RUNNING_TIME_DATA}
+              renderItem={renderRunningTimeItem}
+            />
+          </ReportValueContainer>
+          <ReportLabelContainer>
+            <ReportLabelText>{'평균 실행 횟수'}</ReportLabelText>
+          </ReportLabelContainer>
+          <ReportValueContainer>
+            <FlatList
+              showsHorizontalScrollIndicator={false}
+              horizontal={true}
+              data={TEST_AVERAGE_RUNNING_COUNT_DATA}
+              renderItem={renderRunningCountItem}
+            />
+          </ReportValueContainer>
+        </ScrollView>
+      </BodyContainer>
+    </Container>
+  );
+};
 
 const styles = StyleSheet.create({
-    dateUnitButtonShadow: {
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowRadius: 3,
-        shadowOpacity: 0.1,
-    }
-})
+  dateUnitButtonShadow: {
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowRadius: 3,
+    shadowOpacity: 0.1,
+  },
+});
 
-export default TimerReportScreen
+export default TimerReportScreen;

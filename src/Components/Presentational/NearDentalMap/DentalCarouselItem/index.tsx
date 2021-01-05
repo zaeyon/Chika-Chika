@@ -1,8 +1,8 @@
 import React from 'react';
 import Styled from 'styled-components/native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 const Container = Styled.View`
@@ -16,13 +16,13 @@ padding: 24px 24px 24px 24px;
 `;
 
 const DentalImageContainer = Styled.View`
-width: ${wp('25%')};
-height: ${wp('25%')};
+width: ${wp('25%')}px;
+height: ${wp('25%')}px;
 `;
 
 const DentalImage = Styled.Image`
-width: ${wp('25%')};
-height: ${wp('25%')};
+width: ${wp('25%')}px;
+height: ${wp('25%')}px;
 `;
 
 const HeaderContainer = Styled.View`
@@ -148,52 +148,74 @@ font-size: 14px;
 `;
 
 interface Props {
-    isOpen: boolean,
-    isLunchTime: boolean,
-    rating: number,
-    reviewCount: number,
-    name: string,
-    address: string,
-    lunchTime: string,
-    openTime: string,
-    closeTime: string,
+  isOpen: boolean;
+  isLunchTime: boolean;
+  rating: number;
+  reviewCount: number;
+  name: string;
+  address: string;
+  lunchTime: string;
+  openTime: string;
+  closeTime: string;
 }
 
-const DentalCarouselItem = ({isOpen, isLunchTime, rating, reviewCount, name, address, lunchTime, openTime, closeTime}: Props) => {
-    return (
-        <Container>
-            <HeaderContainer>
-                <CurrentStatusContainer>
-                    <OpenStatusContainer style={isOpen ? {backgroundColor: "#0075FF"} : {backgroundColor: "#ffffff"}}>
-                        <CurrentStatusText style={isOpen ? {color: "#ffffff"} : {color: "#7a7a7a"}}>{"진료중"}</CurrentStatusText>
-                    </OpenStatusContainer>
-                    <LauchTimeStatusContainer style={isLunchTime ? {backgroundColor: "#0075FF"} : {backgroundColor: "#ffffff"}}>
-                        <CurrentStatusText style={isLunchTime ? {color: "#ffffff"} : {color: "#7a7a7a"}}>
-                        {"점심시간"}
-                        </CurrentStatusText>
-                    </LauchTimeStatusContainer>
-                </CurrentStatusContainer>
-                <ReviewRatingContainer>
-                    <RatingContainer>
-                    <RatingStarIcon
-                    source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
-                    <RatingText>{rating}</RatingText>
-                    </RatingContainer>
-                    <DividerBar/>
-                    <ReviewText>{"리뷰 "  + reviewCount + "개"}</ReviewText>
-                </ReviewRatingContainer>
-            </HeaderContainer>
-            <DentalInfoContainer>
-                <DentalNameText>{name}</DentalNameText>
-                <DentalAddressText>{address}</DentalAddressText>
-                <LauchTimeText>{"점심시간  " + lunchTime}</LauchTimeText>
-                <OpenTimeText>{"영업시간  " + openTime + "~" + closeTime}</OpenTimeText>
-            </DentalInfoContainer>
-        </Container>
-    )
-}
+const DentalCarouselItem = ({
+  isOpen,
+  isLunchTime,
+  rating,
+  reviewCount,
+  name,
+  address,
+  lunchTime,
+  openTime,
+  closeTime,
+}: Props) => {
+  return (
+    <Container>
+      <HeaderContainer>
+        <CurrentStatusContainer>
+          <OpenStatusContainer
+            style={
+              isOpen
+                ? {backgroundColor: '#0075FF'}
+                : {backgroundColor: '#ffffff'}
+            }>
+            <CurrentStatusText
+              style={isOpen ? {color: '#ffffff'} : {color: '#7a7a7a'}}>
+              {'진료중'}
+            </CurrentStatusText>
+          </OpenStatusContainer>
+          <LauchTimeStatusContainer
+            style={
+              isLunchTime
+                ? {backgroundColor: '#0075FF'}
+                : {backgroundColor: '#ffffff'}
+            }>
+            <CurrentStatusText
+              style={isLunchTime ? {color: '#ffffff'} : {color: '#7a7a7a'}}>
+              {'점심시간'}
+            </CurrentStatusText>
+          </LauchTimeStatusContainer>
+        </CurrentStatusContainer>
+        <ReviewRatingContainer>
+          <RatingContainer>
+            <RatingStarIcon
+              source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}
+            />
+            <RatingText>{rating}</RatingText>
+          </RatingContainer>
+          <DividerBar />
+          <ReviewText>{'리뷰 ' + reviewCount + '개'}</ReviewText>
+        </ReviewRatingContainer>
+      </HeaderContainer>
+      <DentalInfoContainer>
+        <DentalNameText>{name}</DentalNameText>
+        <DentalAddressText>{address}</DentalAddressText>
+        <LauchTimeText>{'점심시간  ' + lunchTime}</LauchTimeText>
+        <OpenTimeText>{'영업시간  ' + openTime + '~' + closeTime}</OpenTimeText>
+      </DentalInfoContainer>
+    </Container>
+  );
+};
 
-export default DentalCarouselItem
-
-
-
+export default DentalCarouselItem;

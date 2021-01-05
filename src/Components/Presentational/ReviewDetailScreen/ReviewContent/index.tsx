@@ -1,21 +1,17 @@
 import React from 'react';
 import Styled from 'styled-components/native';
+import {TouchableWithoutFeedback, FlatList} from 'react-native';
 import {
-    TouchableWithoutFeedback,
-    FlatList,
-} from 'react-native';
-import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-import ReviewCommentList from '~/Components/Presentational/ReviewDetailScreen/ReviewCommentList'
+import ReviewCommentList from '~/Components/Presentational/ReviewDetailScreen/ReviewCommentList';
 
 const Container = Styled.View`
 flex: 1;
 background-color: #ffffff;
 `;
-
 
 const DescripContainer = Styled.View`
 padding-top: 12px;
@@ -31,8 +27,8 @@ const ImageContainer = Styled.View`
 
 const ReviewImage = Styled.Image`
 margin-top: 24px;
-width: ${wp('91.46%')};
-height: ${wp('91.46%')};
+width: ${wp('91.46%')}px;
+height: ${wp('91.46%')}px;
 border-radius: 8px;
 `;
 
@@ -48,41 +44,42 @@ padding-right: 16px;
 `;
 
 interface Props {
-    paragraphArray: Array<Object>,
-    moveToFullImages: (imageUri:string) => void,
+  paragraphArray: Array<Object>;
+  moveToFullImages: (imageUri: string) => void;
 }
 
 const ReviewContent = ({paragraphArray, moveToFullImages}: Props) => {
-    console.log("paragraphArray", paragraphArray);
+  console.log('paragraphArray', paragraphArray);
 
-    const renderParagraphItem = ({item, index}: any) => {
-            return (
-                <ParagraphContainer>
-                    {item.img_url && (
-                        <TouchableWithoutFeedback onPress={() => moveToFullImages(item.img_url)}>
-                        <ImageContainer>
-                            <ReviewImage
-                            source={{uri:item.img_url}}/>
-                        </ImageContainer>
-                        </TouchableWithoutFeedback>
-                    )}
-                    {item.description && (
-                        <DescripContainer>
-                            <DescripText>{item.description}</DescripText>
-                        </DescripContainer>
-                    )}
-                </ParagraphContainer>
-            )
-    }
-
+  const renderParagraphItem = ({item, index}: any) => {
     return (
-        <Container>
-            <FlatList
-            showsVerticalScrollIndicator={false}
-            data={paragraphArray}
-            renderItem={renderParagraphItem}/>
-        </Container>
-    )
-}
+      <ParagraphContainer>
+        {item.img_url && (
+          <TouchableWithoutFeedback
+            onPress={() => moveToFullImages(item.img_url)}>
+            <ImageContainer>
+              <ReviewImage source={{uri: item.img_url}} />
+            </ImageContainer>
+          </TouchableWithoutFeedback>
+        )}
+        {item.description && (
+          <DescripContainer>
+            <DescripText>{item.description}</DescripText>
+          </DescripContainer>
+        )}
+      </ParagraphContainer>
+    );
+  };
+
+  return (
+    <Container>
+      <FlatList
+        showsVerticalScrollIndicator={false}
+        data={paragraphArray}
+        renderItem={renderParagraphItem}
+      />
+    </Container>
+  );
+};
 
 export default ReviewContent;

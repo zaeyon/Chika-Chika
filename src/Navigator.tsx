@@ -170,7 +170,7 @@ function ReviewStackScreen() {
         component={ReviewUploadStackScreen}
       />
       <ReviewStack.Screen
-        name="DentalClinicStack"
+        name="DentalClinicStackScreen"
         component={DentalClinicStackScreen}
       />
     </ReviewStack.Navigator>
@@ -392,12 +392,20 @@ function MyProfileStackScreen() {
         component={PhoneVerifyScreen}
       />
       <MyProfileStack.Screen
-        name="CommunityDetailScreen"
-        component={CommunityDetailScreen}
+        name="CommunityStackScreen"
+        component={CommunityStackScreen}
       />
       <MyProfileStack.Screen
-        name="ReviewDetailScreen"
-        component={ReviewDetailScreen}
+        name="ReviewStackScreen"
+        component={ReviewStackScreen}
+      />
+      <MyProfileStack.Screen
+        name="DentalClinicStackScreen"
+        component={DentalClinicStackScreen}
+      />
+      <MyProfileStack.Screen
+        name="HometownSettingScreen"
+        component={HometownSettingScreen}
       />
     </MyProfileStack.Navigator>
   );
@@ -553,7 +561,6 @@ function BottomTab() {
     const stackRouteName = routeName.state
       ? routeName.state.routes[routeName.state.index].name
       : '';
-
     if (
       stackRouteName === 'CommunityStackScreen' ||
       routeName.name === 'CommunityPostUploadStackScreen'
@@ -604,11 +611,9 @@ function BottomTab() {
 
   const getMyProfileBottomTabBarVisibility = (route: any) => {
     const routeName = route.state ? route.state.routes[route.state.index] : '';
-    const isSlideUp = route?.params?.isSlideUp;
     const stackRouteName = routeName.state
       ? routeName.state.routes[routeName.state.index].name
       : '';
-
     if (routeName.name === 'EditProfileStackScreen') {
       return false;
     }
@@ -633,11 +638,11 @@ function BottomTab() {
       return false;
     }
 
-    if (routeName.name === 'CommentedPostsTabScreen') {
+    if (routeName.name === 'CommunityStackScreen') {
       return false;
     }
 
-    if (routeName.name === 'CommunityDetailScreen') {
+    if (routeName.name === 'ReviewStackScreen') {
       return false;
     }
 

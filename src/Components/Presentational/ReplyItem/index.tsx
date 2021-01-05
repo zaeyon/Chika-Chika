@@ -12,7 +12,7 @@ import {
 import {useSelector} from 'react-redux';
 
 const Container = Styled.View`
- width: ${wp('100%')};
+ width: ${wp('100%')}px;
  margin-bottom: 2px;
  flex-direction: row;
 `;
@@ -54,8 +54,8 @@ const FooterContainer = Styled.View`
 `;
 
 const ProfileImage = Styled.Image`
- width: ${wp('8.5%')};
- height: ${wp('8.5%')};
+ width: ${wp('8.5%')}px;
+ height: ${wp('8.5%')}px;
  border-radius: 100px;
 `;
 

@@ -14,7 +14,7 @@ import {
 } from 'react-native-responsive-screen';
 
 const ContainerView = Styled.View`
-width: ${wp('100%')};
+width: ${wp('100%')}px;
 height: auto;
 padding-top: 24px;
 background-color: white
@@ -129,7 +129,7 @@ margin-right: 16px;
 margin-left: ${(props) => (props.isFirst ? '0px' : '16px')}
 `;
 const SocialInfoContainerView = Styled.View`
-width: ${wp('100%')};
+width: ${wp('100%')}px;
 height: 56px;
 align-items: center;
 flex-direction: row;

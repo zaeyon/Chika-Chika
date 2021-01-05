@@ -271,8 +271,6 @@ interface Props {
   imageArray: Array<any>;
   isCurUserLikeProp: boolean;
   isCurUserScrapProp: boolean;
-  likeArray: Array<any>;
-  scrapArray: Array<any>;
   refreshingReviewList: boolean;
   dentalObj: DentalObj;
   moveToReviewDetail: (
@@ -312,64 +310,16 @@ const ReviewItem = ({
   moveToWriterProfile,
   isCurUserLikeProp,
   isCurUserScrapProp,
-  likeArray,
-  scrapArray,
   refreshingReviewList,
   dentalObj,
   moveToDentalDetail,
 }: Props) => {
-  const [isCurUserLike, setIsCurUserLike] = useState<boolean>(
-    isCurUserLikeProp,
-  );
-  const [isCurUserScrap, setIsCurUserScrap] = useState<boolean>(
-    isCurUserScrapProp,
-  );
-  const [changeState, setChangeState] = useState<boolean>(false);
-  const [likeCount, setLikeCount] = useState<number>(likeCountProp);
   const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
   const jwtToken = currentUser.jwtToken;
 
   let formatedCreatedAtDate = '';
   let formatedTreatmentDate = '';
-
-  useLayoutEffect(() => {
-    console.log('likeArray 변경', likeArray);
-    if (writer.nickname === 'TEST1608115556040') {
-      console.log('좋아요 Props 변함22', isCurUserLikeProp, likeCountProp);
-    }
-
-    if (!refreshingReviewList) {
-      console.log('refreshingReviewList', refreshingReviewList);
-      if (likeArray[0]) {
-        if (isCurUserLikeProp) {
-          setIsCurUserLike(true);
-        }
-        setLikeCount(likeCountProp);
-      } else {
-        if (!isCurUserLikeProp) {
-          setIsCurUserLike(false);
-        }
-        setLikeCount(likeCountProp);
-      }
-
-      if (scrapArray[0]) {
-        if (isCurUserScrapProp) {
-          setIsCurUserScrap(true);
-        }
-      } else {
-        if (!isCurUserScrapProp) {
-          setIsCurUserScrap(false);
-        }
-      }
-    }
-  }, [
-    likeCountProp,
-    isCurUserLikeProp,
-    isCurUserScrapProp,
-    likeArray,
-    scrapArray,
-  ]);
 
   imageArray.forEach((item, index) => {
     if (item.img_before_after === 'after') {
@@ -420,8 +370,9 @@ const ReviewItem = ({
   };
 
   const clickLike = () => {
+    console.log(isCurUserLikeProp);
     dispatch(allActions.reviewListActions.toggleReviewLike(reviewId));
-    if (isCurUserLike) {
+    if (isCurUserLikeProp) {
       deleteReviewLike();
     } else {
       postReviewLike();
@@ -430,7 +381,7 @@ const ReviewItem = ({
 
   const clickScrap = () => {
     dispatch(allActions.reviewListActions.toggleReviewScrap(reviewId));
-    if (isCurUserScrap) {
+    if (isCurUserScrapProp) {
       deleteReviewScrap();
     } else {
       postReviewScrap();
@@ -438,10 +389,6 @@ const ReviewItem = ({
   };
 
   const postReviewLike = () => {
-    setIsCurUserLike(true);
-    setLikeCount((prevState) => prevState + 1);
-    isCurUserLikeProp = true;
-    likeCountProp = likeCountProp + 1;
     POSTReviewLike({jwtToken, reviewId})
       .then((response) => {
         console.log('POSTReviewLike response', response);
@@ -452,10 +399,6 @@ const ReviewItem = ({
   };
 
   const deleteReviewLike = () => {
-    setIsCurUserLike(false);
-    isCurUserLikeProp = false;
-    likeCountProp = likeCountProp - 1;
-    setLikeCount((prevState) => prevState - 1);
     DELETEReviewLike({jwtToken, reviewId})
       .then((response) => {
         console.log('DELETEReviewLike response', response);
@@ -466,7 +409,6 @@ const ReviewItem = ({
   };
 
   const postReviewScrap = () => {
-    setIsCurUserScrap(true);
     POSTReviewScrap({jwtToken, reviewId})
       .then((response) => {
         console.log('POSTReviewScrap response', response);
@@ -477,7 +419,6 @@ const ReviewItem = ({
   };
 
   const deleteReviewScrap = () => {
-    setIsCurUserScrap(false);
     DELETEReviewScrap({jwtToken, reviewId})
       .then((response) => {
         console.log('DELETEReviewScrap response', response);
@@ -506,10 +447,10 @@ const ReviewItem = ({
           ratingObj,
           formatedTreatmentDate,
           imageArray,
-          isCurUserLike,
-          likeCount,
+          isCurUserLikeProp,
+          likeCountProp,
           commentCount,
-          isCurUserScrap,
+          isCurUserScrapProp,
           dentalObj,
         )
       }>
@@ -537,7 +478,7 @@ const ReviewItem = ({
             <ScrapContainer>
               <ScrapIcon
                 style={
-                  isCurUserScrap
+                  isCurUserScrapProp
                     ? {tintColor: '#FFE600'}
                     : {tintColor: '#C3C3C3'}
                 }
@@ -580,13 +521,13 @@ const ReviewItem = ({
               <LikeContainer>
                 <LikeIcon
                   style={
-                    isCurUserLike
+                    isCurUserLikeProp
                       ? {tintColor: '#FF5656'}
                       : {tintColor: '#c3c3c3'}
                   }
                   source={require('~/Assets/Images/Review/ic_like_inline.png')}
                 />
-                <IndicatorCountText>{likeCount}</IndicatorCountText>
+                <IndicatorCountText>{likeCountProp}</IndicatorCountText>
               </LikeContainer>
             </TouchableWithoutFeedback>
             <CommentContainer>

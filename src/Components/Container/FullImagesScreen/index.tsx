@@ -17,10 +17,9 @@ const PullImage = Styled.Image`
 flex: 1;
 `;
 
-
 const HeaderContainer = Styled.View`
- width: ${wp('100%')};
- height: ${wp('13.8%')};
+ width: ${wp('100%')}px;
+ height: ${wp('13.8%')}px;
  flex-direction: row;
  align-items: center;
  justify-content:space-between;
@@ -35,8 +34,8 @@ padding-bottom: 13px;
 `;
 
 const HeaderCancelIcon = Styled.Image`
- width: ${wp('6.4%')};
- height: ${wp('6.4%')};
+ width: ${wp('6.4%')}px;
+ height: ${wp('6.4%')}px;
  tint-color: #ffffff;
 `;
 
@@ -46,20 +45,18 @@ const ImagesContainer = Styled.View`
 `;
 
 interface Props {
-  navigation: any,
-  route: any,
+  navigation: any;
+  route: any;
 }
-
 
 const FullImagesScreen = ({route, navigation}: Props) => {
   const {imageArray} = route.params;
   const {imageIndex} = route.params;
 
   console.log('imageIndex', imageIndex);
-  console.log("imageArray", imageArray);
+  console.log('imageArray', imageArray);
 
   useEffect(() => {
-
     const backAction = () => {
       navigation.goBack();
       return true;
@@ -76,24 +73,24 @@ const FullImagesScreen = ({route, navigation}: Props) => {
   return (
     <Container>
       <HeaderContainer>
-      <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
-        <LeftContainer>
-          <HeaderCancelIcon
-          source={require('~/Assets/Images/HeaderBar/ic_X.png')}/>
-        </LeftContainer>
-      </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
+          <LeftContainer>
+            <HeaderCancelIcon
+              source={require('~/Assets/Images/HeaderBar/ic_X.png')}
+            />
+          </LeftContainer>
+        </TouchableWithoutFeedback>
       </HeaderContainer>
       <ImagesContainer>
-      <SliderBox
-        images={imageArray}
-        disableOnPress={true}
-        resizeMode="contain"
-        sliderBoxHeight={hp('88%')}
-        imageIndex={imageIndex}
-        dotColor="#267DFF"
-        inactiveDotColor="#cccccc"
-      />
-    
+        <SliderBox
+          images={imageArray}
+          disableOnPress={true}
+          resizeMode="contain"
+          sliderBoxHeight={hp('88%')}
+          imageIndex={imageIndex}
+          dotColor="#267DFF"
+          inactiveDotColor="#cccccc"
+        />
       </ImagesContainer>
     </Container>
   );

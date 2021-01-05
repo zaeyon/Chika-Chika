@@ -2,8 +2,8 @@ import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback} from 'react-native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 const Container = Styled.SafeAreaView`
@@ -20,7 +20,6 @@ const HeaderBar = Styled.View`
  background-color:#ffffff;
 `;
 
-
 const HeaderLeftContainer = Styled.View`
 padding: 7px 16px 13px 15px;
  align-items: center;
@@ -29,8 +28,8 @@ padding: 7px 16px 13px 15px;
 `;
 
 const HeaderBackIcon = Styled.Image`
- width: ${wp('6.4%')};
- height: ${wp('6.4%')};
+ width: ${wp('6.4%')}px;
+ height: ${wp('6.4%')}px;
 `;
 
 const HeaderTitleText = Styled.Text`
@@ -44,44 +43,41 @@ padding: 7px 16px 13px 15px;
 `;
 
 const HeaderEmptyView = Styled.View`
- width: ${wp('6.4%')};
- height: ${wp('6.4%')};
+ width: ${wp('6.4%')}px;
+ height: ${wp('6.4%')}px;
 `;
 
 const ReviewListContainer = Styled.ScrollView`
 `;
 
 interface Props {
-    navigation: any,
-    route: any,
+  navigation: any;
+  route: any;
 }
 
 const AnotherProfileScreen = ({navigation, route}: Props) => {
+  const goBack = () => {
+    navigation.goBack();
+  };
 
-    const goBack = () => {
-        navigation.goBack()
-    }
-
-    return (
-        <Container>
-            <HeaderBar>
-                <TouchableWithoutFeedback onPress={() => goBack()}>
-                <HeaderLeftContainer>
-                    <HeaderBackIcon
-                    source={require('~/Assets/Images/HeaderBar/ic_back.png')}/>
-                </HeaderLeftContainer>
-                </TouchableWithoutFeedback>
-                <HeaderTitleText>Another Profile Screen</HeaderTitleText>
-                <HeaderRightContainer>
-                    <HeaderEmptyView/>
-                </HeaderRightContainer>
-            </HeaderBar>
-            <ReviewListContainer>
-            </ReviewListContainer>
-        </Container>
-    )
-}
+  return (
+    <Container>
+      <HeaderBar>
+        <TouchableWithoutFeedback onPress={() => goBack()}>
+          <HeaderLeftContainer>
+            <HeaderBackIcon
+              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
+            />
+          </HeaderLeftContainer>
+        </TouchableWithoutFeedback>
+        <HeaderTitleText>Another Profile Screen</HeaderTitleText>
+        <HeaderRightContainer>
+          <HeaderEmptyView />
+        </HeaderRightContainer>
+      </HeaderBar>
+      <ReviewListContainer></ReviewListContainer>
+    </Container>
+  );
+};
 
 export default AnotherProfileScreen;
-
-

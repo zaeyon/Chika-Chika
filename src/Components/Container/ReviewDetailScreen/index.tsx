@@ -60,8 +60,8 @@ const HeaderLeftContainer = Styled.View`
 `;
 
 const HeaderBackIcon = Styled.Image`
- width: ${wp('6.4%')};
- height: ${wp('6.4%')};
+ width: ${wp('6.4%')}px;
+ height: ${wp('6.4%')}px;
 `;
 
 const HeaderTitleContainer = Styled.View`
@@ -70,8 +70,8 @@ align-items: center;
 `;
 
 const ProfileImage = Styled.Image`
-width: ${wp('6.9%')};
-height: ${wp('6.9%')};
+width: ${wp('6.9%')}px;
+height: ${wp('6.9%')}px;
 border-radius: 100px;
 background-color: #ececec
 `;
@@ -83,8 +83,8 @@ color: #000000;
 `;
 
 const HeaderEmptyView = Styled.View`
- width: ${wp('6.4%')};
- height: ${wp('6.4%')};
+ width: ${wp('6.4%')}px;
+ height: ${wp('6.4%')}px;
 `;
 
 const HeaderTitleText = Styled.Text`
@@ -98,8 +98,8 @@ flex-direction: row;
 `;
 
 const HeaderMoreIcon = Styled.Image`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const BodyContainer = Styled.View`
@@ -110,7 +110,7 @@ background-color: #ffffff;
 const BottomBarContainer = Styled.View`
 position: absolute;
 bottom: 0;
-width: ${wp('100%')};
+width: ${wp('100%')}px;
 `;
 
 const DentalInfoContainer = Styled.View`

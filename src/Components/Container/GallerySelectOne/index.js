@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 
 import Row from './Row';
 import ImageItem from './ImageItem';
-import AlbumItem from '~/Components/Container/Gallery/AlbumItem'
+import AlbumItem from '~/Components/Container/Gallery/AlbumItem';
 const styles = StyleSheet.create({
   wrapper: {
     flexGrow: 1,
@@ -42,8 +42,8 @@ const Container = Styled.SafeAreaView`
 `;
 
 const HeaderContainer = Styled.View`
- width: ${wp('100%')};
- height: ${wp('11.7%')};
+ width: ${wp('100%')}px;
+ height: ${wp('11.7%')}px;
  background-color: #FFFFFF;
  justify-content: space-between;
  align-items: center;
@@ -61,13 +61,13 @@ const HeaderCancelText = Styled.Text`
  color: #C6C7CC;
  `;
 
- const HeaderRightContainer = Styled.View`
+const HeaderRightContainer = Styled.View`
  padding: 7px 15px 13px 16px;
  align-items: center;
  justify-content: center;
  `;
 
- const HeaderAttachText = Styled.Text`
+const HeaderAttachText = Styled.Text`
 font-weight: 500;
 font-size: 17px;
 color: #267DFF;
@@ -79,14 +79,14 @@ color: #C6C7CC;
 `;
 
 const CloseButton = Styled.Image`
- width: ${wp('6.4%')};
- height: ${wp('4%')};
+ width: ${wp('6.4%')}px;
+ height: ${wp('4%')}px;
  tint-color: #707070;
 `;
 
 const FinishButton = Styled.Image`
- width: ${wp('5.5%')};
- height: ${wp('4%')};
+ width: ${wp('5.5%')}px;
+ height: ${wp('4%')}px;
  tint-color: #707070;
 `;
 
@@ -99,8 +99,8 @@ const AlbumNameText = Styled.Text`
 const DropdownIcon = Styled.Image`
  margin-left: 7px;
  margin-bottom: 3px;
- width: ${wp('3.2%')};
- height: ${wp('3.2%')};
+ width: ${wp('3.2%')}px;
+ height: ${wp('3.2%')}px;
 `;
 
 const HeaderCenterContainer = Styled.View`
@@ -117,12 +117,10 @@ const ImageListContainer = Styled.View`
 
 `;
 
-
 const HeaderEmptyContainer = Styled.View`
- width: ${wp('6.4%')};
- height: ${wp('6.4%')};
+ width: ${wp('6.4%')}px;
+ height: ${wp('6.4%')}px;
 `;
-
 
 // helper functions
 const arrayObjectIndexOf = (array, property, value) =>
@@ -188,7 +186,7 @@ class GallerySelectOne extends Component {
     var allPhotoCount = 0;
 
     CameraRoll.getAlbums(params).then((data) => {
-      console.log("앨범 목록", data)
+      console.log('앨범 목록', data);
       var albumArray = data.map(function (obj) {
         var albumObj = {
           title: obj.title,
@@ -197,40 +195,39 @@ class GallerySelectOne extends Component {
 
         CameraRoll.getPhotos({
           first: 1,
-          groupTypes: "Album",
-          groupName: obj.title
+          groupTypes: 'Album',
+          groupName: obj.title,
         })
-        .then(r => {
-          console.log("앨범 이름", obj.title);
-          console.log("앨범 썸네일", r.edges[0].node.image)
-          albumObj.thumbnail = r.edges
-        })
-        .catch(err => {
-          console.log("앨범 썸네일 오류", err)
-        })
+          .then((r) => {
+            console.log('앨범 이름', obj.title);
+            console.log('앨범 썸네일', r.edges[0].node.image);
+            albumObj.thumbnail = r.edges;
+          })
+          .catch((err) => {
+            console.log('앨범 썸네일 오류', err);
+          });
 
         return albumObj;
       });
 
       CameraRoll.getPhotos({
         first: 1,
-        assetType: 'Photos'
+        assetType: 'Photos',
       })
-      .then(r => {
-        console.log("모두 보기 썸네일", r.edges)
-        albumArray.unshift({title: '모두 보기', thumbnail: r.edges});
-        
-       setTimeout(() => {
-        this.setState({
-          albumArray: albumArray,
-        });
-        console.log('22 albumName', this.state.albumArray);
+        .then((r) => {
+          console.log('모두 보기 썸네일', r.edges);
+          albumArray.unshift({title: '모두 보기', thumbnail: r.edges});
 
-      }, 100)
-      })
-      .catch(err => {
-        console.log("모두 보기 썸네일 err", err);
-      })
+          setTimeout(() => {
+            this.setState({
+              albumArray: albumArray,
+            });
+            console.log('22 albumName', this.state.albumArray);
+          }, 100);
+        })
+        .catch((err) => {
+          console.log('모두 보기 썸네일 err', err);
+        });
     });
   }
 
@@ -253,7 +250,7 @@ class GallerySelectOne extends Component {
       }),
     );
 
-    console.log("갤러리 요청화면", this.props.route.params?.requestType);
+    console.log('갤러리 요청화면', this.props.route.params?.requestType);
   }
 
   componentWillUnmount() {
@@ -278,7 +275,7 @@ class GallerySelectOne extends Component {
   _toggleAlbumList() {
     this.setState({
       visibleAlbumList: !this.state.visibleAlbumList,
-    })
+    });
   }
 
   onEndReached() {
@@ -341,48 +338,46 @@ class GallerySelectOne extends Component {
   }
   */
 
+  doFetch() {
+    console.log('doFetch selectedAlbum', this.state.selectedAlbum);
+    let {groupTypes, assetType} = this.props;
+    let groupName;
+    let fetchParams;
+    if (this.state.selectedAlbum === '모두 보기') {
+      console.log('사진 모두보기');
+      fetchParams = {
+        first: 100,
+        assetType,
+      };
+    } else {
+      console.log('선택한 앨밤', this.state.selectedAlbum);
+      groupName = this.state.selectedAlbum;
 
- doFetch() {
-  console.log("doFetch selectedAlbum", this.state.selectedAlbum);
-  let {groupTypes, assetType} = this.props;
-  let groupName;
-  let fetchParams;
-  if (this.state.selectedAlbum === '모두 보기') {
-    console.log("사진 모두보기");
-    fetchParams = {
-      first: 100,
-      assetType,
-    };
-  } else {
-    console.log("선택한 앨밤", this.state.selectedAlbum);
-    groupName = this.state.selectedAlbum;
-
-    fetchParams = {
-      first: 100,
-      groupTypes: "Album",
-      groupName,
-    };
-  }
-  /*
+      fetchParams = {
+        first: 100,
+        groupTypes: 'Album',
+        groupName,
+      };
+    }
+    /*
   if (Platform.OS === 'android') {
     // not supported in android
     //delete fetchParams.groupTypes;
   }
   */
- 
-  if (this.state.lastCursor) {
-    fetchParams.after = this.state.lastCursor;
-  }
-  
 
-  CameraRoll.getPhotos(fetchParams).then(
-    (data) => {
-      this.appendImages(data)
-      console.log("불러온 사진22", data);
-    },
-    (e) => console.log(e),
-  );
-}
+    if (this.state.lastCursor) {
+      fetchParams.after = this.state.lastCursor;
+    }
+
+    CameraRoll.getPhotos(fetchParams).then(
+      (data) => {
+        this.appendImages(data);
+        console.log('불러온 사진22', data);
+      },
+      (e) => console.log(e),
+    );
+  }
 
   selectImage(image) {
     const {maximum, imagesPerRow, callback, selectSingleItem} = this.props;
@@ -415,7 +410,6 @@ class GallerySelectOne extends Component {
     console.log('사진선택완료');
     console.log('사진선택 this.state.selected', this.state.selected);
     var _selectedImages = this.state.selected.slice(0);
-
 
     this.props.navigation.navigate('UploadAdditionInfo', {
       selectedImages: _selectedImages,
@@ -490,7 +484,6 @@ class GallerySelectOne extends Component {
       loader,
     } = this.props;
 
-
     if (this.state.initialLoading) {
       return (
         <View style={[styles.loader, {backgroundColor}]}>
@@ -499,29 +492,28 @@ class GallerySelectOne extends Component {
       );
     }
 
-
     const selectAlbum = (title) => {
       this.setState({
         visibleAlbumList: false,
         selectedAlbum: title,
         lastCursor: null,
         images: [],
-      })
-  
-      this.fetch()
-      }
+      });
+
+      this.fetch();
+    };
 
     const renderAlbumItem = ({item, index}) => {
-      console.log("renderAlbumItem item", item.thumbnail[0].node.image);
+      console.log('renderAlbumItem item', item.thumbnail[0].node.image);
       return (
         <AlbumItem
-        albumCount={item.count}
-        albumTitle={item.title}
-        albumThumbnail={item.thumbnail[0].node.image.uri}
-        selectAlbum={selectAlbum}
+          albumCount={item.count}
+          albumTitle={item.title}
+          albumThumbnail={item.thumbnail[0].node.image.uri}
+          selectAlbum={selectAlbum}
         />
-      )
-    }
+      );
+    };
 
     const flatListOrEmptyText =
       this.state.data.length > 0 ? (
@@ -541,50 +533,51 @@ class GallerySelectOne extends Component {
 
     return (
       <Container>
-<HeaderContainer>
+        <HeaderContainer>
           <TouchableWithoutFeedback
             onPress={() => this.props.navigation.goBack()}>
-          <HeaderLeftContainer>
-            <HeaderCancelText>취소</HeaderCancelText>
-          </HeaderLeftContainer>
+            <HeaderLeftContainer>
+              <HeaderCancelText>취소</HeaderCancelText>
+            </HeaderLeftContainer>
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback onPress={() => this._toggleAlbumList()}>
-          <HeaderCenterContainer>
-          <AlbumNameText>{this.state.selectedAlbum}</AlbumNameText>
-          <DropdownIcon
-          source={
-            this.state.visibleAlbumList 
-            ? require('~/Assets/Images/HeaderBar/ic_dropdown_fold.png')
-            : require('~/Assets/Images/HeaderBar/ic_dropDown.png')}/>
-         </HeaderCenterContainer>
-         </TouchableWithoutFeedback>
-         {this.state.selected.length === 0 && (
-           <HeaderRightContainer>
-             <HeaderEmptyContainer/>
-           </HeaderRightContainer>
-         )}
-         {this.state.selected.length > 0 && (
-<TouchableWithoutFeedback onPress={() => this._pressFinish()}>
-<HeaderRightContainer>
-  <HeaderEmptyContainer/>
-</HeaderRightContainer>
-</TouchableWithoutFeedback>
-         )}
+            <HeaderCenterContainer>
+              <AlbumNameText>{this.state.selectedAlbum}</AlbumNameText>
+              <DropdownIcon
+                source={
+                  this.state.visibleAlbumList
+                    ? require('~/Assets/Images/HeaderBar/ic_dropdown_fold.png')
+                    : require('~/Assets/Images/HeaderBar/ic_dropDown.png')
+                }
+              />
+            </HeaderCenterContainer>
+          </TouchableWithoutFeedback>
+          {this.state.selected.length === 0 && (
+            <HeaderRightContainer>
+              <HeaderEmptyContainer />
+            </HeaderRightContainer>
+          )}
+          {this.state.selected.length > 0 && (
+            <TouchableWithoutFeedback onPress={() => this._pressFinish()}>
+              <HeaderRightContainer>
+                <HeaderEmptyContainer />
+              </HeaderRightContainer>
+            </TouchableWithoutFeedback>
+          )}
         </HeaderContainer>
         {!this.state.visibleAlbumList && (
-        <ImageListContainer>
-        {flatListOrEmptyText}
-        </ImageListContainer>
+          <ImageListContainer>{flatListOrEmptyText}</ImageListContainer>
         )}
         {this.state.visibleAlbumList && (
           <AlbumListContainer>
             <FlatList
-            showsVerticalScrollIndicator={false}
-            data={this.state.albumArray}
-            renderItem={renderAlbumItem}/>
+              showsVerticalScrollIndicator={false}
+              data={this.state.albumArray}
+              renderItem={renderAlbumItem}
+            />
           </AlbumListContainer>
         )}
-        </Container>
+      </Container>
     );
   }
 }
