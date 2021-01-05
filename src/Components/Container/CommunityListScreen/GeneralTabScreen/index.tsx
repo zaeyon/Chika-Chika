@@ -22,10 +22,10 @@ import CommunityPostList from '~/Components/Presentational/CommunityPostList';
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
 import DELETESocialLike from '~/Routes/Community/social/DELETESocialLike';
-import DELETECommunityPost from '~/Routes/Community/deletePost/DELETECommunityPost';
-import communityActions from '~/actions/communityActions';
+import POSTSocialScrap from '~/Routes/Community/social/POSTSocialScrap';
+import DELETESocialScrap from '~/Routes/Community/social/DELETESocialScrap';
 
-const ContainerView = Styled.SafeAreaView`
+const ContainerView = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
 `;
@@ -38,11 +38,11 @@ interface Props {
 const FreeTalkTabScreen = ({navigation, route}: Props) => {
   const type = 'FreeTalk';
   const limit = 10;
+  const [isDataFinish, setIsDataFinish] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [pageIndex, setPageIndex] = useState(0);
   const [isEndReached, setIsEndReached] = useState(false);
   const [order, setOrder] = useState('createdAt');
-  const jwtToken = route.params.currentUser.user.jwtToken;
+  const jwtToken = route.params.jwtToken;
   const postData = useSelector(
     (state: any) => state.communityPostList.FreeTalkPosts,
   );
@@ -58,32 +58,37 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
     };
     setRefreshing(true);
     GETCommunityPosts(jwtToken, form).then((response: any) => {
+      setIsDataFinish(false);
       const data = {
         type,
         posts: response,
       };
       dispatch(allActions.communityActions.setPosts(data));
-      setPageIndex(0);
       setRefreshing(false);
     });
   }, [jwtToken, order]);
 
   const onEndReached = useCallback(
     (info: any) => {
-      return 0; // depa
+      if (!postData.length || postData.length % limit !== 0) {
+        return;
+      }
       if (!isEndReached) {
+        console.log(postData.length);
         setIsEndReached(true);
-        const newPageIndex = pageIndex + 1;
+        const pageIndex = Math.floor(postData.length / 10);
 
         const form = {
           type: type,
           limit: limit,
-          offset: newPageIndex * limit,
+          offset: pageIndex * limit,
           order: order,
         };
-        setPageIndex((prev: any) => prev + 1);
         GETCommunityPosts(jwtToken, form).then((response: any) => {
           console.log(response.length);
+          if (response.length === 0) {
+            setIsDataFinish(true);
+          }
           const data = {
             type,
             posts: [...postData, ...response],
@@ -93,7 +98,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
         });
       }
     },
-    [isEndReached, pageIndex, postData, order, jwtToken],
+    [isEndReached, postData, order, jwtToken],
   );
 
   const moveToCommunityDetail = useCallback(
@@ -133,13 +138,32 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
     [],
   );
 
-  const toggleSocialScrap = useCallback(() => {}, []);
+  const toggleSocialScrap = useCallback(
+    (postId: number, prevState: number, type: string) => {
+      const form = {
+        type,
+        id: postId,
+      };
+      dispatch(allActions.communityActions.toggleScrap(form));
+      if (prevState) {
+        // true
+        DELETESocialScrap(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      } else {
+        POSTSocialScrap(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      }
+    },
+    [],
+  );
 
   return (
     <ContainerView>
       <CommunityPostList
-        navigation={navigation}
-        route={route}
         postData={postData}
         refreshing={refreshing}
         onRefresh={onRefresh}

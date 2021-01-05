@@ -54,7 +54,9 @@ export default class BottomSheet extends Component<IProps, IState> {
       isVisible: false,
       onSwipe: false,
     };
-    this._backgroundOpacity = new Animated.Value(0);
+    this._backgroundOpacity = new Animated.Value(
+      windowHeight - this.props.visibleHeight,
+    );
 
     this._lastScrollYValue = 0;
     this._lastScrollY = new Animated.Value(0);

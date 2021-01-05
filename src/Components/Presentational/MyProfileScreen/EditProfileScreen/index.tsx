@@ -17,7 +17,6 @@ import ActionSheet from 'react-native-actionsheet';
 const ContainerView = Styled.ScrollView`
 flex: 1;
 background: #EEEEEE;
-margin-bottom: ${hp('9.6%')}px;
 `;
 
 const ProfileContainerView = Styled.View`
@@ -263,6 +262,8 @@ color: #2998FF;
 
 interface Props {
   moveToGallery: any;
+  moveToHomeTownSetting: any;
+  moveToPhoneVerify: any;
   currentUser: any;
   changeProfileNickname: (nickname: string) => void;
   changeProfileGender: (gender: string) => void;
@@ -271,6 +272,8 @@ interface Props {
 
 const EditProfileScreen = ({
   moveToGallery,
+  moveToHomeTownSetting,
+  moveToPhoneVerify,
   currentUser,
   changeProfileNickname,
   changeProfileGender,
@@ -325,7 +328,10 @@ const EditProfileScreen = ({
     setTextInput('');
   }, [textInput]);
 
-  const onChangeText = useCallback((input: string) => setTextInput(input), []);
+  const onChangeText = useCallback(
+    (input: string) => setTextInput(input.replace(/\s/g, '')),
+    [],
+  );
 
   return (
     <ContainerView
@@ -379,7 +385,7 @@ const EditProfileScreen = ({
             <ProfileImageView>
               <ProfileImage
                 source={{
-                  uri: currentUser.profileImage,
+                  uri: currentUser.profileImg,
                 }}
               />
             </ProfileImageView>
@@ -397,7 +403,7 @@ const EditProfileScreen = ({
         <SettingTitleView>
           <SettingTitleText>위치설정</SettingTitleText>
         </SettingTitleView>
-        <ContentTouchableOpacity>
+        <ContentTouchableOpacity onPress={() => moveToHomeTownSetting()}>
           <ContentTitleText>동네설정</ContentTitleText>
           <LocationIconView></LocationIconView>
           <ContentText>이의동</ContentText>
@@ -418,7 +424,7 @@ const EditProfileScreen = ({
         <SettingTitleView>
           <SettingTitleText>개인설정</SettingTitleText>
         </SettingTitleView>
-        <ContentTouchableOpacity>
+        <ContentTouchableOpacity onPress={() => moveToPhoneVerify()}>
           <ContentTitleText>전화번호</ContentTitleText>
           <ContentText>{currentUser.phoneNumber}</ContentText>
         </ContentTouchableOpacity>

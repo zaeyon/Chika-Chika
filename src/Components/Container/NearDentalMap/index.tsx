@@ -437,7 +437,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
     // 주차가능 설정 redux state
     const parkingFilter = useSelector((state: any) => state.dentalFilter).parkingFilter;
 
-    const jwtToken = currentUser.user.jwtToken;
+    const jwtToken = currentUser.jwtToken;
     const todayIndex = new Date().getDay();
 
     useEffect(() => {

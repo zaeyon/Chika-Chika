@@ -7,6 +7,7 @@ import {
   View,
   Text,
   Alert,
+  LayoutAnimation,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -47,20 +48,41 @@ interface imageItem {
 const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.user.jwtToken;
+  const jwtToken = currentUser.jwtToken;
   const prevData = useSelector((state: any) => {
-    if (route.params.data.type === '질문') {
+    if (route.params.data.routeType === 'Question') {
+      console.log('Q');
       return state.communityPostList.QuestionPosts.find(
         (item: any) => item.id === route.params.data.id,
       );
-    } else if (route.params.data.type === '자유') {
+    } else if (route.params.data.routeType === 'FreeTalk') {
+      console.log('F');
       return state.communityPostList.FreeTalkPosts.find(
         (item: any) => item.id === route.params.data.id,
       );
-    } else {
-      return false;
+    } else if (route.params.data.routeType === 'MyPosts') {
+      console.log('My');
+      return state.communityPostList.MyPosts.find(
+        (item: any) => item.id === route.params.data.id,
+      );
+    } else if (route.params.data.routeType === 'Liked') {
+      console.log('Liked');
+      return state.communityPostList.LikedCommunityPosts.find(
+        (item: any) => item.id === route.params.data.id,
+      );
+    } else if (route.params.data.routeType === 'Scraped') {
+      console.log('Scraped');
+      return state.communityPostList.ScrapedCommunityPosts.find(
+        (item: any) => item.id === route.params.data.id,
+      );
+    } else if (route.params.data.routeType === 'Commented') {
+      console.log('Commented');
+      return state.communityPostList.CommentedCommunityPosts.find(
+        (item: any) => item.id === route.params.data.id,
+      );
     }
   });
+
   const prevDescription = route.params.data.description;
   const prevType = route.params.data.type;
   const mode = prevData ? 'edit' : 'create';
@@ -201,10 +223,27 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
             type: formattedCategory,
             posts: response,
           };
-          dispatch(allActions.communityActions.setPosts(data));
+          if (
+            JSON.stringify(response).replace(
+              /"createdDiff\(second\)\"\:\d*\,/gi,
+              '',
+            ) !==
+            JSON.stringify(postData).replace(
+              /"createdDiff\(second\)\"\:\d*\,/gi,
+              '',
+            )
+          ) {
+            console.log('liked post diff');
+            LayoutAnimation.configureNext(
+              LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+            );
+
+            dispatch(allActions.communityActions.setPosts(data));
+          }
           console.log('res', response.length);
         });
         navigation.navigate('CommunityListScreen');
+        console.log('call layout animation');
       });
     }
   };
@@ -232,9 +271,12 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
             data: response.body.updateCommunityPost,
           };
           dispatch(allActions.communityActions.editPost(form));
-          navigation.navigate('CommunityDetailScreen', {
-            id: prevData.id,
-            type: formattedCategory,
+          navigation.navigate('CommunityStackScreen', {
+            screen: 'CommunityDetailScreen',
+            params: {
+              id: prevData.id,
+              type: formattedCategory,
+            },
           });
         },
       );

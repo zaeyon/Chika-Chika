@@ -30,6 +30,8 @@ import POSTCommunityPostComment from '~/Routes/Community/postDetail/POSTCommunit
 import DELETECommunityPost from '~/Routes/Community/deletePost/DELETECommunityPost';
 import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
 import DELETESocialLike from '~/Routes/Community/social/DELETESocialLike';
+import POSTSocialScrap from '~/Routes/Community/social/POSTSocialScrap';
+import DELETESocialScrap from '~/Routes/Community/social/DELETESocialScrap';
 // redux
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
@@ -75,16 +77,26 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     } else if (route.params.type === 'FreeTalk') {
       console.log('F');
       return state.communityPostList.FreeTalkPosts;
-    } else {
-      console.log('A');
-      return state.communityPostList.HomePosts;
+    } else if (route.params.type === 'MyPosts') {
+      console.log('My');
+      return state.communityPostList.MyPosts;
+    } else if (route.params.type === 'Liked') {
+      console.log('Liked');
+      return state.communityPostList.LikedCommunityPosts;
+    } else if (route.params.type === 'Scraped') {
+      console.log('Scraped');
+      return state.communityPostList.ScrapedCommunityPosts;
+    } else if (route.params.type === 'Commented') {
+      console.log('Commented');
+      return state.communityPostList.CommentedCommunityPosts;
     }
   });
   const [postData, setPostData] = useState(
     postList.find((item: any) => item.id === route.params.id),
   );
 
-  const jwtToken = currentUser.user.jwtToken;
+  const jwtToken = currentUser.jwtToken;
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -147,17 +159,31 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
         id: postData.id,
         description: deorderDescription(postData.description),
         type: deorderType(postData.type),
+        routeType: route.params.type,
       },
     });
   }, [postData]);
 
   const onPressDeletePost = useCallback(() => {
-    DELETECommunityPost(jwtToken, postData.id).then((response) => {
-      console.log(response);
-      navigation.goBack();
-      dispatch(allActions.communityActions.deletePost(postData.id));
-      Alert.alert('게시글 삭제가 완료되었습니다.');
-    });
+    Alert.alert('게시글 삭제', '수다방 글을 삭제하시겠습니까?', [
+      {
+        text: '취소',
+        onPress: () => console.log('cancled delete post'),
+        style: 'cancel',
+      },
+      {
+        text: '확인',
+        onPress: () =>
+          DELETECommunityPost(jwtToken, postData.id).then((response) => {
+            console.log(response);
+            navigation.goBack();
+            LayoutAnimation.configureNext(
+              LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+            );
+            dispatch(allActions.communityActions.deletePost(postData.id));
+          }),
+      },
+    ]);
   }, [jwtToken, postData]);
 
   const deorderDescription = useCallback((oldDescription: string) => {
@@ -220,7 +246,28 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     [],
   );
 
-  const toggleSocialScrap = useCallback(() => {}, []);
+  const toggleSocialScrap = useCallback(
+    (postId: number, prevState: number, type: string) => {
+      const form = {
+        type,
+        id: postId,
+      };
+      dispatch(allActions.communityActions.toggleScrap(form));
+      if (prevState) {
+        // true
+        DELETESocialScrap(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      } else {
+        POSTSocialScrap(jwtToken, String(postId)).then((response: any) => {
+          if (response.statusText === 'OK') {
+          }
+        });
+      }
+    },
+    [],
+  );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -237,6 +284,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
       },
     );
   }, []);
+
   if (postData) {
     return (
       <ContainerView>

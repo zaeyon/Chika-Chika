@@ -39,7 +39,7 @@ const HomeTabScreen = ({navigation, route}: Props) => {
   // const [postData, setPostData] = useState([] as any);
   const [refreshing, setRefreshing] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
-  const jwtToken = route.params.currentUser.user.jwtToken;
+  const jwtToken = route.params.jwtToken;
   const postData = useSelector(
     (state: any) => state.communityPostList.HomePosts,
   );

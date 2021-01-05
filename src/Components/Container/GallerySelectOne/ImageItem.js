@@ -14,8 +14,8 @@ import {
 import Styled from 'styled-components/native';
 
 const ImageUnselectedButton = Styled.View`
- width: ${wp('5.5%')};
- height: ${wp('5.5%')};
+ width: ${wp('5.5%')}px;
+ height: ${wp('5.5%')}px;
  border-radius: 100;
  background-color: transparent;
  border-width: 2.5px;
@@ -24,8 +24,8 @@ const ImageUnselectedButton = Styled.View`
 
 const ImageSelectedButton = Styled.View`
  position: absolute;
- width: ${wp('5.5%')};
- height: ${wp('5.5%')};
+ width: ${wp('5.5%')}px;
+ height: ${wp('5.5%')}px;
  border-radius: 100;
  background-color: #23E5D2;
  border-width: 2.5px;
@@ -42,8 +42,8 @@ const ImageSelectedCount = Styled.Text`
 `;
 
 const ImageCheckedButton = Styled.Image`
- width: ${wp('5.5%')};
- height: ${wp('6.5%')};
+ width: ${wp('5.5%')}px;
+ height: ${wp('6.5%')}px;
  tint-color: #23E5D2;
  position: absolute;
  right: 5px;
@@ -51,8 +51,8 @@ const ImageCheckedButton = Styled.Image`
 `;
 
 const SelectButtonContainer = Styled.View`
- width: ${wp('7%')};
- height: ${wp('7%')};
+ width: ${wp('7%')}px;
+ height: ${wp('7%')}px;
  right: 3.5px;
  top: 1px;
  position: absolute;

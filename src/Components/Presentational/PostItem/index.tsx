@@ -6,6 +6,7 @@ import {
   Text,
   View,
   Image,
+  LayoutAnimation,
 } from 'react-native';
 import Styled from 'styled-components/native';
 import {
@@ -14,11 +15,10 @@ import {
 } from 'react-native-responsive-screen';
 
 const ContainerView = Styled.View`
-width: ${wp('100%')};
+width: ${wp('100%')}px;
 height: auto;
-margin-top: 32px;
-background-color: white
-
+padding-top: 24px;
+background: #FFFFFF;
 `;
 
 const BodyContainerView = Styled.View`
@@ -71,7 +71,7 @@ height: 44px;
 background-color: grey;
 border-radius: 22px;
 `;
-
+// width, height ++ 4px
 const ProfileContentView = Styled.View`
 width: auto;
 height: auto;
@@ -81,19 +81,20 @@ const ProfileNameText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
 font-weight: bold;
-font-size: 14px;
-line-height: 16px;
+font-size: 15px;
+line-height: 17px;
 margin-bottom: 4px;
 `;
-
+// font-size, line-height ++ 1px
 const ProfileDescriptionText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
 font-weight: normal;
-font-size: 12px;
-line-height: 14px;
+font-size: 13px;
+line-height: 15px;
 color: #979797;
 `;
+// font-size, line-height ++ 1px
 const ContentView = Styled.View`
 width: 100%;
 height: auto;
@@ -128,7 +129,7 @@ margin-right: 5px;
 margin-left: ${(props) => (props.isFirst ? '0px' : '16px')}
 `;
 const SocialInfoContainerView = Styled.View`
-width: ${wp('100%')};
+width: ${wp('100%')}px;
 height: 57px;
 align-items: center;
 flex-direction: row;
@@ -178,44 +179,38 @@ const PostItem = ({
     postLikeNum,
     postCommentsNum,
     viewerLikeCommunityPost,
+    viewerScrapCommunityPost,
     user,
     Clinics,
     GeneralTags,
     SymptomItems,
     TreatmentItems,
+    CityTags,
     community_imgs,
   } = data;
 
-  const formatUpdatedAtDate = useCallback(
-    (updatedAt: string) => {
-      const currentDate = Date.now();
-      const updatedDate = new Date(updatedAt);
-
-      const diff = currentDate - updatedDate.getTime();
-
-      // if (diff / (24 * 3600 * 1000) > 1) {
-      //   return formatDate(updatedAt);
-      // }
-      if (diff / (24 * 3600 * 1000) >= 1) {
-        // in days
-        const day = Math.floor(diff / (24 * 3600 * 1000));
-        return `${day}일 전`;
-      } else if (diff / (3600 * 1000) >= 1) {
-        // in hours
-        const hour = Math.floor(diff / (3600 * 1000));
-        return `${hour}시간 전`;
-      } else if (diff / (60 * 1000) >= 1) {
-        // in minutes
-        const minute = Math.floor(diff / (60 * 1000));
-        return `${minute}분 전`;
-      } else {
-        // in seconds
-        const second = Math.floor(diff / 1000);
-        return `${second}초 전`;
-      }
-    },
-    [updatedAt],
-  );
+  const formatElapsedDate = useCallback((elapsedTime: number) => {
+    if (elapsedTime / (24 * 3600 * 1000) > 1) {
+      return formatDate(updatedAt);
+    }
+    if (elapsedTime / (24 * 3600 * 1000) >= 1) {
+      // in days
+      const day = Math.floor(elapsedTime / (24 * 3600 * 1000));
+      return `${day}일 전`;
+    } else if (elapsedTime / (3600 * 1000) >= 1) {
+      // in hours
+      const hour = Math.floor(elapsedTime / (3600 * 1000));
+      return `${hour}시간 전`;
+    } else if (elapsedTime / (60 * 1000) >= 1) {
+      // in minutes
+      const minute = Math.floor(elapsedTime / (60 * 1000));
+      return `${minute}분 전`;
+    } else {
+      // in seconds
+      const second = Math.floor(elapsedTime / 1000);
+      return `${second}초 전`;
+    }
+  }, []);
 
   const formatDate = useCallback((date: string) => {
     const tmpDate = new Date(date);
@@ -224,7 +219,7 @@ const PostItem = ({
       day = String(tmpDate.getDay());
     month = Number(month) >= 10 ? month : '0' + month;
     day = Number(day) >= 10 ? day : '0' + day;
-    return year + '년' + month + '월 ' + day + '일';
+    return year + '년 ' + month + '월 ' + day + '일';
   }, []);
 
   const formatHashTag = (text: string, index: number) => {
@@ -282,7 +277,6 @@ const PostItem = ({
   const renderImage = useCallback(
     ({item, index}: any) => (
       <TouchableWithoutFeedback
-        key={'TouchableImage' + index}
         onPress={() => {
           moveToCommunityDetail(id, type);
         }}>
@@ -312,17 +306,20 @@ const PostItem = ({
             }}>
             <ProfileContainerView>
               <ProfileImage
-                source={{
-                  uri: user.profileImg,
-                  cache: 'force-cache',
-                }}
+                source={
+                  user.profileImg
+                    ? {
+                        uri: user.profileImg,
+                        cache: 'force-cache',
+                      }
+                    : require('~/Assets/Images/appIcon_chika.png')
+                }
               />
               <ProfileContentView>
                 <ProfileNameText>{user.nickname}</ProfileNameText>
                 <ProfileDescriptionText>
-                  {updatedAt !== createdAt
-                    ? `${'3시간 전'} ･ 수정됨`
-                    : `${'3시간 전'}`}
+                  {formatElapsedDate(data['createdDiff(second)'] * 1000) +
+                    (updatedAt !== createdAt ? ' ･ 수정됨' : '')}
                 </ProfileDescriptionText>
               </ProfileContentView>
             </ProfileContainerView>
@@ -348,22 +345,27 @@ const PostItem = ({
         <HashTagContainerView>
           {Clinics.map((item: any) => (
             <HashTagIconView key={String(item.id)}>
-              <HashTagIconText>{'#' + item.name}</HashTagIconText>
+              <HashTagIconText>{item.name}</HashTagIconText>
             </HashTagIconView>
           ))}
           {GeneralTags.map((item: any) => (
             <HashTagIconView key={String(item.id)}>
-              <HashTagIconText>{'#' + item.name}</HashTagIconText>
+              <HashTagIconText>{item.name}</HashTagIconText>
             </HashTagIconView>
           ))}
           {SymptomItems.map((item: any) => (
             <HashTagIconView key={String(item.id)}>
-              <HashTagIconText>{'#' + item.name}</HashTagIconText>
+              <HashTagIconText>{item.name}</HashTagIconText>
             </HashTagIconView>
           ))}
           {TreatmentItems.map((item: any) => (
             <HashTagIconView key={String(item.id)}>
-              <HashTagIconText>{'#' + item.name}</HashTagIconText>
+              <HashTagIconText>{item.name}</HashTagIconText>
+            </HashTagIconView>
+          ))}
+          {CityTags.map((item: any) => (
+            <HashTagIconView key={String(item.id)}>
+              <HashTagIconText>{item.fullCityName}</HashTagIconText>
             </HashTagIconView>
           ))}
         </HashTagContainerView>
@@ -400,10 +402,13 @@ const PostItem = ({
               right: 16,
             }}
             onPress={() => {
-              toggleSocialScrap();
+              toggleSocialScrap(id, viewerScrapCommunityPost, type);
             }}>
             <SocialInfoView>
               <Image
+                style={{
+                  tintColor: viewerScrapCommunityPost ? '#000000' : '#c3c3c3',
+                }}
                 source={require('~/Assets/Images/Review/ic_scrap_inline.png')}
               />
             </SocialInfoView>

@@ -18,7 +18,7 @@ height: ${hp('100%')}px;
 
 const HeaderBar = Styled.View`
 position: absolute;
-top: ${DeviceInfo.hasNotch() ? hp('5%') : hp('4%')};
+top: ${DeviceInfo.hasNotch() ? hp('5%') : hp('4%')}px;
 width: ${wp('100%')}px;
 height: ${wp('13.8%')}px;
 flex-direction: row;
@@ -34,8 +34,8 @@ justify-content: center;
 `;
 
 const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const HeaderTitleText = Styled.Text`
@@ -44,8 +44,8 @@ color: #ffffff;
 `;
 
 const HeaderCancelIcon = Styled.Image`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 tint-color: #ffffff;
 `;
 
@@ -58,65 +58,65 @@ justify-content: center;
 
 const CameraCoverContainer = Styled.View`
 position: absolute;
-width: ${wp('100%')};
-height: ${hp('100%')};
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
 align-items: center;
 justify-content: center;
 `;
 
 const GuideLineBackground = Styled.View`
 position: absolute;
-width: ${wp('100%')};
-height: ${hp('100%')};
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
 background-color: #000000;
 opacity: 0.8;
 `;
 
 const GuideLineContainer = Styled.View`
-width: ${wp('42.93%')};
-height: ${wp('42.93%')};
+width: ${wp('42.93%')}px;
+height: ${wp('42.93%')}px;
 `;
 
 const GuideLineTopLeft = Styled.View`
-width: ${wp('9%')};
-height: ${wp('9%')};
+width: ${wp('9%')}px;
+height: ${wp('9%')}px;
 border-color: #c4c4c4;
 opacity: 1;
 border-top-left-radius: 8px;
-border-top-width: ${wp('3.17%')};
-border-left-width: ${wp('3.17%')};
+border-top-width: ${wp('3.17%')}px;
+border-left-width: ${wp('3.17%')}px;
 position: absolute;
 top: 0
 left: 0
 `;
 
 const GuideLineTopLeftImage = Styled.Image`
-width: ${wp('9%')};
-height: ${wp('9%')};
+width: ${wp('9%')}px;
+height: ${wp('9%')}px;
 position: absolute;
 top: 0
 left: 0
 `;
 
 const GuideLineTopRightImage = Styled.Image`
-width: ${wp('9%')};
-height: ${wp('9%')};
+width: ${wp('9%')}px;
+height: ${wp('9%')}px;
 position: absolute;
 top: 0
 right: 0
 `;
 
 const GuideLineBottomLeftImage = Styled.Image`
-width: ${wp('9%')};
-height: ${wp('9%')};
+width: ${wp('9%')}px;
+height: ${wp('9%')}px;
 position: absolute;
 bottom: 0
 left: 0
 `;
 
 const GuideLineBottomRightImage = Styled.Image`
-width: ${wp('9%')};
-height: ${wp('9%')};
+width: ${wp('9%')}px;
+height: ${wp('9%')}px;
 position: absolute;
 bottom: 0
 right: 0
@@ -134,14 +134,14 @@ margin-top: 29px;
 `;
 
 const TakePictureButton = Styled.View`
-width: ${wp('16.266%')};
-height: ${wp('16.266%')};
+width: ${wp('16.266%')}px;
+height: ${wp('16.266%')}px;
 border-radius: 100px;
 background-color: #ffffff;
 border-width: 6px;
 border-color: #595959;
 position: absolute;
-bottom: ${hp('10%')};
+bottom: ${hp('10%')}px;
 `;
 
 interface Props {

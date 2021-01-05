@@ -2,10 +2,9 @@ import React from 'react';
 import Styled from 'styled-components/native';
 import {Text, TouchableWithoutFeedback} from 'react-native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-
 
 const Container = Styled.View`
 flex: 1;
@@ -15,8 +14,8 @@ justify-content: center;
 `;
 
 const NumberInput = Styled.TextInput`
-width: ${wp('91.46%')};
-height: ${wp('14.93%')};
+width: ${wp('91.46%')}px;
+height: ${wp('14.93%')}px;
 background-color: #F0F0F0;
 `;
 
@@ -29,32 +28,29 @@ justify-content: center;
 `;
 
 const AuthCodeInput = Styled.View`
-width: ${wp('91.46%')};
-height: ${wp('14.93%')};
+width: ${wp('91.46%')}px;
+height: ${wp('14.93%')}px;
 background-color: #F0F0F0;
 `;
 
 interface Props {
-    navigation: any,
-    route: any,
+  navigation: any;
+  route: any;
 }
 
-const VerifyPhoneNumberScreen = ({navigation, route}: Props ) => {
+const VerifyPhoneNumberScreen = ({navigation, route}: Props) => {
+  const sendAuthCodeSMS = () => {};
 
-    const sendAuthCodeSMS = () => {
-       
-    }
-
-    return (
-        <Container>
-            <NumberInput/>
-            <TouchableWithoutFeedback onPress={() => sendAuthCodeSMS()}>
-            <VerifyButton>
-                <Text>인증</Text>
-            </VerifyButton>
-            </TouchableWithoutFeedback>
-        </Container>
-    )
-}
+  return (
+    <Container>
+      <NumberInput />
+      <TouchableWithoutFeedback onPress={() => sendAuthCodeSMS()}>
+        <VerifyButton>
+          <Text>인증</Text>
+        </VerifyButton>
+      </TouchableWithoutFeedback>
+    </Container>
+  );
+};
 
 export default VerifyPhoneNumberScreen;

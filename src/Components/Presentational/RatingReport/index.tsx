@@ -151,7 +151,7 @@ const RatingCircleProgress = ({rating}: any) => {
           )}
           <AvgRatingContainer>
             <RatingStarImage
-            source={require('~/Assets/Images/Indicator/ic_starRating.png')}/>
+            source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
             <AvgRatingText>{rating.toFixed(1)}</AvgRatingText>
           </AvgRatingContainer>
       </CircleContainer>
@@ -194,19 +194,19 @@ const RatingStarList = ({ratingValue, ratingImage, interval}: Props) => {
                     return (
                         <RatingImage
                         style={[{tintColor: "#CCD1DD"}, index !== 0 && {marginLeft: 4}]}
-                        source={require('~/Assets/Images/Indicator/ic_starRating.png')}/>
+                        source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
                     )
                 } else if(item === 1) {
                     return (
                         <RatingImage
                         style={index !== 0 && {marginLeft: 4}}
-                        source={require('~/Assets/Images/Indicator/ic_starRating.png')}/>
+                        source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
                     )
                 } else if(item === 0.5) {
                     return (
                         <RatingImage
                         style={index !== 0 && {marginLeft: 4}}
-                        source={require('~/Assets/Images/Indicator/ic_starRating.png')}/>
+                        source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
                     )
                 } 
             })}

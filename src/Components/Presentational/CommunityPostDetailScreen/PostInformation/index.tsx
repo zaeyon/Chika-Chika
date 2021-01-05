@@ -15,7 +15,7 @@ import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 
 const HeaderConatinerView = Styled.View`
 width: ${wp('100%')}px;
-height: 40;
+height: 40px;
 padding: 0px 16px;
 margin-top: ${isIphoneX() ? 10 : 20}px;
 flex-direction: row;

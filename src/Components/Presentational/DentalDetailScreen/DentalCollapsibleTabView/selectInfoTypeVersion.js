@@ -27,7 +27,7 @@ import {Rating} from 'react-native-ratings';
 import ReviewList from '~/Components/Presentational/ReviewList';
 import ShowingRating from '~/Components/Presentational/ShowingRating';
 import RatingReport from '~/Components/Presentational/RatingReport';
-const ratingStarImage = require('~/Assets/Images/Indicator/ic_starRating.png');
+const ratingStarImage = require('~/Assets/Images/Indicator/ic_ratingStar.png');
 ;
 const Container = Styled.View`
  flex: 1;

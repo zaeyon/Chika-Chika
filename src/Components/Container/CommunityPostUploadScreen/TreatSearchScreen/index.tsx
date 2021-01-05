@@ -2,10 +2,10 @@ import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback, FlatList} from 'react-native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { NavigationContainer } from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -24,7 +24,6 @@ const HeaderBar = Styled.View`
  border-color: #ECECEE;
 `;
 
-
 const HeaderLeftContainer = Styled.View`
 height: ${wp('13.8%')}px;
 padding: 0px 16px 0px 16px;
@@ -34,8 +33,8 @@ padding: 0px 16px 0px 16px;
 `;
 
 const HeaderBackIcon = Styled.Image`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const HeaderTitleText = Styled.Text`
@@ -59,8 +58,8 @@ color: #000000;
 `;
 
 const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')};
-height: ${wp('6.4%')};
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const BodyContainer = Styled.View`
@@ -74,8 +73,8 @@ margin-top: 30px;
 `;
 
 const MetaDataItemContainer = Styled.View`
-width: ${wp('91.46%')};
-height: ${wp('12.799%')};
+width: ${wp('91.46%')}px;
+height: ${wp('12.799%')}px;
 background-color: #F0F6FC;
 border-radius: 8px;
 justify-content: center;
@@ -96,8 +95,8 @@ bottom: 53px;
 `;
 
 const FinishButton = Styled.View`
-width: ${wp('91.46%')};
-height: ${wp('12.799%')};
+width: ${wp('91.46%')}px;
+height: ${wp('12.799%')}px;
 border-radius: 8px;
 background-color: #0075FF;
 align-items: center;
@@ -111,8 +110,8 @@ color: #ffffff;
 `;
 
 const SearchInputContainer = Styled.View`
-width: ${wp('71.73%')};
-height: ${wp('10.666%')};
+width: ${wp('71.73%')}px;
+height: ${wp('10.666%')}px;
 border-radius: 8px;
 background-color: #F6F7F8;
 flex-direction: row;
@@ -121,13 +120,13 @@ padding-left: 12px;
 `;
 
 const SearchIcon = Styled.Image`
-width: ${wp('4.2%')};
-height: ${wp('4.2%')};
+width: ${wp('4.2%')}px;
+height: ${wp('4.2%')}px;
 `;
 
 const SearchTextInput = Styled.TextInput`
 margin-left: 8px;
-width: ${wp('65%')};
+width: ${wp('65%')}px;
 font-weight: 300;
 font-size: 16px;
 `;
@@ -137,7 +136,7 @@ padding-top: 7px;
 `;
 
 const TreatItemContainer = Styled.View`
-width: ${wp('100%')};
+width: ${wp('100%')}px;
 padding-top: 12px;
 padding-left: 16px;
 padding-right: 16px;
@@ -157,8 +156,8 @@ flex-wrap: wrap;
 `;
 
 const DividerContainer = Styled.View`
-width: ${wp('100%')};
-height: ${wp('4.26%')};
+width: ${wp('100%')}px;
+height: ${wp('4.26%')}px;
 background-color: #f6f7f8
 `;
 
@@ -197,8 +196,8 @@ font-size: 16px;
 
 const TreatItemDeleteIcon = Styled.Image`
 margin-left: 7px;
-width: ${wp('4.8%')};
-height: ${wp('4.8%')};
+width: ${wp('4.8%')}px;
+height: ${wp('4.8%')}px;
 `;
 
 const DeleteContainer = Styled.View`
@@ -207,141 +206,140 @@ padding-bottom: 7px;
 `;
 
 const TEST_TREAT_DATA = [
-    {
-        name: "임플란트"
-    },
-    {
-        name: "치아부식"
-    },
-    {
-        name: "충치"
-    }
-]
-
+  {
+    name: '임플란트',
+  },
+  {
+    name: '치아부식',
+  },
+  {
+    name: '충치',
+  },
+];
 
 interface Props {
-    navigation: any,
-    route: any,
+  navigation: any;
+  route: any;
 }
 
 const TreatSearchScreen = ({navigation, route}: Props) => {
+  const [selectedTreatList, setSelectedTreatList] = useState<Array<Object>>([]);
+  const [onChangeSelectedTreatList, setOnChangeSelectedTreatList] = useState<
+    boolean
+  >(false);
 
-    const [selectedTreatList, setSelectedTreatList] = useState<Array<Object>>([])
-    const [onChangeSelectedTreatList, setOnChangeSelectedTreatList] = useState<boolean>(false);
-
-    useEffect(() => {
-        if(route.params?.selectedTreatList) {
-            setSelectedTreatList(route.params?.selectedTreatList);
-        }
-        
-    }, [route.params?.selectedTreatList])
-
-    const selectTreatItem = (treat: object) => {
-        var tmpSelectedTreatList = selectedTreatList
-        tmpSelectedTreatList.push(treat)
-        setSelectedTreatList(tmpSelectedTreatList)
-        setOnChangeSelectedTreatList(!onChangeSelectedTreatList)
+  useEffect(() => {
+    if (route.params?.selectedTreatList) {
+      setSelectedTreatList(route.params?.selectedTreatList);
     }
+  }, [route.params?.selectedTreatList]);
 
-    const deleteTreatItem = (treat: object) => {
+  const selectTreatItem = (treat: object) => {
+    var tmpSelectedTreatList = selectedTreatList;
+    tmpSelectedTreatList.push(treat);
+    setSelectedTreatList(tmpSelectedTreatList);
+    setOnChangeSelectedTreatList(!onChangeSelectedTreatList);
+  };
 
-        var tmpSelectedTreatList = selectedTreatList
-        var deleteIndex = tmpSelectedTreatList.indexOf(treat)
-        
-        tmpSelectedTreatList.splice(deleteIndex, 1)
-        setSelectedTreatList(tmpSelectedTreatList);
-        setOnChangeSelectedTreatList(!onChangeSelectedTreatList)
+  const deleteTreatItem = (treat: object) => {
+    var tmpSelectedTreatList = selectedTreatList;
+    var deleteIndex = tmpSelectedTreatList.indexOf(treat);
+
+    tmpSelectedTreatList.splice(deleteIndex, 1);
+    setSelectedTreatList(tmpSelectedTreatList);
+    setOnChangeSelectedTreatList(!onChangeSelectedTreatList);
+  };
+
+  const onPressFinishButton = () => {
+    console.log(route.params?.requestPage);
+    console.log(selectedTreatList);
+    if (route.params?.requestPage === 'CommunityPostUploadScreen') {
+      navigation.navigate('CommunityPostUploadScreen', {
+        selectedTreatList: selectedTreatList,
+      });
+    } else if (route.params?.requestPage === 'content') {
+      navigation.navigate('ContentPostScreen', {
+        selectedTreatList: selectedTreatList,
+      });
     }
-    
-    const onPressFinishButton = () => {
-        console.log(route.params?.requestPage)
-        console.log(selectedTreatList)
-        if(route.params?.requestPage === "CommunityPostUploadScreen") {
-            navigation.navigate("CommunityPostUploadScreen", {
-                selectedTreatList: selectedTreatList,
-            });
-        } else if(route.params?.requestPage === "content") {
-            navigation.navigate("ContentPostScreen", {
-                selectedTreatList: selectedTreatList,
-            })
-        }
-    }
+  };
 
-    const goBack = () => {
-        navigation.goBack();
-    }
+  const goBack = () => {
+    navigation.goBack();
+  };
 
-    const renderTreatItem = ({item, index}: any) => {
-        return (
-            <TreatItemContainer>
-                <TreatItemNameText>{"# " + item.name}</TreatItemNameText>
-                <TouchableWithoutFeedback onPress={() => selectTreatItem(item)}>
-                <TreatItemAddContainer>
-                    <TreatItemAddText>추가</TreatItemAddText>
-                </TreatItemAddContainer>
-                </TouchableWithoutFeedback>
-            </TreatItemContainer>
-        )
-    }
-
-
+  const renderTreatItem = ({item, index}: any) => {
     return (
-        <Container>
-            <HeaderBar>
-               <TouchableWithoutFeedback onPress={() => goBack()}>
-                <HeaderLeftContainer>
-                    <HeaderBackIcon
-                    source={require('~/Assets/Images/HeaderBar/ic_back.png')}/>
-                </HeaderLeftContainer>
-                </TouchableWithoutFeedback>
-                <SearchInputContainer>
-                    <SearchIcon
-                    source={require('~/Assets/Images/HeaderBar/ic_search.png')}/>
-                    <SearchTextInput
-                    placeholder={"진료 및 치료 종류"}
-                    placeholderTextColor={"#ABA5A5"}/>
-                </SearchInputContainer>
-                <HeaderRightContainer>
-                    <HeaderSearchText>검색</HeaderSearchText>
-                </HeaderRightContainer>
-            </HeaderBar>
-            <BodyContainer>
-                <SelectedTreatContainer>
-                    {selectedTreatList.map((item, index) => {
-                        return (
-                            <SelectedTreatItemBackground style={{marginRight: 8}}>
-                                <SelectedTreatItemText>
-                                    {"# " + item.name}
-                                </SelectedTreatItemText>
-                                <TouchableWithoutFeedback onPress={() => deleteTreatItem(item)}>
-                                <DeleteContainer>
-                                <TreatItemDeleteIcon
-                                source={require('~/Assets/Images/Upload/ic_delete.png')}/>
-                                </DeleteContainer>
-                                </TouchableWithoutFeedback>
-                            </SelectedTreatItemBackground>
-                        )
-                    })}
-                </SelectedTreatContainer>
-                <DividerContainer/>
-                <TreatListContainer>
-                    <FlatList
-                    data={TEST_TREAT_DATA}
-                    renderItem={renderTreatItem}/>
-                </TreatListContainer>
-            </BodyContainer>
-            <FooterContainer>
-            <TouchableWithoutFeedback onPress={() => onPressFinishButton()}>
-            <FinishButton>
-                <FinishText>확인</FinishText>
-            </FinishButton>
-            </TouchableWithoutFeedback>
-            </FooterContainer>
-        </Container>
-    )
-}
+      <TreatItemContainer>
+        <TreatItemNameText>{'# ' + item.name}</TreatItemNameText>
+        <TouchableWithoutFeedback onPress={() => selectTreatItem(item)}>
+          <TreatItemAddContainer>
+            <TreatItemAddText>추가</TreatItemAddText>
+          </TreatItemAddContainer>
+        </TouchableWithoutFeedback>
+      </TreatItemContainer>
+    );
+  };
 
-export default TreatSearchScreen
+  return (
+    <Container>
+      <HeaderBar>
+        <TouchableWithoutFeedback onPress={() => goBack()}>
+          <HeaderLeftContainer>
+            <HeaderBackIcon
+              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
+            />
+          </HeaderLeftContainer>
+        </TouchableWithoutFeedback>
+        <SearchInputContainer>
+          <SearchIcon
+            source={require('~/Assets/Images/HeaderBar/ic_search.png')}
+          />
+          <SearchTextInput
+            placeholder={'진료 및 치료 종류'}
+            placeholderTextColor={'#ABA5A5'}
+          />
+        </SearchInputContainer>
+        <HeaderRightContainer>
+          <HeaderSearchText>검색</HeaderSearchText>
+        </HeaderRightContainer>
+      </HeaderBar>
+      <BodyContainer>
+        <SelectedTreatContainer>
+          {selectedTreatList.map((item, index) => {
+            return (
+              <SelectedTreatItemBackground style={{marginRight: 8}}>
+                <SelectedTreatItemText>
+                  {'# ' + item.name}
+                </SelectedTreatItemText>
+                <TouchableWithoutFeedback onPress={() => deleteTreatItem(item)}>
+                  <DeleteContainer>
+                    <TreatItemDeleteIcon
+                      source={require('~/Assets/Images/Upload/ic_delete.png')}
+                    />
+                  </DeleteContainer>
+                </TouchableWithoutFeedback>
+              </SelectedTreatItemBackground>
+            );
+          })}
+        </SelectedTreatContainer>
+        <DividerContainer />
+        <TreatListContainer>
+          <FlatList data={TEST_TREAT_DATA} renderItem={renderTreatItem} />
+        </TreatListContainer>
+      </BodyContainer>
+      <FooterContainer>
+        <TouchableWithoutFeedback onPress={() => onPressFinishButton()}>
+          <FinishButton>
+            <FinishText>확인</FinishText>
+          </FinishButton>
+        </TouchableWithoutFeedback>
+      </FooterContainer>
+    </Container>
+  );
+};
+
+export default TreatSearchScreen;
 
 /*
 <FlatList
@@ -350,4 +348,3 @@ horizontal={true}
 data={selectedTreatList}
 renderItem={renderSelectedItem}/>
 */
-

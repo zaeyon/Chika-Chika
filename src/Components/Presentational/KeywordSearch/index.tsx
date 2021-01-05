@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {
   TouchableWithoutFeedback,
   FlatList,
@@ -18,17 +18,17 @@ padding-bottom: ${hp('5.5%')}px;
 `;
 const HeaderContentView = Styled.View`
 width: ${wp('100%')}px;
-height: ${hp('8.128%')}px
+height: auto;
 align-items: center;
 flex-direction: row;
-padding: 0px 16px 0px 0px;
+padding: 10px 16px 16px 0px;
 border-bottom-width: 1px;
 border-color: #EEEEEE;
 `;
 const BackIconTouchableOpacity = Styled(
   TouchableOpacity as new () => TouchableOpacity,
 )`
-padding: 0px 16px 0px 16px;
+padding: 0px 28px 0px 16px;
 height: 40px;
 `;
 
@@ -43,7 +43,6 @@ height: 100%;
 
 const SearchInputConatinerView = Styled.View`
 flex: 1;
-height: ${hp('4.926%')}px;
 background: #F2F2F2;
 border-radius: 4px;
 padding: 8px;
@@ -59,7 +58,7 @@ line-height: 19px;
 const SearchIcon = Styled.Image`
 width: ${wp('6.4%')}px;
 height: ${wp('6.4%')}px;
-margin-right: 8px;
+margin-right: 12px;
 `;
 
 const BodyContentView = Styled.View`
@@ -98,16 +97,23 @@ const KeywordSearch = ({
   setQuery,
   searchResults,
 }: Props) => {
-  const renderResultItem = ({item, index}: any) => (
-    <TouchableHighlight
-      activeOpacity={1}
-      underlayColor="#EEEEEE"
-      onPress={() => {}}>
-      <SearchResultItemView>
-        <SearchResultItemTitleText>{item.name}</SearchResultItemTitleText>
-      </SearchResultItemView>
-    </TouchableHighlight>
+  const renderResultItem = useCallback(
+    ({item, index}: any) => (
+      <TouchableHighlight
+        activeOpacity={1}
+        underlayColor="#EEEEEE"
+        onPress={() => {}}>
+        <SearchResultItemView>
+          <SearchResultItemTitleText>{item.name}</SearchResultItemTitleText>
+        </SearchResultItemView>
+      </TouchableHighlight>
+    ),
+    [],
   );
+
+  // const renderFrequentTerms = useCallback(() => (
+
+  // ), [])
 
   return (
     <ContinaerView>

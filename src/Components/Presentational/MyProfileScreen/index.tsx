@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -12,7 +13,7 @@ import {
 } from 'react-native-responsive-screen';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import Animated, {Extrapolate, Easing} from 'react-native-reanimated';
-import {TabView, SceneMap} from 'react-native-tab-view';
+import {TabView, TabBar} from 'react-native-tab-view';
 import {PanGestureHandler} from 'react-native-gesture-handler';
 //Local Component
 import PostItem from '~/Components/Presentational/PostItem';
@@ -33,10 +34,10 @@ const HeaderContainerView = Styled.View`
 width: ${wp('100%')}px;
 height: ${hp('8.25%') + getStatusBarHeight()}px;
 flex-direction: row;
-margin-top: ${-getStatusBarHeight()}
+margin-top: ${-getStatusBarHeight()}px;
 padding: ${getStatusBarHeight()}px 16px 0px 16px;
 align-items: center;
-background: white;
+background: #FFFFFF;
 z-index: 2;
 `;
 
@@ -120,7 +121,6 @@ height: auto;
 align-items: center;
 justify-content: center;
 margin: 0px 16px;
-
 `;
 
 const ProfileReservationTitleText = Styled.Text`
@@ -140,59 +140,57 @@ font-size: 14px;
 line-height: 16px;
 `;
 
-const TabBarConatiner = Styled.View`
+const TabBarView = Styled(Animated.View as new () => Animated.View)`
+position: absolute;
+top: ${PROFILEHEIGHT}px;
+left: 0;
 width: 100%;
-height: ${hp('7%')}
-flex-direction: row;
+height: auto;
+z-index: 1;
 border-bottom-width: 1px;
 border-color: #C4C4C4;
-background: white;
 `;
 
-const TabBarItemTouchableOpacity = Styled(
-  TouchableOpacity as new () => TouchableOpacity,
-)`
-width: 50%;
-height: 100%;
+const ActivityIndicatorContianerView = Styled.View`
+width: ${wp('100%')}px;
+height: auto;
+align-items: center;
+padding: 10px 0px;
+`;
+
+const InitializingView = Styled.View`
+flex: 1;
+background: rgba(200, 200, 200, 0.1);
 justify-content: center;
 align-items: center;
-`;
-
-const TabBarItemText = Styled(Animated.Text as new () => Animated.Text)`
-fontFamily: NanumSquare;
-font-style: normal;
-font-weight: bold;
-font-size: 14px;
-line-height: 16px;
-`;
-
-const TabBarIndicatorView = Styled(Animated.View as new () => Animated.View)`
-width: ${wp('50%') - 32}px;
-height: 3px;
-position: absolute;
-bottom: 0px;
-left: 16px;
-background: #2998FF;
 `;
 
 interface Props {
   navigation: any;
   route: any;
-  reviewPostData: any;
+  isReviewInitializing: boolean;
+  isCommunityInitializing: boolean;
+  reviewData: any;
+  isReviewRefreshing: boolean;
+  onReviewRefresh: any;
+  isReviewEndReached: boolean;
+  onReviewEndReached: any;
   communityPostData: any;
-  isRefreshing: boolean;
-  onRefresh: any;
-  isEndReached: boolean;
-  onEndReached: any;
+  isCommunityRefreshing: boolean;
+  onCommunityRefresh: any;
+  isCommunityEndReached: boolean;
+  onCommunityEndReached: any;
   currentUser: User;
   openModal: any;
   moveToCommunityDetail: any;
-  moveToReviewDetail: any;
   moveToReservationTabScreen: any;
   moveToSavedHospitalTabScreen: any;
   moveToAnotherProfile: any;
   toggleSocialLike: any;
   toggleSocialScrap: any;
+  moveToReviewDetail: any;
+  moveToWriterProfile: any;
+  moveToDentalDetail: any;
 }
 
 interface State {
@@ -207,7 +205,7 @@ interface User {
   phoneNumber: string;
   id: string;
   nickname: string;
-  profileImage: string;
+  profileImg: string;
 }
 
 export default class MyProfile extends React.PureComponent<Props, State> {
@@ -226,8 +224,8 @@ export default class MyProfile extends React.PureComponent<Props, State> {
       isModalVisible: false,
       index: 0,
       routes: [
-        {key: 'first', title: 'First'},
-        {key: 'second', title: 'Second'},
+        {key: 'first', title: '내가 쓴 후기'},
+        {key: 'second', title: '내가 쓴 수다글'},
       ],
     };
 
@@ -259,7 +257,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
 
   onRefresh = () => {};
 
-  renderPost = ({item, index}: any) => {
+  renderPostItem = ({item, index}: any) => {
     return (
       <PostItem
         data={item}
@@ -271,149 +269,205 @@ export default class MyProfile extends React.PureComponent<Props, State> {
     );
   };
 
-  renderReview = ({item, index}: any) => {
+  renderReviewItem = ({item, index}: any) => {
+    const ratingObj = {
+      avgRating: Number(
+        (
+          (Number(item.starRate_cost) +
+            Number(item.starRate_service) +
+            Number(item.starRate_treatment)) /
+          3
+        ).toFixed(1),
+      ),
+      priceRating: Number(item.starRate_cost),
+      serviceRating: Number(item.starRate_service),
+      treatRating: Number(item.starRate_treatment),
+    };
+
     const writer = {
       nickname: item.user.nickname,
       profileImage: item.user.profileImg,
       userId: item.userId,
     };
 
-    const avgRating =
-      (item.starRate_cost + item.starRate_treatment + item.starRate_service) /
-      3;
+    let elapsedTimeText = '';
+    let visibleElapsedTime = false;
+
+    const elapsedMin = item['createdDiff(second)'] / 60;
+    const elapsedHour = item['createdDiff(second)'] / 3600;
+    const elapsedDay = item['createdDiff(second)'] / 86400;
+
+    if (elapsedMin < 1) {
+      elapsedTimeText = '방금 전';
+      visibleElapsedTime = true;
+    } else if (1 <= elapsedMin && elapsedHour < 1) {
+      elapsedTimeText = `${Math.floor(elapsedMin)}분 전`;
+      visibleElapsedTime = true;
+    } else if (1 <= elapsedHour && elapsedDay < 1) {
+      elapsedTimeText = `${Math.floor(elapsedHour)}시간 전`;
+      visibleElapsedTime = true;
+    } else if (elapsedDay >= 1) {
+      visibleElapsedTime = false;
+    }
+
     return (
       <ReviewItem
         reviewId={item.id}
         writer={writer}
         createdAt={item.createdAt}
+        elapsedTimeText={elapsedTimeText}
+        visibleElapsedTime={visibleElapsedTime}
         treatmentArray={item.TreatmentItems}
-        treatmentDate={item.treatmentDate}
-        avgRating={avgRating}
+        treatmentDate={item.treatmentDate ? item.treatmentDate : ''}
+        dentalObj={item.dental_clinic}
+        ratingObj={ratingObj}
         viewCount={item.reviewViewNum}
         treatInfoCount={item.getInfo}
-        likeCount={item.reviewLikeNum}
+        likeCountProp={item.reviewLikeNum}
         commentCount={item.reviewCommentsNum}
         imageArray={item.review_contents}
         descriptions={item.reviewDescriptions ? item.reviewDescriptions : ''}
+        isCurUserLikeProp={item.viewerLikedReview}
+        isCurUserScrapProp={item.viewerScrapedReview}
+        refreshingReviewList={this.props.isReviewRefreshing}
         moveToReviewDetail={this.props.moveToReviewDetail}
+        moveToWriterProfile={this.props.moveToWriterProfile}
+        moveToDentalDetail={this.props.moveToDentalDetail}
       />
     );
   };
 
-  componentDidUpdate(prevProps: Props) {
-    if (prevProps.communityPostData !== this.props.communityPostData) {
-      console.log('profile post diff');
-      this.setState(this.state);
-    }
-    console.log('updated');
-  }
-
-  renderPostFlatList = () => (
-    <AnimatedFlatList
-      style={{
-        flex: 1,
-        marginBottom: hp('9.6%'),
-      }}
-      onStartShouldSetResponder={true}
-      contentContainerStyle={{
-        minHeight: hp('100%') - PROFILEHEIGHT + getStatusBarHeight() - 1,
-        paddingTop: HEADERHEIGHT + getStatusBarHeight() + 1 + hp('7%'),
-      }}
-      ref={(ref: any) => (this.communityRef = ref)}
-      scrollEventThrottle={16}
-      scrollIndicatorInsets={{
-        top: PROFILEHEIGHT + hp('7%'),
-      }}
-      onScroll={Animated.event(
-        [
-          {
-            nativeEvent: {
-              contentOffset: {
-                y: (y: number) =>
-                  Animated.block([
-                    Animated.set(this.currentScrollY, y),
-                    Animated.call([y], ([offsetY]) => {
-                      if (this.state.index === 1) {
-                        this.reviewRef &&
-                          this.reviewRef.getNode().scrollToOffset({
-                            offset: Math.min(PROFILEHEIGHT, offsetY),
-                            animated: false,
-                          });
-                      }
-                    }),
-                  ]),
+  renderPostFlatList = () => {
+    return this.props.isCommunityInitializing ? (
+      <InitializingView>
+        <ActivityIndicator />
+      </InitializingView>
+    ) : (
+      <AnimatedFlatList
+        style={{
+          flex: 1,
+          marginBottom: hp('9.6%'),
+        }}
+        scrollIndicatorInsets={{top: PROFILEHEIGHT + hp('7%')}}
+        contentContainerStyle={{
+          minHeight: hp('100%') - PROFILEHEIGHT + getStatusBarHeight() - 1,
+          paddingTop: PROFILEHEIGHT + hp('7%'),
+        }}
+        ref={(ref: any) => (this.communityRef = ref)}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {
+                contentOffset: {
+                  y: (y: number) =>
+                    Animated.block([
+                      Animated.set(this.currentScrollY, y),
+                      Animated.call([y], ([offsetY]) => {
+                        if (this.state.index === 1) {
+                          this.reviewRef &&
+                            this.reviewRef.getNode().scrollToOffset({
+                              offset: Math.min(PROFILEHEIGHT, offsetY),
+                              animated: false,
+                            });
+                        }
+                      }),
+                    ]),
+                },
               },
             },
-          },
-        ],
-        {
-          useNativeDriver: true,
-        },
-      )}
-      data={this.props.communityPostData}
-      renderItem={this.renderPost}
-      keyExtractor={(item: any) => String(item.id)}
-      refreshControl={
-        <RefreshControl
-          refreshing={this.props.isRefreshing}
-          onRefresh={() => this.onRefresh()}
-        />
-      }
-    />
-  );
-
-  renderReviewFlatList = () => (
-    <AnimatedFlatList
-      style={{
-        width: wp('100%'),
-        flex: 1,
-        marginBottom: hp('9.6%'),
-      }}
-      contentContainerStyle={{
-        minHeight: hp('100%') - PROFILEHEIGHT + getStatusBarHeight() - 1,
-        paddingTop: HEADERHEIGHT + getStatusBarHeight() + 1 + hp('7%'),
-      }}
-      ref={(ref: any) => (this.reviewRef = ref)}
-      scrollEventThrottle={16}
-      scrollIndicatorInsets={{
-        top: PROFILEHEIGHT + hp('7%'),
-      }}
-      onScroll={Animated.event(
-        [
+          ],
           {
-            nativeEvent: {
-              contentOffset: {
-                y: (y: number) =>
-                  Animated.block([
-                    Animated.set(this.currentScrollY, y),
-                    Animated.call([y], ([offsetY]) => {
-                      if (this.state.index === 0) {
-                        this.communityRef &&
-                          this.communityRef.getNode().scrollToOffset({
-                            offset: Math.min(PROFILEHEIGHT, offsetY),
-                            animated: false,
-                          });
-                      }
-                    }),
-                  ]),
+            useNativeDriver: true,
+          },
+        )}
+        onEndReached={this.props.onCommunityEndReached}
+        onEndReachedThreshold={5}
+        ListFooterComponent={
+          this.props.isCommunityEndReached ? (
+            <ActivityIndicatorContianerView>
+              <ActivityIndicator size="large" />
+            </ActivityIndicatorContianerView>
+          ) : null
+        }
+        data={this.props.communityPostData}
+        renderItem={this.renderPostItem}
+        keyExtractor={(item: any, index: number) => String(index)}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.props.isCommunityRefreshing}
+            onRefresh={() => this.props.onCommunityRefresh()}
+          />
+        }
+      />
+    );
+  };
+
+  renderReviewFlatList = () => {
+    return this.props.isReviewInitializing ? (
+      <InitializingView>
+        <ActivityIndicator />
+      </InitializingView>
+    ) : (
+      <AnimatedFlatList
+        style={{
+          flex: 1,
+          marginBottom: hp('9.6%'),
+        }}
+        scrollIndicatorInsets={{top: PROFILEHEIGHT + hp('7%')}}
+        contentContainerStyle={{
+          minHeight: hp('100%') - PROFILEHEIGHT + getStatusBarHeight() - 1,
+          paddingTop: PROFILEHEIGHT + hp('7%'),
+        }}
+        ref={(ref: any) => (this.reviewRef = ref)}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {
+                contentOffset: {
+                  y: (y: number) =>
+                    Animated.block([
+                      Animated.set(this.currentScrollY, y),
+                      Animated.call([y], ([offsetY]) => {
+                        if (this.state.index === 0) {
+                          this.communityRef &&
+                            this.communityRef.getNode().scrollToOffset({
+                              offset: Math.min(PROFILEHEIGHT, offsetY),
+                              animated: false,
+                            });
+                        }
+                      }),
+                    ]),
+                },
               },
             },
+          ],
+          {
+            useNativeDriver: true,
           },
-        ],
-        {
-          useNativeDriver: true,
-        },
-      )}
-      data={[]}
-      renderItem={this.renderReview}
-      refreshControl={
-        <RefreshControl
-          refreshing={this.props.isRefreshing}
-          onRefresh={() => this.onRefresh()}
-        />
-      }
-    />
-  );
+        )}
+        onEndReached={this.props.onReviewEndReached}
+        onEndReachedThreshold={5}
+        ListFooterComponent={
+          this.props.isReviewEndReached ? (
+            <ActivityIndicatorContianerView>
+              <ActivityIndicator size="large" />
+            </ActivityIndicatorContianerView>
+          ) : null
+        }
+        data={this.props.reviewData}
+        renderItem={this.renderReviewItem}
+        keyExtractor={(item: any, index: number) => String(index)}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.props.isReviewRefreshing}
+            onRefresh={() => this.props.onReviewRefresh()}
+          />
+        }
+      />
+    );
+  };
 
   renderScene = ({route}: any) => {
     switch (route.key) {
@@ -423,6 +477,43 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         return this.renderPostFlatList();
     }
   };
+
+  renderTabBar = (props: any) => (
+    <TabBarView
+      style={{
+        transform: [
+          {
+            translateY: Animated.multiply(
+              this.minusValue,
+              Animated.min(this.headerHeightValue, this.currentScrollY),
+            ),
+          },
+        ],
+      }}>
+      <TabBar
+        {...props}
+        style={{
+          backgroundColor: 'white',
+        }}
+        indicatorStyle={{
+          height: 3,
+          backgroundColor: '#2998FF',
+        }}
+        activeColor="#2998FF"
+        inactiveColor="#C4C4C4"
+        tabStyle={{
+          height: hp('7%'),
+        }}
+        labelStyle={{
+          fontFamily: 'NanumSquare',
+          fontStyle: 'normal',
+          fontWeight: 'bold',
+          fontSize: 14,
+          lineHeight: 16,
+        }}
+      />
+    </TabBarView>
+  );
 
   render() {
     return (
@@ -459,7 +550,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
               <ProfileImageView>
                 <ProfileImage
                   source={{
-                    uri: this.props.currentUser.profileImage,
+                    uri: this.props.currentUser.profileImg,
                     cache: 'force-cache',
                   }}
                 />
@@ -480,45 +571,12 @@ export default class MyProfile extends React.PureComponent<Props, State> {
               </ProfileReservationTouchableOpacity>
             </ProfileContentView>
           </ProfileContainerView>
-          <TabBarConatiner>
-            <TabBarItemTouchableOpacity onPress={() => this.scrollToIndex(0)}>
-              <TabBarItemText
-                style={{
-                  color: Animated.interpolateColors(this.positionX, {
-                    inputRange: [0, 1],
-                    outputColorRange: ['#2998FF', '#C4C4C4'],
-                  }),
-                }}>{`내가 쓴 후기`}</TabBarItemText>
-            </TabBarItemTouchableOpacity>
-            <TabBarItemTouchableOpacity onPress={() => this.scrollToIndex(1)}>
-              <TabBarItemText
-                style={{
-                  color: Animated.interpolateColors(this.positionX, {
-                    inputRange: [0, 1],
-                    outputColorRange: ['#C4C4C4', '#2998FF'],
-                  }),
-                }}>{`내가 쓴 수다글`}</TabBarItemText>
-            </TabBarItemTouchableOpacity>
-            <TabBarIndicatorView
-              style={{
-                transform: [
-                  {
-                    translateX: Animated.interpolate(this.positionX, {
-                      inputRange: [0, 1],
-                      outputRange: [0, wp('50%')],
-                      extrapolate: Extrapolate.CLAMP,
-                    }),
-                  },
-                ],
-              }}
-            />
-          </TabBarConatiner>
         </FloatingView>
         <TabView
           navigationState={{index: this.state.index, routes: this.state.routes}}
           renderScene={this.renderScene}
           onIndexChange={(index) => this.setState({index})}
-          renderTabBar={() => null}
+          renderTabBar={this.renderTabBar}
           position={this.positionX}
         />
       </ContainerView>

@@ -199,8 +199,8 @@ left: ${wp('73.46%')}px;
 `;
 
 const FinishButtonContainer = Styled.View`
-width: ${wp('100%')};
-padding-left: ${wp('4.2%')};
+width: ${wp('100%')}px;
+padding-left: ${wp('4.2%')}px;
 position:absolute;
 bottom: 16px;
 background-color : #707070;
@@ -252,21 +252,20 @@ const PhoneVerifyScreen = ({navigation}: Props) => {
   );
   const [timeOver, setTimeOver] = useState<boolean>(false);
 
-
   const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
 
   const numberInputRef = useRef(null);
   const authCodeInputRef = useRef(null);
-  let fcmToken = ""
+  let fcmToken = '';
 
   useEffect(() => {
     getFcmToken();
-  }, [])
+  }, []);
 
   const getFcmToken = async () => {
     fcmToken = await messaging().getToken();
-  }
+  };
 
   let submitingNumber: any;
   let submitingPassword: any;
@@ -390,28 +389,27 @@ const PhoneVerifyScreen = ({navigation}: Props) => {
     setLoadingVerify(true);
 
     POSTVerifyPhoneNumber(String(number), String(authCode))
-    .then(function (response: any) {
+      .then(function (response: any) {
         setLoadingVerify(false);
         clearInterval(timeout);
         console.log('POSTVerifyPhoneNumber response', response);
-        console.log('number', number);      
+        console.log('number', number);
 
-        if(response.statusText === "Accepted") {
-            Alert.alert("인증되었습니다!", '', [
-                {
-                    text: "확인",
-                    onPress: () => {
-                        navigation.goBack()
-                    }
-                }
-            ])
+        if (response.statusText === 'Accepted') {
+          Alert.alert('인증되었습니다!', '', [
+            {
+              text: '확인',
+              onPress: () => {
+                navigation.goBack();
+              },
+            },
+          ]);
         }
-    })
-    .catch(function (error) {
+      })
+      .catch(function (error) {
         setLoadingVerify(false);
         console.log('POSTVerifyPhoneNumber error', error);
-    });
-    
+      });
   };
 
   const clickSendAuthCode = () => {

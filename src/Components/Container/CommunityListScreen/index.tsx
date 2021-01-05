@@ -4,10 +4,6 @@ import SafeAreaView from 'react-native-safe-area-view';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
-  FlatList,
-  View,
-  Text,
-  Animated,
   StyleSheet,
 } from 'react-native';
 import {
@@ -31,7 +27,9 @@ import GeneralTabScreen from './GeneralTabScreen';
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 
-const ContainerView = Styled.View`
+const ContainerView = Styled(
+  (SafeAreaView as unknown) as new () => SafeAreaView,
+)`
  flex: 1;
  background: white;
 `;
@@ -40,7 +38,7 @@ const HeaderContainerView = Styled.View`
 width: ${wp('100%')}px;
 height: ${hp('8.25%') + getStatusBarHeight()}px;
 flex-direction: row;
-margin-top: ${-getStatusBarHeight()}
+margin-top: ${-getStatusBarHeight()}px;
 padding: ${getStatusBarHeight()}px 16px 0px 16px;
 align-items: center;
 background: white;
@@ -96,7 +94,7 @@ const CommunityListScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
 
   const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.user.jwtToken;
+  const jwtToken = currentUser.jwtToken;
 
   const moveToKeywordSearch = () => {
     navigation.navigate('KeywordSearchStackScreen', {
@@ -136,60 +134,58 @@ const CommunityListScreen = ({navigation, route}: Props) => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.safeAreaStyle} forceInset={{top: 'always'}}>
-      <ContainerView>
-        <HeaderContainerView>
-          <HeaderNicknameText>{'커뮤니티'}</HeaderNicknameText>
-          <HeaderLocationText>
-            {/* {this.props.currentUser.location} */ '광교동'}
-          </HeaderLocationText>
-          <HeaderIconContainerView>
-            <HeaderIconTouchableOpacity onPress={moveToKeywordSearch} />
-            <HeaderIconTouchableOpacity />
-          </HeaderIconContainerView>
-        </HeaderContainerView>
-        <BodyContainerView>
-          <CommunityTopTab.Navigator
-            style={{
-              flex: 1,
-            }}
-            tabBarOptions={{
-              activeTintColor: '#2998FF',
-              inactiveTintColor: '#848484',
-              labelStyle: {
-                fontFamily: 'NanumSquareR',
-                fontWeight: 'bold',
-                fontSize: 14,
-                lineHeight: 16,
-              },
-              indicatorStyle: {
-                backgroundColor: '#2998FF',
-                height: 3,
-              },
-              indicatorContainerStyle: {
-                borderBottomColor: '#C4C4C4',
-                borderBottomWidth: 1,
-              },
-            }}>
-            <CommunityTopTab.Screen
-              name="전체"
-              component={HomeTabScreen}
-              initialParams={{currentUser: currentUser}}
-            />
-            <CommunityTopTab.Screen
-              name="질문"
-              component={QuestionTabScreen}
-              initialParams={{currentUser: currentUser}}
-            />
-            <CommunityTopTab.Screen
-              name="자유"
-              component={GeneralTabScreen}
-              initialParams={{currentUser: currentUser}}
-            />
-          </CommunityTopTab.Navigator>
-        </BodyContainerView>
-      </ContainerView>
-    </SafeAreaView>
+    <ContainerView forceInset={{top: 'always'}}>
+      <HeaderContainerView>
+        <HeaderNicknameText>{'커뮤니티'}</HeaderNicknameText>
+        <HeaderLocationText>
+          {/* {this.props.currentUser.location} */ '광교동'}
+        </HeaderLocationText>
+        <HeaderIconContainerView>
+          <HeaderIconTouchableOpacity onPress={moveToKeywordSearch} />
+          <HeaderIconTouchableOpacity />
+        </HeaderIconContainerView>
+      </HeaderContainerView>
+      <BodyContainerView>
+        <CommunityTopTab.Navigator
+          style={{
+            flex: 1,
+          }}
+          tabBarOptions={{
+            activeTintColor: '#2998FF',
+            inactiveTintColor: '#848484',
+            labelStyle: {
+              fontFamily: 'NanumSquareR',
+              fontWeight: 'bold',
+              fontSize: 14,
+              lineHeight: 16,
+            },
+            indicatorStyle: {
+              backgroundColor: '#2998FF',
+              height: 3,
+            },
+            indicatorContainerStyle: {
+              borderBottomColor: '#C4C4C4',
+              borderBottomWidth: 1,
+            },
+          }}>
+          <CommunityTopTab.Screen
+            name="전체"
+            component={HomeTabScreen}
+            initialParams={{jwtToken: jwtToken}}
+          />
+          <CommunityTopTab.Screen
+            name="질문"
+            component={QuestionTabScreen}
+            initialParams={{jwtToken: jwtToken}}
+          />
+          <CommunityTopTab.Screen
+            name="자유"
+            component={GeneralTabScreen}
+            initialParams={{jwtToken: jwtToken}}
+          />
+        </CommunityTopTab.Navigator>
+      </BodyContainerView>
+    </ContainerView>
   );
 };
 

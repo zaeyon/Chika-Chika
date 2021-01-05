@@ -6,7 +6,7 @@ const baseUri = serverConfig.baseUri
 const GETAllTagSearch = (jwtToken: string, query: string) => {
 
     const uri = baseUri + "/search/allTagItems";
-    const formattedQuery = '?q='+query+'&limit=20&offset=0'
+    const formattedQuery = '/autoComplete?q='+query+'&limit=20&offset=0'
 
     return new Promise(function(resolve, reject) {
 

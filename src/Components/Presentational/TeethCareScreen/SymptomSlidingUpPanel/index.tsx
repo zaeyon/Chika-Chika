@@ -12,8 +12,8 @@ import SlidingUpPanel from '~/Components/Presentational/TeethCareScreen/SymptomS
 import SymptomItem from '~/Components/Presentational/TeethCareScreen/SymptomItem';
 
 const Container = Styled.View`
-width: ${wp('100%')};
-height: ${hp('100%')};
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
 border-top-left-radius: 25px;
 border-top-right-radius: 25px;
 background-color: #ffffff;
@@ -23,8 +23,8 @@ align-items: center;
 `;
 
 const UpArrowIcon = Styled.Image`
-width: ${wp('3.73%')};
-height: ${wp('1.8%')};
+width: ${wp('3.73%')}px;
+height: ${wp('1.8%')}px;
 `;
 
 const PanelHeaderTitleText = Styled.Text`
@@ -35,8 +35,8 @@ font-size: 16px;
 `;
 
 const PanelHeaderContainer = Styled.View`
-width: ${wp('100%')};
-height: ${wp('19%')};
+width: ${wp('100%')}px;
+height: ${wp('19%')}px;
 flex-direction: column;
 justify-content: center;
 align-items: center;
@@ -52,8 +52,8 @@ const SymptomItemContainer = Styled.View`
 
 const LookAtRelatedDiseaseButton = Styled.View`
 margin-top: 16px;
-width: ${wp('91.46%')};
-height: ${wp('14.398%')};
+width: ${wp('91.46%')}px;
+height: ${wp('14.398%')}px;
 background-color: #f2f2f2;
 border-radius: 8px;
 align-items: center;

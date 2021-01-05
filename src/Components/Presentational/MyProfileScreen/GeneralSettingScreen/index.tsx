@@ -20,7 +20,6 @@ import {storeUserInfo} from '~/storage/currentUser';
 const ContainerView = Styled.ScrollView`
 flex: 1;
 background: #EEEEEE;
-margin-bottom: ${hp('9.6%')}px;
 `;
 
 const UserSettingView = Styled.View`

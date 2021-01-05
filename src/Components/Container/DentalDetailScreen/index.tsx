@@ -1,10 +1,17 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {TouchableWithoutFeedback, FlatList, ScrollView, Keyboard, StyleSheet, Alert} from 'react-native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  TouchableWithoutFeedback,
+  FlatList,
+  ScrollView,
+  Keyboard,
+  StyleSheet,
+  Alert,
+} from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 // Local Component
@@ -19,15 +26,15 @@ const Container = Styled.View`
 `;
 
 interface Props {
-    navigation: any,
-    route: any,
+  navigation: any;
+  route: any;
 }
 
 
 const DentalDetailScreen = ({navigation, route}: Props) => {
 
 
-    /*
+  /*
     const getDentalLocationMap = () => {
         axios
         .get(`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster?w=300&h=300&center=127.1054221,37.3591614&level=16`,
@@ -48,9 +55,9 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
     }
     */
 
-    const moveToDentalInfoEdit = () => {
-        navigation.navigate("DentalInfoEditRequestScreen");
-    }
+  const moveToDentalInfoEdit = () => {
+    navigation.navigate('DentalInfoEditRequestScreen');
+  };
 
     const goBack = () => {
         navigation.goBack()

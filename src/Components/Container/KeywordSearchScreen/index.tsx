@@ -5,13 +5,16 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import SafeAreaView from 'react-native-safe-area-view';
 //Local components
 import KeywordSearch from '~/Components/Presentational/KeywordSearch';
 // Routes
 import GETAllTagSearch from '~/Routes/Search/GETAllTagSearch';
 import {useSelector} from 'react-redux';
 
-const ContainerView = Styled.SafeAreaView`
+const ContainerView = Styled(
+  (SafeAreaView as unknown) as new () => SafeAreaView,
+)`
 flex: 1;
 background: white;
 `;
@@ -25,7 +28,7 @@ const KeywordSearchScreen = ({navigation, route}: Props) => {
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.user.jwtToken;
+  const jwtToken = currentUser.jwtToken;
 
   useEffect(() => {
     async function fetchData() {
@@ -49,7 +52,7 @@ const KeywordSearchScreen = ({navigation, route}: Props) => {
   }, [query]);
 
   return (
-    <ContainerView>
+    <ContainerView forceInset={{top: 'always'}}>
       <KeywordSearch
         navigation={navigation}
         route={route}
