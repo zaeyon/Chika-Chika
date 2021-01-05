@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
-import {LayoutAnimation} from 'react-native';
+import {ActivityIndicator, LayoutAnimation} from 'react-native';
 //Local Component
 
 // Redux
@@ -16,9 +16,11 @@ import DELETESocialScrap from '~/Routes/Community/social/DELETESocialScrap';
 import CommunityPostList from '~/Components/Presentational/CommunityPostList';
 
 const ContainerView = Styled.View`
-         flex: 1;
-         background-color: #FFFFFF;
-        `;
+  flex: 1;
+  background-color: #FFFFFF;
+  justify-content: center;
+  align-items: center;
+`;
 interface Props {
   navigation: any;
   route: any;
@@ -26,6 +28,7 @@ interface Props {
 
 const LikedCommunityPostScreen = ({navigation, route}: Props) => {
   const limit = 10;
+  const [isInitializing, setIsInitializing] = useState(true);
   const [isDataFinish, setIsDataFinish] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
@@ -84,9 +87,9 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
 
   const onEndReached = useCallback(
     (info: any) => {
-      if (!isEndReached && postData.length > 9) {
+      if (!isEndReached && !isDataFinish) {
         setIsEndReached(true);
-        const pageIndex = Math.floor(postData.length / 10);
+        const pageIndex = Math.floor(postData.length / 10) + 1;
 
         const form = {
           type: 'community',
@@ -96,6 +99,8 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
         fetchLikedPosts(form, (response: any) => {
           if (response.length === 0) {
             setIsDataFinish(true);
+            setIsEndReached(false);
+            return;
           }
           const data = {
             type: 'Liked',
@@ -198,6 +203,7 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
         LayoutAnimation.configureNext(
           LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
         );
+        setIsInitializing(false);
         dispatch(allActions.communityActions.setPosts(form));
       }
     });
@@ -220,17 +226,21 @@ const LikedCommunityPostScreen = ({navigation, route}: Props) => {
 
   return (
     <ContainerView>
-      <CommunityPostList
-        postData={postData}
-        isEndReached={isEndReached}
-        refreshing={isRefreshing}
-        onEndReached={onEndReached}
-        onRefresh={onRefresh}
-        moveToAnotherProfile={moveToAnotherProfile}
-        moveToCommunityDetail={moveToCommunityDetail}
-        toggleSocialLike={toggleSocialLike}
-        toggleSocialScrap={toggleSocialScrap}
-      />
+      {isInitializing ? (
+        <ActivityIndicator />
+      ) : (
+        <CommunityPostList
+          postData={postData}
+          isEndReached={isEndReached}
+          refreshing={isRefreshing}
+          onEndReached={onEndReached}
+          onRefresh={onRefresh}
+          moveToAnotherProfile={moveToAnotherProfile}
+          moveToCommunityDetail={moveToCommunityDetail}
+          toggleSocialLike={toggleSocialLike}
+          toggleSocialScrap={toggleSocialScrap}
+        />
+      )}
     </ContainerView>
   );
 };

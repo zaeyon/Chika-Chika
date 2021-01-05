@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
-import {LayoutAnimation} from 'react-native';
+import {ActivityIndicator, LayoutAnimation} from 'react-native';
 //Local Component
 import ReviewList from '~/Components/Presentational/ReviewList';
 // Redux
@@ -10,9 +10,11 @@ import allActions from '~/actions';
 // Routes
 import GETUserCommentedPosts from '~/Routes/User/GETUserCommentedPosts';
 const ContainerView = Styled.View`
-         flex: 1;
-         background-color: #FFFFFF;
-        `;
+  flex: 1;
+  background-color: #FFFFFF;
+  justify-content: center;
+  align-items: center;
+`;
 interface Props {
   navigation: any;
   route: any;
@@ -20,6 +22,7 @@ interface Props {
 
 const CommentedReviewScreen = ({navigation, route}: Props) => {
   const limit = 10;
+  const [isInitializing, setIsInitializing] = useState(true);
   const [isDataFinish, setIsDataFinish] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
@@ -73,9 +76,9 @@ const CommentedReviewScreen = ({navigation, route}: Props) => {
   }, []);
 
   const onEndReached = useCallback(() => {
-    if (!isEndReached && postData.length > 9) {
+    if (!isEndReached && !isDataFinish) {
       setIsEndReached(true);
-      const pageIndex = Math.floor(postData.length / 10);
+      const pageIndex = Math.floor(postData.length / 10) + 1;
 
       const form = {
         type: 'review',
@@ -85,8 +88,15 @@ const CommentedReviewScreen = ({navigation, route}: Props) => {
       fetchCommentedPosts(form, (response: any) => {
         if (response.length === 0) {
           setIsDataFinish(true);
+          setIsEndReached(false);
+          return;
         }
-        dispatch(allActions.reviewListActions.setCommentedReviews(response));
+        dispatch(
+          allActions.reviewListActions.setCommentedReviews([
+            ...postData,
+            ...response,
+          ]),
+        );
         setIsEndReached(false);
       });
     }
@@ -165,6 +175,7 @@ const CommentedReviewScreen = ({navigation, route}: Props) => {
         LayoutAnimation.configureNext(
           LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
         );
+        setIsInitializing(false);
         dispatch(allActions.reviewListActions.setCommentedReviews(response));
       }
     });
@@ -183,16 +194,20 @@ const CommentedReviewScreen = ({navigation, route}: Props) => {
 
   return (
     <ContainerView>
-      <ReviewList
-        reviewList={postData}
-        loadingMoreReview={isEndReached}
-        onEndReachedReviewList={onEndReached}
-        refreshingReviewList={isRefreshing}
-        onRefreshReviewList={onRefresh}
-        moveToReviewDetail={moveToReviewDetail}
-        moveToWriterProfile={moveToWriterProfile}
-        moveToDentalDetail={moveToDentalDetail}
-      />
+      {isInitializing ? (
+        <ActivityIndicator />
+      ) : (
+        <ReviewList
+          reviewList={postData}
+          loadingMoreReview={isEndReached}
+          onEndReachedReviewList={onEndReached}
+          refreshingReviewList={isRefreshing}
+          onRefreshReviewList={onRefresh}
+          moveToReviewDetail={moveToReviewDetail}
+          moveToWriterProfile={moveToWriterProfile}
+          moveToDentalDetail={moveToDentalDetail}
+        />
+      )}
     </ContainerView>
   );
 };

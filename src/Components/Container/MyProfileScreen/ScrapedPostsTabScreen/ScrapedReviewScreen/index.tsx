@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
-import {LayoutAnimation} from 'react-native';
+import {ActivityIndicator, LayoutAnimation} from 'react-native';
 //Local Component
 import ReviewList from '~/Components/Presentational/ReviewList';
 // Redux
@@ -11,9 +11,11 @@ import allActions from '~/actions';
 import GETUserScrapedPosts from '~/Routes/User/GETUserScrapedPosts';
 
 const ContainerView = Styled.View`
-         flex: 1;
-         background-color: #FFFFFF;
-        `;
+  flex: 1;
+  background-color: #FFFFFF;
+  justify-content: center;
+  align-items: center;
+`;
 interface Props {
   navigation: any;
   route: any;
@@ -21,6 +23,7 @@ interface Props {
 
 const ScrapedReviewScreen = ({navigation, route}: Props) => {
   const limit = 10;
+  const [isInitializing, setIsInitializing] = useState(true);
   const [isDataFinish, setIsDataFinish] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
@@ -72,9 +75,9 @@ const ScrapedReviewScreen = ({navigation, route}: Props) => {
   }, []);
 
   const onEndReached = useCallback(() => {
-    if (!isEndReached && postData.length > 9) {
+    if (!isEndReached && !isDataFinish) {
       setIsEndReached(true);
-      const pageIndex = Math.floor(postData.length / 10);
+      const pageIndex = Math.floor(postData.length / 10) + 1;
 
       const form = {
         type: 'review',
@@ -84,9 +87,15 @@ const ScrapedReviewScreen = ({navigation, route}: Props) => {
       fetchScrapedPosts(form, (response: any) => {
         if (response.length === 0) {
           setIsDataFinish(true);
+          setIsEndReached(false);
+          return;
         }
-        const posts = [...postData, ...response];
-        dispatch(allActions.reviewListActions.setScrapedReviews(posts));
+        dispatch(
+          allActions.reviewListActions.setScrapedReviews([
+            ...postData,
+            ...response,
+          ]),
+        );
         setIsEndReached(false);
       });
     }
@@ -150,6 +159,7 @@ const ScrapedReviewScreen = ({navigation, route}: Props) => {
       offset: 0,
     };
     fetchScrapedPosts(form, (response: any) => {
+      setIsInitializing(false);
       dispatch(allActions.reviewListActions.setScrapedReviews(response));
     });
 
@@ -167,16 +177,20 @@ const ScrapedReviewScreen = ({navigation, route}: Props) => {
 
   return (
     <ContainerView>
-      <ReviewList
-        reviewList={postData}
-        loadingMoreReview={isEndReached}
-        onEndReachedReviewList={onEndReached}
-        refreshingReviewList={isRefreshing}
-        onRefreshReviewList={onRefresh}
-        moveToReviewDetail={moveToReviewDetail}
-        moveToWriterProfile={moveToWriterProfile}
-        moveToDentalDetail={moveToDentalDetail}
-      />
+      {isInitializing ? (
+        <ActivityIndicator />
+      ) : (
+        <ReviewList
+          reviewList={postData}
+          loadingMoreReview={isEndReached}
+          onEndReachedReviewList={onEndReached}
+          refreshingReviewList={isRefreshing}
+          onRefreshReviewList={onRefresh}
+          moveToReviewDetail={moveToReviewDetail}
+          moveToWriterProfile={moveToWriterProfile}
+          moveToDentalDetail={moveToDentalDetail}
+        />
+      )}
     </ContainerView>
   );
 };
