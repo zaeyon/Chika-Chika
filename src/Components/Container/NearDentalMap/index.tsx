@@ -635,9 +635,12 @@ const NearDentalMap = ({navigation, route}: Props) => {
         
     }
 
-    const moveToDentalDetail = () => {
+    const moveToDentalDetail = (dentalId: number) => {
         navigation.navigate("DentalClinicStack", {
-            screen: "DentalDetailScreen"
+            screen: "DentalDetailScreen",
+            params: {
+              dentalId: dentalId
+            }
         })
     }
 
@@ -787,7 +790,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
         }
 
         return (
-            <TouchableWithoutFeedback onPress={() => moveToDentalDetail()}>
+            <TouchableWithoutFeedback onPress={() => moveToDentalDetail(item.id)}>
             <DentalCarouselItemContainer>
                 <DentalCarouselItem
                 isOpen={isOpen}

@@ -170,7 +170,7 @@ function ReviewStackScreen() {
         component={ReviewUploadStackScreen}
       />
       <ReviewStack.Screen
-        name="DentalClinicStackScreen"
+        name="DentalClinicStack"
         component={DentalClinicStackScreen}
       />
     </ReviewStack.Navigator>

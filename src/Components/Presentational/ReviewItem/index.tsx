@@ -286,6 +286,7 @@ interface Props {
     commentCount: number,
     isCurUserScrap: boolean,
     dentalObj: DentalObj,
+    elapsedTime: string,
   ) => void;
   moveToWriterProfile: (userId: number) => void;
   moveToDentalDetail: (dentalId: number) => void;
@@ -452,6 +453,7 @@ const ReviewItem = ({
           commentCount,
           isCurUserScrapProp,
           dentalObj,
+          elapsedTimeText,
         )
       }>
       <Container>
@@ -537,7 +539,7 @@ const ReviewItem = ({
               <IndicatorCountText>{commentCount}</IndicatorCountText>
             </CommentContainer>
           </LikeScrapContainer>
-          <TouchableWithoutFeedback onPress={() => moveToDentalDetail()}>
+          <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalObj.id)}>
             <GetTreatInfoButton>
               <GetTreatInfoText>{'병원정보'}</GetTreatInfoText>
             </GetTreatInfoButton>

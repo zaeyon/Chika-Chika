@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -17,6 +17,7 @@ import {
   StatusBar,
   TouchableWithoutFeedback,
   FlatList,
+  Linking,
 } from 'react-native';
 import {TabView, TabBar} from 'react-native-tab-view';
 import {getStatusBarHeight} from 'react-native-status-bar-height'
@@ -37,7 +38,6 @@ const Container = Styled.View`
 const CollapsibleContainer = Styled.View`
 flex: 1;
 width: ${wp('100%')}px;
-height: ${DeviceInfo.hasNotch() ? hp('67%') : hp('74.5%')}px;
 align-items: center;
 background-color: #ffffff;
 border-bottom-width: 8px;
@@ -75,6 +75,7 @@ color: #000000;
 const CoverImageContainer = Styled.View`
 width: ${wp('100%')};
 height: ${hp('31.5%')};
+background-color: #F5F7F9;
 `;
 
 const CoverImage = Styled.Image`
@@ -173,8 +174,8 @@ font-size: 14px;
 font-family: NanumSquare
 `;
 
-const DetailInfoContainer = Styled.View`
-padding-bottom: ${hp('33%')}px;
+const DetailInfoTabContainer = Styled.View`
+padding-bottom: ${hp('17%')}px;
 background-color: #F5F7F9;
 `;
 
@@ -216,7 +217,6 @@ font-family: NanumSquare
 `;
 
 const DetailInfoItemContainer = Styled.View`
-height: 300px;
 background-color: #ffffff;
 padding: 24px 16px;
 border-bottom-width: 8px;
@@ -244,30 +244,88 @@ border-color: #F5F7F9;
 `;
 
 const TreatmentHourFilterContainer = Styled.View`
+flex-direction: row; 
+align-items: center;
+`;
+
+const TreatmentHourFilterItemContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+`;
+
+const TreatmentHourFilterText = Styled.Text`
+font-weight: 800;
+font-size: 16px;
+color: #000000;
+font-family: NanumSquare;
+`;
+
+const DentalStaticMapImage = Styled.Image`
+margin-top: 16px;
+width: ${wp('91.46%')}px;
+height: ${wp('53.329%')}px;
+border-radius: 8px;
+`;
+
+const RequestReviseInfoContainer = Styled.View`
+padding-top: 24px;
+padding-left: 13px;
+padding-right: 0px;
+align-self: flex-start;
+`;
+
+const RequestReviseInfoTextContainer = Styled.View`
+width: 109;
+padding-bottom: 1px;
+border-bottom-width: 1px;
+padding-bottom: 6px;
 `;
 
 
-const TEST_DENTAL_DETAIL_DATA = {
-  coverImage: {
-      uri: "http://www.dailydental.co.kr/data/photos/20180729/art_15318134467_8b8044.jpg"
-  },
-  name: "웃는E치과교정전문의원",
-  address: "경기도 수원시 광교중앙로 145",
-  tagList: ["임플란트", "소아청소년과"],
-  homePage: "http://www.sadh.co.kr/",
-  detailInfo: {
-      introduction: "안녕하세요. 누구누구입니다. 잘 부탁드립니다.",
-      establishDate: "2020.11.09",
-      treatTime: "09:00 ~ 18",
-      location: {
-          latitude: 37.294242,
-          longitude: 127.045466,
-      },
-      park: "불가",
-      uniqueness: "특이특이특이",
-      dentist: "전문의 1명"
-  }
-}
+const RequestReviseInfoText = Styled.Text`
+width: 120px;
+font-weight: bold;
+font-size: 14px;
+color: #000000;
+font-family: NanumSquare;
+`;
+
+const CopyrightDescipContainer = Styled.View`
+margin-top: 16px;
+padding-left: 16px;
+padding-right: 16px;
+`;
+
+const CopyrightDescipText = Styled.Text`
+font-weight: 400;
+color: #75808B;
+font-size: 12px;
+font-family: NanumSquare;
+line-height: 22;
+`;
+
+const DentistInfoListContainer = Styled.View`
+`;
+
+const ReviewTabContainer = Styled.View`
+`;
+
+const ReviewListContainer = Styled.View`
+`;
+
+const NoneReviewContainer = Styled.View`
+width: ${wp('100%')}px;
+align-items: center;
+padding-top: 30px;
+`;
+
+const NoneReviewText = Styled.Text`
+margin-top: 16px;
+font-weight: 400; 
+font-size: 16px;
+color: #000000;
+font-family: NanumSquare
+`;
 
 
 let isReachedTop = false;
@@ -275,7 +333,7 @@ let isReachedTop = false;
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 const tabBarHeight = hp('6.89%');
-const collapsibleViewHeight = DeviceInfo.hasNotch() ? hp('67%') : hp('74.5%');
+// let collapsibleViewHeight = DeviceInfo.hasNotch() ? hp('69%') : hp('74.5%');
 const detailInfoTypeHeight = DeviceInfo.hasNotch() ? hp('10.83%') : hp('15%')
 const headerHeight = getStatusBarHeight() + hp('8%');
 const SafeStatusBar = Platform.select({
@@ -283,225 +341,19 @@ const SafeStatusBar = Platform.select({
   android: StatusBar.currentHeight,
 });
 
-
-const DetailInfoTabScene = ({
-  onGetRef,
-  scrollY,
-  onScrollEndDrag,
-  onMomentumScrollEnd,
-  onMomentumScrollBegin,
-  setIsContentedHeader,
-  lockContentedHeader,
-  unlockContentedHeader,
-  isContentedHeader,
-  reachTop,
-  offTop,
-  focused,
-  tabPanResponder,
-  infoTypeArr,
-  selectInfoType,
-  changeCurInfoTypeIndex,
-  curInfoTypeIndex,
-  isChangingInfoTypeIndex,
-  infoTypeScrollViewRef,
-}: any) => {
-
-  const windowHeight = Dimensions.get('window').height;
-
-  return (
-    <Animated.ScrollView
-      {...tabPanResponder.panHandlers}
-      scrollToOverflowEnabled={true}
-      ref={onGetRef}
-      scrollEventThrottle={1}
-      onScroll={focused ? Animated.event([
-        {nativeEvent: {contentOffset: {y: scrollY}}}], 
-        {
-          useNativeDriver: true,
-          listener: event => {
-              if(scrollY._value > 110) {
-                if(!isContentedHeader) {
-                  //lockContentedHeader();
-                }
-                if(scrollY._value >= (collapsibleViewHeight - tabBarHeight - getStatusBarHeight()) && !isReachedTop) {
-                  console.log("reachTop")
-                  isReachedTop = true;
-                } else if(scrollY._value < (collapsibleViewHeight - tabBarHeight - getStatusBarHeight()) && isReachedTop) {
-                  isReachedTop = false;
-                }
-              } else if(scrollY._value <= 110 ) {
-                if(isContentedHeader) {
-                  //unlockContentedHeader();
-                }
-              }
-              const invisibleScrollHeight = collapsibleViewHeight - tabBarHeight - getStatusBarHeight() - 10;
-              
-              if(infoTypeArr.current[0] <= scrollY._value && scrollY._value < (infoTypeArr.current[1] + invisibleScrollHeight)) {
-                if(curInfoTypeIndex !== 0 && !isChangingInfoTypeIndex.current) {
-                  infoTypeScrollViewRef.current.scrollTo({x: 0, animated: true})
-                  changeCurInfoTypeIndex(0);
-                }
-              } else if((infoTypeArr.current[1] + invisibleScrollHeight) <= scrollY._value && scrollY._value < (infoTypeArr.current[2] + invisibleScrollHeight)) {
-                if(curInfoTypeIndex !== 1 && !isChangingInfoTypeIndex.current) {
-                  changeCurInfoTypeIndex(1);
-                }
-              } else if((infoTypeArr.current[2] + invisibleScrollHeight) <= scrollY._value && scrollY._value < (infoTypeArr.current[3] + invisibleScrollHeight)) {
-                if(curInfoTypeIndex !== 2 && !isChangingInfoTypeIndex.current) {
-                  changeCurInfoTypeIndex(2);
-                }
-              } else if((infoTypeArr.current[3] + invisibleScrollHeight) <= scrollY._value) {
-                if(curInfoTypeIndex !== 3 && !isChangingInfoTypeIndex.current) {
-                  infoTypeScrollViewRef.current.scrollToEnd({animated: true})
-                  changeCurInfoTypeIndex(3);
-                }
-              }
-        }
-        },
-      ) : null}
-      onMomentumScrollBegin={onMomentumScrollBegin}
-      onScrollEndDrag={onScrollEndDrag}
-      onMomentumScrollEnd={onMomentumScrollEnd}
-      contentContainerStyle={{
-        width: wp('100%'),
-        paddingTop: collapsibleViewHeight + tabBarHeight + detailInfoTypeHeight,
-        minHeight: windowHeight - tabBarHeight,
-      }}
-      showsHorizontalScrollIndicator={false}
-      showsVerticalScrollIndicator={false}>
-        <DetailInfoContainer>
-        <DetailInfoItemContainer
-        onLayout={(event) => {
-          infoTypeArr.current[0] = event.nativeEvent.layout.y
-        }}>
-          <DetailInfoLabelText>{"병원 소개"}</DetailInfoLabelText>
-        </DetailInfoItemContainer>
-        <DetailInfoItemContainer>
-          <DetailInfoLabelText>{"진료 시간"}</DetailInfoLabelText>
-        </DetailInfoItemContainer>
-        <DetailInfoItemContainer>
-          <DetailInfoLabelText>{"위치 정보"}</DetailInfoLabelText>
-        </DetailInfoItemContainer>
-        <DetailInfoItemContainer
-        onLayout={(event) => {
-          infoTypeArr.current[1] = event.nativeEvent.layout.y
-        }}>
-          <DetailInfoLabelText>{"진료 과목"}</DetailInfoLabelText>
-        </DetailInfoItemContainer>
-        <DetailInfoItemContainer>
-          <DetailInfoLabelText>{"특수 진료 장비"}</DetailInfoLabelText>
-        </DetailInfoItemContainer>
-        <DetailInfoItemContainer>
-          <DetailInfoLabelText>{"전문 및 특수 진료 항목"}</DetailInfoLabelText>
-        </DetailInfoItemContainer>
-        <DetailInfoItemContainer
-        onLayout={(event) => {
-          infoTypeArr.current[2] = event.nativeEvent.layout.y
-        }}>
-          <DetailInfoLabelText>{"의사 정보"}</DetailInfoLabelText>
-        </DetailInfoItemContainer>
-        <DetailInfoItemContainer
-        onLayout={(event) => {
-          infoTypeArr.current[3] = event.nativeEvent.layout.y 
-        }}
-        style={{borderWidth: 0}}>
-          <DetailInfoLabelText>{"주차 정보"}</DetailInfoLabelText>
-        </DetailInfoItemContainer>
-        </DetailInfoContainer>
-    </Animated.ScrollView>
-  );
-};
-
-const ReviewTabScene = ({
-  onGetRef,
-  scrollY,
-  onScrollEndDrag,
-  onMomentumScrollEnd,
-  onMomentumScrollBegin,
-  dentalReviewArray,
-  moveToWriterProfile,
-  moveToReviewDetail,
-  moveToDentalDetail,
-  lockContentedHeader,
-  unlockContentedHeader,
-  isContentedHeader,
-  reachTop,
-  offTop,
-  focused,
-  tabPanResponder,
-}: any) => {
-  const windowHeight = Dimensions.get('window').height;
-
-  return (
-    <Animated.ScrollView
-    {...tabPanResponder.panHandlers}
-      scrollToOverflowEnabled={true}
-      ref={onGetRef}
-      scrollEventThrottle={1}
-      data={TEST_DENTAL_REVIEW_DATA}
-      onScroll={focused ? Animated.event([
-        {nativeEvent: {contentOffset: {y: scrollY}}}], 
-        {
-          useNativeDriver: true,
-          listener: event => {
-              if(scrollY._value > 110) {
-                if(!isContentedHeader) {
-                  //lockContentedHeader();
-                }
-                if(scrollY._value >= (collapsibleViewHeight - tabBarHeight - getStatusBarHeight()) && !isReachedTop) {
-                  console.log("reachTop")
-                  isReachedTop = true
-                } else if(scrollY._value < (collapsibleViewHeight - tabBarHeight - getStatusBarHeight()) && isReachedTop) {
-                  isReachedTop = false
-                }
-              } else if(scrollY._value <= 110) {
-                if(isContentedHeader) {
-                  //unlockContentedHeader();
-                }
-              }
-        }
-        },
-      ): null}
-      onMomentumScrollBegin={onMomentumScrollBegin}
-      onScrollEndDrag={onScrollEndDrag}
-      onMomentumScrollEnd={onMomentumScrollEnd}
-      contentContainerStyle={{
-        width: wp("100%"),
-        height: 2000,
-        paddingTop: collapsibleViewHeight + tabBarHeight,
-        minHeight: windowHeight - tabBarHeight,
-      }}
-      showsHorizontalScrollIndicator={false}
-      showsVerticalScrollIndicator={false}
-    >
-    <RatingReportContainer>
-      <RatingReport
-      avgRating={3}/>
-    </RatingReportContainer>
-    <ReviewList
-    scrollEnabled={false}
-    reviewList={dentalReviewArray}
-    moveToDentalDetail={moveToDentalDetail}
-    moveToWriterProfile={moveToWriterProfile}
-    moveToReviewDetail={moveToReviewDetail}
-    />
-
-    </Animated.ScrollView>
-  );
-};
-
 interface Props {
   goBack: () => void,
+  dentalDetailInfo: any,
 }
 
-
-const DentalCollapsibleTabView = ({goBack}: Props) => {
+const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
+  console.log("DentalCollapsibleTabView dentalDetailInfo", dentalDetailInfo);
+  const [collapsibleViewHeight, setCollapsibleViewHeight] = useState<number>(DeviceInfo.hasNotch() ? hp('68.5%') : hp('76.3%'));
   const [tabIndex, setIndex] = useState(0);
   const [routes] = useState([
     {key: 'detailInfo', title: '상세 정보'},
     {key: 'review', title: '리뷰'},
   ]);
-  const [dentalDetailInfo, setDentalDetailInfo] = useState<any>(TEST_DENTAL_DETAIL_DATA)
-  const [dentalReviewArray, setDentalReviewArray] = useState<any>(TEST_DENTAL_REVIEW_DATA);
 
   /**
    * ref
@@ -521,7 +373,15 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
      outputRange: [0, 1],
      extrapolate: 'clamp'
    })
- 
+
+   const introduction = dentalDetailInfo.clinicInfoBody.description;
+   const treatmentTimeInfo = dentalDetailInfo.clinicInfoBody.treatmentTime;
+   const locationInfo = dentalDetailInfo.clinicInfoBody.location;
+   const treatmentSubjectInfo = dentalDetailInfo.clinicInfoBody.treatmentSubject;
+   const specialTreatmentInfo = dentalDetailInfo.clinicInfoBody.SpecialTreatment;
+   const dentistInfo = dentalDetailInfo.clinicInfoBody.dentistInfo;
+   const parkingInfo = dentalDetailInfo.clinicInfoBody.parkingInfo;
+
   /**
    * PanResponder for header
    */
@@ -677,6 +537,29 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
     syncScrollOffset();
   };
 
+  const getEstablishedElapsedYear = useCallback((establishedDate) => {
+
+    const splitedDate = establishedDate.split("-");
+    const currentYear = new Date().getFullYear();
+
+    return (currentYear - Number(splitedDate[0]))
+
+  }, [dentalDetailInfo?.clinicInfoHeader?.launchDate])
+
+  const openDentalWebsite = async (url: string) => {
+
+    // TEST용 url
+    //url = "http://www.marudental.com/?gclid=CjwKCAiAudD_BRBXEiwAudakX8qynWvVNaNUSpXQkh2FPPsbeTaGd-RK18o5fA5hpbmencfiqp7rcBoCkwAQAvD_BwE"
+
+    const supported = await Linking.canOpenURL(url);
+
+    if(supported) {
+      await Linking.openURL(url)
+    } else {
+      Alert.alert("병원의 웹사이트로 이동 할 수 없습니다.")
+    }
+  }
+
   /**
    * render Helper
    */
@@ -691,10 +574,13 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
       <Animated.View 
       {...collapsibleViewPanResponder.panHandlers}
       style={[styles.collapsibleView, {transform: [{translateY: y}]}]}>
-        <CollapsibleContainer>
+        <CollapsibleContainer
+        onLayout={(event) => {
+          setCollapsibleViewHeight(event.nativeEvent.layout.height)
+        }}>
             <CoverImageContainer>
                 <CoverImage
-                source={{uri:dentalDetailInfo.coverImage.uri}}/>
+                source={{uri:""}}/>
                 <CertificationIcon
                 style={styles.certificationIconShadow}/>
             </CoverImageContainer>
@@ -704,22 +590,26 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
                 </RepresentingKeywordItemContainer>
             </RepresentingKeywordContainer>
             <BasicInfoContainer>
-                <DentalNameText>{dentalDetailInfo.name}</DentalNameText>
-                <DentalAddressText>{dentalDetailInfo.address}</DentalAddressText>
-                <RatingText>{"평점 3.0"}</RatingText>
+                <DentalNameText>{dentalDetailInfo?.clinicInfoHeader?.name}</DentalNameText>
+                <DentalAddressText>{dentalDetailInfo?.clinicInfoHeader?.address}</DentalAddressText>
+                <RatingText>{dentalDetailInfo?.clinicInfoHeader?.reviewAVGStarRate.all ? "평점" + dentalDetailInfo?.clinicInfoHeader?.reviewAVGStarRate.all.toFixed(0) : "평가 없음"}</RatingText>
             <BasicInfoItemDivider
             style={{marginTop: 24}}/>
             <BasicInfoItemContainer>
                 <BasicInfoLabelText>{"설립"}</BasicInfoLabelText>
                 <BasicInfoLabelDivider/>
-                <BasicInfoValueText>{"4년"}</BasicInfoValueText>
+                <BasicInfoValueText>{`${getEstablishedElapsedYear(dentalDetailInfo?.clinicInfoHeader?.launchDate)}년`}</BasicInfoValueText>
             </BasicInfoItemContainer>
             <BasicInfoItemDivider/>
+            {dentalDetailInfo.clinicInfoHeader.website.length > 0 && (
             <BasicInfoItemContainer>
                 <BasicInfoLabelText>{"홈페이지"}</BasicInfoLabelText>
                 <BasicInfoLabelDivider/>
+                <TouchableWithoutFeedback onPress={() => openDentalWebsite(dentalDetailInfo.clinicInfoHeader.website)}>
                 <BasicInfoValueText>{"바로가기"}</BasicInfoValueText>
+                </TouchableWithoutFeedback>
             </BasicInfoItemContainer>
+            )}
             </BasicInfoContainer>
             </CollapsibleContainer>
       </Animated.View>
@@ -774,19 +664,23 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
             onMomentumScrollEnd={onMomentumScrollEnd}
             contentContainerStyle={{
               paddingTop: collapsibleViewHeight + tabBarHeight,
+              backgroundColor: "#ffffff"
             }}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
-            ><DetailInfoContainer>
+            ><DetailInfoTabContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"병원 소개"}</DetailInfoLabelText>
-              <DetailInfoDescripText>{"경기도 수원시 광교중앙로 145 (엘포트아이파크) 2층에 위치한 웃는E치과교정전문의원 입니다. 주차는 지하 3층 D01 구역에 하시고 롯데 아울렛 방향으로 쭉 걸어오시면 됩니다."}</DetailInfoDescripText>
+              <DetailInfoDescripText>{introduction> 0 ? introduction : "-"}</DetailInfoDescripText>
             </DetailInfoItemContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"진료 시간"}</DetailInfoLabelText>
             </DetailInfoItemContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"위치 정보"}</DetailInfoLabelText>
+              <DetailInfoDescripText>{locationInfo.address > 0 ? locationInfo.address : "-"}</DetailInfoDescripText>
+              <DentalStaticMapImage
+              source={{uri: locationInfo.clinicStaticMap}}/>
             </DetailInfoItemContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"진료 과목"}</DetailInfoLabelText>
@@ -796,15 +690,61 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
             </DetailInfoItemContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"전문 및 특수 진료 항목"}</DetailInfoLabelText>
+              {specialTreatmentInfo.length > 0 && (
+              specialTreatmentInfo.map((item: any, index: number) => {
+                return (
+                  <DetailInfoDescripText>{(index !== specialTreatmentInfo.length -1) ? (item.name + ", ") : (item.name)}</DetailInfoDescripText>
+                )
+              })
+              )}
+              {specialTreatmentInfo.length === 0 && (
+                  <DetailInfoDescripText>{"-"}</DetailInfoDescripText>
+              )}
             </DetailInfoItemContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"의사 정보"}</DetailInfoLabelText>
+                <DentistInfoListContainer>
+                {(dentistInfo.specialListDentist !== null) && (
+                <DetailInfoDescripText>{`전문의 ${dentistInfo.specialistDentist}명`}</DetailInfoDescripText>
+                )}
+                {(dentistInfo.generalDentist !== null) && (
+                <DetailInfoDescripText>{`일반의 ${dentistInfo.generalDentist}명`}</DetailInfoDescripText>
+                )}
+                {(dentistInfo.resident !== null) && (
+                <DetailInfoDescripText>{`레지던트 ${dentistInfo.resident}명`}</DetailInfoDescripText>
+                )}
+                {(dentistInfo.intern !== null) && (
+                <DetailInfoDescripText>{`인턴 ${dentistInfo.intern}명`}</DetailInfoDescripText>
+                )}
+                </DentistInfoListContainer>
             </DetailInfoItemContainer>
             <DetailInfoItemContainer
             style={{borderWidth: 0}}>
               <DetailInfoLabelText>{"주차 정보"}</DetailInfoLabelText>
+              {(parkingInfo.parkingAllowNum === 0 && parkingInfo.parkingCost === "" && parkingInfo.parkingNotice === "") && (
+                <DetailInfoDescripText>{"-"}</DetailInfoDescripText>
+              )}
+              {(parkingInfo.parkingAllowNum > 0) && (
+                <DetailInfoDescripText>{`주차 가능 영역 ${parkingInfo.parkingAllowNum}대`}</DetailInfoDescripText>
+              )}
+              {(parkingInfo.parkingCost !== "") && (
+                <DetailInfoDescripText>{`주차 비용 ${parkingInfo.parkingCost}원`}</DetailInfoDescripText>
+              )}
+              {(parkingInfo.parkingNotice !== "") && (
+                <DetailInfoDescripText>{`${parkingInfo.parkingNotice}`}</DetailInfoDescripText>
+              )}
             </DetailInfoItemContainer>
-            </DetailInfoContainer>
+            <RequestReviseInfoContainer>
+              <RequestReviseInfoTextContainer>
+              <RequestReviseInfoText>
+                {"정보 수정 요청하기"}
+              </RequestReviseInfoText>
+              </RequestReviseInfoTextContainer>
+            </RequestReviseInfoContainer>
+            <CopyrightDescipContainer>
+              <CopyrightDescipText>병원정보는 건강보험심사평가원의 의료 빅데이터 및 해당 병원이 제공한 정보를 기반으로 작성되었습니다. 본 컨텐츠의 저작권은 제공처에 있으며, 저작권법의 보호를 받습니다.</CopyrightDescipText>
+            </CopyrightDescipContainer>
+            </DetailInfoTabContainer>
           </Animated.ScrollView>
         );
       case 'review':
@@ -836,18 +776,37 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
             ListHeaderComponent={() => <View style={{height: 10}} />}
             contentContainerStyle={{
               paddingTop: collapsibleViewHeight + tabBarHeight,
+              backgroundColor: "#ffffff"
             }}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             >
-            <RatingReportContainer>
+            <ReviewTabContainer>
+            {dentalDetailInfo.reviews.length > 0 && (
+              <ReviewListContainer>
+              {dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate.all && (
+              <RatingReportContainer>
               <RatingReport
-              avgRating={3}/>
-            </RatingReportContainer>
-            <ReviewList
-            scrollEnabled={false}
-            reviewList={dentalReviewArray}
-            />
+              avgRating={dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate.all}
+              priceRating={dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate.cost}
+              serviceRating={dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate.service}
+              treatRating={dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate.treatment}/>
+              </RatingReportContainer>
+              )}
+              <ReviewList
+              reviewList={dentalDetailInfo.reviews}
+              />
+              </ReviewListContainer>
+            )}
+            {dentalDetailInfo.reviews.length === 0 && (
+              <NoneReviewContainer
+              style={{
+                minHeight: (hp('100%') - (headerHeight + tabBarHeight))
+              }}>
+                <NoneReviewText>{"해당 병원에 등록된 리뷰가 없어요!"}</NoneReviewText>
+              </NoneReviewContainer>
+            )}
+            </ReviewTabContainer>
           </Animated.ScrollView>
         );
         break;
@@ -859,7 +818,6 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
 
   
   const renderTabBar = (props) => {
-    console.log("renderTabBar props", props);
     const y = scrollY.interpolate({
       inputRange: [0, collapsibleViewHeight - headerHeight],
       outputRange: [collapsibleViewHeight, (headerHeight)],
@@ -915,16 +873,18 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
     <View style={styles.container}>
       {renderTabView()}
       {renderCollapsibleView()}
+      <HeaderBar>
       <Animated.View
       style={[styles.header, {opacity: headerOpacity}]}>
+          <HeaderTitleText>{dentalDetailInfo?.clinicInfoHeader?.name}</HeaderTitleText>
+      </Animated.View>
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <HeaderLeftContainer>
             <HeaderBackIcon
             source={require('~/Assets/Images/HeaderBar/ic_back.png')}/>
           </HeaderLeftContainer>
         </TouchableWithoutFeedback>
-          <HeaderTitleText>{"웃는E치과교정전문의"}</HeaderTitleText>
-      </Animated.View>
+      </HeaderBar>
     </View>
   );
 };
@@ -934,7 +894,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   collapsibleView: {
-    height: collapsibleViewHeight,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -948,7 +907,8 @@ const styles = StyleSheet.create({
     height: getStatusBarHeight() + hp('8%'),
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFFFFF"
+    backgroundColor: "#FFFFFF",
+    paddingLeft: wp('10.6%')
   },
   label: {fontSize: 14, color: '#2998FF', fontWeight: '800'},
   tab: {
@@ -971,9 +931,145 @@ const styles = StyleSheet.create({
     width: wp('19%'),
     marginLeft: (wp('50%') - wp('19%')) / 2
   },
+  certificationIconShadow: {
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 16
+  }
 });
 
 export default DentalCollapsibleTabView;
+
+const TEST_DENTAL_DETAIL_DATA = {
+  
+    "clinicInfoHeader": {
+        "name": "아너스치과교정과치과의원(강서구-화곡동)",
+        "address": "서울특별시 강서구 강서로 242 3층 307호 (화곡동, 강서힐스테이트상가)",
+        "telNumber": "02-2602-7222",
+        "website": "http://www.honorsdental.com",
+        "launchDate": "2014-10-14",
+        "reviewNum": 15,
+        "conclustionNow": 0,
+        "lunchTimeNow": 0,
+        "reviewAVGStarRate": 3.6
+    },
+    "clinicInfoBody": {
+        "description": "",
+        "treatmentTime": {
+            "weekday": {
+                "weekdayReceiptNotice": "",
+                "weekdayLunchTimeNotice": "",
+                "mon": {
+                    "treatmentTime": [
+                        "00:00:00",
+                        "00:00:00"
+                    ],
+                    "lunchTime": [
+                        "00:00:00",
+                        "00:00:00"
+                    ]
+                },
+                "tus": {
+                    "treatmentTime": [
+                        "00:00:00",
+                        "00:00:00"
+                    ],
+                    "lunchTime": [
+                        "00:00:00",
+                        "00:00:00"
+                    ]
+                },
+                "wed": {
+                    "treatmentTime": [
+                        "00:00:00",
+                        "00:00:00"
+                    ],
+                    "lunchTime": [
+                        "00:00:00",
+                        "00:00:00"
+                    ]
+                },
+                "thu": {
+                    "treatmentTime": [
+                        "00:00:00",
+                        "00:00:00"
+                    ],
+                    "lunchTime": [
+                        "00:00:00",
+                        "00:00:00"
+                    ]
+                },
+                "fri": {
+                    "treatmentTime": [
+                        "00:00:00",
+                        "00:00:00"
+                    ],
+                    "lunchTime": [
+                        "00:00:00",
+                        "00:00:00"
+                    ]
+                }
+            },
+            "sat": {
+                "weekendReceiptNotice": "",
+                "weekendLunchTimeNotice": "",
+                "weekend_non_consulation_notice": "",
+                "sat": {
+                    "treatmentTime": [
+                        "00:00:00",
+                        "00:00:00"
+                    ],
+                    "lunchTime": [
+                        "00:00:00",
+                        "00:00:00"
+                    ]
+                }
+            },
+            "sunAndHoliday": {
+                "weekend_non_consulation_notice": "",
+                "treatmentTime": [
+                    null,
+                    null
+                ]
+            }
+        },
+        "treatmentSubject": [
+            {
+                "name": "치과교정과",
+                "Clinic_subject": {
+                    "SpecialistDentist_NUM": 1,
+                    "choiceTreatmentDentist_NUM": 0
+                }
+            }
+        ],
+        "SpecialTreatment": [
+            {
+                "name": "측두하악관절 자극요법"
+            },
+            {
+                "name": "소아야간진료(20시 이후)"
+            }
+        ],
+        "dentistInfo": {
+            "specialistDentist": 1,
+            "generalDentist": 0,
+            "resident": 0,
+            "intern": 1
+        },
+        "parkingInfo": {
+            "parkingAllowNum": 0,
+            "parkingCost": "",
+            "parkingNotice": ""
+        },
+        "location": {
+            "address": "서울특별시 강서구 강서로 242 3층 307호 (화곡동, 강서힐스테이트상가)"
+        }
+    },
+}
+
 
 
 const TEST_DENTAL_REVIEW_DATA = [

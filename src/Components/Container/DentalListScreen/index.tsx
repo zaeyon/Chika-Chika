@@ -542,6 +542,9 @@ const DentalListScreen = ({navigation, route}: Props) => {
   const moveToDentalDetail = (dentalId: number) => {
     navigation.navigate('DentalClinicStack', {
       screen: 'DentalDetailScreen',
+      params: {
+        dentalId: dentalId,
+      }
     });
   };
 
@@ -577,16 +580,17 @@ const DentalListScreen = ({navigation, route}: Props) => {
     }
     return (
       <DentalListItem
-        isOpen={isOpen}
-        isLunchTime={isLunchTime}
-        name={item.name}
-        address={item.address}
-        rating={rating}
-        reviewCount={item.reviewNum}
-        lunchTime={item.lunchTime}
-        openTime={todayStartTime}
-        closeTime={todayEndTime}
-        moveToDentalDetail={moveToDentalDetail}
+      dentalId={item.id}
+      isOpen={isOpen}
+      isLunchTime={isLunchTime}
+      name={item.name}
+      address={item.address}
+      rating={rating}
+      reviewCount={item.reviewNum}
+      lunchTime={item.lunchTime}
+      openTime={todayStartTime}
+      closeTime={todayEndTime}
+      moveToDentalDetail={moveToDentalDetail}
       />
     );
   };
@@ -641,6 +645,7 @@ const DentalListScreen = ({navigation, route}: Props) => {
             />
             <SearchTextInput
               autoFocus={true}
+              autoCapitalize={"none"}
               placeholder={'병원, 지역을 검색해 보세요.'}
               placeholderTextColor={'#979797'}
               onSubmitEditing={(event: any) =>

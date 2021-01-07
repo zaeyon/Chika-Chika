@@ -439,9 +439,12 @@ const ReviewListScreen = ({navigation}: Props) => {
     });
   };
 
-  const moveToDentalDetail = () => {
-    navigation.navigate('DentalClinicStackScreen', {
+  const moveToDentalDetail = (dentalId: number) => {
+    navigation.navigate('DentalClinicStack', {
       screen: 'DentalDetailScreen',
+      params: {
+        dentalId: dentalId
+      }
     });
   };
 
@@ -458,6 +461,7 @@ const ReviewListScreen = ({navigation}: Props) => {
     commentCount: number,
     isCurUserScrap: boolean,
     dentalObj: object,
+    elapsedTime: string,
   ) => {
     console.log('moveToReviewDetail reviewId', reviewId);
 
@@ -476,6 +480,7 @@ const ReviewListScreen = ({navigation}: Props) => {
         likeCount: likeCount,
         commentCount: commentCount,
         dentalObj: dentalObj,
+        elapsedTime: elapsedTime,
       },
     });
   };

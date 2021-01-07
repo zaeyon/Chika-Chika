@@ -20,12 +20,16 @@ import allActions from '~/actions';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import ActionSheet from 'react-native-actionsheet';
 
+// Local Component
 import ReviewInformation from '~/Components/Presentational/ReviewDetailScreen/ReviewInformation';
 import ReviewContent from '~/Components/Presentational/ReviewDetailScreen/ReviewContent';
 import ReviewCommentList from '~/Components/Presentational/ReviewDetailScreen/ReviewCommentList';
 import ReviewBottomBar from '~/Components/Presentational/ReviewDetailScreen/ReviewBottomBar';
 import DentalInfomation from '~/Components/Presentational/ReviewDetailScreen/DentalInfomation';
 import DetailMetaInfo from '~/Components/Presentational/ReviewDetailScreen/DetailMetaInfo';
+import NavigationHeader from '~/Components/Presentational/NavigationHeader';
+import TreatmentList from '~/Components/Presentational/ReviewDetailScreen/TreatmentList';
+import ReviewMetaInfo from '~/Components/Presentational/ReviewDetailScreen/ReviewMetaInfo';
 
 // Route
 import GETReviewDetail from '~/Routes/Review/GETReviewDetail';
@@ -43,65 +47,6 @@ const Container = Styled.SafeAreaView`
  background-color: #FFFFFF;
 `;
 
-const HeaderBar = Styled.View`
- width: ${wp('100%')}px;
- height: ${wp('11.7%')}px;
- flex-direction: row;
- align-items: center;
- justify-content: space-between;
- background-color: #ffffff;
-`;
-
-const HeaderLeftContainer = Styled.View`
- padding: 7px 16px 13px 15px;
- align-items: center;
- justify-content: center;
- flex-direction: row;
-`;
-
-const HeaderBackIcon = Styled.Image`
- width: ${wp('6.4%')}px;
- height: ${wp('6.4%')}px;
-`;
-
-const HeaderTitleContainer = Styled.View`
-flex-direction: row;
-align-items: center;
-`;
-
-const ProfileImage = Styled.Image`
-width: ${wp('6.9%')}px;
-height: ${wp('6.9%')}px;
-border-radius: 100px;
-background-color: #ececec
-`;
-
-const NicknameText = Styled.Text`
-margin-left: 7px;
-font-size: 14px;
-color: #000000;
-`;
-
-const HeaderEmptyView = Styled.View`
- width: ${wp('6.4%')}px;
- height: ${wp('6.4%')}px;
-`;
-
-const HeaderTitleText = Styled.Text`
-`;
-
-const HeaderRightContainer = Styled.View`
-padding: 7px 16px 13px 15px;
-align-items: center;
-justify-content: center;
-flex-direction: row;
-`;
-
-const HeaderMoreIcon = Styled.Image`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
-`;
-
 const BodyContainer = Styled.View`
 flex: 1;
 background-color: #ffffff;
@@ -113,20 +58,23 @@ bottom: 0;
 width: ${wp('100%')}px;
 `;
 
+const ReviewContentContainer = Styled.View`
+border-bottom-width: 8px;
+border-color: #F5F7F9;
+`;
+
 const DentalInfoContainer = Styled.View`
-margin-top: 11px;
-width: ${wp('100%')}px;
-align-items: center;
+border-bottom-width: 8px;
+border-color: #F5F7F9;
 `;
 
 const CommentListContainer = Styled.View`
 margin-top: 20px;
 `;
 
-const DetailMetaInfoContainer = Styled.View`
-margin-top: 8px;
-width: ${wp('100%')}px;
-align-items: center;
+const MetaInfoContainer = Styled.View`
+border-bottom-width: 8px;
+border-color: #F5F7F9;
 `;
 
 const IndicatorContainer = Styled.View`
@@ -314,7 +262,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const [treatmentDate, setTreatmentDate] = useState<any>({});
   const [treatmentList, setTreatmentList] = useState<Array<object>>([]);
   const [rating, setRating] = useState<RatingObj>(route.params?.ratingObj);
-  const [totalPrice, setTotalPrice] = useState<number>();
+  const [totalPrice, setTotalPrice] = useState<number>(0);
   const [detailPriceList, setDetailPriceList] = useState<Array<object>>([]);
 
   // 화면에 표시되는 정보
@@ -327,6 +275,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const [treatmentDateDisplay, setTreatmentDateDisplay] = useState<String>(
     route.params?.treatmentDate,
   );
+  const [elapsedTime, setElapsedTime] = useState<string>(route.params?.elapsedTime);
 
   const scrollViewRef = useRef<any>();
   const reviewScrollViewRef = useRef<any>(null);
@@ -341,7 +290,6 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const reviewId = route.params?.reviewId;
   const writerInfo = route.params?.writer;
 
-  const avgRating = route.params?.avgRating;
   const createdDate = route.params?.createdAt;
   const imageArray = route.params?.imageArray;
   const isOwnReview = route.params?.writer.userId == userProfile.id;
@@ -354,6 +302,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   console.log('route.params?.ratingObj', route.params?.ratingObj);
   console.log('route.params?.dentalObj', route.params?.dentalObj);
   console.log('route.params?.treatmentDate', route.params.treatmentDate);
+  console.log("route.params?.elapsedTime", route.params?.elapsedTime);
 
   useEffect(() => {
     setLoadingReviewDetail(true);
@@ -443,9 +392,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         setLoadingReviewDetail(false);
         setRefreshingReviewDetail(false);
 
-        // 현재 사용자의 리뷰일때 리뷰 수정용 데이터 변환 작업
-        if (isOwnReview) {
-          const tmpTreatmentDate = new Date(response.reviewBody.treatmentDate);
+        const tmpTreatmentDate = new Date(response.reviewBody.treatmentDate);
           const splitedTreatmentDate = response.reviewBody.treatmentDate.split(
             '-',
           );
@@ -462,6 +409,8 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
             treatDate: tmpTreatmentDate,
           };
 
+        // 현재 사용자의 리뷰일때 리뷰 수정용 데이터 변환 작업
+        if (isOwnReview) {
           const tmpTreatmentList = response.reviewBody.TreatmentItems.map(
             (item: any, index: number) => {
               let tmpTreatmentObj;
@@ -498,7 +447,6 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           setTimeout(() => {
             setDetailPriceList(tmpDetailPriceList);
             setTreatmentList(tmpTreatmentList);
-            setTreatmentDate(treatmentObj);
             //setRating(tmpRating);
           }, 10);
         }
@@ -555,6 +503,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         }
 
         //setWriterInfo(tmpUserObj)
+        setTreatmentDate(treatmentObj);
         setLikeCount(response.reviewLikeNum);
         setViewCount(response.reviewViewerNum);
         setParagraphArray(tmpParagraphArray);
@@ -586,6 +535,15 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       imageIndex: index,
     });
   };
+
+  const moveToDentalDetail = (dentalId: number) => {
+    navigation.navigate('DentalClinicStack', {
+      screen: 'DentalDetailScreen',
+      params: {
+        dentalId: dentalId,
+      }
+    })
+  }
 
   const goBack = () => {
     navigation.goBack();
@@ -822,8 +780,11 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     setIsCommentInputFocused(true);
   };
 
+
+
   return (
     <Container>
+      {/*
       <HeaderBar>
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <HeaderLeftContainer>
@@ -833,16 +794,8 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           </HeaderLeftContainer>
         </TouchableWithoutFeedback>
         <HeaderTitleContainer>
-          <ProfileImage
-            source={{
-              uri: writerInfo.profileImage
-                ? writerInfo.profileImage
-                : undefined,
-            }}
-          />
           <NicknameText>{writerInfo.nickname}</NicknameText>
         </HeaderTitleContainer>
-
         <HeaderRightContainer>
           <HeaderEmptyView />
           {isOwnReview && (
@@ -860,6 +813,12 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           )}
         </HeaderRightContainer>
       </HeaderBar>
+      */}
+      <NavigationHeader
+      headerLeftProps={{text: "arrow", onPress: goBack}}
+      headerRightProps={{text: "viewMore"}}
+      headerTitle={writerInfo.nickname}
+      />
       <ScrollView
         ref={reviewScrollViewRef}
         showsVerticalScrollIndicator={false}
@@ -869,26 +828,39 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
             onRefresh={onRefreshReviewDetail}
           />
         }>
+        {/*
         <ReviewInformation
-          writer={writerInfo}
-          createdDate={createdDate}
-          treatmentArray={treatmentArrayDisplay}
-          avgRating={rating.avgRating}
-          dental={dentalInfo}
-          treatmentDate={treatmentDateDisplay}
+        writer={writerInfo}
+        createdDate={createdDate}
+        treatmentArray={treatmentArrayDisplay}
+        avgRating={rating.avgRating}
+        dental={dentalInfo}
+        treatmentDate={treatmentDateDisplay}
+        />
+        */}
+        <TreatmentList
+        treatmentArray={treatmentArrayDisplay}
+        elapsedTime={elapsedTime}
         />
         {!loadingReviewDetail && (
           <BodyContainer style={{paddingBottom: paddingBottom}}>
+            <ReviewContentContainer>
             <ReviewContent
               moveToFullImages={moveToFullImages}
               paragraphArray={paragraphArrayDisplay}
             />
+            </ReviewContentContainer>
             <DentalInfoContainer>
-              <DentalInfomation dentalInfo={dentalInfo} />
+              <DentalInfomation
+              dentalInfo={dentalInfo}
+              moveToDentalDetail={moveToDentalDetail}/>
             </DentalInfoContainer>
-            <DetailMetaInfoContainer>
-              <DetailMetaInfo />
-            </DetailMetaInfoContainer>
+            <MetaInfoContainer>
+              <ReviewMetaInfo
+              totalPrice={totalPrice}
+              ratingObj={rating}
+              treatmentDate={treatmentDate.displayTreatDate}/>
+            </MetaInfoContainer>
             <CommentListContainer>
               <ReviewCommentList
                 clickReply={clickReply}
@@ -900,7 +872,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         )}
         {loadingReviewDetail && (
           <IndicatorContainer>
-            <ActivityIndicator />
+            <ActivityIndicator/>
           </IndicatorContainer>
         )}
       </ScrollView>
@@ -935,3 +907,5 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 };
 
 export default ReviewDetailScreen;
+
+

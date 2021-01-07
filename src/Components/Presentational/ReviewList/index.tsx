@@ -199,6 +199,7 @@ interface Props {
     commentCount: number,
     isCurUserScrap: boolean,
     dentalObj: object,
+    elapsedTime: string,
   ) => void;
   moveToDentalDetail: (dentalId: number) => void;
 }

@@ -270,9 +270,12 @@ const MyProfileScreen = ({navigation, route}: Props) => {
     });
   };
 
-  const moveToDentalDetail = () => {
+  const moveToDentalDetail = (dentalId: number) => {
     navigation.navigate('DentalClinicStackScreen', {
       screen: 'DentalDetailScreen',
+      params: {
+        dentalId: dentalId,
+      }
     });
   };
 
