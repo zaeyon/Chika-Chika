@@ -467,7 +467,7 @@ const LoginScreen = ({navigation}: Props) => {
             gender: response.user.userGender,
             birthdate: response.user.userBirthdate,
             provider: response.user.userProvider,
-            residences: response.user.userResidences,
+            Residences: response.user.userResidences,
           };
 
           storeUserInfo(jwtToken);

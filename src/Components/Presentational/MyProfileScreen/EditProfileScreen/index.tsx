@@ -333,6 +333,16 @@ const EditProfileScreen = ({
     [],
   );
 
+  const formatProvider = useCallback((provider: string) => {
+    switch (provider) {
+      case 'google':
+        return '구글';
+      case 'kakao':
+        return '카카오';
+      case 'apple':
+        return '애플';
+    }
+  }, []);
   return (
     <ContainerView
       keyboardShouldPersistTaps={'always'}
@@ -406,7 +416,13 @@ const EditProfileScreen = ({
         <ContentTouchableOpacity onPress={() => moveToHomeTownSetting()}>
           <ContentTitleText>동네설정</ContentTitleText>
           <LocationIconView></LocationIconView>
-          <ContentText>이의동</ContentText>
+          <ContentText>
+            {currentUser.Residences[0].sido +
+              ' ' +
+              currentUser.Residences[0].sigungu +
+              ' ' +
+              currentUser.Residences[0].emdName}
+          </ContentText>
           <ArrowIconView
             style={{
               marginLeft: 'auto',
@@ -426,7 +442,7 @@ const EditProfileScreen = ({
         </SettingTitleView>
         <ContentTouchableOpacity onPress={() => moveToPhoneVerify()}>
           <ContentTitleText>전화번호</ContentTitleText>
-          <ContentText>{currentUser.phoneNumber}</ContentText>
+          <ContentText>{currentUser.phoneNumber || '미등록'}</ContentText>
         </ContentTouchableOpacity>
         <ContentTouchableOpacity
           onPress={() => genderActionSheetRef.current.show()}>
@@ -445,7 +461,9 @@ const EditProfileScreen = ({
         <ContentTouchableOpacity>
           <ContentTitleText>연동계정</ContentTitleText>
           <InterLockIconView></InterLockIconView>
-          <ContentText>카카오 로그인</ContentText>
+          <ContentText>
+            {formatProvider(currentUser.provider)} 로그인
+          </ContentText>
         </ContentTouchableOpacity>
         <ContentTouchableOpacity onPress={() => moveToPhoneVerify()}>
           <ContentTitleText>본인 인증</ContentTitleText>

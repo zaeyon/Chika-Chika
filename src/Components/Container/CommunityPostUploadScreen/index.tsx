@@ -49,6 +49,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state.currentUser);
   const jwtToken = currentUser.jwtToken;
+  const profile = currentUser.profile;
   const prevData = useSelector((state: any) => {
     if (route.params.data.routeType === 'Question') {
       console.log('Q');
@@ -211,38 +212,12 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         images: formattedImages,
       };
       POSTCreateCommunityPost(jwtToken, postData).then((response: any) => {
-        console.log(response);
-        const form = {
-          type: formattedCategory,
-          limit: 10,
-          offset: 0,
-          order: 'createdAt',
-        };
-        GETCommunityPosts(jwtToken, form).then((response: any) => {
-          const data = {
-            type: formattedCategory,
-            posts: response,
-          };
-          if (
-            JSON.stringify(response).replace(
-              /"createdDiff\(second\)\"\:\d*\,/gi,
-              '',
-            ) !==
-            JSON.stringify(postData).replace(
-              /"createdDiff\(second\)\"\:\d*\,/gi,
-              '',
-            )
-          ) {
-            console.log('liked post diff');
-            LayoutAnimation.configureNext(
-              LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-            );
-
-            dispatch(allActions.communityActions.setPosts(data));
-          }
-          console.log('res', response.length);
+        navigation.navigate('CommunityListScreen', {
+          screen: formattedCategory === 'Question' ? '질문방' : '수다방',
+          params: {
+            isPostCreated: true,
+          },
         });
-        navigation.navigate('CommunityListScreen');
         console.log('call layout animation');
       });
     }

@@ -8,6 +8,7 @@ import {
   Text,
   LayoutAnimation,
   Animated,
+  ActivityIndicator,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -16,8 +17,14 @@ import {
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
-//Local Component
+// Local Component
 import CommunityPostList from '~/Components/Presentational/CommunityPostList';
+import LocationInfoHeader from '~/Components/Container/CommunityListScreen/LocationInfoHeader';
+import TopBanner from '~/Components/Container/CommunityListScreen/TopBanner';
+import AdviceInfoHeader from '~/Components/Container/CommunityListScreen/AdviceInfoHeader';
+import CarouselContent from '~/Components/Container/CommunityListScreen/CarouselContent';
+import PostFilterHeader from '~/Components/Container/CommunityListScreen/PostFilterHeader';
+// Routes
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
 import DELETESocialLike from '~/Routes/Community/social/DELETESocialLike';
@@ -29,25 +36,10 @@ const ContainerView = Styled.View`
  background-color: #FFFFFF;
 `;
 
-const CreatePostView = Styled.View`
-width: ${wp('30%')}px;
+const ActivityIndicatorContainerView = Styled.View`
+width: ${wp('100%')}px;
 height: auto;
-padding: 10px 27px;
-background: #FFFFFF;
-border: 1px solid #C3C3C3;
-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.12);
-border-radius: 100px;
-position: absolute;
-left: ${wp('35%')}px;
-bottom: ${getBottomSpace() + hp('9.6%') + 20}px;
-`;
-
-const CreatePostText = Styled.Text`
-font-family: NanumSquare;
-font-style: normal;
-font-weight: bold;
-font-size: 14px;
-line-height: 16px;
+padding-bottom: 18px;
 `;
 interface Props {
   navigation: any;
@@ -59,54 +51,100 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   const limit = 10;
   const [isDataFinish, setIsDataFinish] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [isFiltering, setIsFiltering] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
+  const [region, setRegion] = useState('all');
   const [order, setOrder] = useState('createdAt');
-  const jwtToken = route.params.jwtToken;
+  const currentUser = useSelector((state: any) => state.currentUser);
+  const jwtToken = currentUser.jwtToken;
+  const profile = currentUser.profile;
   const postData = useSelector(
     (state: any) => state.communityPostList.QuestionPosts,
   );
   const dispatch = useDispatch();
   const buttonY = useRef(new Animated.Value(0)).current;
 
+  useEffect(() => {
+    if (route.params?.isPostCreated) {
+      setOrder('createdAt');
+      navigation.setParams({isPostCreated: false});
+      const form = {
+        type,
+        limit: 10,
+        offset: 0,
+        order: 'createdAt',
+        region,
+      };
+      GETCommunityPosts(jwtToken, String(profile.Residences[0].id), form).then(
+        (response: any) => {
+          const data = {
+            type,
+            posts: response,
+          };
+          if (
+            JSON.stringify(response).replace(
+              /"createdDiff\(second\)\"\:\d*\,/gi,
+              '',
+            ) !==
+            JSON.stringify(postData).replace(
+              /"createdDiff\(second\)\"\:\d*\,/gi,
+              '',
+            )
+          ) {
+            console.log('liked post diff');
+            LayoutAnimation.configureNext(
+              LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+            );
+
+            dispatch(allActions.communityActions.setPosts(data));
+          }
+        },
+      );
+    }
+  }, [route.params]);
+
   const onRefresh = useCallback(() => {
     const form = {
-      type: type,
-      limit: limit,
+      type,
+      limit,
       offset: 0,
-      order: order,
+      order,
+      region,
     };
     setRefreshing(true);
-    GETCommunityPosts(jwtToken, form).then((response: any) => {
-      setIsDataFinish(false);
-      const data = {
-        type,
-        posts: response,
-      };
-      if (
-        postData &&
-        JSON.stringify(response).replace(
-          /"createdDiff\(second\)\"\:\d*\,/gi,
-          '',
-        ) !==
-          JSON.stringify(postData).replace(
+    GETCommunityPosts(jwtToken, String(profile.Residences[0].id), form).then(
+      (response: any) => {
+        setIsDataFinish(false);
+        const data = {
+          type,
+          posts: response,
+        };
+        if (
+          postData &&
+          JSON.stringify(response).replace(
             /"createdDiff\(second\)\"\:\d*\,/gi,
             '',
-          )
-      ) {
-        console.log('liked post diff');
-        LayoutAnimation.configureNext(
-          LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-        );
+          ) !==
+            JSON.stringify(postData).replace(
+              /"createdDiff\(second\)\"\:\d*\,/gi,
+              '',
+            )
+        ) {
+          console.log('liked post diff');
+          LayoutAnimation.configureNext(
+            LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+          );
 
-        dispatch(allActions.communityActions.setPosts(data));
-      }
-      setRefreshing(false);
-    });
-  }, [jwtToken, order]);
+          dispatch(allActions.communityActions.setPosts(data));
+        }
+        setRefreshing(false);
+      },
+    );
+  }, [jwtToken, postData, order, region]);
 
   const onEndReached = useCallback(
     (info: any) => {
-      if (!postData.length || postData.length % limit !== 0) {
+      if (isDataFinish || !postData.length || postData.length % limit !== 0) {
         return;
       }
       if (!isEndReached) {
@@ -115,12 +153,17 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         const pageIndex = Math.floor(postData.length / 10);
 
         const form = {
-          type: type,
-          limit: limit,
+          type,
+          limit,
           offset: pageIndex * limit,
-          order: order,
+          order,
+          region,
         };
-        GETCommunityPosts(jwtToken, form).then((response: any) => {
+        GETCommunityPosts(
+          jwtToken,
+          String(profile.Residences[0].id),
+          form,
+        ).then((response: any) => {
           console.log(response.length);
           if (response.length === 0) {
             setIsDataFinish(true);
@@ -134,7 +177,95 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         });
       }
     },
-    [isEndReached, postData, order, jwtToken],
+    [isEndReached, postData, order, jwtToken, region],
+  );
+
+  const onRegionChanged = useCallback(
+    (region: string, callback = () => console.log('region changed')) => {
+      const form = {
+        type,
+        limit,
+        offset: 0,
+        order,
+        region,
+      };
+      setRefreshing(true);
+      GETCommunityPosts(jwtToken, String(profile.Residences[0].id), form).then(
+        (response: any) => {
+          setIsDataFinish(false);
+          const data = {
+            type,
+            posts: response,
+          };
+          if (
+            postData &&
+            JSON.stringify(response).replace(
+              /"createdDiff\(second\)\"\:\d*\,/gi,
+              '',
+            ) !==
+              JSON.stringify(postData).replace(
+                /"createdDiff\(second\)\"\:\d*\,/gi,
+                '',
+              )
+          ) {
+            console.log('liked post diff');
+            LayoutAnimation.configureNext(
+              LayoutAnimation.create(400, 'easeInEaseOut', 'opacity'),
+            );
+            setRegion(region);
+            dispatch(allActions.communityActions.setPosts(data));
+          }
+          setRefreshing(false, callback());
+        },
+      );
+    },
+    [order, region, postData, jwtToken],
+  );
+
+  const onFiltering = useCallback(
+    (order: string, callback = () => console.log('filtered')) => {
+      setIsFiltering(true);
+      const form = {
+        type,
+        limit,
+        offset: 0,
+        order,
+        region,
+      };
+      GETCommunityPosts(jwtToken, String(profile.Residences[0].id), form).then(
+        (response: any) => {
+          setIsDataFinish(false);
+          const data = {
+            type,
+            posts: response,
+          };
+          if (
+            postData &&
+            JSON.stringify(response).replace(
+              /"createdDiff\(second\)\"\:\d*\,/gi,
+              '',
+            ) !==
+              JSON.stringify(postData).replace(
+                /"createdDiff\(second\)\"\:\d*\,/gi,
+                '',
+              )
+          ) {
+            console.log('liked post diff');
+            LayoutAnimation.configureNext(
+              LayoutAnimation.create(400, 'easeInEaseOut', 'opacity'),
+            );
+
+            dispatch(allActions.communityActions.setPosts(data));
+          }
+          setIsFiltering(() => {
+            setOrder(order);
+            return false;
+          });
+          callback();
+        },
+      );
+    },
+    [jwtToken, postData, region, order],
   );
 
   const moveToCommunityDetail = useCallback(
@@ -197,6 +328,34 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
     [],
   );
 
+  const renderHeaderComponent = useCallback(() => {
+    return (
+      <>
+        <LocationInfoHeader
+          type="question"
+          profile={profile}
+          region={region}
+          setRegion={onRegionChanged}
+        />
+        <AdviceInfoHeader profile={profile} />
+        <TopBanner type="question" />
+        <CarouselContent
+          postData={postData}
+          titleText="답변을 기다리는 질문"
+          moveToCommunityDetail={moveToCommunityDetail}
+          moveToAnotherProfile={moveToAnotherProfile}
+        />
+
+        <PostFilterHeader order={order} setOrder={onFiltering} />
+        {isFiltering ? (
+          <ActivityIndicatorContainerView>
+            <ActivityIndicator />
+          </ActivityIndicatorContainerView>
+        ) : null}
+      </>
+    );
+  }, [profile, postData, order, isFiltering, region]);
+
   return (
     <ContainerView>
       <CommunityPostList
@@ -209,8 +368,9 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         moveToAnotherProfile={moveToAnotherProfile}
         toggleSocialLike={toggleSocialLike}
         toggleSocialScrap={toggleSocialScrap}
+        renderHeaderComponent={renderHeaderComponent}
       />
-      <TouchableWithoutFeedback
+      {/* <TouchableWithoutFeedback
         onPress={() =>
           navigation.navigate('CommunityPostUploadStackScreen', {
             data: {
@@ -221,7 +381,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         <CreatePostView>
           <CreatePostText>{'글 작성하기'}</CreatePostText>
         </CreatePostView>
-      </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback> */}
     </ContainerView>
   );
 };
