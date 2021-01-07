@@ -342,6 +342,7 @@ const communityPostList = (
         });
       }
       if (toggleScrapScrapedCommunityPostIndex >= 0) {
+        console.log(toggleScrapScrapedCommunityPostIndex);
         newScrapedCommunityPosts.splice(
           toggleScrapScrapedCommunityPostIndex,
           1,
@@ -386,7 +387,7 @@ const communityPostList = (
           return {
             ...state,
             LikedCommunityPosts: newLikedCommunityPosts,
-            ScrapdCommunityPosts: newScrapedCommunityPosts,
+            ScrapedCommunityPosts: newScrapedCommunityPosts,
             CommentedCommunityPosts: newCommentedCommunityPosts,
             MyPosts: newMyPosts,
             QuestionPosts: newQuestionPosts,
@@ -407,7 +408,7 @@ const communityPostList = (
           return {
             ...state,
             LikedCommunityPosts: newLikedCommunityPosts,
-            ScrapdCommunityPosts: newScrapedCommunityPosts,
+            ScrapedCommunityPosts: newScrapedCommunityPosts,
             CommentedCommunityPosts: newCommentedCommunityPosts,
             MyPosts: newMyPosts,
             FreeTalkPosts: newFreeTalkPosts,
