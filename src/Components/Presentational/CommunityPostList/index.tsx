@@ -22,6 +22,7 @@ import PostItem from '~/Components/Presentational/PostItem';
 
 const BodyContainerFlatList = Styled(FlatList as new () => FlatList)`
 flex: 1;
+background: #F5F7F9;
 `;
 
 const ActivityIndicatorContianerView = Styled.View`
@@ -66,6 +67,7 @@ interface Props {
   moveToAnotherProfile: any;
   toggleSocialLike: any;
   toggleSocialScrap: any;
+  renderHeaderComponent?: () => any;
 }
 const CommunityPostList = ({
   postData,
@@ -77,6 +79,7 @@ const CommunityPostList = ({
   moveToAnotherProfile,
   toggleSocialLike,
   toggleSocialScrap,
+  renderHeaderComponent,
 }: Props) => {
   const renderPosts = useCallback(({item, index}: any) => {
     return (
@@ -96,7 +99,11 @@ const CommunityPostList = ({
     <BodyContainerFlatList
       data={postData}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          enabled={refreshing}
+        />
       }
       keyExtractor={getItemKey}
       scrollIndicatorInsets={{
@@ -109,10 +116,11 @@ const CommunityPostList = ({
       scrollEventThrottle={16}
       onEndReached={onEndReached}
       onEndReachedThreshold={5}
+      ListHeaderComponent={renderHeaderComponent && renderHeaderComponent()}
       ListFooterComponent={
         isEndReached ? (
           <ActivityIndicatorContianerView>
-            <ActivityIndicator size="large" />
+            <ActivityIndicator />
           </ActivityIndicatorContianerView>
         ) : null
       }

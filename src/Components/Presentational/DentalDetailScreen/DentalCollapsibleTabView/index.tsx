@@ -20,16 +20,14 @@ import {
   Linking,
 } from 'react-native';
 import {TabView, TabBar} from 'react-native-tab-view';
-import {getStatusBarHeight} from 'react-native-status-bar-height'
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 import DeviceInfo from 'react-native-device-info';
-
 
 // Local Component
 import ReviewList from '~/Components/Presentational/ReviewList';
 import ShowingRating from '~/Components/Presentational/ShowingRating';
 import RatingReport from '~/Components/Presentational/RatingReport';
 const ratingStarImage = require('~/Assets/Images/Indicator/ic_ratingStar.png');
-;
 const Container = Styled.View`
  flex: 1;
  background-color: #ffffff;
@@ -105,7 +103,6 @@ color: #ffffff;
 font-family: NanumSquare;
 `;
 
-
 const BasicInfoContainer = Styled.View`
 width: ${wp('100%')}px;
 padding-top: 12px;
@@ -149,14 +146,12 @@ font-size: 14px;
 font-family: NanumSquare;
 `;
 
-
 const DentalNameText = Styled.Text`
 font-weight: 800;
 font-size: 20px;
 color: #000000;
 font-family: NanumSquare;
 `;
-
 
 const RatingText = Styled.Text`
 margin-top: 12px;
@@ -165,7 +160,6 @@ color: #000000;
 font-size: 14px;
 font-family: NanumSquare;
 `;
-
 
 const DentalAddressText = Styled.Text`
 margin-top: 12px;
@@ -178,8 +172,6 @@ const DetailInfoTabContainer = Styled.View`
 padding-bottom: ${hp('17%')}px;
 background-color: #F5F7F9;
 `;
-
-
 
 const CertificationIcon = Styled.View`
 background-color: #ffffff;
@@ -453,8 +445,8 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
         null,
         {
           moveX: tabScrollX,
-        }
-      ])
+        },
+      ]),
     }),
   ).current;
 
@@ -618,7 +610,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
 
   const renderLabel = ({route, focused}) => {
     return (
-      <Text style={[styles.label, {color: focused ? "#2998FF" : "#000000"}]}>
+      <Text style={[styles.label, {color: focused ? '#2998FF' : '#000000'}]}>
         {route.title}
       </Text>
     );
@@ -636,7 +628,9 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
             {...tabPanResponder.panHandlers}
             ref={(ref) => {
               if (ref) {
-                const found = listRefArr.current.find((e) => e.key === route.key);
+                const found = listRefArr.current.find(
+                  (e) => e.key === route.key,
+                );
                 if (!found) {
                   listRefArr.current.push({
                     key: route.key,
@@ -646,19 +640,24 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
               }
             }}
             scrollEventThrottle={16}
-            onScroll={focused ? Animated.event([
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    y: scrollY
-                  }
-                }
-              },
-            ], 
-              {
-                useNativeDriver: true,
-              },
-            ) : null}
+            onScroll={
+              focused
+                ? Animated.event(
+                    [
+                      {
+                        nativeEvent: {
+                          contentOffset: {
+                            y: scrollY,
+                          },
+                        },
+                      },
+                    ],
+                    {
+                      useNativeDriver: true,
+                    },
+                  )
+                : null
+            }
             onMomentumScrollBegin={onMomentumScrollBegin}
             onScrollEndDrag={onScrollEndDrag}
             onMomentumScrollEnd={onMomentumScrollEnd}
@@ -753,7 +752,9 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
             {...tabPanResponder.panHandlers}
             ref={(ref) => {
               if (ref) {
-                const found = listRefArr.current.find((e) => e.key === route.key);
+                const found = listRefArr.current.find(
+                  (e) => e.key === route.key,
+                );
                 if (!found) {
                   listRefArr.current.push({
                     key: route.key,
@@ -763,12 +764,16 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
               }
             }}
             scrollEventThrottle={16}
-            onScroll={focused ? Animated.event([
-              {nativeEvent: {contentOffset: {y: scrollY}}}], 
-              {
-                useNativeDriver: true,
-              },
-            ): null}
+            onScroll={
+              focused
+                ? Animated.event(
+                    [{nativeEvent: {contentOffset: {y: scrollY}}}],
+                    {
+                      useNativeDriver: true,
+                    },
+                  )
+                : null
+            }
             onMomentumScrollBegin={onMomentumScrollBegin}
             onScrollEndDrag={onScrollEndDrag}
             onMomentumScrollEnd={onMomentumScrollEnd}
@@ -813,17 +818,14 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
       default:
         return null;
     }
-    
   };
 
-  
   const renderTabBar = (props) => {
     const y = scrollY.interpolate({
       inputRange: [0, collapsibleViewHeight - headerHeight],
-      outputRange: [collapsibleViewHeight, (headerHeight)],
+      outputRange: [collapsibleViewHeight, headerHeight],
       extrapolate: 'clamp',
     });
-
 
     return (
       <Animated.View
@@ -841,7 +843,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
               preventDefault();
             }
           }}
-          inactiveColor={{fontColor: "#000000"}}
+          inactiveColor={{fontColor: '#000000'}}
           style={styles.tab}
           renderLabel={renderLabel}
           indicatorContainerStyle={styles.indicatorContainer}
@@ -881,7 +883,8 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <HeaderLeftContainer>
             <HeaderBackIcon
-            source={require('~/Assets/Images/HeaderBar/ic_back.png')}/>
+              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
+            />
           </HeaderLeftContainer>
         </TouchableWithoutFeedback>
       </HeaderBar>
@@ -901,7 +904,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFA088',
   },
   header: {
-    position: "absolute",
+    position: 'absolute',
     paddingTop: getStatusBarHeight(),
     width: wp('100%'),
     height: getStatusBarHeight() + hp('8%'),
@@ -919,17 +922,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
     borderBottomWidth: 1,
-    borderColor: "#F0F0F0"
+    borderColor: '#F0F0F0',
   },
   indicatorContainer: {
     width: wp('100%'),
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
   },
   indicator: {
     backgroundColor: '#2998FF',
     height: 4,
     width: wp('19%'),
-    marginLeft: (wp('50%') - wp('19%')) / 2
+    marginLeft: (wp('50%') - wp('19%')) / 2,
   },
   certificationIconShadow: {
     shadowOffset: {
@@ -1074,347 +1077,363 @@ const TEST_DENTAL_DETAIL_DATA = {
 
 const TEST_DENTAL_REVIEW_DATA = [
   {
-    "id": 2,
-    "starRate_cost": 5,
-    "starRate_treatment": 4,
-    "starRate_service": 4,
-    "certifiedBill": true,
-    "hits": 0,
-    "treatmentDate": "2020-12-07",
-    "totalCost": null,
-    "createdAt": "2020-12-07T03:21:08.000Z",
-    "updatedAt": "2020-12-07T03:21:08.000Z",
-    "deletedAt": null,
-    "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
-    "dentalClinicId": 43,
-    "createdDiff(second)": 352,
-    "reviewCommentsNum": 0,
-    "reviewLikeNum": 0,
-    "viewerLikedReview": 0,
-    "viewerScrapedReview": 0,
-    "reviewViewNum": 1,
-    "reviewDescriptions": "1 2",
-    "user": {
-        "nickname": "jiwon11",
-        "profileImg": ""
+    id: 2,
+    starRate_cost: 5,
+    starRate_treatment: 4,
+    starRate_service: 4,
+    certifiedBill: true,
+    hits: 0,
+    treatmentDate: '2020-12-07',
+    totalCost: null,
+    createdAt: '2020-12-07T03:21:08.000Z',
+    updatedAt: '2020-12-07T03:21:08.000Z',
+    deletedAt: null,
+    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
+    dentalClinicId: 43,
+    'createdDiff(second)': 352,
+    reviewCommentsNum: 0,
+    reviewLikeNum: 0,
+    viewerLikedReview: 0,
+    viewerScrapedReview: 0,
+    reviewViewNum: 1,
+    reviewDescriptions: '1 2',
+    user: {
+      nickname: 'jiwon11',
+      profileImg: '',
     },
-    "review_contents": [
-        {
-            "id": 2,
-            "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic",
-            "index": 1,
-            "img_before_after": "before"
-        },
-        {
-            "id": 1,
-            "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png",
-            "index": 2,
-            "img_before_after": "after"
-        }
+    review_contents: [
+      {
+        id: 2,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
+        index: 1,
+        img_before_after: 'before',
+      },
+      {
+        id: 1,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
+        index: 2,
+        img_before_after: 'after',
+      },
     ],
-    "dental_clinic": {
-        "id": 43,
-        "name": "시그마치과병원"
+    dental_clinic: {
+      id: 43,
+      name: '시그마치과병원',
     },
-    "TreatmentItems": [
-        {
-            "name": "복합레진",
-            "review_treatment_item": {
-                "cost": 30000
-            }
+    TreatmentItems: [
+      {
+        name: '복합레진',
+        review_treatment_item: {
+          cost: 30000,
         },
-        {
-            "name": "임플란트",
-            "review_treatment_item": {
-                "cost": 20000
-            }
-        }
-    ]
-},
-{
-  "id": 2,
-  "starRate_cost": 5,
-  "starRate_treatment": 4,
-  "starRate_service": 4,
-  "certifiedBill": true,
-  "hits": 0,
-  "treatmentDate": "2020-12-07",
-  "totalCost": null,
-  "createdAt": "2020-12-07T03:21:08.000Z",
-  "updatedAt": "2020-12-07T03:21:08.000Z",
-  "deletedAt": null,
-  "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
-  "dentalClinicId": 43,
-  "createdDiff(second)": 352,
-  "reviewCommentsNum": 0,
-  "reviewLikeNum": 0,
-  "viewerLikedReview": 0,
-  "viewerScrapedReview": 0,
-  "reviewViewNum": 1,
-  "reviewDescriptions": "1 2",
-  "user": {
-      "nickname": "jiwon11",
-      "profileImg": ""
-  },
-  "review_contents": [
-      {
-          "id": 2,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic",
-          "index": 1,
-          "img_before_after": "before"
       },
       {
-          "id": 1,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png",
-          "index": 2,
-          "img_before_after": "after"
-      }
-  ],
-  "dental_clinic": {
-      "id": 43,
-      "name": "시그마치과병원"
+        name: '임플란트',
+        review_treatment_item: {
+          cost: 20000,
+        },
+      },
+    ],
   },
-  "TreatmentItems": [
+  {
+    id: 2,
+    starRate_cost: 5,
+    starRate_treatment: 4,
+    starRate_service: 4,
+    certifiedBill: true,
+    hits: 0,
+    treatmentDate: '2020-12-07',
+    totalCost: null,
+    createdAt: '2020-12-07T03:21:08.000Z',
+    updatedAt: '2020-12-07T03:21:08.000Z',
+    deletedAt: null,
+    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
+    dentalClinicId: 43,
+    'createdDiff(second)': 352,
+    reviewCommentsNum: 0,
+    reviewLikeNum: 0,
+    viewerLikedReview: 0,
+    viewerScrapedReview: 0,
+    reviewViewNum: 1,
+    reviewDescriptions: '1 2',
+    user: {
+      nickname: 'jiwon11',
+      profileImg: '',
+    },
+    review_contents: [
       {
-          "name": "복합레진",
-          "review_treatment_item": {
-              "cost": 30000
-          }
+        id: 2,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
+        index: 1,
+        img_before_after: 'before',
       },
       {
-          "name": "임플란트",
-          "review_treatment_item": {
-              "cost": 20000
-          }
-      }
-  ]
-},{
-  "id": 2,
-  "starRate_cost": 5,
-  "starRate_treatment": 4,
-  "starRate_service": 4,
-  "certifiedBill": true,
-  "hits": 0,
-  "treatmentDate": "2020-12-07",
-  "totalCost": null,
-  "createdAt": "2020-12-07T03:21:08.000Z",
-  "updatedAt": "2020-12-07T03:21:08.000Z",
-  "deletedAt": null,
-  "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
-  "dentalClinicId": 43,
-  "createdDiff(second)": 352,
-  "reviewCommentsNum": 0,
-  "reviewLikeNum": 0,
-  "viewerLikedReview": 0,
-  "viewerScrapedReview": 0,
-  "reviewViewNum": 1,
-  "reviewDescriptions": "1 2",
-  "user": {
-      "nickname": "jiwon11",
-      "profileImg": ""
-  },
-  "review_contents": [
+        id: 1,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
+        index: 2,
+        img_before_after: 'after',
+      },
+    ],
+    dental_clinic: {
+      id: 43,
+      name: '시그마치과병원',
+    },
+    TreatmentItems: [
       {
-          "id": 2,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic",
-          "index": 1,
-          "img_before_after": "before"
+        name: '복합레진',
+        review_treatment_item: {
+          cost: 30000,
+        },
       },
       {
-          "id": 1,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png",
-          "index": 2,
-          "img_before_after": "after"
-      }
-  ],
-  "dental_clinic": {
-      "id": 43,
-      "name": "시그마치과병원"
+        name: '임플란트',
+        review_treatment_item: {
+          cost: 20000,
+        },
+      },
+    ],
   },
-  "TreatmentItems": [
+  {
+    id: 2,
+    starRate_cost: 5,
+    starRate_treatment: 4,
+    starRate_service: 4,
+    certifiedBill: true,
+    hits: 0,
+    treatmentDate: '2020-12-07',
+    totalCost: null,
+    createdAt: '2020-12-07T03:21:08.000Z',
+    updatedAt: '2020-12-07T03:21:08.000Z',
+    deletedAt: null,
+    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
+    dentalClinicId: 43,
+    'createdDiff(second)': 352,
+    reviewCommentsNum: 0,
+    reviewLikeNum: 0,
+    viewerLikedReview: 0,
+    viewerScrapedReview: 0,
+    reviewViewNum: 1,
+    reviewDescriptions: '1 2',
+    user: {
+      nickname: 'jiwon11',
+      profileImg: '',
+    },
+    review_contents: [
       {
-          "name": "복합레진",
-          "review_treatment_item": {
-              "cost": 30000
-          }
+        id: 2,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
+        index: 1,
+        img_before_after: 'before',
       },
       {
-          "name": "임플란트",
-          "review_treatment_item": {
-              "cost": 20000
-          }
-      }
-  ]
-},{
-  "id": 2,
-  "starRate_cost": 5,
-  "starRate_treatment": 4,
-  "starRate_service": 4,
-  "certifiedBill": true,
-  "hits": 0,
-  "treatmentDate": "2020-12-07",
-  "totalCost": null,
-  "createdAt": "2020-12-07T03:21:08.000Z",
-  "updatedAt": "2020-12-07T03:21:08.000Z",
-  "deletedAt": null,
-  "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
-  "dentalClinicId": 43,
-  "createdDiff(second)": 352,
-  "reviewCommentsNum": 0,
-  "reviewLikeNum": 0,
-  "viewerLikedReview": 0,
-  "viewerScrapedReview": 0,
-  "reviewViewNum": 1,
-  "reviewDescriptions": "1 2",
-  "user": {
-      "nickname": "jiwon11",
-      "profileImg": ""
-  },
-  "review_contents": [
+        id: 1,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
+        index: 2,
+        img_before_after: 'after',
+      },
+    ],
+    dental_clinic: {
+      id: 43,
+      name: '시그마치과병원',
+    },
+    TreatmentItems: [
       {
-          "id": 2,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic",
-          "index": 1,
-          "img_before_after": "before"
+        name: '복합레진',
+        review_treatment_item: {
+          cost: 30000,
+        },
       },
       {
-          "id": 1,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png",
-          "index": 2,
-          "img_before_after": "after"
-      }
-  ],
-  "dental_clinic": {
-      "id": 43,
-      "name": "시그마치과병원"
+        name: '임플란트',
+        review_treatment_item: {
+          cost: 20000,
+        },
+      },
+    ],
   },
-  "TreatmentItems": [
+  {
+    id: 2,
+    starRate_cost: 5,
+    starRate_treatment: 4,
+    starRate_service: 4,
+    certifiedBill: true,
+    hits: 0,
+    treatmentDate: '2020-12-07',
+    totalCost: null,
+    createdAt: '2020-12-07T03:21:08.000Z',
+    updatedAt: '2020-12-07T03:21:08.000Z',
+    deletedAt: null,
+    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
+    dentalClinicId: 43,
+    'createdDiff(second)': 352,
+    reviewCommentsNum: 0,
+    reviewLikeNum: 0,
+    viewerLikedReview: 0,
+    viewerScrapedReview: 0,
+    reviewViewNum: 1,
+    reviewDescriptions: '1 2',
+    user: {
+      nickname: 'jiwon11',
+      profileImg: '',
+    },
+    review_contents: [
       {
-          "name": "복합레진",
-          "review_treatment_item": {
-              "cost": 30000
-          }
+        id: 2,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
+        index: 1,
+        img_before_after: 'before',
       },
       {
-          "name": "임플란트",
-          "review_treatment_item": {
-              "cost": 20000
-          }
-      }
-  ]
-},{
-  "id": 2,
-  "starRate_cost": 5,
-  "starRate_treatment": 4,
-  "starRate_service": 4,
-  "certifiedBill": true,
-  "hits": 0,
-  "treatmentDate": "2020-12-07",
-  "totalCost": null,
-  "createdAt": "2020-12-07T03:21:08.000Z",
-  "updatedAt": "2020-12-07T03:21:08.000Z",
-  "deletedAt": null,
-  "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
-  "dentalClinicId": 43,
-  "createdDiff(second)": 352,
-  "reviewCommentsNum": 0,
-  "reviewLikeNum": 0,
-  "viewerLikedReview": 0,
-  "viewerScrapedReview": 0,
-  "reviewViewNum": 1,
-  "reviewDescriptions": "1 2",
-  "user": {
-      "nickname": "jiwon11",
-      "profileImg": ""
-  },
-  "review_contents": [
+        id: 1,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
+        index: 2,
+        img_before_after: 'after',
+      },
+    ],
+    dental_clinic: {
+      id: 43,
+      name: '시그마치과병원',
+    },
+    TreatmentItems: [
       {
-          "id": 2,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic",
-          "index": 1,
-          "img_before_after": "before"
+        name: '복합레진',
+        review_treatment_item: {
+          cost: 30000,
+        },
       },
       {
-          "id": 1,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png",
-          "index": 2,
-          "img_before_after": "after"
-      }
-  ],
-  "dental_clinic": {
-      "id": 43,
-      "name": "시그마치과병원"
+        name: '임플란트',
+        review_treatment_item: {
+          cost: 20000,
+        },
+      },
+    ],
   },
-  "TreatmentItems": [
+  {
+    id: 2,
+    starRate_cost: 5,
+    starRate_treatment: 4,
+    starRate_service: 4,
+    certifiedBill: true,
+    hits: 0,
+    treatmentDate: '2020-12-07',
+    totalCost: null,
+    createdAt: '2020-12-07T03:21:08.000Z',
+    updatedAt: '2020-12-07T03:21:08.000Z',
+    deletedAt: null,
+    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
+    dentalClinicId: 43,
+    'createdDiff(second)': 352,
+    reviewCommentsNum: 0,
+    reviewLikeNum: 0,
+    viewerLikedReview: 0,
+    viewerScrapedReview: 0,
+    reviewViewNum: 1,
+    reviewDescriptions: '1 2',
+    user: {
+      nickname: 'jiwon11',
+      profileImg: '',
+    },
+    review_contents: [
       {
-          "name": "복합레진",
-          "review_treatment_item": {
-              "cost": 30000
-          }
+        id: 2,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
+        index: 1,
+        img_before_after: 'before',
       },
       {
-          "name": "임플란트",
-          "review_treatment_item": {
-              "cost": 20000
-          }
-      }
-  ]
-},{
-  "id": 2,
-  "starRate_cost": 5,
-  "starRate_treatment": 4,
-  "starRate_service": 4,
-  "certifiedBill": true,
-  "hits": 0,
-  "treatmentDate": "2020-12-07",
-  "totalCost": null,
-  "createdAt": "2020-12-07T03:21:08.000Z",
-  "updatedAt": "2020-12-07T03:21:08.000Z",
-  "deletedAt": null,
-  "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
-  "dentalClinicId": 43,
-  "createdDiff(second)": 352,
-  "reviewCommentsNum": 0,
-  "reviewLikeNum": 0,
-  "viewerLikedReview": 0,
-  "viewerScrapedReview": 0,
-  "reviewViewNum": 1,
-  "reviewDescriptions": "1 2",
-  "user": {
-      "nickname": "jiwon11",
-      "profileImg": ""
-  },
-  "review_contents": [
+        id: 1,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
+        index: 2,
+        img_before_after: 'after',
+      },
+    ],
+    dental_clinic: {
+      id: 43,
+      name: '시그마치과병원',
+    },
+    TreatmentItems: [
       {
-          "id": 2,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic",
-          "index": 1,
-          "img_before_after": "before"
+        name: '복합레진',
+        review_treatment_item: {
+          cost: 30000,
+        },
       },
       {
-          "id": 1,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png",
-          "index": 2,
-          "img_before_after": "after"
-      }
-  ],
-  "dental_clinic": {
-      "id": 43,
-      "name": "시그마치과병원"
+        name: '임플란트',
+        review_treatment_item: {
+          cost: 20000,
+        },
+      },
+    ],
   },
-  "TreatmentItems": [
+  {
+    id: 2,
+    starRate_cost: 5,
+    starRate_treatment: 4,
+    starRate_service: 4,
+    certifiedBill: true,
+    hits: 0,
+    treatmentDate: '2020-12-07',
+    totalCost: null,
+    createdAt: '2020-12-07T03:21:08.000Z',
+    updatedAt: '2020-12-07T03:21:08.000Z',
+    deletedAt: null,
+    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
+    dentalClinicId: 43,
+    'createdDiff(second)': 352,
+    reviewCommentsNum: 0,
+    reviewLikeNum: 0,
+    viewerLikedReview: 0,
+    viewerScrapedReview: 0,
+    reviewViewNum: 1,
+    reviewDescriptions: '1 2',
+    user: {
+      nickname: 'jiwon11',
+      profileImg: '',
+    },
+    review_contents: [
       {
-          "name": "복합레진",
-          "review_treatment_item": {
-              "cost": 30000
-          }
+        id: 2,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
+        index: 1,
+        img_before_after: 'before',
       },
       {
-          "name": "임플란트",
-          "review_treatment_item": {
-              "cost": 20000
-          }
-      }
-  ]
-},
-]
+        id: 1,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
+        index: 2,
+        img_before_after: 'after',
+      },
+    ],
+    dental_clinic: {
+      id: 43,
+      name: '시그마치과병원',
+    },
+    TreatmentItems: [
+      {
+        name: '복합레진',
+        review_treatment_item: {
+          cost: 30000,
+        },
+      },
+      {
+        name: '임플란트',
+        review_treatment_item: {
+          cost: 20000,
+        },
+      },
+    ],
+  },
+];

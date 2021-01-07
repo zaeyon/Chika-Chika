@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {StyleSheet, StatusBar} from 'react-native';
+import {StyleSheet, StatusBar, Image} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -548,7 +548,11 @@ function BottomTab() {
       ? routeName.state.routes[routeName.state.index].name
       : '';
 
-    if (routeName.name === 'DentalListScreen' || routeName.name === 'DentalClinicStack' || isOpenDentalList) {
+    if (
+      routeName.name === 'DentalListScreen' ||
+      routeName.name === 'DentalClinicStack' ||
+      isOpenDentalList
+    ) {
       return false;
     }
 
@@ -651,8 +655,7 @@ function BottomTab() {
   return (
     <Tab.Navigator
       tabBarOptions={{
-        showLabel: true,
-        labelStyle: styles.tabLabel,
+        showLabel: false,
         style: styles.tabBar,
       }}>
       <Tab.Screen
@@ -660,6 +663,15 @@ function BottomTab() {
         component={HomeStackScreen}
         options={({route}) => ({
           tabBarVisible: getHomeBottomTabBarVisibility(route),
+          tabBarIcon: ({focused}: {focused: boolean}) => (
+            <Image
+              source={
+                focused
+                  ? require('~/Assets/Images/BottomTab/ic/home/focus.png')
+                  : require('~/Assets/Images/BottomTab/ic/home/unfocus.png')
+              }
+            />
+          ),
         })}
       />
       <Tab.Screen
@@ -667,6 +679,15 @@ function BottomTab() {
         component={NearDentalMapStackScreen}
         options={({route}) => ({
           tabBarVisible: getDentalBottomTabBarVisibility(route),
+          tabBarIcon: ({focused}: {focused: boolean}) => (
+            <Image
+              source={
+                focused
+                  ? require('~/Assets/Images/BottomTab/ic/map/focus.png')
+                  : require('~/Assets/Images/BottomTab/ic/map/unfocus.png')
+              }
+            />
+          ),
         })}
       />
       <Tab.Screen
@@ -674,6 +695,15 @@ function BottomTab() {
         component={TeethCareStackScreen}
         options={({route}) => ({
           tabBarVisible: getTeethCareBottomTabBarVisibility(route),
+          tabBarIcon: ({focused}: {focused: boolean}) => (
+            <Image
+              source={
+                focused
+                  ? require('~/Assets/Images/BottomTab/ic/care/focus.png')
+                  : require('~/Assets/Images/BottomTab/ic/care/unfocus.png')
+              }
+            />
+          ),
         })}
       />
       <Tab.Screen
@@ -681,15 +711,15 @@ function BottomTab() {
         component={CommunityStackScreen}
         options={({route}) => ({
           tabBarVisible: getCommunityBottomTabBarVisibility(route),
-          /*
-        tabBarIcon: ({focused}: {focused: boolean}) => (
-        
-          <Image
-          source={
-            require('~/Assets/Images/BottomTab/ic_community_outline.png')
-          }/>
-        )
-        */
+          tabBarIcon: ({focused}: {focused: boolean}) => (
+            <Image
+              source={
+                focused
+                  ? require('~/Assets/Images/BottomTab/ic/community/focus.png')
+                  : require('~/Assets/Images/BottomTab/ic/community/unfocus.png')
+              }
+            />
+          ),
         })}
       />
       <Tab.Screen
@@ -697,17 +727,15 @@ function BottomTab() {
         component={MyProfileStackScreen}
         options={({route}) => ({
           tabBarVisible: getMyProfileBottomTabBarVisibility(route),
-          /*
-        tabBarIcon: ({focused}: {focused: boolean}) => (
-          <Image
-            source={
-              focused
-               ? require('~/Assets/Images/BottomTab/ic_profile_focused.png')
-               : require('~/Assets/Images/BottomTab/ic_profile_outline.png')
-            }
-          />
-        ),
-        */
+          tabBarIcon: ({focused}: {focused: boolean}) => (
+            <Image
+              source={
+                focused
+                  ? require('~/Assets/Images/BottomTab/ic/mypage/focus.png')
+                  : require('~/Assets/Images/BottomTab/ic/mypage/unfocus.png')
+              }
+            />
+          ),
         })}
       />
     </Tab.Navigator>
@@ -717,7 +745,6 @@ function BottomTab() {
 const Navigator = () => {
   const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
-
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
     console.log('getFcmToken fcmToken', fcmToken);
@@ -731,6 +758,7 @@ const Navigator = () => {
         GETUserInfo(jwtToken)
           .then((response: any) => {
             const profile = response;
+            console.log('profile', profile);
             dispatch(
               allActions.userActions.setUser({
                 jwtToken,
@@ -757,12 +785,11 @@ const Navigator = () => {
 
 const styles = StyleSheet.create({
   tabBar: {
-    paddingTop: isIphoneX() ? 10 : 0,
-    height: DeviceInfo.hasNotch() ? hp('9.6%') : hp('9.6%'),
+    borderTopColor: '#E2E6ED',
+    borderTopWidth: 1,
+    height: DeviceInfo.hasNotch() ? hp('12.3%') : hp('7.2%'),
+    paddingHorizontal: 0,
     position: 'absolute',
-  },
-  tabLabel: {
-    fontSize: 13,
   },
 });
 

@@ -321,15 +321,22 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
         setLoadingSignUp(false);
         console.log('POSTRegister response', response);
 
-        const userInfo = {
-          jwtToken: response.token,
-          phoneNumber: phoneNumber,
+        const profile = {
           id: response.user.userId,
           nickname: response.user.userNickname,
-          profileImage: response.user.userProfileImg,
+          profileImg: response.user.userProfileImg,
+          phoneNumber,
+          birthdate: response.user.userBirthdate,
+          gender: response.user.userGender,
+          provider,
+          Residences: response.user.userResidences,
+        };
+        const userInfo = {
+          jwtToken: response.token,
+          profile,
         };
 
-        storeUserInfo(userInfo);
+        storeUserInfo(response.token);
         dispatch(allActions.userActions.setUser(userInfo));
       })
       .catch((error) => {
@@ -369,14 +376,22 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
         setLoadingSignUp(false);
         console.log('POSTSocialRegister response', response);
 
+        const profile = {
+          id: response.user.userId,
+          nickname: response.user.userNickname,
+          profileImg: response.user.userProfileImg,
+          phoneNumber,
+          birthdate,
+          gender: '',
+          provider,
+          Cities: [cityId],
+        };
         const userInfo = {
           jwtToken: response.token,
-          userId: response.user.userId,
-          nickname: response.user.userNickname,
-          profileImage: response.user.userProfileImg,
+          profile,
         };
 
-        storeUserInfo(userInfo);
+        storeUserInfo(response.token);
         dispatch(allActions.userActions.setUser(userInfo));
       })
       .catch((error: any) => {

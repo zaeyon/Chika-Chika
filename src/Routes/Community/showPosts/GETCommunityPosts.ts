@@ -8,10 +8,11 @@ interface Props {
     limit: number;
     offset: number;
     order: string;
+    region: string;
 }
 
-const GETCommunityPosts = (jwtToken: string, {type, limit, offset, order}: Props) => {
-    const uri = baseUri + `/api/v1/communities/lists?type=${type}&limit=${limit}&offset=${offset}&order=${order}`;
+const GETCommunityPosts = (jwtToken: string, cityId: string, {type, limit, offset, order, region}: Props) => {
+    const uri = baseUri + `/api/v1/communities/lists?region=${region}&cityId=${cityId}&type=${type}&limit=${limit}&offset=${offset}&order=${order}`;
     return new Promise(function(resolve, reject) {
 
         axios.get(uri, {

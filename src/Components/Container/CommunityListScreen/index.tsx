@@ -1,10 +1,11 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useRef, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   StyleSheet,
+  Image,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -36,22 +37,23 @@ const ContainerView = Styled(
 
 const HeaderContainerView = Styled.View`
 width: ${wp('100%')}px;
-height: ${hp('8.25%') + getStatusBarHeight()}px;
 flex-direction: row;
-margin-top: ${-getStatusBarHeight()}px;
-padding: ${getStatusBarHeight()}px 16px 0px 16px;
-align-items: center;
+padding: 20px 16px 15px 16px;
 background: white;
 z-index: 2;
 `;
 
-const HeaderNicknameText = Styled.Text`
+const HeaderTitleView = Styled.View`
+justify-content: center;
+`;
+
+const HeaderTitleText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
 font-weight: bold;
 font-size: 20px;
-line-height: 32px;
-margin-right: 8px;
+line-height: 24px;
+color: #131F3C;
 `;
 
 const HeaderLocationText = Styled.Text`
@@ -76,8 +78,9 @@ const HeaderIconTouchableOpacity = Styled(
 width: 30px;
 height: 30px;
 margin-left: 16px;
-background: grey;
 border-radius: 15px;
+justify-content: center;
+align-items: center;
 `;
 const BodyContainerView = Styled.View`
 flex: 1;
@@ -94,6 +97,7 @@ const CommunityListScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
 
   const currentUser = useSelector((state: any) => state.currentUser);
+  const profile = currentUser.profile;
   const jwtToken = currentUser.jwtToken;
 
   const moveToKeywordSearch = () => {
@@ -108,14 +112,20 @@ const CommunityListScreen = ({navigation, route}: Props) => {
       limit: 10,
       offset: 0,
       order: 'createdAt',
+      region: 'all',
     };
     const freetalkform = {
       type: 'FreeTalk',
       limit: 10,
       offset: 0,
       order: 'createdAt',
+      region: 'all',
     };
-    GETCommunityPosts(jwtToken, questionform).then((response: any) => {
+    GETCommunityPosts(
+      jwtToken,
+      String(profile.Residences[0].id),
+      questionform,
+    ).then((response: any) => {
       const data = {
         type: 'Question',
         posts: response,
@@ -123,7 +133,11 @@ const CommunityListScreen = ({navigation, route}: Props) => {
       dispatch(allActions.communityActions.setPosts(data));
       console.log('res', response.length);
     });
-    GETCommunityPosts(jwtToken, freetalkform).then((response: any) => {
+    GETCommunityPosts(
+      jwtToken,
+      String(profile.Residences[0].id),
+      freetalkform,
+    ).then((response: any) => {
       const data = {
         type: 'FreeTalk',
         posts: response,
@@ -136,13 +150,30 @@ const CommunityListScreen = ({navigation, route}: Props) => {
   return (
     <ContainerView forceInset={{top: 'always'}}>
       <HeaderContainerView>
-        <HeaderNicknameText>{'커뮤니티'}</HeaderNicknameText>
-        <HeaderLocationText>
-          {/* {this.props.currentUser.location} */ '광교동'}
-        </HeaderLocationText>
+        <HeaderTitleView>
+          <HeaderTitleText>{'커뮤니티'}</HeaderTitleText>
+        </HeaderTitleView>
         <HeaderIconContainerView>
-          <HeaderIconTouchableOpacity onPress={moveToKeywordSearch} />
-          <HeaderIconTouchableOpacity />
+          <HeaderIconTouchableOpacity onPress={moveToKeywordSearch}>
+            <Image source={require('~/Assets/Images/TopTab/ic/search.png')} />
+          </HeaderIconTouchableOpacity>
+          <HeaderIconTouchableOpacity
+            onPress={() =>
+              navigation.navigate('CommunityPostUploadStackScreen', {
+                data: {
+                  id: -1,
+                },
+              })
+            }>
+            <Image
+              source={require('~/Assets/Images/TopTab/ic/write/black.png')}
+            />
+          </HeaderIconTouchableOpacity>
+          <HeaderIconTouchableOpacity>
+            <Image
+              source={require('~/Assets/Images/TopTab/ic/alarm/focus.png')}
+            />
+          </HeaderIconTouchableOpacity>
         </HeaderIconContainerView>
       </HeaderContainerView>
       <BodyContainerView>
@@ -151,49 +182,32 @@ const CommunityListScreen = ({navigation, route}: Props) => {
             flex: 1,
           }}
           tabBarOptions={{
-            activeTintColor: '#2998FF',
-            inactiveTintColor: '#848484',
+            tabStyle: {
+              height: hp('7.7%'),
+            },
+            activeTintColor: '#131F3C',
+            inactiveTintColor: '#9AA2A9',
             labelStyle: {
               fontFamily: 'NanumSquareR',
               fontWeight: 'bold',
-              fontSize: 14,
-              lineHeight: 16,
+              fontSize: 16,
+              lineHeight: 24,
             },
             indicatorStyle: {
-              backgroundColor: '#2998FF',
+              backgroundColor: '#00D1FF',
               height: 3,
             },
             indicatorContainerStyle: {
-              borderBottomColor: '#C4C4C4',
+              borderBottomColor: '#E2E6ED',
               borderBottomWidth: 1,
             },
           }}>
-          <CommunityTopTab.Screen
-            name="전체"
-            component={HomeTabScreen}
-            initialParams={{jwtToken: jwtToken}}
-          />
-          <CommunityTopTab.Screen
-            name="질문"
-            component={QuestionTabScreen}
-            initialParams={{jwtToken: jwtToken}}
-          />
-          <CommunityTopTab.Screen
-            name="자유"
-            component={GeneralTabScreen}
-            initialParams={{jwtToken: jwtToken}}
-          />
+          <CommunityTopTab.Screen name="질문방" component={QuestionTabScreen} />
+          <CommunityTopTab.Screen name="수다방" component={GeneralTabScreen} />
         </CommunityTopTab.Navigator>
       </BodyContainerView>
     </ContainerView>
   );
 };
-
-const styles = StyleSheet.create({
-  safeAreaStyle: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
-});
 
 export default CommunityListScreen;

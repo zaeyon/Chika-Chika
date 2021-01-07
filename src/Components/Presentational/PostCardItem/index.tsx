@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {TouchableWithoutFeedback, FlatList} from 'react-native';
 import Styled from 'styled-components/native';
 import {
@@ -6,170 +6,218 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-const Container = Styled.View`
-width: ${wp('68.2%')}px;
-height: ${wp('46.9%')}px;
-background-color: #ffffff;
+const ContainerView = Styled.View`
+width: ${wp('76%')}px;
+height: 100%;
+margin-right: 16px;
+padding: 16px;
+background: #FFFFFF;
+border: 0.5px solid #E2E6ED;
+box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
 border-radius: 8px;
-border-width: 1px;
-border-color: #E0E0E0;
-padding-top: 16px;
-padding-left: 16px;
-padding-right: 16px;
-padding-bottom: 16px;
 `;
 
-const ProfileContainer = Styled.View`
+const ProfileContainerView = Styled.View`
+width: 100%;
 flex-direction: row;
 align-items: center;
+margin-bottom: 12px;
 `;
-
-const ProfileImageContainer = Styled.View`
+const ProfileImage = Styled.Image<{source: any}>`
+width: ${wp('8.8%')}px;
+height: ${wp('8.8%')}px;
+background-color: grey;
+border-width: 0.5px
+border-color: #E2E6ED;
+border-radius: 12px;
+margin-right: 8px;
 `;
-
-const ProfileImage = Styled.Image`
-width: ${wp('10.6%')}px;
-height: ${wp('10.6%')}px;
-border-radius: 100px;
-`;
-
-const ProfileRightContainer = Styled.View`
-margin-left: 8px;
-`;
-
-const NicknameText = Styled.Text`
+const ProfileNameText = Styled.Text`
+font-family: NanumSquareR;
+font-style: normal;
 font-weight: bold;
 font-size: 14px;
-color: #000000;
 `;
 
-const CategoryCreatedAtContainer = Styled.View`
-margin-top: 4px;
+const ProfileSplitView = Styled.View`
+width: 2px;
+height: 2px;
+background: #9AA2A9;
+border-radius: 2px;
+margin: 0px 6px;
+`;
+// font-size, line-height ++ 1px
+const ProfileDescriptionText = Styled.Text`
+font-family: NanumSquareR;
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+color: #9AA2A9;
+`;
+
+const ContentView = Styled.View`
+width: 100%;
+height: auto;
+background: #FFFFFF;
+`;
+
+const ContentText = Styled.Text`
+font-family: NanumSquareR;
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 24px;
+`;
+
+const HashTagText = Styled.Text`
+  color: #0075FF;
+`;
+
+const SocialInfoContainerView = Styled.View`
+width: 100%;
 flex-direction: row;
-align-items: center;
-`;
-
-const CategoryText = Styled.Text`
-font-size: 12px;
-color: #828282;
-`;
-
-const CreatedAtText = Styled.Text`
-font-size: 12px;
-color: #828282;
-`;
-
-const TagListContainer = Styled.View`
-margin-top: 8px;
-padding-right: 10px;
-`;
-
-const TagText = Styled.Text`
-padding-right: 3px;
-font-weight: 400;
-font-size: 14px;
-color: #267DFF;
-`;
-
-const DescripContainer = Styled.View`
-margin-top: 8px;
-`;
-
-const DescripText = Styled.Text`
-color: #000000;
-font-size: 14px;
-`;
-
-const MoreViewText = Styled.Text`
-margin-left: 5px;
-font-size: 14px;
-color: #BDBDBD;
-`;
-
-const TagItemContainer = Styled.View`
-width: 20px;
-height: 20px;
-background-color: #000000;
-`;
-
-const SocialInfoContainer = Styled.View`
-flex-direction: row;
-align-items: center;
+margin-top: auto;
+background: #FFFFFF;
 `;
 
 const SocialInfoText = Styled.Text`
-margin-top: 16px;
-margin-right: 10px;
+font-family: NanumSquare;
+font-style: normal;
+font-weight: normal;
 font-size: 12px;
-color: #828282;
+line-height: 16px;
+color: #9AA2A9;
+margin-right: 12px;
 `;
 
-interface Props {
-  profileImageUri: string;
-  nickname: string;
-  category: string;
-  createdAt: string;
-  tagList: Array<string>;
-  description: string;
-  likeCount: number;
-  commentCount: number;
-}
-
 const PostCardItem = ({
-  profileImageUri,
-  nickname,
-  category,
-  createdAt,
-  tagList,
-  description,
-  likeCount,
-  commentCount,
-}: Props) => {
-  const renderTagItem = ({item, index}: any) => {
+  postData,
+  moveToCommunityDetail,
+  moveToAnotherProfile,
+}: any) => {
+  const {
+    id,
+    type,
+    user,
+    updatedAt,
+    createdAt,
+    description,
+    postLikeNum,
+    postCommentsNum,
+  } = postData;
+
+  const formatElapsedDate = useCallback((elapsedTime: number) => {
+    if (elapsedTime / (24 * 3600 * 1000) > 1) {
+      return formatDate(updatedAt);
+    }
+    if (elapsedTime / (24 * 3600 * 1000) >= 1) {
+      // in days
+      const day = Math.floor(elapsedTime / (24 * 3600 * 1000));
+      return `${day}일 전`;
+    } else if (elapsedTime / (3600 * 1000) >= 1) {
+      // in hours
+      const hour = Math.floor(elapsedTime / (3600 * 1000));
+      return `${hour}시간 전`;
+    } else if (elapsedTime / (60 * 1000) >= 1) {
+      // in minutes
+      const minute = Math.floor(elapsedTime / (60 * 1000));
+      return `${minute}분 전`;
+    } else {
+      // in seconds
+      const second = Math.floor(elapsedTime / 1000);
+      return `${second}초 전`;
+    }
+  }, []);
+
+  const formatDate = useCallback((date: string) => {
+    const tmpDate = new Date(date);
+    let year = tmpDate.getFullYear(),
+      month = String(tmpDate.getMonth() + 1),
+      day = String(tmpDate.getDay());
+    month = Number(month) >= 10 ? month : '0' + month;
+    day = Number(day) >= 10 ? day : '0' + day;
+    return year + '년 ' + month + '월 ' + day + '일';
+  }, []);
+
+  const formatHashTag = useCallback((text: string, index: number) => {
     return (
-      <TagItemContainer>
-        <TagText>ss</TagText>
-      </TagItemContainer>
+      <TouchableWithoutFeedback key={text + index}>
+        <HashTagText>{'#' + text}</HashTagText>
+      </TouchableWithoutFeedback>
     );
-  };
+  }, []);
+
+  const formatDescription = useCallback((oldDescription: string) => {
+    let formattedDescription: any[] = [];
+    const lines = oldDescription.split(/\r\n|\r|\n/);
+    for (let line of lines) {
+      let formattedLine = [];
+      const words = line.split(' ');
+      for (let word of words) {
+        if (
+          word.charAt(0) === '{' &&
+          word.charAt(1) === '{' &&
+          word.charAt(word.length - 1) === '}' &&
+          word.charAt(word.length - 2) === '}'
+        ) {
+          //isTag
+          const formattedHashTag = formatHashTag(
+            word.slice(2, word.length - 2),
+            formattedLine.length,
+          );
+          formattedLine.push(formattedHashTag);
+        } else {
+          formattedLine.push(word);
+        }
+        if (words.indexOf(word) !== words.length - 1) {
+          formattedLine.push(' ');
+        }
+      }
+      if (lines.indexOf(line) !== lines.length - 1) {
+        formattedDescription = formattedDescription.concat(
+          formattedLine,
+          '\r\n',
+        );
+      } else {
+        formattedDescription = formattedDescription.concat(formattedLine);
+      }
+    }
+    return formattedDescription;
+    // let description = oldDescription.replace(/{{/gi, '#');
+    // description = description.replace(/}}/gi, '');
+    // return description;
+  }, []);
 
   return (
-    <Container>
-      <ProfileContainer>
-        <ProfileImageContainer>
-          <ProfileImage source={{uri: profileImageUri}} />
-        </ProfileImageContainer>
-        <ProfileRightContainer>
-          <NicknameText>{nickname}</NicknameText>
-          <CategoryCreatedAtContainer>
-            <CategoryText>{category}</CategoryText>
-            <CreatedAtText>{createdAt}</CreatedAtText>
-          </CategoryCreatedAtContainer>
-        </ProfileRightContainer>
-      </ProfileContainer>
-      <TagListContainer>
-        <TagText>
-          {tagList.map((tag, index) => {
-            if (index == 0) {
-              return <TagText>{'#' + tag}</TagText>;
-            } else {
-              return <TagText>{' #' + tag}</TagText>;
+    <TouchableWithoutFeedback onPress={() => moveToCommunityDetail(id, type)}>
+      <ContainerView>
+        <ProfileContainerView>
+          <ProfileImage
+            source={
+              user.profileImg
+                ? {url: user.profileImg, cache: 'force-cache'}
+                : require('~/Assets/Images/appIcon_chika.png')
             }
-          })}
-        </TagText>
-      </TagListContainer>
-      <DescripContainer>
-        <DescripText>
-          {description}
-          <MoreViewText> 더보기</MoreViewText>
-        </DescripText>
-      </DescripContainer>
-      <SocialInfoContainer>
-        <SocialInfoText>{'좋아요 ' + likeCount + '개'}</SocialInfoText>
-        <SocialInfoText>{'댓글 ' + commentCount + '개'}</SocialInfoText>
-      </SocialInfoContainer>
-    </Container>
+          />
+          <ProfileNameText>{user.nickname}</ProfileNameText>
+          <ProfileSplitView />
+          <ProfileDescriptionText>
+            {formatElapsedDate(postData['createdDiff(second)'] * 1000) +
+              (updatedAt !== createdAt ? ' ･ 수정됨' : '')}
+          </ProfileDescriptionText>
+        </ProfileContainerView>
+        <ContentView>
+          <ContentText numberOfLines={3}>
+            {formatDescription(description)}
+          </ContentText>
+        </ContentView>
+        <SocialInfoContainerView>
+          <SocialInfoText>{`좋아요 ${postLikeNum}개`}</SocialInfoText>
+          <SocialInfoText>{`댓글 ${postCommentsNum}개`}</SocialInfoText>
+        </SocialInfoContainerView>
+      </ContainerView>
+    </TouchableWithoutFeedback>
   );
 };
 
-export default PostCardItem;
+export default React.memo(PostCardItem);
