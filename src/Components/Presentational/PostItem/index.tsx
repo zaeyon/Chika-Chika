@@ -378,18 +378,16 @@ const PostItem = ({
         </HashTagContainerView>
 
         <SocialInfoContainerView>
-          <TouchableOpacity
+          <TouchableWithoutFeedback
             onPress={() => {
               toggleSocialLike(id, viewerLikeCommunityPost, type);
-              if (!viewerLikeCommunityPost) {
-                likeButtonScale.setValue(0.8);
-                Animated.spring(likeButtonScale, {
-                  toValue: 1,
-                  friction: 6,
-                  tension: 400,
-                  useNativeDriver: true,
-                }).start();
-              }
+              likeButtonScale.setValue(0.8);
+              Animated.spring(likeButtonScale, {
+                toValue: 1,
+                friction: 8,
+                tension: 300,
+                useNativeDriver: true,
+              }).start();
             }}>
             <SocialInfoView>
               <Animated.Image
@@ -406,7 +404,7 @@ const PostItem = ({
               />
               <SocialInfoText>{postLikeNum}</SocialInfoText>
             </SocialInfoView>
-          </TouchableOpacity>
+          </TouchableWithoutFeedback>
           <SocialInfoView>
             <Image
               style={{
@@ -418,23 +416,18 @@ const PostItem = ({
             <SocialInfoText>{postCommentsNum}</SocialInfoText>
           </SocialInfoView>
 
-          <TouchableOpacity
-            style={{
-              marginLeft: 'auto',
-            }}
+          <TouchableWithoutFeedback
             onPress={() => {
               toggleSocialScrap(id, viewerScrapCommunityPost, type);
-              if (!viewerScrapCommunityPost) {
-                scrapButtonScale.setValue(0.8);
-                Animated.spring(scrapButtonScale, {
-                  toValue: 1,
-                  friction: 6,
-                  tension: 400,
-                  useNativeDriver: true,
-                }).start();
-              }
+              scrapButtonScale.setValue(0.8);
+              Animated.spring(scrapButtonScale, {
+                toValue: 1,
+                friction: 8,
+                tension: 300,
+                useNativeDriver: true,
+              }).start();
             }}>
-            <SocialInfoView>
+            <SocialInfoView style={{marginLeft: 'auto'}}>
               <Animated.Image
                 style={{
                   width: 18,
@@ -449,7 +442,7 @@ const PostItem = ({
               />
               <SocialInfoText>{'저장하기'}</SocialInfoText>
             </SocialInfoView>
-          </TouchableOpacity>
+          </TouchableWithoutFeedback>
         </SocialInfoContainerView>
       </ContainerView>
     </TouchableWithoutFeedback>

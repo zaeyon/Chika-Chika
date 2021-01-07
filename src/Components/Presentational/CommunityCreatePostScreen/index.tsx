@@ -41,9 +41,9 @@ flex: 1;
 `;
 
 const CategoryContainerView = Styled.View`
-width: ${wp('100%') - 32}px;
+width: ${wp('100%')}px;
 margin: 4px 16px 0px 16px;
-height: ${hp('7.13')}px;
+height: ${wp('17%')}px;
 flex-direction: row;
 align-items: center;
 border-bottom-width: 1px;
@@ -52,20 +52,48 @@ border-color: #F2F2F2;
 `;
 
 const CategoryTitleText = Styled.Text`
-font-size: 16px;
+font-family: NanumSquare;
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
 line-height: 24px;
-margin-right:16px;
+color: #9AA2A9;
+margin-right: 12px;
 `;
 
 const CategoryContentView = Styled.View`
 flex: 1;
 flex-direction: row;
 `;
-const CategoryContentText = Styled.Text`
+
+const CategoryContentFocusedText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
 font-size: 14px;
 line-height: 24px;
+color: #FFFFFF;
+`;
+const CategoryContentText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 24px;
+color: #131F3C;
 `;
 
+const CategorySelectorView = Styled(
+  (Animated.View as unknown) as new () => Animated.View,
+)`
+width: ${wp('16.8')}px;
+height: 32px;
+justify-content: center;
+align-items: center;
+background: #00D1FF;
+border-radius: 100;
+position: absolute;
+`;
 const PopupAdviceView = Styled.View`
 margin: 8px 16px 0px 16px;
 padding: 12px;
@@ -360,16 +388,8 @@ const CommunityCreatePostScreen = ({
             <CategoryTitleText>카테고리</CategoryTitleText>
             <CategoryContentView>
               {renderCategories(categoryList)}
-              <Animated.View
+              <CategorySelectorView
                 style={{
-                  width: wp('16.53'),
-                  height: 'auto',
-                  paddingVertical: '1.3%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: '#C4C4C4',
-                  borderRadius: 100,
-                  position: 'absolute',
                   transform: [
                     {
                       translateX: categoryIndex.interpolate({
@@ -382,13 +402,8 @@ const CommunityCreatePostScreen = ({
                       }),
                     },
                   ],
-                }}>
-                <View
-                  style={{
-                    height: 30,
-                  }}
-                />
-              </Animated.View>
+                }}
+              />
             </CategoryContentView>
           </CategoryContainerView>
           {isPopupShown ? (
