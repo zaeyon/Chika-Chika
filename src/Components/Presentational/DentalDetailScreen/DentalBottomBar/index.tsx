@@ -57,7 +57,7 @@ const DentalBottomBar = ({}) => {
         <Container>
             <ScrapButton>
                 <ScrapImage
-                source={require('~/Assets/Images/Indicator/ic_scrap.png')}/>
+                source={require('~/Assets/Images/Indicator/ic_scrap_unfocus.png')}/>
             </ScrapButton>
             <ReserveButton>
                 <ReserveText>

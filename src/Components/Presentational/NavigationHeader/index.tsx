@@ -14,16 +14,17 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
- height: ${hp('8.25%')}px;
+ height: ${hp('6.5%')}px;
  flex-direction: row;
  align-items: center;
  justify-content: space-between;
  border-bottom-width: 1px;
- border-color: #eeeeee;
- background: white;
+ border-color: #E2E6ED;
+ background-color: #ffffff;
 `;
 
 const HeaderText = Styled.Text`
@@ -31,37 +32,35 @@ font-size: 18px;
 `;
 
 const HeaderLeftContainer = Styled.View`
-width: 30%;
-height: ${hp('8%')}px;
-padding: 0px 16px;
- align-items: center;
- flex-direction: row;
+height: ${hp('6.5%')}px;
+padding: 16px;
+align-items: center;
+flex-direction: row;
 `;
 
 const HeaderTitleContainer = Styled.View`
 height: auto;
 justify-content: center;
 `;
+
 const HeaderTitleText = Styled.Text`
-font-family: NanumSquareR;
-font-weight: bold;
-font-size: 18px; 
+font-family: NanumSquare;
+font-weight: 700;
+font-size: 16px; 
 `;
 
 const HeaderRightContainer = Styled.View`
-width: 30%;
-height: ${hp('8%')}px;
-padding: 0px 16px 0px 16px;
+height: ${hp('6.5%')}px;
+padding: 16px;
  align-items: center;
- justify-content: flex-end;
  flex-direction: row;
 `;
 
 const HeaderIconView = Styled.View`
-flex: 1;
 `;
 const HeaderIcon = Styled.Image`
-
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 interface HeaderProps {
@@ -79,25 +78,28 @@ const NavigationHeader = ({
   headerRightProps,
   headerTitle,
 }: Props) => {
+
+  console.log("NavigationHeader statusbarHeight", getStatusBarHeight())
   return (
     <HeaderBar>
-      <HeaderLeftContainer>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            headerLeftProps?.onPress();
-          }}>
+      <TouchableWithoutFeedback
+      onPress={() => {
+      headerLeftProps?.onPress();
+      }}>
+        <HeaderLeftContainer>
+        
           {headerLeftProps?.text === 'arrow' ? (
             <HeaderIconView>
               <HeaderIcon
                 style={{resizeMode: 'contain'}}
-                source={require('~/Assets/Images/Arrow/ic_leftArrow.png')}
+                source={require('~/Assets/Images/HeaderBar/ic_back.png')}
               />
             </HeaderIconView>
           ) : (
             <HeaderText>{headerLeftProps?.text}</HeaderText>
           )}
-        </TouchableWithoutFeedback>
-      </HeaderLeftContainer>
+        </HeaderLeftContainer>
+      </TouchableWithoutFeedback>
       <HeaderTitleContainer>
         <HeaderTitleText>{headerTitle}</HeaderTitleText>
       </HeaderTitleContainer>
@@ -112,9 +114,15 @@ const NavigationHeader = ({
                 source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
               />
             </HeaderIconView>
+          ) :
+          (headerRightProps?.text === 'viewMore' ? (
+            <HeaderIconView>
+              <HeaderIcon
+              source={require('~/Assets/Images/HeaderBar/ic_viewMore.png')}/>
+            </HeaderIconView>
           ) : (
             <HeaderText>{headerRightProps?.text}</HeaderText>
-          )}
+          ))}
         </TouchableWithoutFeedback>
       </HeaderRightContainer>
     </HeaderBar>

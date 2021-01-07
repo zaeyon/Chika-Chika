@@ -15,15 +15,14 @@ import {getBottomSpace} from 'react-native-iphone-x-helper';
 import DeviceInfo from 'react-native-device-info';
 
 const Container = Styled.View`
-height: auto;
-min-height: ${hp('100%') * 0.08}px;
-max-height: ${hp('100%') * 0.15}px;
+height: ${hp('8%')}px;
 border-top-width: 1px;
-border-color: #c4c4c4;
+border-color: #E2E6ED;
 background-color: #ffffff;
 `;
 
 const DefaultContainer = Styled.View`
+flex: 1;
 flex-direction: row;
 align-items: center;
 justify-content: space-around;
@@ -73,13 +72,13 @@ color: #000000;
 `;
 
 const ScrapIcon = Styled.Image`
-width: ${wp('4.53%')}px;
-height: ${wp('4.53%')}px;
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const CommentIcon = Styled.Image`
-width: ${wp('5.3%')}px;
-height: ${wp('5.3%')}px;
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const SeeDentalInfoButton = Styled.View`
@@ -159,12 +158,11 @@ const ReviewBottomBar = ({
             <TouchableWithoutFeedback onPress={() => clickReviewLike()}>
               <LikeContainer>
                 <LikeIcon
-                  style={
-                    isCurUserLike
-                      ? {tintColor: '#FF5656'}
-                      : {tintColor: '#000000'}
+                  source={
+                    isCurUserLike 
+                    ? require('~/Assets/Images/Indicator/ic_like_focus.png')
+                    : require('~/Assets/Images/Indicator/ic_like_unfocus.png')
                   }
-                  source={require('~/Assets/Images/Indicator/ic_like.png')}
                 />
                 <LikeCountText>{likeCount}</LikeCountText>
               </LikeContainer>
@@ -172,12 +170,11 @@ const ReviewBottomBar = ({
             <TouchableWithoutFeedback onPress={() => clickReviewScrap()}>
               <ScrapContainer>
                 <ScrapIcon
-                  style={
+                  source={
                     isCurUserScrap
-                      ? {tintColor: '#FFE600'}
-                      : {tintColor: '#000000'}
+                    ? require('~/Assets/Images/Indicator/ic_scrap_focus.png')
+                    : require('~/Assets/Images/Indicator/ic_scrap_unfocus.png')
                   }
-                  source={require('~/Assets/Images/Indicator/ic_scrap.png')}
                 />
               </ScrapContainer>
             </TouchableWithoutFeedback>

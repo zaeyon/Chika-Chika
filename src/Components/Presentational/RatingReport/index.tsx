@@ -4,6 +4,9 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {
+    View
+} from 'react-native';
 
 const Container = Styled.View`
 padding-top: 24px;
@@ -158,13 +161,7 @@ const RatingCircleProgress = ({rating}: any) => {
     )
 }
 
-interface Props {
-    ratingValue: number,
-    ratingImage: any,
-    interval: number
-}
-
-const RatingStarList = ({ratingValue, ratingImage, interval}: Props) => {
+const RatingStarList = ({ratingValue, ratingImage, interval}: any) => {
 
     let isInteger = false;
     let tmpArray = [0, 0, 0, 0, 0]
@@ -208,6 +205,11 @@ const RatingStarList = ({ratingValue, ratingImage, interval}: Props) => {
                         style={index !== 0 && {marginLeft: 4}}
                         source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
                     )
+                } else {
+                    return (
+                        <View
+                        style={{width:0, height: 0}}/>
+                    )
                 } 
             })}
             <RatingValueText style={{marginTop: 2, marginLeft: 8}}>{ratingValue.toFixed(1)}</RatingValueText>
@@ -217,33 +219,37 @@ const RatingStarList = ({ratingValue, ratingImage, interval}: Props) => {
 
 interface Props {
     avgRating: number,
+    priceRating: number,
+    serviceRating: number,
+    treatRating: number,
+    type: string
 }
 
-const RatingReport = ({avgRating}: Props) => {
+const RatingReport = ({avgRating, priceRating, serviceRating, treatRating, type}: Props) => {
 
     return (
-        <Container>
+        <Container style={type === "review" && {paddingTop: 16}}>
             <RatingCircleProgress
             rating={avgRating}/>
             <RatingListContainer>
               <RatingItemContainer>
                 <RatingTypeText>{"진료"}</RatingTypeText>
                 <RatingStarList
-                ratingValue={3}
+                ratingValue={treatRating}
                 interval={4}
                 />
               </RatingItemContainer>
               <RatingItemContainer style={{marginTop: hp('1.8%')}}>
                 <RatingTypeText>{"서비스"}</RatingTypeText>
                 <RatingStarList
-                ratingValue={3}
+                ratingValue={serviceRating}
                 interval={4}
                 />
               </RatingItemContainer>
               <RatingItemContainer style={{marginTop: hp('1.8%')}}>
                 <RatingTypeText>{"가격"}</RatingTypeText>
                 <RatingStarList
-                ratingValue={3}
+                ratingValue={priceRating}
                 interval={4}
                 />
               </RatingItemContainer>

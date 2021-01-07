@@ -170,7 +170,7 @@ function ReviewStackScreen() {
         component={ReviewUploadStackScreen}
       />
       <ReviewStack.Screen
-        name="DentalClinicStackScreen"
+        name="DentalClinicStack"
         component={DentalClinicStackScreen}
       />
     </ReviewStack.Navigator>
@@ -787,8 +787,8 @@ const styles = StyleSheet.create({
   tabBar: {
     borderTopColor: '#E2E6ED',
     borderTopWidth: 1,
-    height: hp('7.2%'),
-    paddingHorizontal: 8,
+    height: DeviceInfo.hasNotch() ? hp('12.3%') : hp('7.2%'),
+    paddingHorizontal: 0,
     position: 'absolute',
   },
 });
