@@ -19,16 +19,14 @@ import {
   FlatList,
 } from 'react-native';
 import {TabView, TabBar} from 'react-native-tab-view';
-import {getStatusBarHeight} from 'react-native-status-bar-height'
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 import DeviceInfo from 'react-native-device-info';
-
 
 // Local Component
 import ReviewList from '~/Components/Presentational/ReviewList';
 import ShowingRating from '~/Components/Presentational/ShowingRating';
 import RatingReport from '~/Components/Presentational/RatingReport';
 const ratingStarImage = require('~/Assets/Images/Indicator/ic_ratingStar.png');
-;
 const Container = Styled.View`
  flex: 1;
  background-color: #ffffff;
@@ -104,7 +102,6 @@ color: #ffffff;
 font-family: NanumSquare;
 `;
 
-
 const BasicInfoContainer = Styled.View`
 width: ${wp('100%')}px;
 padding-top: 12px;
@@ -148,14 +145,12 @@ font-size: 14px;
 font-family: NanumSquare;
 `;
 
-
 const DentalNameText = Styled.Text`
 font-weight: 800;
 font-size: 20px;
 color: #000000;
 font-family: NanumSquare;
 `;
-
 
 const RatingText = Styled.Text`
 margin-top: 12px;
@@ -164,7 +159,6 @@ color: #000000;
 font-size: 14px;
 font-family: NanumSquare;
 `;
-
 
 const DentalAddressText = Styled.Text`
 margin-top: 12px;
@@ -177,8 +171,6 @@ const DetailInfoContainer = Styled.View`
 padding-bottom: ${hp('33%')}px;
 background-color: #F5F7F9;
 `;
-
-
 
 const CertificationIcon = Styled.View`
 background-color: #ffffff;
@@ -246,29 +238,28 @@ border-color: #F5F7F9;
 const TreatmentHourFilterContainer = Styled.View`
 `;
 
-
 const TEST_DENTAL_DETAIL_DATA = {
   coverImage: {
-      uri: "http://www.dailydental.co.kr/data/photos/20180729/art_15318134467_8b8044.jpg"
+    uri:
+      'http://www.dailydental.co.kr/data/photos/20180729/art_15318134467_8b8044.jpg',
   },
-  name: "웃는E치과교정전문의원",
-  address: "경기도 수원시 광교중앙로 145",
-  tagList: ["임플란트", "소아청소년과"],
-  homePage: "http://www.sadh.co.kr/",
+  name: '웃는E치과교정전문의원',
+  address: '경기도 수원시 광교중앙로 145',
+  tagList: ['임플란트', '소아청소년과'],
+  homePage: 'http://www.sadh.co.kr/',
   detailInfo: {
-      introduction: "안녕하세요. 누구누구입니다. 잘 부탁드립니다.",
-      establishDate: "2020.11.09",
-      treatTime: "09:00 ~ 18",
-      location: {
-          latitude: 37.294242,
-          longitude: 127.045466,
-      },
-      park: "불가",
-      uniqueness: "특이특이특이",
-      dentist: "전문의 1명"
-  }
-}
-
+    introduction: '안녕하세요. 누구누구입니다. 잘 부탁드립니다.',
+    establishDate: '2020.11.09',
+    treatTime: '09:00 ~ 18',
+    location: {
+      latitude: 37.294242,
+      longitude: 127.045466,
+    },
+    park: '불가',
+    uniqueness: '특이특이특이',
+    dentist: '전문의 1명',
+  },
+};
 
 let isReachedTop = false;
 
@@ -276,13 +267,12 @@ const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 const tabBarHeight = hp('6.89%');
 const collapsibleViewHeight = DeviceInfo.hasNotch() ? hp('67%') : hp('74.5%');
-const detailInfoTypeHeight = DeviceInfo.hasNotch() ? hp('10.83%') : hp('15%')
+const detailInfoTypeHeight = DeviceInfo.hasNotch() ? hp('10.83%') : hp('15%');
 const headerHeight = getStatusBarHeight() + hp('8%');
 const SafeStatusBar = Platform.select({
   ios: 44,
   android: StatusBar.currentHeight,
 });
-
 
 const DetailInfoTabScene = ({
   onGetRef,
@@ -305,7 +295,6 @@ const DetailInfoTabScene = ({
   isChangingInfoTypeIndex,
   infoTypeScrollViewRef,
 }: any) => {
-
   const windowHeight = Dimensions.get('window').height;
 
   return (
@@ -314,50 +303,99 @@ const DetailInfoTabScene = ({
       scrollToOverflowEnabled={true}
       ref={onGetRef}
       scrollEventThrottle={1}
-      onScroll={focused ? Animated.event([
-        {nativeEvent: {contentOffset: {y: scrollY}}}], 
-        {
-          useNativeDriver: true,
-          listener: event => {
-              if(scrollY._value > 110) {
-                if(!isContentedHeader) {
-                  //lockContentedHeader();
+      onScroll={
+        focused
+          ? Animated.event([{nativeEvent: {contentOffset: {y: scrollY}}}], {
+              useNativeDriver: true,
+              listener: (event) => {
+                if (scrollY._value > 110) {
+                  if (!isContentedHeader) {
+                    //lockContentedHeader();
+                  }
+                  if (
+                    scrollY._value >=
+                      collapsibleViewHeight -
+                        tabBarHeight -
+                        getStatusBarHeight() &&
+                    !isReachedTop
+                  ) {
+                    console.log('reachTop');
+                    isReachedTop = true;
+                  } else if (
+                    scrollY._value <
+                      collapsibleViewHeight -
+                        tabBarHeight -
+                        getStatusBarHeight() &&
+                    isReachedTop
+                  ) {
+                    isReachedTop = false;
+                  }
+                } else if (scrollY._value <= 110) {
+                  if (isContentedHeader) {
+                    //unlockContentedHeader();
+                  }
                 }
-                if(scrollY._value >= (collapsibleViewHeight - tabBarHeight - getStatusBarHeight()) && !isReachedTop) {
-                  console.log("reachTop")
-                  isReachedTop = true;
-                } else if(scrollY._value < (collapsibleViewHeight - tabBarHeight - getStatusBarHeight()) && isReachedTop) {
-                  isReachedTop = false;
+                const invisibleScrollHeight =
+                  collapsibleViewHeight -
+                  tabBarHeight -
+                  getStatusBarHeight() -
+                  10;
+
+                if (
+                  infoTypeArr.current[0] <= scrollY._value &&
+                  scrollY._value <
+                    infoTypeArr.current[1] + invisibleScrollHeight
+                ) {
+                  if (
+                    curInfoTypeIndex !== 0 &&
+                    !isChangingInfoTypeIndex.current
+                  ) {
+                    infoTypeScrollViewRef.current.scrollTo({
+                      x: 0,
+                      animated: true,
+                    });
+                    changeCurInfoTypeIndex(0);
+                  }
+                } else if (
+                  infoTypeArr.current[1] + invisibleScrollHeight <=
+                    scrollY._value &&
+                  scrollY._value <
+                    infoTypeArr.current[2] + invisibleScrollHeight
+                ) {
+                  if (
+                    curInfoTypeIndex !== 1 &&
+                    !isChangingInfoTypeIndex.current
+                  ) {
+                    changeCurInfoTypeIndex(1);
+                  }
+                } else if (
+                  infoTypeArr.current[2] + invisibleScrollHeight <=
+                    scrollY._value &&
+                  scrollY._value <
+                    infoTypeArr.current[3] + invisibleScrollHeight
+                ) {
+                  if (
+                    curInfoTypeIndex !== 2 &&
+                    !isChangingInfoTypeIndex.current
+                  ) {
+                    changeCurInfoTypeIndex(2);
+                  }
+                } else if (
+                  infoTypeArr.current[3] + invisibleScrollHeight <=
+                  scrollY._value
+                ) {
+                  if (
+                    curInfoTypeIndex !== 3 &&
+                    !isChangingInfoTypeIndex.current
+                  ) {
+                    infoTypeScrollViewRef.current.scrollToEnd({animated: true});
+                    changeCurInfoTypeIndex(3);
+                  }
                 }
-              } else if(scrollY._value <= 110 ) {
-                if(isContentedHeader) {
-                  //unlockContentedHeader();
-                }
-              }
-              const invisibleScrollHeight = collapsibleViewHeight - tabBarHeight - getStatusBarHeight() - 10;
-              
-              if(infoTypeArr.current[0] <= scrollY._value && scrollY._value < (infoTypeArr.current[1] + invisibleScrollHeight)) {
-                if(curInfoTypeIndex !== 0 && !isChangingInfoTypeIndex.current) {
-                  infoTypeScrollViewRef.current.scrollTo({x: 0, animated: true})
-                  changeCurInfoTypeIndex(0);
-                }
-              } else if((infoTypeArr.current[1] + invisibleScrollHeight) <= scrollY._value && scrollY._value < (infoTypeArr.current[2] + invisibleScrollHeight)) {
-                if(curInfoTypeIndex !== 1 && !isChangingInfoTypeIndex.current) {
-                  changeCurInfoTypeIndex(1);
-                }
-              } else if((infoTypeArr.current[2] + invisibleScrollHeight) <= scrollY._value && scrollY._value < (infoTypeArr.current[3] + invisibleScrollHeight)) {
-                if(curInfoTypeIndex !== 2 && !isChangingInfoTypeIndex.current) {
-                  changeCurInfoTypeIndex(2);
-                }
-              } else if((infoTypeArr.current[3] + invisibleScrollHeight) <= scrollY._value) {
-                if(curInfoTypeIndex !== 3 && !isChangingInfoTypeIndex.current) {
-                  infoTypeScrollViewRef.current.scrollToEnd({animated: true})
-                  changeCurInfoTypeIndex(3);
-                }
-              }
-        }
-        },
-      ) : null}
+              },
+            })
+          : null
+      }
       onMomentumScrollBegin={onMomentumScrollBegin}
       onScrollEndDrag={onScrollEndDrag}
       onMomentumScrollEnd={onMomentumScrollEnd}
@@ -368,45 +406,45 @@ const DetailInfoTabScene = ({
       }}
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}>
-        <DetailInfoContainer>
+      <DetailInfoContainer>
         <DetailInfoItemContainer
-        onLayout={(event) => {
-          infoTypeArr.current[0] = event.nativeEvent.layout.y
-        }}>
-          <DetailInfoLabelText>{"병원 소개"}</DetailInfoLabelText>
+          onLayout={(event) => {
+            infoTypeArr.current[0] = event.nativeEvent.layout.y;
+          }}>
+          <DetailInfoLabelText>{'병원 소개'}</DetailInfoLabelText>
         </DetailInfoItemContainer>
         <DetailInfoItemContainer>
-          <DetailInfoLabelText>{"진료 시간"}</DetailInfoLabelText>
+          <DetailInfoLabelText>{'진료 시간'}</DetailInfoLabelText>
         </DetailInfoItemContainer>
         <DetailInfoItemContainer>
-          <DetailInfoLabelText>{"위치 정보"}</DetailInfoLabelText>
+          <DetailInfoLabelText>{'위치 정보'}</DetailInfoLabelText>
         </DetailInfoItemContainer>
         <DetailInfoItemContainer
-        onLayout={(event) => {
-          infoTypeArr.current[1] = event.nativeEvent.layout.y
-        }}>
-          <DetailInfoLabelText>{"진료 과목"}</DetailInfoLabelText>
+          onLayout={(event) => {
+            infoTypeArr.current[1] = event.nativeEvent.layout.y;
+          }}>
+          <DetailInfoLabelText>{'진료 과목'}</DetailInfoLabelText>
         </DetailInfoItemContainer>
         <DetailInfoItemContainer>
-          <DetailInfoLabelText>{"특수 진료 장비"}</DetailInfoLabelText>
+          <DetailInfoLabelText>{'특수 진료 장비'}</DetailInfoLabelText>
         </DetailInfoItemContainer>
         <DetailInfoItemContainer>
-          <DetailInfoLabelText>{"전문 및 특수 진료 항목"}</DetailInfoLabelText>
+          <DetailInfoLabelText>{'전문 및 특수 진료 항목'}</DetailInfoLabelText>
         </DetailInfoItemContainer>
         <DetailInfoItemContainer
-        onLayout={(event) => {
-          infoTypeArr.current[2] = event.nativeEvent.layout.y
-        }}>
-          <DetailInfoLabelText>{"의사 정보"}</DetailInfoLabelText>
+          onLayout={(event) => {
+            infoTypeArr.current[2] = event.nativeEvent.layout.y;
+          }}>
+          <DetailInfoLabelText>{'의사 정보'}</DetailInfoLabelText>
         </DetailInfoItemContainer>
         <DetailInfoItemContainer
-        onLayout={(event) => {
-          infoTypeArr.current[3] = event.nativeEvent.layout.y 
-        }}
-        style={{borderWidth: 0}}>
-          <DetailInfoLabelText>{"주차 정보"}</DetailInfoLabelText>
+          onLayout={(event) => {
+            infoTypeArr.current[3] = event.nativeEvent.layout.y;
+          }}
+          style={{borderWidth: 0}}>
+          <DetailInfoLabelText>{'주차 정보'}</DetailInfoLabelText>
         </DetailInfoItemContainer>
-        </DetailInfoContainer>
+      </DetailInfoContainer>
     </Animated.ScrollView>
   );
 };
@@ -433,66 +471,75 @@ const ReviewTabScene = ({
 
   return (
     <Animated.ScrollView
-    {...tabPanResponder.panHandlers}
+      {...tabPanResponder.panHandlers}
       scrollToOverflowEnabled={true}
       ref={onGetRef}
       scrollEventThrottle={1}
       data={TEST_DENTAL_REVIEW_DATA}
-      onScroll={focused ? Animated.event([
-        {nativeEvent: {contentOffset: {y: scrollY}}}], 
-        {
-          useNativeDriver: true,
-          listener: event => {
-              if(scrollY._value > 110) {
-                if(!isContentedHeader) {
-                  //lockContentedHeader();
+      onScroll={
+        focused
+          ? Animated.event([{nativeEvent: {contentOffset: {y: scrollY}}}], {
+              useNativeDriver: true,
+              listener: (event) => {
+                if (scrollY._value > 110) {
+                  if (!isContentedHeader) {
+                    //lockContentedHeader();
+                  }
+                  if (
+                    scrollY._value >=
+                      collapsibleViewHeight -
+                        tabBarHeight -
+                        getStatusBarHeight() &&
+                    !isReachedTop
+                  ) {
+                    console.log('reachTop');
+                    isReachedTop = true;
+                  } else if (
+                    scrollY._value <
+                      collapsibleViewHeight -
+                        tabBarHeight -
+                        getStatusBarHeight() &&
+                    isReachedTop
+                  ) {
+                    isReachedTop = false;
+                  }
+                } else if (scrollY._value <= 110) {
+                  if (isContentedHeader) {
+                    //unlockContentedHeader();
+                  }
                 }
-                if(scrollY._value >= (collapsibleViewHeight - tabBarHeight - getStatusBarHeight()) && !isReachedTop) {
-                  console.log("reachTop")
-                  isReachedTop = true
-                } else if(scrollY._value < (collapsibleViewHeight - tabBarHeight - getStatusBarHeight()) && isReachedTop) {
-                  isReachedTop = false
-                }
-              } else if(scrollY._value <= 110) {
-                if(isContentedHeader) {
-                  //unlockContentedHeader();
-                }
-              }
-        }
-        },
-      ): null}
+              },
+            })
+          : null
+      }
       onMomentumScrollBegin={onMomentumScrollBegin}
       onScrollEndDrag={onScrollEndDrag}
       onMomentumScrollEnd={onMomentumScrollEnd}
       contentContainerStyle={{
-        width: wp("100%"),
+        width: wp('100%'),
         height: 2000,
         paddingTop: collapsibleViewHeight + tabBarHeight,
         minHeight: windowHeight - tabBarHeight,
       }}
       showsHorizontalScrollIndicator={false}
-      showsVerticalScrollIndicator={false}
-    >
-    <RatingReportContainer>
-      <RatingReport
-      avgRating={3}/>
-    </RatingReportContainer>
-    <ReviewList
-    scrollEnabled={false}
-    reviewList={dentalReviewArray}
-    moveToDentalDetail={moveToDentalDetail}
-    moveToWriterProfile={moveToWriterProfile}
-    moveToReviewDetail={moveToReviewDetail}
-    />
-
+      showsVerticalScrollIndicator={false}>
+      <RatingReportContainer>
+        <RatingReport avgRating={3} />
+      </RatingReportContainer>
+      <ReviewList
+        scrollEnabled={false}
+        reviewList={dentalReviewArray}
+        moveToDentalDetail={moveToDentalDetail}
+        moveToWriterProfile={moveToWriterProfile}
+        moveToReviewDetail={moveToReviewDetail}
+      />
     </Animated.ScrollView>
   );
 };
 
 interface Props {
-  goBack: () => void,
+  goBack: () => void;
 }
-
 
 const DentalCollapsibleTabView = ({goBack}: Props) => {
   const [tabIndex, setIndex] = useState(0);
@@ -500,8 +547,12 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
     {key: 'detailInfo', title: '상세 정보'},
     {key: 'review', title: '리뷰'},
   ]);
-  const [dentalDetailInfo, setDentalDetailInfo] = useState<any>(TEST_DENTAL_DETAIL_DATA)
-  const [dentalReviewArray, setDentalReviewArray] = useState<any>(TEST_DENTAL_REVIEW_DATA);
+  const [dentalDetailInfo, setDentalDetailInfo] = useState<any>(
+    TEST_DENTAL_DETAIL_DATA,
+  );
+  const [dentalReviewArray, setDentalReviewArray] = useState<any>(
+    TEST_DENTAL_REVIEW_DATA,
+  );
 
   /**
    * ref
@@ -515,13 +566,13 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
   const headerScrollStart = useRef(0);
   const _tabIndex = useRef(0);
   const isChangingInfoTypeIndex = useRef<boolean>(false);
- 
-   const headerOpacity = scrollY.interpolate({
-     inputRange: [hp('18%'), hp('28%')],
-     outputRange: [0, 1],
-     extrapolate: 'clamp'
-   })
- 
+
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [hp('18%'), hp('28%')],
+    outputRange: [0, 1],
+    extrapolate: 'clamp',
+  });
+
   /**
    * PanResponder for header
    */
@@ -593,8 +644,8 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
         null,
         {
           moveX: tabScrollX,
-        }
-      ])
+        },
+      ]),
     }),
   ).current;
 
@@ -688,47 +739,44 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
     });
 
     return (
-      <Animated.View 
-      {...collapsibleViewPanResponder.panHandlers}
-      style={[styles.collapsibleView, {transform: [{translateY: y}]}]}>
+      <Animated.View
+        {...collapsibleViewPanResponder.panHandlers}
+        style={[styles.collapsibleView, {transform: [{translateY: y}]}]}>
         <CollapsibleContainer>
-            <CoverImageContainer>
-                <CoverImage
-                source={{uri:dentalDetailInfo.coverImage.uri}}/>
-                <CertificationIcon
-                style={styles.certificationIconShadow}/>
-            </CoverImageContainer>
-            <RepresentingKeywordContainer>
-                <RepresentingKeywordItemContainer>
-                    <RepresentingKeywordText>{"진료가능"}</RepresentingKeywordText>
-                </RepresentingKeywordItemContainer>
-            </RepresentingKeywordContainer>
-            <BasicInfoContainer>
-                <DentalNameText>{dentalDetailInfo.name}</DentalNameText>
-                <DentalAddressText>{dentalDetailInfo.address}</DentalAddressText>
-                <RatingText>{"평점 3.0"}</RatingText>
-            <BasicInfoItemDivider
-            style={{marginTop: 24}}/>
+          <CoverImageContainer>
+            <CoverImage source={{uri: dentalDetailInfo.coverImage.uri}} />
+            <CertificationIcon style={styles.certificationIconShadow} />
+          </CoverImageContainer>
+          <RepresentingKeywordContainer>
+            <RepresentingKeywordItemContainer>
+              <RepresentingKeywordText>{'진료가능'}</RepresentingKeywordText>
+            </RepresentingKeywordItemContainer>
+          </RepresentingKeywordContainer>
+          <BasicInfoContainer>
+            <DentalNameText>{dentalDetailInfo.name}</DentalNameText>
+            <DentalAddressText>{dentalDetailInfo.address}</DentalAddressText>
+            <RatingText>{'평점 3.0'}</RatingText>
+            <BasicInfoItemDivider style={{marginTop: 24}} />
             <BasicInfoItemContainer>
-                <BasicInfoLabelText>{"설립"}</BasicInfoLabelText>
-                <BasicInfoLabelDivider/>
-                <BasicInfoValueText>{"4년"}</BasicInfoValueText>
+              <BasicInfoLabelText>{'설립'}</BasicInfoLabelText>
+              <BasicInfoLabelDivider />
+              <BasicInfoValueText>{'4년'}</BasicInfoValueText>
             </BasicInfoItemContainer>
-            <BasicInfoItemDivider/>
+            <BasicInfoItemDivider />
             <BasicInfoItemContainer>
-                <BasicInfoLabelText>{"홈페이지"}</BasicInfoLabelText>
-                <BasicInfoLabelDivider/>
-                <BasicInfoValueText>{"바로가기"}</BasicInfoValueText>
+              <BasicInfoLabelText>{'홈페이지'}</BasicInfoLabelText>
+              <BasicInfoLabelDivider />
+              <BasicInfoValueText>{'바로가기'}</BasicInfoValueText>
             </BasicInfoItemContainer>
-            </BasicInfoContainer>
-            </CollapsibleContainer>
+          </BasicInfoContainer>
+        </CollapsibleContainer>
       </Animated.View>
     );
   };
 
   const renderLabel = ({route, focused}) => {
     return (
-      <Text style={[styles.label, {color: focused ? "#2998FF" : "#000000"}]}>
+      <Text style={[styles.label, {color: focused ? '#2998FF' : '#000000'}]}>
         {route.title}
       </Text>
     );
@@ -746,7 +794,9 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
             {...tabPanResponder.panHandlers}
             ref={(ref) => {
               if (ref) {
-                const found = listRefArr.current.find((e) => e.key === route.key);
+                const found = listRefArr.current.find(
+                  (e) => e.key === route.key,
+                );
                 if (!found) {
                   listRefArr.current.push({
                     key: route.key,
@@ -756,19 +806,24 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
               }
             }}
             scrollEventThrottle={16}
-            onScroll={focused ? Animated.event([
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    y: scrollY
-                  }
-                }
-              },
-            ], 
-              {
-                useNativeDriver: true,
-              },
-            ) : null}
+            onScroll={
+              focused
+                ? Animated.event(
+                    [
+                      {
+                        nativeEvent: {
+                          contentOffset: {
+                            y: scrollY,
+                          },
+                        },
+                      },
+                    ],
+                    {
+                      useNativeDriver: true,
+                    },
+                  )
+                : null
+            }
             onMomentumScrollBegin={onMomentumScrollBegin}
             onScrollEndDrag={onScrollEndDrag}
             onMomentumScrollEnd={onMomentumScrollEnd}
@@ -776,34 +831,39 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
               paddingTop: collapsibleViewHeight + tabBarHeight,
             }}
             showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            ><DetailInfoContainer>
-            <DetailInfoItemContainer>
-              <DetailInfoLabelText>{"병원 소개"}</DetailInfoLabelText>
-              <DetailInfoDescripText>{"경기도 수원시 광교중앙로 145 (엘포트아이파크) 2층에 위치한 웃는E치과교정전문의원 입니다. 주차는 지하 3층 D01 구역에 하시고 롯데 아울렛 방향으로 쭉 걸어오시면 됩니다."}</DetailInfoDescripText>
-            </DetailInfoItemContainer>
-            <DetailInfoItemContainer>
-              <DetailInfoLabelText>{"진료 시간"}</DetailInfoLabelText>
-            </DetailInfoItemContainer>
-            <DetailInfoItemContainer>
-              <DetailInfoLabelText>{"위치 정보"}</DetailInfoLabelText>
-            </DetailInfoItemContainer>
-            <DetailInfoItemContainer>
-              <DetailInfoLabelText>{"진료 과목"}</DetailInfoLabelText>
-            </DetailInfoItemContainer>
-            <DetailInfoItemContainer>
-              <DetailInfoLabelText>{"특수 진료 장비"}</DetailInfoLabelText>
-            </DetailInfoItemContainer>
-            <DetailInfoItemContainer>
-              <DetailInfoLabelText>{"전문 및 특수 진료 항목"}</DetailInfoLabelText>
-            </DetailInfoItemContainer>
-            <DetailInfoItemContainer>
-              <DetailInfoLabelText>{"의사 정보"}</DetailInfoLabelText>
-            </DetailInfoItemContainer>
-            <DetailInfoItemContainer
-            style={{borderWidth: 0}}>
-              <DetailInfoLabelText>{"주차 정보"}</DetailInfoLabelText>
-            </DetailInfoItemContainer>
+            showsVerticalScrollIndicator={false}>
+            <DetailInfoContainer>
+              <DetailInfoItemContainer>
+                <DetailInfoLabelText>{'병원 소개'}</DetailInfoLabelText>
+                <DetailInfoDescripText>
+                  {
+                    '경기도 수원시 광교중앙로 145 (엘포트아이파크) 2층에 위치한 웃는E치과교정전문의원 입니다. 주차는 지하 3층 D01 구역에 하시고 롯데 아울렛 방향으로 쭉 걸어오시면 됩니다.'
+                  }
+                </DetailInfoDescripText>
+              </DetailInfoItemContainer>
+              <DetailInfoItemContainer>
+                <DetailInfoLabelText>{'진료 시간'}</DetailInfoLabelText>
+              </DetailInfoItemContainer>
+              <DetailInfoItemContainer>
+                <DetailInfoLabelText>{'위치 정보'}</DetailInfoLabelText>
+              </DetailInfoItemContainer>
+              <DetailInfoItemContainer>
+                <DetailInfoLabelText>{'진료 과목'}</DetailInfoLabelText>
+              </DetailInfoItemContainer>
+              <DetailInfoItemContainer>
+                <DetailInfoLabelText>{'특수 진료 장비'}</DetailInfoLabelText>
+              </DetailInfoItemContainer>
+              <DetailInfoItemContainer>
+                <DetailInfoLabelText>
+                  {'전문 및 특수 진료 항목'}
+                </DetailInfoLabelText>
+              </DetailInfoItemContainer>
+              <DetailInfoItemContainer>
+                <DetailInfoLabelText>{'의사 정보'}</DetailInfoLabelText>
+              </DetailInfoItemContainer>
+              <DetailInfoItemContainer style={{borderWidth: 0}}>
+                <DetailInfoLabelText>{'주차 정보'}</DetailInfoLabelText>
+              </DetailInfoItemContainer>
             </DetailInfoContainer>
           </Animated.ScrollView>
         );
@@ -813,7 +873,9 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
             {...tabPanResponder.panHandlers}
             ref={(ref) => {
               if (ref) {
-                const found = listRefArr.current.find((e) => e.key === route.key);
+                const found = listRefArr.current.find(
+                  (e) => e.key === route.key,
+                );
                 if (!found) {
                   listRefArr.current.push({
                     key: route.key,
@@ -823,12 +885,16 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
               }
             }}
             scrollEventThrottle={16}
-            onScroll={focused ? Animated.event([
-              {nativeEvent: {contentOffset: {y: scrollY}}}], 
-              {
-                useNativeDriver: true,
-              },
-            ): null}
+            onScroll={
+              focused
+                ? Animated.event(
+                    [{nativeEvent: {contentOffset: {y: scrollY}}}],
+                    {
+                      useNativeDriver: true,
+                    },
+                  )
+                : null
+            }
             onMomentumScrollBegin={onMomentumScrollBegin}
             onScrollEndDrag={onScrollEndDrag}
             onMomentumScrollEnd={onMomentumScrollEnd}
@@ -838,34 +904,26 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
               paddingTop: collapsibleViewHeight + tabBarHeight,
             }}
             showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            >
+            showsVerticalScrollIndicator={false}>
             <RatingReportContainer>
-              <RatingReport
-              avgRating={3}/>
+              <RatingReport avgRating={3} />
             </RatingReportContainer>
-            <ReviewList
-            scrollEnabled={false}
-            reviewList={dentalReviewArray}
-            />
+            <ReviewList scrollEnabled={false} reviewList={dentalReviewArray} />
           </Animated.ScrollView>
         );
         break;
       default:
         return null;
     }
-    
   };
 
-  
   const renderTabBar = (props) => {
-    console.log("renderTabBar props", props);
+    console.log('renderTabBar props', props);
     const y = scrollY.interpolate({
       inputRange: [0, collapsibleViewHeight - headerHeight],
-      outputRange: [collapsibleViewHeight, (headerHeight)],
+      outputRange: [collapsibleViewHeight, headerHeight],
       extrapolate: 'clamp',
     });
-
 
     return (
       <Animated.View
@@ -883,7 +941,7 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
               preventDefault();
             }
           }}
-          inactiveColor={{fontColor: "#000000"}}
+          inactiveColor={{fontColor: '#000000'}}
           style={styles.tab}
           renderLabel={renderLabel}
           indicatorContainerStyle={styles.indicatorContainer}
@@ -915,15 +973,15 @@ const DentalCollapsibleTabView = ({goBack}: Props) => {
     <View style={styles.container}>
       {renderTabView()}
       {renderCollapsibleView()}
-      <Animated.View
-      style={[styles.header, {opacity: headerOpacity}]}>
+      <Animated.View style={[styles.header, {opacity: headerOpacity}]}>
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <HeaderLeftContainer>
             <HeaderBackIcon
-            source={require('~/Assets/Images/HeaderBar/ic_back.png')}/>
+              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
+            />
           </HeaderLeftContainer>
         </TouchableWithoutFeedback>
-          <HeaderTitleText>{"웃는E치과교정전문의"}</HeaderTitleText>
+        <HeaderTitleText>{'웃는E치과교정전문의'}</HeaderTitleText>
       </Animated.View>
     </View>
   );
@@ -942,13 +1000,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFA088',
   },
   header: {
-    position: "absolute",
+    position: 'absolute',
     paddingTop: getStatusBarHeight(),
     width: wp('100%'),
     height: getStatusBarHeight() + hp('8%'),
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF"
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
   },
   label: {fontSize: 14, color: '#2998FF', fontWeight: '800'},
   tab: {
@@ -959,366 +1017,381 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
     borderBottomWidth: 1,
-    borderColor: "#F0F0F0"
+    borderColor: '#F0F0F0',
   },
   indicatorContainer: {
     width: wp('100%'),
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
   },
   indicator: {
     backgroundColor: '#2998FF',
     height: 4,
     width: wp('19%'),
-    marginLeft: (wp('50%') - wp('19%')) / 2
+    marginLeft: (wp('50%') - wp('19%')) / 2,
   },
 });
 
 export default DentalCollapsibleTabView;
 
-
 const TEST_DENTAL_REVIEW_DATA = [
   {
-    "id": 2,
-    "starRate_cost": 5,
-    "starRate_treatment": 4,
-    "starRate_service": 4,
-    "certifiedBill": true,
-    "hits": 0,
-    "treatmentDate": "2020-12-07",
-    "totalCost": null,
-    "createdAt": "2020-12-07T03:21:08.000Z",
-    "updatedAt": "2020-12-07T03:21:08.000Z",
-    "deletedAt": null,
-    "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
-    "dentalClinicId": 43,
-    "createdDiff(second)": 352,
-    "reviewCommentsNum": 0,
-    "reviewLikeNum": 0,
-    "viewerLikedReview": 0,
-    "viewerScrapedReview": 0,
-    "reviewViewNum": 1,
-    "reviewDescriptions": "1 2",
-    "user": {
-        "nickname": "jiwon11",
-        "profileImg": ""
+    id: 2,
+    starRate_cost: 5,
+    starRate_treatment: 4,
+    starRate_service: 4,
+    certifiedBill: true,
+    hits: 0,
+    treatmentDate: '2020-12-07',
+    totalCost: null,
+    createdAt: '2020-12-07T03:21:08.000Z',
+    updatedAt: '2020-12-07T03:21:08.000Z',
+    deletedAt: null,
+    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
+    dentalClinicId: 43,
+    'createdDiff(second)': 352,
+    reviewCommentsNum: 0,
+    reviewLikeNum: 0,
+    viewerLikedReview: 0,
+    viewerScrapedReview: 0,
+    reviewViewNum: 1,
+    reviewDescriptions: '1 2',
+    user: {
+      nickname: 'jiwon11',
+      profileImg: '',
     },
-    "review_contents": [
-        {
-            "id": 2,
-            "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic",
-            "index": 1,
-            "img_before_after": "before"
-        },
-        {
-            "id": 1,
-            "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png",
-            "index": 2,
-            "img_before_after": "after"
-        }
+    review_contents: [
+      {
+        id: 2,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
+        index: 1,
+        img_before_after: 'before',
+      },
+      {
+        id: 1,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
+        index: 2,
+        img_before_after: 'after',
+      },
     ],
-    "dental_clinic": {
-        "id": 43,
-        "name": "시그마치과병원"
+    dental_clinic: {
+      id: 43,
+      name: '시그마치과병원',
     },
-    "TreatmentItems": [
-        {
-            "name": "복합레진",
-            "review_treatment_item": {
-                "cost": 30000
-            }
+    TreatmentItems: [
+      {
+        name: '복합레진',
+        review_treatment_item: {
+          cost: 30000,
         },
-        {
-            "name": "임플란트",
-            "review_treatment_item": {
-                "cost": 20000
-            }
-        }
-    ]
-},
-{
-  "id": 2,
-  "starRate_cost": 5,
-  "starRate_treatment": 4,
-  "starRate_service": 4,
-  "certifiedBill": true,
-  "hits": 0,
-  "treatmentDate": "2020-12-07",
-  "totalCost": null,
-  "createdAt": "2020-12-07T03:21:08.000Z",
-  "updatedAt": "2020-12-07T03:21:08.000Z",
-  "deletedAt": null,
-  "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
-  "dentalClinicId": 43,
-  "createdDiff(second)": 352,
-  "reviewCommentsNum": 0,
-  "reviewLikeNum": 0,
-  "viewerLikedReview": 0,
-  "viewerScrapedReview": 0,
-  "reviewViewNum": 1,
-  "reviewDescriptions": "1 2",
-  "user": {
-      "nickname": "jiwon11",
-      "profileImg": ""
-  },
-  "review_contents": [
-      {
-          "id": 2,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic",
-          "index": 1,
-          "img_before_after": "before"
       },
       {
-          "id": 1,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png",
-          "index": 2,
-          "img_before_after": "after"
-      }
-  ],
-  "dental_clinic": {
-      "id": 43,
-      "name": "시그마치과병원"
+        name: '임플란트',
+        review_treatment_item: {
+          cost: 20000,
+        },
+      },
+    ],
   },
-  "TreatmentItems": [
+  {
+    id: 2,
+    starRate_cost: 5,
+    starRate_treatment: 4,
+    starRate_service: 4,
+    certifiedBill: true,
+    hits: 0,
+    treatmentDate: '2020-12-07',
+    totalCost: null,
+    createdAt: '2020-12-07T03:21:08.000Z',
+    updatedAt: '2020-12-07T03:21:08.000Z',
+    deletedAt: null,
+    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
+    dentalClinicId: 43,
+    'createdDiff(second)': 352,
+    reviewCommentsNum: 0,
+    reviewLikeNum: 0,
+    viewerLikedReview: 0,
+    viewerScrapedReview: 0,
+    reviewViewNum: 1,
+    reviewDescriptions: '1 2',
+    user: {
+      nickname: 'jiwon11',
+      profileImg: '',
+    },
+    review_contents: [
       {
-          "name": "복합레진",
-          "review_treatment_item": {
-              "cost": 30000
-          }
+        id: 2,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
+        index: 1,
+        img_before_after: 'before',
       },
       {
-          "name": "임플란트",
-          "review_treatment_item": {
-              "cost": 20000
-          }
-      }
-  ]
-},{
-  "id": 2,
-  "starRate_cost": 5,
-  "starRate_treatment": 4,
-  "starRate_service": 4,
-  "certifiedBill": true,
-  "hits": 0,
-  "treatmentDate": "2020-12-07",
-  "totalCost": null,
-  "createdAt": "2020-12-07T03:21:08.000Z",
-  "updatedAt": "2020-12-07T03:21:08.000Z",
-  "deletedAt": null,
-  "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
-  "dentalClinicId": 43,
-  "createdDiff(second)": 352,
-  "reviewCommentsNum": 0,
-  "reviewLikeNum": 0,
-  "viewerLikedReview": 0,
-  "viewerScrapedReview": 0,
-  "reviewViewNum": 1,
-  "reviewDescriptions": "1 2",
-  "user": {
-      "nickname": "jiwon11",
-      "profileImg": ""
-  },
-  "review_contents": [
+        id: 1,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
+        index: 2,
+        img_before_after: 'after',
+      },
+    ],
+    dental_clinic: {
+      id: 43,
+      name: '시그마치과병원',
+    },
+    TreatmentItems: [
       {
-          "id": 2,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic",
-          "index": 1,
-          "img_before_after": "before"
+        name: '복합레진',
+        review_treatment_item: {
+          cost: 30000,
+        },
       },
       {
-          "id": 1,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png",
-          "index": 2,
-          "img_before_after": "after"
-      }
-  ],
-  "dental_clinic": {
-      "id": 43,
-      "name": "시그마치과병원"
+        name: '임플란트',
+        review_treatment_item: {
+          cost: 20000,
+        },
+      },
+    ],
   },
-  "TreatmentItems": [
+  {
+    id: 2,
+    starRate_cost: 5,
+    starRate_treatment: 4,
+    starRate_service: 4,
+    certifiedBill: true,
+    hits: 0,
+    treatmentDate: '2020-12-07',
+    totalCost: null,
+    createdAt: '2020-12-07T03:21:08.000Z',
+    updatedAt: '2020-12-07T03:21:08.000Z',
+    deletedAt: null,
+    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
+    dentalClinicId: 43,
+    'createdDiff(second)': 352,
+    reviewCommentsNum: 0,
+    reviewLikeNum: 0,
+    viewerLikedReview: 0,
+    viewerScrapedReview: 0,
+    reviewViewNum: 1,
+    reviewDescriptions: '1 2',
+    user: {
+      nickname: 'jiwon11',
+      profileImg: '',
+    },
+    review_contents: [
       {
-          "name": "복합레진",
-          "review_treatment_item": {
-              "cost": 30000
-          }
+        id: 2,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
+        index: 1,
+        img_before_after: 'before',
       },
       {
-          "name": "임플란트",
-          "review_treatment_item": {
-              "cost": 20000
-          }
-      }
-  ]
-},{
-  "id": 2,
-  "starRate_cost": 5,
-  "starRate_treatment": 4,
-  "starRate_service": 4,
-  "certifiedBill": true,
-  "hits": 0,
-  "treatmentDate": "2020-12-07",
-  "totalCost": null,
-  "createdAt": "2020-12-07T03:21:08.000Z",
-  "updatedAt": "2020-12-07T03:21:08.000Z",
-  "deletedAt": null,
-  "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
-  "dentalClinicId": 43,
-  "createdDiff(second)": 352,
-  "reviewCommentsNum": 0,
-  "reviewLikeNum": 0,
-  "viewerLikedReview": 0,
-  "viewerScrapedReview": 0,
-  "reviewViewNum": 1,
-  "reviewDescriptions": "1 2",
-  "user": {
-      "nickname": "jiwon11",
-      "profileImg": ""
-  },
-  "review_contents": [
+        id: 1,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
+        index: 2,
+        img_before_after: 'after',
+      },
+    ],
+    dental_clinic: {
+      id: 43,
+      name: '시그마치과병원',
+    },
+    TreatmentItems: [
       {
-          "id": 2,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic",
-          "index": 1,
-          "img_before_after": "before"
+        name: '복합레진',
+        review_treatment_item: {
+          cost: 30000,
+        },
       },
       {
-          "id": 1,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png",
-          "index": 2,
-          "img_before_after": "after"
-      }
-  ],
-  "dental_clinic": {
-      "id": 43,
-      "name": "시그마치과병원"
+        name: '임플란트',
+        review_treatment_item: {
+          cost: 20000,
+        },
+      },
+    ],
   },
-  "TreatmentItems": [
+  {
+    id: 2,
+    starRate_cost: 5,
+    starRate_treatment: 4,
+    starRate_service: 4,
+    certifiedBill: true,
+    hits: 0,
+    treatmentDate: '2020-12-07',
+    totalCost: null,
+    createdAt: '2020-12-07T03:21:08.000Z',
+    updatedAt: '2020-12-07T03:21:08.000Z',
+    deletedAt: null,
+    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
+    dentalClinicId: 43,
+    'createdDiff(second)': 352,
+    reviewCommentsNum: 0,
+    reviewLikeNum: 0,
+    viewerLikedReview: 0,
+    viewerScrapedReview: 0,
+    reviewViewNum: 1,
+    reviewDescriptions: '1 2',
+    user: {
+      nickname: 'jiwon11',
+      profileImg: '',
+    },
+    review_contents: [
       {
-          "name": "복합레진",
-          "review_treatment_item": {
-              "cost": 30000
-          }
+        id: 2,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
+        index: 1,
+        img_before_after: 'before',
       },
       {
-          "name": "임플란트",
-          "review_treatment_item": {
-              "cost": 20000
-          }
-      }
-  ]
-},{
-  "id": 2,
-  "starRate_cost": 5,
-  "starRate_treatment": 4,
-  "starRate_service": 4,
-  "certifiedBill": true,
-  "hits": 0,
-  "treatmentDate": "2020-12-07",
-  "totalCost": null,
-  "createdAt": "2020-12-07T03:21:08.000Z",
-  "updatedAt": "2020-12-07T03:21:08.000Z",
-  "deletedAt": null,
-  "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
-  "dentalClinicId": 43,
-  "createdDiff(second)": 352,
-  "reviewCommentsNum": 0,
-  "reviewLikeNum": 0,
-  "viewerLikedReview": 0,
-  "viewerScrapedReview": 0,
-  "reviewViewNum": 1,
-  "reviewDescriptions": "1 2",
-  "user": {
-      "nickname": "jiwon11",
-      "profileImg": ""
-  },
-  "review_contents": [
+        id: 1,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
+        index: 2,
+        img_before_after: 'after',
+      },
+    ],
+    dental_clinic: {
+      id: 43,
+      name: '시그마치과병원',
+    },
+    TreatmentItems: [
       {
-          "id": 2,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic",
-          "index": 1,
-          "img_before_after": "before"
+        name: '복합레진',
+        review_treatment_item: {
+          cost: 30000,
+        },
       },
       {
-          "id": 1,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png",
-          "index": 2,
-          "img_before_after": "after"
-      }
-  ],
-  "dental_clinic": {
-      "id": 43,
-      "name": "시그마치과병원"
+        name: '임플란트',
+        review_treatment_item: {
+          cost: 20000,
+        },
+      },
+    ],
   },
-  "TreatmentItems": [
+  {
+    id: 2,
+    starRate_cost: 5,
+    starRate_treatment: 4,
+    starRate_service: 4,
+    certifiedBill: true,
+    hits: 0,
+    treatmentDate: '2020-12-07',
+    totalCost: null,
+    createdAt: '2020-12-07T03:21:08.000Z',
+    updatedAt: '2020-12-07T03:21:08.000Z',
+    deletedAt: null,
+    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
+    dentalClinicId: 43,
+    'createdDiff(second)': 352,
+    reviewCommentsNum: 0,
+    reviewLikeNum: 0,
+    viewerLikedReview: 0,
+    viewerScrapedReview: 0,
+    reviewViewNum: 1,
+    reviewDescriptions: '1 2',
+    user: {
+      nickname: 'jiwon11',
+      profileImg: '',
+    },
+    review_contents: [
       {
-          "name": "복합레진",
-          "review_treatment_item": {
-              "cost": 30000
-          }
+        id: 2,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
+        index: 1,
+        img_before_after: 'before',
       },
       {
-          "name": "임플란트",
-          "review_treatment_item": {
-              "cost": 20000
-          }
-      }
-  ]
-},{
-  "id": 2,
-  "starRate_cost": 5,
-  "starRate_treatment": 4,
-  "starRate_service": 4,
-  "certifiedBill": true,
-  "hits": 0,
-  "treatmentDate": "2020-12-07",
-  "totalCost": null,
-  "createdAt": "2020-12-07T03:21:08.000Z",
-  "updatedAt": "2020-12-07T03:21:08.000Z",
-  "deletedAt": null,
-  "userId": "fb0617b0-33c0-11eb-92de-e3fb3b4e0264",
-  "dentalClinicId": 43,
-  "createdDiff(second)": 352,
-  "reviewCommentsNum": 0,
-  "reviewLikeNum": 0,
-  "viewerLikedReview": 0,
-  "viewerScrapedReview": 0,
-  "reviewViewNum": 1,
-  "reviewDescriptions": "1 2",
-  "user": {
-      "nickname": "jiwon11",
-      "profileImg": ""
-  },
-  "review_contents": [
+        id: 1,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
+        index: 2,
+        img_before_after: 'after',
+      },
+    ],
+    dental_clinic: {
+      id: 43,
+      name: '시그마치과병원',
+    },
+    TreatmentItems: [
       {
-          "id": 2,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic",
-          "index": 1,
-          "img_before_after": "before"
+        name: '복합레진',
+        review_treatment_item: {
+          cost: 30000,
+        },
       },
       {
-          "id": 1,
-          "img_url": "https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png",
-          "index": 2,
-          "img_before_after": "after"
-      }
-  ],
-  "dental_clinic": {
-      "id": 43,
-      "name": "시그마치과병원"
+        name: '임플란트',
+        review_treatment_item: {
+          cost: 20000,
+        },
+      },
+    ],
   },
-  "TreatmentItems": [
+  {
+    id: 2,
+    starRate_cost: 5,
+    starRate_treatment: 4,
+    starRate_service: 4,
+    certifiedBill: true,
+    hits: 0,
+    treatmentDate: '2020-12-07',
+    totalCost: null,
+    createdAt: '2020-12-07T03:21:08.000Z',
+    updatedAt: '2020-12-07T03:21:08.000Z',
+    deletedAt: null,
+    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
+    dentalClinicId: 43,
+    'createdDiff(second)': 352,
+    reviewCommentsNum: 0,
+    reviewLikeNum: 0,
+    viewerLikedReview: 0,
+    viewerScrapedReview: 0,
+    reviewViewNum: 1,
+    reviewDescriptions: '1 2',
+    user: {
+      nickname: 'jiwon11',
+      profileImg: '',
+    },
+    review_contents: [
       {
-          "name": "복합레진",
-          "review_treatment_item": {
-              "cost": 30000
-          }
+        id: 2,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
+        index: 1,
+        img_before_after: 'before',
       },
       {
-          "name": "임플란트",
-          "review_treatment_item": {
-              "cost": 20000
-          }
-      }
-  ]
-},
-]
+        id: 1,
+        img_url:
+          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
+        index: 2,
+        img_before_after: 'after',
+      },
+    ],
+    dental_clinic: {
+      id: 43,
+      name: '시그마치과병원',
+    },
+    TreatmentItems: [
+      {
+        name: '복합레진',
+        review_treatment_item: {
+          cost: 30000,
+        },
+      },
+      {
+        name: '임플란트',
+        review_treatment_item: {
+          cost: 20000,
+        },
+      },
+    ],
+  },
+];

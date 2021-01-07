@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
-import {View, Text} from 'react-native';
+import {View, Text, ScrollView} from 'react-native';
+import Animated from 'react-native-reanimated';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -106,6 +107,9 @@ interface Props {}
 
 const CommunityHomeScreen = () => {
   const hospitalList = [0, 1, 2];
+  const [scrollEnabled, setScrollEnabled] = useState(false);
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const scrollRef = useRef();
   const renderTabPreviewItem = ({item, index}: any) => (
     <TabPreviewItemView></TabPreviewItemView>
   );
@@ -137,45 +141,95 @@ const CommunityHomeScreen = () => {
     </HospitalItemContainerView>
   );
   return (
-    <ContainerView showsVerticalScrollIndicator={false}>
-      <TopBannerContainerView>
-        <TopBannerImage
-          source={require('~/Assets/Images/Netflix-new-logo.jpg')}
-        />
-      </TopBannerContainerView>
-      <ContentContainerView>
-        <ContentTitleText>{'질문방'}</ContentTitleText>
-        <TabPreviewFlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={wp('75%') + 16}
-          decelerationRate={'fast'}
-          data={[0, 1, 2]}
-          keyExtractor={(item: any, index: number) => String(index)}
-          ListFooterComponent={renderTabPreviewFooter()}
-          renderItem={renderTabPreviewItem}
-        />
-      </ContentContainerView>
-      <ContentContainerView>
-        <ContentTitleText>{'자유수다'}</ContentTitleText>
-        <TabPreviewFlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={wp('75%') + 16}
-          decelerationRate={'fast'}
-          data={[0, 1, 2]}
-          keyExtractor={(item: any, index: number) => String(index)}
-          ListFooterComponent={renderTabPreviewFooter()}
-          renderItem={renderTabPreviewItem}
-        />
-      </ContentContainerView>
-      <ContentContainerView>
-        <ContentTitleText>{'내 근처 병원소식'}</ContentTitleText>
-        <HospitalListContainerView>
-          {hospitalList.map(renderHospitalItem)}
-        </HospitalListContainerView>
-      </ContentContainerView>
-    </ContainerView>
+    <Animated.ScrollView
+      ref={scrollRef}
+      scrollEventThrottle={16}
+      onScroll={Animated.event(
+        [
+          {
+            nativeEvent: {
+              contentOffset: {
+                y: (y: number) =>
+                  Animated.block([
+                    Animated.set(scrollY, y),
+                    Animated.call([y], ([offsetY]) => {
+                      if (offsetY >= 300) {
+                        setScrollEnabled(true);
+                      }
+                    }),
+                  ]),
+              },
+            },
+          },
+        ],
+        {useNativeDriver: true},
+      )}>
+      <View
+        style={{
+          width: '100%',
+          height: 300,
+          backgroundColor: 'red',
+        }}></View>
+
+      <View
+        style={{
+          width: '100%',
+          height: 600,
+          backgroundColor: 'yellow',
+        }}>
+        <ScrollView horizontal={true} pagingEnabled>
+          <ScrollView
+            scrollEventThrottle={16}
+            onScroll={(e) => {
+              if (e.nativeEvent.contentOffset.y < 0) {
+                console.log(
+                  scrollRef.current.getNode().scrollTo({
+                    y: 300 + e.nativeEvent.contentOffset.y,
+                    animated: false,
+                  }),
+                );
+              }
+            }}
+            scrollEnabled={scrollEnabled}
+            style={{
+              width: wp('100%'),
+              height: 600,
+              backgroundColor: 'blue',
+            }}>
+            <View
+              style={{
+                width: wp('100%'),
+                height: 600,
+                backgroundColor: 'purple',
+              }}></View>
+            <View
+              style={{
+                width: wp('100%'),
+                height: 600,
+                backgroundColor: 'grey',
+              }}></View>
+          </ScrollView>
+          <ScrollView
+            style={{
+              width: wp('100%'),
+              backgroundColor: 'blue',
+            }}>
+            <View
+              style={{
+                width: wp('100%'),
+                height: 600,
+                backgroundColor: 'pink',
+              }}></View>
+            <View
+              style={{
+                width: wp('100%'),
+                height: 600,
+                backgroundColor: 'orange',
+              }}></View>
+          </ScrollView>
+        </ScrollView>
+      </View>
+    </Animated.ScrollView>
   );
 };
 

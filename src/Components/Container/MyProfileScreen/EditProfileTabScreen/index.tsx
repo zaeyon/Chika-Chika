@@ -51,6 +51,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
         GETUserInfo(jwtToken).then((response: any) => {
           dispatch(
             allActions.userActions.setUser({
+              //depart
               profile: response,
             }),
           );

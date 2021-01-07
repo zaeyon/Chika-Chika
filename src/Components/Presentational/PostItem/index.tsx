@@ -1,12 +1,11 @@
-import React, {useMemo, useCallback, useEffect, useState} from 'react';
+import React, {useMemo, useCallback, useRef, useState} from 'react';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   FlatList,
-  Text,
-  View,
   Image,
-  LayoutAnimation,
+  Animated,
+  Easing,
 } from 'react-native';
 import Styled from 'styled-components/native';
 import {
@@ -17,14 +16,14 @@ import {
 const ContainerView = Styled.View`
 width: ${wp('100%')}px;
 height: auto;
-padding-top: 24px;
+margin-bottom: 8px;
 background: #FFFFFF;
 `;
 
 const BodyContainerView = Styled.View`
 display: flex;
 width: 100%;
-padding: 0px 16px;
+padding: 9px 16px 0px 16px;
 `;
 
 const ProfileContainerView = Styled.View`
@@ -33,7 +32,7 @@ height: auto;
 margin-right: auto;
 flex-direction: row;
 align-items: center;
-padding: 8px 0px;
+padding: 12px 0px;
 `;
 
 const HashTagContainerView = Styled.View`
@@ -41,8 +40,6 @@ width: 100%;
 height: auto;
 padding: 0px 16px;
 flex-direction: row;
-flex-wrap: wrap;
-margin-top: 4px;
 `;
 
 const HashTagIconView = Styled(TouchableOpacity as new () => TouchableOpacity)`
@@ -50,56 +47,65 @@ width: auto;
 height: auto;
 flex-direction: row;
 align-items: center;
-margin: 4px 8px 4px 0px;
-padding: 8px;
-border: 1px solid #C4C4C4;
-border-radius: 4px;
-background-color: #C4C4C4;
-color: '#rgb(0, 0, 0)'
+margin: 8px 8px 0px 0px;
+padding: 4px 12px;
+border-radius: 100px;
+background-color: #F5F7F9;
 `;
 const HashTagIconText = Styled.Text`
 font-family: NanumSquare;
 font-style: normal;
 font-weight: normal;
 font-size: 14px;
-line-height: 16px;
+line-height: 24px;
+text-align: center;
+color: #9AA2A9;
 `;
 // View => Image when ready
 const ProfileImage = Styled.Image<{source: any}>`
-width: 44px;
-height: 44px;
+width: ${wp('8.8%')}px;
+height: ${wp('8.8%')}px;
 background-color: grey;
-border-radius: 22px;
+border-width: 0.5px
+border-color: #E2E6ED;
+border-radius: 12px;
 `;
 // width, height ++ 4px
 const ProfileContentView = Styled.View`
 width: auto;
 height: auto;
+flex-direction: row;
+align-items: center;
 padding-left: 8px;
 `;
 const ProfileNameText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
 font-weight: bold;
-font-size: 15px;
-line-height: 17px;
-margin-bottom: 4px;
+font-size: 14px;
+`;
+
+const ProfileSplitView = Styled.View`
+width: 2px;
+height: 2px;
+background: #9AA2A9;
+border-radius: 2px;
+margin: 0px 6px;
 `;
 // font-size, line-height ++ 1px
 const ProfileDescriptionText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
-font-weight: normal;
-font-size: 13px;
-line-height: 15px;
-color: #979797;
+font-weight: bold;
+font-size: 14px;
+color: #9AA2A9;
 `;
 // font-size, line-height ++ 1px
 const ContentView = Styled.View`
 width: 100%;
 height: auto;
 background: white;
-margin: 8px 0px;
+margin: 4px;
 `;
 
 const ContentText = Styled.Text`
@@ -111,45 +117,42 @@ line-height: 24px;
 `;
 
 const ImageContainerView = Styled.View`
-margin-top: 4px;
-margin-right: auto;
-width: 100%;
+margin: 12px 16px 0px 16px;
+width: auto;
 height: auto;
 `;
 const ImageFlatList = Styled(FlatList as new () => FlatList)`
 width: 100%;
 height: auto;
+overflow: visible;
 `;
-const ImageView = Styled.Image<{isFirst: number; source: any}>`
-width: 130px;
-height: 130px;
+const ImageView = Styled.Image<{source: any}>`
+width: 120px;
+height: 120px;
 background-color: grey;
-border-radius: 4px;
-margin-right: 5px;
-margin-left: ${(props) => (props.isFirst ? '0px' : '16px')}
+border-radius: 8px;
+margin: 0px 4px;
 `;
 const SocialInfoContainerView = Styled.View`
-width: ${wp('100%')}px;
-height: 57px;
+width: auto;
+height: 60px;
 align-items: center;
 flex-direction: row;
-margin-top: 4px;
-border-bottom-width: 1px;
-border-color: #ECECEC;
+padding: 0px 16px;
 `;
 const SocialInfoView = Styled.View`
+min-width: 64px;
+height: 44px;
+padding: 0px 4px;
 flex-direction: row;
-display: flex;
-height: 24px;
 align-items: center;
-padding: 0px;
-justify-content: space-between;
 `;
 const SocialInfoText = Styled.Text`
+font-family: NanumSquare;
 font-style: normal;
-font-weight: normal;
+font-weight: bold;
 font-size: 14px;
-line-height: 16px;
+line-height: 24px;
 margin-left: 4px;
 `;
 const HashTagText = Styled.Text`
@@ -189,6 +192,9 @@ const PostItem = ({
     community_imgs,
   } = data;
 
+  const likeButtonScale = useRef(new Animated.Value(1)).current;
+  const scrapButtonScale = useRef(new Animated.Value(1)).current;
+
   const formatElapsedDate = useCallback((elapsedTime: number) => {
     if (elapsedTime / (24 * 3600 * 1000) > 1) {
       return formatDate(updatedAt);
@@ -222,13 +228,13 @@ const PostItem = ({
     return year + '년 ' + month + '월 ' + day + '일';
   }, []);
 
-  const formatHashTag = (text: string, index: number) => {
+  const formatHashTag = useCallback((text: string, index: number) => {
     return (
       <TouchableWithoutFeedback key={text + index}>
         <HashTagText>{'#' + text}</HashTagText>
       </TouchableWithoutFeedback>
     );
-  };
+  }, []);
   const formatDescription = useCallback((oldDescription: string) => {
     let formattedDescription: any[] = [];
     const lines = oldDescription.split(/\r\n|\r|\n/);
@@ -281,7 +287,6 @@ const PostItem = ({
           moveToCommunityDetail(id, type);
         }}>
         <ImageView
-          isFirst={index}
           key={'image' + index}
           source={{
             url: item.img_url,
@@ -317,6 +322,7 @@ const PostItem = ({
               />
               <ProfileContentView>
                 <ProfileNameText>{user.nickname}</ProfileNameText>
+                <ProfileSplitView />
                 <ProfileDescriptionText>
                   {formatElapsedDate(data['createdDiff(second)'] * 1000) +
                     (updatedAt !== createdAt ? ' ･ 수정됨' : '')}
@@ -338,6 +344,7 @@ const PostItem = ({
               alwaysBounceHorizontal={false}
               data={community_imgs}
               keyExtractor={(item) => String(item.id)}
+              snapToInterval={128}
               renderItem={renderImage}
             />
           </ImageContainerView>
@@ -372,45 +379,75 @@ const PostItem = ({
 
         <SocialInfoContainerView>
           <TouchableOpacity
-            style={{
-              marginHorizontal: 16,
-            }}
             onPress={() => {
               toggleSocialLike(id, viewerLikeCommunityPost, type);
+              if (!viewerLikeCommunityPost) {
+                likeButtonScale.setValue(0.8);
+                Animated.spring(likeButtonScale, {
+                  toValue: 1,
+                  friction: 6,
+                  tension: 400,
+                  useNativeDriver: true,
+                }).start();
+              }
             }}>
             <SocialInfoView>
-              <Image
+              <Animated.Image
                 style={{
-                  tintColor: viewerLikeCommunityPost ? '#FF5656' : '#c3c3c3',
+                  width: 18,
+                  height: 18,
+                  transform: [{scale: likeButtonScale}],
                 }}
-                source={require('~/Assets/Images/Review/ic_like_inline.png')}
+                source={
+                  viewerLikeCommunityPost
+                    ? require('~/Assets/Images/Social/ic/like/focus.png')
+                    : require('~/Assets/Images/Social/ic/like/unfocus.png')
+                }
               />
               <SocialInfoText>{postLikeNum}</SocialInfoText>
             </SocialInfoView>
           </TouchableOpacity>
-
           <SocialInfoView>
             <Image
-              source={require('~/Assets/Images/Review/ic_comment_inline.png')}
+              style={{
+                width: 18,
+                height: 18,
+              }}
+              source={require('~/Assets/Images/Social/ic/comment/unfocus.png')}
             />
             <SocialInfoText>{postCommentsNum}</SocialInfoText>
           </SocialInfoView>
 
           <TouchableOpacity
             style={{
-              position: 'absolute',
-              right: 16,
+              marginLeft: 'auto',
             }}
             onPress={() => {
               toggleSocialScrap(id, viewerScrapCommunityPost, type);
+              if (!viewerScrapCommunityPost) {
+                scrapButtonScale.setValue(0.8);
+                Animated.spring(scrapButtonScale, {
+                  toValue: 1,
+                  friction: 6,
+                  tension: 400,
+                  useNativeDriver: true,
+                }).start();
+              }
             }}>
             <SocialInfoView>
-              <Image
+              <Animated.Image
                 style={{
-                  tintColor: viewerScrapCommunityPost ? '#000000' : '#c3c3c3',
+                  width: 18,
+                  height: 18,
+                  transform: [{scale: scrapButtonScale}],
                 }}
-                source={require('~/Assets/Images/Review/ic_scrap_inline.png')}
+                source={
+                  viewerScrapCommunityPost
+                    ? require('~/Assets/Images/Social/ic/bookmark/focus.png')
+                    : require('~/Assets/Images/Social/ic/bookmark/unfocus.png')
+                }
               />
+              <SocialInfoText>{'저장하기'}</SocialInfoText>
             </SocialInfoView>
           </TouchableOpacity>
         </SocialInfoContainerView>

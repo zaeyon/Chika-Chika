@@ -201,11 +201,20 @@ interface State {
 }
 
 interface User {
-  jwtToken: string;
   phoneNumber: string;
   id: string;
   nickname: string;
   profileImg: string;
+  provider: string;
+  Residences: Array<Residence>;
+  gender: string;
+  birthdate: string;
+}
+
+interface Residence {
+  emdName: string;
+  sido: string;
+  sigungu: string;
 }
 
 export default class MyProfile extends React.PureComponent<Props, State> {
@@ -523,7 +532,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
             {this.props.currentUser.nickname}
           </HeaderNicknameText>
           <HeaderLocationText>
-            {/* {this.props.currentUser.location} */ '광교동'}
+            {this.props.currentUser.Residences[0].emdName}
           </HeaderLocationText>
           <HeaderIconContainerView>
             <HeaderIconTouchableOpacity
