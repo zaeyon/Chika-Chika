@@ -252,7 +252,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
           ) {
             console.log('liked post diff');
             LayoutAnimation.configureNext(
-              LayoutAnimation.create(400, 'easeInEaseOut', 'opacity'),
+              LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
             );
 
             dispatch(allActions.communityActions.setPosts(data));
@@ -347,14 +347,9 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         />
 
         <PostFilterHeader order={order} setOrder={onFiltering} />
-        {isFiltering ? (
-          <ActivityIndicatorContainerView>
-            <ActivityIndicator />
-          </ActivityIndicatorContainerView>
-        ) : null}
       </>
     );
-  }, [profile, postData, order, isFiltering, region]);
+  }, [profile, postData, order, region]);
 
   return (
     <ContainerView>

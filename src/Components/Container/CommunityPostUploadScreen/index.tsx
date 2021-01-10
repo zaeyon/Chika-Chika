@@ -95,10 +95,13 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   const [wantDentistHelp, setWantDentistHelp] = useState<boolean>(
     prevData?.wantDentistHelp || false,
   );
-  const [category, setCategory] = useState(prevType || '질문');
+  const [category, setCategory] = useState(prevType || '질문방');
   const [images, setImages] = useState(prevData?.community_imgs || []);
 
-  const [categoryList, setCategoryList] = useState<string[]>(['질문', '자유']);
+  const [categoryList, setCategoryList] = useState<string[]>([
+    '질문방',
+    '수다방',
+  ]);
   const [isPopupShown, setIsPopupShown] = useState<boolean>(true);
 
   const [onSubmit, setOnSubmit] = useState(false);
@@ -187,9 +190,9 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   };
 
   const formatCategory = (oldCategory: string) => {
-    if (oldCategory === '질문') {
+    if (oldCategory === '질문방') {
       return 'Question';
-    } else if (oldCategory === '자유') {
+    } else if (oldCategory === '수다방') {
       return 'FreeTalk';
     } else {
       return 'FreeTalk';
@@ -262,7 +265,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
       <NavigationHeader
         headerLeftProps={{
           onPress: navigation.goBack,
-          text: '취소',
+          text: 'arrow',
         }}
         headerRightProps={
           onSubmit
@@ -279,7 +282,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
                 text: '완료',
               }
         }
-        headerTitle={mode === 'edit' ? '수정' : '글쓰기'}
+        headerTitle={mode === 'edit' ? '수정' : '커뮤니티 글쓰기'}
       />
       <CommunityCreatePostScreen
         navigation={navigation}

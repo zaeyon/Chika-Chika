@@ -23,6 +23,7 @@ const HeaderBar = Styled.View`
  border-bottom-width: 1px;
  border-color: #E2E6ED;
  background-color: #ffffff;
+ z-index: 3;
 `;
 
 const HeaderText = Styled.Text`
@@ -45,12 +46,14 @@ const HeaderTitleContainer = Styled.View`
 width: 100%;
 position: absolute;
 height: 100%;
-padding: 12px 16px 16px 16px;
 justify-content: center;
 align-items: center;
 z-index: -1;
 `;
 
+const HeaderTitleContentView = Styled.View`
+padding: 12px 16px 16px 16px;
+`;
 const HeaderTitleText = Styled.Text`
 font-family: NanumSquare;
 font-weight: 700;
@@ -78,61 +81,44 @@ interface HeaderProps {
 }
 
 interface Props {
-  headerLeftProps?: HeaderProps;
-  headerRightProps?: HeaderProps;
-  headerTitle: string;
+  selectedImageNum: number;
+  selectedAlbum: string;
+  goBack: () => void;
+  toggleAlbumList: () => void;
+  onSubmit: () => void;
 }
 const NavigationHeader = ({
-  headerLeftProps,
-  headerRightProps,
-  headerTitle,
+  selectedImageNum,
+  selectedAlbum,
+  goBack,
+  toggleAlbumList,
+  onSubmit,
 }: Props) => {
   return (
     <HeaderBar>
-      <TouchableWithoutFeedback
-        onPress={() => {
-          headerLeftProps?.onPress();
-        }}>
+      <TouchableWithoutFeedback onPress={() => goBack()}>
         <HeaderLeftContainer>
-          {headerLeftProps?.text === 'arrow' ? (
-            <HeaderIcon
-              style={{
-                resizeMode: 'contain',
-                width: 24,
-                height: 24,
-              }}
-              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
-            />
-          ) : (
-            <HeaderText>{headerLeftProps?.text}</HeaderText>
-          )}
+          <HeaderIcon
+            style={{
+              resizeMode: 'contain',
+              width: 24,
+              height: 24,
+            }}
+            source={require('~/Assets/Images/HeaderBar/ic_X.png')}
+          />
         </HeaderLeftContainer>
       </TouchableWithoutFeedback>
+
       <HeaderTitleContainer>
-        <HeaderTitleText>{headerTitle}</HeaderTitleText>
+        <TouchableWithoutFeedback onPress={() => toggleAlbumList()}>
+          <HeaderTitleContentView>
+            <HeaderTitleText>{selectedAlbum}</HeaderTitleText>
+          </HeaderTitleContentView>
+        </TouchableWithoutFeedback>
       </HeaderTitleContainer>
-      <TouchableWithoutFeedback
-        onPress={() => {
-          headerRightProps?.onPress();
-        }}>
+      <TouchableWithoutFeedback onPress={() => onSubmit()}>
         <HeaderRightContainer>
-          {headerRightProps?.text === 'arrow' ? (
-            <HeaderIconView>
-              <HeaderIcon
-                style={{resizeMode: 'contain', width: 24, height: 24}}
-                source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
-              />
-            </HeaderIconView>
-          ) : headerRightProps?.text === 'viewMore' ? (
-            <HeaderIconView>
-              <HeaderIcon
-                style={{resizeMode: 'contain', width: 24, height: 24}}
-                source={require('~/Assets/Images/HeaderBar/ic_viewMore.png')}
-              />
-            </HeaderIconView>
-          ) : (
-            <HeaderText>{headerRightProps?.text}</HeaderText>
-          )}
+          <HeaderText>{'업로드'}</HeaderText>
         </HeaderRightContainer>
       </TouchableWithoutFeedback>
     </HeaderBar>

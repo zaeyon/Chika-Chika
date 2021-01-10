@@ -366,50 +366,6 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
         toggleSocialScrap={toggleSocialScrap}
         renderHeaderComponent={renderHeaderComponent}
       />
-      <Animated.View
-        style={{
-          position: 'absolute',
-          zIndex: 3,
-          right: wp('50%') - 45,
-          bottom: (getBottomSpace() ? wp('12%') : wp('15%')) + 23,
-          backgroundColor: '#C4C4C4',
-          borderRadius: 100,
-          width: 90,
-          height: 34,
-          justifyContent: 'center',
-          alignItems: 'center',
-          transform: [
-            {
-              translateY: buttonY.interpolate({
-                inputRange: [
-                  0,
-                  (getBottomSpace() ? wp('12%') : wp('15%')) + 23,
-                ],
-                outputRange: [
-                  0,
-                  (getBottomSpace() ? wp('12%') : wp('15%')) + 23,
-                ],
-                extrapolate: 'clamp',
-              }),
-            },
-          ],
-        }}>
-        <TouchableOpacity
-          style={{
-            flex: 1,
-            padding: 9,
-            borderRadius: 100,
-          }}
-          onPress={() => {
-            navigation.navigate('CommunityPostUploadStackScreen', {
-              data: {
-                id: -1,
-              },
-            });
-          }}>
-          <Text>글 작성하기</Text>
-        </TouchableOpacity>
-      </Animated.View>
     </ContainerView>
   );
 };

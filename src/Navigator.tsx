@@ -73,7 +73,7 @@ import SettingScreen from '~/Components/Container/SettingScreen';
 import CommunityListScreen from '~/Components/Container/CommunityListScreen';
 import CommunityDetailScreen from '~/Components/Container/CommunityDetailScreen';
 import CommunityPostUploadScreen from '~/Components/Container/CommunityPostUploadScreen';
-import CommunityTreatSearchScreen from '~/Components/Container/CommunityPostUploadScreen/TreatSearchScreen';
+import ImageSelectScreen from '~/Components/Container/ImageSelectScreen';
 // Dental Clinic Stack Screen
 import NearDentalMap from '~/Components/Container/NearDentalMap';
 import DentalListScreen from '~/Components/Container/DentalListScreen';
@@ -434,8 +434,8 @@ function CommunityPostUploadStackScreen({route}: any) {
         component={InstantCamera}
       />
       <CommunityPostUploadStack.Screen
-        name="CommunityGallery"
-        component={Gallery}
+        name="ImageSelectScreen"
+        component={ImageSelectScreen}
       />
     </CommunityPostUploadStack.Navigator>
   );

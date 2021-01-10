@@ -4,8 +4,11 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   FlatList,
-  View,
+  LayoutAnimation,
+  UIManager,
+  Platform,
   Animated,
+  Easing,
   KeyboardAvoidingView,
   Keyboard,
 } from 'react-native';
@@ -41,14 +44,14 @@ flex: 1;
 `;
 
 const CategoryContainerView = Styled.View`
-width: ${wp('100%')}px;
+width: auto;
 margin: 4px 16px 0px 16px;
-height: ${wp('17%')}px;
+height: auto;
+padding: 16px 0px;
 flex-direction: row;
 align-items: center;
+border-color: #E2E6ED;
 border-bottom-width: 1px;
-border-color: #F2F2F2;
-
 `;
 
 const CategoryTitleText = Styled.Text`
@@ -86,24 +89,39 @@ color: #131F3C;
 const CategorySelectorView = Styled(
   (Animated.View as unknown) as new () => Animated.View,
 )`
-width: ${wp('16.8')}px;
-height: 32px;
+width: 63px;
+height: 100%;
 justify-content: center;
 align-items: center;
 background: #00D1FF;
 border-radius: 100;
 position: absolute;
 `;
+
+const CategoryItemView = Styled.View`
+width: auto;
+height: auto;
+margin-right: 8px;
+padding: 4px 12px;
+justify-content: center;
+align-items: center;
+z-index: 1;
+`;
 const PopupAdviceView = Styled.View`
 margin: 8px 16px 0px 16px;
-padding: 12px;
-background: #F7F7F7;
+padding: 16px;
+background: #F5F7F9;
 border-radius: 8px;
 `;
 
 const PopupAdviceText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: normal;
 font-size: 14px;
-line-height: 24px;`;
+line-height: 24px;
+color: #131F3C;
+`;
 
 const ParagraphTextInput = Styled.TextInput`
 width: 100%;
@@ -192,9 +210,7 @@ height: 16px;
 const GalleryContentImage = Styled.Image`
 width: ${wp('15%')}px;
 height: ${wp('15%')}px;
-
 border-radius: 10px;
-
 `;
 
 interface Props {
@@ -218,6 +234,12 @@ interface Props {
   isPopupShown: any;
   setIsPopupShown: any;
   isLoading: any;
+}
+
+if (Platform.OS === 'android') {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
 }
 
 const CommunityCreatePostScreen = ({
@@ -296,7 +318,7 @@ const CommunityCreatePostScreen = ({
     });
   };
   const navigateToGallery = () => {
-    navigation.navigate('CommunityGallery', {
+    navigation.navigate('ImageSelectScreen', {
       requestType: 'CommunityPostUploadScreen',
     });
   };
@@ -304,28 +326,36 @@ const CommunityCreatePostScreen = ({
   const renderCategories = (categoryList: any) => {
     return categoryList.map((item: any, index: number) => {
       return (
-        <TouchableOpacity
+        <TouchableWithoutFeedback
           key={'category' + index}
           onPress={() => {
             Keyboard.dismiss();
-            Animated.timing(categoryIndex, {
+            LayoutAnimation.configureNext(
+              LayoutAnimation.create(100, 'easeInEaseOut', 'opacity'),
+            );
+            Animated.spring(categoryIndex, {
               toValue: index,
-              duration: 100,
+              velocity: 7,
+              friction: 100,
+              tension: 100,
               useNativeDriver: false,
             }).start();
             setCategory(categoryList[index]);
-          }}
-          style={{
-            width: wp('16.53%'),
-            height: 'auto',
-            paddingVertical: '1.3%',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 100,
-            zIndex: 1,
           }}>
-          <CategoryContentText>{item}</CategoryContentText>
-        </TouchableOpacity>
+          <CategoryItemView>
+            {index === 0 ? (
+              category === '질문방' ? (
+                <CategoryContentFocusedText>{item}</CategoryContentFocusedText>
+              ) : (
+                <CategoryContentText>{item}</CategoryContentText>
+              )
+            ) : category === '수다방' ? (
+              <CategoryContentFocusedText>{item}</CategoryContentFocusedText>
+            ) : (
+              <CategoryContentText>{item}</CategoryContentText>
+            )}
+          </CategoryItemView>
+        </TouchableWithoutFeedback>
       );
     });
   };
@@ -394,10 +424,7 @@ const CommunityCreatePostScreen = ({
                     {
                       translateX: categoryIndex.interpolate({
                         inputRange: [0, categoryList.length - 1],
-                        outputRange: [
-                          0,
-                          wp('16.53') * (categoryList.length - 1),
-                        ],
+                        outputRange: [0, 71 * (categoryList.length - 1)],
                         extrapolate: 'clamp',
                       }),
                     },
@@ -417,6 +444,9 @@ const CommunityCreatePostScreen = ({
                   top: 12,
                 }}
                 onPress={() => {
+                  LayoutAnimation.configureNext(
+                    LayoutAnimation.create(100, 'easeInEaseOut', 'opacity'),
+                  );
                   setIsPopupShown(false);
                 }}>
                 <DeleteImage
@@ -426,10 +456,7 @@ const CommunityCreatePostScreen = ({
               <PopupAdviceText>
                 해시태그로 병원, 증상, 진료항목을 추가해보세요!
               </PopupAdviceText>
-              <PopupAdviceText
-                style={{
-                  color: '#0075FF',
-                }}>
+              <PopupAdviceText>
                 #햇살365치과 #잇몸통증 #잇몸성형
               </PopupAdviceText>
             </PopupAdviceView>
