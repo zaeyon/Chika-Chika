@@ -20,6 +20,7 @@ import GETReviewList from '~/Routes/Review/GETReviewList';
 
 const Container = Styled.SafeAreaView`
  background-color: #FFFFFF;
+ flex: 1;
 `;
 
 const HeaderBar = Styled.View`
@@ -69,6 +70,7 @@ const ReviewContainer = Styled.View`
 `;
 
 const ReviewListContainer = Styled.View`
+flex: 1;
 `;
 
 const ReviewHeaderContainer = Styled.View`
@@ -199,6 +201,7 @@ interface Props {
     commentCount: number,
     isCurUserScrap: boolean,
     dentalObj: object,
+    visibleElapsedTime: boolean,
     elapsedTime: string,
   ) => void;
   moveToDentalDetail: (dentalId: number) => void;
@@ -244,9 +247,9 @@ const ReviewList = ({
   var offset = 0;
   var limit = 10;
 
-  const renderEndRecahedIndicator = ({item, index}: any) => {
+  const renderEndRechedIndicator = ({item, index}: any) => {
     console.log(
-      'renderEndRecahedIndicator loadingMoreReview',
+      'renderEndRechedIndicator loadingMoreReview',
       loadingMoreReview,
     );
     if (loadingMoreReview) {
@@ -261,6 +264,8 @@ const ReviewList = ({
   };
 
   const renderReviewItem = ({item, index}: any) => {
+    console.log("renderReviewItem, item", item);
+    console.log("renderReviewItem, item.user", item.user);
     const ratingObj = {
       avgRating: Number(
         (
@@ -275,11 +280,22 @@ const ReviewList = ({
       treatRating: Number(item.starRate_treatment),
     };
 
-    const writer = {
-      nickname: item.user.nickname,
-      profileImage: item.user.profileImg,
-      userId: item.userId,
-    };
+    let writer = {}
+
+    if(item.user !== null) {
+      writer = {
+        nickname: item.user.nickname,
+        profileImage: item.user.profileImg,
+        userId: item.userId,
+      };
+    } else {
+      writer = {
+        nickname: "알수없음",
+        profileImage: "null",
+        userId: "null",
+      }
+    }
+    
 
     let elapsedTimeText = '';
     let visibleElapsedTime = false;
@@ -332,6 +348,7 @@ const ReviewList = ({
     <Container>
       <ReviewListContainer>
         <FlatList
+
           keyExtractor={(item, index) => `${index}`}
           refreshing={refreshingReviewList}
           onRefresh={onRefreshReviewList}
@@ -341,7 +358,7 @@ const ReviewList = ({
           renderItem={renderReviewItem}
           onEndReached={onEndReachedReviewList}
           onEndReachedThreshold={0.5}
-          ListFooterComponent={renderEndRecahedIndicator}
+          ListFooterComponent={renderEndRechedIndicator}
         />
       </ReviewListContainer>
     </Container>

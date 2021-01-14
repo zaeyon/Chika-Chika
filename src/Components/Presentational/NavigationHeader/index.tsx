@@ -38,6 +38,13 @@ align-items: center;
 flex-direction: row;
 `;
 
+const HeaderLeftText = Styled.Text`
+font-family: NanumSquare;
+color: #131F3C;
+font-size: 18px;
+font-weight: 700;
+`;
+
 const HeaderTitleContainer = Styled.View`
 height: auto;
 justify-content: center;
@@ -56,8 +63,16 @@ padding: 16px;
  flex-direction: row;
 `;
 
-const HeaderIconView = Styled.View`
+const HeaderEmptyContainer = Styled.View`
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
+
+const HeaderIconView = Styled.View`
+flex-direction: row;
+align-items: center;
+`;
+
 const HeaderIcon = Styled.Image`
 width: ${wp('6.4%')}px;
 height: ${wp('6.4%')}px;
@@ -65,13 +80,14 @@ height: ${wp('6.4%')}px;
 
 interface HeaderProps {
   onPress?: any;
-  text: string;
+  text?: string;
+  type?: string;
 }
 
 interface Props {
   headerLeftProps?: HeaderProps;
   headerRightProps?: HeaderProps;
-  headerTitle: string;
+  headerTitle?: string;
 }
 const NavigationHeader = ({
   headerLeftProps,
@@ -88,12 +104,15 @@ const NavigationHeader = ({
       }}>
         <HeaderLeftContainer>
         
-          {headerLeftProps?.text === 'arrow' ? (
+          {headerLeftProps?.type === 'arrow' ? (
             <HeaderIconView>
               <HeaderIcon
                 style={{resizeMode: 'contain'}}
                 source={require('~/Assets/Images/HeaderBar/ic_back.png')}
               />
+              {headerLeftProps?.text?.length > 0 && (
+              <HeaderLeftText>{headerLeftProps.text}</HeaderLeftText>
+              )}
             </HeaderIconView>
           ) : (
             <HeaderText>{headerLeftProps?.text}</HeaderText>
@@ -108,21 +127,25 @@ const NavigationHeader = ({
           onPress={() => {
             headerRightProps?.onPress();
           }}>
-          {headerRightProps?.text === 'arrow' ? (
+          {headerRightProps?.type === 'arrow' ? (
             <HeaderIconView>
               <HeaderIcon
                 source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
               />
             </HeaderIconView>
           ) :
-          (headerRightProps?.text === 'viewMore' ? (
+          (headerRightProps?.type === 'viewMore' ? (
             <HeaderIconView>
               <HeaderIcon
               source={require('~/Assets/Images/HeaderBar/ic_viewMore.png')}/>
             </HeaderIconView>
-          ) : (
+          ) :
+          (headerRightProps?.type === 'empty' ? (
+            <HeaderEmptyContainer/>
+          ) : 
+          (
             <HeaderText>{headerRightProps?.text}</HeaderText>
-          ))}
+          )))}
         </TouchableWithoutFeedback>
       </HeaderRightContainer>
     </HeaderBar>

@@ -10,12 +10,12 @@ import {
     FlatList,
     StyleSheet,
     Keyboard,
-    Picker,
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {Picker} from '@react-native-picker/picker';
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 
@@ -34,6 +34,7 @@ import DentalList from '~/Components/Presentational/DentalList';
 
 // Route
 import GETAroundDental from '~/Routes/Dental/GETAroundDental';
+import GETDentalTotalSearch from '~/Routes/Search/GETDentalTotalSearch';
 
 const mapHeight = hp('100%') - (wp('11.7%') - (isIphoneX() ? wp("21%") : wp("15%")))
 
@@ -63,10 +64,10 @@ margin-top: ${hp('6.6%')}px;
 `;
 
 const LoadingContainer = Styled.View`
-width: ${wp('100%')};
-height: ${hp('100%')};
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
 position: absolute;
-top: ${wp('11.7%')};
+top: ${wp('11.7%')}px;
 align-items: center;
 justify-content: center;
 `;
@@ -81,10 +82,16 @@ padding-left: 10px;
 border-radius: 4px;
 `;
 
-const SearchText = Styled.Text`
+const SearchPlaceHolderText = Styled.Text`
 margin-left: 12px;
 font-size: 16px;
 color: #979797;
+`;
+
+const SearchText = Styled.Text`
+margin-left: 12px;
+font-size: 16px;
+color: #000000;
 `;
 
 const SearchTextInput = Styled.TextInput`
@@ -93,7 +100,7 @@ const SearchTextInput = Styled.TextInput`
 const SelectedDentalContainer = Styled.View`
 position: absolute;
 bottom: 0;
-width: ${wp('100%')};
+width: ${wp('100%')}px;
 padding-bottom: 16px;
 align-items: center;
 `;
@@ -110,8 +117,8 @@ const DentalCarouselItemContainer = Styled.View`
 
 
 const SelectedDentalItemContainer = Styled.View`
-width: ${wp('87.2%')};
-height: ${wp('41.6%')};
+width: ${wp('87.2%')}px;
+height: ${wp('41.6%')}px;
 background-color: #ffffff;
 border-width: 1px;
 border-color: #c4c4c4;
@@ -124,13 +131,13 @@ align-items: center;
 `;
 
 const DentalImageContainer = Styled.View`
-width: ${wp('25%')};
-height: ${wp('25%')};
+width: ${wp('25%')}px;
+height: ${wp('25%')}px;
 `;
 
 const DentalImage = Styled.Image`
-width: ${wp('25%')};
-height: ${wp('25%')};
+width: ${wp('25%')}px;
+height: ${wp('25%')}px;
 `;
 
 
@@ -327,7 +334,6 @@ font-size: 20px;
 color: #000000;
 `;
 
-
 interface Props {
     navigation: any,
     route: any,
@@ -388,12 +394,17 @@ const TEST_COORDINATE = {
     longitude: 126.9781164904998,
 }
 
+let offset = 0;
+let limit = 20;
+let sort = "distance"
+let isNearDentalList = true;
+
 const NearDentalMap = ({navigation, route}: Props) => {
     console.log("NearDentalMap route", route.params?.isOpenDentalList)
     const [currentLocation, setCurrentLocation] = useState<Coord>(TEST_COORDINATE);
     const [cameraLocation, setCameraLocation] = useState<Coord>(TEST_COORDINATE);
 
-    const [loadingGetDental, setLoadingGetDental] = useState<boolean>(true);
+    //const [loadingGetDental, setLoadingGetDental] = useState<boolean>(true);
 
     const [visibleTimeFilterModal, setVisibleTimeFilterModal] = useState<boolean>(false);
     const [visibleDayFilterModal, setVisibleDayFilterModal] = useState<boolean>(false);
@@ -407,8 +418,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const [minutePickerValue, setMinutePickerValue] = useState<string>("00");
     const [timeSlotPickerValue, setTimeSlotPickerValue] = useState<string>("오전");
 
-    const [sort, setSort] = useState<string>("d");
-
+    
     const [changeDentalList, setChangeDentalList] = useState<boolean>(false);
     const [changeDayFilter, setChangeDayFilter] = useState<boolean>(false);
 
@@ -421,7 +431,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const dispatch = useDispatch();
 
     const currentUser = useSelector((state: any) => state.currentUser);
-    const nearDentalList = useSelector((state: any) => state.dentalList).nearDentalList;
+    const nearDentalList = useSelector((state: any) => state.dentalMap).nearDentalList;
 
     // 방문일 설정 redux state
     const dayList = useSelector((state: any) => state.dentalFilter).dayList;
@@ -436,6 +446,24 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
     // 주차가능 설정 redux state
     const parkingFilter = useSelector((state: any) => state.dentalFilter).parkingFilter;
+
+    // 병원 지도 관련 redux state
+    const dentalMapRedux = useSelector((state: any) => state.dentalMap);
+    const mapLocation = dentalMapRedux.mapLocation;
+    const mapZoom = dentalMapRedux.mapZoom;
+
+    const searchedKeyword = dentalMapRedux.searchedKeyword;
+    const searchedDentalArr = dentalMapRedux.searchedDentalArr;
+    const loadingGetDental = dentalMapRedux.loadingGetDental;
+
+
+    //const mapLocation = useSelector((state: any) => state.dentalMap).mapLocation;
+
+    // search keyword redux state
+    //const searchedKeyword = useSelector((state: any) => state.dentalMap).searchedKeyword;
+
+    //const searchedDentalArr = useSelector((state: any) => state.dentalMap).searchedDentalArr;    
+    
 
     const jwtToken = currentUser.jwtToken;
     const todayIndex = new Date().getDay();
@@ -463,9 +491,30 @@ const NearDentalMap = ({navigation, route}: Props) => {
         }
     }, [])
 
+ 
+    useEffect(() => {
+        if(route.params?.offset || route.params?.limit) {
+            console.log("offset, limit 존재", route.params?.offset, route.params?.limit);
+            if(route.params.offset === 0) {
+                offset = 0;
+                limit = 20;
+            } else if(route.params.offset > 0) {
+                offset = 0;
+                limit = route.params?.offset;
+            }
+        }
+
+        if(searchedKeyword.length > 0) {
+            isNearDentalList = false;
+        }
+
+        sort = "accuracy"
+
+    }, [route.params?.offset, route.params?.limit, searchedKeyword])
+
     useEffect(() => {
         getNearDental();
-    }, [dayFilter, timeFilter, holidayFilter, parkingFilter])
+    }, [])
 
 
     const onKeyboardWillShow = (event: any) => {
@@ -493,27 +542,32 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     const long = position.coords.longitude;
 
                     const location = {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
+                        coordinate: {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                        },
+                        zoom: 16
                     }
 
-                    dispatch(allActions.userActions.setCurrentLocation(location))
+                    dispatch(allActions.dentalMapActions.setMapLocation(location));
                     
 
                     GETAroundDental({jwtToken, lat, long, sort, timeFilter, dayFilter, parkingFilter})
                     .then((response) => {
-                    setLoadingGetDental(false);
+                    //setLoadingGetDental(false);
+                    dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
+                    dispatch(allActions.dentalMapActions.setSearchedDentalArr(response))
                     })
                     .catch((error) => {
                     console.log("GETAroundDental error", error);
-                    setLoadingGetDental(false);
+                    dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
                     })
 
                   return position;
                 },
                 (error) => {
                   console.log("사용자 현재 위치 불러오기 실패", error.code, error.message);
-                  setLoadingGetDental(false);
+                  dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
 
                   return false;
                 },
@@ -545,32 +599,35 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     const long = position.coords.longitude;
 
                     const location = {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
+                        coordinate: {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                        },
+                        zoom: 16
                     }
 
-                    dispatch(allActions.userActions.setCurrentLocation(location))
+                    dispatch(allActions.dentalMapActions.setMapLocation(location))
 
                     GETAroundDental({jwtToken, lat, long, sort, timeFilter, dayFilter, parkingFilter})
                     .then((response: any) => {
                     console.log("GETAroundDental response.length", response.length);
-                    setLoadingGetDental(false);
+                    dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
                     //const slicedDentalList = response.slice(0, 70);
                     //slicedDentalList[0].selected = true;
                     //setNearDentalList(response);
-                    dispatch(allActions.dentalListActions.setNearDentalList(response))
-                    setSelectedDentalId(response[0].id)
+                    dispatch(allActions.dentalMapActions.setSearchedDentalArr(response))
+                    //setSelectedDentalId(response[0].id)
                     })
                     .catch((error) => {
                     console.log("GETAroundDental error", error);
-                    setLoadingGetDental(false);
+                    dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
                     })
 
                     return position;
                 },
                 (error) => {
                     console.log("사용자 현재 위치 불러오기 실패", error)
-                    setLoadingGetDental(false);
+                    dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
 
                     return false;
                 },
@@ -582,21 +639,106 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const getNearDental = () => {
         const lat = currentLocation.latitude;
         const long = currentLocation.longitude;
-        setLoadingGetDental(true);
+        const sort = "d";
+        dispatch(allActions.dentalMapActions.setLoadingGetDental(true))
+        setSelectedDentalIndex(0);
+        dentalCarouselRef.current.snapToItem(0);
 
         GETAroundDental({jwtToken, lat, long, sort, timeFilter, dayFilter, parkingFilter})
         .then((response: any) => {
-            setLoadingGetDental(false);
+            console.log("GETAroundDental response in NearDentalMap", response);
+            dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
             //const slicedDentalList = response.slice(0, 70);
             //slicedDentalList[0].selected = true;
             //setNearDentalList(response);
-            dispatch(allActions.dentalListActions.setNearDentalList(response));
+            //dispatch(allActions.dentalMapActions.setNearDentalList(response));
+            dispatch(allActions.dentalMapActions.setSearchedDentalArr(response));
             setChangeDentalList(!changeDentalList);
         })
         .catch((error) => {
-            setLoadingGetDental(false);
+            console.log("GETAroundDental error", error);
+            dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
         })
     }
+
+    const filterNearDental = (tmpDayFilter: any, tmpTimeFilter: string, tmpParkingFilter: string) => {
+        const lat = currentLocation.latitude;
+        const long = currentLocation.longitude;
+        const sort = "d";
+        const timeFilter = tmpTimeFilter;
+        const dayFilter = tmpDayFilter;
+        const parkingFilter = tmpParkingFilter;
+        dispatch(allActions.dentalMapActions.setLoadingGetDental(true));
+        setSelectedDentalIndex(0);
+        dentalCarouselRef.current.snapToItem(0);
+
+        GETAroundDental({jwtToken, lat, long, sort, timeFilter, dayFilter, parkingFilter})
+        .then((response) => {
+            console.log("GETAroundDental response in NearDentalMap", response);
+            dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
+            //const slicedDentalList = response.slice(0, 70);
+            //slicedDentalList[0].selected = true;
+            //setNearDentalList(response);
+            //dispatch(allActions.dentalMapActions.setNearDentalList(response));
+            dispatch(allActions.dentalMapActions.setSearchedDentalArr(response));
+            setChangeDentalList(!changeDentalList);
+        })
+        .catch((error) => {
+            console.log("GETAroundDental error", error);
+            dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
+        })
+        
+    }
+
+
+  const filterSearchedDental = (query: string, tmpDayFilter: any, tmpTimeFilter: string, tmpParkingFilter: string) => {
+    dispatch(allActions.dentalMapActions.setLoadingGetDental(true))
+    const lat = currentLocation.latitude;
+    const long = currentLocation.longitude;
+
+    const dayFilter = tmpDayFilter;
+    const timeFilter = tmpTimeFilter;
+    const parkingFilter = tmpParkingFilter;
+  
+    GETDentalTotalSearch({jwtToken, offset, limit, lat, long, query, sort, dayFilter, timeFilter, parkingFilter})
+      .then((response: any) => {
+        dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
+        console.log('GETDentalTotalSearch response', response);
+
+        if(response.length > 0) {
+          
+          dispatch(allActions.dentalMapActions.setSearchedDentalArr(response));
+
+        } else {
+          dispatch(allActions.dentalMapActions.setSearchedDentalArr([]));
+
+        }
+      })
+      .catch((error: any) => {
+        dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
+        console.log('GETDentalTotalSearch error', error);
+      });
+  };
+
+    /*
+    const searchDental = () => {
+        const lat = currentLocation.latitude;
+        const long = currentLocation.longitude;
+        const query = searchedKeyword;
+        dispatch(allActions.dentalMapActions.setLoadingGetDental(true))
+        setSelectedDentalIndex(0);
+        dentalCarouselRef.current.snapToItem(0);
+
+        GETDentalTotalSearch({jwtToken, offset, limit, lat, long, query, sort, dayFilter, timeFilter, parkingFilter})
+        .then((response: any) => {
+            dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
+            dispatch(allActions.dentalMapActions.setSearchedDentalArr(response));
+        })
+        .catch((error: any) => {
+
+        })
+    }
+    */
     
 
 
@@ -606,7 +748,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
     }
 
     const openDentalList = () => {
-        navigation.navigate("DentalListScreen", {
+        navigation.navigate("DentalTotalSearchScreen", {
             currentLocation: currentLocation
         })
     }
@@ -659,8 +801,21 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
     const changeParkingFilter = () => {
         if(parkingFilter === "y") {
+            if(isNearDentalList) {
+                filterNearDental(dayFilter, timeFilter, "n");
+            } else {
+                filterSearchedDental(searchedKeyword, dayFilter, timeFilter, "n");
+            }
+
             dispatch(allActions.dentalFilterActions.setParkingFilter("n"))
+
         } else if(parkingFilter === "n") {
+            if(isNearDentalList) {
+                filterNearDental(dayFilter, timeFilter, "y");
+            } else {
+                filterSearchedDental(searchedKeyword, dayFilter, timeFilter, "y");
+            }
+
             dispatch(allActions.dentalFilterActions.setParkingFilter("y"))
         }
     }
@@ -703,10 +858,17 @@ const NearDentalMap = ({navigation, route}: Props) => {
         })
 
         console.log("tmpSelectedDayList", tmpSelectedDayList);
-        
-        dispatch(allActions.dentalFilterActions.setDayFilter(tmpDayFilter));
-        dispatch(allActions.dentalFilterActions.setSelectedDayList(tmpSelectedDayList));
+      
+        if(JSON.stringify(tmpDayFilter) !== JSON.stringify(dayFilter)) {
+            dispatch(allActions.dentalFilterActions.setDayFilter(tmpDayFilter));
+            dispatch(allActions.dentalFilterActions.setSelectedDayList(tmpSelectedDayList));
 
+            if(isNearDentalList) {
+                filterNearDental(tmpDayFilter, timeFilter, parkingFilter);
+            } else {
+                filterSearchedDental(searchedKeyword, tmpDayFilter, timeFilter, parkingFilter)
+            }
+        }
         setVisibleDayFilterModal(false);
     }
 
@@ -742,10 +904,28 @@ const NearDentalMap = ({navigation, route}: Props) => {
         if(timeSlotPickerValue === "오전") {
             const formattedHourPickerValue = hourPickerValue < 10 ? ('0' + hourPickerValue) : (hourPickerValue);
             const formattedTime = formattedHourPickerValue + ':' + minutePickerValue + ":00"
-            dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
+
+            if(timeFilter !== formattedTime) {
+                dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
+
+                if(isNearDentalList) {
+                    filterNearDental(dayFilter, formattedTime, parkingFilter);
+                } else {
+                    filterSearchedDental(searchedKeyword, dayFilter, formattedTime, parkingFilter);
+                }
+            }
         } else if(timeSlotPickerValue == "오후") {
             const formattedTime = (Number(hourPickerValue) + 12) + ":" + minutePickerValue + ":00"
-            dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
+
+            if(timeFilter !== formattedTime) {
+                dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
+
+                if(isNearDentalList) {
+                    filterNearDental(dayFilter, formattedTime, parkingFilter);
+                } else {
+                    filterSearchedDental(searchedKeyword, dayFilter, formattedTime, parkingFilter);
+                }
+            }
         }
     }
 
@@ -797,7 +977,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 isLunchTime={isLunchTime}
                 rating={rating}
                 reviewCount={item.reviewNum}
-                name={item.name}
+                name={item.originalName}
                 address={item.address}
                 lunchTime={item.lunchTime}
                 openTime={todayStartTime}
@@ -844,7 +1024,12 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 <SearchInputContainer>
                     <SearchIcon
                     source={require('~/Assets/Images/Search/ic_search.png')}/>
-                    <SearchText>{"병원, 지역을 검색해 보세요."}</SearchText>
+                    {(searchedKeyword === "") && (
+                        <SearchPlaceHolderText>{"병원, 지역을 검색해 보세요."}</SearchPlaceHolderText>
+                    )}
+                    {(searchedKeyword.length > 0) && (
+                        <SearchText>{searchedKeyword}</SearchText>
+                    )}
                 </SearchInputContainer>
                 </TouchableWithoutFeedback>
             </HeaderBar>
@@ -852,14 +1037,15 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 <NaverMapView
                 ref={mapRef}
                 compass={false}
-                style={{width: '100%', height: hp('100%') - (DeviceInfo.hasNotch() ? wp('44%') : wp('38%'))}}
+                style={{width: '100%', height: hp('100%') - (DeviceInfo.hasNotch() ? wp('54%') : wp('33%'))}}
                 showsMyLocationButton={false}
-                center={{...cameraLocation, zoom: 16}}
+                center={{...mapLocation, zoom: mapZoom}}
                 onMapClick={(e:any) => clickMapBackground()}
                 zoomControl={true}>
-                {nearDentalList.map((item, index) => {
+                {searchedDentalArr.map((item: any, index: number) => {
                     return (
                         <Marker
+                        key={index}
                         coordinate={{latitude: Number(item.geographLat), longitude: Number(item.geographLong)}}
                         onClick={() => clickDentalMarker(index)}
                         image={(index == selectedDentalIndex) ? require('~/Assets/Images/Map/ic_dentalMarker_selected.png') : require('~/Assets/Images/Map/ic_dentalMarker_unselected.png')}/>
@@ -954,7 +1140,6 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 */}
                 <MapInsetBottomShadow
                 style={styles.insetShadow}/>
-                {!loadingGetDental && (
                 <DentalCarouselListContainer>
                     <Carousel
                     contentContainerCustomStyle={{justifyContent: "center"}}
@@ -963,16 +1148,15 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     inactiveSlideShift={0}
                     onSnapToItem={(index) => onSnapToDentalCarouselItem(index)}
                     ref={dentalCarouselRef}
-                    data={nearDentalList}
+                    data={searchedDentalArr}
                     renderItem={renderCarouselItem}
                     sliderWidth={wp('100%')}
                     itemWidth={wp('87.2%')}/>
                     <CarouselIndexContainer>
-                        <CarouselIndexText style={styles.carouselIndexShadow}>{selectedDentalIndex+1 + " / " + nearDentalList.length}
+                        <CarouselIndexText style={styles.carouselIndexShadow}>{selectedDentalIndex+1 + " / " + searchedDentalArr.length}
                         </CarouselIndexText>
                     </CarouselIndexContainer>
                 </DentalCarouselListContainer>
-                )}
             </MapContainer>
             <Modal
             isVisible={visibleDayFilterModal}

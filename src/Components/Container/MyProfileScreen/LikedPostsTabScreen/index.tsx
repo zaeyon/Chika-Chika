@@ -30,7 +30,7 @@ const LikedPostsTabScreen = ({navigation, route}: Props) => {
       <NavigationHeader
         headerLeftProps={{
           onPress: headerLeftAction,
-          text: 'arrow',
+          type: 'arrow',
         }}
         headerTitle="좋아요한 글"
       />

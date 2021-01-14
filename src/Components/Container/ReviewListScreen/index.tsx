@@ -73,6 +73,7 @@ const ReviewContainer = Styled.View`
 `;
 
 const ReviewListContainer = Styled.View`
+flex: 1;
 `;
 
 const ReviewHeaderContainer = Styled.View`
@@ -342,6 +343,7 @@ interface ReviewData {
 
 var offset = 0;
 var limit = 10;
+let noMoreReviewData = false;
 
 const ReviewListScreen = ({navigation}: Props) => {
   //const [reviewList, setReviewList] = useState<Array<ReviewData>>([]);
@@ -353,7 +355,6 @@ const ReviewListScreen = ({navigation}: Props) => {
   );
   const [changingReviewList, setChangingReviewList] = useState<boolean>(false);
 
-  let noMoreReviewData = false;
   const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state.currentUser);
   const reviewList = useSelector((state: any) => state.reviewList);
@@ -461,6 +462,7 @@ const ReviewListScreen = ({navigation}: Props) => {
     commentCount: number,
     isCurUserScrap: boolean,
     dentalObj: object,
+    visibleElapsedTime: boolean,
     elapsedTime: string,
   ) => {
     console.log('moveToReviewDetail reviewId', reviewId);
@@ -480,6 +482,7 @@ const ReviewListScreen = ({navigation}: Props) => {
         likeCount: likeCount,
         commentCount: commentCount,
         dentalObj: dentalObj,
+        visibleElapsedTime: visibleElapsedTime,
         elapsedTime: elapsedTime,
       },
     });

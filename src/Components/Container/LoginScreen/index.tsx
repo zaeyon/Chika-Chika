@@ -226,6 +226,7 @@ interface Props {
 var limitTime = 300;
 var timeout: any;
 //var isUser = false;
+  let fcmToken = '';
 
 const LoginScreen = ({navigation}: Props) => {
   const [number, setNumber] = useState('');
@@ -258,7 +259,6 @@ const LoginScreen = ({navigation}: Props) => {
 
   const numberInputRef = useRef(null);
   const authCodeInputRef = useRef(null);
-  let fcmToken = '';
 
   useEffect(() => {
     getFcmToken();
@@ -477,6 +477,7 @@ const LoginScreen = ({navigation}: Props) => {
               profile,
             }),
           );
+          
         }
       })
       .catch(function (error: any) {

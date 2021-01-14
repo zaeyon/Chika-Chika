@@ -1,9 +1,14 @@
 import axios from 'axios';
 import serverCofig from '../server.config';
 
-const GETDentalSearch = (keyword: string) => {
+interface Props {
+    jwtToken: string,
+    keyword: string,
+}
 
-    console.log("GETDentalSearch keyword", keyword);
+const GETDentalNameSearch = ({jwtToken, keyword}: Props) => {
+
+    console.log("GETDentalNameSearch keyword", keyword);
 
     const uri = serverCofig.baseUri + "/search/clinics?q=" + keyword
 
@@ -12,7 +17,7 @@ const GETDentalSearch = (keyword: string) => {
         .get(uri, {
             headers: {
                 'Content-Type': "application/x-www-form-urlencoded",
-                Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZiMDYxN2IwLTMzYzAtMTFlYi05MmRlLWUzZmIzYjRlMDI2NCIsImlhdCI6MTYwNjgxODk1MCwiZXhwIjoxNjM4Mzc2NTUwfQ.3-PEUaAWAW6sjl7TuKNzSHlTlK8p7myWG8nedNZ3nFE",
+                Authorization: jwtToken,
             }
         })
         .then(function(response) {
@@ -24,4 +29,4 @@ const GETDentalSearch = (keyword: string) => {
     })
 }
 
-export default GETDentalSearch;
+export default GETDentalNameSearch;

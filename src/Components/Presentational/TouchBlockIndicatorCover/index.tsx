@@ -8,7 +8,7 @@ import {
 
 const Container = Styled.View`
 position: absolute;
-background-color: #00000040;
+background-color: #00000030;
 width: ${wp('100%')}px;
 height: ${hp('100%')}px;
 align-items: center;

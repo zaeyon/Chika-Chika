@@ -182,15 +182,15 @@ interface CityData {
 const NMAP_CLIENT_ID = 'htnc7h3vi5';
 const NMAP_CLIENT_SECRET = '6uL7bf7tRgcDr9a3IS70fiufg647gVXxlTVoctIO';
 
+let inputValue = "";
 var offset = 0;
 var limit = 25;
 
 const HometownSettingScreen = ({navigation, route}: Props) => {
   const [loadingGetHometown, setLoadingGetHometown] = useState<boolean>(false);
-  const [autoCompletedCityList, setAutoCompletedCityList] = useState<
-    Array<CityData>
-  >([]);
+  const [autoCompletedCityList, setAutoCompletedCityList] = useState<Array<CityData>>([]);
   const [loadingSignUp, setLoadingSignUp] = useState<boolean>(false);
+  //const [inputValue, setInputValue] = useState<string>("");
   const provider = route.params.provider;
   var curLocationHometown = '';
 
@@ -201,6 +201,7 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
         'route.params.certifiedPhoneNumber',
         route.params.certifiedPhoneNumber,
       );
+
       console.log('route.params.provider', route.params.provider);
       console.log('route.params.fcmToken', route.params.fcmToken);
       console.log('route.params.nickname', route.params.nickname);
@@ -319,7 +320,10 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
     })
       .then((response: any) => {
         setLoadingSignUp(false);
+        console.log("POSTRegister (response)", typeof(response))
         console.log('POSTRegister response', response);
+        console.log("POSTRegister response.user", response.user);
+        console.log("POSTRegister response.user.userId", response.user.userId);
 
         const profile = {
           id: response.user.userId,
@@ -384,7 +388,7 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
           birthdate,
           gender: '',
           provider,
-          Cities: [cityId],
+          Residences: response.user.userResidences,
         };
         const userInfo = {
           jwtToken: response.token,
@@ -409,7 +413,12 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
       .then((response: any) => {
         console.log('GETCitySearch response', response);
         console.log('GETCitySearch response.length', response.length);
-        setAutoCompletedCityList(response);
+        console.log('GETCitySearch keyword', keyword);
+        console.log("GETCitySearch inputValue", inputValue);
+        
+        if(keyword === inputValue) {
+          setAutoCompletedCityList(response);
+        }
       })
       .catch((error) => {
         console.log('GETCitySearch error', error);
@@ -417,13 +426,18 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
   };
 
   const onChangeHometownInput = (text: string) => {
+    inputValue = text;
     if (text.length > 0) {
       getAuthCompletedCityList(text, offset, limit);
     }
   };
 
+  const onEndEditingHometownInput = () => {
+    console.log("입력 끝");
+  }
+
   const renderHometownItem = ({item, index}: any) => {
-    console.log('renderHometownItem item', item);
+    //console.log('renderHometownItem item', item);
 
     return (
       <TouchableWithoutFeedback onPress={() => selectHometownItem(item)}>
@@ -461,6 +475,7 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
               placeholder={'동명(읍, 면)으로 검색 (ex 서초동)'}
               onChangeText={(text: string) => onChangeHometownInput(text)}
               placeholderTextColor={'#979797'}
+              onEndEditing={() => onEndEditingHometownInput()}
             />
           </HometownTextInputContainer>
         </HometownInputContainer>

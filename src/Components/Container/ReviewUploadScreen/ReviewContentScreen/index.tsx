@@ -465,7 +465,7 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
   };
 
   const moveToDentalClinicSearch = () => {
-    navigation.push('DentalClinicSearchScreen', {
+    navigation.push('DentalNameSearchScreen', {
       requestPage: 'content',
       requestType: route.params?.requestType,
     });

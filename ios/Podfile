@@ -18,6 +18,8 @@ target 'chikaApp' do
 
   pod 'RNConvertPhAsset', :path => '../node_modules/react-native-convert-ph-asset'
 
+  pod 'RNCPicker', :path => '../node_modules/@react-native-picker/picker'
+
   target 'chikaAppTests' do
     inherit! :complete
     # Pods for testing

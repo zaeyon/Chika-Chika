@@ -6,6 +6,7 @@ const baseUri = serverConfig.baseUri;
 
 const GETUserInfo = (jwtToken: string) => {
     const uri = baseUri + '/userInfo'
+    console.log("GETUserInfo jwtToken", jwtToken);
     return new Promise(function(resolve, reject) {
 
         axios.get(uri, {

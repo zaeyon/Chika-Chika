@@ -23,7 +23,7 @@ const SavedHospitalTabScreen = ({navigation, route}: Props) => {
       <NavigationHeader
         headerLeftProps={{
           onPress: headerLeftAction,
-          text: 'arrow',
+          type: 'arrow',
         }}
         headerTitle="찜한 병원"
       />

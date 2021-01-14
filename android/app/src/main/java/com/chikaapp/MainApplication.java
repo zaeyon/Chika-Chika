@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.facebook.react.BuildConfig;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.picker.RNCPickerPackage;
 import com.rnfs.RNFSPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.reactnativecommunity.imageeditor.ImageEditorPackage;
@@ -44,6 +45,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
+            new RNCPickerPackage(),
             new RNFSPackage(),
                     new RNGoogleSigninPackage(), // <-- this needs to be in the list
                     new RNSPackage();

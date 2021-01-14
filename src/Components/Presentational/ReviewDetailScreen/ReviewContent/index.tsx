@@ -6,39 +6,39 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-import ReviewCommentList from '~/Components/Presentational/ReviewDetailScreen/ReviewCommentList';
+import ReviewCommentList from '~/Components/Presentational/ReviewDetailScreen/ReviewPreviewCommentList';
 
 const Container = Styled.View`
 background-color: #ffffff;
 `;
 
 const DescripContainer = Styled.View`
-padding-left: 24px;
-padding-right: 24px;
+padding-left: 16px;
+padding-right: 16px;
 `;
 
 const DescripText = Styled.Text`
 font-size: 14px;
 color: #131F3C;
 font-family: NanumSquare;
+font-weight: 400;
 `;
 
 const ImageContainer = Styled.View`
-padding-left: 16px;
-padding-right: 16px;
 `;
 
 const ReviewImage = Styled.Image`
-margin-top: 20px;
-width: ${wp('91.46%')}px;
-height: ${wp('91.46%')}px;
-border-radius: 8px;
+margin-top: 24px;
+width: ${wp('100%')}px;
+height: ${wp('100%')}px;
 `;
 
 const ReviewImageTypeText = Styled.Text`
+padding-left: 16px;
+padding-right: 16px;
 font-size: 18px;
-font-weight: 700;
-color: #000000;
+font-weight: 800;
+color: #131F3C;
 font-family: NanumSquare;
 `;
 
@@ -51,7 +51,7 @@ const ParagraphDivider = Styled.View`
 align-self: center;
 width: ${wp('87.2%')}px;
 height: 1px;
-background-color: #E2E6ED;
+background-color: #F5F7F9;
 `;
 
 interface Props {
@@ -68,7 +68,7 @@ const ReviewContent = ({paragraphArray, moveToFullImages}: Props) => {
       <ParagraphContainer>
         {item.img_url && (
           <ImageContainer>
-          <ReviewImageTypeText>{item.img_before_after === "before" ? "치료전" : (item.img_before_after === "after" ? "치료후" : "")}</ReviewImageTypeText>
+          <ReviewImageTypeText>{item.img_before_after === "before" ? "Before" : (item.img_before_after === "after" ? "After" : "")}</ReviewImageTypeText>
           <TouchableWithoutFeedback
             onPress={() => moveToFullImages(item.img_url)}>
               <ReviewImage source={{uri: item.img_url}} />

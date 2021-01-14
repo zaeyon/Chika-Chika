@@ -227,7 +227,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   };
 
   const moveToDentalClinicSearch = () => {
-    navigation.navigate('DentalClinicSearchScreen', {
+    navigation.navigate('DentalNameSearchScreen', {
       requestPage: 'metadata',
     });
     setOnFocusDentalClinicName(true);

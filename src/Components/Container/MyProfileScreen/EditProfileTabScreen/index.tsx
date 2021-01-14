@@ -145,7 +145,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
       <NavigationHeader
         headerLeftProps={{
           onPress: headerLeftAction,
-          text: '취소',
+          type: '취소',
         }}
         headerTitle="내 정보 수정"
       />

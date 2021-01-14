@@ -36,6 +36,8 @@ import HomeScreen from '~/Components/Container/HomeScreen';
 import ReviewListScreen from '~/Components/Container/ReviewListScreen';
 import ReviewDetailScreen from '~/Components/Container/ReviewDetailScreen';
 import FullImagesScreen from '~/Components/Container/FullImagesScreen';
+import ReviewCommentListScreen from '~/Components/Container/ReviewCommentListScreen';
+import ReplyPostScreen from '~/Components/Container/ReplyPostScreen';
 
 // Review Upload Stack Screen
 import ReviewUploadScreen from '~/Components/Container/ReviewUploadScreen';
@@ -47,7 +49,7 @@ import GallerySelectOne from '~/Components/Container/GallerySelectOne';
 import ReceiptRegisterScreen from '~/Components/Container/ReviewUploadScreen/ReceiptRegisterScreen';
 import ReceiptCamera from '~/Components/Container/ReceiptCamera';
 import TakenPictureScreen from '~/Components/Container/ReviewUploadScreen/TakenPictureScreen';
-import DentalClinicSearchScreen from '~/Components/Container/ReviewUploadScreen/DentalClinicSearchScreen';
+import DentalNameSearchScreen from '~/Components/Container/ReviewUploadScreen/DentalNameSearchScreen';
 import TreatSearchScreen from '~/Components/Container/ReviewUploadScreen/TreatSearchScreen';
 import DetailPriceScreen from '~/Components/Container/ReviewUploadScreen/DetailPriceScreen';
 import RatingScreen from '~/Components/Container/ReviewUploadScreen/RatingScreen';
@@ -76,7 +78,7 @@ import CommunityPostUploadScreen from '~/Components/Container/CommunityPostUploa
 import CommunityTreatSearchScreen from '~/Components/Container/CommunityPostUploadScreen/TreatSearchScreen';
 // Dental Clinic Stack Screen
 import NearDentalMap from '~/Components/Container/NearDentalMap';
-import DentalListScreen from '~/Components/Container/DentalListScreen';
+import DentalTotalSearchScreen from '~/Components/Container/DentalTotalSearchScreen';
 import DentalDetailScreen from '~/Components/Container/DentalDetailScreen';
 import DentalInfoEditRequestScreen from '~/Components/Container/DentalDetailScreen/DentalInfoEditRequestScreen';
 
@@ -173,6 +175,12 @@ function ReviewStackScreen() {
         name="DentalClinicStack"
         component={DentalClinicStackScreen}
       />
+      <ReviewStack.Screen
+        name="ReviewCommentListScreen"
+        component={ReviewCommentListScreen}/>
+      <ReviewStack.Screen
+        name="ReplyPostScreen"
+        component={ReplyPostScreen}/>
     </ReviewStack.Navigator>
   );
 }
@@ -219,8 +227,8 @@ function NearDentalMapStackScreen() {
         }}
       />
       <NearDentalMapStack.Screen
-        name="DentalListScreen"
-        component={DentalListScreen}
+        name="DentalTotalSearchScreen"
+        component={DentalTotalSearchScreen}
         options={{
           transitionSpec: {
             open: staticConfig,
@@ -321,8 +329,8 @@ function ReviewUploadStackScreen() {
         component={TakenPictureScreen}
       />
       <ReviewUploadStack.Screen
-        name="DentalClinicSearchScreen"
-        component={DentalClinicSearchScreen}
+        name="DentalNameSearchScreen"
+        component={DentalNameSearchScreen}
       />
       <ReviewUploadStack.Screen
         name="TreatSearchScreen"
@@ -549,7 +557,7 @@ function BottomTab() {
       : '';
 
     if (
-      routeName.name === 'DentalListScreen' ||
+      routeName.name === 'DentalTotalSearchScreen' ||
       routeName.name === 'DentalClinicStack' ||
       isOpenDentalList
     ) {
@@ -767,7 +775,7 @@ const Navigator = () => {
             );
           })
           .catch((error: any) => {
-            console.log('user error');
+            console.log('user error', error);
           });
       })
       .catch((error) => {

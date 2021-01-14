@@ -23,7 +23,7 @@ const GeneralSettingTabScreen = ({navigation, route}: Props) => {
       <NavigationHeader
         headerLeftProps={{
           onPress: headerLeftAction,
-          text: 'arrow',
+          type: 'arrow',
         }}
         headerTitle="설정"
       />

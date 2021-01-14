@@ -8,9 +8,10 @@ import {
 import {NavigationContainer} from '@react-navigation/native';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import DeviceInfo from 'react-native-device-info';
+import {useSelector} from 'react-redux';
 
 // route
-import GETDentalSearch from '~/Routes/Search/GETDentalSearch';
+import GETDentalNameSearch from '~/Routes/Search/GETDentalNameSearch';
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -220,10 +221,13 @@ interface Dental {
   id: number;
 }
 
-const DentalClinicSearchScreen = ({navigation, route}: Props) => {
+let inputText = "";
+
+const DentalNameSearchScreen = ({navigation, route}: Props) => {
   const [autoCompletedDentalList, setAutoCompletedDentalList] = useState<
     Array<Dental>
   >([]);
+  const jwtToken = useSelector((state: any) => state.currentUser).jwtToken;
 
   const goBack = () => {
     navigation.goBack();
@@ -252,17 +256,23 @@ const DentalClinicSearchScreen = ({navigation, route}: Props) => {
     );
   };
 
-  const onChangeDentalInput = (text: string) => {
-    if (text.trim() === '') {
+  const onChangeDentalInput = (keyword: string) => {
+    
+    inputText = keyword;
+
+    if (keyword.trim() === '') {
       setAutoCompletedDentalList([]);
     } else {
-      GETDentalSearch(text)
+    
+      GETDentalNameSearch({jwtToken, keyword})
         .then(function (response: any) {
-          console.log('GETDentalSearch response', response);
-          setAutoCompletedDentalList(response);
+          
+          if(keyword === inputText) {
+            setAutoCompletedDentalList(response);
+          }
         })
         .catch(function (error: any) {
-          console.log('GETDentalSearch error', error);
+          console.log('GETDentalNameSearch error', error);
         });
     }
   };
@@ -307,4 +317,4 @@ const DentalClinicSearchScreen = ({navigation, route}: Props) => {
   );
 };
 
-export default DentalClinicSearchScreen;
+export default DentalNameSearchScreen;

@@ -22,7 +22,7 @@ import {isIphoneX} from 'react-native-iphone-x-helper'
 import DentalListItem from '~/Components/Presentational/DentalListItem'
 
 // Route
-import GETDentalMainSearch from '~/Routes/Search/GETDentalMainSearch';
+import GETDentalTotalSearch from '~/Routes/Search/GETDentalTotalSearch';
 
 const Container = Styled.View`
 height: ${hp('100%') - (DeviceInfo.hasNotch() ? wp('44%') : wp('38%'))}px;
@@ -66,7 +66,7 @@ interface Props {
 }
 
 const DentalList = ({openMap}: Props) => {
-    const nearDentalList = useSelector((state: any) => state.dentalList).nearDentalList
+    const nearDentalList = useSelector((state: any) => state.dentalMap).nearDentalList
     const [bottomPadding, setBottomPadding] = useState<number>(40);
     
     useEffect(() => {
@@ -112,12 +112,12 @@ const DentalList = ({openMap}: Props) => {
     /*
     const searchDental = (query: string) => {
 
-        GETDentalMainSearch({jwtToken, query, long, lat})
+        GETDentalTotalSearch({jwtToken, query, long, lat})
         .then((response: any) => {
-            console.log("GETDentalMainSearch response", response)
+            console.log("GETDentalTotalSearch response", response)
         })
         .catch((error: any) => {
-            console.log("GETDentalMainSearch error", error);
+            console.log("GETDentalTotalSearch error", error);
         })
     }
     */

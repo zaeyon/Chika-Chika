@@ -286,6 +286,7 @@ interface Props {
     commentCount: number,
     isCurUserScrap: boolean,
     dentalObj: DentalObj,
+    visibleElapsedtime: boolean,
     elapsedTime: string,
   ) => void;
   moveToWriterProfile: (userId: number) => void;
@@ -453,6 +454,7 @@ const ReviewItem = ({
           commentCount,
           isCurUserScrapProp,
           dentalObj,
+          visibleElapsedTime,
           elapsedTimeText,
         )
       }>

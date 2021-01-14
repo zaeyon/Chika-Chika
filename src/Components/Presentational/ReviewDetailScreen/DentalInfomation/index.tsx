@@ -7,10 +7,9 @@ import {
 import {TouchableWithoutFeedback} from 'react-native';
 
 const Container = Styled.View`
-border-top-width: 1px;
-border-bottom-width: 1px;
-border-color: #E2E6ED;
-padding: 23px 16px 24px 17px;
+padding: 24px 24px 24px 24px;
+flex-direction: row;
+align-items: center;
 justify-content: space-between;
 `;
 
@@ -31,17 +30,14 @@ font-family: NanumSquare;
 `;
 
 const DentalImage = Styled.Image`
-width: ${wp('14.93%')}px;
-height: ${wp('14.93%')}px;
-border-width: 1px;
-border-color: #c4c4c4;
-border-radius: 20px;
+width: ${wp('14.4%')}px;
+height: ${wp('14.4%')}px;
+border-width: 0.5px;
+border-color: #E2E6ED;
+border-radius: 100px;
 `;
 
 const DentalInfoContainer = Styled.View`
-width: ${wp('64%')}px;
-margin-left: 17px;
-padding-bottom: 7px;
 `;
 
 const DentalNameText = Styled.Text`
@@ -58,10 +54,17 @@ font-size: 16px;
 color: #000000;
 `;
 
+const DentalAddressContainer = Styled.View`
+width: ${wp('65%')}px;
+margin-top: 8px;
+flex-direction: row;
+align-items: center;
+`;
+
 const DentalAddressText = Styled.Text`
-margin-top: 10px;
-font-weight: 400;
-font-size: 12px;
+font-family: NanumSquare;
+font-weight: 700;
+font-size: 13px;
 color: #9AA2A9;
 `;
 
@@ -71,6 +74,11 @@ const RightArrowContainer = Styled.View`
 const RightArrowIcon = Styled.Image`
 width: ${wp('6.4%')}px;
 height: ${wp('6.4%')}px;
+`;
+
+const DentalMarkerIcon = Styled.Image`
+width: ${wp('4.26%')}px;
+height: ${wp('4.26%')}px;
 `;
 
 interface Props {
@@ -83,23 +91,30 @@ interface Props {
 
 const DentalInfomation = ({dentalInfo, moveToDentalDetail}: Props) => {
     console.log("DentalInformation dentalInfo", dentalInfo);
+
+    let splitedAddress = new Array();
+    let formattedAddress = "";
+
+    if(dentalInfo.address) {
+        splitedAddress = dentalInfo.address.split(" ");
+        formattedAddress = splitedAddress[0] + " " + splitedAddress[1] + " " + splitedAddress[2] + " " + splitedAddress[3] + " " + splitedAddress[4]
+
+    }
+
     return (
         <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalInfo.id)}>
         <Container>
-            <DentalIntroText>{"교정을 전문으로 하는 병원이에요!"}</DentalIntroText>
-            <BodyContainer>
+            <DentalInfoContainer>
+                <DentalNameText>{dentalInfo.originalName}</DentalNameText>
+                <DentalAddressContainer>
+                <DentalMarkerIcon
+                source={require('~/Assets/Images/Review/ic_dentalMarker.png')}/>
+                <DentalAddressText>{formattedAddress}</DentalAddressText>
+                </DentalAddressContainer>
+            </DentalInfoContainer>
             <DentalImageContainer>
                 <DentalImage/>
             </DentalImageContainer>
-            <DentalInfoContainer>
-                <DentalNameText>{dentalInfo.name}</DentalNameText>
-                <DentalAddressText>{dentalInfo.address}</DentalAddressText>
-            </DentalInfoContainer>
-            <RightArrowContainer>
-            <RightArrowIcon
-            source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
-            </RightArrowContainer>
-            </BodyContainer>
         </Container>
         </TouchableWithoutFeedback>
     )

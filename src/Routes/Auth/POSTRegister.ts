@@ -23,7 +23,7 @@ const POSTRegister = ({certifiedPhoneNumber, provider, fcmToken, phoneNumber, ni
     const bodyParamsStr = `{
         "certifiedPhoneNumber":"${certifiedPhoneNumber}",
         "provider":"${provider}",
-        "fcmToken":"${"test"}",
+        "fcmToken":"${fcmToken}",
         "userPhoneNumber":"${phoneNumber}",
         "nickname":"${nickname}",
         "cityId":"${cityId}"

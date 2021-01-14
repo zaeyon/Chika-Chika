@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   Alert,
+  StyleSheet,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -19,22 +20,22 @@ import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import ActionSheet from 'react-native-actionsheet';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 // Local Component
 import ReviewInformation from '~/Components/Presentational/ReviewDetailScreen/ReviewInformation';
 import ReviewContent from '~/Components/Presentational/ReviewDetailScreen/ReviewContent';
-import ReviewCommentList from '~/Components/Presentational/ReviewDetailScreen/ReviewCommentList';
+import ReviewPreviewCommentList from '~/Components/Presentational/ReviewDetailScreen/ReviewPreviewCommentList';
 import ReviewBottomBar from '~/Components/Presentational/ReviewDetailScreen/ReviewBottomBar';
 import DentalInfomation from '~/Components/Presentational/ReviewDetailScreen/DentalInfomation';
 import DetailMetaInfo from '~/Components/Presentational/ReviewDetailScreen/DetailMetaInfo';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import TreatmentList from '~/Components/Presentational/ReviewDetailScreen/TreatmentList';
 import ReviewMetaInfo from '~/Components/Presentational/ReviewDetailScreen/ReviewMetaInfo';
+import WriterInfo from '~/Components/Presentational/ReviewDetailScreen/WriterInfo';
 
 // Route
 import GETReviewDetail from '~/Routes/Review/GETReviewDetail';
-import POSTComment from '~/Routes/Comment/POSTComment';
-import DELETEComment from '~/Routes/Comment/DELETEComment';
 import POSTReply from '~/Routes/Comment/POSTReply';
 import DELETEReview from '~/Routes/Review/DELETEReview';
 import POSTReviewLike from '~/Routes/Review/POSTReviewLike';
@@ -52,29 +53,32 @@ flex: 1;
 background-color: #ffffff;
 `;
 
+const ScrollViewContainer = Styled.View`
+`;
+
 const BottomBarContainer = Styled.View`
 position: absolute;
 bottom: 0;
 width: ${wp('100%')}px;
 `;
 
+const TreatmentListContainer = Styled.View`
+`;
+
 const ReviewContentContainer = Styled.View`
-border-bottom-width: 8px;
-border-color: #F5F7F9;
 `;
 
 const DentalInfoContainer = Styled.View`
-border-bottom-width: 8px;
-border-color: #F5F7F9;
 `;
 
 const CommentListContainer = Styled.View`
-margin-top: 20px;
 `;
 
 const MetaInfoContainer = Styled.View`
-border-bottom-width: 8px;
-border-color: #F5F7F9;
+padding-top: 20px;
+padding-left: 16px;
+padding-right: 16px;
+padding-bottom: 20px;
 `;
 
 const IndicatorContainer = Styled.View`
@@ -93,6 +97,35 @@ height: ${hp('100%')}px;
 background-color: #00000040;
 align-items: center;
 justify-content: center;
+`;
+
+const MoreViewModalContainer = Styled.View`
+position: absolute;
+top: ${getStatusBarHeight() + hp('6.5%') - hp('1.23%')}px;
+right: ${wp('4.26')}px;
+background-color: #ffffff;
+border-width: 1px;
+border-color: #E2E6ED;
+border-radius: 12px;
+`;
+
+const MoreViewItemContainer = Styled.View`
+padding-top: ${hp('1.477%')}px;
+padding-bottom: ${hp('1.477%')}px;
+padding-left: ${wp('4.26%')}px;
+padding-right: ${wp('18.13%')}px;
+border-bottom-width: 1px;
+border-color: #E2E6ED;
+`;
+
+const MoreViewItemLabelText = Styled.Text`
+font-family: NanumSquare;
+font-size: 16px;
+font-weight: 700;
+color: #000000;
+`;
+
+const WriterInfoContainer = Styled.View`
 `;
 
 const TEST_REVIEW_DETAIL_DATA = {
@@ -276,6 +309,10 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     route.params?.treatmentDate,
   );
   const [elapsedTime, setElapsedTime] = useState<string>(route.params?.elapsedTime);
+  const [isVisibleOwnMoreViewModal, setIsVisibleOwnMoreViewModal] = useState<boolean>(false);
+  const [isVisibleOtherMoreViewModal, setIsVisibleOtherMoreViewModal] = useState<boolean>(false);
+
+  const [isCertifiedReceipt, setIsCertifiedReceipt] = useState<boolean>(false);
 
   const scrollViewRef = useRef<any>();
   const reviewScrollViewRef = useRef<any>(null);
@@ -288,9 +325,10 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const userProfile = currentUser.profile;
 
   const reviewId = route.params?.reviewId;
-  const writerInfo = route.params?.writer;
+  const writerObj = route.params?.writer;
 
   const createdDate = route.params?.createdAt;
+  const isVisibleElapsedTime = route.params?.visibleElapsedTime;
   const imageArray = route.params?.imageArray;
   const isOwnReview = route.params?.writer.userId == userProfile.id;
 
@@ -339,6 +377,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     route.params?.dentalObj,
   ]);
 
+  /*
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
     Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
@@ -350,6 +389,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       Keyboard.removeListener('keyboardWillHide', _keyboardWillHide);
     };
   }, []);
+  */
 
   const _keyboardWillShow = (e: any) => {
     setPaddingBottom(e.endCoordinates.height + hp('5%'));
@@ -376,6 +416,8 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     }, 0);
   };
 
+
+
   const getReviewDetail = () => {
     GETReviewDetail(jwtToken, reviewId)
       .then((response: any) => {
@@ -390,6 +432,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         );
         setTotalPrice(response.reviewBody.totalCost);
         setLoadingReviewDetail(false);
+        setIsCertifiedReceipt(response.reviewBody.certifiedBill);
         setRefreshingReviewDetail(false);
 
         const tmpTreatmentDate = new Date(response.reviewBody.treatmentDate);
@@ -492,6 +535,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
         const dentalObj = {
           name: response.reviewBody.dental_clinic.name,
+          originalName: response.reviewBody.dental_clinic.originalName,
           address: response.reviewBody.dental_clinic.address,
           id: response.reviewBody.dentalClinicId,
         };
@@ -502,7 +546,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           setIsCurUserLike(false);
         }
 
-        //setWriterInfo(tmpUserObj)
+        //setWriterInfo(userObj)
         setTreatmentDate(treatmentObj);
         setLikeCount(response.reviewLikeNum);
         setViewCount(response.reviewViewerNum);
@@ -545,12 +589,29 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     })
   }
 
+  const moveToCommentList = (request: string) => {
+    navigation.navigate("ReviewCommentListScreen", {
+      reviewId: reviewId,
+      commentArray: commentArray,
+      request: request
+    });
+  }
+
   const goBack = () => {
     navigation.goBack();
   };
 
-  const clickCommentIcon = () => {
-    setIsCommentInputFocused(true);
+  const clickMoreView = () => {
+    if(isOwnReview) {
+      setIsVisibleOwnMoreViewModal(!isVisibleOwnMoreViewModal);
+    } else {
+      setIsVisibleOtherMoreViewModal(!isVisibleOtherMoreViewModal);
+    }
+  }
+
+  const clickCommentIcon = (request: string) => {
+    //setIsCommentInputFocused(true);
+    moveToCommentList(request);
   };
 
   const onRefreshReviewDetail = () => {
@@ -559,6 +620,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   };
 
   const clickReviseReview = () => {
+    setIsVisibleOwnMoreViewModal(false);
     console.log('dentalInfo', dentalInfo);
     const submitParagraphArray = paragraphArray;
 
@@ -591,6 +653,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   };
 
   const clickDeleteReview = () => {
+    setIsVisibleOwnMoreViewModal(false);
     Alert.alert('정말 리뷰를 삭제하실건가요?', '', [
       {
         text: '확인',
@@ -692,39 +755,6 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       });
   };
 
-  const postReviewComment = (description: string) => {
-    setLoadingCommentPost(true);
-    const type = 'review';
-    const id = reviewId;
-
-    POSTComment({jwtToken, id, type, description})
-      .then((response) => {
-        console.log('POSTReviewComment response', response);
-        GETReviewDetail(jwtToken, reviewId)
-          .then((response: any) => {
-            console.log('GETReviewDetail response', response);
-            console.log(
-              'GETReviewDetail response.reviewComments',
-              response.reviewComments,
-            );
-            setLoadingCommentPost(false);
-            setCommentArray(response.reviewComments);
-
-            setTimeout(() => {
-              reviewScrollViewRef.current.scrollToEnd({animated: true});
-            }, 10);
-          })
-          .catch((error) => {
-            console.log('GETReviewDetail error', error);
-            setLoadingCommentPost(false);
-          });
-      })
-      .catch((error) => {
-        console.log('POSTReviewComment error', error);
-        setLoadingCommentPost(false);
-      });
-  };
-
   const deleteReviewComment = () => {
     setLoadingCommentPost(true);
     const commentId = selectedCommentId;
@@ -780,9 +810,22 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     setIsCommentInputFocused(true);
   };
 
+  const pressBackground = () => {
+    if(isOwnReview) {
+      if(isVisibleOwnMoreViewModal) {
+        setIsVisibleOwnMoreViewModal(false)
+      }
+    } else {
+      if(isVisibleOtherMoreViewModal) {
+        setIsVisibleOtherMoreViewModal(false);
+      }
+    }
+  }
+
 
 
   return (
+    <TouchableWithoutFeedback onPress={() => pressBackground()}>
     <Container>
       {/*
       <HeaderBar>
@@ -815,9 +858,8 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       </HeaderBar>
       */}
       <NavigationHeader
-      headerLeftProps={{text: "arrow", onPress: goBack}}
-      headerRightProps={{text: "viewMore"}}
-      headerTitle={writerInfo.nickname}
+      headerLeftProps={{type: "arrow", onPress: goBack, text: "리얼리뷰"}}
+      headerRightProps={{type: "viewMore", onPress: clickMoreView}}
       />
       <ScrollView
         ref={reviewScrollViewRef}
@@ -828,6 +870,8 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
             onRefresh={onRefreshReviewDetail}
           />
         }>
+        <TouchableWithoutFeedback onPress={() => 0}>
+        <ScrollViewContainer>
         {/*
         <ReviewInformation
         writer={writerInfo}
@@ -838,10 +882,18 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         treatmentDate={treatmentDateDisplay}
         />
         */}
+        <WriterInfoContainer>
+        <WriterInfo
+        writerObj={writerObj}
+        elapsedTime={elapsedTime}
+        isVisibleElapsedTime={isVisibleElapsedTime}
+        createdDate={createdDate}/>
+        </WriterInfoContainer>
+        <TreatmentListContainer>
         <TreatmentList
         treatmentArray={treatmentArrayDisplay}
-        elapsedTime={elapsedTime}
         />
+        </TreatmentListContainer>
         {!loadingReviewDetail && (
           <BodyContainer style={{paddingBottom: paddingBottom}}>
             <ReviewContentContainer>
@@ -850,19 +902,18 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
               paragraphArray={paragraphArrayDisplay}
             />
             </ReviewContentContainer>
-            <DentalInfoContainer>
-              <DentalInfomation
-              dentalInfo={dentalInfo}
-              moveToDentalDetail={moveToDentalDetail}/>
-            </DentalInfoContainer>
             <MetaInfoContainer>
               <ReviewMetaInfo
+              dentalObj={dentalInfo}
+              moveToDentalDetail={moveToDentalDetail}
+              certifiedReceipt={isCertifiedReceipt}
               totalPrice={totalPrice}
               ratingObj={rating}
               treatmentDate={treatmentDate.displayTreatDate}/>
             </MetaInfoContainer>
             <CommentListContainer>
-              <ReviewCommentList
+              <ReviewPreviewCommentList
+                moveToCommentList={moveToCommentList}
                 clickReply={clickReply}
                 openCommentActionSheet={openCommentActionSheet}
                 commentList={commentArray}
@@ -875,6 +926,8 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
             <ActivityIndicator/>
           </IndicatorContainer>
         )}
+        </ScrollViewContainer>
+        </TouchableWithoutFeedback>
       </ScrollView>
       <KeyboardAvoidingView behavior={'position'}>
         <BottomBarContainer>
@@ -883,8 +936,6 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
             isCurUserScrap={isCurUserScrap}
             clickReviewLike={clickReviewLike}
             clickReviewScrap={clickReviewScrap}
-            postReviewComment={postReviewComment}
-            isCommentInputFocused={isCommentInputFocused}
             clickCommentIcon={clickCommentIcon}
             likeCount={likeCount}
           />
@@ -902,9 +953,63 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           <ActivityIndicator color={'#ffffff'} />
         </TransIndicatorContainer>
       )}
+      {isVisibleOwnMoreViewModal && (
+        <MoreViewModalContainer
+        style={styles.moreViewModalShadow}>
+          <TouchableWithoutFeedback onPress={() => clickReviseReview()}>
+          <MoreViewItemContainer>
+            <MoreViewItemLabelText>{"수정"}</MoreViewItemLabelText>
+          </MoreViewItemContainer>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => clickDeleteReview()}>
+          <MoreViewItemContainer>
+            <MoreViewItemLabelText>{"삭제"}</MoreViewItemLabelText>
+          </MoreViewItemContainer>
+          </TouchableWithoutFeedback>
+          <MoreViewItemContainer>
+            <MoreViewItemLabelText>{"신고"}</MoreViewItemLabelText>
+          </MoreViewItemContainer>
+          <MoreViewItemContainer style={{borderBottomWidth: 0}}>
+            <MoreViewItemLabelText>{"공유"}</MoreViewItemLabelText>
+          </MoreViewItemContainer>
+        </MoreViewModalContainer>
+      )}
+      {isVisibleOtherMoreViewModal && (
+        <MoreViewModalContainer
+        style={styles.moreViewModalShadow}>
+          <TouchableWithoutFeedback onPress={() => clickReviseReview()}>
+          <MoreViewItemContainer>
+            <MoreViewItemLabelText>{"수정"}</MoreViewItemLabelText>
+          </MoreViewItemContainer>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => clickDeleteReview()}>
+          <MoreViewItemContainer>
+            <MoreViewItemLabelText>{"삭제"}</MoreViewItemLabelText>
+          </MoreViewItemContainer>
+          </TouchableWithoutFeedback>
+          <MoreViewItemContainer>
+            <MoreViewItemLabelText>{"신고"}</MoreViewItemLabelText>
+          </MoreViewItemContainer>
+          <MoreViewItemContainer style={{borderBottomWidth: 0}}>
+            <MoreViewItemLabelText>{"공유"}</MoreViewItemLabelText>
+          </MoreViewItemContainer>
+        </MoreViewModalContainer>
+      )}
     </Container>
+    </TouchableWithoutFeedback>
   );
 };
+
+const styles = StyleSheet.create({
+  moreViewModalShadow: {
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowRadius: 5,
+    shadowOpacity: 0.1,
+  }
+})
 
 export default ReviewDetailScreen;
 

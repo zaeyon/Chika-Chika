@@ -22,8 +22,8 @@ const Container = Styled.View`
 `;
 
 const ProfileImageContainer = Styled.View`
-width: ${wp('9.6%')}px;
- height: ${wp('9.6%')}px;
+width: ${wp('8.5%')}px;
+ height: ${wp('8.5%')}px;
 
 margin-top: 15px;
 margin-left: 16px;
@@ -32,14 +32,16 @@ margin-right: 12px;
 `;
 
 const CommentRightContainer = Styled.View`
-padding-right: 85px;
+flex: 1;
 `;
 
 const HeaderContainer = Styled.View`
+background-color: #ffffff;
+align-items: center;
+flex-direction: row;
+justify-content: space-between;
 padding-top: 14px;
 padding-right: 16px;
-flex-direction: row;
-align-items: center;
 `;
 
 const NicknameContentContainer = Styled.View`
@@ -50,7 +52,7 @@ justify-content: center;
 `;
 
 const BodyContainer = Styled.View`
- flex-direction: row;
+padding-right: 85px;
 `;
 
 const FooterContainer = Styled.View`
@@ -68,25 +70,33 @@ const ProfileImage = Styled.Image`
 `;
 
 const NicknameText = Styled.Text`
- font-size: 15px;
- font-weight: 600;
+ font-size: 14px;
+ font-weight: 800;
+ font-family: NanumSquare;
+ color: #131F3C
 `;
 
 const CommentDescripText = Styled.Text`
- margin-top: 5px;
- font-size: 16px;
+font-weight: 400;
+font-size: 14px;
+margin-top: 5px;
+font-family: NanumSquare;
+color: #000000;
 `;
 
 const CreateAtText = Styled.Text`
- font-size: 15px;
- color: #cccccc;
- margin-left: 10px;
+margin-top: 4px;
+font-weight: 400;
+font-family: NanumSquare;
+font-size: 12px;
+ color: #9AA2A9;
 `;
 
 const ReplyText = Styled.Text`
-font-size: 14px;
-font-weight: 600;
-color: #979797;
+font-weight: 400;
+font-family: NanumSquare;
+font-size: 12px;
+ color: #9AA2A9;
 `;
 
 const ReplyContainer = Styled.View`
@@ -98,16 +108,30 @@ font-weight: 600;
 color: #979797;
 `;
 
+const HeaderLeftContainer = Styled.View`
+`;
+
+const MoreViewContainer = Styled.View`
+`;
+
+const MoreViewIcon = Styled.Image`
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
+`;
+
 interface Props {
+  commentObj: object,
   userId: string;
   commentId: number;
   profileImage: string;
   nickname: string;
   description: string;
   createdDate: string;
+  elapsedTime: string;
+  isVisibleElapsedTime: boolean;
   replys: Array<Object>;
-  clickReply: (target: string, commentId: number) => void;
-  navigation: any;
+  clickReply: (commentObj: any, commentId: number) => void;
+  isVisibleReplyButton: boolean;
   openCommentActionSheet: (
     userId: string,
     nickname: string,
@@ -116,18 +140,23 @@ interface Props {
 }
 
 const CommentItem = ({
+  commentObj,
   userId,
   commentId,
   profileImage,
   nickname,
   description,
   createdDate,
+  elapsedTime,
   replys,
   clickReply,
   openCommentActionSheet,
+  isVisibleReplyButton,
 }: Props) => {
   const currentUser = useSelector((state: any) => state.currentUser);
   const userProfile = currentUser.profile;
+
+  console.log("commentObj", commentObj);
 
   function getDateFormat(dateStr: string) {
     const date = new Date(dateStr);
@@ -160,30 +189,44 @@ const CommentItem = ({
   };
 
   return (
-    <TouchableOpacity
+    <TouchableWithoutFeedback
       onLongPress={() => onLongPressComment()}
       delayLongPress={300}>
       <Container>
         <TouchableWithoutFeedback onPress={() => moveToUserProfile()}>
           <ProfileImageContainer>
-            <ProfileImage source={{uri: profileImage}} />
+            <ProfileImage source={{uri: profileImage ? profileImage : "https://pickk.one/images/defaultProfile.jpg"}} />
           </ProfileImageContainer>
         </TouchableWithoutFeedback>
         <CommentRightContainer>
           <HeaderContainer>
+            <HeaderLeftContainer>
             <NicknameText>{nickname}</NicknameText>
-          </HeaderContainer>
-          <CommentDescripText>{description}</CommentDescripText>
-          <FooterContainer>
-            <TouchableWithoutFeedback
-              onPress={() => clickReply(nickname, commentId)}>
-              <ReplyText>답글달기</ReplyText>
-            </TouchableWithoutFeedback>
             <CreateAtText>{getDateFormat(createdDate)}</CreateAtText>
+            </HeaderLeftContainer>
+            <TouchableWithoutFeedback onPress={() => openCommentActionSheet(userId, nickname, commentId)}>
+            <MoreViewContainer>
+              <MoreViewIcon
+              source={require('~/Assets/Images/Comment/ic_moreView.png')}/>
+            </MoreViewContainer>
+            </TouchableWithoutFeedback>
+          </HeaderContainer>
+          <BodyContainer>
+          <CommentDescripText>{description}</CommentDescripText>
+          </BodyContainer>
+          <FooterContainer>
+            {isVisibleReplyButton && (
+            <TouchableWithoutFeedback
+              onPress={() => clickReply(commentObj, commentId)}>
+              <ReplyContainer>
+              <ReplyText>답글달기</ReplyText>
+              </ReplyContainer>
+            </TouchableWithoutFeedback>
+            )}
           </FooterContainer>
         </CommentRightContainer>
       </Container>
-    </TouchableOpacity>
+    </TouchableWithoutFeedback>
   );
 };
 

@@ -27,6 +27,8 @@ import DeviceInfo from 'react-native-device-info';
 import ReviewList from '~/Components/Presentational/ReviewList';
 import ShowingRating from '~/Components/Presentational/ShowingRating';
 import RatingReport from '~/Components/Presentational/RatingReport';
+import WeeklyTreatmentTimeInfo from '~/Components/Presentational/DentalDetailScreen/WeeklyTreatmentTimeInfo'
+
 const ratingStarImage = require('~/Assets/Images/Indicator/ic_ratingStar.png');
 const Container = Styled.View`
  flex: 1;
@@ -296,6 +298,10 @@ font-family: NanumSquare;
 line-height: 22;
 `;
 
+const WeeklyTreatmentTimeInfoContainer = Styled.View`
+margin-top: 16px;
+`;
+
 const DentistInfoListContainer = Styled.View`
 `;
 
@@ -340,16 +346,14 @@ interface Props {
 
 const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
   console.log("DentalCollapsibleTabView dentalDetailInfo", dentalDetailInfo);
-  const [collapsibleViewHeight, setCollapsibleViewHeight] = useState<number>(DeviceInfo.hasNotch() ? hp('68.5%') : hp('76.3%'));
+  const [collapsibleViewHeight, setCollapsibleViewHeight] = useState<number>(DeviceInfo.hasNotch() ? hp('38.54%') : hp('46.54%'));
   const [tabIndex, setIndex] = useState(0);
   const [routes] = useState([
     {key: 'detailInfo', title: '상세 정보'},
     {key: 'review', title: '리뷰'},
   ]);
 
-  /**
-   * ref
-   */
+  // ref  
   const scrollY = useRef(new Animated.Value(0)).current;
   const tabScrollX = useRef(new Animated.Value(0)).current;
   const headerScrollY = useRef(new Animated.Value(0)).current;
@@ -373,6 +377,8 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
    const specialTreatmentInfo = dentalDetailInfo.clinicInfoBody.SpecialTreatment;
    const dentistInfo = dentalDetailInfo.clinicInfoBody.dentistInfo;
    const parkingInfo = dentalDetailInfo.clinicInfoBody.parkingInfo;
+
+   const todayIndex = new Date().getDay();
 
   /**
    * PanResponder for header
@@ -573,35 +579,13 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
             <CoverImageContainer>
                 <CoverImage
                 source={{uri:""}}/>
-                <CertificationIcon
-                style={styles.certificationIconShadow}/>
             </CoverImageContainer>
-            <RepresentingKeywordContainer>
-                <RepresentingKeywordItemContainer>
-                    <RepresentingKeywordText>{"진료가능"}</RepresentingKeywordText>
-                </RepresentingKeywordItemContainer>
-            </RepresentingKeywordContainer>
             <BasicInfoContainer>
-                <DentalNameText>{dentalDetailInfo?.clinicInfoHeader?.name}</DentalNameText>
+                <DentalNameText>{dentalDetailInfo?.clinicInfoHeader?.originalName}</DentalNameText>
                 <DentalAddressText>{dentalDetailInfo?.clinicInfoHeader?.address}</DentalAddressText>
+                {/*
                 <RatingText>{dentalDetailInfo?.clinicInfoHeader?.reviewAVGStarRate.all ? "평점" + dentalDetailInfo?.clinicInfoHeader?.reviewAVGStarRate.all.toFixed(0) : "평가 없음"}</RatingText>
-            <BasicInfoItemDivider
-            style={{marginTop: 24}}/>
-            <BasicInfoItemContainer>
-                <BasicInfoLabelText>{"설립"}</BasicInfoLabelText>
-                <BasicInfoLabelDivider/>
-                <BasicInfoValueText>{`${getEstablishedElapsedYear(dentalDetailInfo?.clinicInfoHeader?.launchDate)}년`}</BasicInfoValueText>
-            </BasicInfoItemContainer>
-            <BasicInfoItemDivider/>
-            {dentalDetailInfo.clinicInfoHeader.website.length > 0 && (
-            <BasicInfoItemContainer>
-                <BasicInfoLabelText>{"홈페이지"}</BasicInfoLabelText>
-                <BasicInfoLabelDivider/>
-                <TouchableWithoutFeedback onPress={() => openDentalWebsite(dentalDetailInfo.clinicInfoHeader.website)}>
-                <BasicInfoValueText>{"바로가기"}</BasicInfoValueText>
-                </TouchableWithoutFeedback>
-            </BasicInfoItemContainer>
-            )}
+                */}
             </BasicInfoContainer>
             </CollapsibleContainer>
       </Animated.View>
@@ -674,6 +658,11 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
             </DetailInfoItemContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"진료 시간"}</DetailInfoLabelText>
+              <WeeklyTreatmentTimeInfoContainer>
+              <WeeklyTreatmentTimeInfo
+              todayIndex={todayIndex}
+              treatmentTimeInfo={treatmentTimeInfo}/>
+              </WeeklyTreatmentTimeInfoContainer>
             </DetailInfoItemContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"위치 정보"}</DetailInfoLabelText>
@@ -878,7 +867,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
       <HeaderBar>
       <Animated.View
       style={[styles.header, {opacity: headerOpacity}]}>
-          <HeaderTitleText>{dentalDetailInfo?.clinicInfoHeader?.name}</HeaderTitleText>
+          <HeaderTitleText>{dentalDetailInfo?.clinicInfoHeader?.originalName}</HeaderTitleText>
       </Animated.View>
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <HeaderLeftContainer>
@@ -1437,3 +1426,23 @@ const TEST_DENTAL_REVIEW_DATA = [
     ],
   },
 ];
+
+/*
+<BasicInfoItemDivider
+            style={{marginTop: 24}}/>
+            <BasicInfoItemContainer>
+                <BasicInfoLabelText>{"설립"}</BasicInfoLabelText>
+                <BasicInfoLabelDivider/>
+                <BasicInfoValueText>{`${getEstablishedElapsedYear(dentalDetailInfo?.clinicInfoHeader?.launchDate)}년`}</BasicInfoValueText>
+            </BasicInfoItemContainer>
+            <BasicInfoItemDivider/>
+            {dentalDetailInfo.clinicInfoHeader.website.length > 0 && (
+            <BasicInfoItemContainer>
+                <BasicInfoLabelText>{"홈페이지"}</BasicInfoLabelText>
+                <BasicInfoLabelDivider/>
+                <TouchableWithoutFeedback onPress={() => openDentalWebsite(dentalDetailInfo.clinicInfoHeader.website)}>
+                <BasicInfoValueText>{"바로가기"}</BasicInfoValueText>
+                </TouchableWithoutFeedback>
+            </BasicInfoItemContainer>
+            )}
+*/

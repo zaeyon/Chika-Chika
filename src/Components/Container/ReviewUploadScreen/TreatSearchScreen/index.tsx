@@ -225,6 +225,8 @@ interface Treatment {
   id: number;
 }
 
+let inputText = "";
+
 const TreatSearchScreen = ({navigation, route}: Props) => {
   const [selectedTreatList, setSelectedTreatList] = useState<Array<Object>>([]);
   const [onChangeSelectedTreatList, setOnChangeSelectedTreatList] = useState<
@@ -300,18 +302,28 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
   };
 
   const onChangeTreatInput = (text: string) => {
-    GETTreatmentSearch(text)
+
+    inputText = text;
+
+    if(text === "") {
+
+    } else {
+      GETTreatmentSearch(text)
       .then(function (response: any) {
         console.log('GETTreatmentSearch response', response);
-        response.forEach((item: any, index: any) => {
-          console.log('item', item);
-          console.log('selectedTreatList', selectedTreatList);
-        });
-        setAutoCompletedTreatList(response);
+        // response.forEach((item: any, index: any) => {
+        //   console.log('item', item);
+        //   console.log('selectedTreatList', selectedTreatList);
+        // });
+
+        if(inputText === text) {
+          setAutoCompletedTreatList(response);
+        }
       })
       .catch(function (error: any) {
         console.log('GETTreatmentSearch error', error);
       });
+    }
   };
 
   const goBack = () => {
