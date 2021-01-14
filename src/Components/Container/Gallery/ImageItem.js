@@ -12,7 +12,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import Styled from 'styled-components/native';
-
+import FastImage from 'react-native-fast-image';
 const ImageUnselectedButton = Styled.View`
  width: ${wp('5.5%')}px;
  height: ${wp('5.5%')}px;
@@ -124,7 +124,7 @@ class ImageItem extends Component {
 
     return (
       <View style={{marginBottom: 2, marginRight: 2}}>
-        <Image
+        <FastImage
           source={{uri: image.uri}}
           style={{height: wp('33%'), width: wp('33%')}}
         />

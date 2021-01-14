@@ -10,7 +10,7 @@ import PostCardItem from '~/Components/Presentational/PostCardItem';
 
 const ContainerView = Styled.View`
 width: ${wp('100%')}px;
-height: ${wp('66%')}px;
+
 padding: 24px 0px;
 background: #FFFFFF;
 `;

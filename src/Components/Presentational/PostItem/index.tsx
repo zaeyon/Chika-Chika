@@ -140,9 +140,15 @@ align-items: center;
 flex-direction: row;
 padding: 0px 16px;
 `;
-const SocialInfoView = Styled.View`
+
+const SocialInfoContentView = Styled.View`
 min-width: 64px;
+`;
+
+const SocialInfoView = Styled.View`
+width: auto;
 height: 44px;
+margin-right: auto;
 padding: 0px 4px;
 flex-direction: row;
 align-items: center;
@@ -378,63 +384,62 @@ const PostItem = ({
         </HashTagContainerView>
 
         <SocialInfoContainerView>
-          <TouchableOpacity
-            onPress={() => {
-              toggleSocialLike(id, viewerLikeCommunityPost, type);
-              if (!viewerLikeCommunityPost) {
+          <SocialInfoContentView>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                toggleSocialLike(id, viewerLikeCommunityPost, type);
                 likeButtonScale.setValue(0.8);
                 Animated.spring(likeButtonScale, {
                   toValue: 1,
-                  friction: 6,
-                  tension: 400,
+                  friction: 8,
+                  tension: 300,
                   useNativeDriver: true,
                 }).start();
-              }
-            }}>
-            <SocialInfoView>
-              <Animated.Image
-                style={{
-                  width: 18,
-                  height: 18,
-                  transform: [{scale: likeButtonScale}],
-                }}
-                source={
-                  viewerLikeCommunityPost
-                    ? require('~/Assets/Images/Social/ic/like/focus.png')
-                    : require('~/Assets/Images/Social/ic/like/unfocus.png')
-                }
-              />
-              <SocialInfoText>{postLikeNum}</SocialInfoText>
-            </SocialInfoView>
-          </TouchableOpacity>
-          <SocialInfoView>
-            <Image
-              style={{
-                width: 18,
-                height: 18,
-              }}
-              source={require('~/Assets/Images/Social/ic/comment/unfocus.png')}
-            />
-            <SocialInfoText>{postCommentsNum}</SocialInfoText>
-          </SocialInfoView>
+              }}>
+              <SocialInfoView>
+                <Animated.Image
+                  style={{
+                    width: 18,
+                    height: 18,
+                    transform: [{scale: likeButtonScale}],
+                  }}
+                  source={
+                    viewerLikeCommunityPost
+                      ? require('~/Assets/Images/Social/ic/like/focus.png')
+                      : require('~/Assets/Images/Social/ic/like/unfocus.png')
+                  }
+                />
+                <SocialInfoText>{postLikeNum}</SocialInfoText>
+              </SocialInfoView>
+            </TouchableWithoutFeedback>
+          </SocialInfoContentView>
+          <SocialInfoContentView>
+            <TouchableWithoutFeedback>
+              <SocialInfoView>
+                <Image
+                  style={{
+                    width: 18,
+                    height: 18,
+                  }}
+                  source={require('~/Assets/Images/Social/ic/comment/unfocus.png')}
+                />
+                <SocialInfoText>{postCommentsNum}</SocialInfoText>
+              </SocialInfoView>
+            </TouchableWithoutFeedback>
+          </SocialInfoContentView>
 
-          <TouchableOpacity
-            style={{
-              marginLeft: 'auto',
-            }}
+          <TouchableWithoutFeedback
             onPress={() => {
               toggleSocialScrap(id, viewerScrapCommunityPost, type);
-              if (!viewerScrapCommunityPost) {
-                scrapButtonScale.setValue(0.8);
-                Animated.spring(scrapButtonScale, {
-                  toValue: 1,
-                  friction: 6,
-                  tension: 400,
-                  useNativeDriver: true,
-                }).start();
-              }
+              scrapButtonScale.setValue(0.8);
+              Animated.spring(scrapButtonScale, {
+                toValue: 1,
+                friction: 8,
+                tension: 300,
+                useNativeDriver: true,
+              }).start();
             }}>
-            <SocialInfoView>
+            <SocialInfoView style={{marginLeft: 'auto', marginRight: 0}}>
               <Animated.Image
                 style={{
                   width: 18,
@@ -449,7 +454,7 @@ const PostItem = ({
               />
               <SocialInfoText>{'저장하기'}</SocialInfoText>
             </SocialInfoView>
-          </TouchableOpacity>
+          </TouchableWithoutFeedback>
         </SocialInfoContainerView>
       </ContainerView>
     </TouchableWithoutFeedback>

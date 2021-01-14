@@ -6,6 +6,8 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
+
+
 // Local Component
 import RatingReport from '~/Components/Presentational/RatingReport';
 
@@ -234,7 +236,6 @@ const RatingStarList = ({ratingValue, ratingImage, interval}: any) => {
     let tmpArray = [0, 0, 0, 0, 0]
 
     if(ratingValue % 1 !== 0) {
-        
         for(var i = 0; i < Math.round(ratingValue); i++) {
             if(i === Math.round(ratingValue) - 1) {
                 tmpArray[i] = 0.5
@@ -243,7 +244,6 @@ const RatingStarList = ({ratingValue, ratingImage, interval}: any) => {
             }
         }
     } else if(ratingValue % 1 === 0) {
-        
         for(var i = 0; i < ratingValue; i++) {
             tmpArray[i] = 1
         }

@@ -8,11 +8,11 @@ import {
 
 const ContainerView = Styled.View`
 width: ${wp('76%')}px;
-height: 100%;
+height: auto;
 margin-right: 16px;
 padding: 16px;
 background: #FFFFFF;
-border: 0.5px solid #E2E6ED;
+border: 0.5px #E2E6ED;
 box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
 border-radius: 8px;
 `;
@@ -58,6 +58,7 @@ color: #9AA2A9;
 const ContentView = Styled.View`
 width: 100%;
 height: auto;
+margin-bottom: 16px;
 background: #FFFFFF;
 `;
 

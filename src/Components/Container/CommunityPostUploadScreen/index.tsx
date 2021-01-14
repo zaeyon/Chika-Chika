@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
@@ -13,12 +13,14 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {launchCamera} from 'react-native-image-picker';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 // Local Component
 import {uploadImageToS3} from '~/method/uploadImageToS3';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import CommunityCreatePostScreen from '~/Components/Presentational/CommunityCreatePostScreen';
+import AnimatedModal from '~/Components/Presentational/AnimatedModal';
+// Routes
 import GETAllTagSearch from '~/Routes/Search/GETAllTagSearch';
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import POSTCreateCommunityPost from '~/Routes/Community/createPost/POSTCreateCommunityPost';
@@ -26,23 +28,69 @@ import PUTCommunityPost from '~/Routes/Community/editPost/PUTCommunityPost';
 // redux
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
+import Animated from 'react-native-reanimated';
 
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
  background-color: white;
 `;
 
-const BodyContainerView = Styled.View`
-flex: 1;
+const ModalContentText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+line-height: 20px;
+color: #131F3C;
 `;
 
 interface Props {
   navigation: any;
   route: any;
 }
-interface imageItem {
+
+interface Image {
+  /** Only set if the `include` parameter contains `filename`. */
+  filename?: string | null;
   uri: string;
-  filename: string;
+  base64: string;
+  /** Only set if the `include` parameter contains `imageSize`. */
+  height?: number;
+  /** Only set if the `include` parameter contains `imageSize`. */
+  width?: number;
+  /** Only set if the `include` parameter contains `fileSize`. */
+  fileSize?: number | null;
+  /**
+   * Only set if the `include` parameter contains `playableDuration`.
+   * Will be null for images.
+   */
+  playableDuration?: number | null;
+}
+
+interface Tag {
+  id: number;
+  name: string | undefined;
+  category: string;
+  postNum: number;
+  address: string | undefined;
+  sido: string | undefined;
+  sigungu: string | undefined;
+  emdName: string | undefined;
+  fullCityName: string | undefined;
+  relativeAddress: string | undefined;
+}
+
+interface CameraResponse {
+  didCancel: boolean;
+  errorCode: number;
+  errorMessage: string;
+  base64: string;
+  uri: string;
+  width: number;
+  height: number;
+  fileSize: number;
+  type: string;
+  fileName: string;
 }
 
 const CommunityPostUploadScreen = ({navigation, route}: Props) => {
@@ -89,51 +137,77 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   const mode = prevData ? 'edit' : 'create';
   const [searchQuery, setSearchQuery] = useState('');
   const [searchMode, setSearchMode] = useState(false);
-  const [suggestionList, setSuggestionList] = useState([]);
+  const [suggestionList, setSuggestionList] = useState<Tag[]>([]);
 
   const [description, setDescription] = useState<string>(prevDescription || '');
   const [wantDentistHelp, setWantDentistHelp] = useState<boolean>(
     prevData?.wantDentistHelp || false,
   );
-  const [category, setCategory] = useState(prevType || '질문');
-  const [images, setImages] = useState(prevData?.community_imgs || []);
+  const [category, setCategory] = useState(prevType || '질문방');
+  const [images, setImages] = useState<Image[]>(prevData?.community_imgs || []);
 
-  const [categoryList, setCategoryList] = useState<string[]>(['질문', '자유']);
+  const [categoryList, setCategoryList] = useState<string[]>([
+    '질문방',
+    '수다방',
+  ]);
   const [isPopupShown, setIsPopupShown] = useState<boolean>(true);
 
   const [onSubmit, setOnSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isEmptyPost, setIsEmptyPost] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     //fetch here!!
     console.log(searchQuery);
-    async function fetchData() {
-      setIsLoading(true);
-      const incompleteKorean = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
-      if (!incompleteKorean.test(searchQuery)) {
-        if (searchQuery !== '') {
-          setSuggestionList([]);
-          const response: any = await GETAllTagSearch(jwtToken, searchQuery);
-          setSearchQuery((prev) => {
-            if (prev !== searchQuery) {
-            } else {
-              setIsLoading((prev) => {
-                setSuggestionList(response);
-                console.log(prev);
-                return false;
-              });
-            }
-            return prev;
-          });
-        } else {
-          setSuggestionList([]);
-        }
-      }
-    }
+    setIsLoading(true);
     fetchData();
   }, [searchQuery, searchMode]);
 
-  const formatImages = async (oldImages: Array<imageItem>) => {
+  useEffect(() => {
+    if (description.replace(/\s/g, '').length === 0 && images.length === 0) {
+      setIsEmptyPost(true);
+    } else {
+      setIsEmptyPost(false);
+    }
+  }, [description, images]);
+
+  useEffect(() => {
+    if (route.params?.selectedImages) {
+      setImages(route.params.selectedImages);
+    }
+  }, [route]);
+  const fetchData = useCallback(() => {
+    const incompleteKorean = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
+    if (!incompleteKorean.test(searchQuery)) {
+      if (searchQuery !== '') {
+        setSuggestionList([]);
+        GETAllTagSearch(jwtToken, searchQuery)
+          .then((response: any) => {
+            setSearchQuery((prev) => {
+              if (prev !== searchQuery) {
+              } else {
+                setIsLoading((prev) => {
+                  setSuggestionList(response);
+                  return false;
+                });
+              }
+              return prev;
+            });
+          })
+          .catch((e) => console.log(e));
+      } else {
+        setSuggestionList([]);
+      }
+    } else {
+      setIsLoading((prev) => {
+        setSuggestionList([]);
+        return false;
+      });
+    }
+  }, [searchQuery, jwtToken]);
+
+  const formatImages = useCallback(async (oldImages) => {
     const result = await Promise.all(
       oldImages.map(async (item: any, index: number) => {
         if (item.img_url) {
@@ -160,11 +234,10 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         }
       }),
     );
-    console.log(result);
     return result;
-  };
+  }, []);
 
-  const formatDescription = (oldDescription: string) => {
+  const formatDescription = useCallback((oldDescription: string) => {
     let formattedDescription = [];
     const lines = oldDescription.split(/\r\n|\r|\n/);
 
@@ -184,27 +257,35 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
     }
 
     return formattedDescription.join('\r\n');
-  };
+  }, []);
 
-  const formatCategory = (oldCategory: string) => {
-    if (oldCategory === '질문') {
+  const formatCategory = useCallback((oldCategory: string) => {
+    if (oldCategory === '질문방') {
       return 'Question';
-    } else if (oldCategory === '자유') {
+    } else if (oldCategory === '수다방') {
       return 'FreeTalk';
     } else {
       return 'FreeTalk';
     }
-  };
-  const uploadPost = async () => {
-    console.log(description, wantDentistHelp, category, images);
-    setOnSubmit(true);
-    const formattedImages = await formatImages(images);
-    const formattedDescription = formatDescription(description);
-    const formattedCategory = formatCategory(category);
+  }, []);
 
-    if (description.length === 0 && images.length === 0) {
-      console.log('emptyPost!');
+  const uploadPost = useCallback(async () => {
+    console.log(description, wantDentistHelp, category, images);
+    if (isEmptyPost) {
+      console.log('empty');
+      return;
     } else {
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(
+          200,
+          LayoutAnimation.Types.easeInEaseOut,
+          'opacity',
+        ),
+      );
+      setOnSubmit(true);
+      const formattedImages = await formatImages(images);
+      const formattedDescription = formatDescription(description);
+      const formattedCategory = formatCategory(category);
       const postData = {
         description: formattedDescription,
         wantDentistHelp,
@@ -221,18 +302,32 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         console.log('call layout animation');
       });
     }
-  };
+  }, [
+    description,
+    wantDentistHelp,
+    category,
+    images,
+    prevData,
+    jwtToken,
+    isEmptyPost,
+  ]);
 
-  const editPost = async () => {
+  const editPost = useCallback(async () => {
     console.log(description, wantDentistHelp, category, images);
-    setOnSubmit(true);
-    const formattedImages = await formatImages(images);
-    const formattedDescription = formatDescription(description);
-    const formattedCategory = formatCategory(category);
-
-    if (description.length === 0 && images.length === 0) {
-      console.log('emptyPost!');
+    if (isEmptyPost) {
+      return;
     } else {
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(
+          200,
+          LayoutAnimation.Types.easeInEaseOut,
+          'opacity',
+        ),
+      );
+      setOnSubmit(true);
+      const formattedImages = await formatImages(images);
+      const formattedDescription = formatDescription(description);
+      const formattedCategory = formatCategory(category);
       const postData = {
         description: formattedDescription,
         wantDentistHelp,
@@ -246,23 +341,87 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
             data: response.body.updateCommunityPost,
           };
           dispatch(allActions.communityActions.editPost(form));
-          navigation.navigate('CommunityStackScreen', {
-            screen: 'CommunityDetailScreen',
-            params: {
-              id: prevData.id,
-              type: formattedCategory,
-            },
+          navigation.navigate('CommunityDetailScreen', {
+            id: prevData.id,
+            type: formattedCategory,
           });
         },
       );
     }
-  };
+  }, [
+    description,
+    wantDentistHelp,
+    category,
+    images,
+    prevData,
+    allActions,
+    jwtToken,
+    isEmptyPost,
+  ]);
+
+  const navigateToCamera = useCallback(() => {
+    launchCamera({includeBase64: true}, (response: CameraResponse) => {
+      if (!response.didCancel) {
+        const capturedImage = {
+          filename: response.fileName,
+          fileSize: response.fileSize,
+          width: response.width,
+          height: response.height,
+          uri: response.uri,
+          base64: response.base64,
+          camera: true,
+        };
+        setImages((prev) => [...prev, capturedImage]);
+      }
+    });
+  }, []);
+
+  const navigateToGallery = useCallback(() => {
+    navigation.navigate('ImageSelectScreen', {
+      requestType: 'CommunityPostUploadScreen',
+      selectedImages: images,
+    });
+  }, [images]);
+
+  const unSelectImage = useCallback((image) => {
+    setImages((prev) => {
+      const targetIndex = prev.findIndex(
+        (item) => item.filename === image.filename,
+      );
+      const newSelectedImages = prev.concat();
+      if (targetIndex >= 0) {
+        newSelectedImages.splice(targetIndex, 1);
+        return newSelectedImages;
+      } else {
+        return prev;
+      }
+    });
+  }, []);
+
   return (
     <ContainerView>
+      <AnimatedModal
+        visible={isModalVisible}
+        buttons={[
+          {
+            title: '아니요',
+            onPress: () => setIsModalVisible(false),
+            color: '#9AA2A9',
+          },
+          {
+            title: '예',
+            onPress: () => {
+              setIsModalVisible(false);
+              navigation.goBack();
+            },
+          },
+        ]}>
+        <ModalContentText>{'글 작성을 취소하시겠어요?'}</ModalContentText>
+      </AnimatedModal>
       <NavigationHeader
         headerLeftProps={{
-          onPress: navigation.goBack,
-          text: '취소',
+          onPress: () => setIsModalVisible(true),
+          text: 'arrow',
         }}
         headerRightProps={
           onSubmit
@@ -279,13 +438,14 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
                 text: '완료',
               }
         }
-        headerTitle={mode === 'edit' ? '수정' : '글쓰기'}
+        headerRightDisabled={isEmptyPost}
+        headerRightActiveColor="#00D1FF"
+        headerTitle={mode === 'edit' ? '수정' : '커뮤니티 글쓰기'}
       />
       <CommunityCreatePostScreen
-        navigation={navigation}
-        route={route}
+        navigateToCamera={navigateToCamera}
+        navigateToGallery={navigateToGallery}
         categoryList={categoryList}
-        selectedImages={route.params?.selectedImages}
         searchMode={searchMode}
         setSearchMode={setSearchMode}
         searchQuery={searchQuery}
@@ -293,8 +453,8 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         suggestionList={suggestionList}
         category={category}
         setCategory={setCategory}
-        imageDataList={images}
-        setImageDataList={setImages}
+        selectedImages={images}
+        unSelectImage={unSelectImage}
         paragraph={description}
         setParagraph={setDescription}
         wantDentistHelp={wantDentistHelp}

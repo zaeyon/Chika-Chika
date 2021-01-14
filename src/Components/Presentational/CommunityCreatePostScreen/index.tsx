@@ -1,24 +1,31 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
-  FlatList,
-  View,
+  LayoutAnimation,
+  UIManager,
+  Platform,
   Animated,
   KeyboardAvoidingView,
   Keyboard,
+  TextInput,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import DeviceInfo from 'react-native-device-info';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
+import {
+  isIphoneX,
+  getBottomSpace,
+  getStatusBarHeight,
+} from 'react-native-iphone-x-helper';
 import ActionSheet from 'react-native-actionsheet';
 // Local Component
-import ImageContentView from '~/Components/Presentational/CommunityCreatePostScreen/ImageContentView';
 import SuggestionBarView from '~/Components/Presentational/CommunityCreatePostScreen/SuggestionBarView';
+import AnimatedModal from '~/Components/Presentational/AnimatedModal';
 
 const ContainerView = Styled.View`
  flex: 1;
@@ -38,122 +45,139 @@ padding: 0px 16px 0px 16px;
 const BodyContainerView = Styled.View`
 width: 100%;
 flex: 1;
+margin-bottom: 8px;
 `;
 
 const CategoryContainerView = Styled.View`
-width: ${wp('100%') - 32}px;
+width: auto;
 margin: 4px 16px 0px 16px;
-height: ${hp('7.13')}px;
+height: auto;
+padding: 16px 0px;
 flex-direction: row;
 align-items: center;
+border-color: #E2E6ED;
 border-bottom-width: 1px;
-border-color: #F2F2F2;
-
 `;
 
 const CategoryTitleText = Styled.Text`
-font-size: 16px;
+font-family: NanumSquare;
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
 line-height: 24px;
-margin-right:16px;
+color: #9AA2A9;
+margin-right: 12px;
 `;
 
 const CategoryContentView = Styled.View`
 flex: 1;
 flex-direction: row;
 `;
-const CategoryContentText = Styled.Text`
+
+const CategoryContentFocusedText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
 font-size: 14px;
 line-height: 24px;
+color: #FFFFFF;
+`;
+const CategoryContentText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 24px;
+color: #131F3C;
 `;
 
+const CategorySelectorView = Styled.View`
+width: 63px;
+height: 100%;
+justify-content: center;
+align-items: center;
+background: #00D1FF;
+border-radius: 100;
+position: absolute;
+`;
+
+const CategoryItemView = Styled.View`
+width: auto;
+height: auto;
+margin-right: 8px;
+padding: 4px 12px;
+justify-content: center;
+align-items: center;
+z-index: 1;
+`;
 const PopupAdviceView = Styled.View`
-margin: 8px 16px 0px 16px;
-padding: 12px;
-background: #F7F7F7;
+margin: 16px 16px 0px 16px;
+padding: 16px;
+background: #F5F7F9;
 border-radius: 8px;
 `;
 
 const PopupAdviceText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: normal;
 font-size: 14px;
-line-height: 24px;`;
+line-height: 24px;
+color: #131F3C;
+`;
 
 const ParagraphTextInput = Styled.TextInput`
 width: 100%;
+flex: 1;
 padding: 0px 16px;
-font-size: 16px;
-line-height: 28px;
-`;
-
-const FooterContainerView = Styled.View`
-width: ${wp('100%')}px;
-height: ${hp('10.59%') - getBottomSpace()}px;
-justify-content: flex-end;
-padding: 16px 16px;
-border-top-width: 1px;
-border-color: #C8C8C8;
-`;
-const CheckBoxItemView = Styled.View`
-margin-left: auto;
-height: auto;
-flex-direction: row
-`;
-const CheckBoxImage = Styled.Image`
-width: 24px;
-height: 24px;
-align-items: center;
-justify-content: center;
-border: 1px #C4C4C4;
-border-radius: 4px;
-`;
-const CheckBoxItemText = Styled.Text`
 font-size: 16px;
 line-height: 24px;
 `;
 
 const GalleryContainerView = Styled.View`
-width: 100%;
-flex-direction: row;
-align-items: flex-end;
-padding-left: 16px;
-padding-bottom: 24px;
-margin-top: 16px;
-margin-bottom: ${hp('11%') - getBottomSpace()}px;
+width: ${wp('100%')}px;
+margin-bottom: ${DeviceInfo.hasNotch() ? 0 : 16}px;
 `;
 
-const GalleryUploadTouchableOpacity = Styled(
-  TouchableOpacity as new () => TouchableOpacity,
-)`
-width: ${wp('15%')}px;
-height: ${wp('15%')}px;
-justify-content: center;
-align-items: center;
-margin-right: 20px;
-border: 1px solid #C4C4C4;
-border-radius: 4px;
+const GalleryFlatList = Styled.FlatList`
+width: ${wp('100%')}px;
 `;
 
-const GalleryStatusImage = Styled.Image`
-width: 20px;
-height: 20px;
-`;
-
-const GalleryStatusText = Styled.Text`
-font-size: 12px;
-line-height: 16px;
-margin-top: 3px;
-color: #C4C4C4;
-`;
-
-const GalleryFlatList = Styled(FlatList as new () => FlatList)`
-flex: 1;
-`;
-
-const GalleryContentView = Styled.View`
-width: ${wp('16.8%')}px;
-height: ${wp('16.8%')}px;
-border-radius: 10px;
+const ItemContainerView = Styled.View`
+width: 72px;
+height: 72px;
+margin-right: 8px;
 justify-content: flex-end;
-margin: 0px 4px;
+overflow: visible;
+`;
+
+const ItemImage = Styled.Image`
+width: 67px;
+height: 67px;
+border-width: 0.5px;
+border-color: #E2E6ED;
+border-radius: 2px;
+`;
+
+const DeleteButtonView = Styled.View`
+width: 18px;
+height: 18px;
+align-items: center;
+justify-content: center;
+position: absolute;
+top: 0px;
+right: 0px;
+z-index: 1;
+background: #131F3C80;
+border-radius: 100px;
+`;
+const DeleteButtonImage = Styled.Image`
+width: 9px;
+height: 9px;
+`;
+
+const UploadImageButtonImage = Styled.Image`
+margin: 0px 16px;
 `;
 
 const DeleteImage = Styled.Image`
@@ -161,19 +185,12 @@ width: 16px;
 height: 16px;
 `;
 
-const GalleryContentImage = Styled.Image`
-width: ${wp('15%')}px;
-height: ${wp('15%')}px;
-
-border-radius: 10px;
-
-`;
-
 interface Props {
-  navigation: any;
-  route: any;
+  navigateToCamera: () => void;
+  navigateToGallery: () => void;
   categoryList: any;
   selectedImages: any;
+  unSelectImage: (image: any) => void;
   searchMode: any;
   setSearchMode: any;
   searchQuery: any;
@@ -181,8 +198,6 @@ interface Props {
   suggestionList: any;
   category: string;
   setCategory: any;
-  imageDataList: any;
-  setImageDataList: any;
   paragraph: string;
   setParagraph: any;
   wantDentistHelp: boolean;
@@ -192,11 +207,18 @@ interface Props {
   isLoading: any;
 }
 
+if (Platform.OS === 'android') {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+}
+
 const CommunityCreatePostScreen = ({
-  navigation,
-  route,
+  navigateToCamera,
+  navigateToGallery,
   categoryList,
   selectedImages,
+  unSelectImage,
   searchMode,
   setSearchMode,
   searchQuery,
@@ -204,8 +226,6 @@ const CommunityCreatePostScreen = ({
   suggestionList,
   category,
   setCategory,
-  imageDataList,
-  setImageDataList,
   paragraph,
   setParagraph,
   wantDentistHelp,
@@ -214,9 +234,6 @@ const CommunityCreatePostScreen = ({
   setIsPopupShown,
   isLoading,
 }: Props) => {
-  const [imageRenderList, setImageRenderList] = useState<string[]>(
-    imageDataList,
-  );
   const [cursorIndex, setCursorIndex] = useState(0);
   const [currentHashTagInfo, setCurrentHashTagInfo] = useState({
     startIndex: 0,
@@ -225,170 +242,190 @@ const CommunityCreatePostScreen = ({
   const categoryIndex = useRef(
     new Animated.Value(categoryList.indexOf(category)),
   ).current;
-  const textInputRef = useRef();
-  const actionSheetRef = useRef();
+  const textInputRef = useRef() as
+    | ((instance: TextInput | null) => void)
+    | React.RefObject<TextInput>
+    | null
+    | undefined;
+  const actionSheetRef = useRef() as any;
   const actionSheetItemList = ['취소', '카메라', '앨범'];
 
-  useEffect(() => {
-    let newImages = selectedImages || [];
-    let newImageList = imageDataList.concat(newImages.concat());
-    setImageRenderList(newImageList);
-    setImageDataList(newImageList);
-  }, [selectedImages]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const DismissKeyboard = ({children}: any) => (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      {children}
-    </TouchableWithoutFeedback>
-  );
-  const onPressActionSheet = (index: number) => {
-    switch (actionSheetItemList[index]) {
-      case '카메라':
-        navigateToCamera();
-        break;
-      case '앨범':
-        navigateToGallery();
-        break;
-    }
-  };
-  const deleteImageByFilename = (item: any) => {
-    let newImageList = imageDataList
-      .concat()
-      .filter(
-        (image: any) =>
-          image.filename !== item.filename ||
-          image.img_filename !== item.img_filename,
-      );
-    setImageDataList(newImageList);
-  };
-
-  const navigateToCamera = () => {
-    navigation.navigate('CommunityCamera', {
-      requestType: 'CommunityPostUploadScreen',
-    });
-  };
-  const navigateToGallery = () => {
-    navigation.navigate('CommunityGallery', {
-      requestType: 'CommunityPostUploadScreen',
-    });
-  };
-
-  const renderCategories = (categoryList: any) => {
-    return categoryList.map((item: any, index: number) => {
-      return (
-        <TouchableOpacity
-          key={'category' + index}
-          onPress={() => {
-            Keyboard.dismiss();
-            Animated.timing(categoryIndex, {
-              toValue: index,
-              duration: 100,
-              useNativeDriver: false,
-            }).start();
-            setCategory(categoryList[index]);
-          }}
-          style={{
-            width: wp('16.53%'),
-            height: 'auto',
-            paddingVertical: '1.3%',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 100,
-            zIndex: 1,
-          }}>
-          <CategoryContentText>{item}</CategoryContentText>
-        </TouchableOpacity>
-      );
-    });
-  };
-
-  const completeCurrentHashTag = (selectedHashTag: any) => {
-    const newParagraph =
-      paragraph.charAt(currentHashTagInfo.endIndex) === ' '
-        ? paragraph.slice(0, currentHashTagInfo.startIndex + 1) +
-          selectedHashTag +
-          paragraph.slice(currentHashTagInfo.endIndex)
-        : paragraph.slice(0, currentHashTagInfo.startIndex + 1) +
-          selectedHashTag +
-          ' ' +
-          paragraph.slice(currentHashTagInfo.endIndex);
-
-    setParagraph(newParagraph);
-    setSearchQuery('');
-  };
-
-  const getCursorInfo = (index: number, text?: string) => {
-    const field = text ? text : paragraph;
-    let searchStartIndex = index - 1;
-    let searchEndIndex = index - 1;
-    let isTag = false;
-    while (searchStartIndex >= 0) {
-      if (field.charAt(searchStartIndex) == '#') {
-        isTag = true;
-        while (searchEndIndex < field.length) {
-          if (
-            field.charAt(searchEndIndex) == ' ' ||
-            field.charAt(searchEndIndex) == '\n'
-          ) {
-            break;
-          }
-          searchEndIndex += 1;
-        }
-        break;
-      } else if (
-        field.charAt(searchStartIndex) == ' ' ||
-        field.charAt(searchStartIndex) == '\n'
-      ) {
-        break;
+  const onPressActionSheet = useCallback(
+    (index: number) => {
+      switch (actionSheetItemList[index]) {
+        case '카메라':
+          navigateToCamera();
+          break;
+        case '앨범':
+          navigateToGallery();
+          break;
       }
-      searchStartIndex -= 1;
-    }
+    },
+    [actionSheetItemList],
+  );
 
-    const cursorInfo = {
-      isTag,
-      startIndex: searchStartIndex,
-      endIndex: searchEndIndex,
-    };
-    return cursorInfo;
-  };
+  const renderCategories = useCallback(
+    (categoryList: any) => {
+      return categoryList.map((item: any, index: number) => {
+        return (
+          <TouchableWithoutFeedback
+            key={'category' + index}
+            onPress={() => {
+              Keyboard.dismiss();
+              Animated.spring(categoryIndex, {
+                toValue: index,
+                velocity: 7,
+                friction: 100,
+                tension: 100,
+                useNativeDriver: false,
+              }).start();
+              setCategory(categoryList[index]);
+            }}>
+            <CategoryItemView>
+              {index === 0 ? (
+                category === '질문방' ? (
+                  <CategoryContentFocusedText>
+                    {item}
+                  </CategoryContentFocusedText>
+                ) : (
+                  <CategoryContentText>{item}</CategoryContentText>
+                )
+              ) : category === '수다방' ? (
+                <CategoryContentFocusedText>{item}</CategoryContentFocusedText>
+              ) : (
+                <CategoryContentText>{item}</CategoryContentText>
+              )}
+            </CategoryItemView>
+          </TouchableWithoutFeedback>
+        );
+      });
+    },
+    [categoryIndex, Keyboard, category],
+  );
+
+  const completeCurrentHashTag = useCallback(
+    (selectedHashTag: any) => {
+      const newParagraph =
+        paragraph.charAt(currentHashTagInfo.endIndex) === ' '
+          ? paragraph.slice(0, currentHashTagInfo.startIndex + 1) +
+            selectedHashTag +
+            paragraph.slice(currentHashTagInfo.endIndex)
+          : paragraph.slice(0, currentHashTagInfo.startIndex + 1) +
+            selectedHashTag +
+            ' ' +
+            paragraph.slice(currentHashTagInfo.endIndex);
+
+      setParagraph(newParagraph);
+      setSearchQuery('');
+    },
+    [currentHashTagInfo],
+  );
+
+  const getCursorInfo = useCallback(
+    (index: number, text?: string) => {
+      const field = text ? text : paragraph;
+      let searchStartIndex = index - 1;
+      let searchEndIndex = index - 1;
+      let isTag = false;
+      while (searchStartIndex >= 0) {
+        if (field.charAt(searchStartIndex) == '#') {
+          isTag = true;
+          while (searchEndIndex < field.length) {
+            if (
+              field.charAt(searchEndIndex) == ' ' ||
+              field.charAt(searchEndIndex) == '\n'
+            ) {
+              break;
+            }
+            searchEndIndex += 1;
+          }
+          break;
+        } else if (
+          field.charAt(searchStartIndex) == ' ' ||
+          field.charAt(searchStartIndex) == '\n'
+        ) {
+          break;
+        }
+        searchStartIndex -= 1;
+      }
+
+      const cursorInfo = {
+        isTag,
+        startIndex: searchStartIndex,
+        endIndex: searchEndIndex,
+      };
+      return cursorInfo;
+    },
+    [paragraph],
+  );
+
+  const renderImageItem = useCallback(
+    ({item, index}) => (
+      <TouchableWithoutFeedback onPress={() => unSelectImage(item)}>
+        <ItemContainerView>
+          <DeleteButtonView>
+            <DeleteButtonImage
+              source={require('~/Assets/Images/TopTab/ic/white.png')}
+            />
+          </DeleteButtonView>
+          <ItemImage
+            source={
+              item.img_url
+                ? {uri: item.img_url} // edit mode s3 image
+                : {
+                    uri: item.base64
+                      ? 'data:image/jpeg;base64,' + item.base64
+                      : item.uri,
+                  }
+            }
+          />
+        </ItemContainerView>
+      </TouchableWithoutFeedback>
+    ),
+    [],
+  );
+
+  const renderListHeader = useCallback(
+    () => (
+      <TouchableWithoutFeedback
+        onPress={() => {
+          actionSheetRef.current.show();
+        }}>
+        <UploadImageButtonImage
+          source={require('~Assets/Images/Camera/Master/community/btn/uploadImage.png')}
+        />
+      </TouchableWithoutFeedback>
+    ),
+    [],
+  );
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}>
       <ContainerView>
         <BodyContainerView>
           <CategoryContainerView>
             <CategoryTitleText>카테고리</CategoryTitleText>
             <CategoryContentView>
               {renderCategories(categoryList)}
-              <Animated.View
+              <CategorySelectorView
+                as={Animated.View}
                 style={{
-                  width: wp('16.53'),
-                  height: 'auto',
-                  paddingVertical: '1.3%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: '#C4C4C4',
-                  borderRadius: 100,
-                  position: 'absolute',
                   transform: [
                     {
                       translateX: categoryIndex.interpolate({
                         inputRange: [0, categoryList.length - 1],
-                        outputRange: [
-                          0,
-                          wp('16.53') * (categoryList.length - 1),
-                        ],
+                        outputRange: [0, 71 * (categoryList.length - 1)],
                         extrapolate: 'clamp',
                       }),
                     },
                   ],
-                }}>
-                <View
-                  style={{
-                    height: 30,
-                  }}
-                />
-              </Animated.View>
+                }}
+              />
             </CategoryContentView>
           </CategoryContainerView>
           {isPopupShown ? (
@@ -402,6 +439,9 @@ const CommunityCreatePostScreen = ({
                   top: 12,
                 }}
                 onPress={() => {
+                  LayoutAnimation.configureNext(
+                    LayoutAnimation.create(100, 'easeInEaseOut', 'opacity'),
+                  );
                   setIsPopupShown(false);
                 }}>
                 <DeleteImage
@@ -411,27 +451,26 @@ const CommunityCreatePostScreen = ({
               <PopupAdviceText>
                 해시태그로 병원, 증상, 진료항목을 추가해보세요!
               </PopupAdviceText>
-              <PopupAdviceText
-                style={{
-                  color: '#0075FF',
-                }}>
+              <PopupAdviceText>
                 #햇살365치과 #잇몸통증 #잇몸성형
               </PopupAdviceText>
             </PopupAdviceView>
           ) : null}
           <KeyboardAvoidingView
             behavior="padding"
+            keyboardVerticalOffset={
+              (DeviceInfo.hasNotch() ? getBottomSpace() : 16) + 62.5
+            }
             style={{
               width: '100%',
               marginTop: 16,
-              height: isPopupShown ? hp('69%') : hp('80%'),
+              flex: 1,
             }}>
             <ParagraphTextInput
-              style={{
-                flex: 1,
-                marginBottom: suggestionList.length > 2 ? 5 : 0,
-              }}
               ref={textInputRef}
+              style={{
+                paddingBottom: searchQuery ? hp('7.39%') * 3 : 8,
+              }}
               placeholderTextColor="#C4C4C4"
               placeholder="수다방에 올릴 게시물을 작성해주세요!"
               multiline
@@ -477,56 +516,32 @@ const CommunityCreatePostScreen = ({
                 }
               }}
               autoCorrect={false}></ParagraphTextInput>
-            <GalleryContainerView>
-              <GalleryUploadTouchableOpacity
-                onPress={() => {
-                  actionSheetRef.current.show();
-                }}>
-                <GalleryStatusImage
-                  source={require('~/Assets/Images/Picture/camera.png')}
-                />
-                <GalleryStatusText>
-                  <GalleryStatusText style={{color: '#0075FF'}}>
-                    {imageDataList.length}
-                  </GalleryStatusText>
-                  /5
-                </GalleryStatusText>
-              </GalleryUploadTouchableOpacity>
-              <GalleryFlatList
-                data={imageRenderList}
-                horizontal
-                indicatorStyle="white"
-                keyExtractor={(item) => item.filename}
-                renderItem={({item, index}) => (
-                  <ImageContentView
-                    item={item}
-                    index={index}
-                    deleteImageByFilename={deleteImageByFilename}
-                  />
-                )}
-              />
-            </GalleryContainerView>
           </KeyboardAvoidingView>
         </BodyContainerView>
-        <FooterContainerView>
-          <CheckBoxItemView>
-            <TouchableOpacity
-              style={{
-                backgroundColor: wantDentistHelp ? 'red' : 'white',
-                marginRight: 8,
-              }}
-              onPress={() => {
-                setWantDentistHelp((prev: any) => !prev);
-              }}></TouchableOpacity>
-            <CheckBoxItemText>의사에게 물어보기</CheckBoxItemText>
-          </CheckBoxItemView>
-        </FooterContainerView>
+        <GalleryContainerView>
+          <GalleryFlatList
+            data={selectedImages}
+            horizontal
+            alwaysBounceHorizontal={false}
+            scrollIndicatorInsets={{bottom: -1, left: 13, right: 8}}
+            contentContainerStyle={{
+              paddingVertical: 8,
+            }}
+            keyExtractor={(item: any) =>
+              'preview' + (item.filename || item.img_filename)
+            }
+            renderItem={renderImageItem}
+            ListHeaderComponent={renderListHeader}
+          />
+        </GalleryContainerView>
+
         <SuggestionBarView
           suggestionList={suggestionList}
           searchQuery={searchQuery}
           completeCurrentHashTag={completeCurrentHashTag}
           isLoading={isLoading}
         />
+
         <ActionSheet
           ref={actionSheetRef}
           options={actionSheetItemList}

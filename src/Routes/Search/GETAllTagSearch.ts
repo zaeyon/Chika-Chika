@@ -16,7 +16,6 @@ const GETAllTagSearch = (jwtToken: string, query: string) => {
             },
         })
         .then(function(response) {
-        
             resolve(response.data);
             
         })
@@ -24,7 +23,6 @@ const GETAllTagSearch = (jwtToken: string, query: string) => {
             console.log('fail',error)
             reject(error.response);
         })
-
     })
 }
 

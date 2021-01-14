@@ -73,13 +73,13 @@ color: #000000;
 `;
 
 const CoverImageContainer = Styled.View`
-width: ${wp('100%')};
-height: ${hp('31.5%')};
+width: ${wp('100%')}px;
+height: ${hp('31.5%')}px;
 `;
 
 const CoverImage = Styled.Image`
-width: ${wp('100%')};
-height: ${hp('31.5%')};
+width: ${wp('100%')}px;
+height: ${hp('31.5%')}px;
 `;
 
 const RepresentingKeywordContainer = Styled.View`
@@ -247,8 +247,8 @@ margin-top: 28px;
 `;
 
 const LocationMapContainer = Styled.View`
-width: ${wp('91.466%')};
-height: ${wp('55.836%')};
+width: ${wp('91.466%')}px;
+height: ${wp('55.836%')}px;
 `;
 
 const LocationMapImage = Styled.Image`

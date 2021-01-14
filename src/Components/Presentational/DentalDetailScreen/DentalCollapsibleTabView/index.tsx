@@ -73,14 +73,14 @@ color: #000000;
 `;
 
 const CoverImageContainer = Styled.View`
-width: ${wp('100%')};
-height: ${hp('31.5%')};
+width: ${wp('100%')}px;
+height: ${hp('31.5%')}px;
 background-color: #F5F7F9;
 `;
 
 const CoverImage = Styled.Image`
-width: ${wp('100%')};
-height: ${hp('31.5%')};
+width: ${wp('100%')}px;
+height: ${hp('31.5%')}px;
 `;
 
 const RepresentingKeywordContainer = Styled.View`
@@ -275,7 +275,6 @@ border-bottom-width: 1px;
 padding-bottom: 6px;
 `;
 
-
 const RequestReviseInfoText = Styled.Text`
 width: 120px;
 font-weight: bold;
@@ -325,14 +324,13 @@ color: #000000;
 font-family: NanumSquare
 `;
 
-
 let isReachedTop = false;
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 const tabBarHeight = hp('6.89%');
 // let collapsibleViewHeight = DeviceInfo.hasNotch() ? hp('69%') : hp('74.5%');
-const detailInfoTypeHeight = DeviceInfo.hasNotch() ? hp('10.83%') : hp('15%')
+const detailInfoTypeHeight = DeviceInfo.hasNotch() ? hp('10.83%') : hp('15%');
 const headerHeight = getStatusBarHeight() + hp('8%');
 const SafeStatusBar = Platform.select({
   ios: 44,
@@ -340,8 +338,8 @@ const SafeStatusBar = Platform.select({
 });
 
 interface Props {
-  goBack: () => void,
-  dentalDetailInfo: any,
+  goBack: () => void;
+  dentalDetailInfo: any;
 }
 
 const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
@@ -363,20 +361,20 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
   const headerScrollStart = useRef(0);
   const _tabIndex = useRef(0);
   const isChangingInfoTypeIndex = useRef<boolean>(false);
- 
-   const headerOpacity = scrollY.interpolate({
-     inputRange: [hp('18%'), hp('28%')],
-     outputRange: [0, 1],
-     extrapolate: 'clamp'
-   })
 
-   const introduction = dentalDetailInfo.clinicInfoBody.description;
-   const treatmentTimeInfo = dentalDetailInfo.clinicInfoBody.treatmentTime;
-   const locationInfo = dentalDetailInfo.clinicInfoBody.location;
-   const treatmentSubjectInfo = dentalDetailInfo.clinicInfoBody.treatmentSubject;
-   const specialTreatmentInfo = dentalDetailInfo.clinicInfoBody.SpecialTreatment;
-   const dentistInfo = dentalDetailInfo.clinicInfoBody.dentistInfo;
-   const parkingInfo = dentalDetailInfo.clinicInfoBody.parkingInfo;
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [hp('18%'), hp('28%')],
+    outputRange: [0, 1],
+    extrapolate: 'clamp',
+  });
+
+  const introduction = dentalDetailInfo.clinicInfoBody.description;
+  const treatmentTimeInfo = dentalDetailInfo.clinicInfoBody.treatmentTime;
+  const locationInfo = dentalDetailInfo.clinicInfoBody.location;
+  const treatmentSubjectInfo = dentalDetailInfo.clinicInfoBody.treatmentSubject;
+  const specialTreatmentInfo = dentalDetailInfo.clinicInfoBody.SpecialTreatment;
+  const dentistInfo = dentalDetailInfo.clinicInfoBody.dentistInfo;
+  const parkingInfo = dentalDetailInfo.clinicInfoBody.parkingInfo;
 
    const todayIndex = new Date().getDay();
 
@@ -535,28 +533,28 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
     syncScrollOffset();
   };
 
-  const getEstablishedElapsedYear = useCallback((establishedDate) => {
+  const getEstablishedElapsedYear = useCallback(
+    (establishedDate) => {
+      const splitedDate = establishedDate.split('-');
+      const currentYear = new Date().getFullYear();
 
-    const splitedDate = establishedDate.split("-");
-    const currentYear = new Date().getFullYear();
-
-    return (currentYear - Number(splitedDate[0]))
-
-  }, [dentalDetailInfo?.clinicInfoHeader?.launchDate])
+      return currentYear - Number(splitedDate[0]);
+    },
+    [dentalDetailInfo?.clinicInfoHeader?.launchDate],
+  );
 
   const openDentalWebsite = async (url: string) => {
-
     // TEST용 url
     //url = "http://www.marudental.com/?gclid=CjwKCAiAudD_BRBXEiwAudakX8qynWvVNaNUSpXQkh2FPPsbeTaGd-RK18o5fA5hpbmencfiqp7rcBoCkwAQAvD_BwE"
 
     const supported = await Linking.canOpenURL(url);
 
-    if(supported) {
-      await Linking.openURL(url)
+    if (supported) {
+      await Linking.openURL(url);
     } else {
-      Alert.alert("병원의 웹사이트로 이동 할 수 없습니다.")
+      Alert.alert('병원의 웹사이트로 이동 할 수 없습니다.');
     }
-  }
+  };
 
   /**
    * render Helper
@@ -569,9 +567,9 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
     });
 
     return (
-      <Animated.View 
-      {...collapsibleViewPanResponder.panHandlers}
-      style={[styles.collapsibleView, {transform: [{translateY: y}]}]}>
+      <Animated.View
+        {...collapsibleViewPanResponder.panHandlers}
+        style={[styles.collapsibleView, {transform: [{translateY: y}]}]}>
         <CollapsibleContainer
         onLayout={(event) => {
           setCollapsibleViewHeight(event.nativeEvent.layout.height)
@@ -647,7 +645,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
             onMomentumScrollEnd={onMomentumScrollEnd}
             contentContainerStyle={{
               paddingTop: collapsibleViewHeight + tabBarHeight,
-              backgroundColor: "#ffffff"
+              backgroundColor: '#ffffff',
             }}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
@@ -689,49 +687,54 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
                   <DetailInfoDescripText>{"-"}</DetailInfoDescripText>
               )}
             </DetailInfoItemContainer>
-            <DetailInfoItemContainer>
-              <DetailInfoLabelText>{"의사 정보"}</DetailInfoLabelText>
+              <DetailInfoItemContainer>
+                <DetailInfoLabelText>{'의사 정보'}</DetailInfoLabelText>
                 <DentistInfoListContainer>
-                {(dentistInfo.specialListDentist !== null) && (
-                <DetailInfoDescripText>{`전문의 ${dentistInfo.specialistDentist}명`}</DetailInfoDescripText>
-                )}
-                {(dentistInfo.generalDentist !== null) && (
-                <DetailInfoDescripText>{`일반의 ${dentistInfo.generalDentist}명`}</DetailInfoDescripText>
-                )}
-                {(dentistInfo.resident !== null) && (
-                <DetailInfoDescripText>{`레지던트 ${dentistInfo.resident}명`}</DetailInfoDescripText>
-                )}
-                {(dentistInfo.intern !== null) && (
-                <DetailInfoDescripText>{`인턴 ${dentistInfo.intern}명`}</DetailInfoDescripText>
-                )}
+                  {dentistInfo.specialListDentist !== null && (
+                    <DetailInfoDescripText>{`전문의 ${dentistInfo.specialistDentist}명`}</DetailInfoDescripText>
+                  )}
+                  {dentistInfo.generalDentist !== null && (
+                    <DetailInfoDescripText>{`일반의 ${dentistInfo.generalDentist}명`}</DetailInfoDescripText>
+                  )}
+                  {dentistInfo.resident !== null && (
+                    <DetailInfoDescripText>{`레지던트 ${dentistInfo.resident}명`}</DetailInfoDescripText>
+                  )}
+                  {dentistInfo.intern !== null && (
+                    <DetailInfoDescripText>{`인턴 ${dentistInfo.intern}명`}</DetailInfoDescripText>
+                  )}
                 </DentistInfoListContainer>
-            </DetailInfoItemContainer>
-            <DetailInfoItemContainer
-            style={{borderWidth: 0}}>
-              <DetailInfoLabelText>{"주차 정보"}</DetailInfoLabelText>
-              {(parkingInfo.parkingAllowNum === 0 && parkingInfo.parkingCost === "" && parkingInfo.parkingNotice === "") && (
-                <DetailInfoDescripText>{"-"}</DetailInfoDescripText>
-              )}
-              {(parkingInfo.parkingAllowNum > 0) && (
-                <DetailInfoDescripText>{`주차 가능 영역 ${parkingInfo.parkingAllowNum}대`}</DetailInfoDescripText>
-              )}
-              {(parkingInfo.parkingCost !== "") && (
-                <DetailInfoDescripText>{`주차 비용 ${parkingInfo.parkingCost}원`}</DetailInfoDescripText>
-              )}
-              {(parkingInfo.parkingNotice !== "") && (
-                <DetailInfoDescripText>{`${parkingInfo.parkingNotice}`}</DetailInfoDescripText>
-              )}
-            </DetailInfoItemContainer>
-            <RequestReviseInfoContainer>
-              <RequestReviseInfoTextContainer>
-              <RequestReviseInfoText>
-                {"정보 수정 요청하기"}
-              </RequestReviseInfoText>
-              </RequestReviseInfoTextContainer>
-            </RequestReviseInfoContainer>
-            <CopyrightDescipContainer>
-              <CopyrightDescipText>병원정보는 건강보험심사평가원의 의료 빅데이터 및 해당 병원이 제공한 정보를 기반으로 작성되었습니다. 본 컨텐츠의 저작권은 제공처에 있으며, 저작권법의 보호를 받습니다.</CopyrightDescipText>
-            </CopyrightDescipContainer>
+              </DetailInfoItemContainer>
+              <DetailInfoItemContainer style={{borderWidth: 0}}>
+                <DetailInfoLabelText>{'주차 정보'}</DetailInfoLabelText>
+                {parkingInfo.parkingAllowNum === 0 &&
+                  parkingInfo.parkingCost === '' &&
+                  parkingInfo.parkingNotice === '' && (
+                    <DetailInfoDescripText>{'-'}</DetailInfoDescripText>
+                  )}
+                {parkingInfo.parkingAllowNum > 0 && (
+                  <DetailInfoDescripText>{`주차 가능 영역 ${parkingInfo.parkingAllowNum}대`}</DetailInfoDescripText>
+                )}
+                {parkingInfo.parkingCost !== '' && (
+                  <DetailInfoDescripText>{`주차 비용 ${parkingInfo.parkingCost}원`}</DetailInfoDescripText>
+                )}
+                {parkingInfo.parkingNotice !== '' && (
+                  <DetailInfoDescripText>{`${parkingInfo.parkingNotice}`}</DetailInfoDescripText>
+                )}
+              </DetailInfoItemContainer>
+              <RequestReviseInfoContainer>
+                <RequestReviseInfoTextContainer>
+                  <RequestReviseInfoText>
+                    {'정보 수정 요청하기'}
+                  </RequestReviseInfoText>
+                </RequestReviseInfoTextContainer>
+              </RequestReviseInfoContainer>
+              <CopyrightDescipContainer>
+                <CopyrightDescipText>
+                  병원정보는 건강보험심사평가원의 의료 빅데이터 및 해당 병원이
+                  제공한 정보를 기반으로 작성되었습니다. 본 컨텐츠의 저작권은
+                  제공처에 있으며, 저작권법의 보호를 받습니다.
+                </CopyrightDescipText>
+              </CopyrightDescipContainer>
             </DetailInfoTabContainer>
           </Animated.ScrollView>
         );
@@ -770,36 +773,48 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
             ListHeaderComponent={() => <View style={{height: 10}} />}
             contentContainerStyle={{
               paddingTop: collapsibleViewHeight + tabBarHeight,
-              backgroundColor: "#ffffff"
+              backgroundColor: '#ffffff',
             }}
             showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            >
+            showsVerticalScrollIndicator={false}>
             <ReviewTabContainer>
-            {dentalDetailInfo.reviews.length > 0 && (
-              <ReviewListContainer>
-              {dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate.all && (
-              <RatingReportContainer>
-              <RatingReport
-              avgRating={dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate.all}
-              priceRating={dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate.cost}
-              serviceRating={dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate.service}
-              treatRating={dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate.treatment}/>
-              </RatingReportContainer>
+              {dentalDetailInfo.reviews.length > 0 && (
+                <ReviewListContainer>
+                  {dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate.all && (
+                    <RatingReportContainer>
+                      <RatingReport
+                        avgRating={
+                          dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate
+                            .all
+                        }
+                        priceRating={
+                          dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate
+                            .cost
+                        }
+                        serviceRating={
+                          dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate
+                            .service
+                        }
+                        treatRating={
+                          dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate
+                            .treatment
+                        }
+                      />
+                    </RatingReportContainer>
+                  )}
+                  <ReviewList reviewList={dentalDetailInfo.reviews} />
+                </ReviewListContainer>
               )}
-              <ReviewList
-              reviewList={dentalDetailInfo.reviews}
-              />
-              </ReviewListContainer>
-            )}
-            {dentalDetailInfo.reviews.length === 0 && (
-              <NoneReviewContainer
-              style={{
-                minHeight: (hp('100%') - (headerHeight + tabBarHeight))
-              }}>
-                <NoneReviewText>{"해당 병원에 등록된 리뷰가 없어요!"}</NoneReviewText>
-              </NoneReviewContainer>
-            )}
+              {dentalDetailInfo.reviews.length === 0 && (
+                <NoneReviewContainer
+                  style={{
+                    minHeight: hp('100%') - (headerHeight + tabBarHeight),
+                  }}>
+                  <NoneReviewText>
+                    {'해당 병원에 등록된 리뷰가 없어요!'}
+                  </NoneReviewText>
+                </NoneReviewContainer>
+              )}
             </ReviewTabContainer>
           </Animated.ScrollView>
         );
@@ -897,10 +912,10 @@ const styles = StyleSheet.create({
     paddingTop: getStatusBarHeight(),
     width: wp('100%'),
     height: getStatusBarHeight() + hp('8%'),
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    paddingLeft: wp('10.6%')
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingLeft: wp('10.6%'),
   },
   label: {fontSize: 14, color: '#2998FF', fontWeight: '800'},
   tab: {
@@ -929,140 +944,100 @@ const styles = StyleSheet.create({
       height: 0,
     },
     shadowOpacity: 0.05,
-    shadowRadius: 16
-  }
+    shadowRadius: 16,
+  },
 });
 
 export default DentalCollapsibleTabView;
 
 const TEST_DENTAL_DETAIL_DATA = {
-  
-    "clinicInfoHeader": {
-        "name": "아너스치과교정과치과의원(강서구-화곡동)",
-        "address": "서울특별시 강서구 강서로 242 3층 307호 (화곡동, 강서힐스테이트상가)",
-        "telNumber": "02-2602-7222",
-        "website": "http://www.honorsdental.com",
-        "launchDate": "2014-10-14",
-        "reviewNum": 15,
-        "conclustionNow": 0,
-        "lunchTimeNow": 0,
-        "reviewAVGStarRate": 3.6
+  clinicInfoHeader: {
+    name: '아너스치과교정과치과의원(강서구-화곡동)',
+    address:
+      '서울특별시 강서구 강서로 242 3층 307호 (화곡동, 강서힐스테이트상가)',
+    telNumber: '02-2602-7222',
+    website: 'http://www.honorsdental.com',
+    launchDate: '2014-10-14',
+    reviewNum: 15,
+    conclustionNow: 0,
+    lunchTimeNow: 0,
+    reviewAVGStarRate: 3.6,
+  },
+  clinicInfoBody: {
+    description: '',
+    treatmentTime: {
+      weekday: {
+        weekdayReceiptNotice: '',
+        weekdayLunchTimeNotice: '',
+        mon: {
+          treatmentTime: ['00:00:00', '00:00:00'],
+          lunchTime: ['00:00:00', '00:00:00'],
+        },
+        tus: {
+          treatmentTime: ['00:00:00', '00:00:00'],
+          lunchTime: ['00:00:00', '00:00:00'],
+        },
+        wed: {
+          treatmentTime: ['00:00:00', '00:00:00'],
+          lunchTime: ['00:00:00', '00:00:00'],
+        },
+        thu: {
+          treatmentTime: ['00:00:00', '00:00:00'],
+          lunchTime: ['00:00:00', '00:00:00'],
+        },
+        fri: {
+          treatmentTime: ['00:00:00', '00:00:00'],
+          lunchTime: ['00:00:00', '00:00:00'],
+        },
+      },
+      sat: {
+        weekendReceiptNotice: '',
+        weekendLunchTimeNotice: '',
+        weekend_non_consulation_notice: '',
+        sat: {
+          treatmentTime: ['00:00:00', '00:00:00'],
+          lunchTime: ['00:00:00', '00:00:00'],
+        },
+      },
+      sunAndHoliday: {
+        weekend_non_consulation_notice: '',
+        treatmentTime: [null, null],
+      },
     },
-    "clinicInfoBody": {
-        "description": "",
-        "treatmentTime": {
-            "weekday": {
-                "weekdayReceiptNotice": "",
-                "weekdayLunchTimeNotice": "",
-                "mon": {
-                    "treatmentTime": [
-                        "00:00:00",
-                        "00:00:00"
-                    ],
-                    "lunchTime": [
-                        "00:00:00",
-                        "00:00:00"
-                    ]
-                },
-                "tus": {
-                    "treatmentTime": [
-                        "00:00:00",
-                        "00:00:00"
-                    ],
-                    "lunchTime": [
-                        "00:00:00",
-                        "00:00:00"
-                    ]
-                },
-                "wed": {
-                    "treatmentTime": [
-                        "00:00:00",
-                        "00:00:00"
-                    ],
-                    "lunchTime": [
-                        "00:00:00",
-                        "00:00:00"
-                    ]
-                },
-                "thu": {
-                    "treatmentTime": [
-                        "00:00:00",
-                        "00:00:00"
-                    ],
-                    "lunchTime": [
-                        "00:00:00",
-                        "00:00:00"
-                    ]
-                },
-                "fri": {
-                    "treatmentTime": [
-                        "00:00:00",
-                        "00:00:00"
-                    ],
-                    "lunchTime": [
-                        "00:00:00",
-                        "00:00:00"
-                    ]
-                }
-            },
-            "sat": {
-                "weekendReceiptNotice": "",
-                "weekendLunchTimeNotice": "",
-                "weekend_non_consulation_notice": "",
-                "sat": {
-                    "treatmentTime": [
-                        "00:00:00",
-                        "00:00:00"
-                    ],
-                    "lunchTime": [
-                        "00:00:00",
-                        "00:00:00"
-                    ]
-                }
-            },
-            "sunAndHoliday": {
-                "weekend_non_consulation_notice": "",
-                "treatmentTime": [
-                    null,
-                    null
-                ]
-            }
+    treatmentSubject: [
+      {
+        name: '치과교정과',
+        Clinic_subject: {
+          SpecialistDentist_NUM: 1,
+          choiceTreatmentDentist_NUM: 0,
         },
-        "treatmentSubject": [
-            {
-                "name": "치과교정과",
-                "Clinic_subject": {
-                    "SpecialistDentist_NUM": 1,
-                    "choiceTreatmentDentist_NUM": 0
-                }
-            }
-        ],
-        "SpecialTreatment": [
-            {
-                "name": "측두하악관절 자극요법"
-            },
-            {
-                "name": "소아야간진료(20시 이후)"
-            }
-        ],
-        "dentistInfo": {
-            "specialistDentist": 1,
-            "generalDentist": 0,
-            "resident": 0,
-            "intern": 1
-        },
-        "parkingInfo": {
-            "parkingAllowNum": 0,
-            "parkingCost": "",
-            "parkingNotice": ""
-        },
-        "location": {
-            "address": "서울특별시 강서구 강서로 242 3층 307호 (화곡동, 강서힐스테이트상가)"
-        }
+      },
+    ],
+    SpecialTreatment: [
+      {
+        name: '측두하악관절 자극요법',
+      },
+      {
+        name: '소아야간진료(20시 이후)',
+      },
+    ],
+    dentistInfo: {
+      specialistDentist: 1,
+      generalDentist: 0,
+      resident: 0,
+      intern: 1,
     },
-}
-
-
+    parkingInfo: {
+      parkingAllowNum: 0,
+      parkingCost: '',
+      parkingNotice: '',
+    },
+    location: {
+      address:
+        '서울특별시 강서구 강서로 242 3층 307호 (화곡동, 강서힐스테이트상가)',
+    },
+  },
+};
 
 const TEST_DENTAL_REVIEW_DATA = [
   {

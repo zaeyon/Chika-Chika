@@ -5,7 +5,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {RNCamera} from 'react-native-camera';
+import {launchCamera} from 'react-native-image-picker';
 
 const ContainerView = Styled.View`
 flex: 1;
@@ -16,18 +16,10 @@ interface Props {
   route: any;
 }
 const InstantCamera = ({navigation, route}: Props) => {
-  return (
-    <ContainerView>
-      <RNCamera
-        style={{
-          width: wp('100%'),
-          height: hp('100%'),
-        }}
-        captureAudio={false}
-        type={RNCamera.Constants.Type.front}
-      />
-    </ContainerView>
-  );
+  useEffect(() => {
+    launchCamera({}, (e) => console.log(e));
+  }, []);
+  return <ContainerView></ContainerView>;
 };
 
 export default InstantCamera;
