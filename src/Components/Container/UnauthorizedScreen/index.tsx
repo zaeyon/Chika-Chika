@@ -67,8 +67,8 @@ const LocalSignUpText = Styled.Text`
 `;
 
 const KakaoLoginButton = Styled.View`
-width: ${wp('91.46%')};
-height: ${wp('14.93%')};
+width: ${wp('91.46%')}px;
+height: ${wp('14.93%')}px;
 border-radius: 8px;
 background-color: #FFE600;
 align-items: center;
@@ -82,8 +82,8 @@ color: #000000;
 
 const GoogleLoginButton = Styled.View`
 margin-top: 16px;
-width: ${wp('91.46%')};
-height: ${wp('14.93%')};
+width: ${wp('91.46%')}px;
+height: ${wp('14.93%')}px;
 border-radius: 8px;
 background-color: #F4F4F4;
 
@@ -98,8 +98,8 @@ color: #000000;
 
 const AppleLoginButton = Styled.View`
 margin-top: 16px;
-width: ${wp('91.46%')};
-height: ${wp('14.93%')};
+width: ${wp('91.46%')}px;
+height: ${wp('14.93%')}px;
 border-radius: 8px;
 background-color: #000000;
 align-items: center;

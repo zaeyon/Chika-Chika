@@ -100,7 +100,7 @@ font-style: normal;
 font-weight: normal;
 font-size: 14px;
 line-height: 16px;
-border: 1px solid #F2F2F2;
+border: 1px #F2F2F2;
 border-radius: 8px;
 `;
 

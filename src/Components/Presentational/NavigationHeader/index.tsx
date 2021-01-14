@@ -18,6 +18,7 @@ import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
+ height: ${wp('14.1%')}px;
  flex-direction: row;
  justify-content: space-between;
  border-bottom-width: 1px;
@@ -68,8 +69,8 @@ padding: 12px 16px 16px 16px;
 const HeaderIconView = Styled.View`
 `;
 const HeaderIcon = Styled.Image`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
+width: 24px;
+height: 24px;
 `;
 
 interface HeaderProps {
@@ -80,27 +81,31 @@ interface HeaderProps {
 interface Props {
   headerLeftProps?: HeaderProps;
   headerRightProps?: HeaderProps;
+  headerLeftDisabled?: boolean;
+  headerRightDisabled?: boolean;
+  headerLeftActiveColor?: string;
+  headerRightActiveColor?: string;
   headerTitle: string;
 }
 const NavigationHeader = ({
   headerLeftProps,
   headerRightProps,
+  headerLeftDisabled = false,
+  headerRightDisabled = false,
+  headerLeftActiveColor = '#000000',
+  headerRightActiveColor = '#000000',
   headerTitle,
 }: Props) => {
   return (
     <HeaderBar>
       <TouchableWithoutFeedback
+        disabled={headerLeftDisabled}
         onPress={() => {
           headerLeftProps?.onPress();
         }}>
         <HeaderLeftContainer>
           {headerLeftProps?.text === 'arrow' ? (
             <HeaderIcon
-              style={{
-                resizeMode: 'contain',
-                width: 24,
-                height: 24,
-              }}
               source={require('~/Assets/Images/HeaderBar/ic_back.png')}
             />
           ) : (
@@ -112,26 +117,26 @@ const NavigationHeader = ({
         <HeaderTitleText>{headerTitle}</HeaderTitleText>
       </HeaderTitleContainer>
       <TouchableWithoutFeedback
+        disabled={headerRightDisabled}
         onPress={() => {
           headerRightProps?.onPress();
         }}>
         <HeaderRightContainer>
           {headerRightProps?.text === 'arrow' ? (
-            <HeaderIconView>
-              <HeaderIcon
-                style={{resizeMode: 'contain', width: 24, height: 24}}
-                source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
-              />
-            </HeaderIconView>
+            <HeaderIcon
+              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
+            />
           ) : headerRightProps?.text === 'viewMore' ? (
-            <HeaderIconView>
-              <HeaderIcon
-                style={{resizeMode: 'contain', width: 24, height: 24}}
-                source={require('~/Assets/Images/HeaderBar/ic_viewMore.png')}
-              />
-            </HeaderIconView>
+            <HeaderIcon
+              source={require('~/Assets/Images/HeaderBar/ic_viewMore.png')}
+            />
           ) : (
-            <HeaderText>{headerRightProps?.text}</HeaderText>
+            <HeaderText
+              style={{
+                color: headerRightDisabled ? '#9AA2A9' : headerRightActiveColor,
+              }}>
+              {headerRightProps?.text}
+            </HeaderText>
           )}
         </HeaderRightContainer>
       </TouchableWithoutFeedback>

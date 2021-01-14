@@ -40,7 +40,7 @@ padding: 7px 16px 13px 15px;
 
 const HeaderBackIcon = Styled.Image`
 width: ${wp('6.4%')}px;
-height: %{wp('6.4%)};
+height: ${wp('6.4%')}px;
 `;
 
 const HeaderTitleText = Styled.Text`

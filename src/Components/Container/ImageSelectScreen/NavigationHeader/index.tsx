@@ -31,7 +31,6 @@ font-family: NanumSquare;
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
-color: #9AA2A9;
 `;
 
 const HeaderLeftContainer = Styled.View`
@@ -53,11 +52,14 @@ z-index: -1;
 
 const HeaderTitleContentView = Styled.View`
 padding: 12px 16px 16px 16px;
+align-items: center;
+flex-direction: row;
 `;
 const HeaderTitleText = Styled.Text`
 font-family: NanumSquare;
 font-weight: 700;
 font-size: 16px; 
+margin-right: 5px;
 `;
 
 const HeaderRightContainer = Styled.View`
@@ -81,6 +83,7 @@ interface HeaderProps {
 }
 
 interface Props {
+  visible: boolean;
   selectedImageNum: number;
   selectedAlbum: string;
   goBack: () => void;
@@ -88,6 +91,7 @@ interface Props {
   onSubmit: () => void;
 }
 const NavigationHeader = ({
+  visible,
   selectedImageNum,
   selectedAlbum,
   goBack,
@@ -110,15 +114,33 @@ const NavigationHeader = ({
       </TouchableWithoutFeedback>
 
       <HeaderTitleContainer>
-        <TouchableWithoutFeedback onPress={() => toggleAlbumList()}>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            toggleAlbumList();
+          }}>
           <HeaderTitleContentView>
             <HeaderTitleText>{selectedAlbum}</HeaderTitleText>
+            <Image
+              style={{
+                transform: [{rotate: visible ? '180deg' : '0deg'}],
+              }}
+              source={require('~/Assets/Images/HeaderBar/dropdownVector.png')}
+            />
           </HeaderTitleContentView>
         </TouchableWithoutFeedback>
       </HeaderTitleContainer>
-      <TouchableWithoutFeedback onPress={() => onSubmit()}>
+      <TouchableWithoutFeedback
+        disabled={selectedImageNum === 0}
+        onPress={() => onSubmit()}>
         <HeaderRightContainer>
-          <HeaderText>{'업로드'}</HeaderText>
+          <HeaderText
+            style={{
+              color: selectedImageNum ? '#000000' : '#9AA2A9',
+            }}>
+            <HeaderText
+              style={{color: '#00D1FF'}}>{`(${selectedImageNum}) `}</HeaderText>
+            {'업로드'}
+          </HeaderText>
         </HeaderRightContainer>
       </TouchableWithoutFeedback>
     </HeaderBar>

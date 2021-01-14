@@ -195,9 +195,9 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
 
   const deorderType = useCallback((oldCategory: string) => {
     if (oldCategory === 'Question') {
-      return '질문';
+      return '질문방';
     } else if (oldCategory === 'FreeTalk') {
-      return '자유';
+      return '수다방';
     }
   }, []);
 

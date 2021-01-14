@@ -6,7 +6,7 @@ export async function uploadImageToS3(imageFile: any) {
     const imageIdArray = imageId.split("/");
     const filenameArray = imageFile.filename.split(".");
     const imageType = `image/${String(filenameArray[1]).toLowerCase()}`
-    const imagePath = `assets-library://asset/asset.${'JPG'}?id=${imageId}&ext=${'JPG'}`
+    const imagePath = imageFile.uri.includes('file://') ? imageFile.uri : `assets-library://asset/asset.${'JPG'}?id=${imageId}&ext=${'JPG'}`
     const imageSize = imageFile.fileSize
 
     const originalName = Date.now() + imageIdArray[0] + "." + filenameArray[1]

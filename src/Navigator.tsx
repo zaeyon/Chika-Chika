@@ -428,14 +428,16 @@ function CommunityPostUploadStackScreen({route}: any) {
         initialParams={{
           data: route.params && route.params.data,
         }}
-      />
-      <CommunityPostUploadStack.Screen
-        name="CommunityCamera"
-        component={InstantCamera}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <CommunityPostUploadStack.Screen
         name="ImageSelectScreen"
         component={ImageSelectScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
     </CommunityPostUploadStack.Navigator>
   );
@@ -461,6 +463,9 @@ function CommunityStackScreen() {
       <CommunityStack.Screen
         name="CommunityPostUploadStackScreen"
         component={CommunityPostUploadStackScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <CommunityStack.Screen
         options={{
@@ -767,7 +772,7 @@ const Navigator = () => {
             );
           })
           .catch((error: any) => {
-            console.log('user error');
+            console.log('get user info error');
           });
       })
       .catch((error) => {

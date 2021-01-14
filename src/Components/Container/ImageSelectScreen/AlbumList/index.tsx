@@ -39,8 +39,10 @@ const AlbumList = ({visible, albums, changeSelectedAlbum}: Props) => {
   const renderSeparator = useCallback(() => <VerticalLineView />, []);
 
   return (
-    <ContainerView style={{zIndex: visible ? 3 : 0}}>
+    <ContainerView
+      style={{zIndex: visible ? 3 : 0, height: visible ? '100%' : 0}}>
       <FlatList
+        keyExtractor={(item) => item.title}
         data={albums}
         renderItem={renderAlbumItem}
         ItemSeparatorComponent={renderSeparator}

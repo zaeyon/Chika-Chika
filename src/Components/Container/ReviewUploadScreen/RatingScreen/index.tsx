@@ -139,7 +139,7 @@ color: #0075FF;
 `;
 
 const RatingItemContainer = Styled.View`
-width: ${wp('91.73')};
+width: ${wp('91.73')}px;
 height: ${wp('27.99%')}px;
 justify-content: center;
 align-items: center;

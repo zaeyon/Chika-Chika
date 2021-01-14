@@ -89,7 +89,7 @@ const ReservationTouchableOpacity = Styled(
 )`
 width: 100%;
 height: 100%;
-border: 1px solid #C4C4C4;
+border: 1px #C4C4C4;
 border-radius: 8px;
 background: white;
 justify-content: center;
