@@ -42,7 +42,7 @@ margin-top: 22px;
 const ModalButtonItemView = Styled.TouchableHighlight`
 flex: 1;
 height: 100%;
-background: rgba(255, 255, 255, 0.9);
+background: #FFFFFF;
 align-items: center;
 justify-content: center;
 border-top-width: 1px;
