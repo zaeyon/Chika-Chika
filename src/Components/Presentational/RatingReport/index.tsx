@@ -175,7 +175,6 @@ const RatingStarList = ({ratingValue, ratingImage, interval}: any) => {
                 tmpArray[i] = 1
             }
         }
-        
     } else if(ratingValue % 1 === 0) {
         
         for(var i = 0; i < ratingValue; i++) {

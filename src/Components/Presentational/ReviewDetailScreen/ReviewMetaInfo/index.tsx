@@ -5,6 +5,7 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {Rating} from 'react-native-ratings';
 
 
 
@@ -19,7 +20,7 @@ border-radius: 16px;
 `;
 
 const PriceInfoContainer = Styled.View`
-padding: 24px 24px 24px 24px;
+padding: 16px 16px 16px 16px;
 background-color: #ffffff;
 `;
 
@@ -35,6 +36,13 @@ const PriceItemContainer = Styled.View`
 flex-direction: row;
 align-items: center;
 justify-content: space-between;
+`;
+
+const InfoValueText = Styled.View`
+font-weight: 400;
+font-size: 12px;
+line-height: 16px;
+color: #000000;
 `;
 
 const ReceiptCertificationContainer = Styled.View`
@@ -111,7 +119,7 @@ font-size: 14px;
 color: #9AA2A9;
 `;
 
-const RatingValueText = Styled.Text`
+const AvgRatingValueText = Styled.Text`
 font-family: NanumSquare;
 margin-left: 4px;
 font-weight: 800;
@@ -177,10 +185,16 @@ border-color: #c4c4c4;
 border-radius: 100px;
 `;
 
+const AvgRatingValueContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+`;
+
 const RatingValueContainer = Styled.View`
 margin-top: 8px;
 flex-direction: row;
 align-items: center;
+justify-content: space-between;
 `;
 
 const RatingImage = Styled.Image`
@@ -191,6 +205,34 @@ height: ${wp('4.26%')}px;
 const StarListContainer = Styled.View`
 flex-direction: row;
 align-items: center;
+`;
+
+const DetailRatingContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+`;
+
+const DetailRatingTypeText = Styled.Text`
+font-weight: 400;
+font-size: 10px;
+color: #000000;
+line-height: 16px;
+`;
+
+const DetailRatingValueText = Styled.Text`
+margin-left: 4px;
+font-weight: 700;
+font-size: 10px;
+color: #000000;
+line-height: 16px;
+`;
+
+const DetailRatingDivider = Styled.View`
+margin-left: 4px;
+margin-right: 4px;
+width: 1px;
+height: ${hp('0.738%')}px;
+background-color: #9AA2A9; 
 `;
 
 interface dentalObj {
@@ -229,61 +271,6 @@ const ReviewMetaInfo = ({totalPrice, certifiedReceipt, ratingObj, treatmentDate,
         formattedAddress = splitedAddress[0] + " " + splitedAddress[1] + " " + splitedAddress[2] + " " + splitedAddress[3] + " " + splitedAddress[4]
     }
 
-
-const RatingStarList = ({ratingValue, ratingImage, interval}: any) => {
-
-    let isInteger = false;
-    let tmpArray = [0, 0, 0, 0, 0]
-
-    if(ratingValue % 1 !== 0) {
-        for(var i = 0; i < Math.round(ratingValue); i++) {
-            if(i === Math.round(ratingValue) - 1) {
-                tmpArray[i] = 0.5
-            } else {
-                tmpArray[i] = 1
-            }
-        }
-    } else if(ratingValue % 1 === 0) {
-        for(var i = 0; i < ratingValue; i++) {
-            tmpArray[i] = 1
-        }
-    }
-
-    return (
-        <StarListContainer>
-            {tmpArray.map((item, index) => {
-                if(item === 0) {
-                    return (
-                        <RatingImage
-                        style={[{tintColor: "#CCD1DD"}, index !== 0 && {marginLeft: 0}]}
-                        source={require('~/Assets/Images/Indicator/ic_ratingStar_empty.png')}/>
-                    )
-                } else if(item === 1) {
-                    return (
-                        <RatingImage
-                        style={index !== 0 && {marginLeft: 0}}
-                        source={require('~/Assets/Images/Indicator/ic_ratingStar_full.png')}/>
-                    )
-                } else if(item === 0.5) {
-                    return (
-                        <RatingImage
-                        style={index !== 0 && {marginLeft: 0}}
-                        source={require('~/Assets/Images/Indicator/ic_ratingStar_half.png')}/>
-                    )
-                } else {
-                    return (
-                        <View
-                        style={{width:0, height: 0}}/>
-                    )
-                } 
-            })}
-            <RatingValueText style={{marginTop: 2, marginLeft: 8}}>{ratingValue.toFixed(1)}</RatingValueText>
-        </StarListContainer>
-    )
-    }
-
-
-
     return (
         <Container>
         <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalObj.id)}>
@@ -303,35 +290,56 @@ const RatingStarList = ({ratingValue, ratingImage, interval}: any) => {
             <RatingInfoContainer>
                 <InfoLabelText>{"회원님의 병원 만족도"}</InfoLabelText>
                 <RatingValueContainer>
-                <RatingStarList
-                ratingValue={ratingObj.avgRating}/>
+                <AvgRatingValueContainer>
+                <Rating
+                type={"custom"}
+                ratingImage={require('~/Assets/Images/Review/ic_ratingStar_swipe.png')}
+                ratingColor={"#00D1FF"}
+                ratingBackgroundColor={"#E2E6ED"}
+                imageSize={wp('4.26%')}
+                ratingCount={5}
+                startingValue={ratingObj.avgRating}
+                readonly={true}/>
+                <AvgRatingValueText>{ratingObj.avgRating}</AvgRatingValueText>
+                </AvgRatingValueContainer>
+                <DetailRatingContainer>
+                    <DetailRatingTypeText>{"시술"}</DetailRatingTypeText>
+                    <DetailRatingValueText>{ratingObj.treatRating}</DetailRatingValueText>
+                    <DetailRatingDivider/>
+                    <DetailRatingTypeText>{"서비스"}</DetailRatingTypeText>
+                    <DetailRatingValueText>{ratingObj.serviceRating}</DetailRatingValueText>
+                    <DetailRatingDivider/>
+                    <DetailRatingTypeText>{"가격"}</DetailRatingTypeText>
+                    <DetailRatingValueText>{ratingObj.priceRating}</DetailRatingValueText>
+                </DetailRatingContainer>
                 </RatingValueContainer>
             </RatingInfoContainer>
             <SectionDevider/>
-            <TreatmentDateInfoContainer>
-                <TreatmentDateText>{formattedTreatmentDate}<TreatmentDateText style={{fontWeight: "400", fontSize: 16}}>{"  방문"}</TreatmentDateText></TreatmentDateText>
-            </TreatmentDateInfoContainer>
-            <SectionDevider/>
             <PriceInfoContainer>
+                <InfoLabelText>{"시술 비용"}</InfoLabelText>
                 <PriceItemContainer>
                     <View style={{flexDirection: "row", alignItems: "center"}}>
-                    {certifiedReceipt && (
+                    {/* {certifiedReceipt && ( */}
                     <ReceiptCertificationContainer>
                         <ReceiptCertificationText>
                             {"영수증인증"}
                         </ReceiptCertificationText>
                     </ReceiptCertificationContainer>
-                    )}
+                    {/* )} */}
                     <TotalPriceText>
                         {totalPrice.toLocaleString() + "원 "}
                     </TotalPriceText>
                     <Text style={{fontWeight: "400", fontSize: 14, color: "#9AA2A9", lineHeight: 24, fontFamily: "NanumSquare"}}>{"(총계)"}</Text>
                     </View>
                     <ViewDetailPriceContainer>
-                    <ViewDetailPriceText>{"상세비용"}</ViewDetailPriceText>
+                    <ViewDetailPriceText>{"상세 비용"}</ViewDetailPriceText>
                     </ViewDetailPriceContainer>
                 </PriceItemContainer>
             </PriceInfoContainer>
+            <SectionDevider/>
+            <TreatmentDateInfoContainer>
+                <TreatmentDateText>{formattedTreatmentDate}<TreatmentDateText style={{fontWeight: "400", fontSize: 16}}>{"  방문"}</TreatmentDateText></TreatmentDateText>
+            </TreatmentDateInfoContainer>
         </Container>
     )
 }
