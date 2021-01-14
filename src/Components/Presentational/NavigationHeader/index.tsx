@@ -18,9 +18,8 @@ import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
- height: ${hp('6.5%')}px;
+ height: ${wp('14.1%')}px;
  flex-direction: row;
- align-items: center;
  justify-content: space-between;
  border-bottom-width: 1px;
  border-color: #E2E6ED;
@@ -28,19 +27,29 @@ const HeaderBar = Styled.View`
 `;
 
 const HeaderText = Styled.Text`
-font-size: 18px;
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
+font-size: 16px;
+color: #9AA2A9;
 `;
 
 const HeaderLeftContainer = Styled.View`
-height: ${hp('6.5%')}px;
-padding: 16px;
+min-width: 44px;
+height: 100%;
+padding: 12px 16px 16px 16px;
 align-items: center;
 flex-direction: row;
 `;
 
 const HeaderTitleContainer = Styled.View`
-height: auto;
+width: 100%;
+position: absolute;
+height: 100%;
+padding: 12px 16px 16px 16px;
 justify-content: center;
+align-items: center;
+z-index: -1;
 `;
 
 const HeaderTitleText = Styled.Text`
@@ -50,8 +59,9 @@ font-size: 16px;
 `;
 
 const HeaderRightContainer = Styled.View`
-height: ${hp('6.5%')}px;
-padding: 16px;
+min-width: 44px;
+height: 100%;
+padding: 12px 16px 16px 16px;
  align-items: center;
  flex-direction: row;
 `;
@@ -59,8 +69,8 @@ padding: 16px;
 const HeaderIconView = Styled.View`
 `;
 const HeaderIcon = Styled.Image`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
+width: 24px;
+height: 24px;
 `;
 
 interface HeaderProps {
@@ -71,30 +81,33 @@ interface HeaderProps {
 interface Props {
   headerLeftProps?: HeaderProps;
   headerRightProps?: HeaderProps;
+  headerLeftDisabled?: boolean;
+  headerRightDisabled?: boolean;
+  headerLeftActiveColor?: string;
+  headerRightActiveColor?: string;
   headerTitle: string;
 }
 const NavigationHeader = ({
   headerLeftProps,
   headerRightProps,
+  headerLeftDisabled = false,
+  headerRightDisabled = false,
+  headerLeftActiveColor = '#000000',
+  headerRightActiveColor = '#000000',
   headerTitle,
 }: Props) => {
-
-  console.log("NavigationHeader statusbarHeight", getStatusBarHeight())
   return (
     <HeaderBar>
       <TouchableWithoutFeedback
-      onPress={() => {
-      headerLeftProps?.onPress();
-      }}>
+        disabled={headerLeftDisabled}
+        onPress={() => {
+          headerLeftProps?.onPress();
+        }}>
         <HeaderLeftContainer>
-        
           {headerLeftProps?.text === 'arrow' ? (
-            <HeaderIconView>
-              <HeaderIcon
-                style={{resizeMode: 'contain'}}
-                source={require('~/Assets/Images/HeaderBar/ic_back.png')}
-              />
-            </HeaderIconView>
+            <HeaderIcon
+              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
+            />
           ) : (
             <HeaderText>{headerLeftProps?.text}</HeaderText>
           )}
@@ -103,28 +116,30 @@ const NavigationHeader = ({
       <HeaderTitleContainer>
         <HeaderTitleText>{headerTitle}</HeaderTitleText>
       </HeaderTitleContainer>
-      <HeaderRightContainer>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            headerRightProps?.onPress();
-          }}>
+      <TouchableWithoutFeedback
+        disabled={headerRightDisabled}
+        onPress={() => {
+          headerRightProps?.onPress();
+        }}>
+        <HeaderRightContainer>
           {headerRightProps?.text === 'arrow' ? (
-            <HeaderIconView>
-              <HeaderIcon
-                source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
-              />
-            </HeaderIconView>
-          ) :
-          (headerRightProps?.text === 'viewMore' ? (
-            <HeaderIconView>
-              <HeaderIcon
-              source={require('~/Assets/Images/HeaderBar/ic_viewMore.png')}/>
-            </HeaderIconView>
+            <HeaderIcon
+              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
+            />
+          ) : headerRightProps?.text === 'viewMore' ? (
+            <HeaderIcon
+              source={require('~/Assets/Images/HeaderBar/ic_viewMore.png')}
+            />
           ) : (
-            <HeaderText>{headerRightProps?.text}</HeaderText>
-          ))}
-        </TouchableWithoutFeedback>
-      </HeaderRightContainer>
+            <HeaderText
+              style={{
+                color: headerRightDisabled ? '#9AA2A9' : headerRightActiveColor,
+              }}>
+              {headerRightProps?.text}
+            </HeaderText>
+          )}
+        </HeaderRightContainer>
+      </TouchableWithoutFeedback>
     </HeaderBar>
   );
 };

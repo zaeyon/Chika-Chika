@@ -83,7 +83,7 @@ color: #595959;
 
 const CircleTimerContainer = Styled.View`
 margin-top: 16px;
-width: ${wp('61.6%')};
+width: ${wp('61.6%')}px;
 height: ${wp('61.6%')}px;
 border-radius: 300px;
 background-color: #ffffff;
@@ -95,23 +95,23 @@ justify-content: center;
 
 const CircleProgressContainer1 = Styled.View`
 flex-direction: row;
-width: ${wp('61.6%')};
+width: ${wp('61.6%')}px;
 height: ${wp('61.6%')}px;
-border-radius: ${wp('30.8%')};
+border-radius: ${wp('30.8%')}px;
 `;
 
 const CircleProgressContainer2 = Styled.View`
 flex-direction: row;
 
-width: ${wp('61.6%')};
+width: ${wp('61.6%')}px;
 height: ${wp('61.6%')}px;
-border-radius: ${wp('30.8%')};
+border-radius: ${wp('30.8%')}px;
 `;
 
 const SemiCircle1 = Styled.View`
-width: ${wp('30.8%')};
+width: ${wp('30.8%')}px;
 height: ${wp('61.6%')}px;
-border-radius: ${wp('30.8%')};
+border-radius: ${wp('30.8%')}px;
 border-bottom-right-radius: 1;
 border-top-right-radius: 0;
 background-color: #eeeeee;
@@ -119,42 +119,42 @@ background-color: #eeeeee;
 
 const BehindSemiCircleContainer = Styled.View`
 flex-direction: row;
-width: ${wp('61.6%')};
+width: ${wp('61.6%')}px;
 height: ${wp('61.6%')}px;
 position: absolute;
 
 `;
 
 const BehindSemiCircle = Styled.View`
-width: ${wp('30.8%')};
+width: ${wp('30.8%')}px;
 height: ${wp('61.6%')}px;
-border-radius: ${wp('30.8%')};
+border-radius: ${wp('30.8%')}px;
 border-bottom-right-radius: 1;
 border-top-right-radius: 0;
 background-color: #eeeeee;
 `;
 
 const SemiCircle2 = Styled.View`
-width: ${wp('30.8%')};
+width: ${wp('30.8%')}px;
 height: ${wp('61.6%')}px;
-border-radius: ${wp('30.8%')};
+border-radius: ${wp('30.8%')}px;
 border-bottom-left-radius: 1;
 border-top-left-radius: 0;
 background-color: red;
 `;
 
 const InvisibleSemiCircle1 = Styled.View`
-width: ${wp('30.8%')};
+width: ${wp('30.8%')}px;
 height: ${wp('61.6%')}px;
-border-radius: ${wp('30.8%')};
+border-radius: ${wp('30.8%')}px;
 border-bottom-left-radius: 1;
 border-top-left-radius: 0;
 `;
 
 const InvisibleSemiCircle2 = Styled.View`
-width: ${wp('30.8%')};
+width: ${wp('30.8%')}px;
 height: ${wp('61.6%')}px;
-border-radius: ${wp('30.8%')};
+border-radius: ${wp('30.8%')}px;
 border-bottom-left-radius: 1;
 border-top-left-radius: 0;
 `;
@@ -177,7 +177,7 @@ align-items: center;
 `;
 
 const RemainingTimeContainer = Styled.View`
-width: ${wp('61.6%')};
+width: ${wp('61.6%')}px;
 height: ${wp('61.6%')}px;
 flex-direction: row;
 align-items: center;
@@ -193,7 +193,7 @@ color: #000000;
 `;
 
 const ShadeSemiCircleContainer1 = Styled.View`
-width: ${wp('61.6%')};
+width: ${wp('61.6%')}px;
 height: ${wp('61.6%')}px;
 flex-direction: row;
 align-items: center;
@@ -201,16 +201,16 @@ position: absolute;
 `;
 
 const ShadeSemiCircle1 = Styled.View`
-width: ${wp('30.8%')};
+width: ${wp('30.8%')}px;
 height: ${wp('61.6%')}px;
-border-radius: ${wp('30.8%')};
+border-radius: ${wp('30.8%')}px;
 border-bottom-right-radius: 1;
 border-top-right-radius: 0;
 background-color: #ffffff;
 `;
 
 const ShadeSemiCircleContainer2 = Styled.View`
-width: ${wp('61.6%')};
+width: ${wp('61.6%')}px;
 height: ${wp('61.6%')}px;
 flex-direction: row;
 align-items: center;
@@ -219,9 +219,9 @@ justify-content: flex-end;
 `;
 
 const ShadeSemiCircle2 = Styled.View`
-width: ${wp('30.8%')};
+width: ${wp('30.8%')}px;
 height: ${wp('61.6%')}px;
-border-radius: ${wp('30.8%')};
+border-radius: ${wp('30.8%')}px;
 border-bottom-left-radius: 1;
 border-top-left-radius: 0;
 background-color: #ffffff;

@@ -73,7 +73,7 @@ import SettingScreen from '~/Components/Container/SettingScreen';
 import CommunityListScreen from '~/Components/Container/CommunityListScreen';
 import CommunityDetailScreen from '~/Components/Container/CommunityDetailScreen';
 import CommunityPostUploadScreen from '~/Components/Container/CommunityPostUploadScreen';
-import CommunityTreatSearchScreen from '~/Components/Container/CommunityPostUploadScreen/TreatSearchScreen';
+import ImageSelectScreen from '~/Components/Container/ImageSelectScreen';
 // Dental Clinic Stack Screen
 import NearDentalMap from '~/Components/Container/NearDentalMap';
 import DentalListScreen from '~/Components/Container/DentalListScreen';
@@ -428,14 +428,16 @@ function CommunityPostUploadStackScreen({route}: any) {
         initialParams={{
           data: route.params && route.params.data,
         }}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <CommunityPostUploadStack.Screen
-        name="CommunityCamera"
-        component={InstantCamera}
-      />
-      <CommunityPostUploadStack.Screen
-        name="CommunityGallery"
-        component={Gallery}
+        name="ImageSelectScreen"
+        component={ImageSelectScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
     </CommunityPostUploadStack.Navigator>
   );
@@ -461,6 +463,9 @@ function CommunityStackScreen() {
       <CommunityStack.Screen
         name="CommunityPostUploadStackScreen"
         component={CommunityPostUploadStackScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <CommunityStack.Screen
         options={{
@@ -767,7 +772,7 @@ const Navigator = () => {
             );
           })
           .catch((error: any) => {
-            console.log('user error');
+            console.log('get user info error');
           });
       })
       .catch((error) => {

@@ -14,6 +14,9 @@ import {
 } from 'react-native-responsive-screen';
 import ActionSheet from 'react-native-actionsheet';
 
+// Local Component
+import AnimatedModal from '~/Components/Presentational/AnimatedModal';
+
 const ContainerView = Styled.ScrollView`
 flex: 1;
 background: #EEEEEE;
@@ -67,7 +70,7 @@ width: auto;
 height: auto;
 margin-top: 8px;
 padding: 8px 18px;
-border: 1px solid #EEEEEE;
+border: 1px #EEEEEE;
 border-radius: 100px;
 `;
 
@@ -195,22 +198,12 @@ align-items: center;
 justify-content: center;
 `;
 
-const ModalContentView = Styled.View`
-width: ${wp('74%')}px;
-height: ${hp('28%')}px;
-align-items: center;
-background: rgba(255, 255, 255, 0.9);
-border-radius: 16px;
-overflow: hidden;
-`;
-
 const ModalTitleText = Styled.Text`
 font-family: NanumSquare;
 font-style: normal;
 font-weight: bold;
 font-size: 18px;
 line-height: 24px;
-margin-top: 24px;
 `;
 
 const ModalDescriptionText = Styled.Text`
@@ -226,7 +219,7 @@ margin-top: 4px;
 const ModalTextInput = Styled.TextInput`
 width: 90%;
 height: 40px;
-border: 0.25px solid #898989;
+border: 0.25px #898989;
 border-radius: 8px;
 background: #FFFFFF;
 margin-top: 16px;
@@ -280,9 +273,6 @@ const EditProfileScreen = ({
   changeProfileBirthdate,
 }: Props) => {
   const [textInput, setTextInput] = useState('');
-  const [nickname, setNickname] = useState(currentUser.nickname);
-  const [gender, setGender] = useState(currentUser.gender);
-  const [birthday, setBirthday] = useState(currentUser.birth);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const genderActionSheetRef: any = useRef();
@@ -290,10 +280,6 @@ const EditProfileScreen = ({
 
   const genderActionSheetItemList = ['취소', '남성', '여성'];
   const imageActionSheetItemList = ['취소', '카메라', '앨범'];
-
-  useEffect(() => {
-    console.log(currentUser);
-  }, [currentUser]);
 
   const onPressGenderActionSheet = useCallback((index: number) => {
     switch (genderActionSheetItemList[index]) {
@@ -347,44 +333,31 @@ const EditProfileScreen = ({
     <ContainerView
       keyboardShouldPersistTaps={'always'}
       showsVerticalScrollIndicator={false}>
-      <Modal animationType="fade" transparent={true} visible={isModalVisible}>
-        <ModalContainerView>
-          <ModalContentView>
-            <ModalTitleText>{'닉네임 변경'}</ModalTitleText>
-            <ModalDescriptionText>
-              {'10자 이내로 입력이 가능합니다.'}
-            </ModalDescriptionText>
-            <ModalTextInput
-              autoFocus={true}
-              autoCorrect={false}
-              maxLength={10}
-              autoCapitalize="none"
-              onChangeText={onChangeText}
-              value={textInput}
-            />
-            <ModalButtonContainerView>
-              <ModalButtonItemView
-                activeOpacity={1}
-                underlayColor="#DDDDDD"
-                onPress={closeModal}
-                style={{
-                  marginRight: 0.5,
-                }}>
-                <ModalButtonText>{'취소'}</ModalButtonText>
-              </ModalButtonItemView>
-              <ModalButtonItemView
-                activeOpacity={1}
-                underlayColor="#DDDDDD"
-                onPress={setUserNickname}
-                style={{
-                  marginLeft: 0.5,
-                }}>
-                <ModalButtonText>{'변경'}</ModalButtonText>
-              </ModalButtonItemView>
-            </ModalButtonContainerView>
-          </ModalContentView>
-        </ModalContainerView>
-      </Modal>
+      <AnimatedModal
+        visible={isModalVisible}
+        buttons={[
+          {
+            title: '취소',
+            onPress: closeModal,
+          },
+          {
+            title: '변경',
+            onPress: setUserNickname,
+          },
+        ]}>
+        <ModalTitleText>{'닉네임 변경'}</ModalTitleText>
+        <ModalDescriptionText>
+          {'10자 이내로 입력이 가능합니다.'}
+        </ModalDescriptionText>
+        <ModalTextInput
+          autoFocus={true}
+          autoCorrect={false}
+          maxLength={10}
+          autoCapitalize="none"
+          onChangeText={onChangeText}
+          value={textInput}
+        />
+      </AnimatedModal>
       <ProfileContainerView>
         <ProfileContentView>
           <TouchableOpacity

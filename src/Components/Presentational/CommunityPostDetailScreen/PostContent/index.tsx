@@ -52,7 +52,7 @@ flex-direction: row;
 align-items: center;
 margin: 4px 8px 4px 0px;
 padding: 8px;
-border: 1px solid #C4C4C4;
+border: 1px  #C4C4C4;
 border-radius: 4px;
 background-color: #C4C4C4;
 color: '#rgb(0, 0, 0)'

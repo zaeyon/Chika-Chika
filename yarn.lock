@@ -6380,6 +6380,11 @@
   "resolved" "https://registry.npmjs.org/react-native-device-info/-/react-native-device-info-7.2.1.tgz"
   "version" "7.2.1"
 
+"react-native-fast-image@^8.3.4":
+  "integrity" "sha512-LpzAdjUphihUpVEBn5fEv5AILe55rHav0YiZroPZ1rumKDhAl4u2cG01ku2Pb7l8sayjTsNu7FuURAlXUUDsow=="
+  "resolved" "https://registry.npmjs.org/react-native-fast-image/-/react-native-fast-image-8.3.4.tgz"
+  "version" "8.3.4"
+
 "react-native-fs@^2.16.6":
   "integrity" "sha512-ZWOooD1AuFoAGY3HS2GY7Qx2LZo4oIg6AK0wbC68detxwvX75R/q9lRqThXNKP6vIo2VHWa0fYUo/SrLw80E8w=="
   "resolved" "https://registry.npmjs.org/react-native-fs/-/react-native-fs-2.16.6.tgz"
@@ -6403,6 +6408,11 @@
     "hoist-non-react-statics" "^3.3.0"
     "invariant" "^2.2.4"
     "prop-types" "^15.7.2"
+
+"react-native-image-resizer@^1.4.1":
+  "integrity" "sha512-70xTt2wS/pT37nH0WdzW8L1X5z2sZuFQpFTDrVyqnA9V/ff8vFq0p0vQIYzO3zSBCm3JJP6IUzZRtEtG2eCl4A=="
+  "resolved" "https://registry.npmjs.org/react-native-image-resizer/-/react-native-image-resizer-1.4.1.tgz"
+  "version" "1.4.1"
 
 "react-native-iphone-x-helper@^1.0.3", "react-native-iphone-x-helper@^1.2.1":
   "integrity" "sha512-/VbpIEp8tSNNHIvstuA3Swx610whci1Zpc9mqNkqn14DkMbw+ORviln2u0XyHG1kPvvwTNGZY6QpeFwxYaSdbQ=="
@@ -6520,7 +6530,7 @@
     "buffer" "^4.5.1"
     "crypto-js" "^3.1.6"
 
-"react-native@0.63.3":
+"react-native@>=0.60.0", "react-native@>=v0.40.0", "react-native@0.63.3":
   "integrity" "sha512-71wq13uNo5W8QVQnFlnzZ3AD+XgUBYGhpsxysQFW/hJ8GAt/J5o+Bvhy81FXichp6IBDJDh/JgfHH2gNji8dFA=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.63.3.tgz"
   "version" "0.63.3"
@@ -6579,7 +6589,7 @@
     "react-is" "^16.8.6"
     "scheduler" "^0.19.1"
 
-"react@16.13.1":
+"react@^15.4.0 || ^16.0.0-alpha", "react@^16.8.6", "react@16.13.1":
   "integrity" "sha512-YMZQQq32xHLX0bz5Mnibv1/LHb3Sqzngu7xstSM+vrkE5Kzr9xE0yMByK5kMoTK30YVJE61WfbxIFFvfeDKT1w=="
   "resolved" "https://registry.npmjs.org/react/-/react-16.13.1.tgz"
   "version" "16.13.1"

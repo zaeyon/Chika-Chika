@@ -5,7 +5,7 @@ const baseUri = serverConfig.baseUri
 
 const GETCommunityPostComments = (jwtToken: string, postId: string) => {
 
-    const uri = baseUri + "/api/v1/comments/lists?postId=" + postId;
+    const uri = baseUri + "/api/v1/comments/lists?type=community&postId=" + postId;
 
     return new Promise(function(resolve, reject) {
 
