@@ -172,8 +172,8 @@ background: #131F3C80;
 border-radius: 100px;
 `;
 const DeleteButtonImage = Styled.Image`
-width: 9px;
-height: 9px;
+width: 16px;
+height: 16px;
 `;
 
 const UploadImageButtonImage = Styled.Image`
@@ -445,7 +445,7 @@ const CommunityCreatePostScreen = ({
                   setIsPopupShown(false);
                 }}>
                 <DeleteImage
-                  source={require('~/Assets/Images/Picture/deleteButton.png')}
+                  source={require('~/Assets/Images/TopTab/ic/cancel.png')}
                 />
               </TouchableOpacity>
               <PopupAdviceText>
@@ -472,7 +472,11 @@ const CommunityCreatePostScreen = ({
                 paddingBottom: searchQuery ? hp('7.39%') * 3 : 8,
               }}
               placeholderTextColor="#C4C4C4"
-              placeholder="수다방에 올릴 게시물을 작성해주세요!"
+              placeholder={
+                category === '질문방'
+                  ? '질문방에 올릴 게시물을 작성해주세요!'
+                  : '수다방에 올릴 게시물을 작성해주세요!'
+              }
               multiline
               value={paragraph}
               scrollEnabled={true}

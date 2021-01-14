@@ -98,8 +98,6 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
     '움직이는 항목',
     'Live Photo',
     'Live Photo',
-    '최근 항목',
-    '최근 항목',
   ]);
 
   const [selectedImages, setSelectedImages] = useState<Image[]>(
@@ -110,11 +108,11 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
   useEffect(() => {
     CameraRoll.getPhotos({
       first: 89,
-      groupTypes: 'All',
-      groupName: '최근 항목',
+      groupTypes: 'init',
+      groupName: 'init',
     }).then((photos) => {
       const result = {
-        title: '최근 항목',
+        title: photos.edges[0].node.group_name,
         type: 2,
         photos: photos.edges,
         page_info: photos.page_info,
@@ -129,15 +127,8 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
       const filteredAlbums: Album[] = albumInfos.filter(
         (album) => !uselessAlbums.includes(album.title),
       );
-      const recentlyAddedAlbum: Album | undefined = albumInfos.find(
-        (item) => item.title === '최근 항목',
-      );
 
-      if (recentlyAddedAlbum) {
-        setAlbumInfos([recentlyAddedAlbum, ...filteredAlbums]);
-      } else {
-        setAlbumInfos(filteredAlbums);
-      }
+      setAlbumInfos(filteredAlbums);
 
       fetchGalleryData(filteredAlbums);
     });

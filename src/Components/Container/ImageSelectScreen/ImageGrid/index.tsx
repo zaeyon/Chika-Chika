@@ -16,7 +16,6 @@ const ContainerView = Styled.View`
 width: ${wp('100% ')}px;
 height: 100%;
 justify-content: center;
-align-items: center;
 position: absolute;
 background: #FFFFFF;
 `;
@@ -137,6 +136,7 @@ const ImageGrid = ({
   return (
     <ContainerView style={{height: selectedAlbum === title ? '100%' : 0}}>
       <FlatList
+        alwaysBounceVertical={false}
         keyExtractor={(item, index) => item.filename + String(index)}
         numColumns={3}
         data={[0, ...albumData]}
