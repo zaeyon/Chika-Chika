@@ -124,20 +124,19 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
 
   const uploadComment = useCallback(
     (comment: string) => {
-      POSTCommunityPostComment(jwtToken, postData.id, comment).then(
-        (response: any) => {
-          console.log(response);
-          if (response.body.statusText === 'Created') {
-            console.log('Created!');
-            const form = {
-              type: postData.type,
-              id: postData.id,
-            };
-            dispatch(allActions.communityActions.createComment(form));
-            fetchPostComments(postData.id);
-          }
-        },
-      );
+      POSTCommunityPostComment(jwtToken, postData.id, comment)
+        .then((response: any) => {
+          console.log('Created!');
+          const form = {
+            type: postData.type,
+            id: postData.id,
+          };
+          dispatch(allActions.communityActions.createComment(form));
+          setComments(response);
+        })
+        .catch((e) => {
+          console.log(e.body.message);
+        });
     },
     [jwtToken, postData],
   );

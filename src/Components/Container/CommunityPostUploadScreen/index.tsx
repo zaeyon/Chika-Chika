@@ -165,7 +165,6 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   }, [searchQuery, searchMode]);
 
   useEffect(() => {
-    console.log(description);
     if (description.replace(/\s/g, '').length === 0 && images.length === 0) {
       setIsEmptyPost(true);
     } else {
@@ -185,13 +184,11 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         setSuggestionList([]);
         GETAllTagSearch(jwtToken, searchQuery)
           .then((response: any) => {
-            console.log('response', response);
             setSearchQuery((prev) => {
               if (prev !== searchQuery) {
               } else {
                 setIsLoading((prev) => {
                   setSuggestionList(response);
-                  console.log(response);
                   return false;
                 });
               }
@@ -343,7 +340,6 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
             id: prevData.id,
             data: response.body.updateCommunityPost,
           };
-          console.log('res', response);
           dispatch(allActions.communityActions.editPost(form));
           navigation.navigate('CommunityDetailScreen', {
             id: prevData.id,
@@ -375,7 +371,6 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
           base64: response.base64,
           camera: true,
         };
-        console.log(capturedImage);
         setImages((prev) => [...prev, capturedImage]);
       }
     });
@@ -394,7 +389,6 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         (item) => item.filename === image.filename,
       );
       const newSelectedImages = prev.concat();
-      console.log(targetIndex);
       if (targetIndex >= 0) {
         newSelectedImages.splice(targetIndex, 1);
         return newSelectedImages;
