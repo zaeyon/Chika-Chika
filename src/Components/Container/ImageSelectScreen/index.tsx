@@ -90,7 +90,7 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
   const [recentlyAdded, setRecentlyAdded] = useState<AlbumInfo>();
 
   const [showAlbumList, setShowAlbumList] = useState(false);
-  const [selectedAlbum, setSelectedAlbum] = useState('최근 항목');
+  const [selectedAlbum, setSelectedAlbum] = useState('');
   const [uselessAlbums, setUselessAlbums] = useState([
     '파노라마',
     '최근 삭제된 항목',
@@ -111,6 +111,7 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
       groupTypes: 'init',
       groupName: 'init',
     }).then((photos) => {
+      setSelectedAlbum(photos.edges[0].node.group_name);
       const result = {
         title: photos.edges[0].node.group_name,
         type: 2,
@@ -229,9 +230,7 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
         );
       } else {
       }
-      const targetIndex = prev.findIndex(
-        (item) => item.filename === image.filename,
-      );
+      const targetIndex = prev.findIndex((item) => item.uri === image.uri);
       const newSelectedImages = prev.concat();
       console.log(targetIndex);
       if (targetIndex >= 0) {
