@@ -174,6 +174,7 @@ const PostContent = ({
     Clinics,
     community_imgs,
   } = data;
+  console.log(community_imgs);
 
   const formatElapsedDate = useCallback((elapsedTime: number) => {
     if (elapsedTime / (24 * 3600 * 1000) > 1) {

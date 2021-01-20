@@ -10,6 +10,7 @@ import FastImage from 'react-native-fast-image';
 import {
   PanGestureHandler,
   PinchGestureHandler,
+  TapGestureHandler,
   State,
 } from 'react-native-gesture-handler';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
@@ -27,8 +28,7 @@ interface Props {
   setScrollEnabled: (callback: any) => void;
   dragY: Animated.Value;
   setHeaderVisible: (callback: any) => void;
-  imageUri: string;
-  scrolling: boolean;
+  image: any;
 }
 
 const PinchableImage = ({
@@ -37,7 +37,7 @@ const PinchableImage = ({
   setScrollEnabled,
   dragY,
   setHeaderVisible,
-  imageUri,
+  image,
 }: Props) => {
   const [lastScale, setLastScale] = useState(1);
   const [lastX, setLastX] = useState(0);
@@ -57,11 +57,6 @@ const PinchableImage = ({
   const baseY = useRef(new Animated.Value(0)).current;
   const translateY = useRef(Animated.add(moveY, baseY)).current;
 
-  const contentRef = useRef();
-
-  const [isMaxZoom, setIsMaxZoom] = useState(false);
-  const [isMinZoom, setIsMinZoom] = useState(false);
-
   useEffect(() => {
     if (currentIndex !== index) {
       baseScale.setValue(1);
@@ -72,13 +67,14 @@ const PinchableImage = ({
       baseY.setValue(0);
       setLastScale(1);
       setLastX(0);
+      setLastY(0);
+      setPinchEnabled(true);
       setTravelEnabled(false);
       setSwipeDownEnabled(true);
     }
   }, [currentIndex, index]);
 
   useEffect(() => {
-    const range = ((lastScale - 1) * (wp('100%') / 2)) / lastScale;
     if (lastScale === 1) {
       setScrollEnabled(true);
       setTravelEnabled(false);
@@ -100,6 +96,7 @@ const PinchableImage = ({
 
   const onHorizontalPanHandlerStateChange = useCallback(
     ({nativeEvent}) => {
+      console.log('hori');
       if (nativeEvent.oldState === State.ACTIVE) {
         setLastX((prev) => {
           const newX = prev + nativeEvent.translationX;
@@ -117,8 +114,18 @@ const PinchableImage = ({
         });
         setLastY((prev) => {
           const newY = prev + nativeEvent.translationY;
-          const range = (hp('100%') - getStatusBarHeight() * 2 - 112) / 3;
+          const range =
+            (((image.img_height * wp('100%')) / image.img_width >
+            hp('100%') - getStatusBarHeight() * 2 - 112
+              ? hp('100%') - getStatusBarHeight() * 2 - 112
+              : (image.img_height * wp('100%')) / image.img_width) *
+              lastScale -
+              (hp('100%') - getStatusBarHeight() * 2 - 112)) /
+            2 /
+            lastScale;
+
           if (newY > range || newY < -range) {
+            console.log('out!!');
             baseY.setValue(newY > range ? range : -range);
             moveY.setValue(0);
             return newY > range ? range : -range;
@@ -130,7 +137,7 @@ const PinchableImage = ({
         });
       }
     },
-    [baseX, moveX, lastScale],
+    [baseX, moveX, baseY, moveY, lastScale, image],
   );
 
   const onVerticalPanGestureEvent = useCallback(
@@ -167,31 +174,8 @@ const PinchableImage = ({
   const onPinchGestureEvent = useCallback(
     Animated.event([{nativeEvent: {scale: pinchScale}}], {
       useNativeDriver: true,
-      listener: (e) => {
-        if (lastScale * e.nativeEvent.scale > 3) {
-          setIsMaxZoom((prev) => {
-            if (!prev) {
-              ReactNativeHapticFeedback.trigger('impactMedium', {
-                enableVibrateFallback: false,
-                ignoreAndroidSystemSettings: false,
-              });
-            }
-            return true;
-          });
-        } else if (lastScale * e.nativeEvent.scale < 1) {
-          setIsMinZoom((prev) => {
-            if (!prev) {
-              ReactNativeHapticFeedback.trigger('impactMedium', {
-                enableVibrateFallback: false,
-                ignoreAndroidSystemSettings: false,
-              });
-            }
-            return true;
-          });
-        }
-      },
     }),
-    [pinchScale, lastScale],
+    [pinchScale],
   );
 
   const onPinchHandlerStateChange = useCallback(
@@ -199,11 +183,15 @@ const PinchableImage = ({
       if (nativeEvent.oldState === State.ACTIVE) {
         setLastScale((prev) => {
           const newScale = prev * nativeEvent.scale;
-          console.log(newScale * wp('100%'), 'and', wp('100%'));
           if (newScale < 1) {
+            ReactNativeHapticFeedback.trigger('impactMedium', {
+              enableVibrateFallback: false,
+              ignoreAndroidSystemSettings: false,
+            });
+
             Animated.timing(pinchScale, {
               toValue: 1 / prev,
-              duration: 200,
+              duration: 100,
               easing: Easing.ease,
               useNativeDriver: true,
             }).start(() => {
@@ -211,22 +199,33 @@ const PinchableImage = ({
               baseScale.setValue(1);
               setTravelEnabled(false);
               setSwipeDownEnabled(true);
-              setIsMinZoom(false);
             });
             Animated.timing(baseX, {
               toValue: 0,
-              duration: 200,
+              duration: 100,
               easing: Easing.ease,
               useNativeDriver: true,
-            }).start(() => setLastX(0));
+            }).start(() => {
+              setLastX(0);
+              baseX.setValue(0);
+              moveX.setValue(0);
+            });
             Animated.timing(baseY, {
               toValue: 0,
-              duration: 200,
+              duration: 100,
               easing: Easing.ease,
               useNativeDriver: true,
-            }).start(() => setLastY(0));
+            }).start(() => {
+              setLastY(0);
+              baseY.setValue(0);
+              moveY.setValue(0);
+            });
             return 1;
           } else if (newScale > 3) {
+            ReactNativeHapticFeedback.trigger('impactMedium', {
+              enableVibrateFallback: false,
+              ignoreAndroidSystemSettings: false,
+            });
             Animated.timing(pinchScale, {
               toValue: 3 / prev,
               duration: 100,
@@ -237,10 +236,10 @@ const PinchableImage = ({
               baseScale.setValue(3);
               setTravelEnabled(true);
               setSwipeDownEnabled(false);
-              setIsMaxZoom(false);
             });
             return 3;
           } else {
+            console.log('gigi');
             baseScale.setValue(newScale);
             pinchScale.setValue(1);
             setTravelEnabled(true);
@@ -329,34 +328,107 @@ const PinchableImage = ({
                         extrapolate: 'clamp',
                       }),
                     },
-                    {
-                      translateY: translateY.interpolate({
-                        inputRange: [
-                          -(hp('100%') - getStatusBarHeight() * 2 - 112),
-                          -(hp('100%') - getStatusBarHeight() * 2 - 112) / 3,
-                          (hp('100%') - getStatusBarHeight() * 2 - 112) / 3,
-                          hp('100%') - getStatusBarHeight() * 2 - 112,
-                        ],
-                        outputRange: [
-                          -(hp('100%') - getStatusBarHeight() * 2 - 112) / 3,
-                          -(hp('100%') - getStatusBarHeight() * 2 - 112) / 3,
-                          (hp('100%') - getStatusBarHeight() * 2 - 112) / 3,
-                          (hp('100%') - getStatusBarHeight() * 2 - 112) / 3,
-                        ],
-                      }),
-                    },
+                    ((image.img_height * wp('100%')) / image.img_width >
+                    hp('100%') - getStatusBarHeight() * 2 - 112
+                      ? hp('100%') - getStatusBarHeight() * 2 - 112
+                      : (image.img_height * wp('100%')) / image.img_width) *
+                      lastScale >
+                    hp('100%') - getStatusBarHeight() * 2 - 112
+                      ? {
+                          translateY: translateY.interpolate({
+                            inputRange: [
+                              -hp('100%'),
+                              -(
+                                ((image.img_height * wp('100%')) /
+                                  image.img_width >
+                                hp('100%') - getStatusBarHeight() * 2 - 112
+                                  ? hp('100%') - getStatusBarHeight() * 2 - 112
+                                  : (image.img_height * wp('100%')) /
+                                    image.img_width) *
+                                  lastScale -
+                                (hp('100%') - getStatusBarHeight() * 2 - 112)
+                              ) /
+                                2 /
+                                lastScale,
+                              0,
+                              (((image.img_height * wp('100%')) /
+                                image.img_width >
+                              hp('100%') - getStatusBarHeight() * 2 - 112
+                                ? hp('100%') - getStatusBarHeight() * 2 - 112
+                                : (image.img_height * wp('100%')) /
+                                  image.img_width) *
+                                lastScale -
+                                (hp('100%') - getStatusBarHeight() * 2 - 112)) /
+                                2 /
+                                lastScale,
+                              hp('100%'),
+                            ],
+                            outputRange: [
+                              -(
+                                ((image.img_height * wp('100%')) /
+                                  image.img_width >
+                                hp('100%') - getStatusBarHeight() * 2 - 112
+                                  ? hp('100%') - getStatusBarHeight() * 2 - 112
+                                  : (image.img_height * wp('100%')) /
+                                    image.img_width) *
+                                  lastScale -
+                                (hp('100%') - getStatusBarHeight() * 2 - 112)
+                              ) /
+                                2 /
+                                lastScale,
+                              -(
+                                ((image.img_height * wp('100%')) /
+                                  image.img_width >
+                                hp('100%') - getStatusBarHeight() * 2 - 112
+                                  ? hp('100%') - getStatusBarHeight() * 2 - 112
+                                  : (image.img_height * wp('100%')) /
+                                    image.img_width) *
+                                  lastScale -
+                                (hp('100%') - getStatusBarHeight() * 2 - 112)
+                              ) /
+                                2 /
+                                lastScale,
+                              0,
+                              (((image.img_height * wp('100%')) /
+                                image.img_width >
+                              hp('100%') - getStatusBarHeight() * 2 - 112
+                                ? hp('100%') - getStatusBarHeight() * 2 - 112
+                                : (image.img_height * wp('100%')) /
+                                  image.img_width) *
+                                lastScale -
+                                (hp('100%') - getStatusBarHeight() * 2 - 112)) /
+                                2 /
+                                lastScale,
+                              (((image.img_height * wp('100%')) /
+                                image.img_width >
+                              hp('100%') - getStatusBarHeight() * 2 - 112
+                                ? hp('100%') - getStatusBarHeight() * 2 - 112
+                                : (image.img_height * wp('100%')) /
+                                  image.img_width) *
+                                lastScale -
+                                (hp('100%') - getStatusBarHeight() * 2 - 112)) /
+                                2 /
+                                lastScale,
+                            ],
+                            extrapolate: 'clamp',
+                          }),
+                        }
+                      : {
+                          translateY: 0,
+                        },
                   ],
                 }}>
                 <FastImage
                   key={'image' + currentIndex}
-                  onLayout={(e) => console.log(e.nativeEvent.layout)}
                   style={{
                     width: wp('100%'),
-                    height: '100%',
+                    height: image.img_height
+                      ? (image.img_height * wp('100%')) / image.img_width
+                      : '100%',
                     maxHeight: hp('100%') - getStatusBarHeight() * 2 - 112,
                   }}
                   source={{
-                    uri: imageUri,
+                    uri: image.img_url,
                     priority:
                       index === currentIndex
                         ? FastImage.priority.high

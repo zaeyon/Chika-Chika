@@ -224,6 +224,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
           return imageObj;
         } else {
           const res: any = await uploadImageToS3(item);
+          console.log('res', res);
           const imageObj = {
             index,
             location: res.response.location,
@@ -231,8 +232,8 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
             mimetype: res.type,
             originalname: res.originalName,
             size: res.size,
-            width: item.width,
-            height: item.height,
+            width: res.width,
+            height: res.height,
           };
           return imageObj;
         }

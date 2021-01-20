@@ -89,8 +89,20 @@ z-index: -1;
 `;
 
 interface Params {
-  imageArray: string[];
+  imageArray: Image[];
   imageIndex: number;
+}
+
+interface Image {
+  id: number;
+  img_filename: string;
+  img_index: number;
+  img_mimetype: string;
+  img_originalname: string;
+  img_size: number;
+  img_url: string;
+  width: number;
+  height: number;
 }
 
 interface Props {
@@ -128,17 +140,16 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
         setScrollEnabled={setScrollEnabled}
         dragY={dragY}
         setHeaderVisible={setHeaderVisible}
-        imageUri={item}
-        scrollRef={scrollRef}
-        pinchRef={pinchRef}
-        scrolling={scrolling}
+        image={item}
       />
     ),
     [index, dragY],
   );
 
   const onScrollEnd = useCallback((e) => {
-    setIndex(Math.floor(e.nativeEvent.contentOffset.x / wp('100%')));
+    setIndex(
+      Math.max(Math.floor(e.nativeEvent.contentOffset.x / wp('100%')), 0),
+    );
     setScrolling(false);
   }, []);
 
@@ -168,7 +179,7 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
           </HeaderIndicatorView>
         </HeaderConatinerView>
       ) : null}
-      <NativeViewGestureHandler ref={scrollRef} simultaneousHandlers={pinchRef}>
+      <NativeViewGestureHandler onGestureEvent={() => console.log('of')}>
         <ContentFlatList
           horizontal
           disableScrollViewPanResponder={true}
