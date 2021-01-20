@@ -9,59 +9,58 @@ import {
 } from 'react-native';
 
 const Container = Styled.View`
-padding-top: 24px;
+padding-top: 16px;
 padding-left: ${wp('5%')}px;
 padding-right: ${wp('14%')}px;
-padding-bottom: 24px;
+padding-bottom: 16px;
 background-color: #ffffff;
 flex-direction: row;
-justify-content: space-between;
 align-items: center;
 `;
 
 const CircleContainer = Styled.View`
-width: ${wp('25.6%')}px;
-height: ${wp('25.6%')}px;
-border-width: ${wp("1.5%")}px;
-border-radius: ${wp('12.8%')}px;
-border-color: #CCD1DD;
+width: ${wp('14.9%')}px;
+height: ${wp('14.9%')}px;
+border-width: ${wp("1%")}px;
+border-radius: ${wp('7.5%')}px;
+border-color: #E2E6ED;
 justify-content: center;
 align-items: center;
 `;
 
 const FirstCircleProgressLayer = Styled.View`
-width: ${wp('25.6%')}px;
-height: ${wp('25.6%')}px;
+width: ${wp('14.9%')}px;
+height: ${wp('14.9%')}px;
 position: absolute;
-border-width: ${wp('1.5%')}px;
+border-width: ${wp('1%')}px;
 border-left-color: transparent;
 border-bottom-color: transparent;
-border-right-color: #3ECB99;
-border-top-color: #3ECB99;
-border-radius: ${wp('12.8%')}px;
+border-right-color: #00D1FF;
+border-top-color: #00D1FF;
+border-radius: ${wp('7.5%')}px;
 `;
 
 const SecondCircleProgressLayer = Styled.View`
-width: ${wp('25.6%')}px;
-height: ${wp('25.6%')}px;
+width: ${wp('14.9%')}px;
+height: ${wp('14.9%')}px;
 position: absolute;
-border-width: ${wp('1.5%')}px;
-border-radius: ${wp('12.8%')}px;
+border-width: ${wp('1%')}px;
+border-radius: ${wp('7.5%')}px;
 border-left-color: transparent;
 border-bottom-color: transparent;
-border-right-color: #3ECB99;
-border-top-color: #3ECB99;
+border-right-color: #00D1FF;
+border-top-color: #00D1FF;
 `;
 
 const CircleOffsetLayer = Styled.View`
-width: ${wp('25.6%')}px;
-height: ${wp('25.6%')}px;
-border-width: ${wp('1.5%')}px;
-border-radius: ${wp('12.8%')}px;
+width: ${wp('14.9%')}px;
+height: ${wp('14.9%')}px;
+border-width: ${wp('1%')}px;
+border-radius: ${wp('7.5%')}px;
 border-left-color: transparent;
 border-bottom-color: transparent;
-border-right-color: #CCD1DD;
-border-top-color: #CCD1DD;
+border-right-color: #E2E6ED;
+border-top-color: #E2E6ED;
 `;
 
 const AvgRatingContainer = Styled.View`
@@ -69,48 +68,57 @@ flex-direction: row;
 align-items: center;
 `;
 
-const RatingStarImage = Styled.Image`
-width: ${wp('4.53%')}px;
-height: ${wp('4.53%')}px;
+const RatingStarIcon = Styled.Image`
+margin-left: 8px;
+width: ${wp('3.2%')}px;
+height: ${wp('3.2%')}px;
 `;
 
 const AvgRatingText = Styled.Text`
-margin-left: 2px;
-font-weight: 700;
-font-size: 20px;
+font-weight: 800;
+font-size: 18px;
 color: #000000;
 font-family: NanumSquare;
 `
 
 const RatingListContainer = Styled.View`
-width: ${wp('49.3%')}px;
-flex-direction: column;
-
+margin-left: 16px;
+flex-direction: row;
+align-items:center;
 `;
 
 const RatingItemContainer = Styled.View`
 flex-direction: row;
 align-items: center;
-justify-content: space-between;
 `;
 
 const RatingTypeText = Styled.Text`
-margin-top: 2px;
 font-weight: 800;
 font-size: 14px;
-color: #2F2F2F;
+line-height: 24px;
+color: #000000;
 font-family: NanumSquare;
 `;
+
 
 const RatingValueText = Styled.Text`
-font-weight: 800;
+margin-left: 2px;
+font-weight: 400;
 font-size: 14px;
-color: #2F2F2F;
+line-height: 24px;
+color: #000000;
 font-family: NanumSquare;
 `;
 
-const RatingImage = Styled.Image`
+const RatingItemDivider = Styled.View`
+margin-left: 8px;
+margin-right: 8px;
+width: 1px;
+height: ${hp('1.23%')}px;
+background-color: #E2E6ED;
+border-radius: 100px;
 `;
+
 
 const StarListContainer = Styled.View`
 flex-direction: row;
@@ -153,8 +161,6 @@ const RatingCircleProgress = ({rating}: any) => {
           }}/>
           )}
           <AvgRatingContainer>
-            <RatingStarImage
-            source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}/>
             <AvgRatingText>{rating.toFixed(1)}</AvgRatingText>
           </AvgRatingContainer>
       </CircleContainer>
@@ -233,24 +239,23 @@ const RatingReport = ({avgRating, priceRating, serviceRating, treatRating, type}
             <RatingListContainer>
               <RatingItemContainer>
                 <RatingTypeText>{"진료"}</RatingTypeText>
-                <RatingStarList
-                ratingValue={treatRating}
-                interval={4}
-                />
+                <RatingStarIcon
+                source={require('~/Assets/Images/Indicator/rating/ic_ratingStar_10.png')}/>
+                <RatingValueText>{treatRating.toFixed(1)}</RatingValueText>
               </RatingItemContainer>
-              <RatingItemContainer style={{marginTop: hp('1.8%')}}>
+              <RatingItemDivider/>
+              <RatingItemContainer>
                 <RatingTypeText>{"서비스"}</RatingTypeText>
-                <RatingStarList
-                ratingValue={serviceRating}
-                interval={4}
-                />
+                <RatingStarIcon
+                source={require('~/Assets/Images/Indicator/rating/ic_ratingStar_10.png')}/>
+                <RatingValueText>{serviceRating.toFixed(1)}</RatingValueText>
               </RatingItemContainer>
-              <RatingItemContainer style={{marginTop: hp('1.8%')}}>
+              <RatingItemDivider/>
+              <RatingItemContainer>
                 <RatingTypeText>{"가격"}</RatingTypeText>
-                <RatingStarList
-                ratingValue={priceRating}
-                interval={4}
-                />
+                <RatingStarIcon
+                source={require('~/Assets/Images/Indicator/rating/ic_ratingStar_10.png')}/>
+                <RatingValueText>{priceRating.toFixed(1)}</RatingValueText>
               </RatingItemContainer>
             </RatingListContainer>
         </Container>

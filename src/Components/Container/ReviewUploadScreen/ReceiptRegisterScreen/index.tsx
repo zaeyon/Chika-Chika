@@ -1,5 +1,6 @@
 import React, {useState, useEffect, createRef} from 'react';
 import Styled from 'styled-components/native';
+import SafeAreaView from 'react-native-safe-area-view';
 import {TouchableWithoutFeedback} from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -8,7 +9,7 @@ import {
 import {NavigationContainer} from '@react-navigation/native';
 import ActionSheet from 'react-native-actionsheet';
 
-const Container = Styled.SafeAreaView`
+const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
 `;
@@ -135,7 +136,7 @@ const ReceiptRegisterScreen = ({navigation, route}: Props) => {
   };
 
   return (
-    <Container>
+    <Container as={SafeAreaView} forceInset={{top: 'always'}}>
       <HeaderBar>
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <HeaderLeftContainer>

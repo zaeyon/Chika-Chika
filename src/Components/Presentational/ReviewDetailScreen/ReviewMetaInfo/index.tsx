@@ -33,6 +33,7 @@ font-family: NanumSquare;
 `;
 
 const PriceItemContainer = Styled.View`
+margin-top: 8px;
 flex-direction: row;
 align-items: center;
 justify-content: space-between;
@@ -46,30 +47,32 @@ color: #000000;
 `;
 
 const ReceiptCertificationContainer = Styled.View`
-padding: 6px 8px 6px 8px;
+padding: 2px 4px 2px 4px;
 border-width: 1px;
 border-color: #00D1FF;
-border-radius: 100px;
+border-radius: 2px;
 `;
 
 const ReceiptCertificationText = Styled.Text`
-font-weight: 800;
+font-weight: 700;
 font-size: 10px;
+line-height: 16px;
 color: #00D1FF;
 font-family: NanumSquare;
 `;
 
 const TotalPriceText = Styled.Text`
 margin-left: 4px;
-font-weight: 800;
-font-size: 18px;
-color: #131F3C;
+font-weight: 700;
+font-size: 12px;
+color: #000000;
+line-height: 16px;
 font-family: NanumSquare;
 `;
 
 const ViewDetailPriceText = Styled.Text`
 font-weight: 700;
-font-size: 14px;
+font-size: 12px;
 color: #9AA2A9;
 font-family: NanumSquare;
 `;
@@ -129,13 +132,15 @@ color: #131F3C;
 `;
 
 const TreatmentDateInfoContainer = Styled.View`
-padding: 24px 24px 24px 24px;
+padding: 16px 16px 24px 16px;
 `;
 
 const TreatmentDateText = Styled.Text`
-font-weight: 800;
-font-size: 16px;
-color: #131F3C;
+margin-top: 8px;
+font-weight: 400;
+font-size: 12px;
+color: #000000;
+line-height: 16px;
 font-family: NanumSquare;
 `;
 
@@ -257,11 +262,11 @@ const ReviewMetaInfo = ({totalPrice, certifiedReceipt, ratingObj, treatmentDate,
 
     let splitedTreatmentDate = new Array
     let formattedTreatmentDate = ""
-    if(treatmentDate) {
+    // if(treatmentDate) {
 
-        splitedTreatmentDate = treatmentDate.split("");
-        formattedTreatmentDate = splitedTreatmentDate[0] + splitedTreatmentDate[1] + splitedTreatmentDate[2] + splitedTreatmentDate[3] + "." + splitedTreatmentDate[6] + splitedTreatmentDate[7] + "." + splitedTreatmentDate[10] + splitedTreatmentDate[11]
-    }
+    //     splitedTreatmentDate = treatmentDate.split("");
+    //     formattedTreatmentDate = splitedTreatmentDate[0] + splitedTreatmentDate[1] + splitedTreatmentDate[2] + splitedTreatmentDate[3] + "." + splitedTreatmentDate[6] + splitedTreatmentDate[7] + "." + splitedTreatmentDate[10] + splitedTreatmentDate[11]
+    // }
 
     let splitedAddress = new Array();
     let formattedAddress = "";
@@ -316,7 +321,7 @@ const ReviewMetaInfo = ({totalPrice, certifiedReceipt, ratingObj, treatmentDate,
             </RatingInfoContainer>
             <SectionDevider/>
             <PriceInfoContainer>
-                <InfoLabelText>{"시술 비용"}</InfoLabelText>
+                <InfoLabelText>{"전체 시술 비용"}</InfoLabelText>
                 <PriceItemContainer>
                     <View style={{flexDirection: "row", alignItems: "center"}}>
                     {/* {certifiedReceipt && ( */}
@@ -327,9 +332,8 @@ const ReviewMetaInfo = ({totalPrice, certifiedReceipt, ratingObj, treatmentDate,
                     </ReceiptCertificationContainer>
                     {/* )} */}
                     <TotalPriceText>
-                        {totalPrice.toLocaleString() + "원 "}
+                        {totalPrice}
                     </TotalPriceText>
-                    <Text style={{fontWeight: "400", fontSize: 14, color: "#9AA2A9", lineHeight: 24, fontFamily: "NanumSquare"}}>{"(총계)"}</Text>
                     </View>
                     <ViewDetailPriceContainer>
                     <ViewDetailPriceText>{"상세 비용"}</ViewDetailPriceText>
@@ -338,7 +342,8 @@ const ReviewMetaInfo = ({totalPrice, certifiedReceipt, ratingObj, treatmentDate,
             </PriceInfoContainer>
             <SectionDevider/>
             <TreatmentDateInfoContainer>
-                <TreatmentDateText>{formattedTreatmentDate}<TreatmentDateText style={{fontWeight: "400", fontSize: 16}}>{"  방문"}</TreatmentDateText></TreatmentDateText>
+                <InfoLabelText>{"방문 일자"}</InfoLabelText>
+                <TreatmentDateText>{treatmentDate}</TreatmentDateText>
             </TreatmentDateInfoContainer>
         </Container>
     )

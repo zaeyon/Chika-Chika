@@ -28,6 +28,7 @@ import ReviewList from '~/Components/Presentational/ReviewList';
 import ShowingRating from '~/Components/Presentational/ShowingRating';
 import RatingReport from '~/Components/Presentational/RatingReport';
 import WeeklyTreatmentTimeInfo from '~/Components/Presentational/DentalDetailScreen/WeeklyTreatmentTimeInfo'
+import RatingStarList from '~/Components/Presentational/RatingStarList';
 
 const ratingStarImage = require('~/Assets/Images/Indicator/ic_ratingStar.png');
 const Container = Styled.View`
@@ -39,9 +40,8 @@ const CollapsibleContainer = Styled.View`
 flex: 1;
 width: ${wp('100%')}px;
 align-items: center;
-background-color: #ffffff;
-border-bottom-width: 8px;
-border-color: #F5F7F9;
+border-bottom-width: 1px;
+border-color: #E2E6ED;
 `;
 
 const HeaderBar = Styled.View`
@@ -68,19 +68,20 @@ height: ${wp('6.4%')}px;
 
 const HeaderTitleText = Styled.Text`
 font-weight: 700;
-font-size: 18px;
-color: #000000;
+font-size: 20px;
+line-height: 24px;
+color: #131F3C;
 `;
 
 const CoverImageContainer = Styled.View`
 width: ${wp('100%')}px;
-height: ${hp('31.5%')}px;
+height: ${DeviceInfo.hasNotch() ? hp('26') : hp('28')}px;
 background-color: #F5F7F9;
 `;
 
 const CoverImage = Styled.Image`
 width: ${wp('100%')}px;
-height: ${hp('31.5%')}px;
+height: ${DeviceInfo.hasNotch() ? hp('26') : hp('28')}px;
 `;
 
 const RepresentingKeywordContainer = Styled.View`
@@ -106,8 +107,14 @@ font-family: NanumSquare;
 `;
 
 const BasicInfoContainer = Styled.View`
+position: absolute;
+bottom: 0px;
 width: ${wp('100%')}px;
-padding-top: 12px;
+border-top-left-radius: 24px;
+border-top-right-radius: 24px;
+background-color: #ffffff;
+padding-top: 26px;
+padding-bottom: 23px;
 padding-left: 16px;
 padding-right: 16px;
 `;
@@ -150,29 +157,39 @@ font-family: NanumSquare;
 
 const DentalNameText = Styled.Text`
 font-weight: 800;
-font-size: 20px;
+font-size: 22px;
 color: #000000;
 font-family: NanumSquare;
+line-height: 24px;
 `;
 
-const RatingText = Styled.Text`
-margin-top: 12px;
+const AvgRatingText = Styled.Text`
+margin-left: 4px;
 font-weight: bold;
-color: #000000;
+color: #131F3C;
 font-size: 14px;
 font-family: NanumSquare;
 `;
 
 const DentalAddressText = Styled.Text`
-margin-top: 12px;
-color: #979797;
-font-size: 14px;
+font-weight: 700;
+color: #4E525D;
+font-size: 16px;
 font-family: NanumSquare
+line-height: 24px;
 `;
 
 const DetailInfoTabContainer = Styled.View`
-padding-bottom: ${hp('17%')}px;
 background-color: #F5F7F9;
+`;
+
+const DetailAddressText = Styled.Text`
+margin-top: 12px;
+font-family: NanumSquare;
+font-weight: 800;
+font-size: 18px;
+line-height: 24px;
+color: #131F3C;
 `;
 
 const CertificationIcon = Styled.View`
@@ -213,57 +230,102 @@ font-family: NanumSquare
 const DetailInfoItemContainer = Styled.View`
 background-color: #ffffff;
 padding: 24px 16px;
-border-bottom-width: 8px;
+border-bottom-width: 16px;
 border-color: #F5F7F9; 
 `;
 
 const DetailInfoLabelText = Styled.Text`
 font-weight: 800;
 font-size: 14px;
-color: #9FA0A2;
+line-height: 24px;
+color: #9AA2A9;
 font-family: NanumSquare
 `;
 
 const DetailInfoDescripText = Styled.Text`
-margin-top: 16px;
+margin-top: 10px;
 font-weight: 400; 
-font-size: 16px;
+font-size: 14px;
+line-height: 24px;
 color: #000000;
 font-family: NanumSquare
 `;
 
-const RatingReportContainer = Styled.View`
-border-bottom-width: 8px;
-border-color: #F5F7F9;
-`;
-
-const TreatmentHourFilterContainer = Styled.View`
-flex-direction: row; 
+const PostReviewContainer = Styled.View`
+margin-top: 8px;
+background-color: #ffffff;
+padding: 18px 16px 18px 16px;
+flex-direction: row;
 align-items: center;
+justify-content: space-between;
+border-top-width: 0.5px;
+border-bottom-width: 0.5px;
+border-color: #E2E6ED;
 `;
 
-const TreatmentHourFilterItemContainer = Styled.View`
+const PostReviewDescipText = Styled.Text`
+font-family: NanumSquare;
+font-weight: 400;
+font-size: 16px;
+color: #131F3C;
+line-height: 24px;
+`;
+
+const PostReviewButton = Styled.View`
+background-color: #ffffff;
+padding: 6px 12px 6px 12px;
+border-radius: 100px;
+border-width: 1px;
+border-color: #E2E6ED;
 flex-direction: row;
 align-items: center;
 `;
 
-const TreatmentHourFilterText = Styled.Text`
-font-weight: 800;
-font-size: 16px;
-color: #000000;
-font-family: NanumSquare;
+const PostReviewEmojiIcon = Styled.Image`
+width: ${wp('4.26%')}px;
+height: ${wp('4.26%')}px;
 `;
+
+const PostReviewText = Styled.Text`
+margin-left: 4px;
+font-family: NanumSquare;
+font-size: 14px;
+font-weight: 700;
+line-height: 24px;
+color: #131F3C;
+`;
+
+const RatingReportContainer = Styled.View`
+margin-top: 8px;
+border-top-width: 0.5px;
+border-bottom-width: 0.5px;
+border-color: #E2E6ED;
+`;
+
+
+const ReviewListContainer = Styled.View`
+margin-top: 8px;
+border-top-width: 0.5px;
+border-color: #E2E6ED;
+`;
+
+
+const ReviewInfoContainer = Styled.View`
+`;
+
 
 const DentalStaticMapImage = Styled.Image`
 margin-top: 16px;
 width: ${wp('91.46%')}px;
 height: ${wp('53.329%')}px;
 border-radius: 8px;
+border-width: 1px;
+border-color: #E2E6ED;
 `;
 
 const RequestReviseInfoContainer = Styled.View`
-padding-top: 24px;
-padding-left: 13px;
+padding-top: 32px;
+padding-left: 16px;
 padding-right: 0px;
 align-self: flex-start;
 `;
@@ -272,14 +334,15 @@ const RequestReviseInfoTextContainer = Styled.View`
 width: 109;
 padding-bottom: 1px;
 border-bottom-width: 1px;
-padding-bottom: 6px;
+padding-bottom: 1px;
 `;
 
 const RequestReviseInfoText = Styled.Text`
 width: 120px;
 font-weight: bold;
 font-size: 14px;
-color: #000000;
+line-height: 24px;
+color: #131F3C;
 font-family: NanumSquare;
 `;
 
@@ -291,14 +354,25 @@ padding-right: 16px;
 
 const CopyrightDescipText = Styled.Text`
 font-weight: 400;
-color: #75808B;
+color: #9AA2A9;
 font-size: 12px;
 font-family: NanumSquare;
-line-height: 22;
+line-height: 24;
 `;
 
 const WeeklyTreatmentTimeInfoContainer = Styled.View`
 margin-top: 16px;
+`;
+
+const AddressContainer = Styled.View`
+margin-top: 9px;
+flex-direction: row;
+align-items: center;
+`;
+
+const AddressMarkerIcon = Styled.Image`
+width: ${wp('4.266%')}px;
+height: ${wp('4.266%')}px;
 `;
 
 const DentistInfoListContainer = Styled.View`
@@ -307,29 +381,134 @@ const DentistInfoListContainer = Styled.View`
 const ReviewTabContainer = Styled.View`
 `;
 
-const ReviewListContainer = Styled.View`
-`;
 
-const NoneReviewContainer = Styled.View`
+const NoReviewContainer = Styled.View`
 width: ${wp('100%')}px;
 align-items: center;
-padding-top: 30px;
+padding-top: ${hp('1.9%')}px;
 `;
 
-const NoneReviewText = Styled.Text`
-margin-top: 16px;
-font-weight: 400; 
+const PostNoReviewCardContainer = Styled.View`
+width: ${wp('91.46%')}px;
+height: ${wp('52%')}px;
+background-color: #ffffff;
+border-radius: 12px;
+align-items: center;
+justify-content: center;
+`;
+
+const NoReviewEmoji = Styled.Image`
+width: ${wp('5.6%')}px;
+height: ${wp('5.6%')}px;
+`;
+
+const NoReviewText = Styled.Text`
+margin-top: 8px;
+line-height: 24;
+font-weight: 700; 
 font-size: 16px;
-color: #000000;
+color: #131F3C;
 font-family: NanumSquare
 `;
+
+const PostNoReviewContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+`;
+
+const PostNoReviewButton = Styled.View`
+margin-top: 12px;
+padding-top: 12px;
+padding-bottom: 12px;
+padding-left: 20px;
+padding-right: 20px;
+border-radius: 100px;
+border-width: 1px;
+border-color: #E2E6ED;
+`;
+
+const PostNoReviewText = Styled.Text`
+font-family: NanumSquare;
+color: #00D1FF;
+font-weight: 800;
+font-size: 16px;
+line-height: 24px;
+`;
+
+const PostNoReviewArrowIcon = Styled.Image`
+margin-left: 2px;
+width: ${wp('3.2%')}px;
+height: ${wp('3.2%')}px;
+`;
+
+
+const RatingContainer = Styled.View`
+margin-top: 11px;
+flex-direction: row;
+align-items: center;
+`;
+
+const RatingStarListContainer = Styled.View`
+margin-top: 11px;
+flex-direction: row;
+align-items: center;
+`;
+
+const RatingStarIcon = Styled.Image`
+width: ${wp('4.266%')}px;
+height: ${wp('4.266%')}px;
+`;
+
+const IntroKeywordListContainer = Styled.View`
+padding-top: 12px;
+flex-direction: row
+align-items: center;
+`;
+
+const IntroKeywordItemContainer = Styled.View`
+background-color: #ffffff;
+border-radius: 100px;
+border-width: 0.5px;
+border-color: #E2E6ED;
+padding: 4px 12px 4px 5px;
+flex-direction: row;
+align-items: center;
+`;
+
+const IntroKeywordIcon = Styled.Image`
+width: ${wp('7.46%')}px;
+height: ${wp('7.46%')}px;
+`;
+
+const IntroKeywordText = Styled.Text`
+margin-left: 4px;
+font-weight: 700;
+font-family: NanumSquare;
+font-size: 14px;
+line-height: 24px;
+color: #4E525D;
+`;
+
+const ScrollTopContainer = Styled.View`
+border-radius: 100px;
+width: ${wp('9.6%')}px;
+height: ${wp('9.6%')}px;
+`;
+
+const ScrollTopShadow = Styled.View`
+position: absolute;
+border-radius: 100px;
+width: ${wp('8%')}px;
+height: ${wp('8%')}px;
+`;
+
 
 let isReachedTop = false;
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
-const tabBarHeight = hp('6.89%');
-// let collapsibleViewHeight = DeviceInfo.hasNotch() ? hp('69%') : hp('74.5%');
+const tabBarHeight = DeviceInfo.hasNotch() ?  hp('6.77%') : hp("8.5%");
+const collapsibleViewHeight = DeviceInfo.hasNotch() ? hp('38.54%') : hp('45.5%');
 const detailInfoTypeHeight = DeviceInfo.hasNotch() ? hp('10.83%') : hp('15%');
 const headerHeight = getStatusBarHeight() + hp('8%');
 const SafeStatusBar = Platform.select({
@@ -340,18 +519,22 @@ const SafeStatusBar = Platform.select({
 interface Props {
   goBack: () => void;
   dentalDetailInfo: any;
+  moveToReviewUpload: () => void,
+  moveToDentalLocationMap: () => void,
 }
 
-const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
+const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload, moveToDentalLocationMap}: Props) => {
   console.log("DentalCollapsibleTabView dentalDetailInfo", dentalDetailInfo);
-  const [collapsibleViewHeight, setCollapsibleViewHeight] = useState<number>(DeviceInfo.hasNotch() ? hp('38.54%') : hp('46.54%'));
+  //const [collapsibleViewHeight, setCollapsibleViewHeight] = useState<number>(DeviceInfo.hasNotch() ? hp('43.84%') : hp('46.54%'));
   const [tabIndex, setIndex] = useState(0);
   const [routes] = useState([
     {key: 'detailInfo', title: '상세 정보'},
     {key: 'review', title: '리뷰'},
   ]);
+  const [isVisibleScrollTop, setIsVisibleScrollTop] = useState<boolean>(false);
 
-  // ref  
+  // ref
+  const scrollTopScale = useRef(new Animated.Value(0)).current;
   const scrollY = useRef(new Animated.Value(0)).current;
   const tabScrollX = useRef(new Animated.Value(0)).current;
   const headerScrollY = useRef(new Animated.Value(0)).current;
@@ -364,19 +547,76 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
 
   const headerOpacity = scrollY.interpolate({
     inputRange: [hp('18%'), hp('28%')],
-    outputRange: [0, 1],
+    outputRange: [0, 1.4],
     extrapolate: 'clamp',
   });
 
+  const formatTreatmentSubjectList = useCallback(() => {
+  
+      console.log("formatTreatmentSubjectList 함수 실행");
+
+      const treatmentList = dentalDetailInfo.clinicInfoBody.treatmentSubject;
+      let treatmentSubjectList = new Array();
+      for(var i = 0; i < treatmentList.length ; i++) {
+        treatmentSubjectList.push(treatmentList[i].name)
+      }
+  
+      return treatmentSubjectList;
+
+    }, [dentalDetailInfo]);
+
+  const formatSpecialistTreatmentSubjectList = (treatmentList: any) => {
+
+    let treatmentSubjectList = new Array();
+    for(var i = 0; i < treatmentList.length ; i++) {
+      
+      if(treatmentList[i].Clinic_subject.SpecialistDentist_NUM > 0) {
+        treatmentSubjectList.push(treatmentList[i].name)
+      }
+    }
+
+    return treatmentSubjectList;
+   }
+
+   const formatSpecialTreatmentSubjectList = (specialTreatmentArr: any) => {
+
+    let tmpArray = new Array();
+    for(var i = 0; i < specialTreatmentArr.length; i++) {
+      tmpArray.push(specialTreatmentArr[i].name)
+    }
+
+    return tmpArray;
+   }
+
+  const basicInfo = dentalDetailInfo?.clinicInfoHeader;
   const introduction = dentalDetailInfo.clinicInfoBody.description;
   const treatmentTimeInfo = dentalDetailInfo.clinicInfoBody.treatmentTime;
   const locationInfo = dentalDetailInfo.clinicInfoBody.location;
-  const treatmentSubjectInfo = dentalDetailInfo.clinicInfoBody.treatmentSubject;
-  const specialTreatmentInfo = dentalDetailInfo.clinicInfoBody.SpecialTreatment;
+  const treatmentSubjectInfoArr = formatTreatmentSubjectList()
+  const specialistTreatmentSubjectInfoArr = formatSpecialistTreatmentSubjectList(dentalDetailInfo.clinicInfoBody.treatmentSubject)
+  const specialTreatmentInfoArr = formatSpecialTreatmentSubjectList(dentalDetailInfo.clinicInfoBody.SpecialTreatment);
   const dentistInfo = dentalDetailInfo.clinicInfoBody.dentistInfo;
   const parkingInfo = dentalDetailInfo.clinicInfoBody.parkingInfo;
 
-   const todayIndex = new Date().getDay();
+  const todayIndex = new Date().getDay();
+  
+
+   console.log("진료과목 정보 treatmentSubjectInfoArr", treatmentSubjectInfoArr);
+   console.log("특별진려과목 정보 specialTreatmentInfo", specialTreatmentInfoArr);
+   console.log("진료시간 treatmentTimeInfo", treatmentTimeInfo);
+   console.log("진료시간 treatmentTimeInfo.weekday.thu", treatmentTimeInfo.weekday.thu);
+
+   const getCuttedAddress = (fullAddress: string) => {
+     const splitedAddress = fullAddress.split(" ");
+
+     return splitedAddress[0] + " " + splitedAddress[1] + " " + splitedAddress[2] + " " + splitedAddress[3];
+   }
+
+
+
+   
+
+  
 
   /**
    * PanResponder for header
@@ -556,6 +796,17 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
     }
   };
 
+  const scrollToTop = () => {
+    listRefArr.current[0].value.scrollTo({
+      y: 0,
+      animated: true,
+    })
+    listRefArr.current[1].value.scrollTo({
+      y: 0,
+      animated: true,
+    })
+  }
+
   /**
    * render Helper
    */
@@ -570,20 +821,28 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
       <Animated.View
         {...collapsibleViewPanResponder.panHandlers}
         style={[styles.collapsibleView, {transform: [{translateY: y}]}]}>
-        <CollapsibleContainer
-        onLayout={(event) => {
-          setCollapsibleViewHeight(event.nativeEvent.layout.height)
-        }}>
+        <CollapsibleContainer>
             <CoverImageContainer>
                 <CoverImage
-                source={{uri:""}}/>
+                source={{uri:"https://modo-phinf.pstatic.net/20180627_136/15300801971741t1Kg_JPEG/mosaZn4Vfw.jpeg?type=w720"}}/>
             </CoverImageContainer>
-            <BasicInfoContainer>
-                <DentalNameText>{dentalDetailInfo?.clinicInfoHeader?.originalName}</DentalNameText>
-                <DentalAddressText>{dentalDetailInfo?.clinicInfoHeader?.address}</DentalAddressText>
-                {/*
-                <RatingText>{dentalDetailInfo?.clinicInfoHeader?.reviewAVGStarRate.all ? "평점" + dentalDetailInfo?.clinicInfoHeader?.reviewAVGStarRate.all.toFixed(0) : "평가 없음"}</RatingText>
-                */}
+            <BasicInfoContainer style={styles.basicInfoShadow}>
+                <DentalNameText>{basicInfo?.originalName}</DentalNameText>
+                <AddressContainer>
+                <AddressMarkerIcon
+                source={require('~/Assets/Images/Dental/ic_addressMarker.png')}/>
+                <DentalAddressText>{getCuttedAddress(basicInfo.address)}</DentalAddressText>
+                </AddressContainer>
+                <RatingContainer>
+                  <RatingStarList
+                  ratingValue={basicInfo?.reviewAVGStarRate?.all?.toFixed(1)}/>
+                  {basicInfo?.reviewAVGStarRate?.all !== null && (
+                  <AvgRatingText>{`${basicInfo?.reviewAVGStarRate?.all?.toFixed(1)}(${basicInfo.reviewNum})`}</AvgRatingText>
+                  )}
+                  {basicInfo?.reviewAVGStarRate?.all === null && (
+                  <AvgRatingText>{"평가없음(0)"}</AvgRatingText>
+                  )}
+                </RatingContainer>
             </BasicInfoContainer>
             </CollapsibleContainer>
       </Animated.View>
@@ -592,7 +851,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
 
   const renderLabel = ({route, focused}) => {
     return (
-      <Text style={[styles.label, {color: focused ? '#2998FF' : '#000000'}]}>
+      <Text style={[styles.label, {color: focused ? '#131F3C' : '#9AA2A9'}]}>
         {route.title}
       </Text>
     );
@@ -636,6 +895,27 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
                     ],
                     {
                       useNativeDriver: true,
+                      listener: event => {
+                        if(scrollY._value > (collapsibleViewHeight - headerHeight) && !isVisibleScrollTop) {
+                          setIsVisibleScrollTop(true)
+                          scrollTopScale.setValue(0.7);
+                          Animated.spring(scrollTopScale, {
+                            toValue: 1,
+                            friction: 6,
+                            tension: 400,
+                            useNativeDriver: true,
+                          }).start();
+                        } else if(scrollY._value < (collapsibleViewHeight - headerHeight) && isVisibleScrollTop) {
+                          setIsVisibleScrollTop(false)
+                          //scrollTopScale.setValue(0);
+                          Animated.timing(scrollTopScale, {
+                            toValue: 0,
+                            duration: 70,
+                            useNativeDriver: true,
+                          }).start();
+
+                        }
+                      }
                     },
                   )
                 : null
@@ -645,14 +925,46 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
             onMomentumScrollEnd={onMomentumScrollEnd}
             contentContainerStyle={{
               paddingTop: collapsibleViewHeight + tabBarHeight,
-              backgroundColor: '#ffffff',
+              backgroundColor: '#F5F7F9',
+              paddingBottom: hp('17%'),
             }}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             ><DetailInfoTabContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"병원 소개"}</DetailInfoLabelText>
+              {/*
               <DetailInfoDescripText>{introduction> 0 ? introduction : "-"}</DetailInfoDescripText>
+              */}
+              <IntroKeywordListContainer>
+              {basicInfo?.launchDate && (
+                <IntroKeywordItemContainer style={[styles.introKeywordShadow, , {marginRight: 8}]}>
+                  <IntroKeywordIcon
+                  source={require('~/Assets/Images/Dental/ic_establish.png')}/>
+                  <IntroKeywordText>
+                    {`설립 ${getEstablishedElapsedYear(basicInfo?.launchDate)}년차`}
+                  </IntroKeywordText>
+                </IntroKeywordItemContainer>
+              )}
+              {basicInfo?.dentalTransparent === true && (
+                <IntroKeywordItemContainer style={[styles.introKeywordShadow]}>
+                  <IntroKeywordIcon
+                  source={require('~/Assets/Images/Dental/ic_goodHospital.png')}/>
+                  <IntroKeywordText>
+                    {'우리동네좋은치과 지정'}
+                  </IntroKeywordText>
+                </IntroKeywordItemContainer>
+              )}
+              {dentistInfo.specialistDentist > 0 && (
+                <IntroKeywordItemContainer  style={styles.introKeywordShadow}>
+                  <IntroKeywordIcon
+                  source={require('~/Assets/Images/Dental/ic_doctor.png')}/>
+                  <IntroKeywordText>
+                    {`전문의 ${dentistInfo.specialistDentist}명`}
+                  </IntroKeywordText>
+                </IntroKeywordItemContainer>
+              )}
+              </IntroKeywordListContainer>
             </DetailInfoItemContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"진료 시간"}</DetailInfoLabelText>
@@ -664,44 +976,52 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
             </DetailInfoItemContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"위치 정보"}</DetailInfoLabelText>
-              <DetailInfoDescripText>{locationInfo.address > 0 ? locationInfo.address : "-"}</DetailInfoDescripText>
+              <DetailAddressText>{locationInfo.address.length > 0 ? locationInfo.address : "-"}</DetailAddressText>
+              <TouchableWithoutFeedback onPress={() => moveToDentalLocationMap()}>
               <DentalStaticMapImage
               source={{uri: locationInfo.clinicStaticMap}}/>
+              </TouchableWithoutFeedback>
             </DetailInfoItemContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"진료 과목"}</DetailInfoLabelText>
+              {treatmentSubjectInfoArr.length > 0 && (
+                <DetailInfoDescripText>{treatmentSubjectInfoArr.join(", ")}</DetailInfoDescripText>
+              )}
+              {treatmentSubjectInfoArr.length === 0 && (
+                <DetailInfoDescripText>{"-"}</DetailInfoDescripText>
+              )}
             </DetailInfoItemContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"특수 진료 장비"}</DetailInfoLabelText>
+              <DetailInfoDescripText>{"-"}</DetailInfoDescripText>
             </DetailInfoItemContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"전문 및 특수 진료 항목"}</DetailInfoLabelText>
-              {specialTreatmentInfo.length > 0 && (
-              specialTreatmentInfo.map((item: any, index: number) => {
-                return (
-                  <DetailInfoDescripText>{(index !== specialTreatmentInfo.length -1) ? (item.name + ", ") : (item.name)}</DetailInfoDescripText>
-                )
-              })
+              {specialTreatmentInfoArr.length > 0 && (
+                  <DetailInfoDescripText>{specialTreatmentInfoArr.join(". ")}</DetailInfoDescripText>
               )}
-              {specialTreatmentInfo.length === 0 && (
+              {specialTreatmentInfoArr.length === 0 && (
                   <DetailInfoDescripText>{"-"}</DetailInfoDescripText>
               )}
             </DetailInfoItemContainer>
               <DetailInfoItemContainer>
                 <DetailInfoLabelText>{'의사 정보'}</DetailInfoLabelText>
                 <DentistInfoListContainer>
-                  {dentistInfo.specialListDentist !== null && (
-                    <DetailInfoDescripText>{`전문의 ${dentistInfo.specialistDentist}명`}</DetailInfoDescripText>
+                  {dentistInfo.specialListDentist > 0 && (
+                    <DetailInfoDescripText>{`전문의 ${dentistInfo.specialistDentist}명(${specialistTreatmentSubjectInfoArr.join(", ")})`}</DetailInfoDescripText>
                   )}
-                  {dentistInfo.generalDentist !== null && (
+                  {dentistInfo.generalDentist > 0 && (
                     <DetailInfoDescripText>{`일반의 ${dentistInfo.generalDentist}명`}</DetailInfoDescripText>
                   )}
-                  {dentistInfo.resident !== null && (
+                  {(dentistInfo.generalDentist == 0 && dentistInfo.specialistDentist == 0) && (
+                    <DetailInfoDescripText>{'-'}</DetailInfoDescripText>
+                  )}
+                  {/* {dentistInfo.resident !== null && (
                     <DetailInfoDescripText>{`레지던트 ${dentistInfo.resident}명`}</DetailInfoDescripText>
                   )}
                   {dentistInfo.intern !== null && (
                     <DetailInfoDescripText>{`인턴 ${dentistInfo.intern}명`}</DetailInfoDescripText>
-                  )}
+                  )} */}
                 </DentistInfoListContainer>
               </DetailInfoItemContainer>
               <DetailInfoItemContainer style={{borderWidth: 0}}>
@@ -712,13 +1032,13 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
                     <DetailInfoDescripText>{'-'}</DetailInfoDescripText>
                   )}
                 {parkingInfo.parkingAllowNum > 0 && (
-                  <DetailInfoDescripText>{`주차 가능 영역 ${parkingInfo.parkingAllowNum}대`}</DetailInfoDescripText>
+                  <DetailInfoDescripText>{`주차 가능 차수 ${parkingInfo.parkingAllowNum}대`}</DetailInfoDescripText>
                 )}
-                {parkingInfo.parkingCost !== '' && (
+                {(parkingInfo.parkingCost !== '' && parkingInfo.parkingCost !== 'N') && (
                   <DetailInfoDescripText>{`주차 비용 ${parkingInfo.parkingCost}원`}</DetailInfoDescripText>
                 )}
                 {parkingInfo.parkingNotice !== '' && (
-                  <DetailInfoDescripText>{`${parkingInfo.parkingNotice}`}</DetailInfoDescripText>
+                  <DetailInfoDescripText style={{marginTop: 3}}>{`${parkingInfo.parkingNotice}`}</DetailInfoDescripText>
                 )}
               </DetailInfoItemContainer>
               <RequestReviseInfoContainer>
@@ -762,6 +1082,27 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
                     [{nativeEvent: {contentOffset: {y: scrollY}}}],
                     {
                       useNativeDriver: true,
+                      listener: event => {
+                        if(scrollY._value > (collapsibleViewHeight - headerHeight) && !isVisibleScrollTop) {
+                          setIsVisibleScrollTop(true)
+                          scrollTopScale.setValue(0.7);
+                          Animated.spring(scrollTopScale, {
+                            toValue: 1,
+                            friction: 6,
+                            tension: 400,
+                            useNativeDriver: true,
+                          }).start();
+                        } else if(scrollY._value < (collapsibleViewHeight - headerHeight) && isVisibleScrollTop) {
+                          setIsVisibleScrollTop(false)
+                          //scrollTopScale.setValue(0);
+                          Animated.timing(scrollTopScale, {
+                            toValue: 0,
+                            duration: 70,
+                            useNativeDriver: true,
+                          }).start();
+
+                        }
+                      }
                     },
                   )
                 : null
@@ -769,17 +1110,31 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
             onMomentumScrollBegin={onMomentumScrollBegin}
             onScrollEndDrag={onScrollEndDrag}
             onMomentumScrollEnd={onMomentumScrollEnd}
-            ItemSeparatorComponent={() => <View style={{height: 10}} />}
             ListHeaderComponent={() => <View style={{height: 10}} />}
             contentContainerStyle={{
               paddingTop: collapsibleViewHeight + tabBarHeight,
-              backgroundColor: '#ffffff',
+              backgroundColor: '#F5F7F9',
+              paddingBottom: hp('17%'),
             }}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}>
             <ReviewTabContainer>
               {dentalDetailInfo.reviews.length > 0 && (
-                <ReviewListContainer>
+                <ReviewInfoContainer>
+                  <PostReviewContainer>
+                    <PostReviewDescipText>
+                      병원의 리뷰를 작성하고 {`\n`}아메리카노 기프티콘을 받아가세요!
+                    </PostReviewDescipText>
+                    <TouchableWithoutFeedback onPress={() => moveToReviewUpload()}>
+                    <PostReviewButton>
+                      <PostReviewEmojiIcon
+                      source={require('~/Assets/Images/Emoji/em_post.png')}/>
+                      <PostReviewText>
+                        리뷰참여
+                      </PostReviewText>
+                    </PostReviewButton>
+                    </TouchableWithoutFeedback>
+                  </PostReviewContainer>
                   {dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate.all && (
                     <RatingReportContainer>
                       <RatingReport
@@ -802,18 +1157,61 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
                       />
                     </RatingReportContainer>
                   )}
+                  <ReviewListContainer>
                   <ReviewList reviewList={dentalDetailInfo.reviews} />
-                </ReviewListContainer>
+                  </ReviewListContainer>
+                  <RequestReviseInfoContainer>
+                <RequestReviseInfoTextContainer>
+                  <RequestReviseInfoText>
+                    {'정보 수정 요청하기'}
+                  </RequestReviseInfoText>
+                </RequestReviseInfoTextContainer>
+              </RequestReviseInfoContainer>
+              <CopyrightDescipContainer>
+                <CopyrightDescipText>
+                  병원정보는 건강보험심사평가원의 의료 빅데이터 및 해당 병원이
+                  제공한 정보를 기반으로 작성되었습니다. 본 컨텐츠의 저작권은
+                  제공처에 있으며, 저작권법의 보호를 받습니다.
+                </CopyrightDescipText>
+              </CopyrightDescipContainer>
+                </ReviewInfoContainer>
               )}
               {dentalDetailInfo.reviews.length === 0 && (
-                <NoneReviewContainer
+                <NoReviewContainer
                   style={{
                     minHeight: hp('100%') - (headerHeight + tabBarHeight),
                   }}>
-                  <NoneReviewText>
-                    {'해당 병원에 등록된 리뷰가 없어요!'}
-                  </NoneReviewText>
-                </NoneReviewContainer>
+                    <PostNoReviewCardContainer style={styles.postReviewCardShadow}>
+                      <NoReviewEmoji
+                      source={require('~/Assets/Images/Emoji/em_crying.png')}/>
+                      <NoReviewText>{"아직은 리뷰가 없네요."}</NoReviewText>
+                      <TouchableWithoutFeedback onPress={() => moveToReviewUpload()}>
+                      <PostNoReviewButton>
+                        <PostNoReviewContainer>
+                        <PostNoReviewText>
+                          {"첫번째로 리뷰 남기러 가기"}
+                        </PostNoReviewText>
+                        <PostNoReviewArrowIcon
+                        source={require('~/Assets/Images/Arrow/ic_postReviewArrow.png')}/>
+                        </PostNoReviewContainer>
+                      </PostNoReviewButton>
+                      </TouchableWithoutFeedback>
+                    </PostNoReviewCardContainer>
+              <RequestReviseInfoContainer>
+                <RequestReviseInfoTextContainer>
+                  <RequestReviseInfoText>
+                    {'정보 수정 요청하기'}
+                  </RequestReviseInfoText>
+                </RequestReviseInfoTextContainer>
+              </RequestReviseInfoContainer>
+              <CopyrightDescipContainer>
+                <CopyrightDescipText>
+                  병원정보는 건강보험심사평가원의 의료 빅데이터 및 해당 병원이
+                  제공한 정보를 기반으로 작성되었습니다. 본 컨텐츠의 저작권은
+                  제공처에 있으며, 저작권법의 보호를 받습니다.
+                </CopyrightDescipText>
+              </CopyrightDescipContainer>
+                </NoReviewContainer>
               )}
             </ReviewTabContainer>
           </Animated.ScrollView>
@@ -847,7 +1245,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
               preventDefault();
             }
           }}
-          inactiveColor={{fontColor: '#000000'}}
+          inactiveColor={{fontColor: '#9AA2A9'}}
           style={styles.tab}
           renderLabel={renderLabel}
           indicatorContainerStyle={styles.indicatorContainer}
@@ -892,6 +1290,23 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo}: Props) => {
           </HeaderLeftContainer>
         </TouchableWithoutFeedback>
       </HeaderBar>
+        <TouchableWithoutFeedback onPress={() => scrollToTop()}>
+        <ScrollTopContainer style={styles.scrollTopButton}>
+        {isVisibleScrollTop && (
+        <ScrollTopShadow
+        style={styles.scrollTopShadow}/>
+        )}
+        <Animated.Image
+        style={[{
+          borderRadius: 100,
+          backgroundColor: "#FFFFFF",
+          transform: [{scale: scrollTopScale}]
+        }]}
+        source={require('~/Assets/Images/Dental/ic_scrollTop.png')}/>
+        
+        </ScrollTopContainer>
+        </TouchableWithoutFeedback>
+
     </View>
   );
 };
@@ -902,10 +1317,10 @@ const styles = StyleSheet.create({
   },
   collapsibleView: {
     width: '100%',
+    height: collapsibleViewHeight,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    backgroundColor: '#FFA088',
   },
   header: {
     position: 'absolute',
@@ -917,7 +1332,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingLeft: wp('10.6%'),
   },
-  label: {fontSize: 14, color: '#2998FF', fontWeight: '800'},
+  label: {fontSize: 16, color: '#131F3C', fontWeight: '700', fontFamily: 'NanumSquare'},
   tab: {
     elevation: 0,
     shadowOpacity: 0,
@@ -933,474 +1348,54 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   indicator: {
-    backgroundColor: '#2998FF',
-    height: 4,
-    width: wp('19%'),
-    marginLeft: (wp('50%') - wp('19%')) / 2,
+    backgroundColor: '#00D1FF',
+    height: 2,
   },
-  certificationIconShadow: {
+  introKeywordShadow: {
     shadowOffset: {
       width: 0,
       height: 0,
     },
-    shadowOpacity: 0.05,
-    shadowRadius: 16,
+    shadowOpacity: 0.06,
+    shadowRadius: 5,
   },
+  basicInfoShadow: {
+    shadowOffset: {
+      width: 0,
+      height: -20,
+    },
+    shadowRadius: 15,
+    shadowOpacity: 0.15,
+  },
+  scrollTopButton: {
+    borderRadius: 100,
+    position: "absolute",
+    bottom: hp('15.27%'),
+    right: 16,
+    width: wp('9.6%'),
+    height: wp('9.6%'),
+  },
+  scrollTopShadow: {
+    backgroundColor: "#ffffff",
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowRadius: 10,
+    shadowOpacity: 0.07,
+  },
+  postReviewCardShadow: {
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowRadius: 10,
+    shadowOpacity: 0.08,
+  }
 });
 
 export default DentalCollapsibleTabView;
 
-const TEST_DENTAL_DETAIL_DATA = {
-  clinicInfoHeader: {
-    name: '아너스치과교정과치과의원(강서구-화곡동)',
-    address:
-      '서울특별시 강서구 강서로 242 3층 307호 (화곡동, 강서힐스테이트상가)',
-    telNumber: '02-2602-7222',
-    website: 'http://www.honorsdental.com',
-    launchDate: '2014-10-14',
-    reviewNum: 15,
-    conclustionNow: 0,
-    lunchTimeNow: 0,
-    reviewAVGStarRate: 3.6,
-  },
-  clinicInfoBody: {
-    description: '',
-    treatmentTime: {
-      weekday: {
-        weekdayReceiptNotice: '',
-        weekdayLunchTimeNotice: '',
-        mon: {
-          treatmentTime: ['00:00:00', '00:00:00'],
-          lunchTime: ['00:00:00', '00:00:00'],
-        },
-        tus: {
-          treatmentTime: ['00:00:00', '00:00:00'],
-          lunchTime: ['00:00:00', '00:00:00'],
-        },
-        wed: {
-          treatmentTime: ['00:00:00', '00:00:00'],
-          lunchTime: ['00:00:00', '00:00:00'],
-        },
-        thu: {
-          treatmentTime: ['00:00:00', '00:00:00'],
-          lunchTime: ['00:00:00', '00:00:00'],
-        },
-        fri: {
-          treatmentTime: ['00:00:00', '00:00:00'],
-          lunchTime: ['00:00:00', '00:00:00'],
-        },
-      },
-      sat: {
-        weekendReceiptNotice: '',
-        weekendLunchTimeNotice: '',
-        weekend_non_consulation_notice: '',
-        sat: {
-          treatmentTime: ['00:00:00', '00:00:00'],
-          lunchTime: ['00:00:00', '00:00:00'],
-        },
-      },
-      sunAndHoliday: {
-        weekend_non_consulation_notice: '',
-        treatmentTime: [null, null],
-      },
-    },
-    treatmentSubject: [
-      {
-        name: '치과교정과',
-        Clinic_subject: {
-          SpecialistDentist_NUM: 1,
-          choiceTreatmentDentist_NUM: 0,
-        },
-      },
-    ],
-    SpecialTreatment: [
-      {
-        name: '측두하악관절 자극요법',
-      },
-      {
-        name: '소아야간진료(20시 이후)',
-      },
-    ],
-    dentistInfo: {
-      specialistDentist: 1,
-      generalDentist: 0,
-      resident: 0,
-      intern: 1,
-    },
-    parkingInfo: {
-      parkingAllowNum: 0,
-      parkingCost: '',
-      parkingNotice: '',
-    },
-    location: {
-      address:
-        '서울특별시 강서구 강서로 242 3층 307호 (화곡동, 강서힐스테이트상가)',
-    },
-  },
-};
-
-const TEST_DENTAL_REVIEW_DATA = [
-  {
-    id: 2,
-    starRate_cost: 5,
-    starRate_treatment: 4,
-    starRate_service: 4,
-    certifiedBill: true,
-    hits: 0,
-    treatmentDate: '2020-12-07',
-    totalCost: null,
-    createdAt: '2020-12-07T03:21:08.000Z',
-    updatedAt: '2020-12-07T03:21:08.000Z',
-    deletedAt: null,
-    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
-    dentalClinicId: 43,
-    'createdDiff(second)': 352,
-    reviewCommentsNum: 0,
-    reviewLikeNum: 0,
-    viewerLikedReview: 0,
-    viewerScrapedReview: 0,
-    reviewViewNum: 1,
-    reviewDescriptions: '1 2',
-    user: {
-      nickname: 'jiwon11',
-      profileImg: '',
-    },
-    review_contents: [
-      {
-        id: 2,
-        img_url:
-          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
-        index: 1,
-        img_before_after: 'before',
-      },
-      {
-        id: 1,
-        img_url:
-          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
-        index: 2,
-        img_before_after: 'after',
-      },
-    ],
-    dental_clinic: {
-      id: 43,
-      name: '시그마치과병원',
-    },
-    TreatmentItems: [
-      {
-        name: '복합레진',
-        review_treatment_item: {
-          cost: 30000,
-        },
-      },
-      {
-        name: '임플란트',
-        review_treatment_item: {
-          cost: 20000,
-        },
-      },
-    ],
-  },
-  {
-    id: 2,
-    starRate_cost: 5,
-    starRate_treatment: 4,
-    starRate_service: 4,
-    certifiedBill: true,
-    hits: 0,
-    treatmentDate: '2020-12-07',
-    totalCost: null,
-    createdAt: '2020-12-07T03:21:08.000Z',
-    updatedAt: '2020-12-07T03:21:08.000Z',
-    deletedAt: null,
-    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
-    dentalClinicId: 43,
-    'createdDiff(second)': 352,
-    reviewCommentsNum: 0,
-    reviewLikeNum: 0,
-    viewerLikedReview: 0,
-    viewerScrapedReview: 0,
-    reviewViewNum: 1,
-    reviewDescriptions: '1 2',
-    user: {
-      nickname: 'jiwon11',
-      profileImg: '',
-    },
-    review_contents: [
-      {
-        id: 2,
-        img_url:
-          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
-        index: 1,
-        img_before_after: 'before',
-      },
-      {
-        id: 1,
-        img_url:
-          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
-        index: 2,
-        img_before_after: 'after',
-      },
-    ],
-    dental_clinic: {
-      id: 43,
-      name: '시그마치과병원',
-    },
-    TreatmentItems: [
-      {
-        name: '복합레진',
-        review_treatment_item: {
-          cost: 30000,
-        },
-      },
-      {
-        name: '임플란트',
-        review_treatment_item: {
-          cost: 20000,
-        },
-      },
-    ],
-  },
-  {
-    id: 2,
-    starRate_cost: 5,
-    starRate_treatment: 4,
-    starRate_service: 4,
-    certifiedBill: true,
-    hits: 0,
-    treatmentDate: '2020-12-07',
-    totalCost: null,
-    createdAt: '2020-12-07T03:21:08.000Z',
-    updatedAt: '2020-12-07T03:21:08.000Z',
-    deletedAt: null,
-    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
-    dentalClinicId: 43,
-    'createdDiff(second)': 352,
-    reviewCommentsNum: 0,
-    reviewLikeNum: 0,
-    viewerLikedReview: 0,
-    viewerScrapedReview: 0,
-    reviewViewNum: 1,
-    reviewDescriptions: '1 2',
-    user: {
-      nickname: 'jiwon11',
-      profileImg: '',
-    },
-    review_contents: [
-      {
-        id: 2,
-        img_url:
-          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
-        index: 1,
-        img_before_after: 'before',
-      },
-      {
-        id: 1,
-        img_url:
-          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
-        index: 2,
-        img_before_after: 'after',
-      },
-    ],
-    dental_clinic: {
-      id: 43,
-      name: '시그마치과병원',
-    },
-    TreatmentItems: [
-      {
-        name: '복합레진',
-        review_treatment_item: {
-          cost: 30000,
-        },
-      },
-      {
-        name: '임플란트',
-        review_treatment_item: {
-          cost: 20000,
-        },
-      },
-    ],
-  },
-  {
-    id: 2,
-    starRate_cost: 5,
-    starRate_treatment: 4,
-    starRate_service: 4,
-    certifiedBill: true,
-    hits: 0,
-    treatmentDate: '2020-12-07',
-    totalCost: null,
-    createdAt: '2020-12-07T03:21:08.000Z',
-    updatedAt: '2020-12-07T03:21:08.000Z',
-    deletedAt: null,
-    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
-    dentalClinicId: 43,
-    'createdDiff(second)': 352,
-    reviewCommentsNum: 0,
-    reviewLikeNum: 0,
-    viewerLikedReview: 0,
-    viewerScrapedReview: 0,
-    reviewViewNum: 1,
-    reviewDescriptions: '1 2',
-    user: {
-      nickname: 'jiwon11',
-      profileImg: '',
-    },
-    review_contents: [
-      {
-        id: 2,
-        img_url:
-          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
-        index: 1,
-        img_before_after: 'before',
-      },
-      {
-        id: 1,
-        img_url:
-          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
-        index: 2,
-        img_before_after: 'after',
-      },
-    ],
-    dental_clinic: {
-      id: 43,
-      name: '시그마치과병원',
-    },
-    TreatmentItems: [
-      {
-        name: '복합레진',
-        review_treatment_item: {
-          cost: 30000,
-        },
-      },
-      {
-        name: '임플란트',
-        review_treatment_item: {
-          cost: 20000,
-        },
-      },
-    ],
-  },
-  {
-    id: 2,
-    starRate_cost: 5,
-    starRate_treatment: 4,
-    starRate_service: 4,
-    certifiedBill: true,
-    hits: 0,
-    treatmentDate: '2020-12-07',
-    totalCost: null,
-    createdAt: '2020-12-07T03:21:08.000Z',
-    updatedAt: '2020-12-07T03:21:08.000Z',
-    deletedAt: null,
-    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
-    dentalClinicId: 43,
-    'createdDiff(second)': 352,
-    reviewCommentsNum: 0,
-    reviewLikeNum: 0,
-    viewerLikedReview: 0,
-    viewerScrapedReview: 0,
-    reviewViewNum: 1,
-    reviewDescriptions: '1 2',
-    user: {
-      nickname: 'jiwon11',
-      profileImg: '',
-    },
-    review_contents: [
-      {
-        id: 2,
-        img_url:
-          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
-        index: 1,
-        img_before_after: 'before',
-      },
-      {
-        id: 1,
-        img_url:
-          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
-        index: 2,
-        img_before_after: 'after',
-      },
-    ],
-    dental_clinic: {
-      id: 43,
-      name: '시그마치과병원',
-    },
-    TreatmentItems: [
-      {
-        name: '복합레진',
-        review_treatment_item: {
-          cost: 30000,
-        },
-      },
-      {
-        name: '임플란트',
-        review_treatment_item: {
-          cost: 20000,
-        },
-      },
-    ],
-  },
-  {
-    id: 2,
-    starRate_cost: 5,
-    starRate_treatment: 4,
-    starRate_service: 4,
-    certifiedBill: true,
-    hits: 0,
-    treatmentDate: '2020-12-07',
-    totalCost: null,
-    createdAt: '2020-12-07T03:21:08.000Z',
-    updatedAt: '2020-12-07T03:21:08.000Z',
-    deletedAt: null,
-    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
-    dentalClinicId: 43,
-    'createdDiff(second)': 352,
-    reviewCommentsNum: 0,
-    reviewLikeNum: 0,
-    viewerLikedReview: 0,
-    viewerScrapedReview: 0,
-    reviewViewNum: 1,
-    reviewDescriptions: '1 2',
-    user: {
-      nickname: 'jiwon11',
-      profileImg: '',
-    },
-    review_contents: [
-      {
-        id: 2,
-        img_url:
-          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
-        index: 1,
-        img_before_after: 'before',
-      },
-      {
-        id: 1,
-        img_url:
-          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
-        index: 2,
-        img_before_after: 'after',
-      },
-    ],
-    dental_clinic: {
-      id: 43,
-      name: '시그마치과병원',
-    },
-    TreatmentItems: [
-      {
-        name: '복합레진',
-        review_treatment_item: {
-          cost: 30000,
-        },
-      },
-      {
-        name: '임플란트',
-        review_treatment_item: {
-          cost: 20000,
-        },
-      },
-    ],
-  },
-];
 
 /*
 <BasicInfoItemDivider

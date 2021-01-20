@@ -137,7 +137,9 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
   }, []);
 
   const moveToHomeTownSetting = useCallback(() => {
-    navigation.navigate('HometownSettingScreen', profile);
+    navigation.navigate('HometownSettingScreen', {
+      profile: profile,
+    });
   }, []);
 
   return (

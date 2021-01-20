@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
+import SafeAreaView from 'react-native-safe-area-view';
 import {
   TouchableWithoutFeedback,
   Keyboard,
@@ -15,7 +16,7 @@ import {Rating} from '~/Components/Presentational/Rating';
 
 const ratingImage = require('~/Assets/Images/Review/ic_swipeStar.png');
 
-const Container = Styled.SafeAreaView`
+const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
  align-items: center;
@@ -259,7 +260,7 @@ const RatingScreen = ({navigation, route}: Props) => {
   };
 
   return (
-    <Container>
+    <Container as={SafeAreaView} forceInset={{top: 'always'}}>
       <HeaderBar>
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <HeaderLeftContainer>

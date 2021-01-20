@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -17,7 +17,7 @@ import DeviceInfo from 'react-native-device-info';
 const Container = Styled.View`
 border-top-width: 0.5px;
 border-color: #E2E6ED;
-height: ${hp('6.77%')}px;
+height: ${DeviceInfo.hasNotch() ? hp('6.77%') : hp('8%')}px;
 background-color: #ffffff;
 padding: 8px 16px;
 `;
@@ -38,7 +38,6 @@ flex: 1;
 font-size: 14px;
 font-weight: 400;
 font-family: NanumSquare;
-background-color: #ffffff;
 padding-bottom: 4px;
 color: #131F3C;
 `;
@@ -60,9 +59,12 @@ color: #00D1FF;
 `;
 
 const CommentUploadContainer = Styled.View`
-padding-top: 8px;
+position: absolute;
+right: 0px;
+justify-content: center;
 padding-right: 16px;
 padding-left: 16px;
+padding-top: 8px;
 padding-bottom: 8px;
 `;
 
@@ -99,21 +101,37 @@ color: #9AA2A9;
 `;
 
 interface Props {
+  isFocusedInputProp?:boolean
   postReviewComment: (description: string) => void,
   inputType: string,
   commentInputRef: any,
   replyTargetNickname?: string,
   cancelReplyInput: () => void,
+  requestScreen: string,
 }
 
 const CommentPostBottomBar = ({
+  isFocusedInputProp,
   postReviewComment,
   inputType,
   commentInputRef,
   replyTargetNickname,
-  cancelReplyInput
+  cancelReplyInput,
+  requestScreen,
 }: Props) => {
   const [commentDescrip, setCommentDescrip] = useState<string>('');
+  const [isFocusedInput, setIsFocusedInput] = useState<boolean>()
+
+  useEffect(() => {
+    if(requestScreen === "ReplyPostScreen") {
+      if(commentInputRef.current) {
+        setTimeout(() => {
+          commentInputRef.current.focus()
+        }, 10)
+      }
+    }
+
+  }, [])
 
   const onChangeCommentInput = (text: string) => {
     setCommentDescrip(text);
@@ -133,7 +151,6 @@ const CommentPostBottomBar = ({
             clearButtonMode="always"
             autoCapitalize={'none'}
             autoCorrect={false}
-            autoFocus={false}
             placeholder="댓글 입력"
             placeholderTextColor={'grey'}
             value={commentDescrip}

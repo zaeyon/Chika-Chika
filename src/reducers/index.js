@@ -4,6 +4,7 @@ import reviewList from './reviewList';
 import communityPostList from './communityPostList';
 import dentalMap from './dentalMap';
 import dentalFilter from './dentalFilter';
+import commentList from './commentList';
 
 const rootReducers = combineReducers({
   currentUser,
@@ -11,6 +12,7 @@ const rootReducers = combineReducers({
   reviewList,
   dentalMap,
   dentalFilter,
+  commentList,
 });
 
 export default rootReducers;

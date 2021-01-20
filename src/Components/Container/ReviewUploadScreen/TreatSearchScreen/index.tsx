@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
+import SafeAreaView from 'react-native-safe-area-view';
 import {TouchableWithoutFeedback, FlatList, Keyboard} from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -12,7 +13,7 @@ import AboveKeyboard from 'react-native-above-keyboard';
 // route
 import GETTreatmentSearch from '~/Routes/Search/GETTreatmentSearch';
 
-const Container = Styled.SafeAreaView`
+const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
  align-items: center;
@@ -344,7 +345,7 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
   };
 
   return (
-    <Container>
+    <Container as={SafeAreaView} forceInset={{top: 'always'}}>
       <HeaderBar>
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <HeaderLeftContainer>

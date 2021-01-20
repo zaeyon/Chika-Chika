@@ -76,11 +76,13 @@ import CommunityListScreen from '~/Components/Container/CommunityListScreen';
 import CommunityDetailScreen from '~/Components/Container/CommunityDetailScreen';
 import CommunityPostUploadScreen from '~/Components/Container/CommunityPostUploadScreen';
 import ImageSelectScreen from '~/Components/Container/ImageSelectScreen';
+
 // Dental Clinic Stack Screen
 import NearDentalMap from '~/Components/Container/NearDentalMap';
 import DentalTotalSearchScreen from '~/Components/Container/DentalTotalSearchScreen';
 import DentalDetailScreen from '~/Components/Container/DentalDetailScreen';
 import DentalInfoEditRequestScreen from '~/Components/Container/DentalDetailScreen/DentalInfoEditRequestScreen';
+import DentalLocationMapScreen from '~/Components/Container/DentalDetailScreen/DentalLocationMapScreen';
 
 // Teeth Care Stack Screen
 import TeethCareScreen from '~/Components/Container/TeethCareScreen';
@@ -94,6 +96,7 @@ import MeasuredBrushPictureScreen from '~/Components/Container/BrushDetritionCam
 
 // Hometown Setting Screen
 import HometownSettingScreen from '~/Components/Container/HometownSettingScreen';
+import HometownSearchScreen from '~/Components/Container/HometownSearchScreen';
 
 // Keyword Search Screen
 import KeywordSearchScreen from '~/Components/Container/KeywordSearchScreen';
@@ -145,8 +148,8 @@ function AuthStackScreen() {
         component={PhoneVerifyScreen}
       />
       <AuthStack.Screen
-        name="HometownSettingScreen"
-        component={HometownSettingScreen}
+        name="HometownSearchScreen"
+        component={HometownSearchScreen}
       />
     </AuthStack.Navigator>
   );
@@ -154,10 +157,17 @@ function AuthStackScreen() {
 
 function ReviewStackScreen() {
   return (
-    <ReviewStack.Navigator headerMode="none">
+    <ReviewStack.Navigator 
+    headerMode="none"
+    screenOptions={{
+      gestureEnabled: true,
+    }}>
       <ReviewStack.Screen
         name="ReviewListScreen"
         component={ReviewListScreen}
+        options={{
+          gestureEnabled: true,
+        }}
       />
       <ReviewStack.Screen
         name="ReviewDetailScreen"
@@ -166,10 +176,14 @@ function ReviewStackScreen() {
       <ReviewStack.Screen
         name="FullImagesScreen"
         component={FullImagesScreen}
+        
       />
       <ReviewStack.Screen
         name="ReviewUploadStack"
         component={ReviewUploadStackScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <ReviewStack.Screen
         name="DentalClinicStack"
@@ -198,7 +212,11 @@ function AnotherProfileStackScreen() {
 
 function HomeStackScreen() {
   return (
-    <HomeStack.Navigator headerMode="none">
+    <HomeStack.Navigator 
+    headerMode="none"
+    screenOptions={{
+      gestureEnabled: false
+    }}>
       <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
       <HomeStack.Screen
         name="ReviewStackScreen"
@@ -211,6 +229,9 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name="ReviewUploadStackScreen"
         component={ReviewUploadStackScreen}
+        options={{
+          gestureEnabled: false
+        }}
       />
     </HomeStack.Navigator>
   );
@@ -255,6 +276,17 @@ function DentalClinicStackScreen() {
         name="DentalInfoEditRequestScreen"
         component={DentalInfoEditRequestScreen}
       />
+       <DentalClinicStack.Screen
+        name="ReviewUploadStackScreen"
+        component={ReviewUploadStackScreen}
+        options={{
+          gestureEnabled: false
+        }}
+      />
+      <DentalClinicStack.Screen
+      name="DentalLocationMapScreen"
+      component={DentalLocationMapScreen}
+      />
     </DentalClinicStack.Navigator>
   );
 }
@@ -297,50 +329,91 @@ function TeethCareStackScreen() {
 
 function ReviewUploadStackScreen() {
   return (
-    <ReviewUploadStack.Navigator headerMode="none">
+    <ReviewUploadStack.Navigator 
+    headerMode="none">
       <ReviewUploadStack.Screen
         name="ReceiptRegisterScreen"
         component={ReceiptRegisterScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <ReviewUploadStack.Screen
         name="ReviewUploadScreen"
         component={ReviewUploadScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <ReviewUploadStack.Screen
         name="ReviewMetaDataScreen"
         component={ReviewMetaDataScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <ReviewUploadStack.Screen
         name="ContentPostScreen"
         component={ContentPostScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <ReviewUploadStack.Screen name="TeethCamera" component={TeethCamera} />
       <ReviewUploadStack.Screen name="Gallery" component={Gallery} />
       <ReviewUploadStack.Screen
         name="GallerySelectOne"
         component={GallerySelectOne}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <ReviewUploadStack.Screen
         name="ReceiptCamera"
         component={ReceiptCamera}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <ReviewUploadStack.Screen
         name="TakenPictureScreen"
         component={TakenPictureScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <ReviewUploadStack.Screen
         name="DentalNameSearchScreen"
         component={DentalNameSearchScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <ReviewUploadStack.Screen
         name="TreatSearchScreen"
         component={TreatSearchScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <ReviewUploadStack.Screen
         name="DetailPriceScreen"
         component={DetailPriceScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
-      <ReviewUploadStack.Screen name="RatingScreen" component={RatingScreen} />
+      <ReviewUploadStack.Screen
+      name="RatingScreen"
+      component={RatingScreen}
+      />
+      <ReviewUploadStack.Screen
+      name="ImageSelectScreen"
+      component={ImageSelectScreen}
+      options={{
+        gestureEnabled: false,
+      }}
+      />
     </ReviewUploadStack.Navigator>
   );
 }
@@ -412,9 +485,12 @@ function MyProfileStackScreen() {
         component={DentalClinicStackScreen}
       />
       <MyProfileStack.Screen
-        name="HometownSettingScreen"
-        component={HometownSettingScreen}
+        name="HometownSearchScreen"
+        component={HometownSearchScreen}
       />
+      <MyProfileStack.Screen
+        name="HometownSettingScreen"
+        component={HometownSettingScreen}/>
     </MyProfileStack.Navigator>
   );
 }
@@ -631,7 +707,7 @@ function BottomTab() {
     const stackRouteName = routeName.state
       ? routeName.state.routes[routeName.state.index].name
       : '';
-    if (routeName.name === 'EditProfileStackScreen') {
+    if (routeName.name === 'EditProfileStackScreen' || routeName.name === 'HometownSettingScreen' || routeName.name === 'HometownSearchScreen') {
       return false;
     }
 
@@ -675,6 +751,7 @@ function BottomTab() {
         name="홈"
         component={HomeStackScreen}
         options={({route}) => ({
+          gestureEnabled: false,
           tabBarVisible: getHomeBottomTabBarVisibility(route),
           tabBarIcon: ({focused}: {focused: boolean}) => (
             <Image
@@ -685,6 +762,7 @@ function BottomTab() {
               }
             />
           ),
+        
         })}
       />
       <Tab.Screen
@@ -800,7 +878,7 @@ const styles = StyleSheet.create({
   tabBar: {
     borderTopColor: '#E2E6ED',
     borderTopWidth: 1,
-    height: DeviceInfo.hasNotch() ? hp('12.3%') : hp('7.2%'),
+    height: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'),
     paddingHorizontal: 0,
     position: 'absolute',
   },

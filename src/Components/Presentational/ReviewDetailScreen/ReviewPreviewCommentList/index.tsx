@@ -67,20 +67,46 @@ let commentObj: object;
 
 interface Props {
     commentList: Array<object>,
-    clickReply: () => void,
+    clickReply: (commentOb: any, targetUserNickname: string) => void,
+    clickReplyOfReply: (commentObj: any, targetUserNickname: string) => void,
     openCommentActionSheet: (userId: string, nickname: string, commentId: number) => void;
     moveToCommentList: (request: string) => void,
+    commentCount: number,
 }
-
-const ReviewPreviewCommentList = ({commentList, clickReply, openCommentActionSheet, moveToCommentList}: Props) => {
+    
+const ReviewPreviewCommentList = ({commentList, clickReply, clickReplyOfReply, openCommentActionSheet, moveToCommentList, commentCount}: Props) => {
     const [isViewTotal, setIsViewTotal] = useState<boolean>(false);
-    const [previewCommentList, setPreviewCommentList] = useState<Array<object>>([]);
-
+    const [previewCommentList, setPreviewCommentList] = useState<Array<any>>([]);
+    console.log("ReviewPreviewCommentList commentList", commentList);
+    
     useEffect(() => {
-        if(commentList.length > 7) {
-            const tmpCommentList = commentList.slice(0, 7);
+
+        let tmpCommentList = new Array();
+        tmpCommentList = commentList;
+
+        if(commentCount > 7) {
+            let remainingCount = 7;
+            for (var i = 0; i < commentList.length; i++) {
+                console.log("ReviewPreviewCommentList commentList[i].Replys.length", commentList[i].Replys.length);
+
+                remainingCount = remainingCount - (1 + commentList[i].Replys.length);
+                console.log("ReviewPreviewCommentList remainingCount", remainingCount);
+
+                if(remainingCount <= 0) {
+                     const deletedCommentArr = commentList.slice(0, i+1);
+                     const tmpReplyArr = commentList[i].Replys;
+                     const deletedReplyArr = tmpReplyArr.slice(0, (tmpReplyArr.length - Math.abs(remainingCount)))
+                     console.log("deletedReplyArr", deletedReplyArr);
+                    
+                     deletedCommentArr[i].Replys = deletedReplyArr;
+
+                     setPreviewCommentList(deletedCommentArr)
+                     
+
+                     break
+                }
+            }
             setIsViewTotal(true);
-            setPreviewCommentList(tmpCommentList);
         } else {
             setPreviewCommentList(commentList);
         }
@@ -88,7 +114,6 @@ const ReviewPreviewCommentList = ({commentList, clickReply, openCommentActionShe
     }, [commentList])
 
     const renderCommentItem = ({item, index}: any) => {
-        console.log("renderCommentItem item", item);
         commentObj = item;
 
         return (
@@ -109,7 +134,8 @@ const ReviewPreviewCommentList = ({commentList, clickReply, openCommentActionShe
                 {item.Replys[0] && (
                     <FlatList
                     data={item.Replys}
-                    renderItem={renderReplyItem}/>
+                    renderItem={renderReplyItem}
+                    keyExtractor={item => `${item.id}`}/>
                 )}
             </CommentItemContainer>
         )
@@ -119,6 +145,7 @@ const ReviewPreviewCommentList = ({commentList, clickReply, openCommentActionShe
     const renderReplyItem = ({item, index}: any) => {
         return (
             <ReplyItem
+            replyObj={item}
             commentObj={commentObj}
             isVisibleReplyButton={true}
             userId={item.user.id}
@@ -128,7 +155,8 @@ const ReviewPreviewCommentList = ({commentList, clickReply, openCommentActionShe
             description={item.description}
             createdDate={item.createdAt}
             replys={item.Replys}
-            clickReply={clickReply}
+            clickReplyOfReply={clickReplyOfReply}
+            openCommentActionSheet={openCommentActionSheet}
             />
         )
     } 
@@ -138,13 +166,14 @@ const ReviewPreviewCommentList = ({commentList, clickReply, openCommentActionShe
     return (
         <Container>
             <HeaderContainer>
-                <HeaderCommentCountText>{`댓글(${commentList.length})`}</HeaderCommentCountText>
+                <HeaderCommentCountText>{`댓글(${commentCount})`}</HeaderCommentCountText>
             </HeaderContainer>
             {commentList.length > 0 && (
             <CommentListContainer>
                 <FlatList
                 data={previewCommentList}
-                renderItem={renderCommentItem}/>
+                renderItem={renderCommentItem}
+                keyExtractor={item => `${item.id}`}/>
                 {isViewTotal && (
                 <TouchableWithoutFeedback onPress={() => moveToCommentList("view")}>
                 <ViewTotalCommentContainer>

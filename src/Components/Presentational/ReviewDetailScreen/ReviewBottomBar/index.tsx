@@ -16,13 +16,13 @@ import {getBottomSpace} from 'react-native-iphone-x-helper';
 import DeviceInfo from 'react-native-device-info';
 
 const Container = Styled.View`
-height: ${hp('8.128%')}px;
+height: ${DeviceInfo.hasNotch() ? hp('8.128%') : hp('9.5')}px;
 border-top-width: 1px;
 border-color: #E2E6ED;
 background-color: #ffffff;
-padding-top: 10px;
-padding-left: 16px;
-padding-right: 16px;
+padding-top: ${hp('1.9%')}px;
+padding-left: ${wp('4.26%')}px;
+padding-right: ${wp('4.26%')}px;
 `;
 
 const DefaultContainer = Styled.View`
@@ -97,7 +97,8 @@ height: ${wp('6.4%')}px;
 `;
 
 const SeeDentalInfoButton = Styled.View`
-width: ${wp('44.53%')}px;
+flex: 1;
+margin-left: ${wp('4.26%')}px;
 height: ${wp('12.79%')}px;
 background-color: #131F3C;
 border-radius: 8px;
@@ -119,6 +120,7 @@ interface Props {
   clickReviewScrap: () => void;
   isCurUserLike: boolean;
   isCurUserScrap: boolean;
+  moveToDentalDetail: () => void,
 }
 
 const ReviewBottomBar = ({
@@ -128,6 +130,7 @@ const ReviewBottomBar = ({
   clickReviewScrap,
   isCurUserLike,
   isCurUserScrap,
+  moveToDentalDetail,
 }: Props) => {
 
   const [isCommentInput, setIsCommentInput] = useState<boolean>(false);
@@ -184,9 +187,11 @@ const ReviewBottomBar = ({
               </SocialItemContainer>
             </TouchableWithoutFeedback>
           </SocialInfoListContainer>
+          <TouchableWithoutFeedback onPress={() => moveToDentalDetail()}>
           <SeeDentalInfoButton>
             <SeeDentalInfoText>{'병원정보'}</SeeDentalInfoText>
           </SeeDentalInfoButton>
+          </TouchableWithoutFeedback>
         </DefaultContainer>
     </Container>
   );

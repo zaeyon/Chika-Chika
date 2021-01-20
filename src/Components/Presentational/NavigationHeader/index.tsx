@@ -53,7 +53,7 @@ const HeaderTitleContainer = Styled.View`
 width: 100%;
 position: absolute;
 height: 100%;
-padding: 12px 16px 16px 16px;
+padding: 16px 16px 16px 16px;
 justify-content: center;
 align-items: center;
 z-index: -1;

@@ -5,6 +5,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import SafeAreaView from 'react-native-safe-area-view';
 import {NavigationContainer} from '@react-navigation/native';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import DeviceInfo from 'react-native-device-info';
@@ -13,7 +14,7 @@ import {useSelector} from 'react-redux';
 // route
 import GETDentalNameSearch from '~/Routes/Search/GETDentalNameSearch';
 
-const Container = Styled.SafeAreaView`
+const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
 `;
@@ -70,7 +71,6 @@ height: ${wp('6.4%')}px;
 
 const BodyContainer = Styled.View`
 align-items: center;
-padding-top: 10px;
 padding-bottom: ${DeviceInfo.hasNotch() ? hp('3s%') : hp('14%')}px;
 `;
 
@@ -163,52 +163,6 @@ font-size: 13px;
 color: #9a9a9a;
 `;
 
-const DENTALCLINIC_TEST_DATA = [
-  {
-    name: '연세 좋은 이웃 치과의원',
-    address: '서울특별시 동대문구 왕산로 193 193 4층 (청량리동)',
-  },
-  {
-    name: '재미있는 치과의원',
-    address: '서울특별시 중구 을지로 3가 홍원빌딩',
-  },
-  {
-    name: '아름다운 치과의원',
-    address: '서울특별시 동대문구 왕산로 193 193 5층 (청량리동)',
-  },
-  {
-    name: '연세 좋은 이웃 치과의원',
-    address: '서울특별시 동대문구 왕산로 193 193 4층 (청량리동)',
-  },
-  {
-    name: '재미있는 치과의원',
-    address: '서울특별시 중구 을지로 3가 홍원빌딩',
-  },
-  {
-    name: '아름다운 치과의원',
-    address: '서울특별시 동대문구 왕산로 193 193 5층 (청량리동)',
-  },
-  {
-    name: '연세 좋은 이웃 치과의원',
-    address: '서울특별시 동대문구 왕산로 193 193 4층 (청량리동)',
-  },
-  {
-    name: '재미있는 치과의원',
-    address: '서울특별시 중구 을지로 3가 홍원빌딩',
-  },
-  {
-    name: '아름다운 치과의원',
-    address: '서울특별시 동대문구 왕산로 193 193 5층 (청량리동)',
-  },
-  {
-    name: '재미있는 치과의원',
-    address: '서울특별시 중구 을지로 3가 홍원빌딩',
-  },
-  {
-    name: '아름다운 치과의원',
-    address: '서울특별시 동대문구 왕산로 193 193 5층 (청량리동)',
-  },
-];
 
 interface Props {
   navigation: any;
@@ -246,10 +200,11 @@ const DentalNameSearchScreen = ({navigation, route}: Props) => {
   };
 
   const renderDentalClinicItem = ({item, index}: any) => {
+    console.log("renderDentalClinicItem item", item);
     return (
       <TouchableWithoutFeedback onPress={() => onPressDentalClinicItem(item)}>
         <DentalClinicItemContainer>
-          <DentalClinicNameText>{item.name}</DentalClinicNameText>
+          <DentalClinicNameText>{item.originalName}</DentalClinicNameText>
           <DentalClinicAddressText>{item.address}</DentalClinicAddressText>
         </DentalClinicItemContainer>
       </TouchableWithoutFeedback>
@@ -278,7 +233,7 @@ const DentalNameSearchScreen = ({navigation, route}: Props) => {
   };
 
   return (
-    <Container>
+    <Container as={SafeAreaView} forceInset={{top: 'always'}}>
       <HeaderBar>
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <HeaderLeftContainer>
@@ -306,6 +261,7 @@ const DentalNameSearchScreen = ({navigation, route}: Props) => {
       <BodyContainer>
         <DentalListContainer>
           <KeyboardAwareFlatList
+            contentContainerStyle={{paddingTop: 10}}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps={'always'}
             data={autoCompletedDentalList}
