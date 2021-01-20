@@ -43,7 +43,6 @@ const POSTCreateCommunityPost = (jwtToken: string, postData: PostData) => {
 
         })
         .then(function(response) {
-        
             resolve(response.data);
             
         })

@@ -12,6 +12,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {SharedElement} from 'react-navigation-shared-element';
+import FastImage from 'react-native-fast-image';
 
 const ContainerView = Styled.View`
 width: ${wp('100%')}px;
@@ -123,7 +125,6 @@ height: auto;
 const ImageView = Styled.Image<{isFirst: number; source: any}>`
 width: 130px;
 height: 130px;
-background-color: grey;
 border-radius: 4px;
 margin-right: 16px;
 margin-left: ${(props) => (props.isFirst ? '0px' : '16px')}
@@ -152,13 +153,18 @@ margin-left: 4px;
 const HashTagText = Styled.Text`
   color: #0075FF;
 `;
+
 interface Props {
-  moveToFullImages: any;
   moveToAnotherProfile: any;
+  moveToImageDetail: any;
   data: any;
 }
 
-const PostContent = ({data, moveToFullImages, moveToAnotherProfile}: Props) => {
+const PostContent = ({
+  data,
+  moveToImageDetail,
+  moveToAnotherProfile,
+}: Props) => {
   const {
     id,
     createdAt,
@@ -168,6 +174,7 @@ const PostContent = ({data, moveToFullImages, moveToAnotherProfile}: Props) => {
     Clinics,
     community_imgs,
   } = data;
+  console.log(community_imgs);
 
   const formatElapsedDate = useCallback((elapsedTime: number) => {
     if (elapsedTime / (24 * 3600 * 1000) > 1) {
@@ -259,15 +266,35 @@ const PostContent = ({data, moveToFullImages, moveToAnotherProfile}: Props) => {
       <TouchableWithoutFeedback
         key={'TouchableImage' + index}
         onPress={() => {
-          moveToFullImages(community_imgs, item.img_url);
+          console.log(`item.${item.img_url}`);
+          moveToImageDetail(community_imgs, item.img_url);
         }}>
-        <ImageView
-          isFirst={index}
+        {/* <ImageView
+            isFirst={index}
+            key={'image' + index}
+            style={{
+              resizeMode: 'cover',
+            }}
+            source={{
+              url: item.img_url,
+              cache: 'force-cache',
+            }}
+          /> */}
+        <FastImage
           key={'image' + index}
-          source={{
-            url: item.img_url,
-            cache: 'force-cache',
+          style={{
+            width: 130,
+            height: 130,
+            borderRadius: 4,
+            marginRight: 16,
+            marginLeft: index ? 0 : 16,
           }}
+          source={{
+            uri: item.img_url,
+            priority: FastImage.priority.normal,
+            cache: FastImage.cacheControl.immutable,
+          }}
+          resizeMode={FastImage.resizeMode.cover}
         />
       </TouchableWithoutFeedback>
     ),
@@ -289,7 +316,9 @@ const PostContent = ({data, moveToFullImages, moveToAnotherProfile}: Props) => {
               }}
             />
             <ProfileContentView>
-              <ProfileNameText>{user.nickname}</ProfileNameText>
+              <SharedElement id="1">
+                <ProfileNameText>{user.nickname}</ProfileNameText>
+              </SharedElement>
               <ProfileDescriptionText>
                 {formatElapsedDate(data['createdDiff(second)'] * 1000) +
                   (updatedAt !== createdAt ? ' ･ 수정됨' : '')}

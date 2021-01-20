@@ -3,6 +3,7 @@ import {StyleSheet, StatusBar, Image} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
+import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -11,6 +12,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 import DeviceInfo from 'react-native-device-info';
 import messaging from '@react-native-firebase/messaging';
+import {enableScreens} from 'react-native-screens';
 
 import allActions from '~/actions';
 
@@ -76,7 +78,7 @@ import CommunityListScreen from '~/Components/Container/CommunityListScreen';
 import CommunityDetailScreen from '~/Components/Container/CommunityDetailScreen';
 import CommunityPostUploadScreen from '~/Components/Container/CommunityPostUploadScreen';
 import ImageSelectScreen from '~/Components/Container/ImageSelectScreen';
-
+import ImageDetailScreen from '~/Components/Container/ImageDetailScreen';
 // Dental Clinic Stack Screen
 import NearDentalMap from '~/Components/Container/NearDentalMap';
 import DentalTotalSearchScreen from '~/Components/Container/DentalTotalSearchScreen';
@@ -110,7 +112,7 @@ const MyProfileStack = createStackNavigator();
 const ReviewStack = createStackNavigator();
 const AnotherProfileStack = createStackNavigator();
 const SettingStack = createStackNavigator();
-const CommunityStack = createStackNavigator();
+const CommunityStack = createSharedElementStackNavigator();
 const CommunityPostUploadStack = createStackNavigator();
 const DentalClinicStack = createStackNavigator();
 const TeethCareStack = createStackNavigator();
@@ -191,10 +193,9 @@ function ReviewStackScreen() {
       />
       <ReviewStack.Screen
         name="ReviewCommentListScreen"
-        component={ReviewCommentListScreen}/>
-      <ReviewStack.Screen
-        name="ReplyPostScreen"
-        component={ReplyPostScreen}/>
+        component={ReviewCommentListScreen}
+      />
+      <ReviewStack.Screen name="ReplyPostScreen" component={ReplyPostScreen} />
     </ReviewStack.Navigator>
   );
 }
@@ -526,6 +527,7 @@ function CommunityPostUploadStackScreen({route}: any) {
     </CommunityPostUploadStack.Navigator>
   );
 }
+
 function CommunityStackScreen() {
   return (
     <CommunityStack.Navigator headerMode="none">
@@ -552,11 +554,37 @@ function CommunityStackScreen() {
         }}
       />
       <CommunityStack.Screen
-        options={{
+        name="ImageDetailScreen"
+        component={ImageDetailScreen}
+        options={() => ({
           gestureEnabled: false,
-        }}
-        name="FullImagesScreen"
-        component={FullImagesScreen}
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {duration: 150},
+            },
+            close: {
+              animation: 'timing',
+              config: {duration: 150},
+            },
+          },
+          cardStyle: {backgroundColor: 'transparent'},
+          cardStyleInterpolator: ({current: {progress}}) => {
+            return {
+              cardStyle: {
+                opacity: progress,
+              },
+            };
+          },
+        })}
+        // sharedElementsConfig={(route, otherRoute, showing) => {
+        //   console.log(route.params.imageIndex);
+        //   if (showing) {
+        //     const item = route.params.imageArray;
+        //     return item.map((item) => `item.${item}`);
+        //     return [`item.${item[route.params.imageIndex]}`];
+        //   }
+        // }}
       />
       <CommunityStack.Screen
         name="KeywordSearchStackScreen"
@@ -624,12 +652,6 @@ function BottomTab() {
   };
 
   const getDentalBottomTabBarVisibility = (route: any) => {
-    console.log('getDentalBottomTabBarVisibility route22', route);
-    console.log(
-      'getDentalBottomTabBarVisibility route.state22',
-      route.state?.routes,
-    );
-
     const routeName = route.state ? route.state.routes[route.state.index] : '';
     const isOpenDentalList = routeName.params?.isOpenDentalList;
 
@@ -670,7 +692,7 @@ function BottomTab() {
 
     if (
       stackRouteName === 'CommunityStackScreen' ||
-      routeName.name === 'FullImagesScreen'
+      routeName.name === 'ImageDetailScreen'
     ) {
       return false;
     }
@@ -746,6 +768,10 @@ function BottomTab() {
       tabBarOptions={{
         showLabel: false,
         style: styles.tabBar,
+        tabStyle: {
+          borderTopWidth: 1,
+          borderTopColor: '#E2E6ED',
+        },
       }}>
       <Tab.Screen
         name="홈"

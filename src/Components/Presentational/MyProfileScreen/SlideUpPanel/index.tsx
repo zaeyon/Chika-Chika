@@ -14,16 +14,16 @@ import {
 const ContainerView = Styled.View`
     flex: 1;
     background: white;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
     align-items: center;
-    padding: 10px 0px 70px 0px;
+    padding: 16px 0px 70px 0px;
 `;
 
 const TopIndicatorView = Styled.View`
-width: 48px;
-height: 3px;
-background: #C4C4C4;
+width: 35px;
+height: 4px;
+background: #E2E6ED;
 border-radius: 100px;
 margin-bottom: 16px;
 `;
@@ -33,7 +33,7 @@ const ContentItemTouchableHighlight = Styled(
 )`
 width: 100%;
 height: ${hp('8.13%')}px;
-padding: 0px 16px;
+padding: 0px 24px;
 `;
 const ContentItemView = Styled.View`
 flex: 1;
@@ -41,10 +41,9 @@ flex-direction: row;
 align-items: center;
 `;
 
-const ContentImageView = Styled.View`
+const ContentImage = Styled.Image`
 width: 24px;
 height: 24px;
-background: #C4C4C4;
 margin-right: 12px;
 `;
 
@@ -58,9 +57,9 @@ padding-top: 2.3px;
 `;
 
 const HorizontalLineView = Styled.View`
-width: 91%;
+width: auto;
 height: 1px;
-margin-left: auto;
+margin: 0px 24px 0px 60px;
 background: #ECECEC;
 `;
 
@@ -72,11 +71,31 @@ interface Props {
 
 const SlideUpPanel = ({navigation, closeBottomSheet, disabled}: Props) => {
   const contents = [
-    {title: '좋아요한 글', name: 'LikedPostsTabScreen'},
-    {title: '스크랩한 글', name: 'ScrapedPostsTabScreen'},
-    {title: '내가 댓글 단 글', name: 'CommentedPostsTabScreen'},
-    {title: '내 정보 수정', name: 'EditProfileStackScreen'},
-    {title: '설정', name: 'GeneralSettingTabScreen'},
+    {
+      title: '스크랩',
+      name: 'ScrapedPostsTabScreen',
+      icon: require('~/Assets/Images/MyPage/ic/mypge/modal/scrap.png'),
+    },
+    {
+      title: '좋아요',
+      name: 'LikedPostsTabScreen',
+      icon: require('~/Assets/Images/MyPage/ic/mypge/modal/like.png'),
+    },
+    {
+      title: '댓글 단 글',
+      name: 'CommentedPostsTabScreen',
+      icon: require('~/Assets/Images/MyPage/ic/mypge/modal/comment.png'),
+    },
+    {
+      title: '프로필 편집',
+      name: 'EditProfileStackScreen',
+      icon: require('~/Assets/Images/MyPage/ic/mypge/modal/myprofile.png'),
+    },
+    {
+      title: '설정',
+      name: 'GeneralSettingTabScreen',
+      icon: require('~/Assets/Images/MyPage/ic/mypge/modal/setting.png'),
+    },
   ];
 
   const renderItem = () =>
@@ -95,7 +114,7 @@ const SlideUpPanel = ({navigation, closeBottomSheet, disabled}: Props) => {
             }
           }}>
           <ContentItemView>
-            <ContentImageView></ContentImageView>
+            <ContentImage source={item.icon}></ContentImage>
             <ContentTitleText>{item.title}</ContentTitleText>
           </ContentItemView>
         </ContentItemTouchableHighlight>

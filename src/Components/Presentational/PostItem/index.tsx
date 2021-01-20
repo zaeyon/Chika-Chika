@@ -12,6 +12,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import {SharedElement} from 'react-navigation-shared-element';
 
 const ContainerView = Styled.View`
 width: ${wp('100%')}px;
@@ -327,7 +329,9 @@ const PostItem = ({
                 }
               />
               <ProfileContentView>
-                <ProfileNameText>{user.nickname}</ProfileNameText>
+                <SharedElement id="1">
+                  <ProfileNameText>{user.nickname}</ProfileNameText>
+                </SharedElement>
                 <ProfileSplitView />
                 <ProfileDescriptionText>
                   {formatElapsedDate(data['createdDiff(second)'] * 1000) +
@@ -388,6 +392,9 @@ const PostItem = ({
             <TouchableWithoutFeedback
               onPress={() => {
                 toggleSocialLike(id, viewerLikeCommunityPost, type);
+                if (!viewerLikeCommunityPost) {
+                  ReactNativeHapticFeedback.trigger('impactLight');
+                }
                 likeButtonScale.setValue(0.8);
                 Animated.spring(likeButtonScale, {
                   toValue: 1,
@@ -431,6 +438,9 @@ const PostItem = ({
           <TouchableWithoutFeedback
             onPress={() => {
               toggleSocialScrap(id, viewerScrapCommunityPost, type);
+              if (!viewerScrapCommunityPost) {
+                ReactNativeHapticFeedback.trigger('impactLight');
+              }
               scrapButtonScale.setValue(0.8);
               Animated.spring(scrapButtonScale, {
                 toValue: 1,

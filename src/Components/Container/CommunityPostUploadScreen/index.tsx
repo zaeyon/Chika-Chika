@@ -218,10 +218,13 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
             mimetype: item.img_mimetype,
             originalname: item.img_originalname,
             size: item.img_size,
+            width: item.width,
+            height: item.height,
           };
           return imageObj;
         } else {
           const res: any = await uploadImageToS3(item);
+          console.log('res', res);
           const imageObj = {
             index,
             location: res.response.location,
@@ -229,6 +232,8 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
             mimetype: res.type,
             originalname: res.originalName,
             size: res.size,
+            width: res.width,
+            height: res.height,
           };
           return imageObj;
         }
@@ -421,7 +426,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
       <NavigationHeader
         headerLeftProps={{
           onPress: () => setIsModalVisible(true),
-          text: 'arrow',
+          type: 'arrow',
         }}
         headerRightProps={
           onSubmit

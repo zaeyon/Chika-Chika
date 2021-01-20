@@ -105,7 +105,7 @@ const ImageItem = ({image, index, selectImage, unSelectImage}: Props) => {
         )}
         <Image
           style={{width: (wp('100%') - 6) / 3, height: (wp('100%') - 6) / 3}}
-          source={{uri: 'data:image/jpeg;base64,' + image.base64}}
+          source={{uri: image.uri}}
         />
       </ContainerView>
     </TouchableWithoutFeedback>

@@ -82,7 +82,7 @@ const ImageGrid = ({
         return renderListHeader();
       }
       const targetIndex = selectedImages.findIndex(
-        (selectedImage) => selectedImage.filename === item.node.image.filename,
+        (selectedImage) => selectedImage.uri === item.node.image.uri,
       );
       return (
         <ImageItem

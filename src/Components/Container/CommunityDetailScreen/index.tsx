@@ -204,7 +204,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     navigation.navigate('AnotherProfileScreen');
   }, []);
 
-  const moveToFullImages = useCallback((mediaFiles: any, imageUri: string) => {
+  const moveToImageDetail = useCallback((mediaFiles: any, imageUri: string) => {
     console.log(mediaFiles, imageUri);
     let index = mediaFiles.findIndex(
       (image: any) => image.img_url === imageUri,
@@ -216,8 +216,8 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     console.log(mediaFiles);
     console.log('선택한 사진의 mediaFiles index', index);
 
-    navigation.navigate('FullImagesScreen', {
-      imageArray: imageUri_arr,
+    navigation.navigate('ImageDetailScreen', {
+      imageArray: mediaFiles,
       imageIndex: index,
     });
   }, []);
@@ -314,7 +314,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
             />
             <PostContent
               moveToAnotherProfile={moveToAnotherProfile}
-              moveToFullImages={moveToFullImages}
+              moveToImageDetail={moveToImageDetail}
               data={postData}
             />
             <DentistComment />
@@ -322,9 +322,8 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
               <ActivityIndicatorContianerView>
                 <ActivityIndicator size="small" />
               </ActivityIndicatorContianerView>
-            ) : (
-              <PostCommentList commentList={comments} />
-            )}
+            ) : // <PostCommentList commentList={comments} />
+            null}
           </BodyContainerScrollView>
         </KeyboardAvoidingView>
         <PostBottomBar

@@ -26,12 +26,12 @@ const HeaderBar = Styled.View`
  background-color: #ffffff;
 `;
 
-const HeaderText = Styled.Text`
+const HeaderText = Styled.Text<{disabled: boolean; color: string}>`
 font-family: NanumSquare;
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
-color: #9AA2A9;
+color: ${(props) => (props.disabled ? '#9AA2A9' : '#00D1FF')};
 `;
 
 const HeaderLeftContainer = Styled.View`
@@ -120,7 +120,6 @@ const NavigationHeader = ({
           headerLeftProps?.onPress();
         }}>
         <HeaderLeftContainer>
-        
           {headerLeftProps?.type === 'arrow' ? (
             <HeaderIconView>
               <HeaderIcon
@@ -128,11 +127,15 @@ const NavigationHeader = ({
                 source={require('~/Assets/Images/HeaderBar/ic_back.png')}
               />
               {headerLeftProps?.text?.length > 0 && (
-              <HeaderLeftText>{headerLeftProps.text}</HeaderLeftText>
+                <HeaderLeftText>{headerLeftProps.text}</HeaderLeftText>
               )}
             </HeaderIconView>
           ) : (
-            <HeaderText>{headerLeftProps?.text}</HeaderText>
+            <HeaderText
+              disabled={headerLeftDisabled}
+              color={headerLeftActiveColor}>
+              {headerLeftProps?.text}
+            </HeaderText>
           )}
         </HeaderLeftContainer>
       </TouchableWithoutFeedback>
@@ -141,6 +144,7 @@ const NavigationHeader = ({
       </HeaderTitleContainer>
       <HeaderRightContainer>
         <TouchableWithoutFeedback
+          disabled={headerRightDisabled}
           onPress={() => {
             headerRightProps?.onPress();
           }}>
@@ -150,19 +154,21 @@ const NavigationHeader = ({
                 source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
               />
             </HeaderIconView>
-          ) :
-          (headerRightProps?.type === 'viewMore' ? (
+          ) : headerRightProps?.type === 'viewMore' ? (
             <HeaderIconView>
               <HeaderIcon
-              source={require('~/Assets/Images/HeaderBar/ic_viewMore.png')}/>
+                source={require('~/Assets/Images/HeaderBar/ic_viewMore.png')}
+              />
             </HeaderIconView>
-          ) :
-          (headerRightProps?.type === 'empty' ? (
-            <HeaderEmptyContainer/>
-          ) : 
-          (
-            <HeaderText>{headerRightProps?.text}</HeaderText>
-          )))}
+          ) : headerRightProps?.type === 'empty' ? (
+            <HeaderEmptyContainer />
+          ) : (
+            <HeaderText
+              disabled={headerRightDisabled}
+              color={headerRightActiveColor}>
+              {headerRightProps?.text}
+            </HeaderText>
+          )}
         </TouchableWithoutFeedback>
       </HeaderRightContainer>
     </HeaderBar>

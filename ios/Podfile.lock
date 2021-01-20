@@ -360,13 +360,13 @@ PODS:
     - React-cxxreact (= 0.63.3)
     - React-jsi (= 0.63.3)
   - React-jsinspector (0.63.3)
-  - react-native-camera (3.40.0):
+  - react-native-camera (3.42.0):
     - React-Core
-    - react-native-camera/RCT (= 3.40.0)
-    - react-native-camera/RN (= 3.40.0)
-  - react-native-camera/RCT (3.40.0):
+    - react-native-camera/RCT (= 3.42.0)
+    - react-native-camera/RN (= 3.42.0)
+  - react-native-camera/RCT (3.42.0):
     - React-Core
-  - react-native-camera/RN (3.40.0):
+  - react-native-camera/RN (3.42.0):
     - React-Core
   - react-native-cameraroll (4.0.1):
     - React
@@ -478,9 +478,13 @@ PODS:
   - RNGoogleSignin (5.0.0):
     - GoogleSignIn (~> 5.0.0)
     - React-Core
+  - RNReactNativeHapticFeedback (1.11.0):
+    - React-Core
   - RNReanimated (1.13.1):
     - React
   - RNScreens (2.11.0):
+    - React
+  - RNSharedElement (0.7.0):
     - React
   - SDWebImage (5.10.2):
     - SDWebImage/Core (= 5.10.2)
@@ -564,8 +568,10 @@ DEPENDENCIES:
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-community/google-signin`)"
+  - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNSharedElement (from `../node_modules/react-native-shared-element`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -701,10 +707,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNGoogleSignin:
     :path: "../node_modules/@react-native-community/google-signin"
+  RNReactNativeHapticFeedback:
+    :path: "../node_modules/react-native-haptic-feedback"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSharedElement:
+    :path: "../node_modules/react-native-shared-element"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -755,7 +765,7 @@ SPEC CHECKSUMS:
   React-jsi: df07aa95b39c5be3e41199921509bfa929ed2b9d
   React-jsiexecutor: b56c03e61c0dd5f5801255f2160a815f4a53d451
   React-jsinspector: 8e68ffbfe23880d3ee9bafa8be2777f60b25cbe2
-  react-native-camera: 5c1fbfecf63b802b8ca4a71c60d30a71550fb348
+  react-native-camera: d145df27a9178041b48b839b80ad79c9ef373fbd
   react-native-cameraroll: 9d2b7c1707204d2040d2812f960c6cebdbd9f670
   react-native-geolocation-service: 141e33bdb179bcba10b216ee13962611e21f2be4
   react-native-image-editor: bd67912f38a8e7a895bf6eb8f445acdcefd8fd0c
@@ -787,13 +797,15 @@ SPEC CHECKSUMS:
   RNFS: 2bd9eb49dc82fa9676382f0585b992c424cd59df
   RNGestureHandler: 9b7e605a741412e20e13c512738a31bd1611759b
   RNGoogleSignin: ad866d4c4af2651e36801dd3b7771d7715353499
+  RNReactNativeHapticFeedback: 653a8c126a0f5e88ce15ffe280b3ff37e1fbb285
   RNReanimated: dd8c286ab5dd4ba36d3a7fef8bff7e08711b5476
   RNScreens: 0e91da98ab26d5d04c7b59a9b6bd694124caf88c
+  RNSharedElement: 591b3be4f03678cee37697acc62702984ea43de4
   SDWebImage: b969dcfc02c40a5da71eac0b03b8f1a0c794a86f
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Yoga: 7d13633d129fd179e01b8953d38d47be90db185a
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: b9adc85a9384c1f900a0c791880b9a58001ed1e9
+PODFILE CHECKSUM: d15d4e966140c96412d98441b9991f60bdb4d3b9
 
 COCOAPODS: 1.10.0

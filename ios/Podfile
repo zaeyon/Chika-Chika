@@ -20,6 +20,8 @@ target 'chikaApp' do
 
   pod 'RNCPicker', :path => '../node_modules/@react-native-picker/picker'
 
+  pod 'RNSharedElement', :path => '../node_modules/react-native-shared-element'
+
   target 'chikaAppTests' do
     inherit! :complete
     # Pods for testing

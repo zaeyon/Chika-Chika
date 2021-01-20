@@ -239,9 +239,7 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
         );
       } else {
       }
-      const targetIndex = prev.findIndex(
-        (item) => item.filename === image.filename,
-      );
+      const targetIndex = prev.findIndex((item) => item.uri === image.uri);
       const newSelectedImages = prev.concat();
       console.log(targetIndex);
       if (targetIndex >= 0) {
