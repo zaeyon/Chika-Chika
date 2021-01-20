@@ -20,8 +20,9 @@ import PostItem from '~/Components/Presentational/PostItem';
 import ReviewItem from '~/Components/Presentational/ReviewItem';
 import {callPhoneNumber} from '~/method/callPhoneNumber';
 
-const HEADERHEIGHT = hp('8.25%');
-const PROFILEHEIGHT = 88;
+const HEADERHEIGHT = 91;
+const PROFILEHEIGHT = 102;
+const TABBARHEIGHT = 55;
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
@@ -32,11 +33,11 @@ flex: 1;
 
 const HeaderContainerView = Styled.View`
 width: ${wp('100%')}px;
-height: ${hp('8.25%') + getStatusBarHeight()}px;
+height: ${HEADERHEIGHT}px;
 flex-direction: row;
 margin-top: ${-getStatusBarHeight()}px;
-padding: ${getStatusBarHeight()}px 16px 0px 16px;
-align-items: center;
+padding: ${getStatusBarHeight() + 22}px 16px 16px 16px;
+align-items: flex-end;
 background: #FFFFFF;
 z-index: 2;
 `;
@@ -44,43 +45,30 @@ z-index: 2;
 const HeaderNicknameText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
-font-weight: bold;
-font-size: 20px;
-line-height: 32px;
+font-weight: 800;
+font-size: 22px;
+line-height: 24px;
 margin-right: 8px;
-`;
-
-const HeaderLocationText = Styled.Text`
-font-family: NanumSquareR;
-font-style: normal;
-font-weight: bold;
-font-size: 14px;
-line-height: 32px;
-color: #8C8C8C;
 `;
 
 const HeaderIconContainerView = Styled.View`
 width: auto
-height: auto;
 flex-direction: row;
 margin-left: auto;
 `;
 
-const HeaderIconTouchableOpacity = Styled(
-  TouchableOpacity as new () => TouchableOpacity,
-)`
-width: 30px;
-height: 30px;
+const HeaderIconTouchableOpacity = Styled.TouchableOpacity`
 margin-left: 16px;
-background: grey;
-border-radius: 15px;
+`;
+
+const HeaderIconImage = Styled.Image`
 `;
 
 const FloatingView = Styled(Animated.View as new () => Animated.View)`
 width: ${wp('100%')}px;
 height: 100px;
 position: absolute;
-top: ${HEADERHEIGHT}px;
+top: ${HEADERHEIGHT - getStatusBarHeight()}px;
 left: 0px;
 zIndex: 1;
 
@@ -91,53 +79,55 @@ width: ${wp('100%')}px;
 height: ${PROFILEHEIGHT}px;
 padding: 0px 23px;
 justify-content: center;
-background: white;
+background: #FFFFFF;
 `;
 
 const ProfileContentView = Styled.View`
 width: 100%;
 height: auto;
+align-items: center;
 flex-direction: row;
 `;
 
 const ProfileImageView = Styled.View`
-width: 56px;
-height: 56px;
+width: 77px;
+height: 77px;
 background: grey;
-border-radius: 16px;
-margin-right: 24px;
+border: 0.5px #A6A8AC;
+border-radius: 100px;
+margin-right: 16px;
 `;
 
 const ProfileImage = Styled.Image`
 width: 100%;
 height: 100%;
-border-radius: 16px;
+border-radius: 100px;
 `;
 const ProfileReservationTouchableOpacity = Styled(
   TouchableOpacity as new () => TouchableOpacity,
 )`
 width: auto;
 height: auto;
+
 align-items: center;
 justify-content: center;
-margin: 0px 16px;
+padding: 0px 16px
 `;
 
 const ProfileReservationTitleText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
-font-weight: bold;
-font-size: 14px;
-line-height: 16px;
-margin-bottom: 10px;
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
 `;
 
 const ProfileReservationText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
-font-weight: normal;
-font-size: 14px;
-line-height: 16px;
+font-weight: 800;
+font-size: 18px;
+line-height: 24px;
 `;
 
 const TabBarView = Styled(Animated.View as new () => Animated.View)`
@@ -148,7 +138,8 @@ width: 100%;
 height: auto;
 z-index: 1;
 border-bottom-width: 1px;
-border-color: #C4C4C4;
+border-color: #E2E6ED;
+box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
 `;
 
 const ActivityIndicatorContianerView = Styled.View`
@@ -165,6 +156,12 @@ justify-content: center;
 align-items: center;
 `;
 
+const VerticalPartitionView = Styled.View`
+width: 1px;
+height: 40px;
+background: #E5E9F1;
+margin: 0px 8px;
+`;
 interface Props {
   navigation: any;
   route: any;
@@ -242,9 +239,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
     this.positionX = new Animated.Value(0);
     this.swiperRef = React.createRef();
     this.minusValue = new Animated.Value(-1);
-    this.headerHeightValue = new Animated.Value(
-      HEADERHEIGHT + getStatusBarHeight() + 1,
-    );
+    this.headerHeightValue = new Animated.Value(PROFILEHEIGHT);
 
     this.scrollToIndex = this.scrollToIndex.bind(this);
     this.closeModal = this.closeModal.bind(this);
@@ -357,10 +352,11 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           flex: 1,
           marginBottom: hp('9.6%'),
         }}
-        scrollIndicatorInsets={{top: PROFILEHEIGHT + hp('7%')}}
+        scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
         contentContainerStyle={{
-          minHeight: hp('100%') - PROFILEHEIGHT + getStatusBarHeight() - 1,
-          paddingTop: PROFILEHEIGHT + hp('7%'),
+          backgroundColor: '#F5F7F9',
+          minHeight: hp('100%') - HEADERHEIGHT - 1,
+          paddingTop: PROFILEHEIGHT + TABBARHEIGHT,
         }}
         ref={(ref: any) => (this.communityRef = ref)}
         scrollEventThrottle={16}
@@ -423,10 +419,11 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           flex: 1,
           marginBottom: hp('9.6%'),
         }}
-        scrollIndicatorInsets={{top: PROFILEHEIGHT + hp('7%')}}
+        scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
         contentContainerStyle={{
-          minHeight: hp('100%') - PROFILEHEIGHT + getStatusBarHeight() - 1,
-          paddingTop: PROFILEHEIGHT + hp('7%'),
+          backgroundColor: '#F5F7F9',
+          minHeight: hp('100%') - TABBARHEIGHT,
+          paddingTop: PROFILEHEIGHT + TABBARHEIGHT,
         }}
         ref={(ref: any) => (this.reviewRef = ref)}
         scrollEventThrottle={16}
@@ -502,23 +499,24 @@ export default class MyProfile extends React.PureComponent<Props, State> {
       <TabBar
         {...props}
         style={{
-          backgroundColor: 'white',
+          backgroundColor: '#FFFFFF',
         }}
         indicatorStyle={{
-          height: 3,
-          backgroundColor: '#2998FF',
+          height: 2,
+          backgroundColor: '#00D1FF',
+          borderRadius: 100,
         }}
-        activeColor="#2998FF"
-        inactiveColor="#C4C4C4"
+        activeColor="#131F3C"
+        inactiveColor="#9AA2A9"
         tabStyle={{
-          height: hp('7%'),
+          height: 54,
         }}
         labelStyle={{
           fontFamily: 'NanumSquare',
           fontStyle: 'normal',
           fontWeight: 'bold',
-          fontSize: 14,
-          lineHeight: 16,
+          fontSize: 16,
+          lineHeight: 24,
         }}
       />
     </TabBarView>
@@ -531,16 +529,15 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           <HeaderNicknameText>
             {this.props.currentUser.nickname}
           </HeaderNicknameText>
-          <HeaderLocationText>
-            {this.props.currentUser.Residences[0].emdName}
-          </HeaderLocationText>
           <HeaderIconContainerView>
             <HeaderIconTouchableOpacity
               onPress={() => {
                 this.props.openModal();
-              }}
-            />
-            <HeaderIconTouchableOpacity />
+              }}>
+              <HeaderIconImage
+                source={require('~/Assets/Images/MyPage/Header/Mypage/ic/setting.png')}
+              />
+            </HeaderIconTouchableOpacity>
           </HeaderIconContainerView>
         </HeaderContainerView>
         <FloatingView
@@ -566,17 +563,18 @@ export default class MyProfile extends React.PureComponent<Props, State> {
               </ProfileImageView>
               <ProfileReservationTouchableOpacity
                 onPress={() => this.props.moveToReservationTabScreen()}>
+                <ProfileReservationText>{'1'}</ProfileReservationText>
                 <ProfileReservationTitleText>
                   {'예약피드'}
                 </ProfileReservationTitleText>
-                <ProfileReservationText>{'1개'}</ProfileReservationText>
               </ProfileReservationTouchableOpacity>
+              <VerticalPartitionView />
               <ProfileReservationTouchableOpacity
                 onPress={() => this.props.moveToSavedHospitalTabScreen()}>
+                <ProfileReservationText>{'3'}</ProfileReservationText>
                 <ProfileReservationTitleText>
                   {'찜한병원'}
                 </ProfileReservationTitleText>
-                <ProfileReservationText>{'3개'}</ProfileReservationText>
               </ProfileReservationTouchableOpacity>
             </ProfileContentView>
           </ProfileContainerView>

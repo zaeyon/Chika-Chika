@@ -217,7 +217,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     console.log('선택한 사진의 mediaFiles index', index);
 
     navigation.navigate('ImageDetailScreen', {
-      imageArray: imageUri_arr,
+      imageArray: mediaFiles,
       imageIndex: index,
     });
   }, []);
@@ -322,9 +322,8 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
               <ActivityIndicatorContianerView>
                 <ActivityIndicator size="small" />
               </ActivityIndicatorContianerView>
-            ) : (
-              <PostCommentList commentList={comments} />
-            )}
+            ) : // <PostCommentList commentList={comments} />
+            null}
           </BodyContainerScrollView>
         </KeyboardAvoidingView>
         <PostBottomBar
