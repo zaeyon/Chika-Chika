@@ -191,6 +191,7 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
             offset: wp('100%') * index,
             index,
           })}
+          onScrollBeginDrag={() => console.log('startss')}
           data={route.params.imageArray}
           onMomentumScrollEnd={onScrollEnd}
           showsHorizontalScrollIndicator={false}
