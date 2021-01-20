@@ -25,19 +25,23 @@ justify-content: center;
 interface Props {
   currentIndex: number;
   index: number;
+  lastIndex: number;
   setScrollEnabled: (callback: any) => void;
   dragY: Animated.Value;
   setHeaderVisible: (callback: any) => void;
   image: any;
+  scrollRef: any;
 }
 
 const PinchableImage = ({
   currentIndex,
   index,
+  lastIndex,
   setScrollEnabled,
   dragY,
   setHeaderVisible,
   image,
+  scrollRef,
 }: Props) => {
   const [lastScale, setLastScale] = useState(1);
   const [lastX, setLastX] = useState(0);
@@ -89,9 +93,23 @@ const PinchableImage = ({
       [{nativeEvent: {translationX: moveX, translationY: moveY}}],
       {
         useNativeDriver: true,
+        listener: (e: any) => {
+          const newX = lastX + e.nativeEvent.translationX;
+          const range = ((lastScale - 1) * (wp('100%') / 2)) / lastScale;
+
+          if (newX > range || newX < -range) {
+            scrollRef.current.scrollToOffset({
+              offset:
+                currentIndex * wp('100%') -
+                (newX > range ? newX - range : newX + range),
+              animated: false,
+            });
+          } else {
+          }
+        },
       },
     ),
-    [moveX, moveY],
+    [moveX, moveY, lastX, lastScale, currentIndex],
   );
 
   const onHorizontalPanHandlerStateChange = useCallback(
@@ -102,7 +120,45 @@ const PinchableImage = ({
           const newX = prev + nativeEvent.translationX;
           const range = ((lastScale - 1) * (wp('100%') / 2)) / lastScale;
           console.log(newX);
-          if (newX > range || newX < -range) {
+          if (newX > range) {
+            if (
+              currentIndex !== 0 &&
+              (Math.abs(nativeEvent.velocityX) > 900 ||
+                Math.abs(newX > range ? newX - range : newX + range) >
+                  wp('100%') / 9)
+            ) {
+              setPinchEnabled(false);
+              scrollRef.current.scrollToIndex({
+                index: newX > range ? currentIndex - 1 : currentIndex + 1,
+                animated: true,
+              });
+            } else {
+              scrollRef.current.scrollToIndex({
+                index: currentIndex,
+                animated: true,
+              });
+            }
+            baseX.setValue(newX > range ? range : -range);
+            moveX.setValue(0);
+            return newX > range ? range : -range;
+          } else if (newX < -range) {
+            if (
+              currentIndex !== lastIndex &&
+              (Math.abs(nativeEvent.velocityX) > 900 ||
+                Math.abs(newX > range ? newX - range : newX + range) >
+                  wp('100%') / 9)
+            ) {
+              setPinchEnabled(false);
+              scrollRef.current.scrollToIndex({
+                index: newX > range ? currentIndex - 1 : currentIndex + 1,
+                animated: true,
+              });
+            } else {
+              scrollRef.current.scrollToIndex({
+                index: currentIndex,
+                animated: true,
+              });
+            }
             baseX.setValue(newX > range ? range : -range);
             moveX.setValue(0);
             return newX > range ? range : -range;
@@ -135,9 +191,11 @@ const PinchableImage = ({
             return newY;
           }
         });
+      } else if (nativeEvent.oldState === State.BEGAN) {
+        console.log(nativeEvent);
       }
     },
-    [baseX, moveX, baseY, moveY, lastScale, image],
+    [baseX, moveX, baseY, moveY, lastScale, image, currentIndex, lastIndex],
   );
 
   const onVerticalPanGestureEvent = useCallback(
@@ -172,9 +230,18 @@ const PinchableImage = ({
   );
 
   const onPinchGestureEvent = useCallback(
-    Animated.event([{nativeEvent: {scale: pinchScale}}], {
-      useNativeDriver: true,
-    }),
+    Animated.event(
+      [
+        {
+          nativeEvent: {
+            scale: pinchScale,
+          },
+        },
+      ],
+      {
+        useNativeDriver: true,
+      },
+    ),
     [pinchScale],
   );
 
@@ -188,7 +255,10 @@ const PinchableImage = ({
               enableVibrateFallback: false,
               ignoreAndroidSystemSettings: false,
             });
-
+            // setPrevFocal({
+            //   x: 0,
+            //   y: 0,
+            // });
             Animated.timing(pinchScale, {
               toValue: 1 / prev,
               duration: 100,
@@ -239,16 +309,45 @@ const PinchableImage = ({
             });
             return 3;
           } else {
-            console.log('gigi');
             baseScale.setValue(newScale);
             pinchScale.setValue(1);
+            // if (nativeEvent.scale > 1) {
+            //   setFocal((prevFocalValue) => {
+            //     setPrevFocal((prevFocaled) => ({
+            //       x:
+            //         ((prevFocalValue.x - prevFocaled.x) *
+            //           (nativeEvent.scale - 1)) /
+            //           2 +
+            //         prevFocaled.x,
+            //       y:
+            //         ((prevFocalValue.y - prevFocaled.y) *
+            //           (nativeEvent.scale - 1)) /
+            //           2 +
+            //         prevFocaled.y,
+            //     }));
+            //     console.log({
+            //       x: (prevFocalValue.x * nativeEvent.scale) / 3,
+            //       y: (prevFocalValue.y * nativeEvent.scale) / 3,
+            //     });
+            //     return prevFocalValue;
+            //   });
+            // } else {
+            //   setPrevFocal((prevFocaled) => ({
+            //     x: prevFocaled.x * nativeEvent.scale,
+            //     y: prevFocaled.y * nativeEvent.scale,
+            //   }));
+            // }
             setTravelEnabled(true);
             setSwipeDownEnabled(false);
             return newScale;
           }
         });
       } else if (nativeEvent.oldState === State.BEGAN) {
-        console.log('start');
+        console.log(
+          'start',
+          wp('100%') / 2 - nativeEvent.focalX,
+          nativeEvent.focalY,
+        );
       }
     },
     [pinchScale, baseScale],
@@ -261,7 +360,7 @@ const PinchableImage = ({
       shouldCancelWhenOutside={true}
       onGestureEvent={onVerticalPanGestureEvent}
       onHandlerStateChange={onVerticalPanHandlerStateChange}
-      maxPointers={2}>
+      maxPointers={1}>
       <ContentView
         as={Animated.View}
         style={{
