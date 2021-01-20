@@ -111,7 +111,7 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
       groupTypes: 'init',
       groupName: 'init',
     }).then((photos) => {
-      setSelectedAlbum(photos.edges[0].node.group_name);
+      setSelectedAlbum(photos.edges[0].node.group_name)
       const result = {
         title: photos.edges[0].node.group_name,
         type: 2,
@@ -178,10 +178,19 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
   const goBack = useCallback(() => navigation.goBack(), [navigation]);
 
   const onSubmit = useCallback(
-    () =>
-      navigation.navigate(route.params.requestType, {
-        selectedImages,
-      }),
+    () => {
+      if(route.params.requestType === "ContentPostScreen") {
+        navigation.navigate("ContentPostScreen", {
+          selectedImages,
+          startIndex: route.params.startIndex,
+        })
+      } else {
+        navigation.navigate(route.params.requestType, {
+          selectedImages,
+        })
+      }
+    }
+      ,
     [route, selectedImages],
   );
 

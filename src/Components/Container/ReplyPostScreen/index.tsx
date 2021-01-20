@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import Styled from 'styled-components/native';
 import {
     widthPercentageToDP as wp,
@@ -9,8 +9,10 @@ import {
     FlatList,
     Keyboard
 } from 'react-native';
-import {useSelector} from 'react-redux';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {useSelector, useDispatch} from 'react-redux';
+import allActions from '~/actions';
+import {KeyboardAwareScrollView, KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
+import { CommonActions } from '@react-navigation/native';
 
 // local components
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
@@ -35,6 +37,12 @@ flex: 1;
 background-color: #ffffff;
 `;
 
+
+const ReplyItemContainer = Styled.View`
+flex: 1;
+background-color: #ffffff;
+`;
+
 const BottomBarContainer = Styled.View`
 background-color: #ffffff;
 position: absolute;
@@ -50,8 +58,43 @@ interface Props {
 const ReplyPostScreen = ({navigation, route}: Props) => {
     const [loadingReplyPost, setLoadingReplyPost] = useState<boolean>(false);
     console.log("ReplyPostScreen route.params?.commentObj", route.params?.commentObj)
+    console.log("ReplyPostScreen targetUserNickname", route.params.targetUserNickname);
+    if(route.params?.replyObj) {
+        console.log("ReplyPostScreen route.params?.replyObj", route.params.replyObj);
+    }
     const jwtToken = useSelector((state: any) => state.currentUser).jwtToken;
+    const dispatch = useDispatch();
     const commentItem = route.params?.commentObj
+    const reviewId = route.params?.reviewId;
+    const commentInputRef = useRef();
+
+
+    useEffect(() => {
+        if(route.params?.request === "ReviewDetailScreen") {
+            navigation.dispatch((state: any) => {
+                console.log("state.routes[state.routes.length - 2]", state.routes[state.routes.length - 2]);
+    
+                    const reviewCommentListRoutes = {
+                        name: "ReviewCommentListScreen",
+                        params: {reviewId: reviewId},
+                    }
+
+                    let routes = state.routes.slice(0, state.routes.length);
+                    routes.splice(routes.length - 1, 0, reviewCommentListRoutes)
+
+                    console.log("변경된 routes", routes);
+
+                    
+                    return CommonActions.reset({
+                        ...state,
+                        routes,
+                        index: routes.length - 1,
+                    })
+            });
+        }
+    }, [])
+
+        
 
     const goBack = () => {
         navigation.goBack()
@@ -60,7 +103,9 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
 
     const renderReplyItem = ({item, index}: any) => {
         return (
+            <ReplyItemContainer>
             <ReplyItem
+            replyObj={item}
             isVisibleReplyButton={false}
             userId={item.user.id}
             commentId={item.id}
@@ -71,26 +116,30 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
             replys={item.Replys}
             clickReply={() => 0}
             />
+            </ReplyItemContainer>
         )
     }
     
     const postCommentReply = (description: string) => {
         Keyboard.dismiss();
         setLoadingReplyPost(true);
+
         const commentId = commentItem.id;
         const type = 'review';
+        const targetUser = route.params.targetUserNickname;
+        const postId = reviewId;
     
-        POSTReply({jwtToken, commentId, type, description})
+        POSTReply({jwtToken, commentId, type, description, targetUser, postId})
         .then((response: any) => {
             console.log("POSTReply response", response);
             setLoadingReplyPost(false);
+            dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
+            dispatch(allActions.commentListActions.setCommentCount(response.commentsNum.commentsNum));
             //setCommentArray(response.reverse());
             //setChangeCommentArray(!changeCommentArray);
             //setInputType("comment")
             //isClickReply = false;
-            navigation.navigate("ReviewCommentListScreen", {
-                refreshCommentList: true,
-            });
+            navigation.navigate("ReviewCommentListScreen");
         })
         .catch((error) => {
             console.log("POSTReply error", error);
@@ -104,7 +153,9 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
             headerTitle={"답글작성"}
             headerLeftProps={{type: 'arrow', onPress: () => goBack()}}
             headerRightProps={{type: 'empty', onPress: () => 0}}/>
-            <KeyboardAwareScrollView>
+            <KeyboardAwareScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{paddingBottom: (commentInputRef?.current?.isFocused() ? hp('5%') : hp('9%')), paddingTop: 12}}>
             <CommentItemContainer>
                 <CommentItem
                 isVisibleReplyButton={false}
@@ -127,9 +178,10 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
             <KeyboardAvoidingView behavior={"position"}>
             <BottomBarContainer>
                 <CommentPostBottomBar
+                requestScreen={"ReplyPostScreen"}
                 cancelReplyInput={() => 0}
                 replyTargetNickname={""}
-                commentInputRef={null}
+                commentInputRef={commentInputRef}
                 inputType={""}
                 postReviewComment={postCommentReply}/>
             </BottomBarContainer>

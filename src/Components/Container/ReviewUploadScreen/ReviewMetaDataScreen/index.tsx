@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
+import SafeAreaView from 'react-native-safe-area-view';
 import {TouchableWithoutFeedback, Keyboard} from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -8,7 +9,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AboveKeyboard from 'react-native-above-keyboard';
 
-const Container = Styled.SafeAreaView`
+const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
  align-items: center;
@@ -200,6 +201,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     if (route.params?.dentalClinic) {
+      console.log("route.params.dentalClinic", route.params.dentalClinic);
       setDentalClinic(route.params?.dentalClinic);
     }
   }, [route.params?.dentalClinic]);
@@ -329,7 +331,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
   return (
     <TouchableWithoutFeedback onPress={() => onPressBackground()}>
-      <Container>
+      <Container as={SafeAreaView} forceInset={{top: 'always'}}>
         <HeaderBar>
           <TouchableWithoutFeedback onPress={() => goBack()}>
             <HeaderLeftContainer>
@@ -352,7 +354,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                   borderColor: '#0075FF',
                 }
               }>
-              <MetaDataText>{dentalClinic.name}</MetaDataText>
+              <MetaDataText>{dentalClinic.originalName}</MetaDataText>
             </MetaDataItemContainer>
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback onPress={() => onPressTreatDate()}>

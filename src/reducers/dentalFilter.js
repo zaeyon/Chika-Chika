@@ -3,7 +3,7 @@ const dentalFilter = (state = {
     selectedDayList: [],
     dayFilter: [],
     timeFilter: "",
-    holidayFilter: "",
+    holidayFilter: false,
     parkingFilter: "n",
 }, action) => {
     switch(action.type) {

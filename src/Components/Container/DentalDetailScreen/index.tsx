@@ -26,6 +26,8 @@ import {callPhoneNumber} from '~/method/callPhoneNumber';
 
 // Route
 import GETDentalDetail from '~/Routes/Dental/GETDentalDetail';
+import POSTDentalScrap from '~/Routes/Dental/POSTDentalScrap';
+import DELETEDentalScrap from '~/Routes/Dental/DELETEDentalScrap';
 
 
 const Container = Styled.View`
@@ -34,6 +36,7 @@ const Container = Styled.View`
 
 
 const DentalTabContainer = Styled.View`
+background-color: #F5F7F9;
  flex: 1;
 `;
 
@@ -54,6 +57,7 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
   console.log("DentalDetailScreen dentalId", route.params?.dentalId);
   const [dentalDetailInfo, setDentalDetailInfo] = useState<any>(TEST_DENTAL_DETAIL_DATA);
   const [loadingGetDentalDetail, setLoadingGetDentalDetail] = useState<boolean>(true);
+  const [isCurUserScrap, setIsCurUserScrap] = useState<boolean>();
 
   const currentUser = useSelector((state: any) => state.currentUser);
   const jwtToken = currentUser.jwtToken;
@@ -69,8 +73,10 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
     GETDentalDetail({jwtToken, dentalId})
     .then((response) => {
       console.log("GETDentalDetail response", response)
+      console.log("response.clinicInfoHeader.userScrapClinics", response.clinicInfoHeader.userScrapClinics);
       setDentalDetailInfo(response)
       setLoadingGetDentalDetail(false);
+      setIsCurUserScrap(response.clinicInfoHeader.userScrapClinics)
     })
     .catch((error) => {
       console.log("GETDentalDetail error", error);
@@ -78,9 +84,56 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
     })
   }
 
+  const postDentalScrap = () => {
+      setIsCurUserScrap(true);
+      POSTDentalScrap({jwtToken, dentalId})
+      .then((response) => {
+          console.log("POSTDentalScrap response", response)
+      })
+      .catch((error) => {
+          console.log("POSTDentalScrap error", error);
+      })
+  }
+
+  const deleteDentalScrap = () => {
+      setIsCurUserScrap(false);
+      DELETEDentalScrap({jwtToken, dentalId})
+      .then((response) => {
+          console.log("DELETEDentalScrap response", response);
+      })
+      .catch((error) => {
+          console.log("DELETEDentalScrap error", error); 
+      })
+  }
+
   const moveToDentalInfoEdit = () => {
     navigation.navigate('DentalInfoEditRequestScreen');
   };
+
+  const moveToReviewUpload = () => {
+      const dentalClinic = {
+          address: dentalDetailInfo.clinicInfoHeader.address,
+          id: dentalId,
+          local: dentalDetailInfo.clinicInfoHeader.address,
+          name: dentalDetailInfo.clinicInfoHeader.name,
+          originalName: dentalDetailInfo.clinicInfoHeader.originalName,
+      }
+      navigation.navigate("ReviewUploadStackScreen", {
+          screen: "ReviewMetaDataScreen",
+          params: {
+            dentalClinic: dentalClinic,
+          }
+      })
+  }
+
+  const moveToDentalLocationMap = () => {
+      navigation.navigate("DentalLocationMapScreen", {
+          coordinate: {
+            latitude: 37.566515657875435,
+            longitude: 126.9781164904998,
+          }
+      });
+  }
 
   const goBack = () => {
     navigation.goBack()
@@ -91,10 +144,15 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
           {!loadingGetDentalDetail && (
           <DentalTabContainer>
             <DentalCollapsibleTabView
+            moveToDentalLocationMap={moveToDentalLocationMap}
+            moveToReviewUpload={moveToReviewUpload}
             dentalDetailInfo={dentalDetailInfo}
             goBack={goBack}
             />
-            <DentalBottomBar/>
+            <DentalBottomBar
+            isCurUserScrap={isCurUserScrap}
+            postDentalScrap={postDentalScrap}
+            deleteDentalScrap={deleteDentalScrap}/>
           </DentalTabContainer>
           )}
           {loadingGetDentalDetail && (

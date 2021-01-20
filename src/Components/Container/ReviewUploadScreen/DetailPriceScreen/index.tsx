@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
+import SafeAreaView from 'react-native-safe-area-view';
 import {TouchableWithoutFeedback, Keyboard, FlatList} from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -9,7 +10,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import AboveKeyboard from 'react-native-above-keyboard';
 
-const Container = Styled.SafeAreaView`
+const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
  align-items: center;
@@ -346,7 +347,7 @@ const DetailPriceScreen = ({navigation, route}: Props) => {
 
   return (
     <TouchableWithoutFeedback onPress={() => onPressBackground()}>
-      <Container>
+      <Container as={SafeAreaView} forceInset={{top: 'always'}}>
         <HeaderBar>
           <TouchableWithoutFeedback onPress={() => goBack()}>
             <HeaderLeftContainer>

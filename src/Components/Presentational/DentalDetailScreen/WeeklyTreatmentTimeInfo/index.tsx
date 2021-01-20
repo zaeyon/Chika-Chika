@@ -1,5 +1,6 @@
 import React from 'react';
 import Styled from 'styled-components/native';
+import {View} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -60,6 +61,7 @@ const WeekdayText = Styled.Text`
 font-family: NanumSquare;
 font-weight: 800;
 font-size: 14px;
+line-height: 24px;
 color: #000000;
 `;
 
@@ -67,6 +69,7 @@ const WeekendText = Styled.Text`
 font-family: NanumSquare;
 font-weight: 800;
 font-size: 14px;
+line-height: 24px;
 color: #00D1FF;
 `;
 
@@ -323,7 +326,7 @@ const WeeklyTreatmentTimeInfo = ({todayIndex, treatmentTimeInfo}: Props) => {
                 <RowDivider/>
                 <RowContainer>
                     <ItemContainer>
-                        <WeekendText>{"일요일"}</WeekendText>
+                        <WeekendText style={{color: "#FF004D"}}>{"일요일"}</WeekendText>
                         <TreatmentTimeText>
                         {(isExistSunTreatTime === true)
                         ? `${sunTreatStartTime} ~ ${sunTreatEndTime}`
@@ -331,7 +334,7 @@ const WeeklyTreatmentTimeInfo = ({todayIndex, treatmentTimeInfo}: Props) => {
                         </TreatmentTimeText>
                     </ItemContainer>
                     <ItemContainer>
-                        <WeekendText>{"공휴일"}</WeekendText>
+                        <WeekendText style={{color: "#FF004D"}}>{"공휴일"}</WeekendText>
                         <TreatmentTimeText>
                         {(isExistSunTreatTime === true)
                         ? `${sunTreatStartTime} ~ ${sunTreatEndTime}`
@@ -340,6 +343,27 @@ const WeeklyTreatmentTimeInfo = ({todayIndex, treatmentTimeInfo}: Props) => {
                     </ItemContainer>
                 </RowContainer>
             </WeeklyInfoContainer>
+            {/*
+            {treatmentTimeInfo.weekday.weekdayReceiptNotice !== "" && (
+                <View style={{paddingTop: 20}}>
+                <WeekdayText>{"주중 진료 안내"}</WeekdayText>
+                <TreatmentTimeText>{"- " + treatmentTimeInfo.weekday.weekdayReceiptNotice}</TreatmentTimeText>
+                </View>
+            )}
+            {treatmentTimeInfo.sat.weekendReceiptNotice !== "" && (
+                <View style={{paddingTop: 20}}>
+                <WeekdayText>{"토요일 진료 안내"}</WeekdayText>
+                <TreatmentTimeText>{"- " + treatmentTimeInfo.sat.weekendReceiptNotice}</TreatmentTimeText>
+                </View>
+            )}
+            */}
+            
+            {treatmentTimeInfo.sunAndHoliday.weekend_non_consulation_notice !== "" && (treatmentTimeInfo.sunAndHoliday.weekend_non_consulation_notice != null) && (
+                <View style={{paddingTop: 20}}>
+                <WeekdayText>{"일요일 ∙ 공휴일 진료 안내 사항"}</WeekdayText>
+                <TreatmentTimeText>{"- " + treatmentTimeInfo.sunAndHoliday.weekend_non_consulation_notice}</TreatmentTimeText>
+                </View>
+            )}
         </Container>
 
     )

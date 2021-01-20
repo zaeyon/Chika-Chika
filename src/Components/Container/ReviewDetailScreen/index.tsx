@@ -42,6 +42,9 @@ import POSTReviewLike from '~/Routes/Review/POSTReviewLike';
 import DELETEReviewLike from '~/Routes/Review/DELETEReviewLike';
 import POSTReviewScrap from '~/Routes/Review/POSTReviewScrap';
 import DELETEReviewScrap from '~/Routes/Review/DELETEReviewScrap';
+import DELETEComment from '~/Routes/Comment/DELETEComment';
+import GETCommentList from '~/Routes/Comment/GETCommentList';
+
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -66,6 +69,7 @@ const TreatmentListContainer = Styled.View`
 `;
 
 const ReviewContentContainer = Styled.View`
+
 `;
 
 const DentalInfoContainer = Styled.View`
@@ -79,6 +83,8 @@ padding-top: 20px;
 padding-left: 16px;
 padding-right: 16px;
 padding-bottom: 20px;
+border-bottom-width: 8px;
+border-color: #F5F7F9;
 `;
 
 const IndicatorContainer = Styled.View`
@@ -128,112 +134,6 @@ color: #000000;
 const WriterInfoContainer = Styled.View`
 `;
 
-const TEST_REVIEW_DETAIL_DATA = {
-  user: {
-    profile_image:
-      'https://i.pinimg.com/564x/25/cd/bf/25cdbfb4c026ab04e3754ae707a4c7eb.jpg',
-    nickname: '전윤정',
-  },
-  createdAt: '2020-10-22',
-  tagOne: '치아교정',
-  tagTwo: '부정교합',
-  rating: 3.5,
-  location: '서울시 강남구',
-  treat_date: '2020.09.24',
-  mediaFiles: [
-    {
-      image_uri: 'https://fimg4.pann.com/new/download.jsp?FileID=49691685',
-    },
-    {
-      image_uri: 'https://fimg4.pann.com/new/download.jsp?FileID=49691687',
-    },
-    {
-      image_uri: 'https://fimg4.pann.com/new/download.jsp?FileID=49691693',
-    },
-  ],
-
-  paragraph: [
-    {
-      index: 1,
-      type: 'description',
-      description:
-        '교정 전 저는 저 스스로도 심한 콤플렉스 였고, 시작하면서 여쭤보니 교정치과 의사쌤도 중상 수준이라고 하셨어요.',
-    },
-    {
-      index: 2,
-      type: 'description',
-      description:
-        '엄청 편한 사이 아니고서는 무조건 입도 가리고 웃고 치아 드러나게 사진 찍는거 되도록 피하고 그러다보니 입매 항상 이상하고 어색하고...',
-    },
-    {
-      index: 3,
-      type: 'description',
-      description:
-        '그래도 해야지 해야지 마음만, 생각만 하고요... 진짜 딱 세월만 보내고 있었어요. 그 중 제일 큰 이유는 돈이죠. 어마어마 하게 많이 들 줄 알고요. 교정치료 전문 치과 없는 계속 외진 곳에서 산 것도 한 몫 했고요.',
-    },
-    {
-      index: 4,
-      type: 'description',
-      description:
-        '이제부턴 ((((혐짤로)))) 봐도 무방한 제 옥수수들을 자랑하겠습니다.',
-    },
-    {
-      index: 5,
-      type: 'image',
-      date: '2019년 10월 1일',
-      image_uri: 'https://fimg4.pann.com/new/download.jsp?FileID=49691685',
-    },
-    {
-      index: 6,
-      type: 'image',
-      date: '2019년 12월 3일',
-      image_uri: 'https://fimg4.pann.com/new/download.jsp?FileID=49691687',
-    },
-    {
-      index: 7,
-      type: 'image',
-      date: '2020년 1월 5일',
-      image_uri: 'https://fimg4.pann.com/new/download.jsp?FileID=49691693',
-    },
-    {
-      index: 8,
-      type: 'description',
-      description:
-        '나 진짜 너무 신난당 덧니가 너무 컴플렉스여서 시작한 교정인데 아프기도 무지 아팠고 관리도 힘들고 길고도 긴 시간이였다 ㅎㅅㅎ.. ',
-    },
-    {
-      index: 9,
-      type: 'description',
-      description:
-        '나는 클리피쉬 교정으로 380정도 든거같어 근데 유지장치도 2년정도 해야된다더라......괜찮아.. 겉에는 안보이니까 웃을때 이제 활짝 웃을 수 있어서 너뮤 조앙 ㅎㅎㅎ ',
-    },
-  ],
-  comments: [
-    {
-      commentId: 1,
-      user: {
-        profile_image:
-          'http://imgmmw.mbn.co.kr/storage/news/2019/08/13/3274f4fbbaa2020ff9d1fb706be99787.jpg',
-        nickname: '메렁메렁',
-      },
-      comment: '잘 되셨네요ㅜㅜㅜㅜ 얼마에 하셨나요? 쪽지 부탁드려요.',
-      createdAt: '2020-10-21',
-      replys: [],
-    },
-    {
-      commentId: 2,
-      user: {
-        profile_image:
-          'http://imgmmw.mbn.co.kr/storage/news/2019/08/13/3274f4fbbaa2020ff9d1fb706be99787.jpg',
-        nickname: '메렁메렁',
-      },
-      comment: '잘 되셨네요ㅜㅜㅜㅜ 얼마에 하셨나요? 쪽지 부탁드려요.',
-      createdAt: '2020-10-21',
-      replys: [],
-    },
-  ],
-};
-
 interface Props {
   navigation: any;
   route: any;
@@ -259,6 +159,8 @@ interface RatingObj {
 }
 
 let selectedCommentId: number;
+let startTime: any;
+let endTime: any;
 
 const ReviewDetailScreen = ({navigation, route}: Props) => {
   const [paragraphArray, setParagraphArray] = useState<Array<any>>([]);
@@ -273,12 +175,9 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     route.params?.isCurUserScrap,
   );
   const [likeCount, setLikeCount] = useState<number>(route.params?.likeCount);
-  const [commentCount, setCommentCount] = useState<number>(
-    route.params?.commentCount,
-  );
+  
   const [viewCount, setViewCount] = useState<number>(0);
 
-  const [commentArray, setCommentArray] = useState<Array<any>>([]);
   const [isCommentInputFocused, setIsCommentInputFocused] = useState<boolean>(
     false,
   );
@@ -295,7 +194,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const [treatmentDate, setTreatmentDate] = useState<any>({});
   const [treatmentList, setTreatmentList] = useState<Array<object>>([]);
   const [rating, setRating] = useState<RatingObj>(route.params?.ratingObj);
-  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [totalPrice, setTotalPrice] = useState<object>({});
   const [detailPriceList, setDetailPriceList] = useState<Array<object>>([]);
 
   // 화면에 표시되는 정보
@@ -313,14 +212,23 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const [isVisibleOtherMoreViewModal, setIsVisibleOtherMoreViewModal] = useState<boolean>(false);
 
   const [isCertifiedReceipt, setIsCertifiedReceipt] = useState<boolean>(false);
+  const [changeCommentArray, setChangeCommentArray] = useState<boolean>(false);
 
   const scrollViewRef = useRef<any>();
   const reviewScrollViewRef = useRef<any>(null);
-  const commentActionSheetRef = createRef<any>();
+
+
+  const ownCommentActionSheetRef = createRef<any>();
+  const otherCommentActionSheetRef = createRef<any>();
 
   const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state.currentUser);
   const reviewList = useSelector((state: any) => state.reviewList);
+
+  const commentState = useSelector((state: any) => state.commentList);
+  const commentArray = commentState.commentList;
+  const commentCount = commentState.commentCount;
+
   const jwtToken = currentUser.jwtToken;
   const userProfile = currentUser.profile;
 
@@ -330,7 +238,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const createdDate = route.params?.createdAt;
   const isVisibleElapsedTime = route.params?.visibleElapsedTime;
   const imageArray = route.params?.imageArray;
-  const isOwnReview = route.params?.writer.userId == userProfile.id;
+  const isOwnReview = route.params?.writer.userId === userProfile.id;
 
   console.log('route.params?.reviewId', route.params?.reviewId);
   console.log('route.params?.imageArray', route.params?.imageArray);
@@ -343,8 +251,10 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   console.log("route.params?.elapsedTime", route.params?.elapsedTime);
 
   useEffect(() => {
+    startTime = new Date();
     setLoadingReviewDetail(true);
     getReviewDetail();
+    getReviewCommentList();
   }, []);
 
   useEffect(() => {
@@ -363,11 +273,38 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         'route.params?.revisedParagraphArray',
         route.params.paragraphArray,
       );
+      console.log("리뷰 수정 route.params.dentalObj", route.params.dentalObj);
+      console.log("리뷰 수정 route.params?.treatmentDateObj", route.params.treatmentDateObj);
+      console.log("수정전 treatmentDate", treatmentDate);
+
+      const tmpTreatmentDate = new Date(route.params?.treatmentDateObj.treatDate);
+      const splitedTreatmentDate = route.params?.treatmentDateObj.displayTreatDate.split(
+          '-',
+      );
+
+      const tmpDisplayTreatDate =
+          splitedTreatmentDate[0] +
+          '.' +
+          splitedTreatmentDate[1] +
+          '.' +
+          splitedTreatmentDate[2];
+
+      const treatmentObj = {
+          displayTreatDate: tmpDisplayTreatDate,
+          treatDate: tmpTreatmentDate,
+      };
+
+      const tmpTreatPriceObj = {
+        displayTreatPrice: (route.params.totalPrice).toLocaleString() + "원",
+        treatPrice: route.params.totalPrice
+      }
+
       setParagraphArrayDisplay(route.params.paragraphArray);
       setTreatmentArrayDisplay(route.params.treatmentArray);
-      setTreatmentDateDisplay(route.params.treatmentDate);
+      setTreatmentDate(treatmentObj);
       setRating(route.params.ratingObj);
       setDentalInfo(route.params.dentalObj);
+      setTotalPrice(tmpTreatPriceObj);
     }
   }, [
     route.params?.isrRevised,
@@ -430,10 +367,18 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           'GETReviewDetail response.reviewBody.review_contents',
           response.reviewBody.review_contents,
         );
-        setTotalPrice(response.reviewBody.totalCost);
+
+        const tmpTreatPriceObj = {
+          displayTreatPrice: (response.reviewBody.totalCost).toLocaleString() + "원",
+          treatPrice: response.reviewBody.totalCost
+        }
+
+        setTotalPrice(tmpTreatPriceObj);
         setLoadingReviewDetail(false);
         setIsCertifiedReceipt(response.reviewBody.certifiedBill);
         setRefreshingReviewDetail(false);
+        endTime = new Date();
+        console.log("경과 시간", endTime - startTime);
 
         const tmpTreatmentDate = new Date(response.reviewBody.treatmentDate);
           const splitedTreatmentDate = response.reviewBody.treatmentDate.split(
@@ -441,11 +386,10 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           );
           const tmpDisplayTreatDate =
             splitedTreatmentDate[0] +
-            '년 ' +
+            '.' +
             splitedTreatmentDate[1] +
-            '월 ' +
-            splitedTreatmentDate[2] +
-            '일';
+            '.' +
+            splitedTreatmentDate[2];
 
           const treatmentObj = {
             displayTreatDate: tmpDisplayTreatDate,
@@ -553,7 +497,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         setParagraphArray(tmpParagraphArray);
         setParagraphArrayDisplay(response.reviewBody.review_contents);
         setDentalInfo(dentalObj);
-        setCommentArray(response.reviewComments);
+
       })
       .catch((error) => {
         console.log('GETReviewDetail error', error);
@@ -561,30 +505,52 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       });
   };
 
+  const getReviewCommentList = () => {
+      const id = reviewId;
+      const type = 'review'
+      GETCommentList({jwtToken, type, id})
+      .then((response: any) => {
+          console.log("GETCommentList response", response)
+          //setCommentArray(response.reverse())
+          dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
+          dispatch(allActions.commentListActions.setCommentCount(response.commentsNum.commentsNum));
+      })
+      .catch((error: any) => {
+          console.log("GETCommentList error", error);
+      })
+  }
+
   const moveToFullImages = (imageUri: string) => {
     console.log('moveToFullImages imageArray', imageArray);
 
-    var index = imageArray.findIndex(
-      (image: any) => image.img_url === imageUri,
-    );
+    if(isVisibleOtherMoreViewModal) {
+      setIsVisibleOtherMoreViewModal(false);
+    } else if(isVisibleOwnMoreViewModal) {
+      setIsVisibleOwnMoreViewModal(false); 
+    } else {
+      var index = imageArray.findIndex(
+        (image: any) => image.img_url === imageUri,
+      );
+  
+      var tmpImageArray = imageArray.map((image: any) => {
+        return image.img_url;
+      });
+  
+      console.log('선택한 사진의 mediaFiles index', index);
+  
+      navigation.navigate('FullImagesScreen', {
+        imageArray: tmpImageArray,
+        imageIndex: index,
+      });
+    }
 
-    var tmpImageArray = imageArray.map((image: any) => {
-      return image.img_url;
-    });
-
-    console.log('선택한 사진의 mediaFiles index', index);
-
-    navigation.navigate('FullImagesScreen', {
-      imageArray: tmpImageArray,
-      imageIndex: index,
-    });
   };
 
   const moveToDentalDetail = (dentalId: number) => {
     navigation.navigate('DentalClinicStack', {
       screen: 'DentalDetailScreen',
       params: {
-        dentalId: dentalId,
+        dentalId: dentalInfo.id,
       }
     })
   }
@@ -592,8 +558,6 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const moveToCommentList = (request: string) => {
     navigation.navigate("ReviewCommentListScreen", {
       reviewId: reviewId,
-      commentArray: commentArray,
-      request: request
     });
   }
 
@@ -603,8 +567,10 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
   const clickMoreView = () => {
     if(isOwnReview) {
+      console.log("clickMoreView isOwnReview", isOwnReview);
       setIsVisibleOwnMoreViewModal(!isVisibleOwnMoreViewModal);
     } else {
+      console.log("clickMoreView isOwnReview", isOwnReview);
       setIsVisibleOtherMoreViewModal(!isVisibleOtherMoreViewModal);
     }
   }
@@ -617,6 +583,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const onRefreshReviewDetail = () => {
     setRefreshingReviewDetail(true);
     getReviewDetail();
+    getReviewCommentList();
   };
 
   const clickReviseReview = () => {
@@ -647,7 +614,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         },
         detailPriceList: detailPriceList,
         reviewId: reviewId,
-        totalPrice: totalPrice,
+        treatPrice: totalPrice,
       },
     });
   };
@@ -755,60 +722,74 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       });
   };
 
+
   const deleteReviewComment = () => {
-    setLoadingCommentPost(true);
     const commentId = selectedCommentId;
     const type = 'review';
 
-    DELETEComment({jwtToken, commentId, type})
-      .then((response) => {
-        console.log('DELETEComment response', response);
-        GETReviewDetail(jwtToken, reviewId)
-          .then((response: any) => {
-            console.log('GETReviewDetail response', response);
-            console.log(
-              'GETReviewDetail response.reviewComments',
-              response.reviewComments,
-            );
-            setLoadingCommentPost(false);
-            setCommentArray(response.reviewComments);
-
-            setTimeout(() => {
-              reviewScrollViewRef.current.scrollToEnd({animated: true});
-            }, 10);
-          })
-          .catch((error) => {
-            console.log('GETReviewDetail error', error);
-            setLoadingCommentPost(false);
-          });
+    DELETEComment({jwtToken, commentId, type, reviewId})
+      .then((response: any) => {
+        console.log("DELETEComment response", response);
+        dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
+        dispatch(allActions.commentListActions.setCommentCount(response.commentsNum.commentsNum)); 
       })
       .catch((error) => {
         console.log('DELETEComment error', error);
-        setLoadingCommentPost(false);
       });
   };
+
 
   const openCommentActionSheet = (
     userId: string,
     nickname: string,
     commentId: number,
-  ) => {
+) => {
     selectedCommentId = commentId;
 
     if (userId === userProfile.id) {
-      commentActionSheetRef.current.show();
+        ownCommentActionSheetRef.current.show();
+    } else {
+        otherCommentActionSheetRef.current.show();
     }
+};
+
+const onPressOwnCommentActionSheet = (index: number) => {
+  if (index === 1) {
+    deleteReviewComment();
+  }
+};
+
+
+const onPressOtherCommentActionSheet = (index: number) => {
+  if (index === 1) {
+
+  }
+};
+
+  const clickReply = (commentObj: any, targetUserNickname: string) => {
+      //console.log("clickReply userNickname, id", userNickname, id);
+      // setInputType("reply");
+      // commentInputRef.current.focus();
+      // replyTargetId = id;
+      // isClickReply = true;
+      // replyTargetNickname.current = userNickname;
+
+      navigation.navigate("ReplyPostScreen", {
+          commentObj: commentObj,
+          targetUserNickname: targetUserNickname,
+          reviewId: reviewId,
+          request: "ReviewDetailScreen",
+      });
   };
 
-  const onPressCommentActionSheet = (index: number) => {
-    if (index === 1) {
-      deleteReviewComment();
-    }
-  };
-
-  const clickReply = () => {
-    setIsCommentInputFocused(true);
-  };
+  const clickReplyOfReply = (commentObj: any, targetUserNickname: string) => {
+    navigation.navigate("ReplyPostScreen", {
+      commentObj: commentObj,
+      targetUserNickname: targetUserNickname,
+      reviewId: reviewId,
+      request: "ReviewDetailScreen",
+    })
+  }
 
   const pressBackground = () => {
     if(isOwnReview) {
@@ -870,18 +851,8 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
             onRefresh={onRefreshReviewDetail}
           />
         }>
-        <TouchableWithoutFeedback onPress={() => 0}>
+        <TouchableWithoutFeedback onPress={() => pressBackground()}>
         <ScrollViewContainer>
-        {/*
-        <ReviewInformation
-        writer={writerInfo}
-        createdDate={createdDate}
-        treatmentArray={treatmentArrayDisplay}
-        avgRating={rating.avgRating}
-        dental={dentalInfo}
-        treatmentDate={treatmentDateDisplay}
-        />
-        */}
         <WriterInfoContainer>
         <WriterInfo
         writerObj={writerObj}
@@ -907,7 +878,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
               dentalObj={dentalInfo}
               moveToDentalDetail={moveToDentalDetail}
               certifiedReceipt={isCertifiedReceipt}
-              totalPrice={totalPrice}
+              totalPrice={totalPrice.displayTreatPrice}
               ratingObj={rating}
               treatmentDate={treatmentDate.displayTreatDate}/>
             </MetaInfoContainer>
@@ -915,8 +886,10 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
               <ReviewPreviewCommentList
                 moveToCommentList={moveToCommentList}
                 clickReply={clickReply}
+                clickReplyOfReply={clickReplyOfReply}
                 openCommentActionSheet={openCommentActionSheet}
                 commentList={commentArray}
+                commentCount={commentCount}
               />
             </CommentListContainer>
           </BodyContainer>
@@ -932,6 +905,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       <KeyboardAvoidingView behavior={'position'}>
         <BottomBarContainer>
           <ReviewBottomBar
+            moveToDentalDetail={moveToDentalDetail}
             isCurUserLike={isCurUserLike}
             isCurUserScrap={isCurUserScrap}
             clickReviewLike={clickReviewLike}
@@ -941,13 +915,6 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           />
         </BottomBarContainer>
       </KeyboardAvoidingView>
-      <ActionSheet
-        ref={commentActionSheetRef}
-        options={['취소', '댓글 삭제']}
-        cancelButtonIndex={0}
-        detructiveButtonIndex={1}
-        onPress={(index: any) => onPressCommentActionSheet(index)}
-      />
       {loadingCommentPost && (
         <TransIndicatorContainer>
           <ActivityIndicator color={'#ffffff'} />
@@ -977,16 +944,6 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       {isVisibleOtherMoreViewModal && (
         <MoreViewModalContainer
         style={styles.moreViewModalShadow}>
-          <TouchableWithoutFeedback onPress={() => clickReviseReview()}>
-          <MoreViewItemContainer>
-            <MoreViewItemLabelText>{"수정"}</MoreViewItemLabelText>
-          </MoreViewItemContainer>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => clickDeleteReview()}>
-          <MoreViewItemContainer>
-            <MoreViewItemLabelText>{"삭제"}</MoreViewItemLabelText>
-          </MoreViewItemContainer>
-          </TouchableWithoutFeedback>
           <MoreViewItemContainer>
             <MoreViewItemLabelText>{"신고"}</MoreViewItemLabelText>
           </MoreViewItemContainer>
@@ -995,6 +952,18 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           </MoreViewItemContainer>
         </MoreViewModalContainer>
       )}
+       <ActionSheet
+            ref={ownCommentActionSheetRef}
+            options={['닫기', '삭제하기']}
+            cancelButtonIndex={0}
+            onPress={(index: any) => onPressOwnCommentActionSheet(index)}
+            />
+            <ActionSheet
+            ref={otherCommentActionSheetRef}
+            options={['닫기', '신고하기']}
+            cancelButtonIndex={0}
+            onPress={(index: any) => onPressOtherCommentActionSheet(index)}
+            />
     </Container>
     </TouchableWithoutFeedback>
   );

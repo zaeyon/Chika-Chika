@@ -14,10 +14,11 @@ import {
     UIManager,
     LayoutAnimation,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';import { useIsFocused } from '@react-navigation/native';
 import ActionSheet from 'react-native-actionsheet';
+import allActions from '~/actions'; 
 
 
 // local component
@@ -71,15 +72,21 @@ let selectedCommentId: number;
 
 const ReviewCommentListScreen = ({navigation, route}: Props) => {
     const [loadingCommentPost, setLoadingCommentPost] = useState<boolean>(false);
-    const [commentArray, setCommentArray] = useState<Array<any>>(route.params?.commentArray);
+    //const [commentArray, setCommentArray] = useState<Array<any>>(route.params?.commentArray);
     const [changeCommentArray ,setChangeCommentArray] = useState<boolean>(false);
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [inputType, setInputType] = useState<string>("comment");
+    const dispatch = useDispatch();
 
     const currentUser = useSelector((state: any) => state.currentUser);
     const jwtToken = currentUser.jwtToken;
-    const reviewId = route.params.reviewId;
+    const reviewId = route.params?.reviewId;
     const userProfile = currentUser.profile;
+
+    const commentState = useSelector((state: any) => state.commentList);
+    const commentArray = commentState.commentList;
+    const commentCount = commentState.commentCount;
+    
 
     const commentFlatListRef = useRef<any>();
     const commentInputRef = useRef<any>();
@@ -133,16 +140,27 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
         navigation.goBack();
     }
 
-    const clickReply = (commentObj: any) => {
+    const clickReply = (commentObj: any, targetUserNickname: string) => {
         //console.log("clickReply userNickname, id", userNickname, id);
         // setInputType("reply");
         // commentInputRef.current.focus();
         // replyTargetId = id;
         // isClickReply = true;
         // replyTargetNickname.current = userNickname;
+
         navigation.navigate("ReplyPostScreen", {
             commentObj: commentObj,
+            targetUserNickname: targetUserNickname,
+            reviewId: reviewId
         });
+    }
+
+    const clickReplyOfReply = (commentObj: any, targetUserNickname: string) => {
+        navigation.navigate("ReplyPostScreen", {
+            commentObj: commentObj,
+            targetUserNickname: targetUserNickname,
+            reviewId: reviewId,
+        })
     }
 
     
@@ -163,12 +181,14 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
     const onRefreshCommentFlat = () => {
         setRefreshing(true);
         const id = reviewId;
-        const type = 'reviews'
+        const type = 'review'
         GETCommentList({jwtToken, type, id})
         .then((response: any) => {
             console.log("GETCommentList response", response)
             setRefreshing(false)
-            setCommentArray(response.reverse())
+            //setCommentArray(response.reverse())
+        dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
+        dispatch(allActions.commentListActions.setCommentCount(response.commentsNum.commentsNum));
         })
         .catch((error) => {
             console.log("GETCommentList error", error);
@@ -178,11 +198,13 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
 
     const refreshCommentList = () => {
         const id = reviewId;
-        const type = 'reviews'
+        const type = 'review'
         GETCommentList({jwtToken, type, id})
         .then((response: any) => {
             console.log("GETCommentList response", response)
-            setCommentArray(response.reverse())
+            //setCommentArray(response.reverse())
+            dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
+            dispatch(allActions.commentListActions.setCommentCount(response.commentsNum.commentsNum));
         })
         .catch((error) => {
             console.log("GETCommentList error", error);
@@ -195,13 +217,33 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
     const type = 'review';
     const id = reviewId;
 
+    POSTComment({jwtToken, id, type, description})
+    .then((response: any) => {
+      console.log('POSTReviewComment response', response);
+      setLoadingCommentPost(false);
+      //etCommentArray(response.reverse());
+      dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
+      dispatch(allActions.commentListActions.setCommentCount(response.commentsNum.commentsNum));
+      //setChangeCommentArray(!changeCommentArray);
+      
+      setTimeout(() => {
+          commentFlatListRef.current.scrollToEnd();
+      }, 10)
+    })
+    .catch((error) => {
+      console.log('POSTReviewComment error', error);
+      setLoadingCommentPost(false);
+    });
+    /*
     if(inputType === 'comment') {
         POSTComment({jwtToken, id, type, description})
           .then((response: any) => {
             console.log('POSTReviewComment response', response);
             setLoadingCommentPost(false);
-            setCommentArray(response.reverse());
-            setChangeCommentArray(!changeCommentArray);
+            //etCommentArray(response.reverse());
+            dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
+            dispatch(allActions.commentListActions.setCommentCount(response.commentsNum.commentsNum));
+            //setChangeCommentArray(!changeCommentArray);
             
             setTimeout(() => {
                 commentFlatListRef.current.scrollToEnd();
@@ -218,7 +260,8 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
         .then((response: any) => {
             console.log("POSTReply response", response);
             setLoadingCommentPost(false);
-            setCommentArray(response.reverse());
+            //setCommentArray(response.reverse());
+            dispatch(allActions.commentListActions.setCommentList(response.reverse()));
             setChangeCommentArray(!changeCommentArray);
             setInputType("comment")
             isClickReply = false;
@@ -227,7 +270,8 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
             console.log("POSTReply error", error);
             setLoadingCommentPost(false);
         })
-    } 
+    }
+    */ 
     }
 
   const onPressOwnCommentActionSheet = (index: number) => {
@@ -248,10 +292,11 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
     const commentId = selectedCommentId;
     const type = 'review';
 
-    DELETEComment({jwtToken, commentId, type})
-      .then((response) => {
-        setCommentArray(response.reverse());
-        setChangeCommentArray(!changeCommentArray);        
+    DELETEComment({jwtToken, commentId, type, reviewId})
+      .then((response: any) => {
+        console.log("DELETEComment response", response);
+        dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
+        dispatch(allActions.commentListActions.setCommentCount(response.commentsNum.commentsNum));   
       })
       .catch((error) => {
         console.log('DELETEComment error', error);
@@ -289,6 +334,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
     const renderReplyItem = ({item, index}: any) => {
         return (
             <ReplyItem
+            replyObj={item}
             commentObj={commentObj}
             isVisibleReplyButton={true}
             userId={item.user.id}
@@ -298,7 +344,8 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
             description={item.description}
             createdDate={item.createdAt}
             replys={item.Replys}
-            clickReply={clickReply}
+            clickReplyOfReply={clickReplyOfReply}
+            openCommentActionSheet={openCommentActionSheet}
             />
         )
     } 
@@ -308,7 +355,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
             <NavigationHeader
             headerLeftProps={{type: "arrow", onPress: goBack}}
             headerRightProps={{type: "empty", onPress: () => 0}}
-            headerTitle={"댓글"}
+            headerTitle={`댓글(${commentCount})`}
             />
             <CommentListContainer>
                 <KeyboardAwareFlatList
@@ -316,7 +363,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
                 onRefresh={onRefreshCommentFlat}
                 ref={commentFlatListRef}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{paddingBottom: (commentInputRef?.current?.isFocused() ? hp('5%') : hp('9%'))}}
+                contentContainerStyle={{paddingBottom: (commentInputRef?.current?.isFocused() ? hp('5%') : hp('9%')), paddingTop: 12}}
                 scrollEnabled={true}
                 data={commentArray}
                 renderItem={renderCommentItem}
@@ -325,6 +372,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
             <KeyboardAvoidingView behavior={"position"}>
             <BottomBarContainer>
                 <CommentPostBottomBar
+                requestScreen={"ReviewCommentListScreen"}
                 cancelReplyInput={cancelReplyInput}
                 replyTargetNickname={replyTargetNickname.current}
                 commentInputRef={commentInputRef}

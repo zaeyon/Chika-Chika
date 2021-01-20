@@ -6,20 +6,28 @@ interface Props {
     commentId: number,
     type: string,
     description: string,
+    targetUser: string,
+    postId: number,
 }
 
-const POSTReply = ({jwtToken, commentId, type, description}: Props) => {
+const POSTReply = ({jwtToken, commentId, type, description, targetUser, postId}: Props) => {
 
+    let uri = ""
+    if(type === "review") {
+        uri = serverConfig.baseUri + `/api/v1/comments/reply?type=${type}&commentId=${commentId}&reviewId=${postId}`
+    } else {
 
-    const uri = serverConfig.baseUri + `/api/v1/comments/reply?type=${type}&commentId=${commentId}.`
+    }
 
     console.log("POSTReply jwtToken", jwtToken);
     console.log("POSTReply commentId", commentId);
     console.log("POSTReply type", type);
     console.log("POSTReply description", description);
+    console.log("POSTReply targetUser", targetUser);
 
     const formData = new FormData();
     formData.append("description", description);
+    formData.append("targetUserNickname", targetUser);
 
     return new Promise((resolve, reject) => {
         

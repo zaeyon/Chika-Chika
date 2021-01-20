@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef, createRef} from 'react';
 import Styled from 'styled-components/native';
+import SafeAreaView from 'react-native-safe-area-view';
 import {
   TouchableWithoutFeedback,
   FlatList,
@@ -26,7 +27,7 @@ import {uploadImageToS3} from '~/method/uploadImageToS3';
 import POSTReviewUpload from '~/Routes/Review/POSTReviewUpload';
 import PUTReviewRevise from '~/Routes/Review/PUTReviewRevise';
 
-const Container = Styled.SafeAreaView`
+const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
 `;
@@ -341,7 +342,6 @@ const ContentPostScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     if (route.params.requestType === 'revise') {
-      console.log('route.params.paragraphArray', route.params.paragraphArray);
       const tmpParagraphArray = route.params.paragraphArray;
       setParagraphList(tmpParagraphArray);
       setTotalPrice(route.params?.totalPrice);
@@ -351,21 +351,18 @@ const ContentPostScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     if (route.params?.dentalClinic) {
-      console.log('route.params?.dentalClinic', route.params.dentalClinic);
       setDentalClinic(route.params?.dentalClinic);
     }
   }, [route.params?.dentalClinic]);
 
   useEffect(() => {
     if (route.params?.treatDate) {
-      console.log('route.params?.treatDate', route.params?.treatDate);
       setTreatDate(route.params?.treatDate);
     }
   }, [route.params?.treatDate]);
 
   useEffect(() => {
     if (route.params?.treatPrice) {
-      console.log('route.params.treatPrice', route.params.treatPrice);
       setTreatPrice(route.params?.treatPrice);
       setDisplayTotalPrice(route.params?.treatPrice.displayTreatPrice);
       setTotalPrice(route.params?.treatPrice.treatPrice);
@@ -487,8 +484,9 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   };
 
   const applyTreatDate = () => {
-    console.log('date', treatDate);
+    console.log('applyTreatDate date', treatDate);
     var tmpTreatDate: any = treatDate;
+    tmpTreatDate.dateValue = treatDate.treatDate;
     tmpTreatDate.displayTreatDate = convertDisplayDate(treatDate.treatDate);
     tmpTreatDate.treatDate = convertSubmitDate(treatDate.treatDate);
 
@@ -569,9 +567,10 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   };
 
   const onPressAddImage = (index: number) => {
-    navigation.navigate('Gallery', {
-      requestType: 'review',
+    navigation.navigate('ImageSelectScreen', {
+      requestType: 'ContentPostScreen',
       startIndex: index,
+      selectedImages: [],
     });
   };
 
@@ -739,6 +738,14 @@ const ContentPostScreen = ({navigation, route}: Props) => {
           'PUTReviswRevise response.updateReview.reviewBody.TreatmentItems',
           response.updateReview.reviewBody.TreatmentItems,
         );
+        console.log('PUTReviewRevise response.updateReview.reviewBody.dental_clinic', response.updateReview.reviewBody.dental_clinic);
+
+        const dentalObj = {
+          id: response.updateReview.reviewBody.dentalClinicId,
+          address: response.updateReview.reviewBody.dental_clinic.address,
+          originalName: response.updateReview.reviewBody.dental_clinic.originalName,
+          name: response.updateReview.reviewBody.dental_clinic.name
+        }
 
         const tmpRating = {
           avgRating: (
@@ -752,18 +759,26 @@ const ContentPostScreen = ({navigation, route}: Props) => {
           treatRating: response.updateReview.reviewBody.starRate_treatment,
         };
 
+        console.log("PUTReviewRevise treatDate", treatDate);
+
+        const treatmentDateObj = {
+          treatDate: new Date(response.updateReview.reviewBody.treatmentDate),
+          displayTreatDate: response.updateReview.reviewBody.treatmentDate,
+        }
+
         navigation.navigate('ReviewDetailScreen', {
           isRevised: true,
+          totalPrice: response.updateReview.reviewBody.totalCost,
           paragraphArray: response.updateReview.reviewBody.review_contents,
           treatmentArray: response.updateReview.reviewBody.TreatmentItems,
           ratingObj: tmpRating,
-          dentalObj: response.updateReview.reviewBody.dental_clinic,
-          treatmentDate: response.updateReview.reviewBody.treatmentDate,
+          dentalObj: dentalObj,
+          treatmentDateObj: treatmentDateObj,
         });
       })
       .catch((error) => {
         setUploadLoading(false);
-        console.log('POSTReviewUpload error', error);
+        console.log('PUTReviewRevise error', error);
       });
   };
 
@@ -881,7 +896,10 @@ const ContentPostScreen = ({navigation, route}: Props) => {
               <TouchableWithoutFeedback
                 onLongPress={() => clickInsertedImage(index)}
                 delayLongPress={300}>
-                <ParaImage source={{uri: item.image.uri}} />
+                <ParaImage 
+                source={{
+                  uri: item.image.uri,
+                }}/>
               </TouchableWithoutFeedback>
               <SelectOrderContainer>
                 <TouchableWithoutFeedback
@@ -1006,7 +1024,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   };
 
   return (
-    <Container>
+    <Container as={SafeAreaView} forceInset={{top: 'always'}}>
       <HeaderBar>
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <HeaderLeftContainer>

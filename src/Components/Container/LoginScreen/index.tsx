@@ -401,7 +401,7 @@ const LoginScreen = ({navigation}: Props) => {
           console.log('POSTVerifyPhoneNumber response', response);
           console.log('number', number);
 
-          navigation.navigate('HometownSettingScreen', {
+          navigation.navigate('HometownSearchScreen', {
             certifiedPhoneNumber: true,
             provider: 'local',
             fcmToken: fcmToken,

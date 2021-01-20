@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef, createRef} from 'react';
+import React, {useEffect, useState, useRef, createRef, useMemo, useCallback, memo} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
 import {
@@ -10,6 +10,7 @@ import {
     FlatList,
     StyleSheet,
     Keyboard,
+    PanResponder,
 } from 'react-native';
 import {
     widthPercentageToDP as wp,
@@ -28,7 +29,7 @@ import ActionSheet from 'react-native-actionsheet';
 import Modal from 'react-native-modal';
 
 // Local Component
-import DentalCarouselItem from '~/Components/Presentational/NearDentalMap/DentalCarouselItem';
+import DentalCarouselList from '~/Components/Presentational/NearDentalMap/DentalCarouselList';
 import TouchBloackIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 import DentalList from '~/Components/Presentational/DentalList';
 
@@ -334,6 +335,19 @@ font-size: 20px;
 color: #000000;
 `;
 
+const ViewDentalListButton = Styled.View`
+padding: 13px;
+background-color: #eeeeee;
+`;
+
+const ViewDentalListText = Styled.Text`
+font-family: NanumSquare;
+font-size: 16px;
+`;
+
+const NaverMapContainer = Styled.View`
+`;
+
 interface Props {
     navigation: any,
     route: any,
@@ -343,51 +357,6 @@ interface Coord {
     latitude: number;
     longitude: number;
 }
-
-const TEST_NEAR_DENTAL_DATA = [
-    {
-        index: 1,
-        name: "연세웃는아이치과의원",
-        rating: 3.1,
-        reviewCount: 3,
-        isOpen: true,
-        isLauchTime: true,
-        address: "경기 안양시 동안구 경수대로 428",
-        lunchTime: "12:30~13:20",
-        openTime: "12:30~12:30",
-        geographLat: 37.29440,
-        geographLong: 127.04547,
-        selected: true,
-    },
-    {
-        index: 2,
-        name: "오케이치과의원",
-        rating: 3.5,
-        reviewCount: 12,
-        isOpen: false,
-        isLauchTime: true,
-        address: "경기도 의왕시 오전동 206",
-        lunchTime: "12:30~13:20",
-        openTime: "12:30~12:30",
-        geographLat: 37.29404,
-        geographLong: 127.04458,
-        selected: false,
-    },
-    {
-        index: 3,
-        name: "굿모닝치과의원",
-        rating: 4,
-        reviewCount: 20,
-        isOpen: false,
-        isLauchTime: false,
-        address: "경기도 의왕시 모락로 16",
-        lunchTime: "12:30~13:20",
-        openTime: "12:30~12:30",
-        geographLat: 37.29370,
-        geographLong: 127.04638,
-        selected: false,
-    },
-]
 
 const TEST_COORDINATE = {
     latitude: 37.566515657875435,
@@ -412,7 +381,6 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const [isOpenDentalList, setIsOpenDentalList] = useState<boolean>(false);
     //const [nearDentalList, setNearDentalList] = useState<Array<any>>(TEST_NEAR_DENTAL_DATA);
     const [currentCarouselIndex, setCurrentCarouselIndex] = useState<number>(0); 
-    const [keyboardHeight, setKeyboardHeight] = useState<number>(0);
 
     const [hourPickerValue, setHourPickerValue] = useState<number>(1);
     const [minutePickerValue, setMinutePickerValue] = useState<string>("00");
@@ -421,18 +389,20 @@ const NearDentalMap = ({navigation, route}: Props) => {
     
     const [changeDentalList, setChangeDentalList] = useState<boolean>(false);
     const [changeDayFilter, setChangeDayFilter] = useState<boolean>(false);
+    
+    const [isVisibleCarouselList, setIsVisibleCarouselList] = useState<boolean>(true);
 
     const [selectedDentalIndex, setSelectedDentalIndex] = useState<number>(0);
 
     const mapRef = useRef<any>(null);
     const dentalCarouselRef = useRef<any>(null);
     const timeTextInputRef = useRef<any>(null);
+    const curCameraLocation = useRef<any>(TEST_COORDINATE);
     const timeFilterActionSheet = createRef<any>();
     const dispatch = useDispatch();
 
     const currentUser = useSelector((state: any) => state.currentUser);
-    const nearDentalList = useSelector((state: any) => state.dentalMap).nearDentalList;
-
+    
     // 방문일 설정 redux state
     const dayList = useSelector((state: any) => state.dentalFilter).dayList;
     const selectedDayList = useSelector((state: any) => state.dentalFilter).selectedDayList;
@@ -456,17 +426,42 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const searchedDentalArr = dentalMapRedux.searchedDentalArr;
     const loadingGetDental = dentalMapRedux.loadingGetDental;
 
-
-    //const mapLocation = useSelector((state: any) => state.dentalMap).mapLocation;
-
-    // search keyword redux state
-    //const searchedKeyword = useSelector((state: any) => state.dentalMap).searchedKeyword;
-
-    //const searchedDentalArr = useSelector((state: any) => state.dentalMap).searchedDentalArr;    
-    
-
     const jwtToken = currentUser.jwtToken;
     const todayIndex = new Date().getDay();
+
+    /*
+    const panResponder = React.useRef(
+        PanResponder.create({
+          // Ask to be the responder:
+          onStartShouldSetPanResponder: (evt, gestureState) => true,
+          onStartShouldSetPanResponderCapture: (evt, gestureState) =>
+            true,
+          onMoveShouldSetPanResponder: (evt, gestureState) => true,
+          onMoveShouldSetPanResponderCapture: (evt, gestureState) =>
+            true,
+    
+          onPanResponderGrant: (evt, gestureState) => {
+          },
+          onPanResponderMove: (evt, gestureState) => {
+          },
+          onPanResponderTerminationRequest: (evt, gestureState) =>
+            true,
+          onPanResponderRelease: (evt, gestureState) => {
+            console.log("onPanResponderRelease gestureState", gestureState);
+          },
+          onPanResponderTerminate: (evt, gestureState) => {
+            // Another component has become the responder, so this gesture
+            // should be cancelled
+            console.log("onPanResponderTreminate gestureState", gestureState);
+          },
+          onShouldBlockNativeResponder: (evt, gestureState) => {
+            // Returns whether this component should block native components from becoming the JS
+            // responder. Returns true by default. Is currently only supported on android.
+            return true;
+          }
+        })
+      ).current;
+      */
 
     useEffect(() => {
         //mapRef.current.setLocationTrackingMode(2)
@@ -481,16 +476,6 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
         getInitialNearDental();
     }, [])
-
-    useEffect(() => {
-        
-        Keyboard.addListener("keyboardWillShow", onKeyboardWillShow);
-
-        return () => {
-            Keyboard.removeListener("keyboardWillShow", onKeyboardWillShow);
-        }
-    }, [])
-
  
     useEffect(() => {
         if(route.params?.offset || route.params?.limit) {
@@ -515,12 +500,6 @@ const NearDentalMap = ({navigation, route}: Props) => {
     useEffect(() => {
         getNearDental();
     }, [])
-
-
-    const onKeyboardWillShow = (event: any) => {
-        console.log("event", event.endCoordinates.height)
-        setKeyboardHeight(event.endCoordinates.height);
-    }
     
     async function getAndroidInitialNearDental() {
         const permission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
@@ -552,7 +531,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     dispatch(allActions.dentalMapActions.setMapLocation(location));
                     
 
-                    GETAroundDental({jwtToken, lat, long, sort, timeFilter, dayFilter, parkingFilter})
+                    GETAroundDental({jwtToken, lat, long, sort, timeFilter, dayFilter, holidayFilter, parkingFilter})
                     .then((response) => {
                     //setLoadingGetDental(false);
                     dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
@@ -608,7 +587,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
                     dispatch(allActions.dentalMapActions.setMapLocation(location))
 
-                    GETAroundDental({jwtToken, lat, long, sort, timeFilter, dayFilter, parkingFilter})
+                    GETAroundDental({jwtToken, lat, long, sort, timeFilter, dayFilter, holidayFilter, parkingFilter})
                     .then((response: any) => {
                     console.log("GETAroundDental response.length", response.length);
                     dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
@@ -642,9 +621,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
         const sort = "d";
         dispatch(allActions.dentalMapActions.setLoadingGetDental(true))
         setSelectedDentalIndex(0);
-        dentalCarouselRef.current.snapToItem(0);
+        dentalCarouselRef.current?.snapToItem(0);
 
-        GETAroundDental({jwtToken, lat, long, sort, timeFilter, dayFilter, parkingFilter})
+        GETAroundDental({jwtToken, lat, long, sort, timeFilter, dayFilter, holidayFilter, parkingFilter})
         .then((response: any) => {
             console.log("GETAroundDental response in NearDentalMap", response);
             dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
@@ -653,6 +632,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
             //setNearDentalList(response);
             //dispatch(allActions.dentalMapActions.setNearDentalList(response));
             dispatch(allActions.dentalMapActions.setSearchedDentalArr(response));
+        
             setChangeDentalList(!changeDentalList);
         })
         .catch((error) => {
@@ -661,18 +641,20 @@ const NearDentalMap = ({navigation, route}: Props) => {
         })
     }
 
-    const filterNearDental = (tmpDayFilter: any, tmpTimeFilter: string, tmpParkingFilter: string) => {
+    const filterNearDental = (tmpDayFilter: any, tmpTimeFilter: string, tmpParkingFilter: string, tmpHolidayFilter: boolean) => {
         const lat = currentLocation.latitude;
         const long = currentLocation.longitude;
         const sort = "d";
         const timeFilter = tmpTimeFilter;
         const dayFilter = tmpDayFilter;
         const parkingFilter = tmpParkingFilter;
+        const holidayFilter = tmpHolidayFilter;
+
         dispatch(allActions.dentalMapActions.setLoadingGetDental(true));
         setSelectedDentalIndex(0);
-        dentalCarouselRef.current.snapToItem(0);
+        dentalCarouselRef.current?.snapToItem(0);
 
-        GETAroundDental({jwtToken, lat, long, sort, timeFilter, dayFilter, parkingFilter})
+        GETAroundDental({jwtToken, lat, long, sort, timeFilter, dayFilter, holidayFilter, parkingFilter})
         .then((response) => {
             console.log("GETAroundDental response in NearDentalMap", response);
             dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
@@ -691,7 +673,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
     }
 
 
-  const filterSearchedDental = (query: string, tmpDayFilter: any, tmpTimeFilter: string, tmpParkingFilter: string) => {
+  const filterSearchedDental = (query: string, tmpDayFilter: any, tmpTimeFilter: string, tmpParkingFilter: string, tmpHolidayFilter: boolean) => {
     dispatch(allActions.dentalMapActions.setLoadingGetDental(true))
     const lat = currentLocation.latitude;
     const long = currentLocation.longitude;
@@ -699,8 +681,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const dayFilter = tmpDayFilter;
     const timeFilter = tmpTimeFilter;
     const parkingFilter = tmpParkingFilter;
+    const holidayFilter = tmpHolidayFilter;
   
-    GETDentalTotalSearch({jwtToken, offset, limit, lat, long, query, sort, dayFilter, timeFilter, parkingFilter})
+    GETDentalTotalSearch({jwtToken, offset, limit, lat, long, query, sort, dayFilter, timeFilter, holidayFilter, parkingFilter})
       .then((response: any) => {
         dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
         console.log('GETDentalTotalSearch response', response);
@@ -720,47 +703,34 @@ const NearDentalMap = ({navigation, route}: Props) => {
       });
   };
 
-    /*
-    const searchDental = () => {
-        const lat = currentLocation.latitude;
-        const long = currentLocation.longitude;
-        const query = searchedKeyword;
-        dispatch(allActions.dentalMapActions.setLoadingGetDental(true))
-        setSelectedDentalIndex(0);
-        dentalCarouselRef.current.snapToItem(0);
-
-        GETDentalTotalSearch({jwtToken, offset, limit, lat, long, query, sort, dayFilter, timeFilter, parkingFilter})
-        .then((response: any) => {
-            dispatch(allActions.dentalMapActions.setLoadingGetDental(false))
-            dispatch(allActions.dentalMapActions.setSearchedDentalArr(response));
-        })
-        .catch((error: any) => {
-
-        })
-    }
-    */
-    
-
-
-
     const goBack = () => {
         navigation.goBack();
     }
 
-    const openDentalList = () => {
+    const focusSearchInput = () => {
         navigation.navigate("DentalTotalSearchScreen", {
-            currentLocation: currentLocation
+            currentLocation: currentLocation,
+            requestType: "search"
         })
     }
 
     const clickDentalMarker = (selectedIndex: number) => {
 
+        if(!isVisibleCarouselList) {
+            setIsVisibleCarouselList(true);
+        }
+
         setSelectedDentalIndex(selectedIndex);
-        dentalCarouselRef.current.snapToItem(selectedIndex);
+        
+        dentalCarouselRef.current?.snapToItem(selectedIndex, false);
         
     }
 
-    const clickMapBackground = () => {
+    const onMapClick = () => {
+        if(isVisibleCarouselList) {
+            setSelectedDentalIndex(-1)
+            setIsVisibleCarouselList(false);
+        }
     }
 
     
@@ -786,34 +756,53 @@ const NearDentalMap = ({navigation, route}: Props) => {
         })
     }
 
+    const moveToDentalList = () => {
+        navigation.navigate("DentalTotalSearchScreen", {
+            currentLocation: currentLocation,
+            requestType: "dentalList",
+        })
+    }
+
     const clickMyLocationTrackingButton = () => {
         mapRef.current.setLocationTrackingMode(2);
     }
 
-    const onSnapToDentalCarouselItem = (selectedIndex: number) => {
+    const onSnapToDentalCarouselItem = useCallback((selectedIndex: number) => {
         console.log("onSnapToDentalCarouselItem index", selectedIndex);
-        //mapRef.current.animateToCoordinate(nearDentalList[index].location);
         setSelectedDentalIndex(selectedIndex);
+    }, []);
+
+    const onMapCameraChange = (event: any) => {
+        console.log("onMapCameraChange event", event);
     }
 
     const changeHolidayFilter = () => {
+        console.log("changeHolidayFilter holidayFilter", holidayFilter);
+        if(isNearDentalList) {
+            filterNearDental(dayFilter, timeFilter, parkingFilter, !holidayFilter)
+        } else {
+            filterSearchedDental(searchedKeyword, dayFilter, timeFilter, parkingFilter, !holidayFilter)
+        }
+        
+        dispatch(allActions.dentalFilterActions.setHolidayFilter(!holidayFilter));
+
     }
 
     const changeParkingFilter = () => {
         if(parkingFilter === "y") {
             if(isNearDentalList) {
-                filterNearDental(dayFilter, timeFilter, "n");
+                filterNearDental(dayFilter, timeFilter, "n", holidayFilter);
             } else {
-                filterSearchedDental(searchedKeyword, dayFilter, timeFilter, "n");
+                filterSearchedDental(searchedKeyword, dayFilter, timeFilter, "n", holidayFilter);
             }
 
             dispatch(allActions.dentalFilterActions.setParkingFilter("n"))
 
         } else if(parkingFilter === "n") {
             if(isNearDentalList) {
-                filterNearDental(dayFilter, timeFilter, "y");
+                filterNearDental(dayFilter, timeFilter, "y", holidayFilter);
             } else {
-                filterSearchedDental(searchedKeyword, dayFilter, timeFilter, "y");
+                filterSearchedDental(searchedKeyword, dayFilter, timeFilter, "y", holidayFilter);
             }
 
             dispatch(allActions.dentalFilterActions.setParkingFilter("y"))
@@ -864,9 +853,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
             dispatch(allActions.dentalFilterActions.setSelectedDayList(tmpSelectedDayList));
 
             if(isNearDentalList) {
-                filterNearDental(tmpDayFilter, timeFilter, parkingFilter);
+                filterNearDental(tmpDayFilter, timeFilter, parkingFilter, holidayFilter);
             } else {
-                filterSearchedDental(searchedKeyword, tmpDayFilter, timeFilter, parkingFilter)
+                filterSearchedDental(searchedKeyword, tmpDayFilter, timeFilter, parkingFilter, holidayFilter)
             }
         }
         setVisibleDayFilterModal(false);
@@ -909,9 +898,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
 
                 if(isNearDentalList) {
-                    filterNearDental(dayFilter, formattedTime, parkingFilter);
+                    filterNearDental(dayFilter, formattedTime, parkingFilter, holidayFilter);
                 } else {
-                    filterSearchedDental(searchedKeyword, dayFilter, formattedTime, parkingFilter);
+                    filterSearchedDental(searchedKeyword, dayFilter, formattedTime, parkingFilter, holidayFilter);
                 }
             }
         } else if(timeSlotPickerValue == "오후") {
@@ -921,9 +910,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
 
                 if(isNearDentalList) {
-                    filterNearDental(dayFilter, formattedTime, parkingFilter);
+                    filterNearDental(dayFilter, formattedTime, parkingFilter, holidayFilter);
                 } else {
-                    filterSearchedDental(searchedKeyword, dayFilter, formattedTime, parkingFilter);
+                    filterSearchedDental(searchedKeyword, dayFilter, formattedTime, parkingFilter, holidayFilter);
                 }
             }
         }
@@ -935,56 +924,6 @@ const NearDentalMap = ({navigation, route}: Props) => {
         } else if(index === 2) {
             dispatch(allActions.dentalFilterActions.setTimeFilter(""));
         }
-    }
-
-    
-    const renderCarouselItem = ({item, index}: any) => {
-        const isLunchTime = item.lunchTimeNow == 1 ? true : false;
-        const isOpen = item.conclustionNow == 1 ? true : false;
-        const rating = item.reviewAVGStarRate ? item.reviewAVGStarRate : "평가없음";
-        
-        let todayStartTime = ""
-        let todayEndTime = ""
-
-        if(todayIndex === 0) {
-            todayStartTime = item.Sun_Consulation_start_time?.slice(0, 5);
-            todayEndTime = item.Sun_Consulation_end_time?.slice(0, 5);
-        } else if(todayIndex === 1) {
-            todayStartTime = item.Mon_Consulation_start_time?.slice(0, 5);
-            todayEndTime = item.Mon_Consulation_end_time?.slice(0, 5);
-        } else if(todayIndex === 2) {
-            todayStartTime = item.Tus_Consulation_start_time?.slice(0, 5);
-            todayEndTime = item.Tus_Consulation_end_time?.slice(0, 5);
-        } else if(todayIndex === 3) {
-            todayStartTime = item.Wed_Consulation_start_time?.slice(0, 5);
-            todayEndTime = item.Wed_Consulation_end_time?.slice(0, 5);
-        } else if(todayIndex === 4) {
-            todayStartTime = item.Thu_Consulation_start_time?.slice(0, 5);
-            todayEndTime = item.Thu_Consulation_end_time?.slice(0, 5);
-        } else if(todayIndex === 5) {
-            todayStartTime = item.Fri_Consulation_start_time?.slice(0, 5);
-            todayEndTime = item.Fri_Consulation_end_time?.slice(0, 5);
-        } else if(todayIndex === 6) {
-            todayStartTime = item.Sat_Consulation_start_time?.slice(0, 5);
-            todayEndTime = item.Sat_Consulation_end_time?.slice(0, 5);
-        }
-
-        return (
-            <TouchableWithoutFeedback onPress={() => moveToDentalDetail(item.id)}>
-            <DentalCarouselItemContainer>
-                <DentalCarouselItem
-                isOpen={isOpen}
-                isLunchTime={isLunchTime}
-                rating={rating}
-                reviewCount={item.reviewNum}
-                name={item.originalName}
-                address={item.address}
-                lunchTime={item.lunchTime}
-                openTime={todayStartTime}
-                closeTime={todayEndTime}/>
-            </DentalCarouselItemContainer>
-            </TouchableWithoutFeedback>
-        )
     }
 
     const renderDayFilterItem = ({item, index}: any) => {
@@ -1020,8 +959,13 @@ const NearDentalMap = ({navigation, route}: Props) => {
         <SafeAreaView style={styles.safeAreaStyle} forceInset={{ top: 'always'}}>
         <Container>
             <HeaderBar>
-                <TouchableWithoutFeedback onPress={() => openDentalList()}>
-                <SearchInputContainer>
+                <TouchableWithoutFeedback onPress={() => moveToDentalList()}>
+                <ViewDentalListButton>
+                    <ViewDentalListText>{"목록"}</ViewDentalListText>
+                </ViewDentalListButton>
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => focusSearchInput()}>
+                <SearchInputContainer style={{marginLeft: 8}}>
                     <SearchIcon
                     source={require('~/Assets/Images/Search/ic_search.png')}/>
                     {(searchedKeyword === "") && (
@@ -1034,13 +978,15 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 </TouchableWithoutFeedback>
             </HeaderBar>
             <MapContainer>
+                <NaverMapContainer>
                 <NaverMapView
                 ref={mapRef}
                 compass={false}
-                style={{width: '100%', height: hp('100%') - (DeviceInfo.hasNotch() ? wp('54%') : wp('33%'))}}
+                style={{width: '100%', height: hp('100%') - (DeviceInfo.hasNotch() ? wp('49%') : wp('33%'))}}
                 showsMyLocationButton={false}
                 center={{...mapLocation, zoom: mapZoom}}
-                onMapClick={(e:any) => clickMapBackground()}
+                onMapClick={(event: any) => onMapClick()}
+                onCameraChange={(event: any) => onMapCameraChange(event)}
                 zoomControl={true}>
                 {searchedDentalArr.map((item: any, index: number) => {
                     return (
@@ -1053,6 +999,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 })
                 }
                 </NaverMapView>
+                </NaverMapContainer>
                 <MapHeaderContainer>
                 <FilterListContainer>
                 <ScrollView
@@ -1104,7 +1051,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={() => changeHolidayFilter()}>
                     <FilterItemContainer style={[{marginLeft: 12}, holidayFilter && {backgroundColor: "#2998FF"}]}>
-                        <FilterItemText style={holidayFilter && {color: "#FFFFFF"}}>{"일요일･공휴일 휴진"}</FilterItemText>
+                        <FilterItemText style={holidayFilter && {color: "#FFFFFF"}}>{"일요일･공휴일 진료"}</FilterItemText>
                     </FilterItemContainer>
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={() => changeParkingFilter()}>
@@ -1126,57 +1073,35 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 </TouchableHighlight>
                 </MyLocationTrackingContainer>
                 </MapHeaderContainer>
-                {/*
-                <DentalCarouselListContainer>
-                    <FlatList
-                    {...dentalPanResponder.panHandlers}
-                    ref={dentalFlatListRef}
-                    onScrollEndDrag={(event: any) => onScrollEndDragDentalCarousel(event)}
-                    showsHorizontalScrollIndicator={false}
-                    data={nearDentalList}
-                    renderItem={renderCarouselItem}
-                    horizontal={true}/>
-                </DentalCarouselListContainer>
-                */}
                 <MapInsetBottomShadow
                 style={styles.insetShadow}/>
-                <DentalCarouselListContainer>
-                    <Carousel
-                    contentContainerCustomStyle={{justifyContent: "center"}}
-                    inactiveSlideOpacity={1}
-                    inactiveSlideScale={0.93}
-                    inactiveSlideShift={0}
-                    onSnapToItem={(index) => onSnapToDentalCarouselItem(index)}
-                    ref={dentalCarouselRef}
-                    data={searchedDentalArr}
-                    renderItem={renderCarouselItem}
-                    sliderWidth={wp('100%')}
-                    itemWidth={wp('87.2%')}/>
-                    <CarouselIndexContainer>
-                        <CarouselIndexText style={styles.carouselIndexShadow}>{selectedDentalIndex+1 + " / " + searchedDentalArr.length}
-                        </CarouselIndexText>
-                    </CarouselIndexContainer>
-                </DentalCarouselListContainer>
-            </MapContainer>
-            <Modal
-            isVisible={visibleDayFilterModal}
-            style={styles.dayFilterModalView}
-            onBackdropPress={() => cancelDayFilter()}
-            swipeDirection={['down']}
-            onSwipeComplete={() => setVisibleDayFilterModal(false)}
-            backdropOpacity={0.25}>
-            <DetailFilterModalContainer>
-                <DetailFilterHeaderContainer>
-                    <TouchableWithoutFeedback onPress={() => cancelDayFilter()}>
-                    <DetailFilterHeaderLeftContainer>
-                        <DetailFilterCancelText>{"취소"}</DetailFilterCancelText>
-                    </DetailFilterHeaderLeftContainer>
-                    </TouchableWithoutFeedback>
+                <DentalCarouselList
+                searchedDentalArr={searchedDentalArr}
+                moveToDentalDetail={moveToDentalDetail}
+                onSnapToDentalCarouselItem={onSnapToDentalCarouselItem}
+                todayIndex={todayIndex}
+                selectedDentalIndex={selectedDentalIndex}
+                dentalCarouselRef={dentalCarouselRef}/>
+                </MapContainer>
+                <Modal
+                isVisible={visibleDayFilterModal}
+                style={styles.dayFilterModalView}
+                onBackdropPress={() => cancelDayFilter()}
+                swipeDirection={['down']}
+                onSwipeComplete={() => setVisibleDayFilterModal(false)}
+                backdropOpacity={0.25}>
+                <DetailFilterModalContainer>
+                    <DetailFilterHeaderContainer>
+                        <TouchableWithoutFeedback onPress={() => cancelDayFilter()}>
+                        <DetailFilterHeaderLeftContainer>
+                            <DetailFilterCancelText>{"취소"}</DetailFilterCancelText>
+                        </DetailFilterHeaderLeftContainer>
+                        </TouchableWithoutFeedback>
                     <DetailFilterTitleText>{"방문일 설정"}</DetailFilterTitleText>
                     <TouchableWithoutFeedback onPress={() => registerDayFilter()}>
-                    <DetailFilterHeaderRightContainer>
-                        <DetailFilterRegisterText>{"저장"}</DetailFilterRegisterText>
-                    </DetailFilterHeaderRightContainer>
+                        <DetailFilterHeaderRightContainer>
+                            <DetailFilterRegisterText>{"저장"}</DetailFilterRegisterText>
+                        </DetailFilterHeaderRightContainer>
                     </TouchableWithoutFeedback>
                 </DetailFilterHeaderContainer>
                 <DetailFilterListContainer>

@@ -326,7 +326,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
         console.log('POSTSocialUserCheck error', error);
         if (error.status === 401) {
           console.log('등록된 소셜 계정 없음');
-          navigation.navigate('HometownSettingScreen', {
+          navigation.navigate('HometownSearchScreen', {
             certifiedPhoneNumber: phoneNumber ? true : false,
             birthdate: userProfile.birthdate,
             profileImg: userProfile.profileImg,
@@ -377,7 +377,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
         console.log('POSTSocialUserCheck error', error);
         if (error.status === 401) {
           console.log('등록된 소셜 계정 없음');
-          navigation.navigate('HometownSettingScreen', {
+          navigation.navigate('HometownSearchScreen', {
             certifiedPhoneNumber: false,
             birthdate: userProfile.birthdate,
             profileImg: userProfile.profileImg,

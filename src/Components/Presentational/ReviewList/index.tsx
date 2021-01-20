@@ -19,164 +19,18 @@ import ReviewItem from '~/Components/Presentational/ReviewItem';
 import GETReviewList from '~/Routes/Review/GETReviewList';
 
 const Container = Styled.SafeAreaView`
- background-color: #FFFFFF;
  flex: 1;
 `;
 
-const HeaderBar = Styled.View`
- width: ${wp('100%')}px;
- height: ${wp('11.7%')}px;
- flex-direction: row;
- align-items: center;
- justify-content: space-between;
- background-color:#ffffff;
-`;
 
-const HeaderLeftContainer = Styled.View`
-padding: 7px 16px 13px 15px;
- align-items: center;
- justify-content: center;
- flex-direction: row;
-`;
-
-const HeaderBackIcon = Styled.Image`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
-`;
-
-const HeaderTitleText = Styled.Text`
- 
-`;
-
-const HeaderRightContainer = Styled.View`
-padding: 7px 16px 13px 15px;
- align-items: center;
- justify-content: center;
- flex-direction: row;
-`;
-
-const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
-`;
-
-const BodyContainer = Styled.View`
-padding-top: 32px;
-background-color: #ffffff;
-align-items: center;
-`;
-
-const ReviewContainer = Styled.View`
-`;
 
 const ReviewListContainer = Styled.View`
 flex: 1;
 `;
 
-const ReviewHeaderContainer = Styled.View`
-width: ${wp('87.2%')}
-flex-direction: row;
-align-items: center;
-justify-content: space-between;
-`;
-
-const ReviewLabelText = Styled.Text`
-font-weight: 700;
-font-size: 16px;
-color: #000000;
-`;
-
-const MoreViewContainer = Styled.View`
-align-items: center;
-justify-content: center;
-padding: 5px;
-`;
-
-const MoreViewText = Styled.Text`
-font-size: 16px;
-font-weight: 400;
-color: #000000;
-`;
-
-const ReviewItemContainer = Styled.View`
-margin-top: 8px;
-width: ${wp('87.2%')}px;
-height: ${wp('40%')}px;
-border-radius: 8px;
-border-width: 1px;
-border-color: #c4c4c4;
-`;
-
-const HospitalContainer = Styled.View`
-`;
-
-const HospitalListContainer = Styled.View`
-`;
-
-const HospitalHeaderContainer = Styled.View`
-width: ${wp('87.2%')}
-flex-direction: row;
-align-items: center;
-justify-content: space-between;
-`;
-
-const HospitalLabelText = Styled.Text`
-font-weight: 700;
-font-size: 16px;
-color: #000000;
-`;
-
-const HospitalItemContainer = Styled.View`
-margin-top: 8px;
-width: ${wp('87.2%')}px;
-height: ${wp('40%')}px;
-border-radius: 8px;
-border-width: 1px;
-border-color: #c4c4c4;
-`;
-
-const ReviewUploadButton = Styled.View`
-width: ${wp('87.2%')}px;
-height: ${wp('24.416%')}px;
-border-radius: 8px;
-border-width: 1px;
-border-color: #C4C4C4;
-align-items: center;
-justify-content: center;
-`;
-
-const ReviewUploadText = Styled.Text`
-font-weight: 700;
-color: #000000;
-font-size: 18px;
-`;
-
-const ToothCareButton = Styled.View`
-width: ${wp('87.2%')}px;
-height: ${wp('24.416%')}px;
-border-radius: 8px;
-border-width: 1px;
-border-color: #C4C4C4;
-align-items: center;
-justify-content: center;
-`;
-
-const ToothCareText = Styled.Text`
-font-weight: 700;
-color: #000000;
-font-size: 18px;
-`;
-
-const IndicatorContainer = Styled.View`
-flex: 1;
-background-color: #ffffff;
-align-items: center;
-justify-content: center;
-`;
 
 const EndReachedIndicatorContainer = Styled.View`
 height: ${hp('9%')}px;
-background-color: #ffffff;
 align-items: center;
 justify-content: center;
 `;
