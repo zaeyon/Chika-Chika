@@ -21,7 +21,7 @@ const HeaderBar = Styled.View`
  height: ${wp('14.1%')}px;
  flex-direction: row;
  justify-content: space-between;
- border-bottom-width: 1px;
+ border-bottom-width: 0.5px;
  border-color: #E2E6ED;
  background-color: #ffffff;
 `;
@@ -65,6 +65,21 @@ font-weight: 700;
 font-size: 16px; 
 `;
 
+const HeaderCenterContainer = Styled.View`
+flex-direction: row;
+flex: 1;
+`;
+
+const HeaderSearchInput = Styled.TextInput`
+flex: 1;
+background-color: #ffffff;
+font-family: NanumSquare;
+padding-bottom: 3px;
+font-weight: 400;
+font-size: 16px;
+color: #131F3C;
+`;
+
 const HeaderRightContainer = Styled.View`
 min-width: 44px;
 height: 100%;
@@ -84,28 +99,33 @@ align-items: center;
 `;
 
 const HeaderIcon = Styled.Image`
-width: 24px;
-height: 24px;
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
+
 
 interface HeaderProps {
   onPress?: any;
   text?: string;
   type?: string;
+  onChangeText?: (test: string) => void,
+  onEndEditing?: () => void,
 }
 
 interface Props {
   headerLeftProps?: HeaderProps;
   headerRightProps?: HeaderProps;
+  headerCenterProps?: HeaderProps;
   headerLeftDisabled?: boolean;
   headerRightDisabled?: boolean;
   headerLeftActiveColor?: string;
   headerRightActiveColor?: string;
-  headerTitle: string;
+  headerTitle?: string;
 }
 const NavigationHeader = ({
   headerLeftProps,
   headerRightProps,
+  headerCenterProps,
   headerLeftDisabled = false,
   headerRightDisabled = false,
   headerLeftActiveColor = '#000000',
@@ -123,7 +143,7 @@ const NavigationHeader = ({
           {headerLeftProps?.type === 'arrow' ? (
             <HeaderIconView>
               <HeaderIcon
-                style={{resizeMode: 'contain'}}
+                style={[{resizeMode: 'contain'}, headerCenterProps?.type === "search" && {tintColor: "#9AA2A9"}]}
                 source={require('~/Assets/Images/HeaderBar/ic_back.png')}
               />
               {headerLeftProps?.text?.length > 0 && (
@@ -139,9 +159,23 @@ const NavigationHeader = ({
           )}
         </HeaderLeftContainer>
       </TouchableWithoutFeedback>
+      {headerTitle && (
       <HeaderTitleContainer>
         <HeaderTitleText>{headerTitle}</HeaderTitleText>
       </HeaderTitleContainer>
+      )}
+      {headerCenterProps?.type === "search" && (
+        <HeaderCenterContainer>
+          <HeaderSearchInput
+          placeholder={"동명(읍, 면)으로 검색(ex. 이의동)"}
+          placeholderTextColor={"#9AA2A9"}
+          clearButtonMode={"while-editing"}
+          onChangeText={headerCenterProps?.onChangeText}
+          onEndEditing={headerCenterProps?.onEndEditing}
+          returnKeyType={"search"}
+          />
+        </HeaderCenterContainer>
+      )}
       <HeaderRightContainer>
         <TouchableWithoutFeedback
           disabled={headerRightDisabled}
@@ -159,6 +193,11 @@ const NavigationHeader = ({
               <HeaderIcon
                 source={require('~/Assets/Images/HeaderBar/ic_viewMore.png')}
               />
+            </HeaderIconView>
+          ) : headerRightProps?.type === "search" ? (
+            <HeaderIconView>
+              <HeaderIcon
+              source={require('~/Assets/Images/HeaderBar/ic_search.png')}/>
             </HeaderIconView>
           ) : headerRightProps?.type === 'empty' ? (
             <HeaderEmptyContainer />
