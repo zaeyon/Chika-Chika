@@ -115,11 +115,9 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
   const [headerVisible, setHeaderVisible] = useState(true);
   const [back, setBack] = useState(true);
   const [scrollEnabled, setScrollEnabled] = useState(true);
-  const [scrolling, setScrolling] = useState(false);
   const dragY = useRef(new Animated.Value(0)).current;
 
-  const scrollRef = useRef();
-  const pinchRef = useRef();
+  const scrollRef: any = useRef();
 
   dragY.addListener(({value}) => {
     if (value > hp('80%')) {
@@ -137,10 +135,12 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
       <PinchableImage
         currentIndex={index}
         index={itemIndex}
+        lastIndex={route.params.imageArray.length - 1}
         setScrollEnabled={setScrollEnabled}
         dragY={dragY}
         setHeaderVisible={setHeaderVisible}
         image={item}
+        scrollRef={scrollRef}
       />
     ),
     [index, dragY],
@@ -150,7 +150,6 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
     setIndex(
       Math.max(Math.floor(e.nativeEvent.contentOffset.x / wp('100%')), 0),
     );
-    setScrolling(false);
   }, []);
 
   return (
@@ -181,10 +180,10 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
       ) : null}
       <NativeViewGestureHandler onGestureEvent={() => console.log('of')}>
         <ContentFlatList
+          ref={scrollRef}
           horizontal
           disableScrollViewPanResponder={true}
           scrollEnabled={scrollEnabled}
-          onMomentumScrollBegin={() => setScrolling(true)}
           initialScrollIndex={route.params.imageIndex}
           getItemLayout={(data, index) => ({
             length: wp('100%'),
