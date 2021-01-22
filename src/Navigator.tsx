@@ -882,6 +882,8 @@ const Navigator = () => {
                 profile,
               }),
             );
+
+            dispatch(allActions.userActions.setHometown(response.Residences))
           })
           .catch((error: any) => {
             console.log('user error', error);
@@ -895,7 +897,7 @@ const Navigator = () => {
   return (
     <NavigationContainer>
       <StatusBar barStyle="dark-content" />
-      {currentUser.loggedIn ? <BottomTab /> : <AuthStackScreen />}
+      {!currentUser.loggedIn ? <BottomTab /> : <AuthStackScreen />}
     </NavigationContainer>
   );
 };

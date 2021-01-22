@@ -319,6 +319,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
           };
           storeUserInfo(response.token);
           dispatch(allActions.userActions.setUser(userInfo));
+          dispatch(allActions.userActions.setHometown(response.user.userResidences));
         }
       })
       .catch((error) => {
@@ -371,6 +372,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
           };
           storeUserInfo(response.token);
           dispatch(allActions.userActions.setUser(userInfo));
+          dispatch(allActions.userActions.setHometown(response.user.userResidences));
         }
       })
       .catch((error) => {

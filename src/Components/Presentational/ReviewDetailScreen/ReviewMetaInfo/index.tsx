@@ -271,7 +271,7 @@ const ReviewMetaInfo = ({totalPrice, certifiedReceipt, ratingObj, treatmentDate,
     let splitedAddress = new Array();
     let formattedAddress = "";
 
-    if(dentalObj.address) {
+    if(dentalObj?.address) {
         splitedAddress = dentalObj.address.split(" ");
         formattedAddress = splitedAddress[0] + " " + splitedAddress[1] + " " + splitedAddress[2] + " " + splitedAddress[3] + " " + splitedAddress[4]
     }
@@ -281,7 +281,7 @@ const ReviewMetaInfo = ({totalPrice, certifiedReceipt, ratingObj, treatmentDate,
         <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalObj.id)}>
         <DentalInfoContainer>
             <DentalNameAddressContainer>
-                <DentalNameText>{dentalObj.originalName}</DentalNameText>
+                <DentalNameText>{dentalObj?.originalName}</DentalNameText>
                 <DentalAddressContainer>
                     <DentalAddressText>{formattedAddress}</DentalAddressText>
                 </DentalAddressContainer>
@@ -303,19 +303,19 @@ const ReviewMetaInfo = ({totalPrice, certifiedReceipt, ratingObj, treatmentDate,
                 ratingBackgroundColor={"#E2E6ED"}
                 imageSize={wp('4.26%')}
                 ratingCount={5}
-                startingValue={ratingObj.avgRating}
+                startingValue={ratingObj?.avgRating}
                 readonly={true}/>
-                <AvgRatingValueText>{ratingObj.avgRating}</AvgRatingValueText>
+                <AvgRatingValueText>{ratingObj?.avgRating}</AvgRatingValueText>
                 </AvgRatingValueContainer>
                 <DetailRatingContainer>
                     <DetailRatingTypeText>{"시술"}</DetailRatingTypeText>
-                    <DetailRatingValueText>{ratingObj.treatRating}</DetailRatingValueText>
+                    <DetailRatingValueText>{ratingObj?.treatRating}</DetailRatingValueText>
                     <DetailRatingDivider/>
                     <DetailRatingTypeText>{"서비스"}</DetailRatingTypeText>
-                    <DetailRatingValueText>{ratingObj.serviceRating}</DetailRatingValueText>
+                    <DetailRatingValueText>{ratingObj?.serviceRating}</DetailRatingValueText>
                     <DetailRatingDivider/>
                     <DetailRatingTypeText>{"가격"}</DetailRatingTypeText>
-                    <DetailRatingValueText>{ratingObj.priceRating}</DetailRatingValueText>
+                    <DetailRatingValueText>{ratingObj?.priceRating}</DetailRatingValueText>
                 </DetailRatingContainer>
                 </RatingValueContainer>
             </RatingInfoContainer>

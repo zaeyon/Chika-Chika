@@ -478,6 +478,8 @@ const LoginScreen = ({navigation}: Props) => {
               profile,
             }),
           );
+
+        dispatch(allActions.userActions.setHometown(response.user.userResidences));
           
         }
       })

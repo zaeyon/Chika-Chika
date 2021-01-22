@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
+import SafeAreaView from 'react-native-safe-area-view';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
@@ -12,59 +13,13 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import NaverMapView, {Marker} from 'react-native-nmap';
-import {NavigationContainer} from '@react-navigation/native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import axios from 'axios';
-import {FlingGestureHandler} from 'react-native-gesture-handler';
 
-const Container = Styled.SafeAreaView`
+// local component;
+import NavigationHeader from '~/Components/Presentational/NavigationHeader';
+
+const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
-`;
-
-const HeaderBar = Styled.View`
- width: ${wp('100%')}px;
- height: ${wp('13.8%')}px;
- flex-direction: row;
- align-items: center;
- justify-content: space-between;
- background-color:#ffffff;
- border-bottom-width: 0.6px;
- border-color: #ECECEE;
-`;
-
-const HeaderLeftContainer = Styled.View`
-height: ${wp('13.8%')}px;
-padding: 0px 16px 0px 15px;
- align-items: center;
- justify-content: center;
- flex-direction: row;
-`;
-
-const HeaderBackIcon = Styled.Image`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
-`;
-
-const HeaderTitleText = Styled.Text`
-margin-top: 5px;
-font-weight: 700;
-font-size: 18px;
-color: #000000;
-`;
-
-const HeaderRightContainer = Styled.View`
-height: ${wp('13.8%')}px;
-padding: 0px 16px 0px 15px;
- align-items: center;
- justify-content: center;
- flex-direction: row;
-`;
-
-const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
 `;
 
 const BodyContainer = Styled.View`
@@ -72,27 +27,28 @@ flex: 1;
 background-color: #ffffff;
 `;
 
-const MakeDentalAccountButton = Styled.View`
-align-items: center;
-justify-content: center;
-width: ${wp('40.53%')}px;
-height: ${wp('23.46%')}px;
-border-width: 1px;
+const DentalInfoContainer = Styled.View`
+padding-top: 24px;
+padding-left: 16px;
+padding-bottom: 24px;
+padding-right: 16px;
 `;
 
-const ReserveByPhoneContainer = Styled.View`
-margin-top: 24px;
-align-items: center;
+const DentalNameText = Styled.Text`
+font-family: NanumSquare;
+font-weight: 800;
+font-size: 20px;
+line-height: 24px;
 `;
 
-const RequestButton = Styled.View`
-width: ${wp('90.133%')}px;
-height: ${wp('14.93%')}px;
-border-radius: 8px;
-background-color: #c4c4c4;
-align-items: center;
-justify-content: center;
+const DentalAddressText = Styled.Text`
+font-family: NanumSquare;
+font-weight: 400;
+font-size: 14px;
+line-height: 24px;
+color: #4E525D;
 `;
+
 
 interface Props {
   navigation: any;
@@ -100,25 +56,17 @@ interface Props {
 }
 
 const DentalInfoEditRequestScreen = ({navigation, route}: Props) => {
+
   const goBack = () => {
     navigation.goBack();
   };
 
   return (
-    <Container>
-      <HeaderBar>
-        <TouchableWithoutFeedback onPress={() => goBack()}>
-          <HeaderLeftContainer>
-            <HeaderBackIcon
-              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
-            />
-          </HeaderLeftContainer>
-        </TouchableWithoutFeedback>
-        <HeaderTitleText>{'정보 수정 요청하기'}</HeaderTitleText>
-        <HeaderRightContainer>
-          <HeaderEmptyContainer></HeaderEmptyContainer>
-        </HeaderRightContainer>
-      </HeaderBar>
+    <Container as={SafeAreaView} forceInset={{top: 'always'}}>
+      <NavigationHeader
+      headerLeftProps={{type: "arrow", onPress: goBack}}
+      headerRightProps={{type: 'text', text: "다음"}}
+      headerTitle={"정보수정 요청"}/>
       <BodyContainer></BodyContainer>
     </Container>
   );

@@ -6,23 +6,18 @@ interface Params {
     cityId: number,
 }
 
-const DELETEUserHometown = ({jwtToken, cityId}: Params) => {
+const POSTMainHometownChange = ({jwtToken, cityId}: Params) => {
 
+    const uri = serverConfig.baseUri + '/residence/now';
 
-
-    const uri = serverConfig.baseUri + `/residence`;
-
-    const bodyParamsStr = `{
+    const bodyParams = `{
         "cityId": "${cityId}"
     }`
 
-    return new Promise((resolve, reject) => {
 
+    return new Promise((resolve, reject) => {
         axios
-        .delete(uri, {
-            data: {
-                cityId: cityId
-            },
+        .post(uri, bodyParams, {
             headers: {
                 Authorization: jwtToken,
             }
@@ -36,4 +31,4 @@ const DELETEUserHometown = ({jwtToken, cityId}: Params) => {
     })
 }
 
-export default DELETEUserHometown;
+export default POSTMainHometownChange;

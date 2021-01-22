@@ -3,26 +3,23 @@ import serverConfig from '../server.config';
 
 interface Params {
     jwtToken: string,
+    preCityId: number,
     cityId: number,
 }
 
-const DELETEUserHometown = ({jwtToken, cityId}: Params) => {
-
-
+const PUTUserHometown = ({jwtToken, preCityId, cityId}: Params) => {
 
     const uri = serverConfig.baseUri + `/residence`;
 
-    const bodyParamsStr = `{
-        "cityId": "${cityId}"
+    const bodyParams = `{
+        "cityId": "${cityId}",
+        "preCityId": "${preCityId}"
     }`
 
     return new Promise((resolve, reject) => {
 
         axios
-        .delete(uri, {
-            data: {
-                cityId: cityId
-            },
+        .put(uri, bodyParams, {
             headers: {
                 Authorization: jwtToken,
             }
@@ -31,9 +28,9 @@ const DELETEUserHometown = ({jwtToken, cityId}: Params) => {
             resolve(response.data);
         })
         .catch((error) => {
-            reject(error.response);
+            reject(error.response)
         })
     })
 }
 
-export default DELETEUserHometown;
+export default PUTUserHometown;

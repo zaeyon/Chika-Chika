@@ -113,7 +113,7 @@ const TreatmentList = ({treatmentArray, elapsedTime}: Props) => {
     return (
         <Container>
             <TreatmentListContainer>
-                    {treatmentArray.map((item, index) => {
+                    {treatmentArray?.map((item, index) => {
                         return (
                             <TreatmentItemContainer>
                                 <TreatmentText>
