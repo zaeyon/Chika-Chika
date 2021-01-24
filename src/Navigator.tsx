@@ -87,6 +87,7 @@ import DentalInfoEditRequestScreen from '~/Components/Container/DentalDetailScre
 import DentalLocationMapScreen from '~/Components/Container/DentalDetailScreen/DentalLocationMapScreen';
 
 // Teeth Care Stack Screen
+import GuideScreen from '~/Components/Container/TeethCareScreen/GuideScreen';
 import TeethCareScreen from '~/Components/Container/TeethCareScreen';
 import TimerReportScreen from '~/Components/Container/TeethCareScreen/ReportTabScreen/TimerReportScreen';
 import BrushDetritionReportScreen from '~/Components/Container/TeethCareScreen/ReportTabScreen/BrushDetritionReportScreen';
@@ -295,6 +296,9 @@ function DentalClinicStackScreen() {
 function TeethCareStackScreen() {
   return (
     <TeethCareStack.Navigator headerMode="none">
+      <TeethCareStack.Screen
+        name="GuideScreen"
+        component={GuideScreen}/>
       <TeethCareStack.Screen
         name="TeethCareScreen"
         component={TeethCareScreen}
