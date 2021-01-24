@@ -324,7 +324,7 @@ border-color: #E2E6ED;
 `;
 
 const RequestReviseInfoContainer = Styled.View`
-padding-top: 32px;
+padding-top: 22px;
 padding-left: 16px;
 padding-right: 0px;
 align-self: flex-start;
@@ -430,7 +430,7 @@ border-color: #E2E6ED;
 const PostNoReviewText = Styled.Text`
 font-family: NanumSquare;
 color: #00D1FF;
-font-weight: 800;
+font-weight: 700;
 font-size: 16px;
 line-height: 24px;
 `;
@@ -521,9 +521,10 @@ interface Props {
   dentalDetailInfo: any;
   moveToReviewUpload: () => void,
   moveToDentalLocationMap: () => void,
+  moveToDentalInfoEdit: () => void,
 }
 
-const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload, moveToDentalLocationMap}: Props) => {
+const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload, moveToDentalLocationMap, moveToDentalInfoEdit}: Props) => {
   console.log("DentalCollapsibleTabView dentalDetailInfo", dentalDetailInfo);
   //const [collapsibleViewHeight, setCollapsibleViewHeight] = useState<number>(DeviceInfo.hasNotch() ? hp('43.84%') : hp('46.54%'));
   const [tabIndex, setIndex] = useState(0);
@@ -1042,11 +1043,13 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
                 )}
               </DetailInfoItemContainer>
               <RequestReviseInfoContainer>
+                <TouchableWithoutFeedback onPress={() => moveToDentalInfoEdit()}>
                 <RequestReviseInfoTextContainer>
                   <RequestReviseInfoText>
                     {'정보 수정 요청하기'}
                   </RequestReviseInfoText>
                 </RequestReviseInfoTextContainer>
+                </TouchableWithoutFeedback>
               </RequestReviseInfoContainer>
               <CopyrightDescipContainer>
                 <CopyrightDescipText>
@@ -1119,7 +1122,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}>
             <ReviewTabContainer>
-              {dentalDetailInfo.reviews.length > 0 && (
+              {dentalDetailInfo?.reviews?.length > 0 && (
                 <ReviewInfoContainer>
                   <PostReviewContainer>
                     <PostReviewDescipText>
@@ -1158,14 +1161,16 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
                     </RatingReportContainer>
                   )}
                   <ReviewListContainer>
-                  <ReviewList reviewList={dentalDetailInfo.reviews} />
+                  <ReviewList reviewList={dentalDetailInfo?.reviews} />
                   </ReviewListContainer>
                   <RequestReviseInfoContainer>
-                <RequestReviseInfoTextContainer>
+                  <TouchableWithoutFeedback onPress={() => moveToDentalInfoEdit()}>
+                  <RequestReviseInfoTextContainer>
                   <RequestReviseInfoText>
                     {'정보 수정 요청하기'}
                   </RequestReviseInfoText>
                 </RequestReviseInfoTextContainer>
+                </TouchableWithoutFeedback>
               </RequestReviseInfoContainer>
               <CopyrightDescipContainer>
                 <CopyrightDescipText>
@@ -1176,7 +1181,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
               </CopyrightDescipContainer>
                 </ReviewInfoContainer>
               )}
-              {dentalDetailInfo.reviews.length === 0 && (
+              {dentalDetailInfo?.reviews?.length === 0 && (
                 <NoReviewContainer
                   style={{
                     minHeight: hp('100%') - (headerHeight + tabBarHeight),
@@ -1189,7 +1194,10 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
                       <PostNoReviewButton>
                         <PostNoReviewContainer>
                         <PostNoReviewText>
-                          {"첫번째로 리뷰 남기러 가기"}
+                          {"첫번째 리뷰"}
+                          <PostNoReviewText
+                          style={{color: "#131F3C"}}
+                          >{" 남기러 가기"}</PostNoReviewText>
                         </PostNoReviewText>
                         <PostNoReviewArrowIcon
                         source={require('~/Assets/Images/Arrow/ic_postReviewArrow.png')}/>
@@ -1198,11 +1206,13 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
                       </TouchableWithoutFeedback>
                     </PostNoReviewCardContainer>
               <RequestReviseInfoContainer>
+                <TouchableWithoutFeedback onPress={() => moveToDentalInfoEdit()}>
                 <RequestReviseInfoTextContainer>
                   <RequestReviseInfoText>
                     {'정보 수정 요청하기'}
                   </RequestReviseInfoText>
                 </RequestReviseInfoTextContainer>
+                </TouchableWithoutFeedback>
               </RequestReviseInfoContainer>
               <CopyrightDescipContainer>
                 <CopyrightDescipText>

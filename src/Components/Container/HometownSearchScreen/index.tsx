@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
@@ -12,13 +12,19 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import allActions from '~/actions';
 import axios from 'axios';
 import Geolocation from 'react-native-geolocation-service';
+import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 
 // Local Component
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
+import AnimatedModal from '~/Components/Presentational/AnimatedModal';
+import ToastMessage from '~/Components/Presentational/ToastMessage';
+
+// Route
+import GETAroundCities from '~/Routes/Search/GETAroundCiteis';
 
 // Async Storage
 import {storeUserInfo} from '~/storage/currentUser';
@@ -28,6 +34,8 @@ import POSTRegister from '~/Routes/Auth/POSTRegister';
 import POSTSocialRegister from '~/Routes/Auth/POSTSocialRegister';
 import POSTReviewUpload from '~/Routes/Review/POSTReviewUpload';
 import GETCitySearch from '~/Routes/Search/GETCitySearch';
+import POSTUserHometown from '~/Routes/User/POSTUserHometown';
+import PUTUserHometown from '~/Routes/User/PUTUserHometown';
 
 const Container = Styled.SafeAreaView`
 flex: 1;
@@ -50,7 +58,6 @@ height: ${wp('6.4%')}px;
 const BodyContainer = Styled.View`
 flex: 1;
 background-color: #ffffff;
-align-items: center;
 `;
 
 const HometownInputContainer = Styled.View`
@@ -79,59 +86,74 @@ width: ${wp('81.6%')}px;
 font-size: 16px;
 `;
 
-const SettingCurrentLocationButton = Styled.View`
-width: ${wp('91.46%')}px;
-height: ${wp('10.66%')}px;
-background-color: #2998FF;
-margin-top: 16px;
+const FindAroundCitesContainer = Styled.View`
+padding-top: 16px;
+padding-left: 16px;
+padding-right: 16px;
+flex-direction: row;
+`;
+
+const FindAroundCitesButton = Styled.View`
+flex: 1;
+padding-top: 11px;
+padding-bottom: 11px;
+background-color: #00D1FF;
 flex-direction: row;
 align-items: center;
 justify-content: center;
 border-radius: 4px;
 `;
 
+
 const TargetIcon = Styled.Image`
 width: ${wp('4.26%')}px;
 height: ${wp('4.26%')}px;
 `;
 
-const SettingCurrentLocationText = Styled.Text`
-margin-left: 4px;
-font-weight: 400;
+const FindAroundCitesText = Styled.Text`
+font-family: NanumSquare;
+font-weight: 800;
 font-size: 14px;
+line-height: 24px;
 color: #ffffff;
 `;
 
 const HometownListContainer = Styled.View`
-flex: 1;
+padding-left: 16px;
+padding-right: 16px;
 `;
 
 const HometownListHeaderContainer = Styled.View`
-padding-top: 23px;
+flex-direction: row;
+padding-top: 24px;
+padding-bottom: 12px;
+background-color: #ffffff;
 padding-left: 16px;
 padding-right: 16px;
-background-color: #ffffff;
 `;
 
-const HometownLabelText = Styled.Text`
-font-size: 14px;
-color: #7a7a7a;
-font-weight: 400;
+const ListLabelText = Styled.Text`
+font-family: NanumSquare;
+font-weight: 700;
+font-size: 13px;
+line-height: 24px;
+color: #000000;
 `;
 
 const HometownItemContainer = Styled.View`
-width: ${wp('100%')}px;
-height: ${hp('6.9%')}px;
+padding-top: 12px;
+padding-bottom: 12px;
 flex-direction: row;
 align-items: center;
-padding-left: 16px;
 border-bottom-width: 1px;
 border-color: #eeeeee;
 `;
 
 const HometownNameText = Styled.Text`
+font-family: NanumSquare;
+line-height: 24px;
 font-weight: 400;
-font-size: 16px;
+font-size: 14px;
 color: #000000;
 `;
 
@@ -144,26 +166,23 @@ align-items: center;
 justify-content: center;
 `;
 
-const TEST_HOMETOWN_DATA = [
-  {
-    name: '서울특별시 강남구 압구정동',
-  },
-  {
-    name: '서울특별시 강남구 압구정동',
-  },
-  {
-    name: '서울특별시 강남구 압구정동',
-  },
-  {
-    name: '서울특별시 강남구 압구정동',
-  },
-  {
-    name: '서울특별시 강남구 압구정동',
-  },
-  {
-    name: '서울특별시 강남구 압구정동',
-  },
-];
+const LoadingCitiesContainer = Styled.View`
+flex: 1;
+background-color: #ffffff;
+align-items: center;
+justify-content: center;
+padding-bottom: ${hp('9.8%')}px;
+`;
+
+
+const ModalTitleText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+line-height: 20px;
+color: #131F3C;
+`;
 
 interface Props {
   navigation: any;
@@ -187,11 +206,18 @@ var offset = 0;
 var limit = 25;
 
 const HometownSearchScreen = ({navigation, route}: Props) => {
-  const [loadingGetHometown, setLoadingGetHometown] = useState<boolean>(false);
-  const [autoCompletedCityList, setAutoCompletedCityList] = useState<Array<CityData>>([]);
+  const [loadingFindAroundCites, setLoadingFindAroundCites] = useState<boolean>(false);
+  const [loadingAddCity, setLoadingAddCity] = useState<boolean>(false);
+  const [cityArray, setCityArray] = useState<Array<CityData>>([]);
   const [loadingSignUp, setLoadingSignUp] = useState<boolean>(false);
+  const [inputText, setInputText] = useState<string>("");
+  const [isAroundCities, setIsAroundCities] = useState<boolean>(true);
+  const [isVisibleModal, setIsVisibleModal] = useState<boolean>(false);
+  const [modalDescripText, setModalDescripText] = useState<string>("현재 위치를 불러 올 수 없습니다.");
   //const [inputValue, setInputValue] = useState<string>("");
-  const provider = route.params.provider;
+  const jwtToken = useSelector((state: any) => state.currentUser).jwtToken;
+
+  const provider = route.params?.provider;
   var curLocationHometown = '';
 
   useEffect(() => {
@@ -207,19 +233,54 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
       console.log('route.params.nickname', route.params.nickname);
     }
   }, [route.params?.provider]);
+ 
+  useEffect(() => {
+    setLoadingFindAroundCites(true);
+    var hasLocationPermission;
+
+    if (Platform.OS == 'android') {
+      const permission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
+      hasLocationPermission = PermissionsAndroid.check(permission);
+    } else if (Platform.OS == 'ios') {
+      hasLocationPermission = true;
+    }
+
+    if (hasLocationPermission) {
+      Geolocation.getCurrentPosition(
+        (position) => {
+          console.log('사용자 현재 위치 position', position);
+          getAroundCities(position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+          setLoadingFindAroundCites(false);
+          console.log('사용자 현재 위치 불러오기 실패 error', error);
+          ToastMessage.show("현재 위치를 불러올 수 없습니다 ㅠㅠ")
+        },
+        {enableHighAccuracy: false, timeout: 10000, maximumAge: 10000},
+      );
+    }
+
+  }, [])
 
   const dispatch = useDispatch();
 
   const selectHometownItem = (item: any) => {
-    if (provider === 'local') {
-      signUp(item);
-    } else {
-      signUpSocial(item);
+    if(route.params?.requestType === "signUp") {
+      if (provider === 'local') {
+        signUp(item);
+      } else {
+        signUpSocial(item);
+      }
+    } else if(route.params?.requestType === "add") {
+        addSubHometown(item);
+    } else if(route.params?.requestType === "revise") {
+        reviseHometown(item);
     }
   };
 
-  async function setCurrentLocationHometown() {
-    setLoadingGetHometown(true);
+  async function findAroundCites() {
+    setIsAroundCities(true); 
+    setLoadingFindAroundCites(true);
     var hasLocationPermission;
 
     if (Platform.OS == 'android') {
@@ -234,66 +295,12 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
         (position) => {
           console.log('사용자 현재 위치 position', position);
 
-          axios
-            .get(
-              `https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${
-                position.coords.longitude + ',' + position.coords.latitude
-              }&orders=admcode&output=json`,
-              {
-                headers: {
-                  'X-NCP-APIGW-API-KEY-ID': NMAP_CLIENT_ID,
-                  'X-NCP-APIGW-API-KEY': NMAP_CLIENT_SECRET,
-                },
-              },
-            )
-            .then((response) => {
-              setLoadingGetHometown(false);
-              console.log(
-                'getReverseGeocode response.data.result',
-                response.data.results[0].region,
-              );
-
-              const region = response.data.results[0].region;
-
-              curLocationHometown =
-                region.area1.name +
-                ' ' +
-                region.area2.name +
-                ' ' +
-                region.area3.name;
-
-              console.log('curLocationHometown', curLocationHometown);
-
-              Alert.alert(
-                `${curLocationHometown}으로 동네를 등록하시겠습니까?`,
-                '',
-                [
-                  {
-                    text: '확인',
-                    onPress: () => {
-                      if (provider == 'local') {
-                        signUp(curLocationHometown);
-                      } else {
-                        signUpSocial(curLocationHometown);
-                      }
-                    },
-                  },
-                  {
-                    text: '취소',
-                    onPress: () => 0,
-                    style: 'cancel',
-                  },
-                ],
-              );
-            })
-            .catch((error) => {
-              console.log('getReverseGeocode error', error);
-              Alert.alert('현재 위치를 불러 올 수 없습니다.');
-            });
+         
         },
         (error) => {
+          setLoadingFindAroundCites(false);
           console.log('사용자 현재 위치 불러오기 실패 error', error);
-          Alert.alert('현재 위치를 불러 올 수 없습니다.');
+          ToastMessage.show("현재 위치를 불러올 수 없습니다 ㅠㅠ")
         },
         {enableHighAccuracy: false, timeout: 10000, maximumAge: 10000},
       );
@@ -342,6 +349,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
 
         storeUserInfo(response.token);
         dispatch(allActions.userActions.setUser(userInfo));
+        dispatch(allActions.userActions.setHometown(response.user.userResidences));
       })
       .catch((error) => {
         setLoadingSignUp(false);
@@ -397,12 +405,101 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
 
         storeUserInfo(response.token);
         dispatch(allActions.userActions.setUser(userInfo));
+        dispatch(allActions.userActions.setHometown(response.user.userResidences));
       })
       .catch((error: any) => {
         setLoadingSignUp(false);
         console.log('POSTSocialRegister error', error);
       });
   };
+
+  const getAroundCities = (latitude: number, longitude: number) => {
+    GETAroundCities({latitude, longitude})
+    .then((response: any) => {
+      setLoadingFindAroundCites(false);
+      console.log("GETAroundCities response", response);
+
+      let tmpCityArray = response.intersectCities;
+      tmpCityArray.unshift(response.currentCity);
+
+      setCityArray(tmpCityArray);
+    })
+    .catch((error) => {
+      setLoadingFindAroundCites(false);
+      console.log("GETAroundCities error", error); 
+    })
+  }
+
+  const addSubHometown = (item: any) => {
+    setLoadingAddCity(true);
+    console.log("addSubHometown, item", item);
+    const cityId = item.id;
+    
+    POSTUserHometown({jwtToken, cityId})
+    .then((response: any) => {
+      console.log("POSTUserHometown response", response);
+      if(response.statusText === "Accepted") {
+        setLoadingAddCity(false);
+
+        const hometownObj = {
+          UsersCities: {
+            now: false
+          },
+          emdName: item.emdName,
+          id: item.id,
+          fullCityName: item.fullCityName,
+          sido: item.sido,
+          sigungu: item.sigungu
+        }
+
+        dispatch(allActions.userActions.addHometown(hometownObj));
+        navigation.goBack();
+      } 
+    })
+    .catch((error) => {
+      setLoadingAddCity(false);
+      console.log("POSTUserHometown error", error);
+
+      if(error.data.message === "이미 설정한 거주지입니다.") {
+        setIsVisibleModal(true);
+        setModalDescripText("이미 설정된 동네입니다.")
+      }
+    })
+  }
+
+  const reviseHometown = (item: any) => {
+    setLoadingAddCity(true);
+    const preCityId = route.params?.preCityId;
+    const cityId = item.id;
+
+    PUTUserHometown({jwtToken, preCityId, cityId})
+    .then((response) => {
+      console.log("PUTUserHometown response", response);
+      setLoadingAddCity(false);
+
+      const hometownArr = [{
+        UsersCities: {
+          now: true
+        },
+        emdName: item.emdName,
+        id: item.id,
+        fullCityName: item.fullCityName,
+        sido: item.sido,
+        sigungu: item.sigungu
+      }]
+
+      dispatch(allActions.userActions.setHometown(hometownArr));
+      navigation.goBack();
+    })
+    .catch((error) => {
+      console.log("PUTUserHometown error", error);
+      setLoadingAddCity(false);
+    })
+  }
+
+  const cancelModal = () => {
+    setIsVisibleModal(false);
+  }
 
   const getAuthCompletedCityList = (
     keyword: string,
@@ -417,7 +514,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
         console.log("GETCitySearch inputValue", inputValue);
         
         if(keyword === inputValue) {
-          setAutoCompletedCityList(response);
+          setCityArray(response);
         }
       })
       .catch((error) => {
@@ -426,9 +523,12 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
   };
 
   const onChangeHometownInput = (text: string) => {
+    setIsAroundCities(false);
     inputValue = text;
+    setInputText(text);
     if (text.length > 0) {
       getAuthCompletedCityList(text, offset, limit);
+    
     }
   };
 
@@ -448,57 +548,64 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
     );
   };
 
+  const goBack = () => {
+    navigation.goBack();
+  }
+
   return (
     <Container>
       <NavigationHeader
-        renderHeaderLeftContainer={() => {
-          return (
-            <HeaderBackIcon
-              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
-            />
-          );
-        }}
-        renderHeaderRightContanier={() => {
-          return <HeaderEmptyContainer />;
-        }}
-        headerTitle={'마을 설정'}
+        headerLeftProps={{type: "arrow", onPress: goBack}}
+        headerCenterProps={{type: "search", onChangeText: onChangeHometownInput, onEndEditing: onEndEditingHometownInput}}
+        headerRightProps={{type: "search"}}
       />
       <BodyContainer>
-        <HometownInputContainer>
-          <HometownTextInputContainer>
-            <SearchIcon
-              style={{tintColor: '#979797'}}
-              source={require('~/Assets/Images/Search/ic_search.png')}
-            />
-            <HometownTextInput
-              autoFocus={false}
-              placeholder={'동명(읍, 면)으로 검색 (ex 서초동)'}
-              onChangeText={(text: string) => onChangeHometownInput(text)}
-              placeholderTextColor={'#979797'}
-              onEndEditing={() => onEndEditingHometownInput()}
-            />
-          </HometownTextInputContainer>
-        </HometownInputContainer>
-        <TouchableWithoutFeedback onPress={() => setCurrentLocationHometown()}>
-          <SettingCurrentLocationButton>
-            <SettingCurrentLocationText>
-              현재 위치로 설정
-            </SettingCurrentLocationText>
-          </SettingCurrentLocationButton>
+        <FindAroundCitesContainer>
+        <TouchableWithoutFeedback onPress={() => findAroundCites()}>
+          <FindAroundCitesButton>
+            <FindAroundCitesText>
+              {"현재위치로 찾기"}
+            </FindAroundCitesText>
+          </FindAroundCitesButton>
         </TouchableWithoutFeedback>
-        <HometownListContainer>
+        </FindAroundCitesContainer>
           <HometownListHeaderContainer>
-            {autoCompletedCityList.length > 0 && (
-              <HometownLabelText>{'검색결과'}</HometownLabelText>
+            {inputText.length > 0 && (
+              <ListLabelText>{`'${inputText}'`}</ListLabelText>
+            )}
+            {isAroundCities && (
+              <ListLabelText>{`근처 동네`}</ListLabelText>
             )}
           </HometownListHeaderContainer>
-          <FlatList
-            data={autoCompletedCityList}
-            renderItem={renderHometownItem}
+          {loadingFindAroundCites && (
+          <LoadingCitiesContainer>
+            <ActivityIndicator/>
+          </LoadingCitiesContainer>
+          )}
+          {!loadingFindAroundCites && (
+          <HometownListContainer>
+          <KeyboardAwareFlatList
+          keyboardShouldPersistTaps={"always"}
+          contentContainerStyle={{paddingBottom: hp('16%')}}
+          showsVerticalScrollIndicator={false}
+          data={cityArray}
+          renderItem={renderHometownItem}
           />
-        </HometownListContainer>
+          </HometownListContainer>
+          )}
       </BodyContainer>
-      {(loadingGetHometown || loadingSignUp) && (
+      <AnimatedModal
+            visible={isVisibleModal}
+            buttons={[
+            {
+            title: '확인',
+            style: {fontWeight: "400"},
+            onPress: cancelModal,
+            },
+            ]}>
+            <ModalTitleText>{modalDescripText}</ModalTitleText>
+            </AnimatedModal>
+      {(loadingSignUp || loadingAddCity) && (
         <IndicatorContainer>
           <ActivityIndicator color={'#ffffff'} />
         </IndicatorContainer>

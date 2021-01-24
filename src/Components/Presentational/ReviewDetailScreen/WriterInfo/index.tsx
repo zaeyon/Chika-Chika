@@ -88,9 +88,9 @@ const WriterInfo = ({writerObj, elapsedTime, isVisibleElapsedTime, createdDate}:
         <Container>
             <ProfileContainer>
                 <ProfileImage
-                source={{uri:writerObj.profileImage}}/>
+                source={{uri:writerObj?.profileImage}}/>
                 <ProfileRightContainer>
-                    <NicknameText>{writerObj.nickname}</NicknameText>
+                    <NicknameText>{writerObj?.nickname}</NicknameText>
                     {isVisibleElapsedTime && (
                     <ElapsedTimeText>{elapsedTime}</ElapsedTimeText>
                     )}

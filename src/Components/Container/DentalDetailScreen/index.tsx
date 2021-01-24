@@ -145,6 +145,7 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
           <DentalTabContainer>
             <DentalCollapsibleTabView
             moveToDentalLocationMap={moveToDentalLocationMap}
+            moveToDentalInfoEdit={moveToDentalInfoEdit}
             moveToReviewUpload={moveToReviewUpload}
             dentalDetailInfo={dentalDetailInfo}
             goBack={goBack}

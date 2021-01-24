@@ -53,6 +53,34 @@ const setCurrentLocation = (currentLocation) => {
   };
 };
 
+const setHometown = (hometown) => {
+  return {
+    type: "SET_HOMETOWN",
+    payload: hometown,
+  }
+}
+
+const changeMainHometown = (index) => {
+  return {
+    type: "CHANGE_MAIN_HOMETOWN",
+    payload: index,
+  }
+}
+
+const addHometown = (hometownItem) => {
+  return {
+    type: "ADD_HOMETOWN",
+    payload: hometownItem,
+  }
+}
+
+const deleteHometown = (hometownId) => {
+  return {
+    type: "DELETE_HOMETOWN",
+    payload: hometownId,
+  }
+}
+
 export default {
   setUser,
   logOut,
@@ -62,4 +90,8 @@ export default {
   putProfileGender,
   putProfileBirthdate,
   setCurrentLocation,
+  setHometown,
+  addHometown,
+  deleteHometown,
+  changeMainHometown,
 };

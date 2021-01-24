@@ -66,8 +66,9 @@ interface Props {
 
 interface Button {
   title: string;
-  onPress: () => void;
+  onPress: (preCityId?: any) => void;
   color?: string;
+  style?: any;
 }
 
 const AnimatedModal = ({visible, buttons, children}: Props) => {
@@ -94,7 +95,9 @@ const AnimatedModal = ({visible, buttons, children}: Props) => {
           onPress={() => {
             item.onPress();
           }}>
-          <ModalButtonText color={item.color}>{item.title}</ModalButtonText>
+          <ModalButtonText
+          style={item.style}
+          color={item.color}>{item.title}</ModalButtonText>
         </ModalButtonItemView>
       );
     } else {
@@ -115,7 +118,9 @@ const AnimatedModal = ({visible, buttons, children}: Props) => {
                   marginLeft: 0.5,
                 }
           }>
-          <ModalButtonText color={item.color}>{item.title}</ModalButtonText>
+          <ModalButtonText 
+          style={item.style}
+          color={item.color}>{item.title}</ModalButtonText>
         </ModalButtonItemView>
       );
     }

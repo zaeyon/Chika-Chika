@@ -184,12 +184,10 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const [paddingBottom, setPaddingBottom] = useState<number>(hp('8%'));
 
   const [loadingReviewDetail, setLoadingReviewDetail] = useState<boolean>(
-    false,
+    true,
   );
   const [loadingCommentPost, setLoadingCommentPost] = useState<boolean>(false);
-  const [refreshingReviewDetail, setRefreshingReviewDetail] = useState<boolean>(
-    false,
-  );
+  const [refreshingReviewDetail, setRefreshingReviewDetail] = useState<boolean>(false,);
 
   const [treatmentDate, setTreatmentDate] = useState<any>({});
   const [treatmentList, setTreatmentList] = useState<Array<object>>([]);
@@ -238,21 +236,20 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const createdDate = route.params?.createdAt;
   const isVisibleElapsedTime = route.params?.visibleElapsedTime;
   const imageArray = route.params?.imageArray;
-  const isOwnReview = route.params?.writer.userId === userProfile.id;
+  const isOwnReview = route.params?.writer.userId === userProfile?.id;
 
   console.log('route.params?.reviewId', route.params?.reviewId);
   console.log('route.params?.imageArray', route.params?.imageArray);
   console.log('route.params?.writer', route.params?.writer);
   console.log('route.params?.writer.userId', route.params?.writer.userId);
-  console.log('userProfile.id', userProfile.id);
+  console.log('userProfile.id', userProfile?.id);
   console.log('route.params?.ratingObj', route.params?.ratingObj);
   console.log('route.params?.dentalObj', route.params?.dentalObj);
-  console.log('route.params?.treatmentDate', route.params.treatmentDate);
+  console.log('route.params?.treatmentDate', route.params?.treatmentDate);
   console.log("route.params?.elapsedTime", route.params?.elapsedTime);
 
   useEffect(() => {
     startTime = new Date();
-    setLoadingReviewDetail(true);
     getReviewDetail();
     getReviewCommentList();
   }, []);
@@ -538,7 +535,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   
       console.log('선택한 사진의 mediaFiles index', index);
   
-      navigation.navigate('FullImagesScreen', {
+      navigation.navigate('ImageDetailScreen', {
         imageArray: tmpImageArray,
         imageIndex: index,
       });
@@ -746,7 +743,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 ) => {
     selectedCommentId = commentId;
 
-    if (userId === userProfile.id) {
+    if (userId === userProfile?.id) {
         ownCommentActionSheetRef.current.show();
     } else {
         otherCommentActionSheetRef.current.show();
@@ -982,4 +979,277 @@ const styles = StyleSheet.create({
 
 export default ReviewDetailScreen;
 
+const TEST_REVIEW_DETAIL_DATA = {
+  "reviewBody": {
+      "id": 96,
+      "starRate_cost": 4.5,
+      "starRate_treatment": 4,
+      "starRate_service": 4,
+      "certifiedBill": false,
+      "hits": 0,
+      "treatmentDate": "2021-01-18",
+      "totalCost": 5000,
+      "createdAt": "2021-01-18T06:53:38.000Z",
+      "updatedAt": "2021-01-18T06:53:38.000Z",
+      "deletedAt": null,
+      "userId": "b788c700-53c1-11eb-9b16-f3588bcc5518",
+      "dentalClinicId": 12940,
+      "createdDiff(second)": 92488,
+      "reviewCommentsNum": 10,
+      "user": {
+          "nickname": "TEST1610337687498",
+          "profileImg": "https://lh4.googleusercontent.com/-kw57sImI58s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucnxW3c4REx4hKLoQSLZsq2f3ELP0g/s120/photo.jpg"
+      },
+      "dental_clinic": {
+          "name": "아가페치과의원(광주북구-매곡동)",
+          "address": "광주광역시 북구 서하로 119 2층 (매곡동, 우리빌딩)",
+          "originalName": "아가페치과의원"
+      },
+      "review_contents": [
+          {
+              "id": 340,
+              "img_url": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F16109528174092A14055F-D29C-497F-AADD-C08D3F9CA89F.JPG",
+              "img_name": null,
+              "mime_type": null,
+              "img_size": 552792,
+              "description": null,
+              "index": 1,
+              "img_before_after": "before",
+              "img_width": null,
+              "img_height": null,
+              "createdAt": "2021-01-18T06:53:38.000Z",
+              "updatedAt": "2021-01-18T06:53:38.000Z",
+              "deletedAt": null,
+              "reviewId": 96
+          },
+          {
+              "id": 341,
+              "img_url": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F161095281746696CD431D-0715-45E8-B6A9-E102684382FA.JPG",
+              "img_name": null,
+              "mime_type": null,
+              "img_size": 794234,
+              "description": null,
+              "index": 2,
+              "img_before_after": "before",
+              "img_width": null,
+              "img_height": null,
+              "createdAt": "2021-01-18T06:53:38.000Z",
+              "updatedAt": "2021-01-18T06:53:38.000Z",
+              "deletedAt": null,
+              "reviewId": 96
+          }
+      ],
+      "TreatmentItems": [
+          {
+              "id": 1,
+              "name": "충치",
+              "review_treatment_item": {
+                  "cost": null,
+                  "index": 1
+              }
+          }
+      ]
+  },
+  "reviewViewerNum": 1,
+  "reviewComments": [
+      {
+          "id": 194,
+          "description": "ㅋㅋㅋㅋ",
+          "createdAt": "2021-01-18T06:53:51.000Z",
+          "updatedAt": "2021-01-18T06:53:51.000Z",
+          "userId": "b788c700-53c1-11eb-9b16-f3588bcc5518",
+          "createdDiff(second)": 92475,
+          "user": {
+              "id": "b788c700-53c1-11eb-9b16-f3588bcc5518",
+              "nickname": "TEST1610337687498",
+              "profileImg": "https://lh4.googleusercontent.com/-kw57sImI58s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucnxW3c4REx4hKLoQSLZsq2f3ELP0g/s120/photo.jpg"
+          },
+          "Replys": [
+              {
+                  "id": 195,
+                  "description": "답글",
+                  "createdAt": "2021-01-18T06:54:06.000Z",
+                  "updatedAt": "2021-01-18T06:54:06.000Z",
+                  "userId": "b788c700-53c1-11eb-9b16-f3588bcc5518",
+                  "createdDiff(second)": 92475,
+                  "user": {
+                      "id": "b788c700-53c1-11eb-9b16-f3588bcc5518",
+                      "nickname": "TEST1610337687498",
+                      "profileImg": "https://lh4.googleusercontent.com/-kw57sImI58s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucnxW3c4REx4hKLoQSLZsq2f3ELP0g/s120/photo.jpg"
+                  },
+                  "Review_reply": {
+                      "targetUserId": "b788c700-53c1-11eb-9b16-f3588bcc5518",
+                      "createdAt": "2021-01-18T06:54:06.000Z",
+                      "updatedAt": "2021-01-18T06:54:06.000Z",
+                      "commentId": 194,
+                      "ReplyId": 195
+                  }
+              },
+              {
+                  "id": 204,
+                  "description": "ㅋㅋㅋㅋㅋㅋ",
+                  "createdAt": "2021-01-18T10:49:56.000Z",
+                  "updatedAt": "2021-01-18T10:49:56.000Z",
+                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                  "createdDiff(second)": 92475,
+                  "user": {
+                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                      "nickname": "TEST1610015727051",
+                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
+                  },
+                  "Review_reply": {
+                      "targetUserId": "b788c700-53c1-11eb-9b16-f3588bcc5518",
+                      "createdAt": "2021-01-18T10:49:56.000Z",
+                      "updatedAt": "2021-01-18T10:49:56.000Z",
+                      "commentId": 194,
+                      "ReplyId": 204
+                  }
+              },
+              {
+                  "id": 217,
+                  "description": "asdadasdasda",
+                  "createdAt": "2021-01-18T13:00:23.000Z",
+                  "updatedAt": "2021-01-18T13:00:23.000Z",
+                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                  "createdDiff(second)": 92475,
+                  "user": {
+                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                      "nickname": "TEST1610015727051",
+                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
+                  },
+                  "Review_reply": {
+                      "targetUserId": "b788c700-53c1-11eb-9b16-f3588bcc5518",
+                      "createdAt": "2021-01-18T13:00:23.000Z",
+                      "updatedAt": "2021-01-18T13:00:23.000Z",
+                      "commentId": 194,
+                      "ReplyId": 217
+                  }
+              },
+              {
+                  "id": 221,
+                  "description": "ekqrmf답글",
+                  "createdAt": "2021-01-18T13:23:07.000Z",
+                  "updatedAt": "2021-01-18T13:23:07.000Z",
+                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                  "createdDiff(second)": 92475,
+                  "user": {
+                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                      "nickname": "TEST1610015727051",
+                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
+                  },
+                  "Review_reply": {
+                      "targetUserId": "b788c700-53c1-11eb-9b16-f3588bcc5518",
+                      "createdAt": "2021-01-18T13:23:07.000Z",
+                      "updatedAt": "2021-01-18T13:23:07.000Z",
+                      "commentId": 194,
+                      "ReplyId": 221
+                  }
+              },
+              {
+                  "id": 222,
+                  "description": "ㅋㅋㅋ",
+                  "createdAt": "2021-01-18T13:23:12.000Z",
+                  "updatedAt": "2021-01-18T13:23:12.000Z",
+                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                  "createdDiff(second)": 92475,
+                  "user": {
+                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                      "nickname": "TEST1610015727051",
+                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
+                  },
+                  "Review_reply": {
+                      "targetUserId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                      "createdAt": "2021-01-18T13:23:12.000Z",
+                      "updatedAt": "2021-01-18T13:23:12.000Z",
+                      "commentId": 194,
+                      "ReplyId": 222
+                  }
+              },
+              {
+                  "id": 237,
+                  "description": "ddddddd",
+                  "createdAt": "2021-01-19T02:05:37.000Z",
+                  "updatedAt": "2021-01-19T02:05:37.000Z",
+                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                  "createdDiff(second)": 92475,
+                  "user": {
+                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                      "nickname": "TEST1610015727051",
+                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
+                  },
+                  "Review_reply": {
+                      "targetUserId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                      "createdAt": "2021-01-19T02:05:37.000Z",
+                      "updatedAt": "2021-01-19T02:05:37.000Z",
+                      "commentId": 194,
+                      "ReplyId": 237
+                  }
+              },
+              {
+                  "id": 238,
+                  "description": "dddddddd",
+                  "createdAt": "2021-01-19T02:09:02.000Z",
+                  "updatedAt": "2021-01-19T02:09:02.000Z",
+                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                  "createdDiff(second)": 92475,
+                  "user": {
+                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                      "nickname": "TEST1610015727051",
+                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
+                  },
+                  "Review_reply": {
+                      "targetUserId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                      "createdAt": "2021-01-19T02:09:02.000Z",
+                      "updatedAt": "2021-01-19T02:09:02.000Z",
+                      "commentId": 194,
+                      "ReplyId": 238
+                  }
+              },
+              {
+                  "id": 239,
+                  "description": "우앙",
+                  "createdAt": "2021-01-19T02:25:52.000Z",
+                  "updatedAt": "2021-01-19T02:25:52.000Z",
+                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                  "createdDiff(second)": 92475,
+                  "user": {
+                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                      "nickname": "TEST1610015727051",
+                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
+                  },
+                  "Review_reply": {
+                      "targetUserId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                      "createdAt": "2021-01-19T02:25:52.000Z",
+                      "updatedAt": "2021-01-19T02:25:52.000Z",
+                      "commentId": 194,
+                      "ReplyId": 239
+                  }
+              },
+              {
+                  "id": 240,
+                  "description": "우앙",
+                  "createdAt": "2021-01-19T02:26:03.000Z",
+                  "updatedAt": "2021-01-19T02:26:03.000Z",
+                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                  "createdDiff(second)": 92475,
+                  "user": {
+                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                      "nickname": "TEST1610015727051",
+                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
+                  },
+                  "Review_reply": {
+                      "targetUserId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
+                      "createdAt": "2021-01-19T02:26:03.000Z",
+                      "updatedAt": "2021-01-19T02:26:03.000Z",
+                      "commentId": 194,
+                      "ReplyId": 240
+                  }
+              }
+          ]
+      }
+  ],
+  "reviewLikeNum": 0,
+  "viewerLikeReview": false,
+  "viewerScrapReview": false
+}
 

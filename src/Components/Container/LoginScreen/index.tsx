@@ -402,6 +402,7 @@ const LoginScreen = ({navigation}: Props) => {
           console.log('number', number);
 
           navigation.navigate('HometownSearchScreen', {
+            requestType: "signUp",
             certifiedPhoneNumber: true,
             provider: 'local',
             fcmToken: fcmToken,
@@ -477,6 +478,8 @@ const LoginScreen = ({navigation}: Props) => {
               profile,
             }),
           );
+
+        dispatch(allActions.userActions.setHometown(response.user.userResidences));
           
         }
       })
