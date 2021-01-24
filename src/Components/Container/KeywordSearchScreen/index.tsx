@@ -35,7 +35,11 @@ const KeywordSearchScreen = ({navigation, route}: Props) => {
       const incompleteKorean = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
       if (!incompleteKorean.test(query)) {
         if (query !== '') {
-          const response: any = await GETAllTagSearch(jwtToken, query);
+          const response: any = await GETAllTagSearch(
+            jwtToken,
+            query,
+            'keywordSearch',
+          );
           setQuery((prev) => {
             if (prev !== query) {
             } else {

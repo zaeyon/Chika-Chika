@@ -88,6 +88,7 @@ const AnimatedModal = ({visible, buttons, children}: Props) => {
     if (buttons.length < 2) {
       return (
         <ModalButtonItemView
+          key={item.title}
           activeOpacity={1}
           underlayColor="#DDDDDD"
           onPress={() => {
@@ -99,6 +100,7 @@ const AnimatedModal = ({visible, buttons, children}: Props) => {
     } else {
       return (
         <ModalButtonItemView
+          key={item.title}
           activeOpacity={1}
           underlayColor="#DDDDDD"
           onPress={() => {

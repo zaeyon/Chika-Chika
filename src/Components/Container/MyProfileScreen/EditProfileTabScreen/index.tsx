@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {Alert} from 'react-native';
+import {launchCamera, ImagePickerResponse} from 'react-native-image-picker';
 //Local Component
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import EditProfileScreen from '~/Components/Presentational/MyProfileScreen/EditProfileScreen';
@@ -23,13 +24,6 @@ interface Props {
   route: any;
 }
 
-interface Form {
-  profileImg?: string;
-  birthdate?: string;
-  gender?: string;
-  nickname?: string;
-}
-
 const EditProfileTabScreen = ({navigation, route}: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,50 +33,54 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (route.params?.changeExistingImage && route.params?.selectedImage) {
+    if (route.params?.selectedImage) {
       changeProfileImage(route.params.selectedImage);
     }
   }, [route]);
 
-  const updateUserProfile = useCallback((form: Form, callback?: any) => {
-    PUTEditProfile(jwtToken, form)
-      .then((response: any) => {
-        console.log('프로필 변경 성공', response.body.message);
-        GETUserInfo(jwtToken).then((response: any) => {
-          dispatch(
-            allActions.userActions.setUser({
-              //depart
-              profile: response,
-            }),
-          );
-          setIsLoading(false);
+  const updateUserProfile = useCallback(
+    (form: any, callback: any = () => console.log('change profile...')) => {
+      PUTEditProfile(jwtToken, form)
+        .then((response: any) => {
+          console.log('프로필 변경 성공', response.body.message);
+          GETUserInfo(jwtToken).then((response: any) => {
+            dispatch(
+              allActions.userActions.setUser({
+                //depart
+                profile: response,
+              }),
+            );
+            setIsLoading(false);
+          });
+          callback();
+        })
+        .catch((e) => {
+          console.log(e);
+          // if (e.data.statusCode === 403) {
+          //   Alert.alert('변경 실패', '이미 있는 닉네임입니다.', [
+          //     {
+          //       text: '확인',
+          //       onPress: () => setIsLoading(false),
+          //     },
+          //   ]);
+          // } else if (e.data.statusCode === 500) {
+          //   Alert.alert(
+          //     '서버 오류',
+          //     '닉네임 변경에 실패하였습니다. 다시 한 번 시도해주세요.',
+          //     [
+          //       {
+          //         text: '확인',
+          //         onPress: () => setIsLoading(false),
+          //       },
+          //     ],
+          //   );
+          // }
         });
-        callback();
-      })
-      .catch((e) => {
-        if (e.data.statusCode === 403) {
-          Alert.alert('변경 실패', '이미 있는 닉네임입니다.', [
-            {
-              text: '확인',
-              onPress: () => setIsLoading(false),
-            },
-          ]);
-        } else if (e.data.statusCode === 500) {
-          Alert.alert(
-            '서버 오류',
-            '닉네임 변경에 실패하였습니다. 다시 한 번 시도해주세요.',
-            [
-              {
-                text: '확인',
-                onPress: () => setIsLoading(false),
-              },
-            ],
-          );
-        }
-      });
-  }, []);
+    },
+    [],
+  );
 
-  const changeProfileImage = useCallback((selectedImage: string) => {
+  const changeProfileImage = useCallback((selectedImage: any) => {
     setIsLoading(true);
     uploadImageToS3(selectedImage).then((res: any) => {
       console.log('change profile img', res);
@@ -91,7 +89,6 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
       };
       updateUserProfile(form, () => {
         navigation.setParams({
-          changeExistingImage: false,
           selectedImage: null,
         });
       });
@@ -130,8 +127,34 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
     navigation.navigate('PhoneVerifyScreen');
   }, []);
 
+  const moveToEditNickname = useCallback((nickname: string) => {
+    navigation.navigate('EditNicknameScreen', {
+      nickname,
+    });
+  }, []);
+
+  const capturePhoto = useCallback(() => {
+    launchCamera(
+      {mediaType: 'photo', includeBase64: true},
+      (response: ImagePickerResponse) => {
+        if (!response.didCancel) {
+          const capturedImage = {
+            filename: response.fileName,
+            fileSize: response.fileSize,
+            width: response.width,
+            height: response.height,
+            uri: response.uri,
+            base64: response.base64,
+          };
+          changeProfileImage(capturedImage);
+        }
+      },
+    );
+  }, []);
+
   const moveToGallery = useCallback(() => {
-    navigation.navigate('EditProfileGallery', {
+    navigation.navigate('ImageSelectOneStackScreen', {
+      screen: 'ImageSelectOneScreen',
       requestType: 'EditProfileTabScreen',
     });
   }, []);
@@ -147,11 +170,13 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
       <NavigationHeader
         headerLeftProps={{
           onPress: headerLeftAction,
-          type: '취소',
+          type: 'arrow',
         }}
-        headerTitle="내 정보 수정"
+        headerTitle="프로필 편집"
       />
       <EditProfileScreen
+        capturePhoto={capturePhoto}
+        moveToEditNickname={moveToEditNickname}
         moveToGallery={moveToGallery}
         moveToHomeTownSetting={moveToHomeTownSetting}
         moveToPhoneVerify={moveToPhoneVerify}

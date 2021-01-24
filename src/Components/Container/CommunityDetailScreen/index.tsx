@@ -104,11 +104,29 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
       (item: any) => item.id === route.params.id,
     );
     if (newPostData) {
+      console.log('hi');
       setPostData(newPostData);
+    } else {
+      GETCommunityPostDetail(jwtToken, String(route.params.id)).then(
+        (response: any) => {
+          console.log(response);
+        },
+      );
     }
   }, [postList]);
 
   useEffect(() => {
+    GETCommunityPostDetail(jwtToken, String(route.params.id)).then(
+      (response: any) => {
+        setPostData((prev) => {
+          if (!prev) {
+            return response;
+          } else {
+            return prev;
+          }
+        });
+      },
+    );
     fetchPostComments(route.params.id);
   }, []);
 

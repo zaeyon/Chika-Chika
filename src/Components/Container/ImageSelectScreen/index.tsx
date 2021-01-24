@@ -101,7 +101,7 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
   ]);
 
   const [selectedImages, setSelectedImages] = useState<Image[]>(
-    route?.params?.selectedImages,
+    route?.params?.selectedImages || [],
   );
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -111,7 +111,7 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
       groupTypes: 'init',
       groupName: 'init',
     }).then((photos) => {
-      setSelectedAlbum(photos.edges[0].node.group_name)
+      setSelectedAlbum(photos.edges[0].node.group_name);
       const result = {
         title: photos.edges[0].node.group_name,
         type: 2,
@@ -177,39 +177,40 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
 
   const goBack = useCallback(() => navigation.goBack(), [navigation]);
 
-  const onSubmit = useCallback(
-    () => {
-      if(route.params.requestType === "ContentPostScreen") {
-        navigation.navigate("ContentPostScreen", {
-          selectedImages,
-          startIndex: route.params.startIndex,
-        })
-      } else {
-        navigation.navigate(route.params.requestType, {
-          selectedImages,
-        })
-      }
+  const onSubmit = useCallback(() => {
+    if (route.params.requestType === 'ContentPostScreen') {
+      navigation.navigate('ContentPostScreen', {
+        selectedImages,
+        startIndex: route.params.startIndex,
+      });
+    } else {
+      navigation.navigate(route.params.requestType, {
+        selectedImages,
+      });
     }
-      ,
-    [route, selectedImages],
-  );
+  }, [route, selectedImages]);
 
   const navigateToCamera = useCallback(() => {
-    launchCamera({includeBase64: true}, (response: CameraResponse) => {
-      if (!response.didCancel) {
-        const capturedImage: Image = {
-          filename: response.fileName,
-          fileSize: response.fileSize,
-          width: response.width,
-          height: response.height,
-          uri: response.uri,
-          base64: response.base64,
-        };
-        console.log(capturedImage);
-        setSelectedImages((prev) => [...prev, capturedImage]);
-      }
-    });
-  }, []);
+    if (selectedImages.length > 11) {
+      setIsModalVisible(true);
+      return;
+    } else {
+      launchCamera({includeBase64: true}, (response: CameraResponse) => {
+        if (!response.didCancel) {
+          const capturedImage: Image = {
+            filename: response.fileName,
+            fileSize: response.fileSize,
+            width: response.width,
+            height: response.height,
+            uri: response.uri,
+            base64: response.base64,
+          };
+          console.log(capturedImage);
+          setSelectedImages((prev) => [...prev, capturedImage]);
+        }
+      });
+    }
+  }, [selectedImages]);
 
   const selectImage = useCallback((image) => {
     setSelectedImages((prev) => {

@@ -18,9 +18,10 @@ import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
+ height: ${wp('14.1%')}px;
  flex-direction: row;
  justify-content: space-between;
- border-bottom-width: 1px;
+ border-bottom-width: 0.5px;
  border-color: #E2E6ED;
  background-color: #ffffff;
  z-index: 3;
@@ -36,7 +37,7 @@ font-size: 16px;
 const HeaderLeftContainer = Styled.View`
 min-width: 44px;
 height: 100%;
-padding: 12px 16px 16px 16px;
+padding: 12px 16px 17px 16px;
 align-items: center;
 flex-direction: row;
 `;
@@ -51,7 +52,7 @@ z-index: -1;
 `;
 
 const HeaderTitleContentView = Styled.View`
-padding: 12px 16px 16px 16px;
+padding: 12px 16px 17px 16px;
 align-items: center;
 flex-direction: row;
 `;
@@ -65,7 +66,7 @@ margin-right: 5px;
 const HeaderRightContainer = Styled.View`
 min-width: 44px;
 height: 100%;
-padding: 12px 16px 16px 16px;
+padding: 12px 16px 17px 16px;
  align-items: center;
  flex-direction: row;
 `;
