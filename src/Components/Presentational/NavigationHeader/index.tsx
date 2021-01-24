@@ -18,10 +18,12 @@ import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
- height: ${wp('14.1%')}px;
+ height: ${wp('14.1%') + getStatusBarHeight()}px;
+  margin-top: ${-getStatusBarHeight()}
+  padding-top: ${getStatusBarHeight()}
  flex-direction: row;
  justify-content: space-between;
- border-bottom-width: 1px;
+ border-bottom-width: 0.5px;
  border-color: #E2E6ED;
  background-color: #ffffff;
 `;
@@ -37,7 +39,7 @@ color: ${(props) => (props.disabled ? '#9AA2A9' : '#00D1FF')};
 const HeaderLeftContainer = Styled.View`
 min-width: 44px;
 height: 100%;
-padding: 12px 16px 16px 16px;
+padding: 12px 16px 17px 16px;
 align-items: center;
 flex-direction: row;
 `;
@@ -53,7 +55,8 @@ const HeaderTitleContainer = Styled.View`
 width: 100%;
 position: absolute;
 height: 100%;
-padding: 16px 16px 16px 16px;
+top: ${getStatusBarHeight()}
+padding: 12px 16px 17px 16px;
 justify-content: center;
 align-items: center;
 z-index: -1;
@@ -68,7 +71,7 @@ font-size: 16px;
 const HeaderRightContainer = Styled.View`
 min-width: 44px;
 height: 100%;
-padding: 12px 16px 16px 16px;
+padding: 12px 16px 17px 16px;
  align-items: center;
  flex-direction: row;
 `;
@@ -102,6 +105,7 @@ interface Props {
   headerLeftActiveColor?: string;
   headerRightActiveColor?: string;
   headerTitle: string;
+  position?: string;
 }
 const NavigationHeader = ({
   headerLeftProps,
@@ -111,9 +115,10 @@ const NavigationHeader = ({
   headerLeftActiveColor = '#000000',
   headerRightActiveColor = '#000000',
   headerTitle,
+  position = 'relative',
 }: Props) => {
   return (
-    <HeaderBar>
+    <HeaderBar position={position}>
       <TouchableWithoutFeedback
         disabled={headerLeftDisabled}
         onPress={() => {
@@ -142,12 +147,12 @@ const NavigationHeader = ({
       <HeaderTitleContainer>
         <HeaderTitleText>{headerTitle}</HeaderTitleText>
       </HeaderTitleContainer>
-      <HeaderRightContainer>
-        <TouchableWithoutFeedback
-          disabled={headerRightDisabled}
-          onPress={() => {
-            headerRightProps?.onPress();
-          }}>
+      <TouchableWithoutFeedback
+        disabled={headerRightDisabled}
+        onPress={() => {
+          headerRightProps?.onPress();
+        }}>
+        <HeaderRightContainer>
           {headerRightProps?.type === 'arrow' ? (
             <HeaderIconView>
               <HeaderIcon
@@ -169,10 +174,10 @@ const NavigationHeader = ({
               {headerRightProps?.text}
             </HeaderText>
           )}
-        </TouchableWithoutFeedback>
-      </HeaderRightContainer>
+        </HeaderRightContainer>
+      </TouchableWithoutFeedback>
     </HeaderBar>
   );
 };
 
-export default NavigationHeader;
+export default React.memo(NavigationHeader);

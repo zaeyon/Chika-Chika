@@ -312,21 +312,6 @@ const TimerTabScreen = ({navigation, route}: Props) => {
     ]).start();
   };
 
-  const firstSpin = circleProgressValue1.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'],
-  });
-
-  const secondSpin = circleProgressValue2.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'],
-  });
-
-  const shadeHide = shadeCircleValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['1', '0'],
-  });
-
   const moveToBrushDetrition = () => {
     navigation.navigate('BrushDetritionCamera');
   };

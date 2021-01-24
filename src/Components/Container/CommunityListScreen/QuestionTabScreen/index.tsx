@@ -197,24 +197,14 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
             type,
             posts: response,
           };
-          if (
-            postData &&
-            JSON.stringify(response).replace(
-              /"createdDiff\(second\)\"\:\d*\,/gi,
-              '',
-            ) !==
-              JSON.stringify(postData).replace(
-                /"createdDiff\(second\)\"\:\d*\,/gi,
-                '',
-              )
-          ) {
-            console.log('liked post diff');
-            LayoutAnimation.configureNext(
-              LayoutAnimation.create(400, 'easeInEaseOut', 'opacity'),
-            );
-            setRegion(region);
-            dispatch(allActions.communityActions.setPosts(data));
-          }
+
+          console.log('liked post diff');
+          LayoutAnimation.configureNext(
+            LayoutAnimation.create(400, 'easeInEaseOut', 'opacity'),
+          );
+          setRegion(region);
+          dispatch(allActions.communityActions.setPosts(data));
+
           setRefreshing(false, callback());
         },
       );
