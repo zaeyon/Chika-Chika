@@ -897,7 +897,7 @@ const Navigator = () => {
   return (
     <NavigationContainer>
       <StatusBar barStyle="dark-content" />
-      {!currentUser.loggedIn ? <BottomTab /> : <AuthStackScreen />}
+      {currentUser.loggedIn ? <BottomTab /> : <AuthStackScreen />}
     </NavigationContainer>
   );
 };

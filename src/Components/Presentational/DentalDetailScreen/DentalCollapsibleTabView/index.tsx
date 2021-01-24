@@ -1122,7 +1122,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}>
             <ReviewTabContainer>
-              {dentalDetailInfo.reviews.length > 0 && (
+              {dentalDetailInfo?.reviews?.length > 0 && (
                 <ReviewInfoContainer>
                   <PostReviewContainer>
                     <PostReviewDescipText>
@@ -1161,7 +1161,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
                     </RatingReportContainer>
                   )}
                   <ReviewListContainer>
-                  <ReviewList reviewList={dentalDetailInfo.reviews} />
+                  <ReviewList reviewList={dentalDetailInfo?.reviews} />
                   </ReviewListContainer>
                   <RequestReviseInfoContainer>
                   <TouchableWithoutFeedback onPress={() => moveToDentalInfoEdit()}>
@@ -1181,7 +1181,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
               </CopyrightDescipContainer>
                 </ReviewInfoContainer>
               )}
-              {dentalDetailInfo.reviews.length === 0 && (
+              {dentalDetailInfo?.reviews?.length === 0 && (
                 <NoReviewContainer
                   style={{
                     minHeight: hp('100%') - (headerHeight + tabBarHeight),

@@ -31,6 +31,7 @@ font-family: NanumSquare;
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
+line-height: 30px;
 color: ${(props) => (props.disabled ? '#9AA2A9' : '#00D1FF')};
 `;
 
@@ -38,7 +39,6 @@ const HeaderLeftContainer = Styled.View`
 min-width: 44px;
 height: 100%;
 padding: 12px 16px 16px 16px;
-align-items: center;
 flex-direction: row;
 `;
 
@@ -53,8 +53,7 @@ const HeaderTitleContainer = Styled.View`
 width: 100%;
 position: absolute;
 height: 100%;
-padding: 16px 16px 16px 16px;
-justify-content: center;
+padding: 12px 16px 16px 16px;
 align-items: center;
 z-index: -1;
 `;
@@ -63,6 +62,7 @@ const HeaderTitleText = Styled.Text`
 font-family: NanumSquare;
 font-weight: 700;
 font-size: 16px; 
+line-height: 30px;
 `;
 
 const HeaderCenterContainer = Styled.View`
