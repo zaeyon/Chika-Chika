@@ -182,7 +182,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
     if (!incompleteKorean.test(searchQuery)) {
       if (searchQuery !== '') {
         setSuggestionList([]);
-        GETAllTagSearch(jwtToken, searchQuery)
+        GETAllTagSearch(jwtToken, searchQuery, 'autoComplete')
           .then((response: any) => {
             setSearchQuery((prev) => {
               if (prev !== searchQuery) {
@@ -413,7 +413,9 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
           {
             title: '아니요',
             onPress: () => setIsModalVisible(false),
-            color: '#9AA2A9',
+            style: {
+              fontWeight: 'bold',
+            },
           },
           {
             title: '예',
@@ -433,15 +435,18 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         headerRightProps={
           onSubmit
             ? {
+                type: 'text',
                 text: '생성중',
               }
             : mode === 'edit'
             ? {
                 onPress: editPost,
+                type: 'text',
                 text: '완료',
               }
             : {
                 onPress: uploadPost,
+                type: 'text',
                 text: '완료',
               }
         }

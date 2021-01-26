@@ -1,14 +1,5 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  FlatList,
-  Text,
-  View,
-  Image,
-  Keyboard,
-  KeyboardAvoidingView,
-} from 'react-native';
+import React, {useCallback} from 'react';
+import {TouchableWithoutFeedback} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -18,26 +9,30 @@ import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
- height: ${wp('14.1%')}px;
+ height: ${wp('14.1%') + getStatusBarHeight()}px;
+  margin-top: ${-getStatusBarHeight()}
+  padding-top: ${getStatusBarHeight()}
  flex-direction: row;
  justify-content: space-between;
  border-bottom-width: 0.5px;
  border-color: #E2E6ED;
  background-color: #ffffff;
+ z-index: 3;
 `;
 
 const HeaderText = Styled.Text<{disabled: boolean; color: string}>`
 font-style: normal;
 font-weight: 400;
 font-size: 16px;
-line-height: 24px;
-color: ${(props) => (props.disabled ? '#9AA2A9' : '#00D1FF')};
+line-height: 30px;
+color: ${(props) => (props.disabled ? '#9AA2A9' : props.color)};
 `;
 
 const HeaderLeftContainer = Styled.View`
 min-width: 44px;
 height: 100%;
-padding: 12px 16px 16px 16px;
+padding: 12px 16px 17px 16px;
+align-items: center;
 flex-direction: row;
 `;
 
@@ -51,6 +46,7 @@ const HeaderTitleContainer = Styled.View`
 width: 100%;
 position: absolute;
 height: 100%;
+top: ${getStatusBarHeight()}px;
 padding: 12px 16px 16px 16px;
 align-items: center;
 z-index: -1;
@@ -79,7 +75,7 @@ color: #131F3C;
 const HeaderRightContainer = Styled.View`
 min-width: 44px;
 height: 100%;
-padding: 12px 16px 16px 16px;
+padding: 12px 16px 17px 16px;
  align-items: center;
  flex-direction: row;
 `;
@@ -98,7 +94,6 @@ const HeaderIcon = Styled.Image`
 width: ${wp('6.4%')}px;
 height: ${wp('6.4%')}px;
 `;
-
 
 interface HeaderProps {
   onPress?: any;
@@ -124,10 +119,52 @@ const NavigationHeader = ({
   headerCenterProps,
   headerLeftDisabled = false,
   headerRightDisabled = false,
-  headerLeftActiveColor = '#000000',
-  headerRightActiveColor = '#000000',
+  headerLeftActiveColor = '#131F3C',
+  headerRightActiveColor = '#131F3C',
   headerTitle,
+
 }: Props) => {
+  
+  const renderHeaderRightContent = useCallback(() => {
+    if (headerRightProps) {
+      switch (headerRightProps.type) {
+        case 'arrow':
+          return (
+            <HeaderIconView>
+              <HeaderIcon
+                source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
+              />
+            </HeaderIconView>
+          );
+        case 'viewMore':
+          return (
+            <HeaderIconView>
+              <HeaderIcon
+                source={require('~/Assets/Images/HeaderBar/ic_viewMore.png')}
+              />
+            </HeaderIconView>
+          );
+        case 'search':
+          return (
+            <HeaderIconView>
+              <HeaderIcon
+                source={require('~/Assets/Images/HeaderBar/ic_search.png')}
+              />
+            </HeaderIconView>
+          );
+        case 'text':
+          return (
+            <HeaderText
+              disabled={headerRightDisabled}
+              color={headerRightActiveColor}>
+              {headerRightProps.text}
+            </HeaderText>
+          );
+        default:
+          return <HeaderEmptyContainer />;
+      }
+    }
+  }, [headerRightProps, headerRightDisabled, headerRightActiveColor]);
   return (
     <HeaderBar>
       <TouchableWithoutFeedback
@@ -135,76 +172,101 @@ const NavigationHeader = ({
         onPress={() => {
           headerLeftProps?.onPress();
         }}>
-        <HeaderLeftContainer>
-          {headerLeftProps?.type === 'arrow' ? (
-            <HeaderIconView>
-              <HeaderIcon
-                style={[{resizeMode: 'contain'}, headerCenterProps?.type === "search" && {tintColor: "#9AA2A9"}]}
-                source={require('~/Assets/Images/HeaderBar/ic_back.png')}
-              />
-              {headerLeftProps?.text?.length > 0 && (
-                <HeaderLeftText>{headerLeftProps.text}</HeaderLeftText>
-              )}
-            </HeaderIconView>
-          ) : (
-            <HeaderText
-              disabled={headerLeftDisabled}
-              color={headerLeftActiveColor}>
-              {headerLeftProps?.text}
-            </HeaderText>
-          )}
-        </HeaderLeftContainer>
+        {headerLeftProps ? (
+          <HeaderLeftContainer>
+            {headerLeftProps.type === 'arrow' ? (
+              <HeaderIconView>
+                <HeaderIcon
+                  style={[
+                    {resizeMode: 'contain'},
+                    headerCenterProps?.type === 'search' && {
+                      tintColor: '#9AA2A9',
+                    },
+                  ]}
+                  source={require('~/Assets/Images/HeaderBar/ic_back.png')}
+                />
+              </HeaderIconView>
+            ) : (
+              <HeaderText
+                disabled={headerLeftDisabled}
+                color={headerLeftActiveColor}>
+                {headerLeftProps?.text}
+              </HeaderText>
+            )}
+          </HeaderLeftContainer>
+        ) : null}
       </TouchableWithoutFeedback>
       {headerTitle && (
-      <HeaderTitleContainer>
-        <HeaderTitleText>{headerTitle}</HeaderTitleText>
-      </HeaderTitleContainer>
+        <HeaderTitleContainer>
+          <HeaderTitleText>{headerTitle}</HeaderTitleText>
+        </HeaderTitleContainer>
       )}
       {headerCenterProps?.type === "searchInput" && (
-        <HeaderCenterContainer>
-          {headerCenterProps.renderSearchInput()}
-        </HeaderCenterContainer>
-      )}
-      <HeaderRightContainer>
-        <TouchableWithoutFeedback
-          disabled={headerRightDisabled}
-          onPress={() => {
-            if(!headerRightDisabled) {
-              headerRightProps?.onPress();
-            } else {
-              return
-            }
-          }}>
-          {headerRightProps?.type === 'arrow' ? (
-            <HeaderIconView>
-              <HeaderIcon
-                source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
-              />
-            </HeaderIconView>
-          ) : headerRightProps?.type === 'viewMore' ? (
-            <HeaderIconView>
-              <HeaderIcon
-                source={require('~/Assets/Images/HeaderBar/ic_viewMore.png')}
-              />
-            </HeaderIconView>
-          ) : headerRightProps?.type === "search" ? (
-            <HeaderIconView>
-              <HeaderIcon
-              source={require('~/Assets/Images/HeaderBar/ic_search.png')}/>
-            </HeaderIconView>
-          ) : headerRightProps?.type === 'empty' ? (
-            <HeaderEmptyContainer />
-          ) : (
-            <HeaderText
-              disabled={headerRightDisabled}
-              color={headerRightActiveColor}>
-              {headerRightProps?.text}
-            </HeaderText>
-          )}
-        </TouchableWithoutFeedback>
-      </HeaderRightContainer>
+      <HeaderCenterContainer>
+        {headerCenterProps.renderSearchInput()}
+      </HeaderCenterContainer>
+    )}
+      <TouchableWithoutFeedback
+        disabled={headerRightDisabled}
+        onPress={() => {
+          headerRightProps?.onPress();
+        }}>
+        <HeaderRightContainer>
+          {renderHeaderRightContent()}
+        </HeaderRightContainer>
+      </TouchableWithoutFeedback>
     </HeaderBar>
   );
 };
 
-export default NavigationHeader;
+export default React.memo(NavigationHeader);
+
+
+// return (
+//   <HeaderBar>
+//     <TouchableWithoutFeedback
+//       disabled={headerLeftDisabled}
+//       onPress={() => {
+//         headerLeftProps?.onPress();
+//       }}>
+//       <HeaderLeftContainer>
+//         {headerLeftProps?.type === 'arrow' ? (
+//           <HeaderIconView>
+//             <HeaderIcon
+//               style={[{resizeMode: 'contain'}, headerCenterProps?.type === "search" && {tintColor: "#9AA2A9"}]}
+//               source={require('~/Assets/Images/HeaderBar/ic_back.png')}
+//             />
+//             {headerLeftProps?.text?.length > 0 && (
+//               <HeaderLeftText>{headerLeftProps.text}</HeaderLeftText>
+//             )}
+//           </HeaderIconView>
+//         ) : (
+//           <HeaderText
+//             disabled={headerLeftDisabled}
+//             color={headerLeftActiveColor}>
+//             {headerLeftProps?.text}
+//           </HeaderText>
+//         )}
+//       </HeaderLeftContainer>
+//     </TouchableWithoutFeedback>
+//     {headerTitle && (
+//     <HeaderTitleContainer>
+//       <HeaderTitleText>{headerTitle}</HeaderTitleText>
+//     </HeaderTitleContainer>
+//     )}
+//     {headerCenterProps?.type === "searchInput" && (
+//       <HeaderCenterContainer>
+//         {headerCenterProps.renderSearchInput()}
+//       </HeaderCenterContainer>
+//     )}
+//     <HeaderRightContainer>
+//       <TouchableWithoutFeedback
+//         disabled={headerRightDisabled}
+//         onPress={() => {
+//           if(!headerRightDisabled) {
+//             headerRightProps?.onPress();
+//           } else {
+//             return
+//           }
+//         }}>
+//         {headerRightProps?.type === 'arrow' ? (

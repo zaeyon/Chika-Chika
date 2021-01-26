@@ -46,6 +46,7 @@ const PinchableImage = ({
   const [lastScale, setLastScale] = useState(1);
   const [lastX, setLastX] = useState(0);
   const [lastY, setLastY] = useState(0);
+
   const [pinchEnabled, setPinchEnabled] = useState(true);
   const [travelEnabled, setTravelEnabled] = useState(false);
   const [swipeDownEnabled, setSwipeDownEnabled] = useState(true);
@@ -60,6 +61,9 @@ const PinchableImage = ({
   const moveY = useRef(new Animated.Value(0)).current;
   const baseY = useRef(new Animated.Value(0)).current;
   const translateY = useRef(Animated.add(moveY, baseY)).current;
+
+  const pinchRef = useRef();
+  const panRef = useRef();
 
   useEffect(() => {
     if (currentIndex !== index) {
@@ -235,11 +239,16 @@ const PinchableImage = ({
         {
           nativeEvent: {
             scale: pinchScale,
+            // focalX: pinchFocal.x,
+            // focalY: pinchFocal.y,
           },
         },
       ],
       {
         useNativeDriver: true,
+        listener: (e: any) => {
+          console.log(`x : ${e.nativeEvent.focalX} y: ${e.nativeEvent.focalY}`);
+        },
       },
     ),
     [pinchScale],
@@ -291,23 +300,23 @@ const PinchableImage = ({
               moveY.setValue(0);
             });
             return 1;
-          } else if (newScale > 3) {
+          } else if (newScale > 4) {
             ReactNativeHapticFeedback.trigger('impactMedium', {
               enableVibrateFallback: false,
               ignoreAndroidSystemSettings: false,
             });
             Animated.timing(pinchScale, {
-              toValue: 3 / prev,
+              toValue: 4 / prev,
               duration: 100,
               easing: Easing.ease,
               useNativeDriver: true,
             }).start(() => {
               pinchScale.setValue(1);
-              baseScale.setValue(3);
+              baseScale.setValue(4);
               setTravelEnabled(true);
               setSwipeDownEnabled(false);
             });
-            return 3;
+            return 4;
           } else {
             baseScale.setValue(newScale);
             pinchScale.setValue(1);
@@ -343,11 +352,6 @@ const PinchableImage = ({
           }
         });
       } else if (nativeEvent.oldState === State.BEGAN) {
-        console.log(
-          'start',
-          wp('100%') / 2 - nativeEvent.focalX,
-          nativeEvent.focalY,
-        );
       }
     },
     [pinchScale, baseScale],
@@ -375,6 +379,8 @@ const PinchableImage = ({
           ],
         }}>
         <PinchGestureHandler
+          ref={pinchRef}
+          simultaneousHandlers={panRef}
           enabled={pinchEnabled}
           onGestureEvent={onPinchGestureEvent}
           onHandlerStateChange={onPinchHandlerStateChange}>
@@ -384,16 +390,18 @@ const PinchableImage = ({
               transform: [
                 {
                   scale: scale.interpolate({
-                    inputRange: [0, 1, 3, 100],
-                    outputRange: [0.4, 1, 3, 100],
+                    inputRange: [0, 1, 4, 100],
+                    outputRange: [0.4, 1, 4, 100],
                     extrapolate: 'clamp',
                   }),
                 },
               ],
             }}>
             <PanGestureHandler
+              ref={panRef}
+              simultaneousHandlers={pinchRef}
               enabled={travelEnabled}
-              maxPointers={1}
+              maxPointers={2}
               activeOffsetX={[-1, 1]}
               activeOffsetY={[-1, 1]}
               onGestureEvent={onHorizontalPanGestureEvent}

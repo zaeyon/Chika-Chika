@@ -91,7 +91,6 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
       console.log("GETDentalDetail response", response)
       console.log("GETDentalDetail response.clinicInfoHeader.clinicProfileImg", response.clinicInfoHeader.clinicProfileImg);
       console.log("GETDentalDetail response.clinicInfoHeader.clinicReviewImg", response.clinicInfoHeader.clinicReviewImg);
-      console.log("response.clinicInfoHeader.userScrapClinics", response.clinicInfoHeader.userScrapClinics);
       setDentalDetailInfo(response)
       setLoadingGetDentalDetail(false);
 

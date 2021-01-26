@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
@@ -11,6 +11,9 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
+//Local Components
+import PlaceholderContent from '~/Components/Container/PlaceholderContent';
+
 const ContainerView = Styled.View`
 flex: 1;
 background: #F8F8F8;
@@ -18,48 +21,47 @@ background: #F8F8F8;
 
 const ReservationItemContainerView = Styled.View`
 width: auto;
-margin: 16px;
-padding: 24px;
-border-radius: 8px;
-background: white;
-justify-content: space-between;
-`;
-
-const ReservationItemContentView = Styled.View`
-width: 100%
+margin: 8px 0px;
+padding: 16px 0px;
+background: #FFFFFF;
 `;
 
 const ReservationItemTitleView = Styled.View`
 width: 100%;
 height: auto;
+padding: 0px 16px;
 flex-direction: row;
 align-items: center;
-margin-bottom: 8px;
+margin-bottom: 16px;
 `;
 
 const ReservationItemTitleText = Styled.Text`
 font-family: NanumSquare;
 font-style: normal;
 font-weight: bold;
-font-size: 18px;
+font-size: 16px;
 line-height: 24px;
+color: #4E525D;
 `;
 
-const ReservationItemDetailView = Styled.View`
-width: 100%;
-height: auto;
+const ReservationItemContentView = Styled.View`
+width: 100%
 flex-direction: row;
-align-items: center;
-margin-top: auto;
+padding: 0px 16px;
+margin-bottom: 24px;
 `;
 
-const ReservationItemLocationText = Styled.Text`
-font-family: NanumSquare;
-font-style: normal;
-font-weight: bold;
-font-size: 14px;
-line-height: 16px;
-margin-bottom: 8px;
+const ReservationItemImage = Styled.Image`
+width: 78px;
+height: 78px;
+background: #F5F7F9;
+border: 0.5px #E2E6ED;
+border-radius: 8px;
+margin-right: 16px;
+`;
+const ReservationItemDetailView = Styled.View`
+width: auto
+height: auto;
 `;
 
 const ReservationItemDateText = Styled.Text`
@@ -67,89 +69,88 @@ font-family: NanumSquare;
 font-style: normal;
 font-weight: normal;
 font-size: 14px;
-line-height: 24px;
+line-height: 16px;
+color: #9AA2A9;
+margin-bottom: 6px;
 `;
 
-const ReservationItemTimeText = Styled.Text`
+const ReservationItemClinicText = Styled.Text`
 font-family: NanumSquare;
 font-style: normal;
-font-weight: normal;
-font-size: 14px;
+font-weight: 800;
+font-size: 18px;
 line-height: 24px;
+color: #131F3C;
+margin-bottom: 12px;s
+`;
+
+const ReservationItemNavigationView = Styled.View`
+flex-direction: row;
+align-items: center;
+`;
+const ReservationItemNavigationText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+line-height: 16px;
+color: #00D1FF;
 `;
 
 const ReservationButtonContainerView = Styled.View`
-width: 100%;
-height: ${hp('5.882%')}px;
+width: ${wp('100%')}px;
+height: auto;
 flex-direction: row;
+padding: 0px 12px;
 `;
 
-const CreateReviewTouchableOpacity = Styled(
-  TouchableOpacity as new () => TouchableOpacity,
-)`
-width: 36.27%;
-height: 100%;
-background: #ECECEE;
-border-radius: 8px;
+const CreateReviewTouchableOpacity = Styled.TouchableOpacity`
+flex: 1;
+padding: 12px 0px;
+margin: 0px 4px;
+border: 1px #00D1FF;
+border-radius: 4px;
 justify-content: center;
 align-items: center;
 `;
 const CreateReviewText = Styled.Text`
-font-size: 16px;
-line-height: 19px;
-color: #595959;
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+line-height: 16px;
+color: #00D1FF;
 `;
-const ReReservationTouchableOpacity = Styled(
-  TouchableOpacity as new () => TouchableOpacity,
-)`
-width: 61.0169%;
-height: 100%;
-border: 1px #C4C4C4;
-border-radius: 8px;
-background: white;
-margin-left: auto;
+const ReReservationTouchableOpacity = Styled.TouchableOpacity`
+flex: 1;
+padding: 12px 0px;
+margin: 0px 4px;
+border: 1px #E2E6ED;
+border-radius: 4px;
 justify-content: center;
 align-items: center;
 `;
 const ReReservationText = Styled.Text`
-font-size: 16px;
-line-height: 19px;
-color: #595959;
-`;
-
-const ArrowIconView = Styled.View`
-width: 4px;
-height: 8px;
-margin-left: 8px;
-
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+line-height: 16px;
+color: #131F3C;
 `;
 
 const ArrowIconImage = Styled.Image`
-width: 100%;
-height: 100%;
-`;
-const InfoIconView = Styled.View`
-width: 12px;
-height: 14px;
-margin-left: auto;
+margin-left: 4px;
 `;
 
-const InfoIconImage = Styled.Image`
-width: 100%;
-height: 100%;
+const DeleteIconView = Styled.View`
+position: absolute;
+top: 12px;
+right: 8px;
+padding: 8px;
 `;
 
-const Line = Styled.View`
-margin: 24px 0px;
-height: 1px;
-background: #EEEEEE;
-`;
-
-const DateTimeDivider = Styled.View`
-width: 1px;
-height: 8px;
-background: #C4C4C4;
-margin: 0px 8px;
+const DeleteIconImage = Styled.Image`
 `;
 
 interface Props {
@@ -159,31 +160,42 @@ interface Props {
 }
 
 const ReservationScreen = ({navigation, route, reservations}: Props) => {
-  const renderReservationItemView = ({item, index}: any) => {
+  const renderReservationItemView = useCallback(({item, index}: any) => {
     return (
       <ReservationItemContainerView>
-        <ReservationItemContentView>
-          <ReservationItemTitleView>
-            <ReservationItemTitleText>{'예쁜이치과'}</ReservationItemTitleText>
-            <InfoIconView>
-              <InfoIconImage
-                style={{
-                  resizeMode: 'contain',
-                }}
-                source={require('~/Assets/Images/Indicator/ic_vertical_more.png')}
-              />
-            </InfoIconView>
-          </ReservationItemTitleView>
-          <ReservationItemLocationText>
-            {'경기도 수원시 영통구 이의동'}
-          </ReservationItemLocationText>
-          <ReservationItemDetailView>
-            <ReservationItemDateText>{'20.12.1.화'}</ReservationItemDateText>
-            <DateTimeDivider />
-            <ReservationItemTimeText>{'오후 3:00'}</ReservationItemTimeText>
-          </ReservationItemDetailView>
-        </ReservationItemContentView>
-        <Line />
+        <TouchableWithoutFeedback>
+          <DeleteIconView>
+            <DeleteIconImage
+              source={require('~/Assets/Images/MyPage/delete_reservation.png')}
+            />
+          </DeleteIconView>
+        </TouchableWithoutFeedback>
+        <ReservationItemTitleView>
+          <ReservationItemTitleText>
+            {'2020.11.12(화)'}
+          </ReservationItemTitleText>
+        </ReservationItemTitleView>
+        <TouchableWithoutFeedback>
+          <ReservationItemContentView>
+            <ReservationItemImage />
+            <ReservationItemDetailView>
+              <ReservationItemDateText>
+                {'오후 3:00 전화'}
+              </ReservationItemDateText>
+              <ReservationItemClinicText>
+                {'광교E편한치과의원'}
+              </ReservationItemClinicText>
+              <ReservationItemNavigationView>
+                <ReservationItemNavigationText>
+                  {'병원상세정보'}
+                </ReservationItemNavigationText>
+                <ArrowIconImage
+                  source={require('~/Assets/Images/MyPage/move_clinic_detail.png')}
+                />
+              </ReservationItemNavigationView>
+            </ReservationItemDetailView>
+          </ReservationItemContentView>
+        </TouchableWithoutFeedback>
         <ReservationButtonContainerView>
           <CreateReviewTouchableOpacity>
             <CreateReviewText>{'리뷰작성'}</CreateReviewText>
@@ -194,8 +206,17 @@ const ReservationScreen = ({navigation, route, reservations}: Props) => {
         </ReservationButtonContainerView>
       </ReservationItemContainerView>
     );
-  };
+  }, []);
 
+  const renderListHeader = useCallback(
+    () => (
+      <PlaceholderContent
+        navigation={navigation}
+        title={'아직 병원 예약 내역이 없습니다.'}
+      />
+    ),
+    [navigation],
+  );
   return (
     <ContainerView>
       <FlatList
@@ -203,6 +224,7 @@ const ReservationScreen = ({navigation, route, reservations}: Props) => {
         keyExtractor={(item) => item.id}
         alwaysBounceVertical={false}
         renderItem={renderReservationItemView}
+        ListHeaderComponent={renderListHeader}
       />
     </ContainerView>
   );

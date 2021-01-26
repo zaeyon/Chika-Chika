@@ -1,6 +1,6 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import clamp from 'clamp'
+import React from 'react';
+import PropTypes from 'prop-types';
+import clamp from 'clamp';
 
 import {
   ViewPropTypes,
@@ -11,27 +11,27 @@ import {
   Animated,
   PanResponder,
   Platform,
-  findNodeHandle
-} from 'react-native'
+  findNodeHandle,
+} from 'react-native';
 
-import closest from './libs/closest'
-import measureElement from './libs/measureElement'
-import FlickAnimation from './libs/FlickAnimation'
-import {statusBarHeight, visibleHeight} from './libs/layout'
-import * as Constants from './libs/constants'
-import styles from './libs/styles'
+import closest from './libs/closest';
+import measureElement from './libs/measureElement';
+import FlickAnimation from './libs/FlickAnimation';
+import {statusBarHeight, visibleHeight} from './libs/layout';
+import * as Constants from './libs/constants';
+import styles from './libs/styles';
 
 const keyboardShowEvent = Platform.select({
   android: 'keyboardDidShow',
-  ios: 'keyboardWillShow'
-})
+  ios: 'keyboardWillShow',
+});
 
 const keyboardHideEvent = Platform.select({
   android: 'keyboardDidHide',
-  ios: 'keyboardWillHide'
-})
+  ios: 'keyboardWillHide',
+});
 
-const usableHeight = visibleHeight() - statusBarHeight()
+const usableHeight = visibleHeight() - statusBarHeight();
 
 class SlidingUpPanel extends React.PureComponent {
   static propTypes = {
@@ -39,7 +39,7 @@ class SlidingUpPanel extends React.PureComponent {
     animatedValue: PropTypes.instanceOf(Animated.Value),
     draggableRange: PropTypes.shape({
       top: PropTypes.number,
-      bottom: PropTypes.number
+      bottom: PropTypes.number,
     }),
     snappingPoints: PropTypes.arrayOf(PropTypes.number),
     minimumVelocityThreshold: PropTypes.number,
@@ -62,7 +62,7 @@ class SlidingUpPanel extends React.PureComponent {
     panelState: PropTypes.string,
     openPanel: PropTypes.func,
     hidePanel: PropTypes.func,
-  }
+  };
 
   static defaultProps = {
     height: usableHeight,
@@ -83,10 +83,10 @@ class SlidingUpPanel extends React.PureComponent {
     backdropOpacity: 0.75,
     friction: Constants.DEFAULT_FRICTION,
     onBottomReached: () => null,
-    panelState: "hide",
+    panelState: 'hide',
     openPanel: () => null,
     hidePanel: () => null,
-  }
+  };
 
   // eslint-disable-next-line react/sort-comp
   _panResponder = PanResponder.create({
@@ -96,146 +96,141 @@ class SlidingUpPanel extends React.PureComponent {
     onPanResponderRelease: this._onPanResponderRelease.bind(this),
     onPanResponderTerminate: this._onPanResponderTerminate.bind(this),
     onShouldBlockNativeResponder: () => true,
-    onPanResponderTerminationRequest: () => false
-  })
+    onPanResponderTerminationRequest: () => false,
+  });
 
   _keyboardShowListener = Keyboard.addListener(
     keyboardShowEvent,
-    this._onKeyboardShown.bind(this)
-  )
+    this._onKeyboardShown.bind(this),
+  );
 
   _keyboardHideListener = Keyboard.addListener(
     keyboardHideEvent,
-    this._onKeyboardHiden.bind(this)
-  )
+    this._onKeyboardHiden.bind(this),
+  );
 
   _backButtonListener = BackHandler.addEventListener(
     'hardwareBackPress',
-    this._onBackButtonPress.bind(this)
-  )
+    this._onBackButtonPress.bind(this),
+  );
 
   constructor(props) {
-    super(props)
+    super(props);
 
-    this._storeKeyboardPosition = this._storeKeyboardPosition.bind(this)
-    this._isInsideDraggableRange = this._isInsideDraggableRange.bind(this)
-    this._triggerAnimation = this._triggerAnimation.bind(this)
-    this._renderContent = this._renderContent.bind(this)
-    this._renderBackdrop = this._renderBackdrop.bind(this)
+    this._storeKeyboardPosition = this._storeKeyboardPosition.bind(this);
+    this._isInsideDraggableRange = this._isInsideDraggableRange.bind(this);
+    this._triggerAnimation = this._triggerAnimation.bind(this);
+    this._renderContent = this._renderContent.bind(this);
+    this._renderBackdrop = this._renderBackdrop.bind(this);
 
-    this.show = this.show.bind(this)
-    this.hide = this.hide.bind(this)
-    this.scrollIntoView = this.scrollIntoView.bind(this)
+    this.show = this.show.bind(this);
+    this.hide = this.hide.bind(this);
+    this.scrollIntoView = this.scrollIntoView.bind(this);
 
-    const {top, bottom} = this.props.draggableRange
-    const animatedValue = this.props.animatedValue.__getValue()
-    const initialValue = clamp(animatedValue, bottom, top)
+    const {top, bottom} = this.props.draggableRange;
+    const animatedValue = this.props.animatedValue.__getValue();
+    const initialValue = clamp(animatedValue, bottom, top);
 
     // Ensure the animation are within draggable range
-    this.props.animatedValue.setValue(initialValue)
+    this.props.animatedValue.setValue(initialValue);
 
-    this._initialDragPosition = initialValue
+    this._initialDragPosition = initialValue;
     this._backdropPointerEvents = this._isAtBottom(initialValue) ? 'none' : 'box-only' // prettier-ignore
-    this._flick = new FlickAnimation({max: top, min: bottom})
+    this._flick = new FlickAnimation({max: top, min: bottom});
 
-    this._flickAnimationListener = this._flick.onUpdate(value => {
-      this.props.animatedValue.setValue(value)
-    })
+    this._flickAnimationListener = this._flick.onUpdate((value) => {
+      this.props.animatedValue.setValue(value);
+    });
 
     this._animatedValueListener = this.props.animatedValue.addListener(
-      this._onAnimatedValueChange.bind(this)
-    )
+      this._onAnimatedValueChange.bind(this),
+    );
   }
 
   componentDidUpdate(prevProps) {
-    
     if (
       prevProps.draggableRange.top !== this.props.draggableRange.top ||
       prevProps.draggableRange.bottom !== this.props.draggableRange.bottom
     ) {
-      const {top, bottom} = this.props.draggableRange
-      const animatedValue = this.props.animatedValue.__getValue()
+      const {top, bottom} = this.props.draggableRange;
+      const animatedValue = this.props.animatedValue.__getValue();
 
-      this._flick.setMax(top)
-      this._flick.setMin(bottom)
+      this._flick.setMax(top);
+      this._flick.setMin(bottom);
 
       // If the panel is below the new 'bottom'
       if (animatedValue < bottom || animatedValue > top) {
-        const newValue = clamp(animatedValue, bottom, top)
-        this.props.animatedValue.setValue(newValue)
+        const newValue = clamp(animatedValue, bottom, top);
+        this.props.animatedValue.setValue(newValue);
       }
     }
   }
 
   componentWillUnmount() {
     if (this._animatedValueListener != null) {
-      this.props.animatedValue.removeListener(this._animatedValueListener)
+      this.props.animatedValue.removeListener(this._animatedValueListener);
     }
 
     if (this._keyboardShowListener != null) {
-      this._keyboardShowListener.remove()
+      this._keyboardShowListener.remove();
     }
 
     if (this._keyboardHideListener != null) {
-      this._keyboardHideListener.remove()
+      this._keyboardHideListener.remove();
     }
 
     if (this._flickAnimationListener != null) {
-      this._flickAnimationListener.remove()
+      this._flickAnimationListener.remove();
     }
 
     if (this._backButtonListener != null) {
-      this._backButtonListener.remove()
+      this._backButtonListener.remove();
     }
   }
 
   _onMoveShouldSetPanResponder(evt, gestureState) {
-
     if (!this.props.allowDragging) {
-        return false
+      return false;
     }
 
-    const animatedValue = this.props.animatedValue.__getValue()
+    const animatedValue = this.props.animatedValue.__getValue();
 
     return (
       this._isInsideDraggableRange(animatedValue, gestureState) &&
       Math.abs(gestureState.dy) > this.props.minimumDistanceThreshold
-    )
+    );
   }
 
   _onPanResponderGrant(evt, gestureState) {
-    this._flick.stop()
+    this._flick.stop();
 
-    const value = this.props.animatedValue.__getValue()
+    const value = this.props.animatedValue.__getValue();
 
-    this._initialDragPosition = value
-    this.props.onDragStart(value, gestureState)
+    this._initialDragPosition = value;
+    this.props.onDragStart(value, gestureState);
   }
 
   _onPanResponderMove(evt, gestureState) {
-    const {top, bottom} = this.props.draggableRange
-    const delta = this._initialDragPosition - gestureState.dy
-    const newValue = clamp(delta, top, bottom)
+    const {top, bottom} = this.props.draggableRange;
+    const delta = this._initialDragPosition - gestureState.dy;
+    const newValue = clamp(delta, top, bottom);
 
-    this.props.animatedValue.setValue(newValue)
+    this.props.animatedValue.setValue(newValue);
   }
 
   // Trigger when you release your finger
   _onPanResponderRelease(evt, gestureState) {
-
-    console.log("onPanResponderRelease gestureState", gestureState);
-    if(gestureState.dy < 0) {
-     const animatedValue = this.props.animatedValue.__getValue()
-     this._initialDragPosition = animatedValue
-     this.props.onDragEnd(animatedValue, gestureState)
-      this.show()
-
-    } else if(gestureState.dy > 0) {
-
-     const animatedValue = this.props.animatedValue.__getValue()
-     this._initialDragPosition = animatedValue
-     this.props.onDragEnd(animatedValue, gestureState)
-      this.hide()
+    console.log('onPanResponderRelease gestureState', gestureState);
+    if (gestureState.dy < 0) {
+      const animatedValue = this.props.animatedValue.__getValue();
+      this._initialDragPosition = animatedValue;
+      this.props.onDragEnd(animatedValue, gestureState);
+      this.show();
+    } else if (gestureState.dy > 0) {
+      const animatedValue = this.props.animatedValue.__getValue();
+      this._initialDragPosition = animatedValue;
+      this.props.onDragEnd(animatedValue, gestureState);
+      this.hide();
     }
 
     /*
@@ -301,261 +296,263 @@ class SlidingUpPanel extends React.PureComponent {
   }
 
   _onPanResponderTerminate(evt, gestureState) {
-    const animatedValue = this.props.animatedValue.__getValue()
+    const animatedValue = this.props.animatedValue.__getValue();
 
     if (!this._isInsideDraggableRange(animatedValue, gestureState)) {
-      return
+      return;
     }
 
-    this._initialDragPosition = animatedValue
-    this.props.onDragEnd(animatedValue, gestureState)
+    this._initialDragPosition = animatedValue;
+    this.props.onDragEnd(animatedValue, gestureState);
   }
 
   _onAnimatedValueChange({value}) {
-    const isAtBottom = this._isAtBottom(value)
+    const isAtBottom = this._isAtBottom(value);
 
     if (isAtBottom) {
-      this.props.onBottomReached()
-      this.props.avoidKeyboard && Keyboard.dismiss()
+      this.props.onBottomReached();
+      this.props.avoidKeyboard && Keyboard.dismiss();
     }
 
     if (this._backdrop == null) {
-      return
+      return;
     }
 
     // @TODO: Find a better way to update pointer events when animated value changed
 
     if (isAtBottom && this._backdropPointerEvents === 'box-only') {
-      this._backdropPointerEvents = 'none'
-      this._backdrop.setNativeProps({pointerEvents: 'none'})
+      this._backdropPointerEvents = 'none';
+      this._backdrop.setNativeProps({pointerEvents: 'none'});
     }
 
     if (!isAtBottom && this._backdropPointerEvents === 'none') {
-      this._backdropPointerEvents = 'box-only'
-      this._backdrop.setNativeProps({pointerEvents: 'box-only'})
+      this._backdropPointerEvents = 'box-only';
+      this._backdrop.setNativeProps({pointerEvents: 'box-only'});
     }
   }
 
   _onKeyboardShown(event) {
     if (!this.props.avoidKeyboard) {
-      return
+      return;
     }
 
-    this._storeKeyboardPosition(event.endCoordinates.screenY)
+    this._storeKeyboardPosition(event.endCoordinates.screenY);
 
     const node = TextInput.State.currentlyFocusedInput
       ? TextInput.State.currentlyFocusedInput()
       : findNodeHandler(TextInput.State.currentlyFocusedInput());
 
     if (node != null) {
-      UIManager.viewIsDescendantOf(node, findNodeHandle(this._content), (isDescendant) => {
-        isDescendant && this.scrollIntoView(node)
-      });
+      UIManager.viewIsDescendantOf(
+        node,
+        findNodeHandle(this._content),
+        (isDescendant) => {
+          isDescendant && this.scrollIntoView(node);
+        },
+      );
     }
   }
 
   _onKeyboardHiden() {
-    this._storeKeyboardPosition(0)
+    this._storeKeyboardPosition(0);
 
-    const animatedValue = this.props.animatedValue.__getValue()
+    const animatedValue = this.props.animatedValue.__getValue();
 
     // Restore last position
     if (this._lastPosition != null && !this._isAtBottom(animatedValue)) {
       Animated.timing(this.props.animatedValue, {
         toValue: this._lastPosition,
         duration: Constants.KEYBOARD_TRANSITION_DURATION,
-        useNativeDriver: true
-      }).start()
+        useNativeDriver: true,
+      }).start();
     }
 
-    this._lastPosition = null
+    this._lastPosition = null;
   }
 
   _onBackButtonPress() {
     if (this.props.onBackButtonPress) {
-      return this.props.onBackButtonPress()
+      return this.props.onBackButtonPress();
     }
 
-    const value = this.props.animatedValue.__getValue()
+    const value = this.props.animatedValue.__getValue();
 
     if (this._isAtBottom(value)) {
-      return false
+      return false;
     }
 
-    this.hide()
+    this.hide();
 
-
-    return true
+    return true;
   }
 
   _isInsideDraggableRange(value, gestureState) {
-    const {top, bottom} = this.props.draggableRange
+    const {top, bottom} = this.props.draggableRange;
 
     if (gestureState.dy > 0) {
-      return value >= bottom
+      return value >= bottom;
     }
 
-    return value <= top
+    return value <= top;
   }
 
   _isAtBottom(value) {
-    const {bottom} = this.props.draggableRange
-    return value <= bottom
+    const {bottom} = this.props.draggableRange;
+    return value <= bottom;
   }
 
   _storeKeyboardPosition(value) {
-    this._keyboardYPosition = value
+    this._keyboardYPosition = value;
   }
 
   _triggerAnimation(options = {}) {
-    const animatedValue = this.props.animatedValue.__getValue()
-    const remainingDistance = animatedValue - options.toValue
+    const animatedValue = this.props.animatedValue.__getValue();
+    const remainingDistance = animatedValue - options.toValue;
     const velocity = options.velocity || remainingDistance / Constants.TIME_CONSTANT // prettier-ignore
 
     this._flick.start({
       velocity,
       toValue: options.toValue,
       fromValue: animatedValue,
-      friction: this.props.friction
-    })
+      friction: this.props.friction,
+    });
   }
 
   _renderBackdrop() {
     if (!this.props.showBackdrop) {
-      return null
+      return null;
     }
 
-    const {top, bottom} = this.props.draggableRange
-    const {backdropStyle} = this.props
+    const {top, bottom} = this.props.draggableRange;
+    const {backdropStyle} = this.props;
 
     const backdropOpacity = this.props.animatedValue.interpolate({
       inputRange: [bottom, top],
       outputRange: [0, this.props.backdropOpacity],
-      extrapolate: 'clamp'
-    })
+      extrapolate: 'clamp',
+    });
 
     const clickBackdrop = () => {
-      this.hide()
-    }
+      this.hide();
+    };
 
     return (
       <Animated.View
         key="backdrop"
         pointerEvents={this._backdropPointerEvents}
-        ref={c => (this._backdrop = c)}
+        ref={(c) => (this._backdrop = c)}
         onTouchStart={() => this._flick.stop()}
         onTouchEnd={() => clickBackdrop()}
         style={[styles.backdrop, backdropStyle, {opacity: backdropOpacity}]}
       />
-    )
+    );
   }
 
   _renderContent() {
     const {
       height,
       draggableRange: {top, bottom},
-      containerStyle
-    } = this.props
+      containerStyle,
+    } = this.props;
 
     const translateY = this.props.animatedValue.interpolate({
       inputRange: [bottom, top],
       outputRange: [-bottom, -top],
-      extrapolate: 'clamp'
-    })
+      extrapolate: 'clamp',
+    });
 
-    const transform = {transform: [{translateY}]}
+    const transform = {transform: [{translateY}]};
 
     const animatedContainerStyles = [
       styles.animatedContainer,
       transform,
       containerStyle,
-      {height, bottom: -height}
-    ]
+      {height, bottom: -height},
+    ];
 
     if (typeof this.props.children === 'function') {
       return (
         <Animated.View
           key="content"
           pointerEvents="box-none"
-          ref={c => (this._content = c)}
+          ref={(c) => (this._content = c)}
           style={animatedContainerStyles}>
           {this.props.children(this._panResponder.panHandlers)}
         </Animated.View>
-      )
+      );
     }
 
     return (
       <Animated.View
         key="content"
         pointerEvents="box-none"
-        ref={c => (this._content = c)}
+        ref={(c) => (this._content = c)}
         style={animatedContainerStyles}
         {...this._panResponder.panHandlers}>
         {this.props.children}
       </Animated.View>
-    )
+    );
   }
 
   render() {
-    return [this._renderBackdrop(), this._renderContent()]
+    return [this._renderBackdrop(), this._renderContent()];
   }
 
   show(mayBeValueOrOptions) {
-
     this.setState({
-      panelState: "show"
-    })
+      panelState: 'show',
+    });
 
-    this.props.openPanel()
+    this.props.openPanel();
 
     if (!mayBeValueOrOptions) {
-      const {top} = this.props.draggableRange
-      return this._triggerAnimation({toValue: top, velocity: -1.2})
+      const {top} = this.props.draggableRange;
+      return this._triggerAnimation({toValue: top, velocity: -1.2});
     }
 
     if (typeof mayBeValueOrOptions === 'object') {
-      return this._triggerAnimation(mayBeValueOrOptions)
+      return this._triggerAnimation(mayBeValueOrOptions);
     }
 
-    return this._triggerAnimation({toValue: mayBeValueOrOptions})
+    return this._triggerAnimation({toValue: mayBeValueOrOptions});
   }
 
   hide() {
     this.setState({
-      panelState: "hide"
-    })
+      panelState: 'hide',
+    });
 
-    this.props.hidePanel()
-    
-    const {bottom} = this.props.draggableRange
-    this._triggerAnimation({toValue: bottom, velocity: 1.2})
+    this.props.hidePanel();
+
+    const {bottom} = this.props.draggableRange;
+    this._triggerAnimation({toValue: bottom, velocity: 1.2});
   }
 
   async scrollIntoView(node, options = {}) {
     if (!this._keyboardYPosition) {
-      return
+      return;
     }
 
     // Stop any animation when the keyboard starts showing
-    this._flick.stop()
+    this._flick.stop();
 
-    const {y} = await measureElement(node)
+    const {y} = await measureElement(node);
     const extraMargin = options.keyboardExtraMargin || Constants.KEYBOARD_EXTRA_MARGIN // prettier-ignore
-    const keyboardActualPos = this._keyboardYPosition - extraMargin
+    const keyboardActualPos = this._keyboardYPosition - extraMargin;
 
     if (y > keyboardActualPos) {
-      this._lastPosition = this.props.animatedValue.__getValue()
+      this._lastPosition = this.props.animatedValue.__getValue();
 
-      const fromKeyboardToElement = y - keyboardActualPos
-      const transitionDistance = this._lastPosition + fromKeyboardToElement
+      const fromKeyboardToElement = y - keyboardActualPos;
+      const transitionDistance = this._lastPosition + fromKeyboardToElement;
 
       Animated.timing(this.props.animatedValue, {
         toValue: transitionDistance,
         duration: Constants.KEYBOARD_TRANSITION_DURATION,
-        useNativeDriver: true
-      }).start()
+        useNativeDriver: true,
+      }).start();
     }
   }
 }
 
-export default SlidingUpPanel
+export default SlidingUpPanel;

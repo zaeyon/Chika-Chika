@@ -39,6 +39,8 @@ import allActions from '~/actions';
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
  background-color: white;
+ align-items: center;
+ justify-content: center;
 `;
 
 const BodyContainerScrollView = Styled.ScrollView`
@@ -104,11 +106,29 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
       (item: any) => item.id === route.params.id,
     );
     if (newPostData) {
+      console.log('hi');
       setPostData(newPostData);
+    } else {
+      GETCommunityPostDetail(jwtToken, String(route.params.id)).then(
+        (response: any) => {
+          console.log(response);
+        },
+      );
     }
   }, [postList]);
 
   useEffect(() => {
+    GETCommunityPostDetail(jwtToken, String(route.params.id)).then(
+      (response: any) => {
+        setPostData((prev) => {
+          if (!prev) {
+            return response;
+          } else {
+            return prev;
+          }
+        });
+      },
+    );
     fetchPostComments(route.params.id);
   }, []);
 
@@ -336,7 +356,11 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
       </ContainerView>
     );
   } else {
-    return <ContainerView></ContainerView>;
+    return (
+      <ContainerView>
+        <ActivityIndicator />
+      </ContainerView>
+    );
   }
 };
 

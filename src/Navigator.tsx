@@ -59,7 +59,7 @@ import RatingScreen from '~/Components/Container/ReviewUploadScreen/RatingScreen
 // My Profile Stack Screen
 import MyProfileScreen from '~/Components/Container/MyProfileScreen';
 import EditProfileTabScreen from '~/Components/Container/MyProfileScreen/EditProfileTabScreen';
-import EmailConsultingTabScreen from '~/Components/Container/MyProfileScreen/EmailConsultingTabScreen';
+import EditNicknameScreen from '~/Components/Presentational/MyProfileScreen/EditProfileScreen/EditNicknameScreen';
 import GeneralSettingTabScreen from '~/Components/Container/MyProfileScreen/GeneralSettingTabScreen';
 import ReservationTabScreen from '~/Components/Container/MyProfileScreen/ReservationTabScreen';
 import SavedHospitalTabScreen from '~/Components/Container/MyProfileScreen/SavedHospitalTabScreen';
@@ -78,6 +78,8 @@ import CommunityListScreen from '~/Components/Container/CommunityListScreen';
 import CommunityDetailScreen from '~/Components/Container/CommunityDetailScreen';
 import CommunityPostUploadScreen from '~/Components/Container/CommunityPostUploadScreen';
 import ImageSelectScreen from '~/Components/Container/ImageSelectScreen';
+import ImageSelectOneScreen from '~/Components/Container/ImageSelectOneScreen';
+import FullImageScreen from '~/Components/Container/ImageSelectOneScreen/FullImageScreen';
 import ImageDetailScreen from '~/Components/Container/ImageDetailScreen';
 // Dental Clinic Stack Screen
 import NearDentalMap from '~/Components/Container/NearDentalMap';
@@ -114,12 +116,13 @@ const MyProfileStack = createStackNavigator();
 const ReviewStack = createStackNavigator();
 const AnotherProfileStack = createStackNavigator();
 const SettingStack = createStackNavigator();
-const CommunityStack = createSharedElementStackNavigator();
+const CommunityStack = createStackNavigator();
 const CommunityPostUploadStack = createStackNavigator();
 const DentalClinicStack = createStackNavigator();
 const TeethCareStack = createStackNavigator();
 const KeywordSearchStack = createStackNavigator();
-const EditProfileStack = createStackNavigator();
+const EditProfileStack = createSharedElementStackNavigator();
+const ImageSelectOneStack = createSharedElementStackNavigator();
 
 const staticConfig = {
   animation: 'timing',
@@ -161,11 +164,11 @@ function AuthStackScreen() {
 
 function ReviewStackScreen() {
   return (
-    <ReviewStack.Navigator 
-    headerMode="none"
-    screenOptions={{
-      gestureEnabled: true,
-    }}>
+    <ReviewStack.Navigator
+      headerMode="none"
+      screenOptions={{
+        gestureEnabled: true,
+      }}>
       <ReviewStack.Screen
         name="ReviewListScreen"
         component={ReviewListScreen}
@@ -180,7 +183,6 @@ function ReviewStackScreen() {
       <ReviewStack.Screen
         name="FullImagesScreen"
         component={FullImagesScreen}
-        
       />
       <ReviewStack.Screen
         name="ReviewUploadStack"
@@ -235,12 +237,21 @@ function ReviewStackScreen() {
   );
 }
 
-function AnotherProfileStackScreen() {
+function AnotherProfileStackScreen({route}) {
   return (
     <AnotherProfileStack.Navigator headerMode="none">
       <AnotherProfileStack.Screen
         name="AnotherProfileScreen"
         component={AnotherProfileScreen}
+        initialParams={route.params}
+      />
+      <AnotherProfileStack.Screen
+        name="CommunityStackScreen"
+        component={CommunityStackScreen}
+      />
+      <AnotherProfileStack.Screen
+        name="ReviewStackScreen"
+        component={ReviewStackScreen}
       />
     </AnotherProfileStack.Navigator>
   );
@@ -248,11 +259,11 @@ function AnotherProfileStackScreen() {
 
 function HomeStackScreen() {
   return (
-    <HomeStack.Navigator 
-    headerMode="none"
-    screenOptions={{
-      gestureEnabled: false
-    }}>
+    <HomeStack.Navigator
+      headerMode="none"
+      screenOptions={{
+        gestureEnabled: false,
+      }}>
       <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
       <HomeStack.Screen
         name="ReviewStackScreen"
@@ -266,7 +277,7 @@ function HomeStackScreen() {
         name="ReviewUploadStackScreen"
         component={ReviewUploadStackScreen}
         options={{
-          gestureEnabled: false
+          gestureEnabled: false,
         }}
       />
     </HomeStack.Navigator>
@@ -312,16 +323,16 @@ function DentalClinicStackScreen() {
         name="DentalInfoEditRequestScreen"
         component={DentalInfoEditRequestScreen}
       />
-       <DentalClinicStack.Screen
+      <DentalClinicStack.Screen
         name="ReviewUploadStackScreen"
         component={ReviewUploadStackScreen}
         options={{
-          gestureEnabled: false
+          gestureEnabled: false,
         }}
       />
       <DentalClinicStack.Screen
-      name="DentalLocationMapScreen"
-      component={DentalLocationMapScreen}
+        name="DentalLocationMapScreen"
+        component={DentalLocationMapScreen}
       />
       <DentalClinicStack.Screen
         name="ImageSelectScreen"
@@ -337,9 +348,7 @@ function DentalClinicStackScreen() {
 function TeethCareStackScreen() {
   return (
     <TeethCareStack.Navigator headerMode="none">
-      <TeethCareStack.Screen
-        name="GuideScreen"
-        component={GuideScreen}/>
+      <TeethCareStack.Screen name="GuideScreen" component={GuideScreen} />
       <TeethCareStack.Screen
         name="TeethCareScreen"
         component={TeethCareScreen}
@@ -375,8 +384,7 @@ function TeethCareStackScreen() {
 
 function ReviewUploadStackScreen() {
   return (
-    <ReviewUploadStack.Navigator 
-    headerMode="none">
+    <ReviewUploadStack.Navigator headerMode="none">
       <ReviewUploadStack.Screen
         name="ReceiptRegisterScreen"
         component={ReceiptRegisterScreen}
@@ -449,16 +457,13 @@ function ReviewUploadStackScreen() {
           gestureEnabled: false,
         }}
       />
+      <ReviewUploadStack.Screen name="RatingScreen" component={RatingScreen} />
       <ReviewUploadStack.Screen
-      name="RatingScreen"
-      component={RatingScreen}
-      />
-      <ReviewUploadStack.Screen
-      name="ImageSelectScreen"
-      component={ImageSelectScreen}
-      options={{
-        gestureEnabled: false,
-      }}
+        name="ImageSelectScreen"
+        component={ImageSelectScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       
     </ReviewUploadStack.Navigator>
@@ -467,16 +472,68 @@ function ReviewUploadStackScreen() {
 
 function EditProfileStackScreen() {
   return (
-    <EditProfileStack.Navigator headerMode="none">
+    <EditProfileStack.Navigator headerMode="none" mode="card">
       <EditProfileStack.Screen
         name="EditProfileTabScreen"
         component={EditProfileTabScreen}
+        sharedElementsConfig={(route, otherRoute, showing) => {
+          console.log(otherRoute);
+          if (otherRoute.name === 'EditNicknameScreen') {
+            return [{id: 'nicknameInput'}];
+          }
+        }}
       />
       <EditProfileStack.Screen
-        name="EditProfileGallery"
-        component={GallerySelectOne}
+        name="ImageSelectOneStackScreen"
+        component={ImageSelectOneStackScreen}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
+      <EditProfileStack.Screen
+        name="EditNicknameScreen"
+        component={EditNicknameScreen}
+        options={{
+          gestureEnabled: false,
+          cardStyleInterpolator: ({current: {progress}}) => {
+            return {
+              cardStyle: {
+                opacity: progress,
+              },
+            };
+          },
+        }}
       />
     </EditProfileStack.Navigator>
+  );
+}
+
+function ImageSelectOneStackScreen({route}) {
+  return (
+    <ImageSelectOneStack.Navigator headerMode="none">
+      <ImageSelectOneStack.Screen
+        name="ImageSelectOneScreen"
+        component={ImageSelectOneScreen}
+        initialParams={route.params}
+      />
+      <ImageSelectOneStack.Screen
+        name="FullImageScreen"
+        component={FullImageScreen}
+        initialParams={route.params}
+        sharedElementsConfig={(route, otherRoute, showing) => {
+          console.log('me', otherRoute);
+          if (
+            otherRoute.name === 'FullImageScreen' ||
+            otherRoute.name === 'ImageSelectOneScreen'
+          ) {
+            return [{id: 'header', animation: 'fade'}];
+          }
+        }}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
+    </ImageSelectOneStack.Navigator>
   );
 }
 
@@ -490,6 +547,15 @@ function MyProfileStackScreen() {
       <MyProfileStack.Screen
         name="EditProfileStackScreen"
         component={EditProfileStackScreen}
+        options={({route}: any) => {
+          const routeName = route.state
+            ? route.state.routeNames[route.state.index]
+            : '';
+          return {
+            gestureEnabled:
+              routeName === 'ImageSelectOneStackScreen' ? false : true,
+          };
+        }}
       />
       <MyProfileStack.Screen
         name="GeneralSettingTabScreen"
@@ -537,7 +603,8 @@ function MyProfileStackScreen() {
       />
       <MyProfileStack.Screen
         name="HometownSettingScreen"
-        component={HometownSettingScreen}/>
+        component={HometownSettingScreen}
+      />
     </MyProfileStack.Navigator>
   );
 }
@@ -740,6 +807,13 @@ function BottomTab() {
     }
 
     if (
+      stackRouteName === 'ReviewStackScreen' ||
+      routeName.name === 'ReviewDetailScreen'
+    ) {
+      return false;
+    }
+
+    if (
       stackRouteName === 'CommunityStackScreen' ||
       routeName.name === 'ImageDetailScreen'
     ) {
@@ -778,7 +852,11 @@ function BottomTab() {
     const stackRouteName = routeName.state
       ? routeName.state.routes[routeName.state.index].name
       : '';
-    if (routeName.name === 'EditProfileStackScreen' || routeName.name === 'HometownSettingScreen' || routeName.name === 'HometownSearchScreen') {
+    if (
+      routeName.name === 'EditProfileStackScreen' ||
+      routeName.name === 'HometownSettingScreen' ||
+      routeName.name === 'HometownSearchScreen'
+    ) {
       return false;
     }
 
@@ -837,7 +915,6 @@ function BottomTab() {
               }
             />
           ),
-        
         })}
       />
       <Tab.Screen
@@ -856,7 +933,7 @@ function BottomTab() {
           ),
         })}
       />
-      <Tab.Screen
+      {<Tab.Screen
         name="관리"
         component={TeethCareStackScreen}
         options={({route}) => ({
@@ -871,7 +948,7 @@ function BottomTab() {
             />
           ),
         })}
-      />
+      />}
       <Tab.Screen
         name="수다방"
         component={CommunityStackScreen}
@@ -932,10 +1009,10 @@ const Navigator = () => {
               }),
             );
 
-            dispatch(allActions.userActions.setHometown(response.Residences))
+            dispatch(allActions.userActions.setHometown(response.Residences));
           })
           .catch((error: any) => {
-            console.log('user error', error);
+            console.log('get user error', error);
           });
       })
       .catch((error) => {

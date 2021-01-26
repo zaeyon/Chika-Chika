@@ -15,12 +15,13 @@ import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import Animated, {Extrapolate, Easing} from 'react-native-reanimated';
 import {TabView, TabBar} from 'react-native-tab-view';
 import {PanGestureHandler} from 'react-native-gesture-handler';
+import DeviceInfo from 'react-native-device-info';
 //Local Component
 import PostItem from '~/Components/Presentational/PostItem';
 import ReviewItem from '~/Components/Presentational/ReviewItem';
 import {callPhoneNumber} from '~/method/callPhoneNumber';
 
-const HEADERHEIGHT = 91;
+const HEADERHEIGHT = 69 + getStatusBarHeight();
 const PROFILEHEIGHT = 102;
 const TABBARHEIGHT = 55;
 
@@ -36,8 +37,8 @@ width: ${wp('100%')}px;
 height: ${HEADERHEIGHT}px;
 flex-direction: row;
 margin-top: ${-getStatusBarHeight()}px;
-padding: ${getStatusBarHeight() + 22}px 16px 16px 16px;
-align-items: flex-end;
+padding: ${getStatusBarHeight() + 24}px 16px 0px 16px;
+align-items: flex-start;
 background: #FFFFFF;
 z-index: 2;
 `;
@@ -46,15 +47,8 @@ const HeaderNicknameText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
 font-weight: 800;
-font-size: 22px;
-line-height: 24px;
+font-size: 23px;
 margin-right: 8px;
-`;
-
-const HeaderIconContainerView = Styled.View`
-width: auto
-flex-direction: row;
-margin-left: auto;
 `;
 
 const HeaderIconTouchableOpacity = Styled.TouchableOpacity`
@@ -93,7 +87,8 @@ const ProfileImageView = Styled.View`
 width: 77px;
 height: 77px;
 background: grey;
-border: 0.5px #A6A8AC;
+border-width: 0.5px;
+border-color: #A6A8AC;
 border-radius: 100px;
 margin-right: 16px;
 `;
@@ -195,6 +190,10 @@ interface State {
   isModalVisible: boolean;
   index: number;
   routes: any;
+  currentScrollY: Animated.Value<0>;
+  positionX: Animated.Value<0>;
+  minusValue: Animated.Value<-1>;
+  headerHeightValue: Animated.Value<number>;
 }
 
 interface User {
@@ -215,13 +214,8 @@ interface Residence {
 }
 
 export default class MyProfile extends React.PureComponent<Props, State> {
-  minusValue: Animated.Value<-1>;
-  headerHeightValue: Animated.Value<number>;
-  swiperRef: any;
-  reviewRef: any;
-  communityRef: any;
-  currentScrollY: Animated.Value<0>;
-  positionX: Animated.Value<0>;
+  reviewRef: React.RefObject<unknown>;
+  communityRef: React.RefObject<unknown>;
 
   constructor(props: Props) {
     super(props);
@@ -233,13 +227,14 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         {key: 'first', title: '내가 쓴 후기'},
         {key: 'second', title: '내가 쓴 수다글'},
       ],
+      currentScrollY: new Animated.Value(0),
+      positionX: new Animated.Value(0),
+      minusValue: new Animated.Value(-1),
+      headerHeightValue: new Animated.Value(PROFILEHEIGHT),
     };
 
-    this.currentScrollY = new Animated.Value(0);
-    this.positionX = new Animated.Value(0);
-    this.swiperRef = React.createRef();
-    this.minusValue = new Animated.Value(-1);
-    this.headerHeightValue = new Animated.Value(PROFILEHEIGHT);
+    this.reviewRef = React.createRef();
+    this.communityRef = React.createRef();
 
     this.scrollToIndex = this.scrollToIndex.bind(this);
     this.closeModal = this.closeModal.bind(this);
@@ -248,10 +243,14 @@ export default class MyProfile extends React.PureComponent<Props, State> {
   }
 
   scrollToIndex = (index: number) => {
+    console.log(index);
     this.setState({
       index,
     });
   };
+  componentDidUpdate() {
+    console.log(this.state.index);
+  }
 
   closeModal = () => {
     this.setState({
@@ -350,12 +349,16 @@ export default class MyProfile extends React.PureComponent<Props, State> {
       <AnimatedFlatList
         style={{
           flex: 1,
-          marginBottom: hp('9.6%'),
+          marginBottom: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'),
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
         contentContainerStyle={{
           backgroundColor: '#F5F7F9',
-          minHeight: hp('100%') - HEADERHEIGHT - 1,
+          minHeight:
+            hp('100%') -
+            HEADERHEIGHT -
+            (DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%')) +
+            PROFILEHEIGHT,
           paddingTop: PROFILEHEIGHT + TABBARHEIGHT,
         }}
         ref={(ref: any) => (this.communityRef = ref)}
@@ -367,7 +370,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
                 contentOffset: {
                   y: (y: number) =>
                     Animated.block([
-                      Animated.set(this.currentScrollY, y),
+                      Animated.set(this.state.currentScrollY, y),
                       Animated.call([y], ([offsetY]) => {
                         if (this.state.index === 1) {
                           this.reviewRef &&
@@ -417,12 +420,16 @@ export default class MyProfile extends React.PureComponent<Props, State> {
       <AnimatedFlatList
         style={{
           flex: 1,
-          marginBottom: hp('9.6%'),
+          marginBottom: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'),
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
         contentContainerStyle={{
           backgroundColor: '#F5F7F9',
-          minHeight: hp('100%') - TABBARHEIGHT,
+          minHeight:
+            hp('100%') -
+            HEADERHEIGHT -
+            (DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%')) +
+            PROFILEHEIGHT,
           paddingTop: PROFILEHEIGHT + TABBARHEIGHT,
         }}
         ref={(ref: any) => (this.reviewRef = ref)}
@@ -434,10 +441,11 @@ export default class MyProfile extends React.PureComponent<Props, State> {
                 contentOffset: {
                   y: (y: number) =>
                     Animated.block([
-                      Animated.set(this.currentScrollY, y),
+                      Animated.set(this.state.currentScrollY, y),
                       Animated.call([y], ([offsetY]) => {
                         if (this.state.index === 0) {
                           this.communityRef &&
+                            this.communityRef.getNode &&
                             this.communityRef.getNode().scrollToOffset({
                               offset: Math.min(PROFILEHEIGHT, offsetY),
                               animated: false,
@@ -490,8 +498,11 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         transform: [
           {
             translateY: Animated.multiply(
-              this.minusValue,
-              Animated.min(this.headerHeightValue, this.currentScrollY),
+              this.state.minusValue,
+              Animated.min(
+                this.state.headerHeightValue,
+                this.state.currentScrollY,
+              ),
             ),
           },
         ],
@@ -529,24 +540,31 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           <HeaderNicknameText>
             {this.props.currentUser.nickname}
           </HeaderNicknameText>
-          <HeaderIconContainerView>
-            <HeaderIconTouchableOpacity
-              onPress={() => {
-                this.props.openModal();
-              }}>
-              <HeaderIconImage
-                source={require('~/Assets/Images/MyPage/Header/Mypage/ic/setting.png')}
-              />
-            </HeaderIconTouchableOpacity>
-          </HeaderIconContainerView>
+          <HeaderIconTouchableOpacity
+            style={{
+              position: 'absolute',
+              right: 6,
+              top: getStatusBarHeight() + 14,
+              padding: 10,
+            }}
+            onPress={() => {
+              this.props.openModal();
+            }}>
+            <HeaderIconImage
+              source={require('~/Assets/Images/MyPage/Header/Mypage/ic/setting.png')}
+            />
+          </HeaderIconTouchableOpacity>
         </HeaderContainerView>
         <FloatingView
           style={{
             transform: [
               {
                 translateY: Animated.multiply(
-                  this.minusValue,
-                  Animated.min(this.headerHeightValue, this.currentScrollY),
+                  this.state.minusValue,
+                  Animated.min(
+                    this.state.headerHeightValue,
+                    this.state.currentScrollY,
+                  ),
                 ),
               },
             ],
@@ -584,7 +602,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           renderScene={this.renderScene}
           onIndexChange={(index) => this.setState({index})}
           renderTabBar={this.renderTabBar}
-          position={this.positionX}
+          position={this.state.positionX}
         />
       </ContainerView>
     );

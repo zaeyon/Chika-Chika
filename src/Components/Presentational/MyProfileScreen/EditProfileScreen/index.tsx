@@ -13,247 +13,111 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import ActionSheet from 'react-native-actionsheet';
-
+import DateTimePicker from '@react-native-community/datetimepicker';
+import {SharedElement} from 'react-navigation-shared-element';
 // Local Component
 import AnimatedModal from '~/Components/Presentational/AnimatedModal';
 
 const ContainerView = Styled.ScrollView`
 flex: 1;
-background: #EEEEEE;
+background: #F5F7F9;
 `;
 
-const ProfileContainerView = Styled.View`
+const ProfileImageContainerView = Styled.View`
 width: ${wp('100%')}px;
-height: auto;
 padding: 16px 0px;
+align-items: center;
 justify-content: center;
-align-items: center;
-background: white;
-`;
-
-const ProfileContentView = Styled.View`
-width: auto;
-height: auto;
-padding: 4px 16px;
-border-bottom-width: 1px;
-border-color: #C4C4C4;
-align-items: center;
-`;
-const ProfileImageView = Styled.View`
-width: ${wp('15%')}px;
-height: ${wp('15%')}px;
-margin-top: 8px;
-background: #ECECEC;
-border-radius: 20px;
 `;
 
 const ProfileImage = Styled.Image`
-width: 100%;
-height: 100%;
-border-radius: 20px;
-`;
-
-const ProfileNicknameText = Styled.Text`
-font-family: NanumSquareR;
-font-style: normal;
-font-weight: bold;
-font-size: 16px;
-line-height: 24px;
-margin-top: 16px;
-color: #9E9E9E;
-`;
-
-const EditProfileTouchableHighlight = Styled(
-  TouchableHighlight as new () => TouchableHighlight,
-)`
-width: auto;
-height: auto;
-margin-top: 8px;
-padding: 8px 18px;
-border: 1px #EEEEEE;
+width: 77px;
+height: 77px;
+border-width: 0.5px;
+border-color: #A6A8AC;
+box-shadow: 0px 0px 12px #D8DCDE;
 border-radius: 100px;
 `;
 
-const EditProfileText = Styled.Text`
-font-family: NanumSquare;
-font-style: normal;
-font-weight: normal;
-font-size: 12px;
-line-height: 16px;
-color: #787878;
-`;
-
-const LocationSettingView = Styled.View`
-width: ${wp('100%')}px;
-height: auto;
-margin-bottom: 12px;
-background: white;
-`;
-
-const LocationIconView = Styled.View`
-width: 16px;
-height: 16px;
-border-radius: 8px;
-margin-right: 8px;
-background: #C4C4C4;
-`;
-
-const LocationIconImage = Styled.Image``;
-
-const PrivacySettingView = Styled.View`
-width: ${wp('100%')}px;
-height: auto;
-margin-bottom: 12px;
-background: white;
-`;
-
-const SettingTitleView = Styled.View`
-width: 100%;
-height: ${hp('6.89%')}px;
-margin-bottom: 4px;
-padding: 16px 
-justify-content: center;
-`;
-
-const SettingTitleText = Styled.Text`
-font-size: 12px;
-line-height: 24px;
-color: #7A7A7A;
-`;
-
-const UserSettingView = Styled.View`
-width: ${wp('100%')}px;
-flex: 1;
-background: white;
-`;
-
-const ContentTouchableOpacity = Styled(
-  TouchableOpacity as new () => TouchableOpacity,
-)`
-width: 100%;
-height: ${hp('6.89%')}px;
-flex-direction: row;
-align-items: center;
-padding: 0px 16px;
-margin-bottom: 4px;
-`;
-
-const ContentTitleText = Styled.Text`
-font-weight: bold;
-font-size: 16px;
-line-height: 24px;
-width: 91px;
-`;
-
-const ContentText = Styled.Text`
-font-size: 16px;
-line-height: 24px;
-color: #7A7A7A;
-`;
-
-const VerificatedView = Styled.View`
-width: 58px;
-height: 24px;
-margin-left: auto;
-background: #EEEEEE;
-border-radius: 4px;
-`;
-
-const VerificatedText = Styled.Text`
-font-size: 12px;
-line-height: 24px;
-text-align: center;
-color: #7A7A7A;
-`;
-
-const ArrowIconView = Styled.View`
-width: 7px;
-height: 12px;
-margin-left: 16px;
-`;
-
-const ArrowIconImage = Styled.Image`
-width: 100%;
-height: 100%;
-`;
-
-const InterLockIconView = Styled.View`
-width: 16px;
-height: 16px;
-border-radius: 8px;
-margin-right: 8px;
-background: #C4C4C4;
-`;
-
-const InterLockIconImage = Styled.Image`
-width: 100%;
-height: 100%;
-border-radius: 8px;
-`;
-
-const ModalContainerView = Styled.View`
-flex: 1;
-background: #00000070;
+const ProfileImageMaskView = Styled.View`
+position: absolute;
+width: 77px;
+height: 77px;
+border-radius: 100px;
+background: #00000040;
 align-items: center;
 justify-content: center;
+z-index: 1;
 `;
 
-const ModalTitleText = Styled.Text`
-font-family: NanumSquare;
-font-style: normal;
-font-weight: bold;
-font-size: 18px;
-line-height: 24px;
+const ProfileImageMaskImage = Styled.Image``;
+
+const ProfileImageContentView = Styled.View`
 `;
 
-const ModalDescriptionText = Styled.Text`
-font-family: NanumSquare;
-font-style: normal;
-font-weight: normal;
-font-size: 12px;
-line-height: 24px;
-color: #808080;
-margin-top: 4px;
-`;
-
-const ModalTextInput = Styled.TextInput`
-width: 90%;
-height: 40px;
-border: 0.25px #898989;
-border-radius: 8px;
+const SectionContainerView = Styled.View`
 background: #FFFFFF;
-margin-top: 16px;
-text-align: center;
+margin-bottom: 16px;
+border-color: #E2E6ED;
+border-top-width: 0.5px;
+border-bottom-width: 0.5px;
 `;
 
-const ModalButtonContainerView = Styled.View`
-width: 100%;
-height: 50px;
-background: #C4C4C4;
+const SectionVerticalDivider = Styled.View`
+background: #E2E6ED;
+width: auto
+height: 0.5px;
+margin: 0px 16px;
+
+`;
+
+const SectionContentView = Styled.View`
 flex-direction: row;
-margin-top: auto;
-`;
-
-const ModalButtonItemView = Styled.TouchableHighlight`
-flex: 1;
-height: 100%;
-background: rgba(255, 255, 255, 0.9);
+padding: 16px;
 align-items: center;
-justify-content: center;
-border-top-width: 1px;
-border-color: #C4C4C4;
+background: #FFFFFF;
 `;
-
-const ModalButtonText = Styled.Text`
+const SectionContentTitleText = Styled.Text`
+width: 94px;
 font-family: NanumSquare;
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
 line-height: 24px;
-color: #2998FF;
+color: #131F3C;`;
+
+const SectionContentText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
+font-size: 16px;
+line-height: 24px;
+color: #9AA2A9;
+`;
+
+const SectionImage = Styled.Image`
+margin-left: auto;
+`;
+
+const VerifiedBadgeView = Styled.View`
+padding: 3px 8px;
+background: #00D1FF;
+border-radius: 4px;
+margin-left: auto;
+`;
+
+const VerifiedBadgeText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
+font-size: 10px;
+line-height: 16px;
+color: #FFFFFF;
 `;
 
 interface Props {
+  capturePhoto: any;
+  moveToEditNickname: any;
   moveToGallery: any;
   moveToHomeTownSetting: any;
   moveToPhoneVerify: any;
@@ -264,6 +128,8 @@ interface Props {
 }
 
 const EditProfileScreen = ({
+  capturePhoto,
+  moveToEditNickname,
   moveToGallery,
   moveToHomeTownSetting,
   moveToPhoneVerify,
@@ -274,12 +140,28 @@ const EditProfileScreen = ({
 }: Props) => {
   const [textInput, setTextInput] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const [sectionArrow, setSectionArrow] = useState(
+    require('~/Assets/Images/MyPage/common/gan/list/profile_edit_section_arrow.png'),
+  );
   const genderActionSheetRef: any = useRef();
   const imageActionSheetRef: any = useRef();
 
-  const genderActionSheetItemList = ['취소', '남성', '여성'];
-  const imageActionSheetItemList = ['취소', '카메라', '앨범'];
+  const genderActionSheetItemList = ['취소', '여성', '남성', '선택안함'];
+  const imageActionSheetItemList = [
+    '취소',
+    '카메라',
+    '앨범에서 선택',
+    '현재 사진 삭제',
+  ];
+
+  const [date, setDate] = useState<Date>(
+    currentUser.profile.birthdate || Date.now(),
+  );
+
+  const onChange = (event: Event, selectedDate?: Date) => {
+    const currentDate = selectedDate || date;
+    setDate(currentDate);
+  };
 
   const onPressGenderActionSheet = useCallback((index: number) => {
     switch (genderActionSheetItemList[index]) {
@@ -289,6 +171,9 @@ const EditProfileScreen = ({
       case '여성':
         changeProfileGender('여성');
         break;
+      case '선택안함':
+        changeProfileGender('선택안함');
+        break;
     }
   }, []);
 
@@ -296,28 +181,45 @@ const EditProfileScreen = ({
     switch (imageActionSheetItemList[index]) {
       case '카메라':
         console.log('open camera');
+        capturePhoto();
         break;
-      case '앨범':
+      case '앨범에서 선택':
         console.log('open gallery');
         moveToGallery();
         break;
     }
   }, []);
 
+  const openModal = useCallback(() => {
+    setIsModalVisible(true);
+  }, []);
   const closeModal = useCallback(() => {
     setIsModalVisible(false);
   }, []);
 
-  const setUserNickname = useCallback(() => {
-    changeProfileNickname(textInput);
+  const setUserBirthdate = useCallback(() => {
+    const formattedDate = date.toJSON().substring(0, 10);
+    console.log(formattedDate);
+    changeProfileBirthdate(formattedDate);
     setIsModalVisible(false);
-    setTextInput('');
-  }, [textInput]);
+  }, [date]);
 
   const onChangeText = useCallback(
     (input: string) => setTextInput(input.replace(/\s/g, '')),
     [],
   );
+
+  const renderResidences = useCallback(() => {
+    let result = '';
+    currentUser.hometown.map((item: any, index: number) => {
+      if (index === 0) {
+        result += item.emdName;
+      } else {
+        result += `, ${item.emdName}`;
+      }
+    });
+    return result;
+  }, [currentUser.hometown]);
 
   const formatProvider = useCallback((provider: string) => {
     switch (provider) {
@@ -327,12 +229,120 @@ const EditProfileScreen = ({
         return '카카오';
       case 'apple':
         return '애플';
+      case 'local':
+        return '없음';
     }
   }, []);
   return (
     <ContainerView
       keyboardShouldPersistTaps={'always'}
       showsVerticalScrollIndicator={false}>
+      <ProfileImageContainerView>
+        <TouchableWithoutFeedback
+          onPress={() => imageActionSheetRef.current.show()}>
+          <ProfileImageContentView>
+            <ProfileImageMaskView>
+              <ProfileImageMaskImage
+                source={require('~/Assets/Images/MyPage/common/gan/ic/write/white.png')}
+              />
+            </ProfileImageMaskView>
+            <ProfileImage source={{uri: currentUser.profile.profileImg}} />
+          </ProfileImageContentView>
+        </TouchableWithoutFeedback>
+      </ProfileImageContainerView>
+      <SectionContainerView>
+        <TouchableHighlight
+          activeOpacity={0.9}
+          underlayColor="black"
+          onPress={() => moveToEditNickname(currentUser.profile.nickname)}>
+          <SharedElement id="nicknameInput">
+            <SectionContentView>
+              <SectionContentTitleText>{'닉네임'}</SectionContentTitleText>
+              <SectionContentText>
+                {currentUser.profile.nickname}
+              </SectionContentText>
+              <SectionImage source={sectionArrow} />
+            </SectionContentView>
+          </SharedElement>
+        </TouchableHighlight>
+        <SectionVerticalDivider />
+        <TouchableHighlight
+          activeOpacity={0.9}
+          underlayColor="black"
+          onPress={() => moveToHomeTownSetting()}>
+          <SectionContentView>
+            <SectionContentTitleText>{'우리동네'}</SectionContentTitleText>
+            <SectionContentText>{renderResidences()}</SectionContentText>
+            <SectionImage source={sectionArrow} />
+          </SectionContentView>
+        </TouchableHighlight>
+      </SectionContainerView>
+
+      <SectionContainerView>
+        <TouchableHighlight
+          activeOpacity={0.9}
+          underlayColor="black"
+          onPress={() => genderActionSheetRef.current.show()}>
+          <SectionContentView>
+            <SectionContentTitleText>{'성별'}</SectionContentTitleText>
+            <SectionContentText>
+              {currentUser.profile.gender || '미등록'}
+            </SectionContentText>
+            <SectionImage source={sectionArrow} />
+          </SectionContentView>
+        </TouchableHighlight>
+        <SectionVerticalDivider />
+        <TouchableHighlight
+          activeOpacity={0.9}
+          underlayColor="black"
+          onPress={() => openModal()}>
+          <SectionContentView>
+            <SectionContentTitleText>{'생일'}</SectionContentTitleText>
+            <SectionContentText>
+              {currentUser.profile.birthdate || '미등록'}
+            </SectionContentText>
+            <SectionImage source={sectionArrow} />
+          </SectionContentView>
+        </TouchableHighlight>
+      </SectionContainerView>
+
+      <SectionContainerView>
+        <TouchableHighlight
+          activeOpacity={0.9}
+          underlayColor="black"
+          onPress={() => console.log('h')}>
+          <SectionContentView>
+            <SectionContentTitleText>{'연동계정'}</SectionContentTitleText>
+            <SectionContentText>
+              {formatProvider(currentUser.profile.provider)}
+            </SectionContentText>
+            <SectionImage source={sectionArrow} />
+          </SectionContentView>
+        </TouchableHighlight>
+        <SectionVerticalDivider />
+        <TouchableHighlight
+          activeOpacity={0.9}
+          underlayColor="black"
+          onPress={() => console.log('h')}>
+          <SectionContentView>
+            <SectionContentTitleText>{'본인인증'}</SectionContentTitleText>
+            <SectionContentText>
+              {currentUser.profile.phoneNumber || '미인증'}
+            </SectionContentText>
+            {currentUser.profile.phoneNumber ? (
+              <VerifiedBadgeView>
+                <VerifiedBadgeText>{'인증완료'}</VerifiedBadgeText>
+              </VerifiedBadgeView>
+            ) : null}
+            <SectionImage
+              source={sectionArrow}
+              style={{
+                marginLeft: currentUser.profile.phoneNumber ? 8 : 'auto',
+              }}
+            />
+          </SectionContentView>
+        </TouchableHighlight>
+      </SectionContainerView>
       <AnimatedModal
         visible={isModalVisible}
         buttons={[
@@ -342,117 +352,22 @@ const EditProfileScreen = ({
           },
           {
             title: '변경',
-            onPress: setUserNickname,
+            onPress: setUserBirthdate,
           },
         ]}>
-        <ModalTitleText>{'닉네임 변경'}</ModalTitleText>
-        <ModalDescriptionText>
-          {'10자 이내로 입력이 가능합니다.'}
-        </ModalDescriptionText>
-        <ModalTextInput
-          autoFocus={true}
-          autoCorrect={false}
-          maxLength={10}
-          autoCapitalize="none"
-          onChangeText={onChangeText}
-          value={textInput}
+        <DateTimePicker
+          style={{
+            width: '100%',
+            height: 200,
+          }}
+          testID="dateTimePicker"
+          value={date}
+          mode="date"
+          is24Hour={true}
+          display="spinner"
+          onChange={onChange}
         />
       </AnimatedModal>
-      <ProfileContainerView>
-        <ProfileContentView>
-          <TouchableOpacity
-            onPress={() => {
-              console.log('profile image clicked');
-              imageActionSheetRef.current.show();
-            }}>
-            <ProfileImageView>
-              <ProfileImage
-                source={{
-                  uri: currentUser.profileImg,
-                }}
-              />
-            </ProfileImageView>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              console.log('profile nickname clicked');
-              setIsModalVisible(true);
-            }}>
-            <ProfileNicknameText>{currentUser.nickname}</ProfileNicknameText>
-          </TouchableOpacity>
-        </ProfileContentView>
-      </ProfileContainerView>
-      <LocationSettingView>
-        <SettingTitleView>
-          <SettingTitleText>위치설정</SettingTitleText>
-        </SettingTitleView>
-        <ContentTouchableOpacity onPress={() => moveToHomeTownSetting()}>
-          <ContentTitleText>동네설정</ContentTitleText>
-          <LocationIconView></LocationIconView>
-          <ContentText>
-            {currentUser.Residences[0].sido +
-              ' ' +
-              currentUser.Residences[0].sigungu +
-              ' ' +
-              currentUser.Residences[0].emdName}
-          </ContentText>
-          <ArrowIconView
-            style={{
-              marginLeft: 'auto',
-            }}>
-            <ArrowIconImage
-              style={{
-                resizeMode: 'contain',
-              }}
-              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
-            />
-          </ArrowIconView>
-        </ContentTouchableOpacity>
-      </LocationSettingView>
-      <PrivacySettingView>
-        <SettingTitleView>
-          <SettingTitleText>개인설정</SettingTitleText>
-        </SettingTitleView>
-        <ContentTouchableOpacity onPress={() => moveToPhoneVerify()}>
-          <ContentTitleText>전화번호</ContentTitleText>
-          <ContentText>{currentUser.phoneNumber || '미등록'}</ContentText>
-        </ContentTouchableOpacity>
-        <ContentTouchableOpacity
-          onPress={() => genderActionSheetRef.current.show()}>
-          <ContentTitleText>성별</ContentTitleText>
-          <ContentText>{currentUser.gender || '미등록'}</ContentText>
-        </ContentTouchableOpacity>
-        <ContentTouchableOpacity>
-          <ContentTitleText>생일</ContentTitleText>
-          <ContentText>{currentUser.birthday || '미등록'}</ContentText>
-        </ContentTouchableOpacity>
-      </PrivacySettingView>
-      <UserSettingView>
-        <SettingTitleView>
-          <SettingTitleText>회원설정</SettingTitleText>
-        </SettingTitleView>
-        <ContentTouchableOpacity>
-          <ContentTitleText>연동계정</ContentTitleText>
-          <InterLockIconView></InterLockIconView>
-          <ContentText>
-            {formatProvider(currentUser.provider)} 로그인
-          </ContentText>
-        </ContentTouchableOpacity>
-        <ContentTouchableOpacity onPress={() => moveToPhoneVerify()}>
-          <ContentTitleText>본인 인증</ContentTitleText>
-          <VerificatedView>
-            <VerificatedText>미인증</VerificatedText>
-          </VerificatedView>
-          <ArrowIconView>
-            <ArrowIconImage
-              style={{
-                resizeMode: 'contain',
-              }}
-              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
-            />
-          </ArrowIconView>
-        </ContentTouchableOpacity>
-      </UserSettingView>
       <ActionSheet
         ref={genderActionSheetRef}
         options={genderActionSheetItemList}

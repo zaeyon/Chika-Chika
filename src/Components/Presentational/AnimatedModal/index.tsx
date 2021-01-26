@@ -52,7 +52,7 @@ border-color: #C4C4C4;
 const ModalButtonText = Styled.Text<{color: string | undefined}>`
 font-family: NanumSquare;
 font-style: normal;
-font-weight: bold;
+font-weight: normal;
 font-size: 16px;
 line-height: 24px;
 color: ${(props) => props.color || '#2998FF'};
@@ -89,19 +89,21 @@ const AnimatedModal = ({visible, buttons, children}: Props) => {
     if (buttons.length < 2) {
       return (
         <ModalButtonItemView
+          key={item.title}
           activeOpacity={1}
           underlayColor="#DDDDDD"
           onPress={() => {
             item.onPress();
           }}>
-          <ModalButtonText
-          style={item.style}
-          color={item.color}>{item.title}</ModalButtonText>
+          <ModalButtonText style={item.style} color={item.color}>
+            {item.title}
+          </ModalButtonText>
         </ModalButtonItemView>
       );
     } else {
       return (
         <ModalButtonItemView
+          key={item.title}
           activeOpacity={1}
           underlayColor="#DDDDDD"
           onPress={() => {
@@ -116,9 +118,9 @@ const AnimatedModal = ({visible, buttons, children}: Props) => {
                   marginLeft: 0.5,
                 }
           }>
-          <ModalButtonText 
-          style={item.style}
-          color={item.color}>{item.title}</ModalButtonText>
+          <ModalButtonText style={item.style} color={item.color}>
+            {item.title}
+          </ModalButtonText>
         </ModalButtonItemView>
       );
     }

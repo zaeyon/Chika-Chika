@@ -1,10 +1,11 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   Switch,
   LayoutAnimation,
+  TouchableHighlight,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -16,94 +17,71 @@ import allActions from '~/actions';
 // Async Storage
 import {storeUserInfo} from '~/storage/currentUser';
 // Local Component
-
+import AnimatedModal from '~/Components/Presentational/AnimatedModal';
 const ContainerView = Styled.ScrollView`
 flex: 1;
-background: #EEEEEE;
+background: #F5F7F9;
 `;
 
-const UserSettingView = Styled.View`
-width: ${wp('100%')}px;
-height: auto;
-background: white;
-margin-top: 8px; 
-padding-bottom: 16px;
+const SectionContainerView = Styled.View`
+margin-top: 16px;
+background: #FFFFFF;
+border-color: #E2E6ED;
+border-top-width: 0.5px;
+border-bottom-width: 0.5px;
 `;
 
-const SettingTitleView = Styled.View`
-width: 100%;
-height: ${hp('6.89%')}px;
-margin-bottom: 4px;
-padding: 16px 
-justify-content: center;
+const SectionVerticalDivider = Styled.View`
+background: #E2E6ED;
+width: auto
+height: 0.5px;
+margin: 0px 16px;
+
 `;
 
-const SettingTitleText = Styled.Text`
-font-size: 12px;
-line-height: 24px;
-color: #7A7A7A;
-`;
-
-const ContentTouchableOpacity = Styled(
-  TouchableOpacity as new () => TouchableOpacity,
-)`
-width: 100%;
-height: ${hp('6.89%')}px;
+const SectionContentView = Styled.View`
 flex-direction: row;
-align-items: center;
 padding: 16px;
-margin-bottom: 4px;
+align-items: center;
+background: #FFFFFF;
 `;
-
-const ContentTitleText = Styled.Text`
+const SectionContentTitleText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
 font-weight: bold;
 font-size: 16px;
 line-height: 24px;
-margin-right: 16px;
-`;
+color: #131F3C;`;
 
-const ContentText = Styled.Text`
+const SectionContentText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
 font-size: 16px;
 line-height: 24px;
-color: #7A7A7A;
+color: #9AA2A9;
 `;
 
-const ArrowIconView = Styled.View`
-width: 7px;
-height: 12px;
-margin-left: auto;
-
-`;
-
-const ArrowIconImage = Styled.Image`
-width: 100%;
-height: 100%;
-`;
-
-const AlertContainerView = Styled.View`
-width: ${wp('100%')}px
-height: auto;
-`;
-
-const AlertView = Styled.View`
-width: 100%;
-height: ${hp('6.89%')}px;
-flex-direction: row;
-align-items: center;
-padding: 16px;
-margin-bottom: 4px;
-`;
-
-const AlertTitleText = Styled.Text`
-margin-left: 16px;
-font-size: 16px;
-line-height: 24px;
-`;
-
-const AlertSwitch = Styled(Switch as new () => Switch)`
+const SectionImage = Styled.Image`
 margin-left: auto;
 `;
 
+const ChildrenIndicatorImage = Styled.Image`
+margin-right: 8px;
+`;
+
+const AlertSwitch = Styled.Switch`
+margin-left: auto;
+`;
+
+const ModalText = Styled.Text`
+font-family: NanumSquare;
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+line-height: 20px;
+color: #131F3C;
+`;
 interface Props {
   navigation: any;
   route: any;
@@ -115,142 +93,182 @@ interface Props {
 const GeneralSettingScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
 
-  const logout = () => {
-    storeUserInfo(null);
-    dispatch(allActions.userActions.logOut());
-  };
+  const [sectionArrow, setSectionArrow] = useState(
+    require('~/Assets/Images/MyPage/common/gan/list/profile_edit_section_arrow.png'),
+  );
+  const [childrenIndicator, setChildrenIndicator] = useState(
+    require('~/Assets/Images/Setting/list/children_indicator.png'),
+  );
 
   const [isAlertEnabled, setIsAlertEnabled] = useState(false);
   const [isLikesAlertEnabled, setIsLikesAlertEnabled] = useState(false);
   const [isCommentsAlertEnabled, setIsCommentsAlertEnabled] = useState(false);
   const [isEventAlertEnabled, setIsEventAlertEnabled] = useState(false);
 
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [signoutModalVisible, setSignoutModalVisible] = useState(false);
+
+  const logout = useCallback(() => {
+    storeUserInfo(null);
+    dispatch(allActions.userActions.logOut());
+  }, []);
+
+  const signout = useCallback(() => {
+    console.log('sign out');
+  }, []);
+
   return (
     <ContainerView
       keyboardShouldPersistTaps={'always'}
       showsVerticalScrollIndicator={false}>
-      <UserSettingView>
-        <SettingTitleView>
-          <SettingTitleText>{'알림설정'}</SettingTitleText>
-        </SettingTitleView>
-        <AlertView>
-          <ContentTitleText>{'알림'}</ContentTitleText>
+      <AnimatedModal
+        visible={logoutModalVisible}
+        buttons={[
+          {
+            title: '아니요',
+            onPress: () => setLogoutModalVisible(false),
+          },
+          {
+            title: '예',
+            onPress: () => logout(),
+          },
+        ]}>
+        <ModalText>{'로그아웃 하시겠어요?'}</ModalText>
+      </AnimatedModal>
+      <AnimatedModal
+        visible={signoutModalVisible}
+        buttons={[
+          {
+            title: '아니요',
+            onPress: () => setSignoutModalVisible(false),
+          },
+          {
+            title: '예',
+            onPress: () => signout(),
+          },
+        ]}>
+        <ModalText>{'탈퇴하시겠어요?'}</ModalText>
+      </AnimatedModal>
+      <SectionContainerView>
+        <SectionContentView>
+          <SectionContentTitleText>{'알림'}</SectionContentTitleText>
           <AlertSwitch
+            trackColor={{
+              true: '#00D1FF',
+              false: '#E2E6ED',
+            }}
             onValueChange={() => {
               LayoutAnimation.configureNext(
                 LayoutAnimation.create(150, 'easeInEaseOut', 'opacity'),
               );
               setIsAlertEnabled((prev) => !prev);
+              setIsLikesAlertEnabled(false);
+              setIsCommentsAlertEnabled(false);
+              setIsEventAlertEnabled(false);
             }}
             value={isAlertEnabled}
           />
-        </AlertView>
+        </SectionContentView>
         {isAlertEnabled ? (
           <>
-            <AlertView>
-              <AlertTitleText>좋아요</AlertTitleText>
+            <SectionContentView>
+              <ChildrenIndicatorImage source={childrenIndicator} />
+              <SectionContentTitleText>{'좋아요'}</SectionContentTitleText>
               <AlertSwitch
+                trackColor={{
+                  true: '#00D1FF',
+                  false: '#E2E6ED',
+                }}
                 onValueChange={() => {
                   setIsLikesAlertEnabled((prev) => !prev);
                 }}
                 value={isLikesAlertEnabled}
               />
-            </AlertView>
-            <AlertView>
-              <AlertTitleText>댓글</AlertTitleText>
+            </SectionContentView>
+            <SectionContentView>
+              <ChildrenIndicatorImage source={childrenIndicator} />
+              <SectionContentTitleText>{'댓글'}</SectionContentTitleText>
               <AlertSwitch
+                trackColor={{
+                  true: '#00D1FF',
+                  false: '#E2E6ED',
+                }}
                 onValueChange={() => {
                   setIsCommentsAlertEnabled((prev) => !prev);
                 }}
                 value={isCommentsAlertEnabled}
               />
-            </AlertView>
-            <AlertView>
-              <AlertTitleText>이벤트</AlertTitleText>
+            </SectionContentView>
+            <SectionContentView>
+              <ChildrenIndicatorImage source={childrenIndicator} />
+              <SectionContentTitleText>{'이벤트'}</SectionContentTitleText>
               <AlertSwitch
+                trackColor={{
+                  true: '#00D1FF',
+                  false: '#E2E6ED',
+                }}
                 onValueChange={() => {
                   setIsEventAlertEnabled((prev) => !prev);
                 }}
                 value={isEventAlertEnabled}
               />
-            </AlertView>
+            </SectionContentView>
           </>
         ) : null}
-      </UserSettingView>
-      <UserSettingView>
-        <SettingTitleView>
-          <SettingTitleText>{'고객센터'}</SettingTitleText>
-        </SettingTitleView>
-        <ContentTouchableOpacity>
-          <ContentTitleText>{'이메일 상담'}</ContentTitleText>
-          <ArrowIconView>
-            <ArrowIconImage
-              style={{
-                resizeMode: 'contain',
-              }}
-              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
-            />
-          </ArrowIconView>
-        </ContentTouchableOpacity>
-      </UserSettingView>
-      <UserSettingView>
-        <SettingTitleView>
-          <SettingTitleText>{'계정 관리'}</SettingTitleText>
-        </SettingTitleView>
-        <ContentTouchableOpacity onPress={() => logout()}>
-          <ContentTitleText>로그아웃</ContentTitleText>
-          <ArrowIconView>
-            <ArrowIconImage
-              style={{
-                resizeMode: 'contain',
-              }}
-              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
-            />
-          </ArrowIconView>
-        </ContentTouchableOpacity>
-        <ContentTouchableOpacity>
-          <ContentTitleText>{'회원탈퇴'}</ContentTitleText>
-          <ArrowIconView>
-            <ArrowIconImage
-              style={{
-                resizeMode: 'contain',
-              }}
-              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
-            />
-          </ArrowIconView>
-        </ContentTouchableOpacity>
-      </UserSettingView>
-      <UserSettingView>
-        <SettingTitleView>
-          <SettingTitleText>{'앱 정보'}</SettingTitleText>
-        </SettingTitleView>
-        <ContentTouchableOpacity>
-          <ContentTitleText>{'버전정보'}</ContentTitleText>
-          <ContentText>{'V.1.1.1'}</ContentText>
-        </ContentTouchableOpacity>
-        <ContentTouchableOpacity>
-          <ContentTitleText>개인정보보호정책</ContentTitleText>
-          <ArrowIconView>
-            <ArrowIconImage
-              style={{
-                resizeMode: 'contain',
-              }}
-              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
-            />
-          </ArrowIconView>
-        </ContentTouchableOpacity>
-        <ContentTouchableOpacity>
-          <ContentTitleText>약관 및 이용동의</ContentTitleText>
-          <ArrowIconView>
-            <ArrowIconImage
-              style={{
-                resizeMode: 'contain',
-              }}
-              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
-            />
-          </ArrowIconView>
-        </ContentTouchableOpacity>
-      </UserSettingView>
+      </SectionContainerView>
+      <SectionContainerView>
+        <TouchableHighlight activeOpacity={0.9} underlayColor="black">
+          <SectionContentView>
+            <SectionContentTitleText>{'이메일 상담'}</SectionContentTitleText>
+            <SectionImage source={sectionArrow} />
+          </SectionContentView>
+        </TouchableHighlight>
+        <SectionVerticalDivider />
+        <TouchableHighlight
+          activeOpacity={0.9}
+          underlayColor="black"
+          onPress={() => setLogoutModalVisible(true)}>
+          <SectionContentView>
+            <SectionContentTitleText>{'로그아웃'}</SectionContentTitleText>
+            <SectionImage source={sectionArrow} />
+          </SectionContentView>
+        </TouchableHighlight>
+        <SectionVerticalDivider />
+        <TouchableHighlight
+          activeOpacity={0.9}
+          underlayColor="black"
+          onPress={() => setSignoutModalVisible(true)}>
+          <SectionContentView>
+            <SectionContentTitleText>{'회원탈퇴'}</SectionContentTitleText>
+            <SectionImage source={sectionArrow} />
+          </SectionContentView>
+        </TouchableHighlight>
+      </SectionContainerView>
+      <SectionContainerView>
+        <TouchableHighlight activeOpacity={0.9} underlayColor="black">
+          <SectionContentView>
+            <SectionContentTitleText>{'버전정보'}</SectionContentTitleText>
+          </SectionContentView>
+        </TouchableHighlight>
+        <SectionVerticalDivider />
+        <TouchableHighlight activeOpacity={0.9} underlayColor="black">
+          <SectionContentView>
+            <SectionContentTitleText>
+              {'개인정보보호정책'}
+            </SectionContentTitleText>
+            <SectionImage source={sectionArrow} />
+          </SectionContentView>
+        </TouchableHighlight>
+        <SectionVerticalDivider />
+        <TouchableHighlight activeOpacity={0.9} underlayColor="black">
+          <SectionContentView>
+            <SectionContentTitleText>
+              {'약관 및 이용동의'}
+            </SectionContentTitleText>
+            <SectionImage source={sectionArrow} />
+          </SectionContentView>
+        </TouchableHighlight>
+      </SectionContainerView>
     </ContainerView>
   );
 };

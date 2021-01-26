@@ -375,7 +375,7 @@ PODS:
   - react-native-image-editor (2.3.0):
     - React
     - React-RCTImage
-  - react-native-image-picker (3.1.3):
+  - react-native-image-picker (3.1.4):
     - React-Core
   - react-native-nmap (0.0.52):
     - NMapsMap (~> 3.7.0)
@@ -764,7 +764,7 @@ SPEC CHECKSUMS:
   react-native-cameraroll: 9d2b7c1707204d2040d2812f960c6cebdbd9f670
   react-native-geolocation-service: 141e33bdb179bcba10b216ee13962611e21f2be4
   react-native-image-editor: bd67912f38a8e7a895bf6eb8f445acdcefd8fd0c
-  react-native-image-picker: f2df0ccab4331c9b7ccda573ada7e54a6487f45f
+  react-native-image-picker: 248afb60a0c5a24153cb7c7483b257f30541323b
   react-native-nmap: 5d572d0318d0cecdc711e319b896604db349c880
   react-native-phasset: b70130ff812fa4fd07f2a3f2a632db28ccd0e771
   react-native-safe-area-context: 86612d2c9a9e94e288319262d10b5f93f0b395f5

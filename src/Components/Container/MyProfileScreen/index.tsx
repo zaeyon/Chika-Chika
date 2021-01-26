@@ -215,6 +215,7 @@ const MyProfileScreen = ({navigation, route}: Props) => {
     navigation.navigate('SavedHospitalTabScreen');
   }, []);
 
+
   const toggleSocialLike = useCallback(
     (postId: number, prevState: number, type: string) => {
       const form = {
@@ -275,7 +276,7 @@ const MyProfileScreen = ({navigation, route}: Props) => {
       screen: 'DentalDetailScreen',
       params: {
         dentalId: dentalId,
-      }
+      },
     });
   };
 

@@ -567,6 +567,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
   const renderSearchInput = () => {
     return (
       <HeaderSearchInput
+      autoCapitalize={"none"}
       placeholder={"동명(읍, 면)으로 검색(ex. 이의동)"}
       placeholderTextColor={"#9AA2A9"}
       clearButtonMode={"while-editing"}

@@ -98,6 +98,7 @@ const CommunityListScreen = ({navigation, route}: Props) => {
 
   const currentUser = useSelector((state: any) => state.currentUser);
   const profile = currentUser.profile;
+  const hometown = currentUser.hometown;
   const jwtToken = currentUser.jwtToken;
 
   const moveToKeywordSearch = () => {
@@ -125,30 +126,26 @@ const CommunityListScreen = ({navigation, route}: Props) => {
       order: 'createdAt',
       region: 'all',
     };
-    GETCommunityPosts(
-      jwtToken,
-      String(profile.Residences[0].id),
-      questionform,
-    ).then((response: any) => {
-      const data = {
-        type: 'Question',
-        posts: response,
-      };
-      dispatch(allActions.communityActions.setPosts(data));
-      console.log('res', response.length);
-    });
-    GETCommunityPosts(
-      jwtToken,
-      String(profile.Residences[0].id),
-      freetalkform,
-    ).then((response: any) => {
-      const data = {
-        type: 'FreeTalk',
-        posts: response,
-      };
-      dispatch(allActions.communityActions.setPosts(data));
-      console.log('res', response.length);
-    });
+    GETCommunityPosts(jwtToken, String(hometown[0].id), questionform).then(
+      (response: any) => {
+        const data = {
+          type: 'Question',
+          posts: response,
+        };
+        dispatch(allActions.communityActions.setPosts(data));
+        console.log('res', response.length);
+      },
+    );
+    GETCommunityPosts(jwtToken, String(hometown[0].id), freetalkform).then(
+      (response: any) => {
+        const data = {
+          type: 'FreeTalk',
+          posts: response,
+        };
+        dispatch(allActions.communityActions.setPosts(data));
+        console.log('res', response.length);
+      },
+    );
   }, []);
 
   return (
@@ -200,6 +197,7 @@ const CommunityListScreen = ({navigation, route}: Props) => {
             indicatorStyle: {
               backgroundColor: '#00D1FF',
               height: 3,
+              borderRadius: 100,
             },
             indicatorContainerStyle: {
               borderBottomColor: '#E2E6ED',

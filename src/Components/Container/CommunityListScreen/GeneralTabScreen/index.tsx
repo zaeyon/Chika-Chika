@@ -54,6 +54,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
   const [order, setOrder] = useState('createdAt');
   const currentUser = useSelector((state: any) => state.currentUser);
   const jwtToken = currentUser.jwtToken;
+  const hometown = currentUser.hometown;
   const profile = currentUser.profile;
   const postData = useSelector(
     (state: any) => state.communityPostList.FreeTalkPosts,
@@ -72,7 +73,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
         order: 'createdAt',
         region,
       };
-      GETCommunityPosts(jwtToken, String(profile.Residences[0].id), form).then(
+      GETCommunityPosts(jwtToken, String(hometown[0].id), form).then(
         (response: any) => {
           const data = {
             type,
@@ -109,7 +110,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
       region,
     };
     setRefreshing(true);
-    GETCommunityPosts(jwtToken, String(profile.Residences[0].id), form).then(
+    GETCommunityPosts(jwtToken, String(hometown[0].id), form).then(
       (response: any) => {
         setIsDataFinish(false);
         const data = {
@@ -156,22 +157,20 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
           order,
           region,
         };
-        GETCommunityPosts(
-          jwtToken,
-          String(profile.Residences[0].id),
-          form,
-        ).then((response: any) => {
-          console.log(response.length);
-          if (response.length === 0) {
-            setIsDataFinish(true);
-          }
-          const data = {
-            type,
-            posts: [...postData, ...response],
-          };
-          dispatch(allActions.communityActions.setPosts(data));
-          setIsEndReached(false);
-        });
+        GETCommunityPosts(jwtToken, String(hometown[0].id), form).then(
+          (response: any) => {
+            console.log(response.length);
+            if (response.length === 0) {
+              setIsDataFinish(true);
+            }
+            const data = {
+              type,
+              posts: [...postData, ...response],
+            };
+            dispatch(allActions.communityActions.setPosts(data));
+            setIsEndReached(false);
+          },
+        );
       }
     },
     [isEndReached, postData, order, jwtToken, region],
@@ -187,31 +186,19 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
         region,
       };
       setRefreshing(true);
-      GETCommunityPosts(jwtToken, String(profile.Residences[0].id), form).then(
+      GETCommunityPosts(jwtToken, String(hometown[0].id), form).then(
         (response: any) => {
           setIsDataFinish(false);
           const data = {
             type,
             posts: response,
           };
-          if (
-            postData &&
-            JSON.stringify(response).replace(
-              /"createdDiff\(second\)\"\:\d*\,/gi,
-              '',
-            ) !==
-              JSON.stringify(postData).replace(
-                /"createdDiff\(second\)\"\:\d*\,/gi,
-                '',
-              )
-          ) {
-            console.log('liked post diff');
-            LayoutAnimation.configureNext(
-              LayoutAnimation.create(400, 'easeInEaseOut', 'opacity'),
-            );
-            setRegion(region);
-            dispatch(allActions.communityActions.setPosts(data));
-          }
+          console.log('liked post diff');
+          LayoutAnimation.configureNext(
+            LayoutAnimation.create(400, 'easeInEaseOut', 'opacity'),
+          );
+          setRegion(region);
+          dispatch(allActions.communityActions.setPosts(data));
           setRefreshing(false, callback());
         },
       );
@@ -229,7 +216,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
         order,
         region,
       };
-      GETCommunityPosts(jwtToken, String(profile.Residences[0].id), form).then(
+      GETCommunityPosts(jwtToken, String(hometown[0].id), form).then(
         (response: any) => {
           setIsDataFinish(false);
           const data = {
@@ -330,7 +317,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
       <>
         <LocationInfoHeader
           type="freetalk"
-          profile={profile}
+          hometown={hometown}
           region={region}
           setRegion={onRegionChanged}
         />

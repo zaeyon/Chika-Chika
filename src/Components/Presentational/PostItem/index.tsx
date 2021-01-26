@@ -1,4 +1,4 @@
-import React, {useMemo, useCallback, useRef, useState} from 'react';
+import React, {useMemo, useEffect, useCallback, useRef, useState} from 'react';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
@@ -13,7 +13,6 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import {SharedElement} from 'react-navigation-shared-element';
 
 const ContainerView = Styled.View`
 width: ${wp('100%')}px;
@@ -25,7 +24,7 @@ background: #FFFFFF;
 const BodyContainerView = Styled.View`
 display: flex;
 width: 100%;
-padding: 9px 16px 0px 16px;
+padding: 12px 16px 0px 16px;
 `;
 
 const ProfileContainerView = Styled.View`
@@ -34,13 +33,14 @@ height: auto;
 margin-right: auto;
 flex-direction: row;
 align-items: center;
-padding: 12px 0px;
+padding: 8px 0px 6px 0px;
 `;
 
 const HashTagContainerView = Styled.View`
 width: 100%;
 height: auto;
-padding: 0px 16px;
+padding-left: 2px;
+margin: 6px 0px;
 flex-direction: row;
 `;
 
@@ -49,28 +49,28 @@ width: auto;
 height: auto;
 flex-direction: row;
 align-items: center;
-margin: 8px 8px 0px 0px;
-padding: 4px 12px;
-border-radius: 100px;
+padding: 6px 10px;
+margin-right: 8px;
+border-radius: 4px;
 background-color: #F5F7F9;
 `;
 const HashTagIconText = Styled.Text`
 font-family: NanumSquare;
 font-style: normal;
-font-weight: normal;
-font-size: 14px;
-line-height: 24px;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
 text-align: center;
-color: #9AA2A9;
+color: #4E525D;
 `;
 // View => Image when ready
 const ProfileImage = Styled.Image<{source: any}>`
-width: ${wp('8.8%')}px;
-height: ${wp('8.8%')}px;
+width: 28px;
+height: 28px;
 background-color: grey;
 border-width: 0.5px
 border-color: #E2E6ED;
-border-radius: 12px;
+border-radius: 10px;
 `;
 // width, height ++ 4px
 const ProfileContentView = Styled.View`
@@ -84,7 +84,9 @@ const ProfileNameText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
 font-weight: bold;
-font-size: 14px;
+font-size: 13px;
+line-height: 16px;
+margin-right: 8px;
 `;
 
 const ProfileSplitView = Styled.View`
@@ -99,29 +101,29 @@ const ProfileDescriptionText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
 font-weight: bold;
-font-size: 14px;
+font-size: 13px;
+line-height: 16px;
 color: #9AA2A9;
 `;
 // font-size, line-height ++ 1px
 const ContentView = Styled.View`
 width: 100%;
 height: auto;
-background: white;
-margin: 4px;
+margin: 6px 2px;
 `;
 
 const ContentText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
-font-weight: normal;
+font-weight: 500;
 font-size: 14px;
 line-height: 24px;
 `;
 
 const ImageContainerView = Styled.View`
-margin: 12px 16px 0px 16px;
 width: auto;
 height: auto;
+margin: 6px 0px;
 `;
 const ImageFlatList = Styled(FlatList as new () => FlatList)`
 width: 100%;
@@ -129,22 +131,23 @@ height: auto;
 overflow: visible;
 `;
 const ImageView = Styled.Image<{source: any}>`
-width: 120px;
-height: 120px;
-background-color: grey;
+width: 124px;
+height: 124px;
+background-color: #F5F7F9;
 border-radius: 8px;
-margin: 0px 4px;
+margin-right: 8px;
 `;
 const SocialInfoContainerView = Styled.View`
 width: auto;
-height: 60px;
+
 align-items: center;
 flex-direction: row;
-padding: 0px 16px;
+margin-top: 6px;
+padding: 6px 16px;
 `;
 
 const SocialInfoContentView = Styled.View`
-min-width: 64px;
+min-width: 48px;
 `;
 
 const SocialInfoView = Styled.View`
@@ -159,13 +162,23 @@ const SocialInfoText = Styled.Text`
 font-family: NanumSquare;
 font-style: normal;
 font-weight: bold;
-font-size: 14px;
-line-height: 24px;
+font-size: 13px;
+line-height: 16px;
 margin-left: 4px;
 `;
-const HashTagText = Styled.Text`
+const HashTagHighlightText = Styled.Text`
   color: #0075FF;
 `;
+
+const HashTagText = Styled.Text`
+font-style: normal;
+font-weight: 500;
+font-size: 12px;
+line-height: 16px;
+color: #9AA2A9;
+margin-right: 4px;
+`;
+
 interface Props {
   data: any;
   moveToCommunityDetail: any;
@@ -191,6 +204,7 @@ const PostItem = ({
     postCommentsNum,
     viewerLikeCommunityPost,
     viewerScrapCommunityPost,
+    userId,
     user,
     Clinics,
     GeneralTags,
@@ -202,6 +216,14 @@ const PostItem = ({
 
   const likeButtonScale = useRef(new Animated.Value(1)).current;
   const scrapButtonScale = useRef(new Animated.Value(1)).current;
+
+  const [isLiked, setIsLiked] = useState(viewerLikeCommunityPost);
+  const [isScraped, setIsScraped] = useState(viewerScrapCommunityPost);
+
+  useEffect(() => {
+    setIsLiked(viewerLikeCommunityPost);
+    setIsScraped(viewerScrapCommunityPost);
+  }, [viewerLikeCommunityPost, viewerScrapCommunityPost]);
 
   const formatElapsedDate = useCallback((elapsedTime: number) => {
     if (elapsedTime / (24 * 3600 * 1000) > 1) {
@@ -228,18 +250,23 @@ const PostItem = ({
 
   const formatDate = useCallback((date: string) => {
     const tmpDate = new Date(date);
+    const currentYear = new Date(Date.now()).getFullYear();
     let year = tmpDate.getFullYear(),
       month = String(tmpDate.getMonth() + 1),
       day = String(tmpDate.getDay());
-    month = Number(month) >= 10 ? month : '0' + month;
-    day = Number(day) >= 10 ? day : '0' + day;
-    return year + '년 ' + month + '월 ' + day + '일';
+    // month = Number(month) >= 10 ? month : '0' + month;
+    // day = Number(day) >= 10 ? day : '0' + day;
+    if (currentYear === year) {
+      return month + '월 ' + day + '일';
+    } else {
+      return year + '년 ' + month + '월 ' + day + '일';
+    }
   }, []);
 
   const formatHashTag = useCallback((text: string, index: number) => {
     return (
       <TouchableWithoutFeedback key={text + index}>
-        <HashTagText>{'#' + text}</HashTagText>
+        <HashTagHighlightText>{'#' + text}</HashTagHighlightText>
       </TouchableWithoutFeedback>
     );
   }, []);
@@ -306,6 +333,35 @@ const PostItem = ({
     [],
   );
 
+  const renderHashTag = useCallback(() => {
+    if (
+      Clinics.length +
+        GeneralTags.length +
+        SymptomItems.length +
+        TreatmentItems.length +
+        CityTags.length ===
+      0
+    ) {
+      return null;
+    } else {
+      const renderItem = (item: any) => (
+        <HashTagIconView key={String(item.id)}>
+          <HashTagText>{'#'}</HashTagText>
+          <HashTagIconText>{item.name || item.emdName}</HashTagIconText>
+        </HashTagIconView>
+      );
+
+      const result = [
+        Clinics,
+        GeneralTags,
+        SymptomItems,
+        TreatmentItems,
+        CityTags,
+      ].map((item) => item.map(renderItem));
+      return <HashTagContainerView>{result}</HashTagContainerView>;
+    }
+  }, [Clinics, GeneralTags, SymptomItems, TreatmentItems, CityTags]);
+
   return (
     <TouchableWithoutFeedback
       onPress={() => {
@@ -315,7 +371,7 @@ const PostItem = ({
         <BodyContainerView>
           <TouchableWithoutFeedback
             onPress={() => {
-              moveToAnotherProfile();
+              moveToAnotherProfile(userId, user.nickname, user.profileImg);
             }}>
             <ProfileContainerView>
               <ProfileImage
@@ -329,10 +385,7 @@ const PostItem = ({
                 }
               />
               <ProfileContentView>
-                <SharedElement id="1">
-                  <ProfileNameText>{user.nickname}</ProfileNameText>
-                </SharedElement>
-                <ProfileSplitView />
+                <ProfileNameText>{user.nickname}</ProfileNameText>
                 <ProfileDescriptionText>
                   {formatElapsedDate(data['createdDiff(second)'] * 1000) +
                     (updatedAt !== createdAt ? ' ･ 수정됨' : '')}
@@ -341,57 +394,33 @@ const PostItem = ({
             </ProfileContainerView>
           </TouchableWithoutFeedback>
 
-          <ContentView>
-            <ContentText numberOfLines={2}>{memoDescription}</ContentText>
-          </ContentView>
+          {renderHashTag()}
+          {community_imgs.length > 0 ? (
+            <ImageContainerView>
+              <ImageFlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                alwaysBounceHorizontal={false}
+                data={community_imgs}
+                keyExtractor={(item) => String(item.id)}
+                snapToInterval={128}
+                renderItem={renderImage}
+              />
+            </ImageContainerView>
+          ) : null}
+          {description ? (
+            <ContentView>
+              <ContentText numberOfLines={2}>{memoDescription}</ContentText>
+            </ContentView>
+          ) : null}
         </BodyContainerView>
-
-        {community_imgs.length > 0 ? (
-          <ImageContainerView>
-            <ImageFlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              alwaysBounceHorizontal={false}
-              data={community_imgs}
-              keyExtractor={(item) => String(item.id)}
-              snapToInterval={128}
-              renderItem={renderImage}
-            />
-          </ImageContainerView>
-        ) : null}
-        <HashTagContainerView>
-          {Clinics.map((item: any) => (
-            <HashTagIconView key={String(item.id)}>
-              <HashTagIconText>{item.name}</HashTagIconText>
-            </HashTagIconView>
-          ))}
-          {GeneralTags.map((item: any) => (
-            <HashTagIconView key={String(item.id)}>
-              <HashTagIconText>{item.name}</HashTagIconText>
-            </HashTagIconView>
-          ))}
-          {SymptomItems.map((item: any) => (
-            <HashTagIconView key={String(item.id)}>
-              <HashTagIconText>{item.name}</HashTagIconText>
-            </HashTagIconView>
-          ))}
-          {TreatmentItems.map((item: any) => (
-            <HashTagIconView key={String(item.id)}>
-              <HashTagIconText>{item.name}</HashTagIconText>
-            </HashTagIconView>
-          ))}
-          {CityTags.map((item: any) => (
-            <HashTagIconView key={String(item.id)}>
-              <HashTagIconText>{item.fullCityName}</HashTagIconText>
-            </HashTagIconView>
-          ))}
-        </HashTagContainerView>
 
         <SocialInfoContainerView>
           <SocialInfoContentView>
             <TouchableWithoutFeedback
               onPress={() => {
                 toggleSocialLike(id, viewerLikeCommunityPost, type);
+                setIsLiked((prev) => !prev);
                 if (!viewerLikeCommunityPost) {
                   ReactNativeHapticFeedback.trigger('impactLight');
                 }
@@ -406,12 +435,12 @@ const PostItem = ({
               <SocialInfoView>
                 <Animated.Image
                   style={{
-                    width: 18,
-                    height: 18,
+                    width: 20,
+                    height: 20,
                     transform: [{scale: likeButtonScale}],
                   }}
                   source={
-                    viewerLikeCommunityPost
+                    isLiked
                       ? require('~/Assets/Images/Social/ic/like/focus.png')
                       : require('~/Assets/Images/Social/ic/like/unfocus.png')
                   }
@@ -425,8 +454,8 @@ const PostItem = ({
               <SocialInfoView>
                 <Image
                   style={{
-                    width: 18,
-                    height: 18,
+                    width: 20,
+                    height: 20,
                   }}
                   source={require('~/Assets/Images/Social/ic/comment/unfocus.png')}
                 />
@@ -438,6 +467,7 @@ const PostItem = ({
           <TouchableWithoutFeedback
             onPress={() => {
               toggleSocialScrap(id, viewerScrapCommunityPost, type);
+              setIsScraped((prev) => !prev);
               if (!viewerScrapCommunityPost) {
                 ReactNativeHapticFeedback.trigger('impactLight');
               }
@@ -452,12 +482,12 @@ const PostItem = ({
             <SocialInfoView style={{marginLeft: 'auto', marginRight: 0}}>
               <Animated.Image
                 style={{
-                  width: 18,
-                  height: 18,
+                  width: 20,
+                  height: 20,
                   transform: [{scale: scrapButtonScale}],
                 }}
                 source={
-                  viewerScrapCommunityPost
+                  isScraped
                     ? require('~/Assets/Images/Social/ic/bookmark/focus.png')
                     : require('~/Assets/Images/Social/ic/bookmark/unfocus.png')
                 }
