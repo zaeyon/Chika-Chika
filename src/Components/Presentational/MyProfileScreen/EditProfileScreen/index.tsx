@@ -143,7 +143,6 @@ const EditProfileScreen = ({
   const [sectionArrow, setSectionArrow] = useState(
     require('~/Assets/Images/MyPage/common/gan/list/profile_edit_section_arrow.png'),
   );
-  console.log(currentUser);
   const genderActionSheetRef: any = useRef();
   const imageActionSheetRef: any = useRef();
 
@@ -155,7 +154,9 @@ const EditProfileScreen = ({
     '현재 사진 삭제',
   ];
 
-  const [date, setDate] = useState<Date>(currentUser.birthdate || Date.now());
+  const [date, setDate] = useState<Date>(
+    currentUser.profile.birthdate || Date.now(),
+  );
 
   const onChange = (event: Event, selectedDate?: Date) => {
     const currentDate = selectedDate || date;
@@ -210,7 +211,7 @@ const EditProfileScreen = ({
 
   const renderResidences = useCallback(() => {
     let result = '';
-    currentUser.Residences.map((item: any, index: number) => {
+    currentUser.hometown.map((item: any, index: number) => {
       if (index === 0) {
         result += item.emdName;
       } else {
@@ -218,7 +219,7 @@ const EditProfileScreen = ({
       }
     });
     return result;
-  }, [currentUser]);
+  }, [currentUser.hometown]);
 
   const formatProvider = useCallback((provider: string) => {
     switch (provider) {
@@ -245,7 +246,7 @@ const EditProfileScreen = ({
                 source={require('~/Assets/Images/MyPage/common/gan/ic/write/white.png')}
               />
             </ProfileImageMaskView>
-            <ProfileImage source={{uri: currentUser.profileImg}} />
+            <ProfileImage source={{uri: currentUser.profile.profileImg}} />
           </ProfileImageContentView>
         </TouchableWithoutFeedback>
       </ProfileImageContainerView>
@@ -253,11 +254,13 @@ const EditProfileScreen = ({
         <TouchableHighlight
           activeOpacity={0.9}
           underlayColor="black"
-          onPress={() => moveToEditNickname(currentUser.nickname)}>
+          onPress={() => moveToEditNickname(currentUser.profile.nickname)}>
           <SharedElement id="nicknameInput">
             <SectionContentView>
               <SectionContentTitleText>{'닉네임'}</SectionContentTitleText>
-              <SectionContentText>{currentUser.nickname}</SectionContentText>
+              <SectionContentText>
+                {currentUser.profile.nickname}
+              </SectionContentText>
               <SectionImage source={sectionArrow} />
             </SectionContentView>
           </SharedElement>
@@ -266,7 +269,7 @@ const EditProfileScreen = ({
         <TouchableHighlight
           activeOpacity={0.9}
           underlayColor="black"
-          onPress={() => console.log('h')}>
+          onPress={() => moveToHomeTownSetting()}>
           <SectionContentView>
             <SectionContentTitleText>{'우리동네'}</SectionContentTitleText>
             <SectionContentText>{renderResidences()}</SectionContentText>
@@ -283,7 +286,7 @@ const EditProfileScreen = ({
           <SectionContentView>
             <SectionContentTitleText>{'성별'}</SectionContentTitleText>
             <SectionContentText>
-              {currentUser.gender || '미등록'}
+              {currentUser.profile.gender || '미등록'}
             </SectionContentText>
             <SectionImage source={sectionArrow} />
           </SectionContentView>
@@ -296,7 +299,7 @@ const EditProfileScreen = ({
           <SectionContentView>
             <SectionContentTitleText>{'생일'}</SectionContentTitleText>
             <SectionContentText>
-              {currentUser.birthdate || '미등록'}
+              {currentUser.profile.birthdate || '미등록'}
             </SectionContentText>
             <SectionImage source={sectionArrow} />
           </SectionContentView>
@@ -311,7 +314,7 @@ const EditProfileScreen = ({
           <SectionContentView>
             <SectionContentTitleText>{'연동계정'}</SectionContentTitleText>
             <SectionContentText>
-              {formatProvider(currentUser.provider)}
+              {formatProvider(currentUser.profile.provider)}
             </SectionContentText>
             <SectionImage source={sectionArrow} />
           </SectionContentView>
@@ -324,9 +327,9 @@ const EditProfileScreen = ({
           <SectionContentView>
             <SectionContentTitleText>{'본인인증'}</SectionContentTitleText>
             <SectionContentText>
-              {currentUser.phoneNumber || '미인증'}
+              {currentUser.profile.phoneNumber || '미인증'}
             </SectionContentText>
-            {currentUser.phoneNumber ? (
+            {currentUser.profile.phoneNumber ? (
               <VerifiedBadgeView>
                 <VerifiedBadgeText>{'인증완료'}</VerifiedBadgeText>
               </VerifiedBadgeView>
@@ -334,7 +337,7 @@ const EditProfileScreen = ({
             <SectionImage
               source={sectionArrow}
               style={{
-                marginLeft: currentUser.phoneNumber ? 8 : 'auto',
+                marginLeft: currentUser.profile.phoneNumber ? 8 : 'auto',
               }}
             />
           </SectionContentView>

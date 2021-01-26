@@ -39,6 +39,8 @@ import allActions from '~/actions';
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
  background-color: white;
+ align-items: center;
+ justify-content: center;
 `;
 
 const BodyContainerScrollView = Styled.ScrollView`
@@ -354,7 +356,11 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
       </ContainerView>
     );
   } else {
-    return <ContainerView></ContainerView>;
+    return (
+      <ContainerView>
+        <ActivityIndicator />
+      </ContainerView>
+    );
   }
 };
 

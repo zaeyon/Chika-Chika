@@ -281,10 +281,11 @@ const PlaceholderContent = ({navigation, title}: Props) => {
   const [communityPost, setCommunityPost]: any = useState();
   const [localClinic, setLocalClinic]: any = useState();
   const jwtToken = currentUser.jwtToken;
+  const hometown = currentUser.hometown;
   const profile = currentUser.profile;
 
   useEffect(() => {
-    GETCommunityPosts(jwtToken, profile.Residences[0].id, {
+    GETCommunityPosts(jwtToken, hometown[0].id, {
       type: 'FreeTalk',
       limit: 2,
       offset: 0,
@@ -478,9 +479,7 @@ const PlaceholderContent = ({navigation, title}: Props) => {
           <LocalIndicatorImage
             source={require('~/Assets/Images/Map/pick/target_white.png')}
           />
-          <LocalIndicatorText>
-            {profile.Residences[0].emdName}
-          </LocalIndicatorText>
+          <LocalIndicatorText>{hometown[0].emdName}</LocalIndicatorText>
         </LocalIndicatorView>
       </LocalHospitalInfoView>
       <LocalCommunityInfoView>

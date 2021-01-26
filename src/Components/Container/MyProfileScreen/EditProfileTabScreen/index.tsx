@@ -180,7 +180,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
         moveToGallery={moveToGallery}
         moveToHomeTownSetting={moveToHomeTownSetting}
         moveToPhoneVerify={moveToPhoneVerify}
-        currentUser={profile}
+        currentUser={currentUser}
         changeProfileNickname={changeProfileNickname}
         changeProfileGender={changeProfileGender}
         changeProfileBirthdate={changeProfileBirthdate}

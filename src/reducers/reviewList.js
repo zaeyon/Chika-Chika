@@ -2,6 +2,7 @@ const reviewList = (
   state = {
     mainReviewList: [],
     MyReviews: [],
+    OpponentReviews: [],
     LikedReviews: [],
     ScrapedReviews: [],
     CommentedReviews: [],
@@ -15,7 +16,8 @@ const reviewList = (
         mainReviewList: action.payload,
       };
     case 'TOGGLE_REVIEW_LIKE': {
-      let tmpReviewList = state.mainReviewList;
+      const tmpReviewList = state.mainReviewList.concat();
+      const tmpOpponentReviews = state.OpponentReviews.concat();
       const tmpMyReviews = state.MyReviews.concat();
       const tmpLikedReviews = state.LikedReviews.concat();
       const tmpScrapedReviews = state.ScrapedReviews.concat();
@@ -24,6 +26,12 @@ const reviewList = (
       const targetReviewIndex = tmpReviewList.findIndex((item, index) => {
         return item.id == action.payload;
       });
+
+      const targetOpponentReviewIndex = tmpOpponentReviews.findIndex(
+        (item, index) => {
+          return item.id == action.payload;
+        },
+      );
 
       const targetMyReviewIndex = tmpMyReviews.findIndex((item, index) => {
         return item.id === action.payload;
@@ -56,6 +64,19 @@ const reviewList = (
         tmpReviewList[targetReviewIndex].reviewLikeNum = liked
           ? tmpReviewList[targetReviewIndex].reviewLikeNum - 1
           : tmpReviewList[targetReviewIndex].reviewLikeNum + 1;
+      }
+
+      if (targetOpponentReviewIndex !== -1) {
+        const liked =
+          tmpOpponentReviews[targetOpponentReviewIndex].viewerLikedReview == 1
+            ? true
+            : false;
+        tmpOpponentReviews[targetOpponentReviewIndex].viewerLikedReview = liked
+          ? 0
+          : 1;
+        tmpOpponentReviews[targetOpponentReviewIndex].reviewLikeNum = liked
+          ? tmpOpponentReviews[targetOpponentReviewIndex].reviewLikeNum - 1
+          : tmpOpponentReviews[targetOpponentReviewIndex].reviewLikeNum + 1;
       }
 
       if (targetMyReviewIndex !== -1) {
@@ -111,13 +132,14 @@ const reviewList = (
         ...state,
         mainReviewList: tmpReviewList,
         MyReviews: tmpMyReviews,
+        OpponentReviews: tmpOpponentReviews,
         LikedReviews: tmpLikedReviews,
         ScrapedReviews: tmpScrapedReviews,
         CommentedReviews: tmpCommentedReviews,
       };
     }
     case 'TOGGLE_REVIEW_SCRAP': {
-      let tmpReviewList = state.mainReviewList;
+      const tmpReviewList = state.mainReviewList.concat();
       const tmpMyReviews = state.MyReviews.concat();
       const tmpLikedReviews = state.LikedReviews.concat();
       const tmpScrapedReviews = state.ScrapedReviews.concat();
@@ -126,6 +148,12 @@ const reviewList = (
       const targetIndex = tmpReviewList.findIndex((item, index) => {
         return item.id == action.payload;
       });
+
+      const targetOpponentReviewIndex = tmpOpponentReviews.findIndex(
+        (item, index) => {
+          return item.id === action.payload;
+        },
+      );
 
       const targetMyReviewIndex = tmpMyReviews.findIndex((item, index) => {
         return item.id === action.payload;
@@ -153,6 +181,14 @@ const reviewList = (
         const scraped =
           tmpReviewList[targetIndex].viewerScrapedReview == 1 ? true : false;
         tmpReviewList[targetIndex].viewerScrapedReview = scraped ? 0 : 1;
+      }
+
+      if (targetOpponentReviewIndex >= 0) {
+        tmpOpponentReviews.splice(targetOpponentReviewIndex, 1, {
+          ...state.OpponentReviews[targetOpponentReviewIndex],
+          viewerScrapedReview: !state.OpponentReviews[targetOpponentReviewIndex]
+            .viewerScrapedReview,
+        });
       }
 
       if (targetMyReviewIndex >= 0) {
@@ -188,7 +224,7 @@ const reviewList = (
       return {
         ...state,
         mainReviewList: tmpReviewList,
-
+        OpponentReviews: tmpOpponentReviews,
         MyReviews: tmpMyReviews,
         LikedReviews: tmpLikedReviews,
         ScrapedReviews: tmpScrapedReviews,
@@ -199,6 +235,11 @@ const reviewList = (
       return {
         ...state,
         MyReviews: action.payload,
+      };
+    case 'SET_OPPONENT_REVIEWS':
+      return {
+        ...state,
+        OpponentReviews: action.payload,
       };
     case 'SET_LIKED_REVIEWS':
       return {

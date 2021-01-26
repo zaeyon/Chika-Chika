@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {Image, Animated} from 'react-native';
 import Styled from 'styled-components/native';
 import {
@@ -10,7 +10,7 @@ const ContianerView = Styled.View`
 width: ${wp('100%')}px;
 height: auto;
 background: #FFFFFF;
-padding: 16px 8px;
+padding: 0px 8px;
 flex-direction: row;
 border-bottom-width: 1px;
 border-color: #E2E6ED;
@@ -34,7 +34,6 @@ margin-right: 8px;
 
 const LocationToggleContainerView = Styled.View`
 flex-direction: row;
-margin-left: auto;
 justify-content: center;
 align-items: center;
 `;
@@ -45,7 +44,7 @@ const LocationToggleContentView = Styled.View`
 justify-content: center;
 align-items: center;
 flex-direction: row;
-padding: 0px 8px
+padding: 16px 8px
 `;
 
 const LocationSelectedText = Styled.Text`
@@ -56,7 +55,7 @@ font-size: 14px;
 line-height: 24px;
 display: flex;
 align-items: center;
-color: #00D1FF;
+color: #131F3C;
 `;
 
 const LocationText = Styled.Text`
@@ -77,36 +76,23 @@ background: #E2E6ED;
 `;
 
 interface Props {
-  profile: any;
+  hometown: any;
   region: string;
   setRegion: any;
   type: string;
 }
-const LocationInfoHeader = ({profile, region, setRegion, type}: Props) => {
+const LocationInfoHeader = ({hometown, region, setRegion, type}: Props) => {
   const iconSize = useRef(new Animated.Value(1)).current;
+  const [mainHometown, setMainHometown] = useState(
+    hometown.find((item) => item.UsersCities.now === true),
+  );
+
+  useEffect(() => {
+    setMainHometown(hometown.find((item) => item.UsersCities.now === true));
+  }, [hometown]);
+
   return (
     <ContianerView>
-      <HeaderTitleView>
-        {region === 'all' ? (
-          <HeaderTitleText>
-            {type === 'question'
-              ? '전국의 질문글입니다.'
-              : '전국의 수다글입니다.'}
-          </HeaderTitleText>
-        ) : (
-          <>
-            <HeaderTitleText>
-              {`${profile.Residences[0].sigungu} ${profile.Residences[0].emdName}`}
-            </HeaderTitleText>
-            <Animated.Image
-              style={{
-                transform: [{scale: iconSize}],
-              }}
-              source={require('~/Assets/Images/Location/ic/imhere.png')}
-            />
-          </>
-        )}
-      </HeaderTitleView>
       <LocationToggleContainerView>
         <LocationToggleTouchableOpacity onPress={() => setRegion('all')}>
           <LocationToggleContentView>
@@ -132,23 +118,13 @@ const LocationInfoHeader = ({profile, region, setRegion, type}: Props) => {
           }}>
           {region === 'residence' ? (
             <LocationToggleContentView>
-              <Image
-                style={{
-                  marginRight: 4,
-                }}
-                source={require('~/Assets/Images/Location/ic/pick/focus.png')}
-              />
-              <LocationSelectedText>{'우리동네'}</LocationSelectedText>
+              <LocationSelectedText>
+                {mainHometown.emdName}
+              </LocationSelectedText>
             </LocationToggleContentView>
           ) : (
             <LocationToggleContentView>
-              <Image
-                style={{
-                  marginRight: 4,
-                }}
-                source={require('~/Assets/Images/Location/ic/pick/unfocus.png')}
-              />
-              <LocationText>{'우리동네'}</LocationText>
+              <LocationText>{mainHometown.emdName}</LocationText>
             </LocationToggleContentView>
           )}
         </LocationToggleTouchableOpacity>

@@ -20,7 +20,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import ActionSheet from 'react-native-actionsheet';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 // Local Component
 import ReviewInformation from '~/Components/Presentational/ReviewDetailScreen/ReviewInformation';
@@ -44,7 +44,6 @@ import POSTReviewScrap from '~/Routes/Review/POSTReviewScrap';
 import DELETEReviewScrap from '~/Routes/Review/DELETEReviewScrap';
 import DELETEComment from '~/Routes/Comment/DELETEComment';
 import GETCommentList from '~/Routes/Comment/GETCommentList';
-
 
 const Container = Styled.SafeAreaView`
  flex: 1;
@@ -113,6 +112,7 @@ background-color: #ffffff;
 border-width: 1px;
 border-color: #E2E6ED;
 border-radius: 12px;
+z-index: 4;
 `;
 
 const MoreViewItemContainer = Styled.View`
@@ -175,7 +175,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     route.params?.isCurUserScrap,
   );
   const [likeCount, setLikeCount] = useState<number>(route.params?.likeCount);
-  
+
   const [viewCount, setViewCount] = useState<number>(0);
 
   const [isCommentInputFocused, setIsCommentInputFocused] = useState<boolean>(
@@ -183,11 +183,11 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   );
   const [paddingBottom, setPaddingBottom] = useState<number>(hp('8%'));
 
-  const [loadingReviewDetail, setLoadingReviewDetail] = useState<boolean>(
-    true,
-  );
+  const [loadingReviewDetail, setLoadingReviewDetail] = useState<boolean>(true);
   const [loadingCommentPost, setLoadingCommentPost] = useState<boolean>(false);
-  const [refreshingReviewDetail, setRefreshingReviewDetail] = useState<boolean>(false,);
+  const [refreshingReviewDetail, setRefreshingReviewDetail] = useState<boolean>(
+    false,
+  );
 
   const [treatmentDate, setTreatmentDate] = useState<any>({});
   const [treatmentList, setTreatmentList] = useState<Array<object>>([]);
@@ -205,16 +205,22 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const [treatmentDateDisplay, setTreatmentDateDisplay] = useState<String>(
     route.params?.treatmentDate,
   );
-  const [elapsedTime, setElapsedTime] = useState<string>(route.params?.elapsedTime);
-  const [isVisibleOwnMoreViewModal, setIsVisibleOwnMoreViewModal] = useState<boolean>(false);
-  const [isVisibleOtherMoreViewModal, setIsVisibleOtherMoreViewModal] = useState<boolean>(false);
+  const [elapsedTime, setElapsedTime] = useState<string>(
+    route.params?.elapsedTime,
+  );
+  const [isVisibleOwnMoreViewModal, setIsVisibleOwnMoreViewModal] = useState<
+    boolean
+  >(false);
+  const [
+    isVisibleOtherMoreViewModal,
+    setIsVisibleOtherMoreViewModal,
+  ] = useState<boolean>(false);
 
   const [isCertifiedReceipt, setIsCertifiedReceipt] = useState<boolean>(false);
   const [changeCommentArray, setChangeCommentArray] = useState<boolean>(false);
 
   const scrollViewRef = useRef<any>();
   const reviewScrollViewRef = useRef<any>(null);
-
 
   const ownCommentActionSheetRef = createRef<any>();
   const otherCommentActionSheetRef = createRef<any>();
@@ -246,7 +252,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   console.log('route.params?.ratingObj', route.params?.ratingObj);
   console.log('route.params?.dentalObj', route.params?.dentalObj);
   console.log('route.params?.treatmentDate', route.params?.treatmentDate);
-  console.log("route.params?.elapsedTime", route.params?.elapsedTime);
+  console.log('route.params?.elapsedTime', route.params?.elapsedTime);
 
   useEffect(() => {
     startTime = new Date();
@@ -270,31 +276,36 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         'route.params?.revisedParagraphArray',
         route.params.paragraphArray,
       );
-      console.log("리뷰 수정 route.params.dentalObj", route.params.dentalObj);
-      console.log("리뷰 수정 route.params?.treatmentDateObj", route.params.treatmentDateObj);
-      console.log("수정전 treatmentDate", treatmentDate);
+      console.log('리뷰 수정 route.params.dentalObj', route.params.dentalObj);
+      console.log(
+        '리뷰 수정 route.params?.treatmentDateObj',
+        route.params.treatmentDateObj,
+      );
+      console.log('수정전 treatmentDate', treatmentDate);
 
-      const tmpTreatmentDate = new Date(route.params?.treatmentDateObj.treatDate);
+      const tmpTreatmentDate = new Date(
+        route.params?.treatmentDateObj.treatDate,
+      );
       const splitedTreatmentDate = route.params?.treatmentDateObj.displayTreatDate.split(
-          '-',
+        '-',
       );
 
       const tmpDisplayTreatDate =
-          splitedTreatmentDate[0] +
-          '.' +
-          splitedTreatmentDate[1] +
-          '.' +
-          splitedTreatmentDate[2];
+        splitedTreatmentDate[0] +
+        '.' +
+        splitedTreatmentDate[1] +
+        '.' +
+        splitedTreatmentDate[2];
 
       const treatmentObj = {
-          displayTreatDate: tmpDisplayTreatDate,
-          treatDate: tmpTreatmentDate,
+        displayTreatDate: tmpDisplayTreatDate,
+        treatDate: tmpTreatmentDate,
       };
 
       const tmpTreatPriceObj = {
-        displayTreatPrice: (route.params.totalPrice).toLocaleString() + "원",
-        treatPrice: route.params.totalPrice
-      }
+        displayTreatPrice: route.params.totalPrice.toLocaleString() + '원',
+        treatPrice: route.params.totalPrice,
+      };
 
       setParagraphArrayDisplay(route.params.paragraphArray);
       setTreatmentArrayDisplay(route.params.treatmentArray);
@@ -350,8 +361,6 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     }, 0);
   };
 
-
-
   const getReviewDetail = () => {
     GETReviewDetail(jwtToken, reviewId)
       .then((response: any) => {
@@ -366,32 +375,33 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         );
 
         const tmpTreatPriceObj = {
-          displayTreatPrice: (response.reviewBody.totalCost).toLocaleString() + "원",
-          treatPrice: response.reviewBody.totalCost
-        }
+          displayTreatPrice:
+            response.reviewBody.totalCost.toLocaleString() + '원',
+          treatPrice: response.reviewBody.totalCost,
+        };
 
         setTotalPrice(tmpTreatPriceObj);
         setLoadingReviewDetail(false);
         setIsCertifiedReceipt(response.reviewBody.certifiedBill);
         setRefreshingReviewDetail(false);
         endTime = new Date();
-        console.log("경과 시간", endTime - startTime);
+        console.log('경과 시간', endTime - startTime);
 
         const tmpTreatmentDate = new Date(response.reviewBody.treatmentDate);
-          const splitedTreatmentDate = response.reviewBody.treatmentDate.split(
-            '-',
-          );
-          const tmpDisplayTreatDate =
-            splitedTreatmentDate[0] +
-            '.' +
-            splitedTreatmentDate[1] +
-            '.' +
-            splitedTreatmentDate[2];
+        const splitedTreatmentDate = response.reviewBody.treatmentDate.split(
+          '-',
+        );
+        const tmpDisplayTreatDate =
+          splitedTreatmentDate[0] +
+          '.' +
+          splitedTreatmentDate[1] +
+          '.' +
+          splitedTreatmentDate[2];
 
-          const treatmentObj = {
-            displayTreatDate: tmpDisplayTreatDate,
-            treatDate: tmpTreatmentDate,
-          };
+        const treatmentObj = {
+          displayTreatDate: tmpDisplayTreatDate,
+          treatDate: tmpTreatmentDate,
+        };
 
         // 현재 사용자의 리뷰일때 리뷰 수정용 데이터 변환 작업
         if (isOwnReview) {
@@ -494,7 +504,6 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         setParagraphArray(tmpParagraphArray);
         setParagraphArrayDisplay(response.reviewBody.review_contents);
         setDentalInfo(dentalObj);
-
       })
       .catch((error) => {
         console.log('GETReviewDetail error', error);
@@ -503,44 +512,51 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   };
 
   const getReviewCommentList = () => {
-      const id = reviewId;
-      const type = 'review'
-      GETCommentList({jwtToken, type, id})
+    const id = reviewId;
+    const type = 'review';
+    GETCommentList({jwtToken, type, id})
       .then((response: any) => {
-          console.log("GETCommentList response", response)
-          //setCommentArray(response.reverse())
-          dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
-          dispatch(allActions.commentListActions.setCommentCount(response.commentsNum.commentsNum));
+        console.log('GETCommentList response', response);
+        //setCommentArray(response.reverse())
+        dispatch(
+          allActions.commentListActions.setCommentList(
+            response.comments.reverse(),
+          ),
+        );
+        dispatch(
+          allActions.commentListActions.setCommentCount(
+            response.commentsNum.commentsNum,
+          ),
+        );
       })
       .catch((error: any) => {
-          console.log("GETCommentList error", error);
-      })
-  }
+        console.log('GETCommentList error', error);
+      });
+  };
 
   const moveToFullImages = (imageUri: string) => {
     console.log('moveToFullImages imageArray', imageArray);
 
-    if(isVisibleOtherMoreViewModal) {
+    if (isVisibleOtherMoreViewModal) {
       setIsVisibleOtherMoreViewModal(false);
-    } else if(isVisibleOwnMoreViewModal) {
-      setIsVisibleOwnMoreViewModal(false); 
+    } else if (isVisibleOwnMoreViewModal) {
+      setIsVisibleOwnMoreViewModal(false);
     } else {
       var index = imageArray.findIndex(
         (image: any) => image.img_url === imageUri,
       );
-  
+
       var tmpImageArray = imageArray.map((image: any) => {
         return image.img_url;
       });
-  
+
       console.log('선택한 사진의 mediaFiles index', index);
-  
+
       navigation.navigate('ImageDetailScreen', {
         imageArray: tmpImageArray,
         imageIndex: index,
       });
     }
-
   };
 
   const moveToDentalDetail = (dentalId: number) => {
@@ -548,29 +564,29 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       screen: 'DentalDetailScreen',
       params: {
         dentalId: dentalInfo.id,
-      }
-    })
-  }
+      },
+    });
+  };
 
   const moveToCommentList = (request: string) => {
-    navigation.navigate("ReviewCommentListScreen", {
+    navigation.navigate('ReviewCommentListScreen', {
       reviewId: reviewId,
     });
-  }
+  };
 
   const goBack = () => {
     navigation.goBack();
   };
 
   const clickMoreView = () => {
-    if(isOwnReview) {
-      console.log("clickMoreView isOwnReview", isOwnReview);
+    if (isOwnReview) {
+      console.log('clickMoreView isOwnReview', isOwnReview);
       setIsVisibleOwnMoreViewModal(!isVisibleOwnMoreViewModal);
     } else {
-      console.log("clickMoreView isOwnReview", isOwnReview);
+      console.log('clickMoreView isOwnReview', isOwnReview);
       setIsVisibleOtherMoreViewModal(!isVisibleOtherMoreViewModal);
     }
-  }
+  };
 
   const clickCommentIcon = (request: string) => {
     //setIsCommentInputFocused(true);
@@ -719,93 +735,95 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       });
   };
 
-
   const deleteReviewComment = () => {
     const commentId = selectedCommentId;
     const type = 'review';
 
     DELETEComment({jwtToken, commentId, type, reviewId})
       .then((response: any) => {
-        console.log("DELETEComment response", response);
-        dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
-        dispatch(allActions.commentListActions.setCommentCount(response.commentsNum.commentsNum)); 
+        console.log('DELETEComment response', response);
+        dispatch(
+          allActions.commentListActions.setCommentList(
+            response.comments.reverse(),
+          ),
+        );
+        dispatch(
+          allActions.commentListActions.setCommentCount(
+            response.commentsNum.commentsNum,
+          ),
+        );
       })
       .catch((error) => {
         console.log('DELETEComment error', error);
       });
   };
 
-
   const openCommentActionSheet = (
     userId: string,
     nickname: string,
     commentId: number,
-) => {
+  ) => {
     selectedCommentId = commentId;
 
     if (userId === userProfile?.id) {
-        ownCommentActionSheetRef.current.show();
+      ownCommentActionSheetRef.current.show();
     } else {
-        otherCommentActionSheetRef.current.show();
+      otherCommentActionSheetRef.current.show();
     }
-};
-
-const onPressOwnCommentActionSheet = (index: number) => {
-  if (index === 1) {
-    deleteReviewComment();
-  }
-};
-
-
-const onPressOtherCommentActionSheet = (index: number) => {
-  if (index === 1) {
-
-  }
-};
-
-  const clickReply = (commentObj: any, targetUserNickname: string) => {
-      //console.log("clickReply userNickname, id", userNickname, id);
-      // setInputType("reply");
-      // commentInputRef.current.focus();
-      // replyTargetId = id;
-      // isClickReply = true;
-      // replyTargetNickname.current = userNickname;
-
-      navigation.navigate("ReplyPostScreen", {
-          commentObj: commentObj,
-          targetUserNickname: targetUserNickname,
-          reviewId: reviewId,
-          request: "ReviewDetailScreen",
-      });
   };
 
-  const clickReplyOfReply = (commentObj: any, targetUserNickname: string) => {
-    navigation.navigate("ReplyPostScreen", {
+  const onPressOwnCommentActionSheet = (index: number) => {
+    if (index === 1) {
+      deleteReviewComment();
+    }
+  };
+
+  const onPressOtherCommentActionSheet = (index: number) => {
+    if (index === 1) {
+    }
+  };
+
+  const clickReply = (commentObj: any, targetUserNickname: string) => {
+    //console.log("clickReply userNickname, id", userNickname, id);
+    // setInputType("reply");
+    // commentInputRef.current.focus();
+    // replyTargetId = id;
+    // isClickReply = true;
+    // replyTargetNickname.current = userNickname;
+
+    navigation.navigate('ReplyPostScreen', {
       commentObj: commentObj,
       targetUserNickname: targetUserNickname,
       reviewId: reviewId,
-      request: "ReviewDetailScreen",
-    })
-  }
+      request: 'ReviewDetailScreen',
+    });
+  };
+
+  const clickReplyOfReply = (commentObj: any, targetUserNickname: string) => {
+    navigation.navigate('ReplyPostScreen', {
+      commentObj: commentObj,
+      targetUserNickname: targetUserNickname,
+      reviewId: reviewId,
+      request: 'ReviewDetailScreen',
+    });
+  };
 
   const pressBackground = () => {
-    if(isOwnReview) {
-      if(isVisibleOwnMoreViewModal) {
-        setIsVisibleOwnMoreViewModal(false)
+    if (isOwnReview) {
+      if (isVisibleOwnMoreViewModal) {
+        setIsVisibleOwnMoreViewModal(false);
       }
     } else {
-      if(isVisibleOtherMoreViewModal) {
+      if (isVisibleOtherMoreViewModal) {
         setIsVisibleOtherMoreViewModal(false);
       }
     }
-  }
-
-
+  };
 
   return (
     <TouchableWithoutFeedback onPress={() => pressBackground()}>
-    <Container>
-      {/*
+      <Container>
+        {/*
       <HeaderBar>
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <HeaderLeftContainer>
@@ -835,133 +853,131 @@ const onPressOtherCommentActionSheet = (index: number) => {
         </HeaderRightContainer>
       </HeaderBar>
       */}
-      <NavigationHeader
-      headerLeftProps={{type: "arrow", onPress: goBack, text: "리얼리뷰"}}
-      headerRightProps={{type: "viewMore", onPress: clickMoreView}}
-      />
-      <ScrollView
-        ref={reviewScrollViewRef}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshingReviewDetail}
-            onRefresh={onRefreshReviewDetail}
-          />
-        }>
-        <TouchableWithoutFeedback onPress={() => pressBackground()}>
-        <ScrollViewContainer>
-        <WriterInfoContainer>
-        <WriterInfo
-        writerObj={writerObj}
-        elapsedTime={elapsedTime}
-        isVisibleElapsedTime={isVisibleElapsedTime}
-        createdDate={createdDate}/>
-        </WriterInfoContainer>
-        <TreatmentListContainer>
-        <TreatmentList
-        treatmentArray={treatmentArrayDisplay}
+        <NavigationHeader
+          headerLeftProps={{type: 'arrow', onPress: goBack, text: '리얼리뷰'}}
+          headerRightProps={{type: 'viewMore', onPress: clickMoreView}}
         />
-        </TreatmentListContainer>
-        {!loadingReviewDetail && (
-          <BodyContainer style={{paddingBottom: paddingBottom}}>
-            <ReviewContentContainer>
-            <ReviewContent
-              moveToFullImages={moveToFullImages}
-              paragraphArray={paragraphArrayDisplay}
+        <ScrollView
+          ref={reviewScrollViewRef}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshingReviewDetail}
+              onRefresh={onRefreshReviewDetail}
             />
-            </ReviewContentContainer>
-            <MetaInfoContainer>
-              <ReviewMetaInfo
-              dentalObj={dentalInfo}
+          }>
+          <TouchableWithoutFeedback onPress={() => pressBackground()}>
+            <ScrollViewContainer>
+              <WriterInfoContainer>
+                <WriterInfo
+                  writerObj={writerObj}
+                  elapsedTime={elapsedTime}
+                  isVisibleElapsedTime={isVisibleElapsedTime}
+                  createdDate={createdDate}
+                />
+              </WriterInfoContainer>
+              <TreatmentListContainer>
+                <TreatmentList treatmentArray={treatmentArrayDisplay} />
+              </TreatmentListContainer>
+              {!loadingReviewDetail && (
+                <BodyContainer style={{paddingBottom: paddingBottom}}>
+                  <ReviewContentContainer>
+                    <ReviewContent
+                      moveToFullImages={moveToFullImages}
+                      paragraphArray={paragraphArrayDisplay}
+                    />
+                  </ReviewContentContainer>
+                  <MetaInfoContainer>
+                    <ReviewMetaInfo
+                      dentalObj={dentalInfo}
+                      moveToDentalDetail={moveToDentalDetail}
+                      certifiedReceipt={isCertifiedReceipt}
+                      totalPrice={totalPrice.displayTreatPrice}
+                      ratingObj={rating}
+                      treatmentDate={treatmentDate.displayTreatDate}
+                    />
+                  </MetaInfoContainer>
+                  <CommentListContainer>
+                    <ReviewPreviewCommentList
+                      moveToCommentList={moveToCommentList}
+                      clickReply={clickReply}
+                      clickReplyOfReply={clickReplyOfReply}
+                      openCommentActionSheet={openCommentActionSheet}
+                      commentList={commentArray}
+                      commentCount={commentCount}
+                    />
+                  </CommentListContainer>
+                </BodyContainer>
+              )}
+              {loadingReviewDetail && (
+                <IndicatorContainer>
+                  <ActivityIndicator />
+                </IndicatorContainer>
+              )}
+            </ScrollViewContainer>
+          </TouchableWithoutFeedback>
+        </ScrollView>
+        <KeyboardAvoidingView behavior={'position'}>
+          <BottomBarContainer>
+            <ReviewBottomBar
               moveToDentalDetail={moveToDentalDetail}
-              certifiedReceipt={isCertifiedReceipt}
-              totalPrice={totalPrice.displayTreatPrice}
-              ratingObj={rating}
-              treatmentDate={treatmentDate.displayTreatDate}/>
-            </MetaInfoContainer>
-            <CommentListContainer>
-              <ReviewPreviewCommentList
-                moveToCommentList={moveToCommentList}
-                clickReply={clickReply}
-                clickReplyOfReply={clickReplyOfReply}
-                openCommentActionSheet={openCommentActionSheet}
-                commentList={commentArray}
-                commentCount={commentCount}
-              />
-            </CommentListContainer>
-          </BodyContainer>
-        )}
-        {loadingReviewDetail && (
-          <IndicatorContainer>
-            <ActivityIndicator/>
-          </IndicatorContainer>
-        )}
-        </ScrollViewContainer>
-        </TouchableWithoutFeedback>
-      </ScrollView>
-      <KeyboardAvoidingView behavior={'position'}>
-        <BottomBarContainer>
-          <ReviewBottomBar
-            moveToDentalDetail={moveToDentalDetail}
-            isCurUserLike={isCurUserLike}
-            isCurUserScrap={isCurUserScrap}
-            clickReviewLike={clickReviewLike}
-            clickReviewScrap={clickReviewScrap}
-            clickCommentIcon={clickCommentIcon}
-            likeCount={likeCount}
-          />
-        </BottomBarContainer>
-      </KeyboardAvoidingView>
-      {loadingCommentPost && (
-        <TransIndicatorContainer>
-          <ActivityIndicator color={'#ffffff'} />
-        </TransIndicatorContainer>
-      )}
-      {isVisibleOwnMoreViewModal && (
-        <MoreViewModalContainer
-        style={styles.moreViewModalShadow}>
-          <TouchableWithoutFeedback onPress={() => clickReviseReview()}>
-          <MoreViewItemContainer>
-            <MoreViewItemLabelText>{"수정"}</MoreViewItemLabelText>
-          </MoreViewItemContainer>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => clickDeleteReview()}>
-          <MoreViewItemContainer>
-            <MoreViewItemLabelText>{"삭제"}</MoreViewItemLabelText>
-          </MoreViewItemContainer>
-          </TouchableWithoutFeedback>
-          <MoreViewItemContainer>
-            <MoreViewItemLabelText>{"신고"}</MoreViewItemLabelText>
-          </MoreViewItemContainer>
-          <MoreViewItemContainer style={{borderBottomWidth: 0}}>
-            <MoreViewItemLabelText>{"공유"}</MoreViewItemLabelText>
-          </MoreViewItemContainer>
-        </MoreViewModalContainer>
-      )}
-      {isVisibleOtherMoreViewModal && (
-        <MoreViewModalContainer
-        style={styles.moreViewModalShadow}>
-          <MoreViewItemContainer>
-            <MoreViewItemLabelText>{"신고"}</MoreViewItemLabelText>
-          </MoreViewItemContainer>
-          <MoreViewItemContainer style={{borderBottomWidth: 0}}>
-            <MoreViewItemLabelText>{"공유"}</MoreViewItemLabelText>
-          </MoreViewItemContainer>
-        </MoreViewModalContainer>
-      )}
-       <ActionSheet
-            ref={ownCommentActionSheetRef}
-            options={['닫기', '삭제하기']}
-            cancelButtonIndex={0}
-            onPress={(index: any) => onPressOwnCommentActionSheet(index)}
+              isCurUserLike={isCurUserLike}
+              isCurUserScrap={isCurUserScrap}
+              clickReviewLike={clickReviewLike}
+              clickReviewScrap={clickReviewScrap}
+              clickCommentIcon={clickCommentIcon}
+              likeCount={likeCount}
             />
-            <ActionSheet
-            ref={otherCommentActionSheetRef}
-            options={['닫기', '신고하기']}
-            cancelButtonIndex={0}
-            onPress={(index: any) => onPressOtherCommentActionSheet(index)}
-            />
-    </Container>
+          </BottomBarContainer>
+        </KeyboardAvoidingView>
+        {loadingCommentPost && (
+          <TransIndicatorContainer>
+            <ActivityIndicator color={'#ffffff'} />
+          </TransIndicatorContainer>
+        )}
+        {isVisibleOwnMoreViewModal && (
+          <MoreViewModalContainer style={styles.moreViewModalShadow}>
+            <TouchableWithoutFeedback onPress={() => clickReviseReview()}>
+              <MoreViewItemContainer>
+                <MoreViewItemLabelText>{'수정'}</MoreViewItemLabelText>
+              </MoreViewItemContainer>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => clickDeleteReview()}>
+              <MoreViewItemContainer>
+                <MoreViewItemLabelText>{'삭제'}</MoreViewItemLabelText>
+              </MoreViewItemContainer>
+            </TouchableWithoutFeedback>
+            <MoreViewItemContainer>
+              <MoreViewItemLabelText>{'신고'}</MoreViewItemLabelText>
+            </MoreViewItemContainer>
+            <MoreViewItemContainer style={{borderBottomWidth: 0}}>
+              <MoreViewItemLabelText>{'공유'}</MoreViewItemLabelText>
+            </MoreViewItemContainer>
+          </MoreViewModalContainer>
+        )}
+        {isVisibleOtherMoreViewModal && (
+          <MoreViewModalContainer style={styles.moreViewModalShadow}>
+            <MoreViewItemContainer>
+              <MoreViewItemLabelText>{'신고'}</MoreViewItemLabelText>
+            </MoreViewItemContainer>
+            <MoreViewItemContainer style={{borderBottomWidth: 0}}>
+              <MoreViewItemLabelText>{'공유'}</MoreViewItemLabelText>
+            </MoreViewItemContainer>
+          </MoreViewModalContainer>
+        )}
+        <ActionSheet
+          ref={ownCommentActionSheetRef}
+          options={['닫기', '삭제하기']}
+          cancelButtonIndex={0}
+          onPress={(index: any) => onPressOwnCommentActionSheet(index)}
+        />
+        <ActionSheet
+          ref={otherCommentActionSheetRef}
+          options={['닫기', '신고하기']}
+          cancelButtonIndex={0}
+          onPress={(index: any) => onPressOtherCommentActionSheet(index)}
+        />
+      </Container>
     </TouchableWithoutFeedback>
   );
 };
@@ -974,282 +990,294 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 5,
     shadowOpacity: 0.1,
-  }
-})
+  },
+});
 
 export default ReviewDetailScreen;
 
 const TEST_REVIEW_DETAIL_DATA = {
-  "reviewBody": {
-      "id": 96,
-      "starRate_cost": 4.5,
-      "starRate_treatment": 4,
-      "starRate_service": 4,
-      "certifiedBill": false,
-      "hits": 0,
-      "treatmentDate": "2021-01-18",
-      "totalCost": 5000,
-      "createdAt": "2021-01-18T06:53:38.000Z",
-      "updatedAt": "2021-01-18T06:53:38.000Z",
-      "deletedAt": null,
-      "userId": "b788c700-53c1-11eb-9b16-f3588bcc5518",
-      "dentalClinicId": 12940,
-      "createdDiff(second)": 92488,
-      "reviewCommentsNum": 10,
-      "user": {
-          "nickname": "TEST1610337687498",
-          "profileImg": "https://lh4.googleusercontent.com/-kw57sImI58s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucnxW3c4REx4hKLoQSLZsq2f3ELP0g/s120/photo.jpg"
-      },
-      "dental_clinic": {
-          "name": "아가페치과의원(광주북구-매곡동)",
-          "address": "광주광역시 북구 서하로 119 2층 (매곡동, 우리빌딩)",
-          "originalName": "아가페치과의원"
-      },
-      "review_contents": [
-          {
-              "id": 340,
-              "img_url": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F16109528174092A14055F-D29C-497F-AADD-C08D3F9CA89F.JPG",
-              "img_name": null,
-              "mime_type": null,
-              "img_size": 552792,
-              "description": null,
-              "index": 1,
-              "img_before_after": "before",
-              "img_width": null,
-              "img_height": null,
-              "createdAt": "2021-01-18T06:53:38.000Z",
-              "updatedAt": "2021-01-18T06:53:38.000Z",
-              "deletedAt": null,
-              "reviewId": 96
-          },
-          {
-              "id": 341,
-              "img_url": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F161095281746696CD431D-0715-45E8-B6A9-E102684382FA.JPG",
-              "img_name": null,
-              "mime_type": null,
-              "img_size": 794234,
-              "description": null,
-              "index": 2,
-              "img_before_after": "before",
-              "img_width": null,
-              "img_height": null,
-              "createdAt": "2021-01-18T06:53:38.000Z",
-              "updatedAt": "2021-01-18T06:53:38.000Z",
-              "deletedAt": null,
-              "reviewId": 96
-          }
-      ],
-      "TreatmentItems": [
-          {
-              "id": 1,
-              "name": "충치",
-              "review_treatment_item": {
-                  "cost": null,
-                  "index": 1
-              }
-          }
-      ]
-  },
-  "reviewViewerNum": 1,
-  "reviewComments": [
+  reviewBody: {
+    id: 96,
+    starRate_cost: 4.5,
+    starRate_treatment: 4,
+    starRate_service: 4,
+    certifiedBill: false,
+    hits: 0,
+    treatmentDate: '2021-01-18',
+    totalCost: 5000,
+    createdAt: '2021-01-18T06:53:38.000Z',
+    updatedAt: '2021-01-18T06:53:38.000Z',
+    deletedAt: null,
+    userId: 'b788c700-53c1-11eb-9b16-f3588bcc5518',
+    dentalClinicId: 12940,
+    'createdDiff(second)': 92488,
+    reviewCommentsNum: 10,
+    user: {
+      nickname: 'TEST1610337687498',
+      profileImg:
+        'https://lh4.googleusercontent.com/-kw57sImI58s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucnxW3c4REx4hKLoQSLZsq2f3ELP0g/s120/photo.jpg',
+    },
+    dental_clinic: {
+      name: '아가페치과의원(광주북구-매곡동)',
+      address: '광주광역시 북구 서하로 119 2층 (매곡동, 우리빌딩)',
+      originalName: '아가페치과의원',
+    },
+    review_contents: [
       {
-          "id": 194,
-          "description": "ㅋㅋㅋㅋ",
-          "createdAt": "2021-01-18T06:53:51.000Z",
-          "updatedAt": "2021-01-18T06:53:51.000Z",
-          "userId": "b788c700-53c1-11eb-9b16-f3588bcc5518",
-          "createdDiff(second)": 92475,
-          "user": {
-              "id": "b788c700-53c1-11eb-9b16-f3588bcc5518",
-              "nickname": "TEST1610337687498",
-              "profileImg": "https://lh4.googleusercontent.com/-kw57sImI58s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucnxW3c4REx4hKLoQSLZsq2f3ELP0g/s120/photo.jpg"
+        id: 340,
+        img_url:
+          'https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F16109528174092A14055F-D29C-497F-AADD-C08D3F9CA89F.JPG',
+        img_name: null,
+        mime_type: null,
+        img_size: 552792,
+        description: null,
+        index: 1,
+        img_before_after: 'before',
+        img_width: null,
+        img_height: null,
+        createdAt: '2021-01-18T06:53:38.000Z',
+        updatedAt: '2021-01-18T06:53:38.000Z',
+        deletedAt: null,
+        reviewId: 96,
+      },
+      {
+        id: 341,
+        img_url:
+          'https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F161095281746696CD431D-0715-45E8-B6A9-E102684382FA.JPG',
+        img_name: null,
+        mime_type: null,
+        img_size: 794234,
+        description: null,
+        index: 2,
+        img_before_after: 'before',
+        img_width: null,
+        img_height: null,
+        createdAt: '2021-01-18T06:53:38.000Z',
+        updatedAt: '2021-01-18T06:53:38.000Z',
+        deletedAt: null,
+        reviewId: 96,
+      },
+    ],
+    TreatmentItems: [
+      {
+        id: 1,
+        name: '충치',
+        review_treatment_item: {
+          cost: null,
+          index: 1,
+        },
+      },
+    ],
+  },
+  reviewViewerNum: 1,
+  reviewComments: [
+    {
+      id: 194,
+      description: 'ㅋㅋㅋㅋ',
+      createdAt: '2021-01-18T06:53:51.000Z',
+      updatedAt: '2021-01-18T06:53:51.000Z',
+      userId: 'b788c700-53c1-11eb-9b16-f3588bcc5518',
+      'createdDiff(second)': 92475,
+      user: {
+        id: 'b788c700-53c1-11eb-9b16-f3588bcc5518',
+        nickname: 'TEST1610337687498',
+        profileImg:
+          'https://lh4.googleusercontent.com/-kw57sImI58s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucnxW3c4REx4hKLoQSLZsq2f3ELP0g/s120/photo.jpg',
+      },
+      Replys: [
+        {
+          id: 195,
+          description: '답글',
+          createdAt: '2021-01-18T06:54:06.000Z',
+          updatedAt: '2021-01-18T06:54:06.000Z',
+          userId: 'b788c700-53c1-11eb-9b16-f3588bcc5518',
+          'createdDiff(second)': 92475,
+          user: {
+            id: 'b788c700-53c1-11eb-9b16-f3588bcc5518',
+            nickname: 'TEST1610337687498',
+            profileImg:
+              'https://lh4.googleusercontent.com/-kw57sImI58s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucnxW3c4REx4hKLoQSLZsq2f3ELP0g/s120/photo.jpg',
           },
-          "Replys": [
-              {
-                  "id": 195,
-                  "description": "답글",
-                  "createdAt": "2021-01-18T06:54:06.000Z",
-                  "updatedAt": "2021-01-18T06:54:06.000Z",
-                  "userId": "b788c700-53c1-11eb-9b16-f3588bcc5518",
-                  "createdDiff(second)": 92475,
-                  "user": {
-                      "id": "b788c700-53c1-11eb-9b16-f3588bcc5518",
-                      "nickname": "TEST1610337687498",
-                      "profileImg": "https://lh4.googleusercontent.com/-kw57sImI58s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucnxW3c4REx4hKLoQSLZsq2f3ELP0g/s120/photo.jpg"
-                  },
-                  "Review_reply": {
-                      "targetUserId": "b788c700-53c1-11eb-9b16-f3588bcc5518",
-                      "createdAt": "2021-01-18T06:54:06.000Z",
-                      "updatedAt": "2021-01-18T06:54:06.000Z",
-                      "commentId": 194,
-                      "ReplyId": 195
-                  }
-              },
-              {
-                  "id": 204,
-                  "description": "ㅋㅋㅋㅋㅋㅋ",
-                  "createdAt": "2021-01-18T10:49:56.000Z",
-                  "updatedAt": "2021-01-18T10:49:56.000Z",
-                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                  "createdDiff(second)": 92475,
-                  "user": {
-                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                      "nickname": "TEST1610015727051",
-                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
-                  },
-                  "Review_reply": {
-                      "targetUserId": "b788c700-53c1-11eb-9b16-f3588bcc5518",
-                      "createdAt": "2021-01-18T10:49:56.000Z",
-                      "updatedAt": "2021-01-18T10:49:56.000Z",
-                      "commentId": 194,
-                      "ReplyId": 204
-                  }
-              },
-              {
-                  "id": 217,
-                  "description": "asdadasdasda",
-                  "createdAt": "2021-01-18T13:00:23.000Z",
-                  "updatedAt": "2021-01-18T13:00:23.000Z",
-                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                  "createdDiff(second)": 92475,
-                  "user": {
-                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                      "nickname": "TEST1610015727051",
-                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
-                  },
-                  "Review_reply": {
-                      "targetUserId": "b788c700-53c1-11eb-9b16-f3588bcc5518",
-                      "createdAt": "2021-01-18T13:00:23.000Z",
-                      "updatedAt": "2021-01-18T13:00:23.000Z",
-                      "commentId": 194,
-                      "ReplyId": 217
-                  }
-              },
-              {
-                  "id": 221,
-                  "description": "ekqrmf답글",
-                  "createdAt": "2021-01-18T13:23:07.000Z",
-                  "updatedAt": "2021-01-18T13:23:07.000Z",
-                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                  "createdDiff(second)": 92475,
-                  "user": {
-                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                      "nickname": "TEST1610015727051",
-                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
-                  },
-                  "Review_reply": {
-                      "targetUserId": "b788c700-53c1-11eb-9b16-f3588bcc5518",
-                      "createdAt": "2021-01-18T13:23:07.000Z",
-                      "updatedAt": "2021-01-18T13:23:07.000Z",
-                      "commentId": 194,
-                      "ReplyId": 221
-                  }
-              },
-              {
-                  "id": 222,
-                  "description": "ㅋㅋㅋ",
-                  "createdAt": "2021-01-18T13:23:12.000Z",
-                  "updatedAt": "2021-01-18T13:23:12.000Z",
-                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                  "createdDiff(second)": 92475,
-                  "user": {
-                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                      "nickname": "TEST1610015727051",
-                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
-                  },
-                  "Review_reply": {
-                      "targetUserId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                      "createdAt": "2021-01-18T13:23:12.000Z",
-                      "updatedAt": "2021-01-18T13:23:12.000Z",
-                      "commentId": 194,
-                      "ReplyId": 222
-                  }
-              },
-              {
-                  "id": 237,
-                  "description": "ddddddd",
-                  "createdAt": "2021-01-19T02:05:37.000Z",
-                  "updatedAt": "2021-01-19T02:05:37.000Z",
-                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                  "createdDiff(second)": 92475,
-                  "user": {
-                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                      "nickname": "TEST1610015727051",
-                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
-                  },
-                  "Review_reply": {
-                      "targetUserId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                      "createdAt": "2021-01-19T02:05:37.000Z",
-                      "updatedAt": "2021-01-19T02:05:37.000Z",
-                      "commentId": 194,
-                      "ReplyId": 237
-                  }
-              },
-              {
-                  "id": 238,
-                  "description": "dddddddd",
-                  "createdAt": "2021-01-19T02:09:02.000Z",
-                  "updatedAt": "2021-01-19T02:09:02.000Z",
-                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                  "createdDiff(second)": 92475,
-                  "user": {
-                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                      "nickname": "TEST1610015727051",
-                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
-                  },
-                  "Review_reply": {
-                      "targetUserId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                      "createdAt": "2021-01-19T02:09:02.000Z",
-                      "updatedAt": "2021-01-19T02:09:02.000Z",
-                      "commentId": 194,
-                      "ReplyId": 238
-                  }
-              },
-              {
-                  "id": 239,
-                  "description": "우앙",
-                  "createdAt": "2021-01-19T02:25:52.000Z",
-                  "updatedAt": "2021-01-19T02:25:52.000Z",
-                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                  "createdDiff(second)": 92475,
-                  "user": {
-                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                      "nickname": "TEST1610015727051",
-                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
-                  },
-                  "Review_reply": {
-                      "targetUserId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                      "createdAt": "2021-01-19T02:25:52.000Z",
-                      "updatedAt": "2021-01-19T02:25:52.000Z",
-                      "commentId": 194,
-                      "ReplyId": 239
-                  }
-              },
-              {
-                  "id": 240,
-                  "description": "우앙",
-                  "createdAt": "2021-01-19T02:26:03.000Z",
-                  "updatedAt": "2021-01-19T02:26:03.000Z",
-                  "userId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                  "createdDiff(second)": 92475,
-                  "user": {
-                      "id": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                      "nickname": "TEST1610015727051",
-                      "profileImg": "https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG"
-                  },
-                  "Review_reply": {
-                      "targetUserId": "14458000-50d4-11eb-8e1a-356dcefef8e2",
-                      "createdAt": "2021-01-19T02:26:03.000Z",
-                      "updatedAt": "2021-01-19T02:26:03.000Z",
-                      "commentId": 194,
-                      "ReplyId": 240
-                  }
-              }
-          ]
-      }
+          Review_reply: {
+            targetUserId: 'b788c700-53c1-11eb-9b16-f3588bcc5518',
+            createdAt: '2021-01-18T06:54:06.000Z',
+            updatedAt: '2021-01-18T06:54:06.000Z',
+            commentId: 194,
+            ReplyId: 195,
+          },
+        },
+        {
+          id: 204,
+          description: 'ㅋㅋㅋㅋㅋㅋ',
+          createdAt: '2021-01-18T10:49:56.000Z',
+          updatedAt: '2021-01-18T10:49:56.000Z',
+          userId: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+          'createdDiff(second)': 92475,
+          user: {
+            id: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+            nickname: 'TEST1610015727051',
+            profileImg:
+              'https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG',
+          },
+          Review_reply: {
+            targetUserId: 'b788c700-53c1-11eb-9b16-f3588bcc5518',
+            createdAt: '2021-01-18T10:49:56.000Z',
+            updatedAt: '2021-01-18T10:49:56.000Z',
+            commentId: 194,
+            ReplyId: 204,
+          },
+        },
+        {
+          id: 217,
+          description: 'asdadasdasda',
+          createdAt: '2021-01-18T13:00:23.000Z',
+          updatedAt: '2021-01-18T13:00:23.000Z',
+          userId: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+          'createdDiff(second)': 92475,
+          user: {
+            id: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+            nickname: 'TEST1610015727051',
+            profileImg:
+              'https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG',
+          },
+          Review_reply: {
+            targetUserId: 'b788c700-53c1-11eb-9b16-f3588bcc5518',
+            createdAt: '2021-01-18T13:00:23.000Z',
+            updatedAt: '2021-01-18T13:00:23.000Z',
+            commentId: 194,
+            ReplyId: 217,
+          },
+        },
+        {
+          id: 221,
+          description: 'ekqrmf답글',
+          createdAt: '2021-01-18T13:23:07.000Z',
+          updatedAt: '2021-01-18T13:23:07.000Z',
+          userId: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+          'createdDiff(second)': 92475,
+          user: {
+            id: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+            nickname: 'TEST1610015727051',
+            profileImg:
+              'https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG',
+          },
+          Review_reply: {
+            targetUserId: 'b788c700-53c1-11eb-9b16-f3588bcc5518',
+            createdAt: '2021-01-18T13:23:07.000Z',
+            updatedAt: '2021-01-18T13:23:07.000Z',
+            commentId: 194,
+            ReplyId: 221,
+          },
+        },
+        {
+          id: 222,
+          description: 'ㅋㅋㅋ',
+          createdAt: '2021-01-18T13:23:12.000Z',
+          updatedAt: '2021-01-18T13:23:12.000Z',
+          userId: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+          'createdDiff(second)': 92475,
+          user: {
+            id: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+            nickname: 'TEST1610015727051',
+            profileImg:
+              'https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG',
+          },
+          Review_reply: {
+            targetUserId: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+            createdAt: '2021-01-18T13:23:12.000Z',
+            updatedAt: '2021-01-18T13:23:12.000Z',
+            commentId: 194,
+            ReplyId: 222,
+          },
+        },
+        {
+          id: 237,
+          description: 'ddddddd',
+          createdAt: '2021-01-19T02:05:37.000Z',
+          updatedAt: '2021-01-19T02:05:37.000Z',
+          userId: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+          'createdDiff(second)': 92475,
+          user: {
+            id: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+            nickname: 'TEST1610015727051',
+            profileImg:
+              'https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG',
+          },
+          Review_reply: {
+            targetUserId: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+            createdAt: '2021-01-19T02:05:37.000Z',
+            updatedAt: '2021-01-19T02:05:37.000Z',
+            commentId: 194,
+            ReplyId: 237,
+          },
+        },
+        {
+          id: 238,
+          description: 'dddddddd',
+          createdAt: '2021-01-19T02:09:02.000Z',
+          updatedAt: '2021-01-19T02:09:02.000Z',
+          userId: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+          'createdDiff(second)': 92475,
+          user: {
+            id: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+            nickname: 'TEST1610015727051',
+            profileImg:
+              'https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG',
+          },
+          Review_reply: {
+            targetUserId: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+            createdAt: '2021-01-19T02:09:02.000Z',
+            updatedAt: '2021-01-19T02:09:02.000Z',
+            commentId: 194,
+            ReplyId: 238,
+          },
+        },
+        {
+          id: 239,
+          description: '우앙',
+          createdAt: '2021-01-19T02:25:52.000Z',
+          updatedAt: '2021-01-19T02:25:52.000Z',
+          userId: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+          'createdDiff(second)': 92475,
+          user: {
+            id: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+            nickname: 'TEST1610015727051',
+            profileImg:
+              'https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG',
+          },
+          Review_reply: {
+            targetUserId: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+            createdAt: '2021-01-19T02:25:52.000Z',
+            updatedAt: '2021-01-19T02:25:52.000Z',
+            commentId: 194,
+            ReplyId: 239,
+          },
+        },
+        {
+          id: 240,
+          description: '우앙',
+          createdAt: '2021-01-19T02:26:03.000Z',
+          updatedAt: '2021-01-19T02:26:03.000Z',
+          userId: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+          'createdDiff(second)': 92475,
+          user: {
+            id: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+            nickname: 'TEST1610015727051',
+            profileImg:
+              'https://s3-ap-northeast-2.amazonaws.com/chikachika-review-images/original%2F1610443721792ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED.JPG',
+          },
+          Review_reply: {
+            targetUserId: '14458000-50d4-11eb-8e1a-356dcefef8e2',
+            createdAt: '2021-01-19T02:26:03.000Z',
+            updatedAt: '2021-01-19T02:26:03.000Z',
+            commentId: 194,
+            ReplyId: 240,
+          },
+        },
+      ],
+    },
   ],
-  "reviewLikeNum": 0,
-  "viewerLikeReview": false,
-  "viewerScrapReview": false
-}
-
+  reviewLikeNum: 0,
+  viewerLikeReview: false,
+  viewerScrapReview: false,
+};
