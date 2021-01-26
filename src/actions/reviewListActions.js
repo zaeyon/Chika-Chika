@@ -26,6 +26,13 @@ const setMyReviews = (reviewList) => {
   };
 };
 
+const setOpponentReviews = (reviewList) => {
+  return {
+    type: 'SET_OPPONENT_REVIEWS',
+    payload: reviewList,
+  };
+};
+
 const setLikedReviews = (reviewList) => {
   return {
     type: 'SET_LIKED_REVIEWS',
@@ -48,6 +55,7 @@ const setCommentedReviews = (reviewList) => {
 };
 export default {
   setMainReviewList,
+  setOpponentReviews,
   toggleReviewLike,
   toggleReviewScrap,
   setMyReviews,

@@ -94,12 +94,12 @@ interface Params {
 }
 
 interface Image {
-  id: number;
-  img_filename: string;
-  img_index: number;
-  img_mimetype: string;
-  img_originalname: string;
-  img_size: number;
+  id?: number;
+  img_filename?: string;
+  img_index?: number;
+  img_mimetype?: string;
+  img_originalname?: string;
+  img_size?: number;
   img_url: string;
   width: number;
   height: number;
@@ -107,7 +107,7 @@ interface Image {
 
 interface Props {
   navigation: any;
-  route: any;
+  route: Params;
 }
 
 const ImageDetailScreen = ({navigation, route}: Props) => {

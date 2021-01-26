@@ -203,12 +203,21 @@ function ReviewStackScreen() {
   );
 }
 
-function AnotherProfileStackScreen() {
+function AnotherProfileStackScreen({route}) {
   return (
     <AnotherProfileStack.Navigator headerMode="none">
       <AnotherProfileStack.Screen
         name="AnotherProfileScreen"
         component={AnotherProfileScreen}
+        initialParams={route.params}
+      />
+      <AnotherProfileStack.Screen
+        name="CommunityStackScreen"
+        component={CommunityStackScreen}
+      />
+      <AnotherProfileStack.Screen
+        name="ReviewStackScreen"
+        component={ReviewStackScreen}
       />
     </AnotherProfileStack.Navigator>
   );
@@ -298,9 +307,7 @@ function DentalClinicStackScreen() {
 function TeethCareStackScreen() {
   return (
     <TeethCareStack.Navigator headerMode="none">
-      <TeethCareStack.Screen
-        name="GuideScreen"
-        component={GuideScreen}/>
+      <TeethCareStack.Screen name="GuideScreen" component={GuideScreen} />
       <TeethCareStack.Screen
         name="TeethCareScreen"
         component={TeethCareScreen}
@@ -755,6 +762,13 @@ function BottomTab() {
     }
 
     if (
+      stackRouteName === 'ReviewStackScreen' ||
+      routeName.name === 'ReviewDetailScreen'
+    ) {
+      return false;
+    }
+
+    if (
       stackRouteName === 'CommunityStackScreen' ||
       routeName.name === 'ImageDetailScreen'
     ) {
@@ -950,7 +964,7 @@ const Navigator = () => {
               }),
             );
 
-            dispatch(allActions.userActions.setHometown(response.Residences))
+            dispatch(allActions.userActions.setHometown(response.Residences));
           })
           .catch((error: any) => {
             console.log('get user error', error);

@@ -1,14 +1,5 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  FlatList,
-  Text,
-  View,
-  Image,
-  Keyboard,
-  KeyboardAvoidingView,
-} from 'react-native';
+import React, {useCallback} from 'react';
+import {TouchableWithoutFeedback} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -26,6 +17,7 @@ const HeaderBar = Styled.View`
  border-bottom-width: 0.5px;
  border-color: #E2E6ED;
  background-color: #ffffff;
+ z-index: 3;
 `;
 
 const HeaderText = Styled.Text<{disabled: boolean; color: string}>`
@@ -34,7 +26,7 @@ font-style: normal;
 font-weight: bold;
 font-size: 16px;
 line-height: 30px;
-color: ${(props) => (props.disabled ? '#9AA2A9' : '#00D1FF')};
+color: ${(props) => (props.disabled ? '#9AA2A9' : props.color)};
 `;
 
 const HeaderLeftContainer = Styled.View`
@@ -56,6 +48,7 @@ const HeaderTitleContainer = Styled.View`
 width: 100%;
 position: absolute;
 height: 100%;
+top: ${getStatusBarHeight()}px;
 padding: 12px 16px 16px 16px;
 align-items: center;
 z-index: -1;
@@ -107,7 +100,7 @@ height: ${wp('6.4%')}px;
 `;
 
 interface HeaderProps {
-  onPress: any;
+  onPress?: any;
   text?: string;
   type: string;
   onChangeText?: (test: string) => void;
@@ -122,7 +115,7 @@ interface Props {
   headerRightDisabled?: boolean;
   headerLeftActiveColor?: string;
   headerRightActiveColor?: string;
-  headerTitle: string;
+  headerTitle?: string;
 }
 const NavigationHeader = ({
   headerLeftProps,
@@ -130,10 +123,50 @@ const NavigationHeader = ({
   headerCenterProps,
   headerLeftDisabled = false,
   headerRightDisabled = false,
-  headerLeftActiveColor = '#000000',
-  headerRightActiveColor = '#000000',
+  headerLeftActiveColor = '#131F3C',
+  headerRightActiveColor = '#131F3C',
   headerTitle,
 }: Props) => {
+  const renderHeaderRightContent = useCallback(() => {
+    if (headerRightProps) {
+      switch (headerRightProps.type) {
+        case 'arrow':
+          return (
+            <HeaderIconView>
+              <HeaderIcon
+                source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
+              />
+            </HeaderIconView>
+          );
+        case 'viewMore':
+          return (
+            <HeaderIconView>
+              <HeaderIcon
+                source={require('~/Assets/Images/HeaderBar/ic_viewMore.png')}
+              />
+            </HeaderIconView>
+          );
+        case 'search':
+          return (
+            <HeaderIconView>
+              <HeaderIcon
+                source={require('~/Assets/Images/HeaderBar/ic_search.png')}
+              />
+            </HeaderIconView>
+          );
+        case 'text':
+          return (
+            <HeaderText
+              disabled={headerRightDisabled}
+              color={headerRightActiveColor}>
+              {headerRightProps.text}
+            </HeaderText>
+          );
+        default:
+          return <HeaderEmptyContainer />;
+      }
+    }
+  }, [headerRightProps, headerRightDisabled, headerRightActiveColor]);
   return (
     <HeaderBar>
       <TouchableWithoutFeedback
@@ -188,33 +221,7 @@ const NavigationHeader = ({
           headerRightProps?.onPress();
         }}>
         <HeaderRightContainer>
-          {headerRightProps?.type === 'arrow' ? (
-            <HeaderIconView>
-              <HeaderIcon
-                source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
-              />
-            </HeaderIconView>
-          ) : headerRightProps?.type === 'viewMore' ? (
-            <HeaderIconView>
-              <HeaderIcon
-                source={require('~/Assets/Images/HeaderBar/ic_viewMore.png')}
-              />
-            </HeaderIconView>
-          ) : headerRightProps?.type === 'search' ? (
-            <HeaderIconView>
-              <HeaderIcon
-                source={require('~/Assets/Images/HeaderBar/ic_search.png')}
-              />
-            </HeaderIconView>
-          ) : headerRightProps?.type === 'empty' ? (
-            <HeaderEmptyContainer />
-          ) : (
-            <HeaderText
-              disabled={headerRightDisabled}
-              color={headerRightActiveColor}>
-              {headerRightProps?.text}
-            </HeaderText>
-          )}
+          {renderHeaderRightContent()}
         </HeaderRightContainer>
       </TouchableWithoutFeedback>
     </HeaderBar>

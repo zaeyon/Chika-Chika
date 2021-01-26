@@ -31,7 +31,8 @@ font-style: normal;
 font-weight: bold;
 font-size: 16px;
 line-height: 24px;
-color: #131F3C;`;
+color: #131F3C;
+`;
 
 const SectionContentTextInput = Styled.TextInput`
 font-family: NanumSquare;
@@ -146,7 +147,7 @@ const EditNicknameScreen = ({navigation, route}: Props) => {
           onPress: () => updateUserNickname(input),
         }}
         headerRightDisabled={input === ''}
-        headerRightActiveColor="00D1FF"
+        headerRightActiveColor="#00D1FF"
       />
       <SharedElement id="nicknameInput">
         <SectionContentView>

@@ -21,7 +21,7 @@ import PostItem from '~/Components/Presentational/PostItem';
 import ReviewItem from '~/Components/Presentational/ReviewItem';
 import {callPhoneNumber} from '~/method/callPhoneNumber';
 
-const HEADERHEIGHT = 69 + getStatusBarHeight();
+const HEADERHEIGHT = 53 + getStatusBarHeight();
 const PROFILEHEIGHT = 102;
 const TABBARHEIGHT = 55;
 
@@ -62,7 +62,7 @@ const FloatingView = Styled(Animated.View as new () => Animated.View)`
 width: ${wp('100%')}px;
 height: 100px;
 position: absolute;
-top: ${HEADERHEIGHT - getStatusBarHeight()}px;
+top: 0px;
 left: 0px;
 zIndex: 1;
 
@@ -86,7 +86,7 @@ flex-direction: row;
 const ProfileImageView = Styled.View`
 width: 77px;
 height: 77px;
-background: grey;
+background: #F5F7F9;
 border-width: 0.5px;
 border-color: #A6A8AC;
 border-radius: 100px;
@@ -146,7 +146,7 @@ padding: 10px 0px;
 
 const InitializingView = Styled.View`
 flex: 1;
-background: rgba(200, 200, 200, 0.1);
+background: #F5F7F9;
 justify-content: center;
 align-items: center;
 `;
@@ -172,16 +172,13 @@ interface Props {
   onCommunityRefresh: any;
   isCommunityEndReached: boolean;
   onCommunityEndReached: any;
-  currentUser: User;
-  openModal: any;
+  targetUser?: User;
+  targetUserSkeletonData: any;
   moveToCommunityDetail: any;
-  moveToReservationTabScreen: any;
-  moveToSavedHospitalTabScreen: any;
   moveToAnotherProfile: any;
   toggleSocialLike: any;
   toggleSocialScrap: any;
   moveToReviewDetail: any;
-  moveToWriterProfile: any;
   moveToDentalDetail: any;
 }
 
@@ -193,7 +190,7 @@ interface State {
   currentScrollY: Animated.Value<0>;
   positionX: Animated.Value<0>;
   minusValue: Animated.Value<-1>;
-  headerHeightValue: Animated.Value<number>;
+  profileHeight: Animated.Value<number>;
 }
 
 interface User {
@@ -213,9 +210,9 @@ interface Residence {
   sigungu: string;
 }
 
-export default class MyProfile extends React.PureComponent<Props, State> {
-  reviewRef: React.RefObject<unknown>;
-  communityRef: React.RefObject<unknown>;
+export default class AnotherProfile extends React.PureComponent<Props, State> {
+  reviewRef: any;
+  communityRef: any;
 
   constructor(props: Props) {
     super(props);
@@ -224,13 +221,13 @@ export default class MyProfile extends React.PureComponent<Props, State> {
       isModalVisible: false,
       index: 0,
       routes: [
-        {key: 'first', title: '내가 쓴 후기'},
-        {key: 'second', title: '내가 쓴 수다글'},
+        {key: 'first', title: '작성한 리뷰'},
+        {key: 'second', title: '작성한 수다글'},
       ],
       currentScrollY: new Animated.Value(0),
       positionX: new Animated.Value(0),
       minusValue: new Animated.Value(-1),
-      headerHeightValue: new Animated.Value(PROFILEHEIGHT),
+      profileHeight: new Animated.Value(PROFILEHEIGHT),
     };
 
     this.reviewRef = React.createRef();
@@ -243,14 +240,10 @@ export default class MyProfile extends React.PureComponent<Props, State> {
   }
 
   scrollToIndex = (index: number) => {
-    console.log(index);
     this.setState({
       index,
     });
   };
-  componentDidUpdate() {
-    console.log(this.state.index);
-  }
 
   closeModal = () => {
     this.setState({
@@ -499,10 +492,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           {
             translateY: Animated.multiply(
               this.state.minusValue,
-              Animated.min(
-                this.state.headerHeightValue,
-                this.state.currentScrollY,
-              ),
+              Animated.min(this.state.profileHeight, this.state.currentScrollY),
             ),
           },
         ],
@@ -536,25 +526,6 @@ export default class MyProfile extends React.PureComponent<Props, State> {
   render() {
     return (
       <ContainerView>
-        <HeaderContainerView>
-          <HeaderNicknameText>
-            {this.props.currentUser.nickname}
-          </HeaderNicknameText>
-          <HeaderIconTouchableOpacity
-            style={{
-              position: 'absolute',
-              right: 6,
-              top: getStatusBarHeight() + 14,
-              padding: 10,
-            }}
-            onPress={() => {
-              this.props.openModal();
-            }}>
-            <HeaderIconImage
-              source={require('~/Assets/Images/MyPage/Header/Mypage/ic/setting.png')}
-            />
-          </HeaderIconTouchableOpacity>
-        </HeaderContainerView>
         <FloatingView
           style={{
             transform: [
@@ -562,7 +533,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
                 translateY: Animated.multiply(
                   this.state.minusValue,
                   Animated.min(
-                    this.state.headerHeightValue,
+                    this.state.profileHeight,
                     this.state.currentScrollY,
                   ),
                 ),
@@ -574,7 +545,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
               <ProfileImageView>
                 <ProfileImage
                   source={{
-                    uri: this.props.currentUser.profileImg,
+                    uri: this.props.targetUserSkeletonData.profileImageUri,
                     cache: 'force-cache',
                   }}
                 />
