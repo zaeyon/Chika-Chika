@@ -106,6 +106,10 @@ const CommunityListScreen = ({navigation, route}: Props) => {
     });
   };
 
+  const moveToNotificationList = () => {
+    navigation.navigate("NotificationListScreen");
+  }
+
   useEffect(() => {
     const questionform = {
       type: 'Question',
@@ -169,7 +173,7 @@ const CommunityListScreen = ({navigation, route}: Props) => {
               source={require('~/Assets/Images/TopTab/ic/write/black.png')}
             />
           </HeaderIconTouchableOpacity>
-          <HeaderIconTouchableOpacity>
+          <HeaderIconTouchableOpacity onPress={() => moveToNotificationList()}>
             <Image
               source={require('~/Assets/Images/TopTab/ic/alarm/focus.png')}
             />

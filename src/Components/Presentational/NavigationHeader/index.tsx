@@ -27,11 +27,10 @@ const HeaderBar = Styled.View`
 `;
 
 const HeaderText = Styled.Text<{disabled: boolean; color: string}>`
-font-family: NanumSquare;
 font-style: normal;
-font-weight: bold;
+font-weight: 400;
 font-size: 16px;
-line-height: 30px;
+line-height: 24px;
 color: ${(props) => (props.disabled ? '#9AA2A9' : '#00D1FF')};
 `;
 
@@ -43,7 +42,6 @@ flex-direction: row;
 `;
 
 const HeaderLeftText = Styled.Text`
-font-family: NanumSquare;
 color: #131F3C;
 font-size: 18px;
 font-weight: 700;
@@ -59,7 +57,6 @@ z-index: -1;
 `;
 
 const HeaderTitleText = Styled.Text`
-font-family: NanumSquare;
 font-weight: 700;
 font-size: 16px; 
 line-height: 30px;
@@ -73,7 +70,6 @@ flex: 1;
 const HeaderSearchInput = Styled.TextInput`
 flex: 1;
 background-color: #ffffff;
-font-family: NanumSquare;
 padding-bottom: 3px;
 font-weight: 400;
 font-size: 16px;
@@ -108,8 +104,8 @@ interface HeaderProps {
   onPress?: any;
   text?: string;
   type?: string;
-  onChangeText?: (test: string) => void,
-  onEndEditing?: () => void,
+  renderSearchInput?: any,
+  fontColor?: string;
 }
 
 interface Props {
@@ -164,23 +160,20 @@ const NavigationHeader = ({
         <HeaderTitleText>{headerTitle}</HeaderTitleText>
       </HeaderTitleContainer>
       )}
-      {headerCenterProps?.type === "search" && (
+      {headerCenterProps?.type === "searchInput" && (
         <HeaderCenterContainer>
-          <HeaderSearchInput
-          placeholder={"동명(읍, 면)으로 검색(ex. 이의동)"}
-          placeholderTextColor={"#9AA2A9"}
-          clearButtonMode={"while-editing"}
-          onChangeText={headerCenterProps?.onChangeText}
-          onEndEditing={headerCenterProps?.onEndEditing}
-          returnKeyType={"search"}
-          />
+          {headerCenterProps.renderSearchInput()}
         </HeaderCenterContainer>
       )}
       <HeaderRightContainer>
         <TouchableWithoutFeedback
           disabled={headerRightDisabled}
           onPress={() => {
-            headerRightProps?.onPress();
+            if(!headerRightDisabled) {
+              headerRightProps?.onPress();
+            } else {
+              return
+            }
           }}>
           {headerRightProps?.type === 'arrow' ? (
             <HeaderIconView>

@@ -85,6 +85,7 @@ import DentalTotalSearchScreen from '~/Components/Container/DentalTotalSearchScr
 import DentalDetailScreen from '~/Components/Container/DentalDetailScreen';
 import DentalInfoEditRequestScreen from '~/Components/Container/DentalDetailScreen/DentalInfoEditRequestScreen';
 import DentalLocationMapScreen from '~/Components/Container/DentalDetailScreen/DentalLocationMapScreen';
+import NotificationListScreen from '~/Components/Container/NotificationListScreen';
 
 // Teeth Care Stack Screen
 import GuideScreen from '~/Components/Container/TeethCareScreen/GuideScreen';
@@ -197,6 +198,39 @@ function ReviewStackScreen() {
         component={ReviewCommentListScreen}
       />
       <ReviewStack.Screen name="ReplyPostScreen" component={ReplyPostScreen} />
+      <ReviewStack.Screen
+        name="ImageDetailScreen"
+        component={ImageDetailScreen}
+        options={() => ({
+          gestureEnabled: false,
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {duration: 150},
+            },
+            close: {
+              animation: 'timing',
+              config: {duration: 150},
+            },
+          },
+          cardStyle: {backgroundColor: 'transparent'},
+          cardStyleInterpolator: ({current: {progress}}) => {
+            return {
+              cardStyle: {
+                opacity: progress,
+              },
+            };
+          },
+        })}
+        // sharedElementsConfig={(route, otherRoute, showing) => {
+        //   console.log(route.params.imageIndex);
+        //   if (showing) {
+        //     const item = route.params.imageArray;
+        //     return item.map((item) => `item.${item}`);
+        //     return [`item.${item[route.params.imageIndex]}`];
+        //   }
+        // }}
+      />
     </ReviewStack.Navigator>
   );
 }
@@ -288,6 +322,13 @@ function DentalClinicStackScreen() {
       <DentalClinicStack.Screen
       name="DentalLocationMapScreen"
       component={DentalLocationMapScreen}
+      />
+      <DentalClinicStack.Screen
+        name="ImageSelectScreen"
+        component={ImageSelectScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
     </DentalClinicStack.Navigator>
   );
@@ -419,6 +460,7 @@ function ReviewUploadStackScreen() {
         gestureEnabled: false,
       }}
       />
+      
     </ReviewUploadStack.Navigator>
   );
 }
@@ -614,6 +656,9 @@ function CommunityStackScreen() {
           },
         })}
       />
+      <CommunityStack.Screen
+        name="NotificationListScreen"
+        component={NotificationListScreen}/>
     </CommunityStack.Navigator>
   );
 }
@@ -908,8 +953,6 @@ const Navigator = () => {
 
 const styles = StyleSheet.create({
   tabBar: {
-    borderTopColor: '#E2E6ED',
-    borderTopWidth: 1,
     height: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'),
     paddingHorizontal: 0,
     position: 'absolute',

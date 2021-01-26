@@ -403,6 +403,8 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
     });
   }, []);
 
+  
+
   return (
     <ContainerView>
       <AnimatedModal

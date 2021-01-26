@@ -17,12 +17,11 @@ align-items: center;
 
 const ToastMessageBackground = Styled.View`
 border-radius: 8px;
-background-color: #131F3C;
+background-color: #131F3C80;
 padding: 8px 24px 8px 24px;
 `;
 
 const ToastMessageText = Styled.Text`
-font-family: NanumSquare;
 font-weight: 400;
 font-size: 14px;
 line-height: 24px;

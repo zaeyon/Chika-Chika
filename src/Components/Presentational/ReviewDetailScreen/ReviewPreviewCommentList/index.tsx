@@ -10,17 +10,17 @@ import CommentItem from '~/Components/Presentational/CommentItem';
 import ReplyItem from '~/Components/Presentational/ReplyItem';
 
 const Container = Styled.View`
-padding-bottom: 24px;
-padding-top: 24px;
+padding-bottom: 35px;
+padding-top: 12px;
 `;
 
 const HeaderContainer = Styled.View`
-flex-direction: row;
-align-items: center;
-justify-content: space-between;
 padding-left: 16px;
 padding-right: 16px;
+flex-direction: row;
 `;
+
+
 
 const HeaderCommentCountText = Styled.Text`
 font-size: 16px;
@@ -31,6 +31,8 @@ font-weight: bold;
 const CommentListContainer = Styled.View`
 padding-top: 5px;
 padding-bottom: 8px;
+border-bottom-width: 8px;
+border-color: #F5F7F9;
 `;
 
 const ViewTotalCommentText = Styled.Text`
@@ -41,10 +43,11 @@ color: #9AA2A9;
 `;
 
 const ViewTotalCommentContainer = Styled.View`
-padding-top: 8px;
-padding-right: 16px;
-padding-left: 16px;
-padding-bottom: 8px;
+padding-top: 12px;
+padding-bottom: 5px;
+background-color: #ffffff;
+flex-direction: row;
+align-items: center;
 `;
 
 const NoCommentContainer = Styled.View`
@@ -55,12 +58,17 @@ padding-bottom: 50px;
 `;
 
 const NoCommentText = Styled.Text`
-font-family: NanumSquare;
 font-size: 14px;
 color: #9AA2A9;
 `;
 
 const CommentItemContainer = Styled.View`
+`;
+
+const ViewTotalCommentIcon = Styled.Image`
+margin-left: 4px;
+width: ${wp('4.266%')}px;
+height: ${wp('4.266%')}px;
 `;
 
 let commentObj: object;
@@ -166,7 +174,13 @@ const ReviewPreviewCommentList = ({commentList, clickReply, clickReplyOfReply, o
     return (
         <Container>
             <HeaderContainer>
-                <HeaderCommentCountText>{`댓글(${commentCount})`}</HeaderCommentCountText>
+                <TouchableWithoutFeedback onPress={() => moveToCommentList()}>
+                <ViewTotalCommentContainer>
+                <HeaderCommentCountText>{`댓글 ${commentCount}`}</HeaderCommentCountText>
+                <ViewTotalCommentIcon
+                source={require('~/Assets/Images/Arrow/ic_viewTotalComments.png')}/>
+                </ViewTotalCommentContainer>
+                </TouchableWithoutFeedback>
             </HeaderContainer>
             {commentList.length > 0 && (
             <CommentListContainer>
@@ -174,13 +188,6 @@ const ReviewPreviewCommentList = ({commentList, clickReply, clickReplyOfReply, o
                 data={previewCommentList}
                 renderItem={renderCommentItem}
                 keyExtractor={item => `${item.id}`}/>
-                {isViewTotal && (
-                <TouchableWithoutFeedback onPress={() => moveToCommentList("view")}>
-                <ViewTotalCommentContainer>
-                    <ViewTotalCommentText>{"댓글 모두 보기"}</ViewTotalCommentText>
-                </ViewTotalCommentContainer>
-                </TouchableWithoutFeedback>
-                )}
             </CommentListContainer>
             )}
             {commentList.length === 0 && (

@@ -46,7 +46,7 @@ border-color: #E2E6ED;
 
 const HeaderBar = Styled.View`
  position: absolute;
- padding-top: ${getStatusBarHeight()}
+ padding-top: ${getStatusBarHeight()}px;
  width: ${wp('100%')}px;
  height: ${getStatusBarHeight() + hp('8%')}px;
  flex-direction: row;
@@ -103,7 +103,6 @@ const RepresentingKeywordText = Styled.Text`
 font-size: 12px;
 font-weight: 800;
 color: #ffffff;
-font-family: NanumSquare;
 `;
 
 const BasicInfoContainer = Styled.View`
@@ -137,7 +136,6 @@ const BasicInfoLabelText = Styled.Text`
 color: #000000;
 font-weight: 400;
 font-size: 14px;
-font-family: NanumSquare;
 `;
 
 const BasicInfoLabelDivider = Styled.View`
@@ -152,14 +150,12 @@ const BasicInfoValueText = Styled.Text`
 color: #000000;
 font-weight: bold;
 font-size: 14px;
-font-family: NanumSquare;
 `;
 
 const DentalNameText = Styled.Text`
 font-weight: 800;
 font-size: 22px;
 color: #000000;
-font-family: NanumSquare;
 line-height: 24px;
 `;
 
@@ -168,14 +164,12 @@ margin-left: 4px;
 font-weight: bold;
 color: #131F3C;
 font-size: 14px;
-font-family: NanumSquare;
 `;
 
 const DentalAddressText = Styled.Text`
 font-weight: 700;
 color: #4E525D;
 font-size: 16px;
-font-family: NanumSquare
 line-height: 24px;
 `;
 
@@ -185,7 +179,7 @@ background-color: #F5F7F9;
 
 const DetailAddressText = Styled.Text`
 margin-top: 12px;
-font-family: NanumSquare;
+
 font-weight: 800;
 font-size: 18px;
 line-height: 24px;
@@ -224,7 +218,6 @@ const DetailInfoTypeText = Styled.Text`
 font-weight: 700;
 font-size: 14px;
 color: #282D3C;
-font-family: NanumSquare
 `;
 
 const DetailInfoItemContainer = Styled.View`
@@ -239,7 +232,6 @@ font-weight: 800;
 font-size: 14px;
 line-height: 24px;
 color: #9AA2A9;
-font-family: NanumSquare
 `;
 
 const DetailInfoDescripText = Styled.Text`
@@ -248,7 +240,6 @@ font-weight: 400;
 font-size: 14px;
 line-height: 24px;
 color: #000000;
-font-family: NanumSquare
 `;
 
 const PostReviewContainer = Styled.View`
@@ -264,7 +255,6 @@ border-color: #E2E6ED;
 `;
 
 const PostReviewDescipText = Styled.Text`
-font-family: NanumSquare;
 font-weight: 400;
 font-size: 16px;
 color: #131F3C;
@@ -288,7 +278,6 @@ height: ${wp('4.26%')}px;
 
 const PostReviewText = Styled.Text`
 margin-left: 4px;
-font-family: NanumSquare;
 font-size: 14px;
 font-weight: 700;
 line-height: 24px;
@@ -331,7 +320,7 @@ align-self: flex-start;
 `;
 
 const RequestReviseInfoTextContainer = Styled.View`
-width: 109;
+width: 109px;
 padding-bottom: 1px;
 border-bottom-width: 1px;
 padding-bottom: 1px;
@@ -343,7 +332,6 @@ font-weight: bold;
 font-size: 14px;
 line-height: 24px;
 color: #131F3C;
-font-family: NanumSquare;
 `;
 
 const CopyrightDescipContainer = Styled.View`
@@ -356,8 +344,7 @@ const CopyrightDescipText = Styled.Text`
 font-weight: 400;
 color: #9AA2A9;
 font-size: 12px;
-font-family: NanumSquare;
-line-height: 24;
+line-height: 24px;
 `;
 
 const WeeklyTreatmentTimeInfoContainer = Styled.View`
@@ -404,11 +391,10 @@ height: ${wp('5.6%')}px;
 
 const NoReviewText = Styled.Text`
 margin-top: 8px;
-line-height: 24;
+line-height: 24px;
 font-weight: 700; 
 font-size: 16px;
 color: #131F3C;
-font-family: NanumSquare
 `;
 
 const PostNoReviewContainer = Styled.View`
@@ -428,7 +414,6 @@ border-color: #E2E6ED;
 `;
 
 const PostNoReviewText = Styled.Text`
-font-family: NanumSquare;
 color: #00D1FF;
 font-weight: 700;
 font-size: 16px;
@@ -483,7 +468,6 @@ height: ${wp('7.46%')}px;
 const IntroKeywordText = Styled.Text`
 margin-left: 4px;
 font-weight: 700;
-font-family: NanumSquare;
 font-size: 14px;
 line-height: 24px;
 color: #4E525D;
@@ -522,11 +506,13 @@ interface Props {
   moveToReviewUpload: () => void,
   moveToDentalLocationMap: () => void,
   moveToDentalInfoEdit: () => void,
+  dentalReviewArray: Array<any>,
 }
 
-const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload, moveToDentalLocationMap, moveToDentalInfoEdit}: Props) => {
+const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload, moveToDentalLocationMap, moveToDentalInfoEdit, dentalReviewArray}: Props) => {
   console.log("DentalCollapsibleTabView dentalDetailInfo", dentalDetailInfo);
-  //const [collapsibleViewHeight, setCollapsibleViewHeight] = useState<number>(DeviceInfo.hasNotch() ? hp('43.84%') : hp('46.54%'));
+  console.log("DentalCollapsibleTabView dentalReviewArray", dentalReviewArray);
+
   const [tabIndex, setIndex] = useState(0);
   const [routes] = useState([
     {key: 'detailInfo', title: '상세 정보'},
@@ -1122,7 +1108,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}>
             <ReviewTabContainer>
-              {dentalDetailInfo?.reviews?.length > 0 && (
+              {dentalReviewArray?.length > 0 && (
                 <ReviewInfoContainer>
                   <PostReviewContainer>
                     <PostReviewDescipText>
@@ -1161,7 +1147,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
                     </RatingReportContainer>
                   )}
                   <ReviewListContainer>
-                  <ReviewList reviewList={dentalDetailInfo?.reviews} />
+                  <ReviewList reviewList={dentalReviewArray}/>
                   </ReviewListContainer>
                   <RequestReviseInfoContainer>
                   <TouchableWithoutFeedback onPress={() => moveToDentalInfoEdit()}>
@@ -1181,7 +1167,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
               </CopyrightDescipContainer>
                 </ReviewInfoContainer>
               )}
-              {dentalDetailInfo?.reviews?.length === 0 && (
+              {dentalReviewArray?.length === 0 && (
                 <NoReviewContainer
                   style={{
                     minHeight: hp('100%') - (headerHeight + tabBarHeight),
@@ -1342,7 +1328,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingLeft: wp('10.6%'),
   },
-  label: {fontSize: 16, color: '#131F3C', fontWeight: '700', fontFamily: 'NanumSquare'},
+  label: {fontSize: 16, color: '#131F3C', fontWeight: '700'},
   tab: {
     elevation: 0,
     shadowOpacity: 0,

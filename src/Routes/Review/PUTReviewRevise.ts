@@ -26,7 +26,7 @@ const PUTReviewRevise = ({jwtToken, reviewId, starRate_cost, starRate_treatment,
     console.log("PUTReviewRevise starRate_service", starRate_service);
     console.log("PUTReviewRevise treatments", formatedTreatmentArray);
     console.log("PUTReviewRevise dentalClinicId", dentalClinicId);
-    console.log("PUTReviewRevise paragraphs", formatedParagraphArray);
+    console.log("리뷰 수정 PUTReviewRevise paragraphs", formatedParagraphArray);
     console.log("PUTReviewRevise totalCost", totalPrice);
 
     const body = `{

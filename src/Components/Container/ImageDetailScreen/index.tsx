@@ -107,7 +107,7 @@ interface Image {
 
 interface Props {
   navigation: any;
-  route: any;
+  route: Params;
 }
 
 const ImageDetailScreen = ({navigation, route}: Props) => {
@@ -116,6 +116,8 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
   const [back, setBack] = useState(true);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const dragY = useRef(new Animated.Value(0)).current;
+
+  console.log("ImageDetailScreen", route.params?.imageArray);
 
   const scrollRef: any = useRef();
 

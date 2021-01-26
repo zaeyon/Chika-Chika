@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useRef, createRef} from 'react';
+import SafeAreaView from 'react-native-safe-area-view';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
@@ -33,6 +34,7 @@ import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import TreatmentList from '~/Components/Presentational/ReviewDetailScreen/TreatmentList';
 import ReviewMetaInfo from '~/Components/Presentational/ReviewDetailScreen/ReviewMetaInfo';
 import WriterInfo from '~/Components/Presentational/ReviewDetailScreen/WriterInfo';
+import AnimatedModal from '~/Components/Presentational/AnimatedModal';
 
 // Route
 import GETReviewDetail from '~/Routes/Review/GETReviewDetail';
@@ -46,9 +48,10 @@ import DELETEComment from '~/Routes/Comment/DELETEComment';
 import GETCommentList from '~/Routes/Comment/GETCommentList';
 
 
-const Container = Styled.SafeAreaView`
+const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
+ padding-top: ${getStatusBarHeight()}px;
 `;
 
 const BodyContainer = Styled.View`
@@ -134,6 +137,14 @@ color: #000000;
 const WriterInfoContainer = Styled.View`
 `;
 
+const ModalContentText = Styled.Text`
+text-align: center;
+font-weight: 400;
+font-size: 14px;
+line-height: 20px;
+color: #131F3C;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -208,9 +219,12 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const [elapsedTime, setElapsedTime] = useState<string>(route.params?.elapsedTime);
   const [isVisibleOwnMoreViewModal, setIsVisibleOwnMoreViewModal] = useState<boolean>(false);
   const [isVisibleOtherMoreViewModal, setIsVisibleOtherMoreViewModal] = useState<boolean>(false);
+  const [isVisibleCommentDeleteModal, setIsVisibleCommentDeleteModal] = useState<boolean>(false);
 
   const [isCertifiedReceipt, setIsCertifiedReceipt] = useState<boolean>(false);
   const [changeCommentArray, setChangeCommentArray] = useState<boolean>(false);
+  
+  const [imageArray, setImageArray] = useState<Array<any>>(route.params?.imageArray);
 
   const scrollViewRef = useRef<any>();
   const reviewScrollViewRef = useRef<any>(null);
@@ -235,7 +249,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
   const createdDate = route.params?.createdAt;
   const isVisibleElapsedTime = route.params?.visibleElapsedTime;
-  const imageArray = route.params?.imageArray;
+  //const imageArray = route.params?.imageArray;
   const isOwnReview = route.params?.writer.userId === userProfile?.id;
 
   console.log('route.params?.reviewId', route.params?.reviewId);
@@ -267,7 +281,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       route.params.isRevised = !route.params.isRevised;
       reviewScrollViewRef.current.scrollTo({x: 0, y: 0, animated: false});
       console.log(
-        'route.params?.revisedParagraphArray',
+        '리뷰 수정 route.params?.paragraphArray',
         route.params.paragraphArray,
       );
       console.log("리뷰 수정 route.params.dentalObj", route.params.dentalObj);
@@ -296,6 +310,13 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         treatPrice: route.params.totalPrice
       }
 
+      async function getRevisedImageArray() {
+        let tmpImageArray = await getImageArray(route.params.paragraphArray)
+        console.log("getRevisedImageArray tmpImageArray", tmpImageArray);
+        setImageArray(tmpImageArray);
+      }
+
+      getRevisedImageArray();
       setParagraphArrayDisplay(route.params.paragraphArray);
       setTreatmentArrayDisplay(route.params.treatmentArray);
       setTreatmentDate(treatmentObj);
@@ -304,53 +325,12 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       setTotalPrice(tmpTreatPriceObj);
     }
   }, [
-    route.params?.isrRevised,
+    route.params?.isRevised,
     route.params?.paragraphArray,
     route.params?.treatmentArray,
     route.params?.ratingObj,
     route.params?.dentalObj,
   ]);
-
-  /*
-  useEffect(() => {
-    Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
-    Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
-    Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
-
-    // cleanup function
-    return () => {
-      Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
-      Keyboard.removeListener('keyboardWillHide', _keyboardWillHide);
-    };
-  }, []);
-  */
-
-  const _keyboardWillShow = (e: any) => {
-    setPaddingBottom(e.endCoordinates.height + hp('5%'));
-  };
-
-  const _keyboardDidShow = (e: any) => {
-    //setPaddingBottom(e.endCoordinates.height);
-    if (route.params?.isCancelRevise == true) {
-      reviewScrollViewRef.current.scrollTo({x: 0, y: 0, animated: false});
-    } else {
-      reviewScrollViewRef.current.scrollToEnd({animated: true});
-    }
-  };
-
-  const _keyboardWillHide = () => {
-    setPaddingBottom(hp('8%'));
-    setIsCommentInputFocused(false);
-    setTimeout(() => {
-      if (route.params?.isCancelRevise == true) {
-        reviewScrollViewRef.current.scrollTo({x: 0, y: 0, animated: false});
-      } else {
-        reviewScrollViewRef.current.scrollToEnd({animated: true});
-      }
-    }, 0);
-  };
-
-
 
   const getReviewDetail = () => {
     GETReviewDetail(jwtToken, reviewId)
@@ -435,11 +415,15 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           }, 10);
         }
 
+        let tmpImageArray = new Array();
+
         const tmpParagraphArray = response.reviewBody.review_contents.map(
           (item: any, index: number) => {
             let paraObj = new Object();
 
             if (item.img_url) {
+              tmpImageArray.push(item);
+              console.log("리뷰 이미지 문단 item", item);
               paraObj = {
                 id: item.id,
                 index: item.index,
@@ -448,6 +432,8 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
                   name: item.img_name,
                   size: item.img_size,
                   mimeType: item.mime_type,
+                  width: item.img_width,
+                  height: item.img_height,
                 },
                 description: item.description,
                 order: item.img_before_after,
@@ -455,6 +441,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
               };
 
               return paraObj;
+
             } else {
               paraObj = {
                 id: item.id,
@@ -488,6 +475,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         }
 
         //setWriterInfo(userObj)
+        setImageArray(tmpImageArray);
         setTreatmentDate(treatmentObj);
         setLikeCount(response.reviewLikeNum);
         setViewCount(response.reviewViewerNum);
@@ -517,6 +505,17 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       })
   }
 
+  const getImageArray = async (paragraphArray: Array<any>) => {
+    let tmpImageArray = new Array();
+    paragraphArray.forEach((item: any, index: number) => {
+      if(item.img_url) {
+        tmpImageArray.push(item);
+      }
+    });
+
+    return tmpImageArray;
+  }
+
   const moveToFullImages = (imageUri: string) => {
     console.log('moveToFullImages imageArray', imageArray);
 
@@ -528,15 +527,9 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       var index = imageArray.findIndex(
         (image: any) => image.img_url === imageUri,
       );
-  
-      var tmpImageArray = imageArray.map((image: any) => {
-        return image.img_url;
-      });
-  
-      console.log('선택한 사진의 mediaFiles index', index);
-  
+    
       navigation.navigate('ImageDetailScreen', {
-        imageArray: tmpImageArray,
+        imageArray: imageArray,
         imageIndex: index,
       });
     }
@@ -752,10 +745,9 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
 const onPressOwnCommentActionSheet = (index: number) => {
   if (index === 1) {
-    deleteReviewComment();
+    setIsVisibleCommentDeleteModal(true);
   }
 };
-
 
 const onPressOtherCommentActionSheet = (index: number) => {
   if (index === 1) {
@@ -805,36 +797,6 @@ const onPressOtherCommentActionSheet = (index: number) => {
   return (
     <TouchableWithoutFeedback onPress={() => pressBackground()}>
     <Container>
-      {/*
-      <HeaderBar>
-        <TouchableWithoutFeedback onPress={() => goBack()}>
-          <HeaderLeftContainer>
-            <HeaderBackIcon
-              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
-            />
-          </HeaderLeftContainer>
-        </TouchableWithoutFeedback>
-        <HeaderTitleContainer>
-          <NicknameText>{writerInfo.nickname}</NicknameText>
-        </HeaderTitleContainer>
-        <HeaderRightContainer>
-          <HeaderEmptyView />
-          {isOwnReview && (
-            <View
-              style={{position: 'absolute', flexDirection: 'row', right: 10}}>
-              <TouchableWithoutFeedback onPress={() => clickReviseReview()}>
-                <HeaderTitleText>{'수정'}</HeaderTitleText>
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback onPress={() => clickDeleteReview()}>
-                <HeaderTitleText style={{marginLeft: 5}}>
-                  {'삭제'}
-                </HeaderTitleText>
-              </TouchableWithoutFeedback>
-            </View>
-          )}
-        </HeaderRightContainer>
-      </HeaderBar>
-      */}
       <NavigationHeader
       headerLeftProps={{type: "arrow", onPress: goBack, text: "리얼리뷰"}}
       headerRightProps={{type: "viewMore", onPress: clickMoreView}}
@@ -950,17 +912,34 @@ const onPressOtherCommentActionSheet = (index: number) => {
         </MoreViewModalContainer>
       )}
        <ActionSheet
-            ref={ownCommentActionSheetRef}
-            options={['닫기', '삭제하기']}
-            cancelButtonIndex={0}
-            onPress={(index: any) => onPressOwnCommentActionSheet(index)}
-            />
-            <ActionSheet
-            ref={otherCommentActionSheetRef}
-            options={['닫기', '신고하기']}
-            cancelButtonIndex={0}
-            onPress={(index: any) => onPressOtherCommentActionSheet(index)}
-            />
+       ref={ownCommentActionSheetRef}
+       options={['닫기', '삭제하기']}
+       cancelButtonIndex={0}
+       onPress={(index: any) => onPressOwnCommentActionSheet(index)}
+       />
+       <ActionSheet
+       ref={otherCommentActionSheetRef}
+       options={['닫기', '신고하기']}
+       cancelButtonIndex={0}
+       onPress={(index: any) => onPressOtherCommentActionSheet(index)}
+       />
+       <AnimatedModal
+       visible={isVisibleCommentDeleteModal}
+       buttons={[
+       {
+        title: '취소',
+        onPress: () => setIsVisibleCommentDeleteModal(false),
+       },
+       {
+        title: '삭제',
+        onPress: () => {
+        setIsVisibleCommentDeleteModal(false)
+        deleteReviewComment();
+        },
+       },
+       ]}>
+         <ModalContentText>{'삭제되면 복구가 불가능합니다.\n정말 삭제하시겠습니까?'}</ModalContentText>
+       </AnimatedModal>
     </Container>
     </TouchableWithoutFeedback>
   );

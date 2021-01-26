@@ -184,6 +184,18 @@ line-height: 20px;
 color: #131F3C;
 `;
 
+
+const HeaderSearchInput = Styled.TextInput`
+flex: 1;
+background-color: #ffffff;
+font-family: NanumSquare;
+padding-bottom: 3px;
+font-weight: 400;
+font-size: 16px;
+color: #131F3C;
+`;
+
+
 interface Props {
   navigation: any;
   route: any;
@@ -550,13 +562,26 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
 
   const goBack = () => {
     navigation.goBack();
+  } 
+
+  const renderSearchInput = () => {
+    return (
+      <HeaderSearchInput
+      placeholder={"동명(읍, 면)으로 검색(ex. 이의동)"}
+      placeholderTextColor={"#9AA2A9"}
+      clearButtonMode={"while-editing"}
+      onChangeText={onChangeHometownInput}
+      onEndEditing={onEndEditingHometownInput}
+      returnKeyType={"search"}
+      />
+    )
   }
 
   return (
     <Container>
       <NavigationHeader
         headerLeftProps={{type: "arrow", onPress: goBack}}
-        headerCenterProps={{type: "search", onChangeText: onChangeHometownInput, onEndEditing: onEndEditingHometownInput}}
+        headerCenterProps={{type: "searchInput", renderSearchInput: renderSearchInput}}
         headerRightProps={{type: "search"}}
       />
       <BodyContainer>

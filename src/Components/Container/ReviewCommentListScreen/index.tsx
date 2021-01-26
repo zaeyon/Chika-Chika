@@ -13,6 +13,7 @@ import {
     Platform,
     UIManager,
     LayoutAnimation,
+    Animated,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
@@ -27,6 +28,7 @@ import CommentPostBottomBar from '~/Components/Presentational/ReviewCommentListS
 import CommentItem from '~/Components/Presentational/CommentItem';
 import ReplyItem from '~/Components/Presentational/ReplyItem';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
+import AnimatedModal from '~/Components/Presentational/AnimatedModal';
 
 
 // route
@@ -55,6 +57,34 @@ width: ${wp('100%')}px;
 const CommentItemContainer = Styled.View`
 `;
 
+const NoCommentListContainer = Styled.View`
+flex: 1;
+background-color: #ffffff;
+align-items: center;
+justify-content: center;
+`;
+
+const NoCommentImage = Styled.Image`
+width: ${wp('21.6%')}px;
+height: ${wp('21.6%')}px;
+`;
+
+const NoCommentText = Styled.Text`
+font-weight: 400;
+font-size: 16px;
+color: #9AA2A9;
+line-height: 24px;
+text-align: center;
+`;
+
+const ModalContentText = Styled.Text`
+text-align: center;
+font-weight: 400;
+font-size: 14px;
+line-height: 20px;
+color: #131F3C;
+`;
+
 interface Props {
     navigation: any,
     route: any,
@@ -74,6 +104,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
     const [loadingCommentPost, setLoadingCommentPost] = useState<boolean>(false);
     //const [commentArray, setCommentArray] = useState<Array<any>>(route.params?.commentArray);
     const [changeCommentArray ,setChangeCommentArray] = useState<boolean>(false);
+    const [isVisibleCommentDeleteModal, setIsVisibleCommentDeleteModal] = useState<boolean>(false);
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [inputType, setInputType] = useState<string>("comment");
     const dispatch = useDispatch();
@@ -95,7 +126,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
 
     const replyTargetNickname = useRef<string>();
     //const inputType = useRef<string>("comment");
-
+    const noCommentYAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         if(route.params?.refreshCommentList) {
@@ -107,12 +138,12 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
     useEffect(() => {
         console.log("ReviewCommentListScreen route.params?.request", route.params?.request);
 
-        // Keyboard.addListener("keyboardWillShow", keyboardWillShow)
-        // Keyboard.addListener("keyboardWillHide", keyboardWillHide)
+        Keyboard.addListener("keyboardWillShow", keyboardWillShow)
+        Keyboard.addListener("keyboardWillHide", keyboardWillHide)
 
         return () => {
-            // Keyboard.removeListener('keyboardWillShow', keyboardWillShow);
-            // Keyboard.removeListener('keyboardWillHide', keyboardWillHide);
+            Keyboard.removeListener('keyboardWillShow', keyboardWillShow);
+            Keyboard.removeListener('keyboardWillHide', keyboardWillHide);
         }
     }, [])
     
@@ -124,16 +155,25 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
     const keyboardWillShow = (e: any) => {
         console.log("키보드 열림")
         //commentFlatListRef.current.scrollToEnd();
+
+        if(commentArray.length === 0) {
+            Animated.timing(noCommentYAnim, {
+                toValue: -(hp('14.778%')),
+                duration: 300,
+                useNativeDriver: true
+            }).start();
+        }
     }
 
     const keyboardWillHide = () => {
-        /*
-        setTimeout(() => {
-            if(!isClickReply) {
-                //commentFlatListRef.current.scrollToEnd();
-            }
-        }, 10)
-        */
+       
+       if(commentArray.length === 0) {
+        Animated.timing(noCommentYAnim, {
+            toValue: 0,
+            duration: 300,
+            useNativeDriver: true
+        }).start();
+    }
     }
     
     const goBack = () => {
@@ -276,7 +316,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
 
   const onPressOwnCommentActionSheet = (index: number) => {
     if (index === 1) {
-      deleteReviewComment();
+        setIsVisibleCommentDeleteModal(true);
     }
   };
 
@@ -286,6 +326,10 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
 
     }
   };
+
+  const clickBackground = () => {
+      Keyboard.dismiss();
+  }
 
 
   const deleteReviewComment = () => {
@@ -350,13 +394,17 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
         )
     } 
 
+
+
     return (
+        <TouchableWithoutFeedback onPress={() => clickBackground()}>
         <Container>
             <NavigationHeader
             headerLeftProps={{type: "arrow", onPress: goBack}}
             headerRightProps={{type: "empty", onPress: () => 0}}
             headerTitle={`댓글(${commentCount})`}
             />
+            {commentArray.length > 0 && (
             <CommentListContainer>
                 <KeyboardAwareFlatList
                 refreshing={refreshing}
@@ -369,6 +417,27 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
                 renderItem={renderCommentItem}
                 keyExtractor={(item: object, index: number) => `${index}`}/>
             </CommentListContainer>
+            )}
+            {commentArray.length === 0 && (
+            <NoCommentListContainer>
+                <Animated.View
+                style={{
+                    backgroundColor: "#ffffff",
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingBottom: hp('10%'),
+                    transform: [
+                        {
+                            translateY: noCommentYAnim,
+                        }
+                    ]
+                }}>
+                <NoCommentImage
+                source={require('~/Assets/Images/Comment/ic_noComment.png')}/>
+                <NoCommentText>{"등록된 댓글이 없습니다.\n댓글을 남겨주세요."}</NoCommentText>
+                </Animated.View>
+            </NoCommentListContainer>
+            )}
             <KeyboardAvoidingView behavior={"position"}>
             <BottomBarContainer>
                 <CommentPostBottomBar
@@ -398,7 +467,25 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
             detructiveButtonIndex={1}
             onPress={(index: any) => onPressOtherCommentActionSheet(index)}
             />
+       <AnimatedModal
+       visible={isVisibleCommentDeleteModal}
+       buttons={[
+       {
+        title: '취소',
+        onPress: () => setIsVisibleCommentDeleteModal(false),
+       },
+       {
+        title: '삭제',
+        onPress: () => {
+        setIsVisibleCommentDeleteModal(false)
+        deleteReviewComment();
+        },
+       },
+       ]}>
+         <ModalContentText>{'삭제되면 복구가 불가능합니다.\n정말 삭제하시겠습니까?'}</ModalContentText>
+       </AnimatedModal>
         </Container>
+        </TouchableWithoutFeedback>
     )
 }
 

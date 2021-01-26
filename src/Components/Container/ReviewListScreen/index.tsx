@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import SafeAreaView from 'react-native-safe-area-view';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
@@ -21,7 +22,7 @@ import ReviewList from '~/Components/Presentational/ReviewList';
 // Route
 import GETReviewList from '~/Routes/Review/GETReviewList';
 
-const Container = Styled.SafeAreaView`
+const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
 `;
@@ -489,7 +490,7 @@ const ReviewListScreen = ({navigation}: Props) => {
   };
 
   return (
-    <Container>
+    <Container as={SafeAreaView} forceInset={{top: 'always'}}>
       <HeaderBar>
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <HeaderLeftContainer>

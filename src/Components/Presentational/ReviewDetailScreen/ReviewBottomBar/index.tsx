@@ -16,13 +16,18 @@ import {getBottomSpace} from 'react-native-iphone-x-helper';
 import DeviceInfo from 'react-native-device-info';
 
 const Container = Styled.View`
-height: ${DeviceInfo.hasNotch() ? hp('8.128%') : hp('9.5')}px;
+width: ${wp('100%')}px;
+flex-direction: row;
+height: ${DeviceInfo.hasNotch() ? hp('8.128%')+34 : hp('11.2')}px;
 border-top-width: 1px;
 border-color: #E2E6ED;
 background-color: #ffffff;
 padding-top: ${hp('1.9%')}px;
 padding-left: ${wp('4.26%')}px;
 padding-right: ${wp('4.26%')}px;
+justify-content: space-between;
+position: absolute;
+bottom: 0;
 `;
 
 const DefaultContainer = Styled.View`
@@ -41,7 +46,6 @@ justify-content: space-around;
 
 const SocialInfoListContainer = Styled.View`
 flex-direction: row;
-align-items: center;
 `;
 
 const SocialItemContainer = Styled.View`
@@ -139,7 +143,6 @@ const ReviewBottomBar = ({
 
   return (
     <Container>
-        <DefaultContainer>
           <SocialInfoListContainer>
             <TouchableWithoutFeedback onPress={() => {
               clickReviewLike();
@@ -192,7 +195,6 @@ const ReviewBottomBar = ({
             <SeeDentalInfoText>{'병원정보'}</SeeDentalInfoText>
           </SeeDentalInfoButton>
           </TouchableWithoutFeedback>
-        </DefaultContainer>
     </Container>
   );
 };

@@ -23,11 +23,14 @@ import DentalCollapsibleTabView from '~/Components/Presentational/DentalDetailSc
 import DentalBottomBar from '~/Components/Presentational/DentalDetailScreen/DentalBottomBar';
 import ReviewItem from '~/Components/Presentational/ReviewItem';
 import {callPhoneNumber} from '~/method/callPhoneNumber';
+import ToastMessage from '~/Components/Presentational/ToastMessage';
 
 // Route
 import GETDentalDetail from '~/Routes/Dental/GETDentalDetail';
 import POSTDentalScrap from '~/Routes/Dental/POSTDentalScrap';
 import DELETEDentalScrap from '~/Routes/Dental/DELETEDentalScrap';
+import GETCurUserScrap from '~/Routes/Dental/GETCurUserScrap';
+import GETDentalReview from '~/Routes/Dental/GETDentalReview';
 
 
 const Container = Styled.View`
@@ -52,12 +55,16 @@ interface Props {
   route: any;
 }
 
+let dentalObj: object;
+let offset = 0;
+let limit = 10;
 
 const DentalDetailScreen = ({navigation, route}: Props) => {
   console.log("DentalDetailScreen dentalId", route.params?.dentalId);
-  const [dentalDetailInfo, setDentalDetailInfo] = useState<any>(TEST_DENTAL_DETAIL_DATA);
+  const [dentalDetailInfo, setDentalDetailInfo] = useState<any>();
+  const [dentalReviewArray, setDentalReviewArray] = useState<Array<any>>([]);
   const [loadingGetDentalDetail, setLoadingGetDentalDetail] = useState<boolean>(true);
-  const [isCurUserScrap, setIsCurUserScrap] = useState<boolean>();
+  const [isCurUserScrap, setIsCurUserScrap] = useState<boolean>(false);
 
   const currentUser = useSelector((state: any) => state.currentUser);
   const jwtToken = currentUser.jwtToken;
@@ -65,22 +72,61 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     if(route.params?.dentalId) {
-      getDentalDetail()
+      getDentalDetail();
+      getCurUserScrap();
+      getDentalReview();
     }
-  }, [route.params?.dentalId])
+  }, [])
+
+  useEffect(() => {
+      if(route.params?.infoEditRequest) {
+          ToastMessage.show("수정 요청이 완료되었습니다:)")
+          navigation.setParams({infoEditRequest: false})
+      }
+  }, [route.params?.infoEditRequest])
 
   const getDentalDetail = () => {
     GETDentalDetail({jwtToken, dentalId})
-    .then((response) => {
+    .then((response: any) => {
       console.log("GETDentalDetail response", response)
+      console.log("GETDentalDetail response.clinicInfoHeader.clinicProfileImg", response.clinicInfoHeader.clinicProfileImg);
+      console.log("GETDentalDetail response.clinicInfoHeader.clinicReviewImg", response.clinicInfoHeader.clinicReviewImg);
       console.log("response.clinicInfoHeader.userScrapClinics", response.clinicInfoHeader.userScrapClinics);
       setDentalDetailInfo(response)
       setLoadingGetDentalDetail(false);
-      setIsCurUserScrap(response.clinicInfoHeader.userScrapClinics)
+
+      dentalObj = {
+          id: route.params?.dentalId,
+          name: response.clinicInfoHeader.name,
+          originalName: response.clinicInfoHeader.originalName,
+          address: response.clinicInfoHeader.address,
+      }
     })
     .catch((error) => {
       console.log("GETDentalDetail error", error);
       setLoadingGetDentalDetail(false); 
+    })
+  }
+
+  const getCurUserScrap = () => {
+    GETCurUserScrap({jwtToken, dentalId})
+    .then((response: any) => {
+        console.log("GETCurUserScrap response", response)
+        setIsCurUserScrap(response.scraped);
+    })
+    .catch((error) => {
+        console.log("GETCurUserScrap error", error);
+    })
+  }
+
+  const getDentalReview = () => {
+    GETDentalReview({jwtToken, dentalId, offset, limit})
+    .then((response) => {
+        console.log("GETDentalReview response", response)
+        setDentalReviewArray(response)
+    })
+    .catch((error) => {
+        console.log("GETDentalReview error", error);
     })
   }
 
@@ -107,7 +153,9 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
   }
 
   const moveToDentalInfoEdit = () => {
-    navigation.navigate('DentalInfoEditRequestScreen');
+    navigation.navigate('DentalInfoEditRequestScreen', {
+        dentalObj: dentalObj,
+    });
   };
 
   const moveToReviewUpload = () => {
@@ -148,6 +196,7 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
             moveToDentalInfoEdit={moveToDentalInfoEdit}
             moveToReviewUpload={moveToReviewUpload}
             dentalDetailInfo={dentalDetailInfo}
+            dentalReviewArray={dentalReviewArray}
             goBack={goBack}
             />
             <DentalBottomBar

@@ -342,6 +342,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     if (route.params.requestType === 'revise') {
+      console.log("리뷰 수정 요청 route.params.paragraphArray", route.params.paragraphArray);
       const tmpParagraphArray = route.params.paragraphArray;
       setParagraphList(tmpParagraphArray);
       setTotalPrice(route.params?.totalPrice);
@@ -739,6 +740,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
           response.updateReview.reviewBody.TreatmentItems,
         );
         console.log('PUTReviewRevise response.updateReview.reviewBody.dental_clinic', response.updateReview.reviewBody.dental_clinic);
+        console.log("PUTReviewRevise response.updateReview.reviewBody.review_contents", response.updateReview.reviewBody.review_contents)
 
         const dentalObj = {
           id: response.updateReview.reviewBody.dentalClinicId,
@@ -789,15 +791,18 @@ const ContentPostScreen = ({navigation, route}: Props) => {
           console.log('formatParagraph item', item);
 
           if (item.isPreExis) {
+            console.log("기존에 있던 사진 item", item)
             const paragraphObj = {
               index: item.index,
               location: item.image.uri,
               key: item.id,
-              contentType: item.mimeType,
+              contentType: item.image.mimeType,
               originalName: item.image.name,
               size: item.image.size,
               description: item.description ? item.description : null,
               imgBeforeAfter: item.order,
+              width: item.image.width,
+              height: item.image.height,
             };
 
             return paragraphObj;
@@ -813,9 +818,12 @@ const ContentPostScreen = ({navigation, route}: Props) => {
               size: result.size,
               description: item.description ? item.description : null,
               imgBeforeAfter: item.order,
+              width: result.width,
+              height: result.height,
             };
 
             return paragraphObj;
+
           }
         } else {
           const paragraphObj = {
@@ -827,9 +835,12 @@ const ContentPostScreen = ({navigation, route}: Props) => {
             originalName: null,
             size: null,
             imgBeforeAfters: null,
+            width: null,
+            height: null,
           };
 
           return paragraphObj;
+
         }
       }),
     );
@@ -879,6 +890,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
       );
       delete tmpParagraphArray[selectedParaIndex].image;
       delete tmpParagraphArray[selectedParaIndex].order;
+      delete tmpParagraphArray[selectedParaIndex].isPreExis;
 
       setParagraphList(tmpParagraphArray);
       setChangeParagraphList(!changeParagraphList);
