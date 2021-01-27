@@ -108,8 +108,8 @@ const CommunityListScreen = ({navigation, route}: Props) => {
   };
 
   const moveToNotificationList = () => {
-    navigation.navigate("NotificationListScreen");
-  }
+    navigation.navigate('NotificationListScreen');
+  };
 
   useEffect(() => {
     const questionform = {
@@ -204,8 +204,8 @@ const CommunityListScreen = ({navigation, route}: Props) => {
               borderBottomWidth: 1,
             },
           }}>
-          <CommunityTopTab.Screen name="질문방" component={QuestionTabScreen} />
           <CommunityTopTab.Screen name="수다방" component={GeneralTabScreen} />
+          <CommunityTopTab.Screen name="질문방" component={QuestionTabScreen} />
         </CommunityTopTab.Navigator>
       </BodyContainerView>
     </ContainerView>

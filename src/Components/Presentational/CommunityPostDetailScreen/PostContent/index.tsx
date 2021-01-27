@@ -18,9 +18,11 @@ import FastImage from 'react-native-fast-image';
 const ContainerView = Styled.View`
 width: ${wp('100%')}px;
 height: auto;
-padding-top: 24px;
-background-color: white
-
+padding-top: 22px;
+padding-bottom: 16px;
+background-color: #FFFFFF;
+border-bottom-width: 1px;
+border-color: #E2E6ED;
 `;
 
 const BodyContainerView = Styled.View`
@@ -36,6 +38,7 @@ height: auto;
 margin-right: auto;
 flex-direction: row;
 align-items: center;
+margin-bottom: 8px;
 `;
 
 const HashTagContainerView = Styled.View`
@@ -66,14 +69,16 @@ font-weight: normal;
 font-size: 14px;
 line-height: 16px;
 `;
-// View => Image when ready
+
 const ProfileImage = Styled.Image<{source: any}>`
-width: 44px;
-height: 44px;
-background-color: grey;
-border-radius: 22px;
+width: 40px;
+height: 40px;
+background-color: #C4C4C4;
+border-width: 0.5px;
+border-color: #9AA2A9;
+border-radius: 100px;
 `;
-// width, height ++ 4px
+
 const ProfileContentView = Styled.View`
 width: auto;
 height: auto;
@@ -82,21 +87,21 @@ padding-left: 8px;
 const ProfileNameText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
-font-weight: bold;
-font-size: 15px;
-line-height: 17px;
-margin-bottom: 4px;
+font-weight: normal;
+font-size: 14px;
+line-height: 16px;
+margin-bottom: 2px;
 `;
-// font-size, line-height ++ 1px
+
 const ProfileDescriptionText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
 font-weight: normal;
-font-size: 13px;
-line-height: 15px;
-color: #979797;
+font-size: 12px;
+line-height: 16px;
+color: #9AA2A9;
 `;
-// font-size, line-height ++ 1px
+
 const ContentView = Styled.View`
 width: 100%;
 height: auto;
@@ -113,22 +118,21 @@ line-height: 24px;
 `;
 
 const ImageContainerView = Styled.View`
+width: auto;
+height: auto;
 margin: 8px 0px;
-margin-right: auto;
+`;
+const ImageFlatList = Styled.FlatList`
 width: 100%;
 height: auto;
+overflow: visible;
 `;
-const ImageFlatList = Styled(FlatList as new () => FlatList)`
-width: 100%;
-height: auto;
+
+const ImageSeperatorView = Styled.View`
+width: 4px;
+height: 100%;
 `;
-const ImageView = Styled.Image<{isFirst: number; source: any}>`
-width: 130px;
-height: 130px;
-border-radius: 4px;
-margin-right: 16px;
-margin-left: ${(props) => (props.isFirst ? '0px' : '16px')}
-`;
+
 const SocialInfoContainerView = Styled.View`
 width: ${wp('100%')}px;
 height: 56px;
@@ -151,7 +155,7 @@ line-height: 16px;
 margin-left: 4px;
 `;
 const HashTagText = Styled.Text`
-  color: #0075FF;
+  color: #00D1FF;
 `;
 
 interface Props {
@@ -199,14 +203,22 @@ const PostContent = ({
     }
   }, []);
 
-  const formatDate = useCallback((date: string) => {
-    const tmpDate = new Date(date);
-    let year = tmpDate.getFullYear(),
-      month = String(tmpDate.getMonth() + 1),
-      day = String(tmpDate.getDay());
-    month = Number(month) >= 10 ? month : '0' + month;
-    day = Number(day) >= 10 ? day : '0' + day;
-    return year + '년 ' + month + '월 ' + day + '일';
+  const formatDate = useCallback((updatedAt: string) => {
+    // const tmpDate = new Date(date);
+    // console.log(tmpDate);
+    const currentYear = new Date(Date.now()).getFullYear();
+    // let year = tmpDate.getFullYear(),
+    //   month = String(tmpDate.getMonth() + 1),
+    //   day = String(tmpDate.getDay());
+    const [date, time] = updatedAt.split(' ');
+    const [year, month, day] = date.split('-');
+    // month = Number(month) >= 10 ? month : '0' + month;
+    // day = Number(day) >= 10 ? day : '0' + day;
+    if (String(currentYear) === year) {
+      return parseInt(month) + '월 ' + parseInt(day) + '일';
+    } else {
+      return year + '년 ' + parseInt(month) + '월 ' + parseInt(day) + '일';
+    }
   }, []);
 
   const formatHashTag = (text: string, index: number) => {
@@ -283,11 +295,10 @@ const PostContent = ({
         <FastImage
           key={'image' + index}
           style={{
-            width: 130,
-            height: 130,
-            borderRadius: 4,
-            marginRight: 16,
-            marginLeft: index ? 0 : 16,
+            width: 124,
+            height: 124,
+            backgroundColor: '#F5F7F9',
+            borderRadius: 8,
           }}
           source={{
             uri: item.img_url,
@@ -327,23 +338,25 @@ const PostContent = ({
           </ProfileContainerView>
         </TouchableWithoutFeedback>
 
+        {community_imgs.length > 0 ? (
+          <ImageContainerView>
+            <ImageFlatList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              alwaysBounceHorizontal={false}
+              data={community_imgs}
+              keyExtractor={(item) => String(item.id)}
+              snapToInterval={128}
+              renderItem={renderImage}
+              ItemSeparatorComponent={() => <ImageSeperatorView />}
+            />
+          </ImageContainerView>
+        ) : null}
         <ContentView>
           <ContentText>{memoDescription}</ContentText>
         </ContentView>
       </BodyContainerView>
 
-      {community_imgs.length > 0 ? (
-        <ImageContainerView>
-          <ImageFlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            alwaysBounceHorizontal={false}
-            data={community_imgs}
-            keyExtractor={(item) => String(item.id)}
-            renderItem={renderImage}
-          />
-        </ImageContainerView>
-      ) : null}
       {/* <HashTagContainerView>
         {Clinics.map((item, index) => (
           <HashTagIconView>

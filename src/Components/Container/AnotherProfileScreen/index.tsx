@@ -28,9 +28,18 @@ const ContainerView = Styled.View`
  background-color: #FFFFFF;
 `;
 
+interface Route {
+  params: {
+    targetUser: {
+      userId: string;
+      nickname: string;
+      profileImageUri: string;
+    };
+  };
+}
 interface Props {
   navigation: any;
-  route: any;
+  route: Route;
 }
 
 interface Form {

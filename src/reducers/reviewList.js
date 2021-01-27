@@ -141,6 +141,7 @@ const reviewList = (
     case 'TOGGLE_REVIEW_SCRAP': {
       const tmpReviewList = state.mainReviewList.concat();
       const tmpMyReviews = state.MyReviews.concat();
+      const tmpOpponentReviews = state.OpponentReviews.concat();
       const tmpLikedReviews = state.LikedReviews.concat();
       const tmpScrapedReviews = state.ScrapedReviews.concat();
       const tmpCommentedReviews = state.CommentedReviews.concat();

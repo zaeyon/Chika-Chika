@@ -8,7 +8,7 @@ import {
 
 const ContianerView = Styled.View`
 width: ${wp('100%')}px;
-height: ${wp('50%')}px;
+height: 112px;
 background: #F0F6FC;
 align-items: center;
 margin-bottom: 8px;
@@ -19,8 +19,8 @@ interface Props {
 }
 
 const images = {
-  question: require('~/Assets/Images/dunkirk_banner.jpg'),
-  freetalk: require('~/Assets/Images/kingdom_banner.jpg'),
+  question: require('~/Assets/Images/topbanner1.jpg'),
+  freetalk: require('~/Assets/Images/topbanner1.jpg'),
 };
 
 const TopBanner = ({type}: Props) => {
@@ -31,6 +31,7 @@ const TopBanner = ({type}: Props) => {
         style={{
           width: '100%',
           height: '100%',
+          resizeMode: 'cover',
         }}
       />
     </ContianerView>

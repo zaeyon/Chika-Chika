@@ -7,11 +7,14 @@ import {
 } from 'react-native-responsive-screen';
 
 const ContianerView = Styled.View`
-width: ${wp('100%')}px;
+width: auto;
 height: auto;
+margin: 0px 8px;
 padding: 24px 16px;
 flex-direction: row;
-background: #FFFFFF;
+align-items: center;
+background: #00D1FF;
+border-radius: 8px;
 margin-bottom: 8px;
 `;
 
@@ -28,8 +31,8 @@ font-family: NanumSquare;
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
-line-height: 24px;
-margin-left: 8px;
+line-height: 16px;
+color: #FFFFFF;
 `;
 
 const ButtonTouchableOpacity = Styled.TouchableOpacity`
@@ -42,11 +45,18 @@ margin-left: auto;
 const ButtonText = Styled.Text`
 font-family: NanumSquare;
 font-style: normal;
-font-weight: bold;
+font-weight: normal;
 font-size: 16px;
 line-height: 24px;
-color: #00D1FF;
-margin-right: 4px;
+color: #FFFFFF;
+`;
+
+const ButtonUnderlineView = Styled.View`
+position: absolute;
+width: 100%;
+height: 1px;
+bottom: 0px;
+background: #FFFFFF;
 `;
 
 interface Props {
@@ -55,16 +65,10 @@ interface Props {
 const AdviceInfoHeader = ({profile}: Props) => {
   return (
     <ContianerView>
-      <TitleImage
-        source={{
-          uri: profile.profileImg,
-          cache: 'force-cache',
-        }}
-      />
-      <TitleText>{profile.nickname + '님, 무엇이 궁금하세요?'}</TitleText>
+      <TitleText>{'이웃님, 무엇이 궁금하세요?'}</TitleText>
       <ButtonTouchableOpacity>
         <ButtonText>{'질문하기'}</ButtonText>
-        <Image source={require('~/Assets/Images/Location/ic/next/mini.png')} />
+        <ButtonUnderlineView />
       </ButtonTouchableOpacity>
     </ContianerView>
   );

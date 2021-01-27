@@ -24,6 +24,7 @@ import TopBanner from '~/Components/Container/CommunityListScreen/TopBanner';
 import AdviceInfoHeader from '~/Components/Container/CommunityListScreen/AdviceInfoHeader';
 import CarouselContent from '~/Components/Container/CommunityListScreen/CarouselContent';
 import PostFilterHeader from '~/Components/Container/CommunityListScreen/PostFilterHeader';
+import LocationSelection from '~/Components/Container/CommunityListScreen/LocationInfoHeader/LocationSelection';
 // Routes
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
@@ -36,11 +37,6 @@ const ContainerView = Styled.View`
  background-color: #FFFFFF;
 `;
 
-const ActivityIndicatorContainerView = Styled.View`
-width: ${wp('100%')}px;
-height: auto;
-padding-bottom: 18px;
-`;
 interface Props {
   navigation: any;
   route: any;
@@ -49,12 +45,17 @@ interface Props {
 const QuestionTabScreen = ({navigation, route}: Props) => {
   const type = 'Question';
   const limit = 10;
+  const [floatVisible, setFloatVisible] = useState(false);
   const [isDataFinish, setIsDataFinish] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isFiltering, setIsFiltering] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
   const [region, setRegion] = useState('all');
   const [order, setOrder] = useState('createdAt');
+  const mainHometown = useSelector((state: any) =>
+    state.currentUser.hometown.find((item) => item.UsersCities.now === true),
+  );
+  const [selectedHometown, setSelectedHometown] = useState(mainHometown);
   const currentUser = useSelector((state: any) => state.currentUser);
   const jwtToken = currentUser.jwtToken;
   const hometown = currentUser.hometown;
@@ -63,7 +64,46 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
     (state: any) => state.communityPostList.QuestionPosts,
   );
   const dispatch = useDispatch();
-  const buttonY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    setSelectedHometown(mainHometown);
+  }, [mainHometown]);
+
+  useEffect(() => {
+    setOrder('createdAt');
+    const form = {
+      type,
+      limit: 10,
+      offset: 0,
+      order: 'createdAt',
+      region,
+    };
+    GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
+      (response: any) => {
+        const data = {
+          type,
+          posts: response,
+        };
+        if (
+          JSON.stringify(response).replace(
+            /"createdDiff\(second\)\"\:\d*\,/gi,
+            '',
+          ) !==
+          JSON.stringify(postData).replace(
+            /"createdDiff\(second\)\"\:\d*\,/gi,
+            '',
+          )
+        ) {
+          console.log('liked post diff1');
+          LayoutAnimation.configureNext(
+            LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+          );
+
+          dispatch(allActions.communityActions.setPosts(data));
+        }
+      },
+    );
+  }, [selectedHometown]);
 
   useEffect(() => {
     if (route.params?.isPostCreated) {
@@ -76,7 +116,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         order: 'createdAt',
         region,
       };
-      GETCommunityPosts(jwtToken, String(hometown[0].id), form).then(
+      GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
         (response: any) => {
           const data = {
             type,
@@ -92,7 +132,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
               '',
             )
           ) {
-            console.log('liked post diff');
+            console.log('liked post diff2');
             LayoutAnimation.configureNext(
               LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
             );
@@ -113,7 +153,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
       region,
     };
     setRefreshing(true);
-    GETCommunityPosts(jwtToken, String(hometown[0].id), form).then(
+    GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
       (response: any) => {
         setIsDataFinish(false);
         const data = {
@@ -131,7 +171,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
               '',
             )
         ) {
-          console.log('liked post diff');
+          console.log('liked post diff3');
           LayoutAnimation.configureNext(
             LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
           );
@@ -141,7 +181,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         setRefreshing(false);
       },
     );
-  }, [jwtToken, postData, order, region]);
+  }, [jwtToken, postData, order, region, selectedHometown]);
 
   const onEndReached = useCallback(
     (info: any) => {
@@ -160,7 +200,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
           order,
           region,
         };
-        GETCommunityPosts(jwtToken, String(hometown[0].id), form).then(
+        GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
           (response: any) => {
             console.log(response.length);
             if (response.length === 0) {
@@ -176,7 +216,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         );
       }
     },
-    [isEndReached, postData, order, jwtToken, region],
+    [isEndReached, postData, order, jwtToken, region, selectedHometown],
   );
 
   const onRegionChanged = useCallback(
@@ -189,7 +229,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         region,
       };
       setRefreshing(true);
-      GETCommunityPosts(jwtToken, String(hometown[0].id), form).then(
+      GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
         (response: any) => {
           setIsDataFinish(false);
           const data = {
@@ -197,7 +237,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
             posts: response,
           };
 
-          console.log('liked post diff');
+          console.log('liked post diff4');
           LayoutAnimation.configureNext(
             LayoutAnimation.create(400, 'easeInEaseOut', 'opacity'),
           );
@@ -208,7 +248,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         },
       );
     },
-    [order, region, postData, jwtToken],
+    [order, region, postData, jwtToken, selectedHometown],
   );
 
   const onFiltering = useCallback(
@@ -221,7 +261,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         order,
         region,
       };
-      GETCommunityPosts(jwtToken, String(hometown[0].id), form).then(
+      GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
         (response: any) => {
           setIsDataFinish(false);
           const data = {
@@ -239,7 +279,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
                 '',
               )
           ) {
-            console.log('liked post diff');
+            console.log('liked post diff5');
             LayoutAnimation.configureNext(
               LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
             );
@@ -254,7 +294,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         },
       );
     },
-    [jwtToken, postData, region, order],
+    [jwtToken, postData, region, order, selectedHometown],
   );
 
   const moveToCommunityDetail = useCallback(
@@ -279,6 +319,9 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
     },
     [],
   );
+  const moveToHomeTownSetting = useCallback(() => {
+    navigation.navigate('HometownSettingScreen');
+  }, []);
 
   const toggleSocialLike = useCallback(
     (postId: number, prevState: number, type: string) => {
@@ -331,9 +374,10 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
       <>
         <LocationInfoHeader
           type="question"
-          hometown={hometown}
+          selectedHometown={selectedHometown}
           region={region}
           setRegion={onRegionChanged}
+          setFloatVisible={setFloatVisible}
         />
         <AdviceInfoHeader profile={profile} />
         <TopBanner type="question" />
@@ -343,11 +387,27 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
           moveToCommunityDetail={moveToCommunityDetail}
           moveToAnotherProfile={moveToAnotherProfile}
         />
-
+        {floatVisible ? (
+          <LocationSelection
+            hometown={hometown}
+            selectedHometown={selectedHometown}
+            setSelectedHometown={setSelectedHometown}
+            setFloatVisible={setFloatVisible}
+            moveToHomeTownSetting={moveToHomeTownSetting}
+          />
+        ) : null}
         <PostFilterHeader order={order} setOrder={onFiltering} />
       </>
     );
-  }, [profile, postData, order, region, hometown]);
+  }, [
+    profile,
+    postData,
+    order,
+    region,
+    hometown,
+    selectedHometown,
+    floatVisible,
+  ]);
 
   return (
     <ContainerView>

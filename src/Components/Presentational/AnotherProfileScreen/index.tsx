@@ -393,7 +393,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
         }
         data={this.props.communityPostData}
         renderItem={this.renderPostItem}
-        keyExtractor={(item: any, index: number) => String(index)}
+        keyExtractor={(item: any, index: number) => item.id + String(index)}
         refreshControl={
           <RefreshControl
             refreshing={this.props.isCommunityRefreshing}
@@ -465,7 +465,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
         }
         data={this.props.reviewData}
         renderItem={this.renderReviewItem}
-        keyExtractor={(item: any, index: number) => String(index)}
+        keyExtractor={(item: any, index: number) => item.id + String(index)}
         refreshControl={
           <RefreshControl
             refreshing={this.props.isReviewRefreshing}
