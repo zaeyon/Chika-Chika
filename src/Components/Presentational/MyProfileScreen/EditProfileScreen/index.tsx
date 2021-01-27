@@ -4,9 +4,7 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   TouchableHighlight,
-  View,
-  Modal,
-  ScrollView,
+  Animated,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -115,6 +113,34 @@ line-height: 16px;
 color: #FFFFFF;
 `;
 
+const BitrhdateModal = Styled.Modal`
+`;
+
+const BirthdateModalContinerView = Styled.View`
+background: #000000;
+position: absolute;
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
+`;
+
+const BirthdateContentView = Styled.View`
+position: absolute;
+width: ${wp('100%')}px;
+bottom: 0px;
+`;
+
+const BirthdateContentHeaderView = Styled.View`
+background: rgb(240,241,243);
+padding: 12px;
+`;
+
+const BirthdateContentHeaderText = Styled.Text`
+margin-left: auto;
+font-size: 16px;
+font-weight: bold;
+color: #2288FF;
+`;
+
 interface Props {
   capturePhoto: any;
   moveToEditNickname: any;
@@ -154,8 +180,9 @@ const EditProfileScreen = ({
     '현재 사진 삭제',
   ];
 
+  const modalContentY = useRef(new Animated.Value(hp('40%'))).current;
   const [date, setDate] = useState<Date>(
-    currentUser.profile.birthdate || Date.now(),
+    new Date(currentUser.profile.birthdate || Date.now()),
   );
 
   const onChange = (event: Event, selectedDate?: Date) => {
@@ -192,13 +219,23 @@ const EditProfileScreen = ({
 
   const openModal = useCallback(() => {
     setIsModalVisible(true);
-  }, []);
+    Animated.spring(modalContentY, {
+      toValue: 0,
+      friction: 17,
+      tension: 68,
+      useNativeDriver: true,
+    }).start();
+  }, [modalContentY]);
   const closeModal = useCallback(() => {
-    setIsModalVisible(false);
-  }, []);
+    Animated.timing(modalContentY, {
+      toValue: hp('40%'),
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => setIsModalVisible(false));
+  }, [modalContentY]);
 
   const setUserBirthdate = useCallback(() => {
-    const formattedDate = date.toJSON().substring(0, 10);
+    const formattedDate = date.toISOString();
     console.log(formattedDate);
     changeProfileBirthdate(formattedDate);
     setIsModalVisible(false);
@@ -343,31 +380,44 @@ const EditProfileScreen = ({
           </SectionContentView>
         </TouchableHighlight>
       </SectionContainerView>
-      <AnimatedModal
+      <BitrhdateModal
         visible={isModalVisible}
-        buttons={[
-          {
-            title: '취소',
-            onPress: closeModal,
-          },
-          {
-            title: '변경',
-            onPress: setUserBirthdate,
-          },
-        ]}>
-        <DateTimePicker
-          style={{
-            width: '100%',
-            height: 200,
-          }}
-          testID="dateTimePicker"
-          value={date}
-          mode="date"
-          is24Hour={true}
-          display="spinner"
-          onChange={onChange}
-        />
-      </AnimatedModal>
+        transparent={true}
+        animationType="none">
+        <TouchableWithoutFeedback onPress={() => closeModal()}>
+          <BirthdateModalContinerView
+            as={Animated.View}
+            style={{
+              opacity: modalContentY.interpolate({
+                inputRange: [0, hp('40%')],
+                outputRange: [0.3, 0],
+                extrapolate: 'clamp',
+              }),
+            }}></BirthdateModalContinerView>
+        </TouchableWithoutFeedback>
+        <BirthdateContentView
+          as={Animated.View}
+          style={{transform: [{translateY: modalContentY}]}}>
+          <BirthdateContentHeaderView>
+            <TouchableWithoutFeedback onPress={() => setUserBirthdate()}>
+              <BirthdateContentHeaderText>{'완료'}</BirthdateContentHeaderText>
+            </TouchableWithoutFeedback>
+          </BirthdateContentHeaderView>
+          <DateTimePicker
+            style={{
+              width: '100%',
+              height: 217,
+              backgroundColor: '#FFFFFF',
+            }}
+            testID="dateTimePicker"
+            value={date}
+            mode="date"
+            is24Hour={true}
+            display="spinner"
+            onChange={onChange}
+          />
+        </BirthdateContentView>
+      </BitrhdateModal>
       <ActionSheet
         ref={genderActionSheetRef}
         options={genderActionSheetItemList}

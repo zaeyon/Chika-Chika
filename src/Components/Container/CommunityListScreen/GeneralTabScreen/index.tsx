@@ -21,6 +21,7 @@ import LocationInfoHeader from '~/Components/Container/CommunityListScreen/Locat
 import TopBanner from '~/Components/Container/CommunityListScreen/TopBanner';
 import CarouselContent from '~/Components/Container/CommunityListScreen/CarouselContent';
 import PostFilterHeader from '~/Components/Container/CommunityListScreen/PostFilterHeader';
+import LocationSelection from '~/Components/Container/CommunityListScreen/LocationInfoHeader/LocationSelection';
 // Routes
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
@@ -46,6 +47,7 @@ interface Props {
 const FreeTalkTabScreen = ({navigation, route}: Props) => {
   const type = 'FreeTalk';
   const limit = 10;
+  const [floatVisible, setFloatVisible] = useState(false);
   const [isDataFinish, setIsDataFinish] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isFiltering, setIsFiltering] = useState(false);
@@ -59,8 +61,52 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
   const postData = useSelector(
     (state: any) => state.communityPostList.FreeTalkPosts,
   );
+  const mainHometown = useSelector((state: any) =>
+    state.currentUser.hometown.find((item) => item.UsersCities.now === true),
+  );
+  const [selectedHometown, setSelectedHometown] = useState(mainHometown);
+
   const dispatch = useDispatch();
-  const buttonY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    setSelectedHometown(mainHometown);
+  }, [mainHometown]);
+
+  useEffect(() => {
+    setOrder('createdAt');
+    const form = {
+      type,
+      limit: 10,
+      offset: 0,
+      order: 'createdAt',
+      region,
+    };
+    GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
+      (response: any) => {
+        const data = {
+          type,
+          posts: response,
+        };
+        if (
+          JSON.stringify(response).replace(
+            /"createdDiff\(second\)\"\:\d*\,/gi,
+            '',
+          ) !==
+          JSON.stringify(postData).replace(
+            /"createdDiff\(second\)\"\:\d*\,/gi,
+            '',
+          )
+        ) {
+          console.log('liked post diff1');
+          LayoutAnimation.configureNext(
+            LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+          );
+
+          dispatch(allActions.communityActions.setPosts(data));
+        }
+      },
+    );
+  }, [selectedHometown]);
 
   useEffect(() => {
     if (route.params?.isPostCreated) {
@@ -73,7 +119,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
         order: 'createdAt',
         region,
       };
-      GETCommunityPosts(jwtToken, String(hometown[0].id), form).then(
+      GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
         (response: any) => {
           const data = {
             type,
@@ -110,7 +156,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
       region,
     };
     setRefreshing(true);
-    GETCommunityPosts(jwtToken, String(hometown[0].id), form).then(
+    GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
       (response: any) => {
         setIsDataFinish(false);
         const data = {
@@ -138,7 +184,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
         setRefreshing(false);
       },
     );
-  }, [jwtToken, postData, order, region]);
+  }, [jwtToken, postData, order, region, selectedHometown]);
 
   const onEndReached = useCallback(
     (info: any) => {
@@ -157,7 +203,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
           order,
           region,
         };
-        GETCommunityPosts(jwtToken, String(hometown[0].id), form).then(
+        GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
           (response: any) => {
             console.log(response.length);
             if (response.length === 0) {
@@ -173,7 +219,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
         );
       }
     },
-    [isEndReached, postData, order, jwtToken, region],
+    [isEndReached, postData, order, jwtToken, region, selectedHometown],
   );
 
   const onRegionChanged = useCallback(
@@ -186,7 +232,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
         region,
       };
       setRefreshing(true);
-      GETCommunityPosts(jwtToken, String(hometown[0].id), form).then(
+      GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
         (response: any) => {
           setIsDataFinish(false);
           const data = {
@@ -203,7 +249,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
         },
       );
     },
-    [order, region, postData, jwtToken],
+    [order, region, postData, jwtToken, selectedHometown],
   );
 
   const onFiltering = useCallback(
@@ -216,7 +262,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
         order,
         region,
       };
-      GETCommunityPosts(jwtToken, String(hometown[0].id), form).then(
+      GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
         (response: any) => {
           setIsDataFinish(false);
           const data = {
@@ -249,7 +295,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
         },
       );
     },
-    [jwtToken, postData, region, order],
+    [jwtToken, postData, region, order, selectedHometown],
   );
 
   const moveToCommunityDetail = useCallback(
@@ -262,8 +308,21 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
     [],
   );
 
-  const moveToAnotherProfile = useCallback(() => {
-    navigation.navigate('AnotherProfileScreen');
+  const moveToAnotherProfile = useCallback(
+    (userId: string, nickname: string, profileImageUri: string) => {
+      navigation.navigate('AnotherProfileStackScreen', {
+        targetUser: {
+          userId,
+          nickname,
+          profileImageUri,
+        },
+      });
+    },
+    [],
+  );
+
+  const moveToHomeTownSetting = useCallback(() => {
+    navigation.navigate('HometownSettingScreen');
   }, []);
 
   const toggleSocialLike = useCallback(
@@ -317,9 +376,10 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
       <>
         <LocationInfoHeader
           type="freetalk"
-          hometown={hometown}
+          selectedHometown={selectedHometown}
           region={region}
           setRegion={onRegionChanged}
+          setFloatVisible={setFloatVisible}
         />
         <TopBanner type="freetalk" />
         <CarouselContent
@@ -328,7 +388,15 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
           moveToCommunityDetail={moveToCommunityDetail}
           moveToAnotherProfile={moveToAnotherProfile}
         />
-
+        {floatVisible ? (
+          <LocationSelection
+            hometown={hometown}
+            selectedHometown={selectedHometown}
+            setSelectedHometown={setSelectedHometown}
+            setFloatVisible={setFloatVisible}
+            moveToHomeTownSetting={moveToHomeTownSetting}
+          />
+        ) : null}
         <PostFilterHeader order={order} setOrder={onFiltering} />
         {isFiltering ? (
           <ActivityIndicatorContainerView>
@@ -337,7 +405,16 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
         ) : null}
       </>
     );
-  }, [profile, postData, order, isFiltering, region]);
+  }, [
+    profile,
+    postData,
+    order,
+    isFiltering,
+    region,
+    floatVisible,
+    hometown,
+    selectedHometown,
+  ]);
 
   return (
     <ContainerView>

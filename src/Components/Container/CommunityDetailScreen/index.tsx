@@ -16,13 +16,14 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
+import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 // Local Components
 import PostInformation from '~/Components/Presentational/CommunityPostDetailScreen/PostInformation';
 import PostContent from '~/Components/Presentational/CommunityPostDetailScreen/PostContent';
 import DentistComment from '~/Components/Presentational/CommunityPostDetailScreen/DentistComment';
 import PostCommentList from '~/Components/Presentational/CommunityPostDetailScreen/PostCommentList';
 import PostBottomBar from '~/Components/Presentational/CommunityPostDetailScreen/PostBottomBar';
+import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 // fetch
 import GETCommunityPostDetail from '~/Routes/Community/postDetail/GETCommunityPostDetail';
 import GETCommunityPostComments from '~/Routes/Community/postDetail/GETCommunityPostComments';
@@ -40,7 +41,6 @@ const ContainerView = Styled.SafeAreaView`
  flex: 1;
  background-color: white;
  align-items: center;
- justify-content: center;
 `;
 
 const BodyContainerScrollView = Styled.ScrollView`
@@ -55,6 +55,39 @@ height: 50px;
 
 align-items: center;
 justify-content: center;
+`;
+
+const FloatingView = Styled.View`
+width: 114px;
+height: 146px;
+position: absolute;
+top: ${getStatusBarHeight() + 45}px;
+right: 16px;
+background: #FFFFFF;
+border-width: 1px;
+border-color: #E2E6ED;
+box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
+border-radius: 12px;
+z-index: 11;
+`;
+
+const FloatingContentView = Styled.View`
+padding: 12px 16px;
+width: 114px;
+`;
+
+const FloatingContentText = Styled.Text`
+font-style: normal;
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+color: #000000;
+`;
+
+const VerticalPartitionView = Styled.View`
+width: 100%;
+height: 1px;
+background: #E2E6ED;
 `;
 
 interface Props {
@@ -132,6 +165,30 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     fetchPostComments(route.params.id);
   }, []);
 
+  const renderFloatingView = useCallback(
+    () => (
+      <FloatingView>
+        <TouchableWithoutFeedback onPress={() => onPressDeletePost()}>
+          <FloatingContentView>
+            <FloatingContentText>{'삭제'}</FloatingContentText>
+          </FloatingContentView>
+        </TouchableWithoutFeedback>
+        <VerticalPartitionView />
+        <TouchableWithoutFeedback onPress={() => console.log('report')}>
+          <FloatingContentView>
+            <FloatingContentText>{'신고'}</FloatingContentText>
+          </FloatingContentView>
+        </TouchableWithoutFeedback>
+        <VerticalPartitionView />
+        <TouchableWithoutFeedback onPress={() => console.log('share')}>
+          <FloatingContentView>
+            <FloatingContentText>{'공유'}</FloatingContentText>
+          </FloatingContentView>
+        </TouchableWithoutFeedback>
+      </FloatingView>
+    ),
+    [],
+  );
   const toggleKeyboardAnimation = useCallback(
     (height: Number) => {
       scrollView &&
@@ -307,6 +364,18 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   if (postData) {
     return (
       <ContainerView>
+        {renderFloatingView()}
+        <NavigationHeader
+          headerLeftProps={{
+            type: 'arrow',
+            text: '수다방',
+            onPress: () => navigation.goBack(),
+          }}
+          headerRightProps={{
+            type: 'viewMore',
+            onPress: () => console.log('s'),
+          }}
+        />
         <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
           <BodyContainerScrollView
             showsVerticalScrollIndicator={false}
@@ -327,17 +396,12 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }>
-            <PostInformation
-              navigation={navigation}
-              onPressEditPost={onPressEditPost}
-              onPressDeletePost={onPressDeletePost}
-            />
             <PostContent
               moveToAnotherProfile={moveToAnotherProfile}
               moveToImageDetail={moveToImageDetail}
               data={postData}
             />
-            <DentistComment />
+
             {isLoading ? (
               <ActivityIndicatorContianerView>
                 <ActivityIndicator size="small" />

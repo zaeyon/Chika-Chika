@@ -8,7 +8,7 @@ import {
 
 const ContainerView = Styled.View`
 width: ${wp('76%')}px;
-height: auto;
+height: 152px;
 margin-right: 16px;
 padding: 16px;
 background: #FFFFFF;
@@ -24,19 +24,20 @@ align-items: center;
 margin-bottom: 12px;
 `;
 const ProfileImage = Styled.Image<{source: any}>`
-width: ${wp('8.8%')}px;
-height: ${wp('8.8%')}px;
+width: 28px;
+height: 28px;
 background-color: grey;
 border-width: 0.5px
 border-color: #E2E6ED;
-border-radius: 12px;
+border-radius: 100px;
 margin-right: 8px;
 `;
 const ProfileNameText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
 font-weight: bold;
-font-size: 14px;
+font-size: 13px;
+margin-right: 4px;
 `;
 
 const ProfileSplitView = Styled.View`
@@ -51,7 +52,7 @@ const ProfileDescriptionText = Styled.Text`
 font-family: NanumSquareR;
 font-style: normal;
 font-weight: bold;
-font-size: 14px;
+font-size: 13px;
 color: #9AA2A9;
 `;
 
@@ -130,14 +131,22 @@ const PostCardItem = ({
     }
   }, []);
 
-  const formatDate = useCallback((date: string) => {
-    const tmpDate = new Date(date);
-    let year = tmpDate.getFullYear(),
-      month = String(tmpDate.getMonth() + 1),
-      day = String(tmpDate.getDay());
-    month = Number(month) >= 10 ? month : '0' + month;
-    day = Number(day) >= 10 ? day : '0' + day;
-    return year + '년 ' + month + '월 ' + day + '일';
+  const formatDate = useCallback((updatedAt: string) => {
+    // const tmpDate = new Date(date);
+    // console.log(tmpDate);
+    const currentYear = new Date(Date.now()).getFullYear();
+    // let year = tmpDate.getFullYear(),
+    //   month = String(tmpDate.getMonth() + 1),
+    //   day = String(tmpDate.getDay());
+    const [date, time] = updatedAt.split(' ');
+    const [year, month, day] = date.split('-');
+    // month = Number(month) >= 10 ? month : '0' + month;
+    // day = Number(day) >= 10 ? day : '0' + day;
+    if (String(currentYear) === year) {
+      return month + '월 ' + day + '일';
+    } else {
+      return year + '년 ' + month + '월 ' + day + '일';
+    }
   }, []);
 
   const formatHashTag = useCallback((text: string, index: number) => {
@@ -201,14 +210,13 @@ const PostCardItem = ({
             }
           />
           <ProfileNameText>{user.nickname}</ProfileNameText>
-          <ProfileSplitView />
           <ProfileDescriptionText>
             {formatElapsedDate(postData['createdDiff(second)'] * 1000) +
               (updatedAt !== createdAt ? ' ･ 수정됨' : '')}
           </ProfileDescriptionText>
         </ProfileContainerView>
         <ContentView>
-          <ContentText numberOfLines={3}>
+          <ContentText numberOfLines={2}>
             {formatDescription(description)}
           </ContentText>
         </ContentView>

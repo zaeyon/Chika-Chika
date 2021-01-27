@@ -17,14 +17,15 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 const ContainerView = Styled.View`
 width: ${wp('100%')}px;
 height: auto;
-margin-bottom: 8px;
+border-bottom-width: 0.5px;
+border-color: #9AA2A9;
 background: #FFFFFF;
 `;
 
 const BodyContainerView = Styled.View`
 display: flex;
 width: 100%;
-padding: 12px 16px 0px 16px;
+padding: 16px 16px 0px 16px;
 `;
 
 const ProfileContainerView = Styled.View`
@@ -70,7 +71,7 @@ height: 28px;
 background-color: grey;
 border-width: 0.5px
 border-color: #E2E6ED;
-border-radius: 10px;
+border-radius: 100px;
 `;
 // width, height ++ 4px
 const ProfileContentView = Styled.View`
@@ -86,7 +87,7 @@ font-style: normal;
 font-weight: bold;
 font-size: 13px;
 line-height: 16px;
-margin-right: 8px;
+margin-right: 4px;
 `;
 
 const ProfileSplitView = Styled.View`
@@ -125,7 +126,7 @@ width: auto;
 height: auto;
 margin: 6px 0px;
 `;
-const ImageFlatList = Styled(FlatList as new () => FlatList)`
+const ImageFlatList = Styled.FlatList`
 width: 100%;
 height: auto;
 overflow: visible;
@@ -135,7 +136,11 @@ width: 124px;
 height: 124px;
 background-color: #F5F7F9;
 border-radius: 8px;
-margin-right: 8px;
+`;
+
+const ImageSeperatorView = Styled.View`
+width: 4px;
+height: 100%;
 `;
 const SocialInfoContainerView = Styled.View`
 width: auto;
@@ -225,41 +230,42 @@ const PostItem = ({
     setIsScraped(viewerScrapCommunityPost);
   }, [viewerLikeCommunityPost, viewerScrapCommunityPost]);
 
-  const formatElapsedDate = useCallback((elapsedTime: number) => {
-    if (elapsedTime / (24 * 3600 * 1000) > 1) {
-      return formatDate(updatedAt);
-    }
-    if (elapsedTime / (24 * 3600 * 1000) >= 1) {
-      // in days
-      const day = Math.floor(elapsedTime / (24 * 3600 * 1000));
-      return `${day}일 전`;
-    } else if (elapsedTime / (3600 * 1000) >= 1) {
-      // in hours
-      const hour = Math.floor(elapsedTime / (3600 * 1000));
-      return `${hour}시간 전`;
-    } else if (elapsedTime / (60 * 1000) >= 1) {
-      // in minutes
-      const minute = Math.floor(elapsedTime / (60 * 1000));
-      return `${minute}분 전`;
-    } else {
-      // in seconds
-      const second = Math.floor(elapsedTime / 1000);
-      return `${second}초 전`;
-    }
-  }, []);
+  const formatElapsedDate = useCallback(
+    (elapsedTime: number) => {
+      if (elapsedTime / (24 * 3600 * 1000) > 1) {
+        return formatDate(createdAt);
+      }
+      if (elapsedTime / (24 * 3600 * 1000) >= 1) {
+        // in days
+        const day = Math.floor(elapsedTime / (24 * 3600 * 1000));
+        return `${day}일 전`;
+      } else if (elapsedTime / (3600 * 1000) >= 1) {
+        // in hours
+        const hour = Math.floor(elapsedTime / (3600 * 1000));
+        return `${hour}시간 전`;
+      } else if (elapsedTime / (60 * 1000) >= 1) {
+        // in minutes
+        const minute = Math.floor(elapsedTime / (60 * 1000));
+        return `${minute}분 전`;
+      } else {
+        // in seconds
+        const second = Math.floor(elapsedTime / 1000);
+        return `${second}초 전`;
+      }
+    },
+    [updatedAt],
+  );
 
-  const formatDate = useCallback((date: string) => {
-    const tmpDate = new Date(date);
+  const formatDate = useCallback((createdAt: string) => {
     const currentYear = new Date(Date.now()).getFullYear();
-    let year = tmpDate.getFullYear(),
-      month = String(tmpDate.getMonth() + 1),
-      day = String(tmpDate.getDay());
-    // month = Number(month) >= 10 ? month : '0' + month;
-    // day = Number(day) >= 10 ? day : '0' + day;
-    if (currentYear === year) {
-      return month + '월 ' + day + '일';
+
+    const [date, time] = createdAt.split(' ');
+    const [year, month, day] = date.split('-');
+
+    if (String(currentYear) === year) {
+      return parseInt(month) + '월 ' + parseInt(day) + '일';
     } else {
-      return year + '년 ' + month + '월 ' + day + '일';
+      return year + '년 ' + parseInt(month) + '월 ' + parseInt(day) + '일';
     }
   }, []);
 
@@ -405,6 +411,7 @@ const PostItem = ({
                 keyExtractor={(item) => String(item.id)}
                 snapToInterval={128}
                 renderItem={renderImage}
+                ItemSeparatorComponent={() => <ImageSeperatorView />}
               />
             </ImageContainerView>
           ) : null}

@@ -10,8 +10,8 @@ import {getStatusBarHeight} from 'react-native-status-bar-height';
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
  height: ${wp('14.1%') + getStatusBarHeight()}px;
-  margin-top: ${-getStatusBarHeight()}
-  padding-top: ${getStatusBarHeight()}
+  margin-top: ${-getStatusBarHeight()}px;
+  padding-top: ${getStatusBarHeight()}px;
  flex-direction: row;
  justify-content: space-between;
  border-bottom-width: 0.5px;
@@ -24,16 +24,16 @@ const HeaderText = Styled.Text<{disabled: boolean; color: string}>`
 font-style: normal;
 font-weight: 400;
 font-size: 16px;
-line-height: 30px;
+line-height: 24px;
 color: ${(props) => (props.disabled ? '#9AA2A9' : props.color)};
 `;
 
 const HeaderLeftContainer = Styled.View`
 min-width: 44px;
 height: 100%;
-padding: 12px 16px 17px 16px;
-align-items: center;
+padding: 12px 16px 16.5px 16px;
 flex-direction: row;
+align-items: center;
 `;
 
 const HeaderLeftText = Styled.Text`
@@ -48,14 +48,25 @@ position: absolute;
 height: 100%;
 top: ${getStatusBarHeight()}px;
 padding: 12px 16px 16px 16px;
+justify-content: center;
 align-items: center;
 z-index: -1;
 `;
 
+const HeadeIconText = Styled.Text`
+font-style: normal;
+font-weight: normal;
+font-size: 18px;
+line-height: 20px;
+color: #131F3C;
+`;
+
 const HeaderTitleText = Styled.Text`
-font-weight: 700;
-font-size: 16px; 
-line-height: 30px;
+font-style: normal;
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+color: #131F3C;
 `;
 
 const HeaderCenterContainer = Styled.View`
@@ -91,15 +102,13 @@ align-items: center;
 `;
 
 const HeaderIcon = Styled.Image`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
 `;
 
 interface HeaderProps {
   onPress?: any;
   text?: string;
   type?: string;
-  renderSearchInput?: any,
+  renderSearchInput?: any;
   fontColor?: string;
 }
 
@@ -122,9 +131,7 @@ const NavigationHeader = ({
   headerLeftActiveColor = '#131F3C',
   headerRightActiveColor = '#131F3C',
   headerTitle,
-
 }: Props) => {
-  
   const renderHeaderRightContent = useCallback(() => {
     if (headerRightProps) {
       switch (headerRightProps.type) {
@@ -185,6 +192,7 @@ const NavigationHeader = ({
                   ]}
                   source={require('~/Assets/Images/HeaderBar/ic_back.png')}
                 />
+                <HeadeIconText>{headerLeftProps.text}</HeadeIconText>
               </HeaderIconView>
             ) : (
               <HeaderText
@@ -201,11 +209,11 @@ const NavigationHeader = ({
           <HeaderTitleText>{headerTitle}</HeaderTitleText>
         </HeaderTitleContainer>
       )}
-      {headerCenterProps?.type === "searchInput" && (
-      <HeaderCenterContainer>
-        {headerCenterProps.renderSearchInput()}
-      </HeaderCenterContainer>
-    )}
+      {headerCenterProps?.type === 'searchInput' && (
+        <HeaderCenterContainer>
+          {headerCenterProps.renderSearchInput()}
+        </HeaderCenterContainer>
+      )}
       <TouchableWithoutFeedback
         disabled={headerRightDisabled}
         onPress={() => {
@@ -220,7 +228,6 @@ const NavigationHeader = ({
 };
 
 export default React.memo(NavigationHeader);
-
 
 // return (
 //   <HeaderBar>
