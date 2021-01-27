@@ -6,8 +6,8 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-import CommentItem from '~/Components/Presentational/CommentItem';
-import ReplyItem from '~/Components/Presentational/ReplyItem';
+import CommentItem from './node_modules/~/Components/Presentational/CommentItem';
+import ReplyItem from './node_modules/~/Components/Presentational/ReplyItem';
 
 const Container = Styled.View`
 padding-bottom: 35px;
@@ -80,9 +80,10 @@ interface Props {
     openCommentActionSheet: (userId: string, nickname: string, commentId: number) => void;
     moveToCommentList: (request: string) => void,
     commentCount: number,
+    moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
 }
     
-const ReviewPreviewCommentList = ({commentList, clickReply, clickReplyOfReply, openCommentActionSheet, moveToCommentList, commentCount}: Props) => {
+const ReviewPreviewCommentList = ({commentList, clickReply, clickReplyOfReply, openCommentActionSheet, moveToCommentList, commentCount, moveToAnotherProfile}: Props) => {
     const [isViewTotal, setIsViewTotal] = useState<boolean>(false);
     const [previewCommentList, setPreviewCommentList] = useState<Array<any>>([]);
     console.log("ReviewPreviewCommentList commentList", commentList);
@@ -138,6 +139,7 @@ const ReviewPreviewCommentList = ({commentList, clickReply, clickReplyOfReply, o
                 replys={item.Replys}
                 clickReply={clickReply}
                 openCommentActionSheet={openCommentActionSheet}
+                moveToAnotherProfile={moveToAnotherProfile}
                 />
                 {item.Replys[0] && (
                     <FlatList
@@ -165,6 +167,7 @@ const ReviewPreviewCommentList = ({commentList, clickReply, clickReplyOfReply, o
             replys={item.Replys}
             clickReplyOfReply={clickReplyOfReply}
             openCommentActionSheet={openCommentActionSheet}
+            moveToAnotherProfile={moveToAnotherProfile}
             />
         )
     } 

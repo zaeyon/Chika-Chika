@@ -289,7 +289,7 @@ interface Props {
     visibleElapsedtime: boolean,
     elapsedTime: string,
   ) => void;
-  moveToWriterProfile: (userId: number) => void;
+  moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
   moveToDentalDetail: (dentalId: number) => void;
 }
 
@@ -309,7 +309,7 @@ const ReviewItem = ({
   commentCount,
   imageArray,
   moveToReviewDetail,
-  moveToWriterProfile,
+  moveToAnotherProfile,
   isCurUserLikeProp,
   isCurUserScrapProp,
   refreshingReviewList,
@@ -461,7 +461,7 @@ const ReviewItem = ({
       <Container>
         <ProfileContainer>
           <TouchableWithoutFeedback
-            onPress={() => moveToWriterProfile(writer.id)}>
+            onPress={() => moveToAnotherProfile(writer.id, writer.nickname, writer.profileImage)}>
             <ProfileLeftContainer>
               <ProfileImage
                 source={{

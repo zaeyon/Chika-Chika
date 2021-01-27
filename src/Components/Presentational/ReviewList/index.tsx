@@ -41,7 +41,7 @@ interface Props {
   onRefreshReviewList: () => void;
   onEndReachedReviewList: () => void;
   loadingMoreReview: boolean;
-  moveToWriterProfile: (userId: number) => void;
+  moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
   moveToReviewDetail: (
     reviewId: number,
     writer: object,
@@ -91,7 +91,7 @@ const ReviewList = ({
   onRefreshReviewList,
   onEndReachedReviewList,
   loadingMoreReview,
-  moveToWriterProfile,
+  moveToAnotherProfile,
   moveToDentalDetail,
 }: Props) => {
   const currentUser = useSelector((state: any) => state.currentUser);
@@ -118,8 +118,6 @@ const ReviewList = ({
   };
 
   const renderReviewItem = ({item, index}: any) => {
-    console.log("renderReviewItem, item", item);
-    console.log("renderReviewItem, item.user", item.user);
     const ratingObj = {
       avgRating: Number(
         (
@@ -189,7 +187,7 @@ const ReviewList = ({
         imageArray={item.review_contents}
         descriptions={item.reviewDescriptions ? item.reviewDescriptions : ''}
         moveToReviewDetail={moveToReviewDetail}
-        moveToWriterProfile={moveToWriterProfile}
+        moveToAnotherProfile={moveToAnotherProfile}
         isCurUserLikeProp={item.viewerLikedReview}
         isCurUserScrapProp={item.viewerScrapedReview}
         refreshingReviewList={refreshingReviewList}

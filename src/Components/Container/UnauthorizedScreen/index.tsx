@@ -124,12 +124,12 @@ interface Props {
   navigation: any;
   route: any;
 }
+let fcmToken = '';
 
 const UnauthorizedScreen = ({navigation, route}: Props) => {
   const [loadingSocial, setLoadingSocial] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  let fcmToken = '';
 
   useEffect(() => {
     getFcmToken();
@@ -137,6 +137,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
 
   const getFcmToken = async () => {
     fcmToken = await messaging().getToken();
+    console.log("getFcmToken fcmToken", fcmToken);
   };
 
   /*

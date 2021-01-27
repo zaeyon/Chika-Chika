@@ -1,4 +1,5 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
+import SafeAreaView from 'react-native-safe-area-view';
 import Styled from 'styled-components/native';
 import {
     widthPercentageToDP as wp,
@@ -22,7 +23,7 @@ import CommentPostBottomBar from '~/Components/Presentational/ReviewCommentListS
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 import POSTReply from '~/Routes/Comment/POSTReply';
 
-const Container = Styled.SafeAreaView`
+const Container = Styled.View`
 flex: 1;
 background-color: #ffffff;
 `;
@@ -70,28 +71,39 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
 
 
     useEffect(() => {
-        if(route.params?.request === "ReviewDetailScreen") {
-            navigation.dispatch((state: any) => {
-                console.log("state.routes[state.routes.length - 2]", state.routes[state.routes.length - 2]);
+        // if(route.params?.request === "ReviewDetailScreen") {
+        //     navigation.dispatch((state: any) => {
+        //         console.log("state.routes[state.routes.length - 2]", state.routes[state.routes.length - 2]);
     
-                    const reviewCommentListRoutes = {
-                        name: "ReviewCommentListScreen",
-                        params: {reviewId: reviewId},
-                    }
+        //             const reviewCommentListRoutes = {
+        //                 name: "ReviewCommentListScreen",
+        //                 params: {reviewId: reviewId},
+        //             }
 
-                    let routes = state.routes.slice(0, state.routes.length);
-                    routes.splice(routes.length - 1, 0, reviewCommentListRoutes)
+        //             let routes = state.routes.slice(0, state.routes.length);
+        //             routes.splice(routes.length - 1, 0, reviewCommentListRoutes)
 
-                    console.log("변경된 routes", routes);
+        //             console.log("변경된 routes", routes);
 
                     
-                    return CommonActions.reset({
-                        ...state,
-                        routes,
-                        index: routes.length - 1,
-                    })
-            });
-        }
+        //             return CommonActions.reset({
+        //                 ...state,
+        //                 routes,
+        //                 index: routes.length - 1,
+        //             })
+        //     });
+        // }
+    }, [])
+
+
+    const moveToAnotherProfile = useCallback((userId: string, nickname: string, profileImageUri: string) => {
+        navigation.navigate("AnotherProfileStackScreen", {
+            targetUser: {
+                userId,
+                nickname,
+                profileImageUri,
+            }
+        })
     }, [])
 
         
@@ -115,12 +127,37 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
             createdDate={item.createdAt}
             replys={item.Replys}
             clickReply={() => 0}
+            moveToAnotherProfile={moveToAnotherProfile}
             />
             </ReplyItemContainer>
         )
     }
     
     const postCommentReply = (description: string) => {
+
+        if(route.params?.request === "ReviewDetailScreen") {
+            navigation.dispatch((state: any) => {
+                console.log("state.routes[state.routes.length - 2]", state.routes[state.routes.length - 2]);
+    
+                    const reviewCommentListRoutes = {
+                        name: "ReviewCommentListScreen",
+                        params: {reviewId: reviewId},
+                    }
+
+                    let routes = state.routes.slice(0, state.routes.length);
+                    routes.splice(routes.length - 1, 0, reviewCommentListRoutes)
+
+                    console.log("변경된 routes", routes);
+
+                    
+                    return CommonActions.reset({
+                        ...state,
+                        routes,
+                        index: routes.length - 1,
+                    })
+            });
+        }
+
         Keyboard.dismiss();
         setLoadingReplyPost(true);
 
@@ -139,6 +176,7 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
             //setChangeCommentArray(!changeCommentArray);
             //setInputType("comment")
             //isClickReply = false;
+
             navigation.navigate("ReviewCommentListScreen");
         })
         .catch((error) => {
@@ -148,7 +186,7 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
     }
 
     return (
-        <Container>
+        <Container as={SafeAreaView} forceInset={{top: 'always'}}>
             <NavigationHeader
             headerTitle={"답글작성"}
             headerLeftProps={{type: 'arrow', onPress: () => goBack()}}
@@ -158,6 +196,7 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
             contentContainerStyle={{paddingBottom: (commentInputRef?.current?.isFocused() ? hp('5%') : hp('9%')), paddingTop: 12}}>
             <CommentItemContainer>
                 <CommentItem
+                moveToAnotherProfile={moveToAnotherProfile}
                 isVisibleReplyButton={false}
                 commentObj={commentItem}
                 userId={commentItem.user.id}

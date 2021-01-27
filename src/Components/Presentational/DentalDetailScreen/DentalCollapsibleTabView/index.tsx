@@ -506,10 +506,11 @@ interface Props {
   moveToReviewUpload: () => void,
   moveToDentalLocationMap: () => void,
   moveToDentalInfoEdit: () => void,
+  moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
   dentalReviewArray: Array<any>,
 }
 
-const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload, moveToDentalLocationMap, moveToDentalInfoEdit, dentalReviewArray}: Props) => {
+const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload, moveToDentalLocationMap, moveToDentalInfoEdit, dentalReviewArray, moveToAnotherProfile}: Props) => {
   console.log("DentalCollapsibleTabView dentalDetailInfo", dentalDetailInfo);
   console.log("DentalCollapsibleTabView dentalReviewArray", dentalReviewArray);
 
@@ -1147,7 +1148,9 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
                     </RatingReportContainer>
                   )}
                   <ReviewListContainer>
-                  <ReviewList reviewList={dentalReviewArray}/>
+                  <ReviewList 
+                  reviewList={dentalReviewArray}
+                  moveToAnotherProfile={moveToAnotherProfile}/>
                   </ReviewListContainer>
                   <RequestReviseInfoContainer>
                   <TouchableWithoutFeedback onPress={() => moveToDentalInfoEdit()}>

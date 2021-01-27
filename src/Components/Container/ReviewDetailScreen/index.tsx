@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, createRef} from 'react';
+import React, {useState, useEffect, useRef, createRef, useCallback} from 'react';
 import SafeAreaView from 'react-native-safe-area-view';
 import Styled from 'styled-components/native';
 import {
@@ -22,11 +22,12 @@ import allActions from '~/actions';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import ActionSheet from 'react-native-actionsheet';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
+import axios from 'axios';
 
 // Local Component
 import ReviewInformation from '~/Components/Presentational/ReviewDetailScreen/ReviewInformation';
 import ReviewContent from '~/Components/Presentational/ReviewDetailScreen/ReviewContent';
-import ReviewPreviewCommentList from '~/Components/Presentational/ReviewDetailScreen/ReviewPreviewCommentList';
+import PreviewCommentList from '~/Components/Presentational/PreviewCommentList';
 import ReviewBottomBar from '~/Components/Presentational/ReviewDetailScreen/ReviewBottomBar';
 import DentalInfomation from '~/Components/Presentational/ReviewDetailScreen/DentalInfomation';
 import DetailMetaInfo from '~/Components/Presentational/ReviewDetailScreen/DetailMetaInfo';
@@ -116,6 +117,7 @@ background-color: #ffffff;
 border-width: 1px;
 border-color: #E2E6ED;
 border-radius: 12px;
+z-index: 3;
 `;
 
 const MoreViewItemContainer = Styled.View`
@@ -505,6 +507,17 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       })
   }
 
+
+  const moveToAnotherProfile = useCallback((userId: string, nickname: string, profileImageUri: string) => {
+    navigation.navigate("AnotherProfileStackScreen", {
+        targetUser: {
+            userId,
+            nickname,
+            profileImageUri,
+        }
+    })
+}, [])
+
   const getImageArray = async (paragraphArray: Array<any>) => {
     let tmpImageArray = new Array();
     paragraphArray.forEach((item: any, index: number) => {
@@ -814,6 +827,7 @@ const onPressOtherCommentActionSheet = (index: number) => {
         <ScrollViewContainer>
         <WriterInfoContainer>
         <WriterInfo
+        moveToAnotherProfile={moveToAnotherProfile}
         writerObj={writerObj}
         elapsedTime={elapsedTime}
         isVisibleElapsedTime={isVisibleElapsedTime}
@@ -842,7 +856,8 @@ const onPressOtherCommentActionSheet = (index: number) => {
               treatmentDate={treatmentDate.displayTreatDate}/>
             </MetaInfoContainer>
             <CommentListContainer>
-              <ReviewPreviewCommentList
+              <PreviewCommentList
+                moveToAnotherProfile={moveToAnotherProfile}
                 moveToCommentList={moveToCommentList}
                 clickReply={clickReply}
                 clickReplyOfReply={clickReplyOfReply}

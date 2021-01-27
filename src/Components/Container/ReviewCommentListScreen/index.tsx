@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useMemo, createRef} from 'react';
+import React, {useState, useEffect, useRef, useMemo, createRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {
     widthPercentageToDP as wp,
@@ -145,6 +145,16 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
             Keyboard.removeListener('keyboardWillShow', keyboardWillShow);
             Keyboard.removeListener('keyboardWillHide', keyboardWillHide);
         }
+    }, [])
+
+    const moveToAnotherProfile = useCallback((userId: string, nickname: string, profileImageUri: string) => {
+        navigation.navigate("AnotherProfileStackScreen", {
+            targetUser: {
+                userId,
+                nickname,
+                profileImageUri,
+            }
+        })
     }, [])
     
     const cancelReplyInput = () => {
@@ -365,6 +375,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
             replys={item.Replys}
             clickReply={clickReply}
             openCommentActionSheet={openCommentActionSheet}
+            moveToAnotherProfile={moveToAnotherProfile}
             />
             {item.Replys[0] && (
                 <FlatList
@@ -390,6 +401,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
             replys={item.Replys}
             clickReplyOfReply={clickReplyOfReply}
             openCommentActionSheet={openCommentActionSheet}
+            moveToAnotherProfile={moveToAnotherProfile}
             />
         )
     } 
@@ -397,7 +409,6 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
 
 
     return (
-        <TouchableWithoutFeedback onPress={() => clickBackground()}>
         <Container>
             <NavigationHeader
             headerLeftProps={{type: "arrow", onPress: goBack}}
@@ -419,6 +430,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
             </CommentListContainer>
             )}
             {commentArray.length === 0 && (
+            <TouchableWithoutFeedback onPress={() => clickBackground()}>
             <NoCommentListContainer>
                 <Animated.View
                 style={{
@@ -437,6 +449,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
                 <NoCommentText>{"등록된 댓글이 없습니다.\n댓글을 남겨주세요."}</NoCommentText>
                 </Animated.View>
             </NoCommentListContainer>
+            </TouchableWithoutFeedback>
             )}
             <KeyboardAvoidingView behavior={"position"}>
             <BottomBarContainer>
@@ -485,7 +498,6 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
          <ModalContentText>{'삭제되면 복구가 불가능합니다.\n정말 삭제하시겠습니까?'}</ModalContentText>
        </AnimatedModal>
         </Container>
-        </TouchableWithoutFeedback>
     )
 }
 

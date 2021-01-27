@@ -152,7 +152,7 @@ interface Props {
     nickname: string,
     commentId: number,
   ) => void;
-  moveToUserProfile: (userId: number) => void,
+  moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
 }
 
 const CommentItem = ({
@@ -167,7 +167,7 @@ const CommentItem = ({
   clickReply,
   openCommentActionSheet,
   isVisibleReplyButton,
-  moveToUserProfile,
+  moveToAnotherProfile
 }: Props) => {
   const currentUser = useSelector((state: any) => state.currentUser);
   const userProfile = currentUser.profile;
@@ -213,7 +213,7 @@ const CommentItem = ({
 
   return (
       <Container>
-        <TouchableWithoutFeedback onPress={() => moveToUserProfile(userId)}>
+        <TouchableWithoutFeedback onPress={() => moveToAnotherProfile(userId, nickname, profileImage)}>
           <ProfileImageContainer>
             <ProfileImage source={{uri: profileImage ? profileImage : "https://pickk.one/images/defaultProfile.jpg"}} />
           </ProfileImageContainer>

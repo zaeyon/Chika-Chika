@@ -13,6 +13,7 @@ width: ${wp('100%')}px;
 height: ${hp('100%')}px;
 align-items: center;
 justify-content: center;
+z-index: 10;
 `;
 
 const EmptyContainer = Styled.View`

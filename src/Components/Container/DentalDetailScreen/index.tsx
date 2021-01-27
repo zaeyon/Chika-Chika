@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
 import {
@@ -182,6 +182,18 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
       });
   }
 
+  const moveToAnotherProfile = useCallback((userId: string, nickname: string, profileImageUri: string) => {
+      navigation.navigate("AnotherProfileStackScreen", {
+          targetUser: {
+              userId,
+              nickname,
+              profileImageUri,
+          }
+      })
+  }, [])
+
+  
+
   const goBack = () => {
     navigation.goBack()
   }
@@ -191,6 +203,7 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
           {!loadingGetDentalDetail && (
           <DentalTabContainer>
             <DentalCollapsibleTabView
+            moveToAnotherProfile={moveToAnotherProfile}
             moveToDentalLocationMap={moveToDentalLocationMap}
             moveToDentalInfoEdit={moveToDentalInfoEdit}
             moveToReviewUpload={moveToReviewUpload}

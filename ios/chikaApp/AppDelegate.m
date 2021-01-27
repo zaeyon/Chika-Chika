@@ -4,6 +4,7 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <KakaoOpenSDK/KakaoOpenSDK.h>
+#import "RNSplashScreen.h"
 
 @import UIKit;
 @import Firebase;
@@ -71,6 +72,8 @@ static void InitializeFlipper(UIApplication *application) {
                                             initialProperties:nil];
 
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+  
+  
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
@@ -79,7 +82,8 @@ static void InitializeFlipper(UIApplication *application) {
   [self.window makeKeyAndVisible];
   [KOSession sharedSession].automaticPeriodicRefresh = YES;
   [FIRApp configure];
-
+  [RNSplashScreen show];
+  
   return YES;
 }
 

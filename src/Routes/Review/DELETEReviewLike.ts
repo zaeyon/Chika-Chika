@@ -22,7 +22,7 @@ const DELETEReviewLike = ({jwtToken, reviewId}: Props) => {
             resolve(response)
         })
         .catch((error) => {
-            reject(error)
+            reject(error.response)
         })
     })
 }

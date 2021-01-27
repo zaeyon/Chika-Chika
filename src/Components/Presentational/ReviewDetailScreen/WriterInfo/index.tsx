@@ -4,6 +4,9 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp
 } from 'react-native-responsive-screen';
+import {
+    TouchableWithoutFeedback
+} from 'react-native';
 
 const Container = Styled.View`
 padding-top: ${hp('2.70%')}px;
@@ -78,14 +81,14 @@ interface Props {
     elapsedTime: string,
     isVisibleElapsedTime: boolean,
     createdDate: string,
+    moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
 }
 
-const WriterInfo = ({writerObj, elapsedTime, isVisibleElapsedTime, createdDate}: Props) => {
-    console.log("WriterInfo writerObj", writerObj);
-    console.log("WriterInfo elapsedTime", elapsedTime);
+const WriterInfo = ({writerObj, elapsedTime, isVisibleElapsedTime, createdDate, moveToAnotherProfile}: Props) => {
 
     return (
         <Container>
+            <TouchableWithoutFeedback onPress={() => moveToAnotherProfile(writerObj.userId, writerObj.nickname, writerObj.profileImage)}>
             <ProfileContainer>
                 <ProfileImage
                 source={{uri:writerObj?.profileImage}}/>
@@ -99,6 +102,7 @@ const WriterInfo = ({writerObj, elapsedTime, isVisibleElapsedTime, createdDate}:
                     )}
                 </ProfileRightContainer>
             </ProfileContainer>
+            </TouchableWithoutFeedback>
             {/*
             <ViewWriterProfileButton>
                 <ViewWriterProfileText>{"프로필 방문"}</ViewWriterProfileText>

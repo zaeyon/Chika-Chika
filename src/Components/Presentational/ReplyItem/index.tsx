@@ -158,7 +158,7 @@ interface Props {
     nickname: string,
     commentId: number,
   ) => void;
-  moveToUserProfile: (userId: number) => void, 
+  moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
 }
 
 const ReplyItem = ({
@@ -172,16 +172,13 @@ const ReplyItem = ({
   clickReplyOfReply,
   openCommentActionSheet,
   isVisibleReplyButton,
-  moveToUserProfile,
+  moveToAnotherProfile,
   replyObj,
   commentObj,
 }: Props) => {
   const currentUser = useSelector((state: any) => state.currentUser);
   const userProfile = currentUser.profile;
-
-  console.log("ReplyItem replyObj",replyObj);
-
-
+  
   function getDateFormat(dateStr: string) {
     const date = new Date(dateStr);
     let year = date.getFullYear();
@@ -225,7 +222,7 @@ const ReplyItem = ({
 
   return (
       <Container>
-        <TouchableWithoutFeedback onPress={() => moveToUserProfile(userId)}>
+        <TouchableWithoutFeedback onPress={() => moveToAnotherProfile(userId, nickname, profileImage)}>
           <ProfileImageContainer>
             <ProfileImage source={{uri: profileImage ? profileImage : "https://pickk.one/images/defaultProfile.jpg"}} />
           </ProfileImageContainer>

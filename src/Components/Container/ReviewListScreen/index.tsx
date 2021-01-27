@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import SafeAreaView from 'react-native-safe-area-view';
 import Styled from 'styled-components/native';
 import {
@@ -450,6 +450,16 @@ const ReviewListScreen = ({navigation}: Props) => {
     });
   };
 
+  const moveToAnotherProfile = useCallback((userId: string, nickname: string, profileImageUri: string) => {
+    navigation.navigate("AnotherProfileStackScreen", {
+        targetUser: {
+            userId,
+            nickname,
+            profileImageUri,
+        }
+    })
+}, [])
+
   const moveToReviewDetail = (
     reviewId: number,
     writer: object,
@@ -512,7 +522,7 @@ const ReviewListScreen = ({navigation}: Props) => {
             onRefreshReviewList={onRefreshReviewList}
             reviewList={reviewList.mainReviewList}
             moveToReviewDetail={moveToReviewDetail}
-            moveToWriterProfile={moveToWriterProfile}
+            moveToAnotherProfile={moveToAnotherProfile}
             onEndReachedReviewList={onEndReachedReviewList}
             moveToDentalDetail={moveToDentalDetail}
           />

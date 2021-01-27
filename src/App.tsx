@@ -13,6 +13,7 @@ import Navigator from '~/Navigator'
 import messaging from '@react-native-firebase/messaging';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {RootSiblingParent, setSiblingWrapper} from 'react-native-root-siblings';
+import SplashScreen from 'react-native-splash-screen';
 
 // Async Storage
 import {getUserInfo} from '~/storage/currentUser';

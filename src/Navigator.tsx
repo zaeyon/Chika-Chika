@@ -13,6 +13,7 @@ import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 import DeviceInfo from 'react-native-device-info';
 import messaging from '@react-native-firebase/messaging';
 import {enableScreens} from 'react-native-screens';
+import SplashScreen from 'react-native-splash-screen';
 
 import allActions from '~/actions';
 
@@ -988,13 +989,13 @@ function BottomTab() {
 const Navigator = () => {
   const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
-  const getFcmToken = async () => {
-    const fcmToken = await messaging().getToken();
-    console.log('getFcmToken fcmToken', fcmToken);
-  };
+  // const getFcmToken = async () => {
+  //   const fcmToken = await messaging().getToken();
+  //   console.log('getFcmToken fcmToken', fcmToken);
+  // };
 
   useEffect(() => {
-    getFcmToken();
+    //getFcmToken();
     getUserInfo()
       .then((jwtToken) => {
         console.log('getUserInfo response', jwtToken);
@@ -1008,15 +1009,19 @@ const Navigator = () => {
                 profile,
               }),
             );
-
             dispatch(allActions.userActions.setHometown(response.Residences));
+
+              SplashScreen.hide();
           })
           .catch((error: any) => {
             console.log('get user error', error);
+            SplashScreen.hide();
           });
       })
       .catch((error) => {
         console.log('getUserInfo error', error);
+        SplashScreen.hide();
+        
       });
   }, []);
 
