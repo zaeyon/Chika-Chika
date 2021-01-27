@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {Image, Animated} from 'react-native';
+import {TouchableWithoutFeedback, Animated} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -10,26 +10,27 @@ const ContianerView = Styled.View`
 width: ${wp('100%')}px;
 height: auto;
 background: #FFFFFF;
-padding: 0px 8px;
+padding: 0px 16px;
 flex-direction: row;
 border-bottom-width: 1px;
 border-color: #E2E6ED;
 margin-bottom: 8px;
 `;
 
-const HeaderTitleView = Styled.View`
-margin-left: 16px;
-align-items: center;
-flex-direction: row;
+const RegionSelectionView = Styled.View`
+padding: 7.5px 12px;
+margin: 12px 0px;
+margin-left: auto;
+background: #131F3C;
+border-radius: 100px;
 `;
 
-const HeaderTitleText = Styled.Text`
-font-family: NanumSquare;
+const RegionSelectionText = Styled.Text`
 font-style: normal;
 font-weight: bold;
-font-size: 16px;
-line-height: 24px;
-margin-right: 8px;
+font-size: 12px;
+line-height: 16px;
+color: #FFFFFF;
 `;
 
 const LocationToggleContainerView = Styled.View`
@@ -44,15 +45,16 @@ const LocationToggleContentView = Styled.View`
 justify-content: center;
 align-items: center;
 flex-direction: row;
-padding: 16px 8px
+padding: 20px 0px
+
 `;
 
 const LocationSelectedText = Styled.Text`
 font-family: NanumSquare;
 font-style: normal;
 font-weight: 800;
-font-size: 14px;
-line-height: 24px;
+font-size: 16px;
+line-height: 16px;
 display: flex;
 align-items: center;
 color: #131F3C;
@@ -62,8 +64,8 @@ const LocationText = Styled.Text`
 font-family: NanumSquare;
 font-style: normal;
 font-weight: bold;
-font-size: 14px;
-line-height: 24px;
+font-size: 16px;
+line-height: 16px;
 display: flex;
 align-items: center;
 color: #9AA2A9;
@@ -75,21 +77,37 @@ height: 8px;
 background: #E2E6ED;
 `;
 
+const LocationSplitView = Styled.View`
+width: 2px;
+height: 2px;
+background: #9AA2A9;
+border-radius: 2px;
+margin: 0px 8px;
+`;
+
+const LocationIndicatorView = Styled.View`
+width: 100%;
+height: 2px;
+position: absolute;
+bottom: 17px;
+background: #131F3C;
+`;
+
 interface Props {
-  hometown: any;
+  selectedHometown: any;
   region: string;
   setRegion: any;
   type: string;
+  setFloatVisible: any;
 }
-const LocationInfoHeader = ({hometown, region, setRegion, type}: Props) => {
-  const iconSize = useRef(new Animated.Value(1)).current;
-  const [mainHometown, setMainHometown] = useState(
-    hometown.find((item) => item.UsersCities.now === true),
-  );
-
-  useEffect(() => {
-    setMainHometown(hometown.find((item) => item.UsersCities.now === true));
-  }, [hometown]);
+const LocationInfoHeader = ({
+  selectedHometown,
+  region,
+  setRegion,
+  setFloatVisible,
+  type,
+}: Props) => {
+  const buttonScale = useRef(new Animated.Value(1)).current;
 
   return (
     <ContianerView>
@@ -97,38 +115,53 @@ const LocationInfoHeader = ({hometown, region, setRegion, type}: Props) => {
         <LocationToggleTouchableOpacity onPress={() => setRegion('all')}>
           <LocationToggleContentView>
             {region === 'all' ? (
-              <LocationSelectedText>{'전국'}</LocationSelectedText>
+              <>
+                <LocationSelectedText>{'전국'}</LocationSelectedText>
+                <LocationIndicatorView />
+              </>
             ) : (
               <LocationText>{'전국'}</LocationText>
             )}
           </LocationToggleContentView>
         </LocationToggleTouchableOpacity>
-        <LocationDividingView />
+        <LocationSplitView />
         <LocationToggleTouchableOpacity
           onPress={() => {
-            setRegion('residence', () =>
-              Animated.spring(iconSize, {
-                delay: 290,
-                toValue: 1.4,
-                friction: 8,
-                tension: 300,
-                useNativeDriver: true,
-              }).start(),
-            );
+            setRegion('residence');
           }}>
           {region === 'residence' ? (
             <LocationToggleContentView>
               <LocationSelectedText>
-                {mainHometown.emdName}
+                {selectedHometown?.emdName}
               </LocationSelectedText>
+              <LocationIndicatorView />
             </LocationToggleContentView>
           ) : (
             <LocationToggleContentView>
-              <LocationText>{mainHometown.emdName}</LocationText>
+              <LocationText>{selectedHometown?.emdName}</LocationText>
             </LocationToggleContentView>
           )}
         </LocationToggleTouchableOpacity>
       </LocationToggleContainerView>
+      {region === 'residence' ? (
+        <TouchableWithoutFeedback
+          onPress={() => {
+            buttonScale.setValue(0.9);
+            Animated.spring(buttonScale, {
+              toValue: 1,
+              friction: 17,
+              tension: 208,
+              useNativeDriver: true,
+            }).start();
+            setFloatVisible((prev) => !prev);
+          }}>
+          <RegionSelectionView
+            as={Animated.View}
+            style={{transform: [{scale: buttonScale}]}}>
+            <RegionSelectionText>{'지역변경'}</RegionSelectionText>
+          </RegionSelectionView>
+        </TouchableWithoutFeedback>
+      ) : null}
     </ContianerView>
   );
 };

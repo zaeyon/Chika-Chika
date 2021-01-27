@@ -465,7 +465,6 @@ function ReviewUploadStackScreen() {
           gestureEnabled: false,
         }}
       />
-      
     </ReviewUploadStack.Navigator>
   );
 }
@@ -725,7 +724,16 @@ function CommunityStackScreen() {
       />
       <CommunityStack.Screen
         name="NotificationListScreen"
-        component={NotificationListScreen}/>
+        component={NotificationListScreen}
+      />
+      <CommunityStack.Screen
+        name="HometownSearchScreen"
+        component={HometownSearchScreen}
+      />
+      <CommunityStack.Screen
+        name="HometownSettingScreen"
+        component={HometownSettingScreen}
+      />
     </CommunityStack.Navigator>
   );
 }
@@ -896,7 +904,7 @@ function BottomTab() {
         showLabel: false,
         style: styles.tabBar,
         tabStyle: {
-          borderTopWidth: 1,
+          borderTopWidth: 0.5,
           borderTopColor: '#E2E6ED',
         },
       }}>
@@ -933,22 +941,24 @@ function BottomTab() {
           ),
         })}
       />
-      {<Tab.Screen
-        name="관리"
-        component={TeethCareStackScreen}
-        options={({route}) => ({
-          tabBarVisible: getTeethCareBottomTabBarVisibility(route),
-          tabBarIcon: ({focused}: {focused: boolean}) => (
-            <Image
-              source={
-                focused
-                  ? require('~/Assets/Images/BottomTab/ic/care/focus.png')
-                  : require('~/Assets/Images/BottomTab/ic/care/unfocus.png')
-              }
-            />
-          ),
-        })}
-      />}
+      {
+        <Tab.Screen
+          name="관리"
+          component={TeethCareStackScreen}
+          options={({route}) => ({
+            tabBarVisible: getTeethCareBottomTabBarVisibility(route),
+            tabBarIcon: ({focused}: {focused: boolean}) => (
+              <Image
+                source={
+                  focused
+                    ? require('~/Assets/Images/BottomTab/ic/care/focus.png')
+                    : require('~/Assets/Images/BottomTab/ic/care/unfocus.png')
+                }
+              />
+            ),
+          })}
+        />
+      }
       <Tab.Screen
         name="수다방"
         component={CommunityStackScreen}
@@ -1033,6 +1043,13 @@ const styles = StyleSheet.create({
     height: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'),
     paddingHorizontal: 0,
     position: 'absolute',
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowRadius: 8,
+    shadowOpacity: 0.3,
+    shadowColor: 'rgb(218, 218, 218)',
   },
 });
 
