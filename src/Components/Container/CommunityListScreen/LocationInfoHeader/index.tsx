@@ -146,11 +146,11 @@ const LocationInfoHeader = ({
       {region === 'residence' ? (
         <TouchableWithoutFeedback
           onPress={() => {
-            buttonScale.setValue(0.9);
+            buttonScale.setValue(0.95);
             Animated.spring(buttonScale, {
               toValue: 1,
               friction: 17,
-              tension: 208,
+              tension: 68,
               useNativeDriver: true,
             }).start();
             setFloatVisible((prev) => !prev);

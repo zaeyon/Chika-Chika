@@ -9,7 +9,11 @@ interface Props {
 
 const GETCommentList = ({jwtToken, type, id}: Props) => {
 
-    const uri = serverConfig.baseUri + `/api/v1/comments/lists?type=${type}&reviewId=${id}`
+    let requestId = ""
+    if(type === "review") requestId = "reviewId"
+    else if(type === "community") requestId = "postId"
+
+    const uri = serverConfig.baseUri + `/api/v1/comments/lists?type=${type}&${requestId}=${id}`
 
     return new Promise(function(resolve, reject) {
         

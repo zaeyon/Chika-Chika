@@ -200,7 +200,6 @@ function ReviewStackScreen() {
         name="CommentListScreen"
         component={CommentListScreen}
       />
-      <ReviewStack.Screen name="ReplyPostScreen" component={ReplyPostScreen} />
       <ReviewStack.Screen
         name="ImageDetailScreen"
         component={ImageDetailScreen}
@@ -656,6 +655,10 @@ function CommunityStackScreen() {
         component={CommunityDetailScreen}
       />
       <CommunityStack.Screen
+        name="CommentListScreen"
+        component={CommentListScreen}
+      />
+      <CommunityStack.Screen
         name="AnotherProfileStackScreen"
         component={AnotherProfileStackScreen}
       />
@@ -816,15 +819,14 @@ function BottomTab() {
     }
 
     if (
-      stackRouteName === 'ReviewStackScreen' ||
-      routeName.name === 'ReviewDetailScreen'
+      stackRouteName === 'CommunityStackScreen' ||
+      routeName.name === 'ImageDetailScreen'
     ) {
       return false;
     }
-
     if (
       stackRouteName === 'CommunityStackScreen' ||
-      routeName.name === 'ImageDetailScreen'
+      routeName.name === 'CommentListScreen'
     ) {
       return false;
     }
@@ -1021,7 +1023,7 @@ const Navigator = () => {
             );
             dispatch(allActions.userActions.setHometown(response.Residences));
 
-              SplashScreen.hide();
+            SplashScreen.hide();
           })
           .catch((error: any) => {
             console.log('get user error', error);
@@ -1031,7 +1033,6 @@ const Navigator = () => {
       .catch((error) => {
         console.log('getUserInfo error', error);
         SplashScreen.hide();
-        
       });
   }, []);
 
