@@ -22,6 +22,7 @@ import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import AnimatedModal from '~/Components/Presentational/AnimatedModal';
 import ToastMessage from '~/Components/Presentational/ToastMessage';
+import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 
 // Route
 import GETAroundCities from '~/Routes/Search/GETAroundCiteis';

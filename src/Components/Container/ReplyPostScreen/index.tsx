@@ -19,7 +19,7 @@ import { CommonActions } from '@react-navigation/native';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import CommentItem from '~/Components/Presentational/CommentItem';
 import ReplyItem from '~/Components/Presentational/ReplyItem';
-import CommentPostBottomBar from '~/Components/Presentational/ReviewCommentListScreen/CommentPostBottomBar';
+import CommentPostBottomBar from '~/Components/Presentational/CommentListScreen/CommentPostBottomBar';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 import POSTReply from '~/Routes/Comment/POSTReply';
 
@@ -40,7 +40,6 @@ background-color: #ffffff;
 
 
 const ReplyItemContainer = Styled.View`
-flex: 1;
 background-color: #ffffff;
 `;
 
@@ -66,7 +65,7 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
     const jwtToken = useSelector((state: any) => state.currentUser).jwtToken;
     const dispatch = useDispatch();
     const commentItem = route.params?.commentObj
-    const reviewId = route.params?.reviewId;
+    const postId = route.params?.postId;
     const commentInputRef = useRef();
 
 
@@ -76,7 +75,7 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
         //         console.log("state.routes[state.routes.length - 2]", state.routes[state.routes.length - 2]);
     
         //             const reviewCommentListRoutes = {
-        //                 name: "ReviewCommentListScreen",
+        //                 name: "CommentListScreen",
         //                 params: {reviewId: reviewId},
         //             }
 
@@ -140,8 +139,8 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
                 console.log("state.routes[state.routes.length - 2]", state.routes[state.routes.length - 2]);
     
                     const reviewCommentListRoutes = {
-                        name: "ReviewCommentListScreen",
-                        params: {reviewId: reviewId},
+                        name: "CommentListScreen",
+                        params: {postId: postId},
                     }
 
                     let routes = state.routes.slice(0, state.routes.length);
@@ -164,20 +163,24 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
         const commentId = commentItem.id;
         const type = 'review';
         const targetUser = route.params.targetUserNickname;
-        const postId = reviewId;
     
         POSTReply({jwtToken, commentId, type, description, targetUser, postId})
         .then((response: any) => {
             console.log("POSTReply response", response);
             setLoadingReplyPost(false);
             dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
+
+            for(var i = 0; i < response.comments.length; i++) {
+                console.log("POSTReply response.comments[i]", response.comments[i]);
+            }
+            
             dispatch(allActions.commentListActions.setCommentCount(response.commentsNum.commentsNum));
             //setCommentArray(response.reverse());
             //setChangeCommentArray(!changeCommentArray);
             //setInputType("comment")
             //isClickReply = false;
 
-            navigation.navigate("ReviewCommentListScreen");
+            navigation.navigate("CommentListScreen");
         })
         .catch((error) => {
             console.log("POSTReply error", error);

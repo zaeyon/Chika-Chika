@@ -17,20 +17,17 @@ import DeviceInfo from 'react-native-device-info';
 const Container = Styled.View`
 border-top-width: 0.5px;
 border-color: #E2E6ED;
-height: ${DeviceInfo.hasNotch() ? hp('6.77%') : hp('8%')}px;
 background-color: #ffffff;
 padding: 8px 16px;
 `;
 
 const CommentInputContainer = Styled.View`
-flex: 1;
 flex-direction: row;
 align-items: center;
 justify-content: space-between;
-padding: 0px 0px 0px 16px;
 border-width: 1px;
 border-color: #E2E6ED;
-border-radius: 100px;
+border-radius: 30px;
 `;
 
 const CommentTextInput = Styled.TextInput`
@@ -38,7 +35,9 @@ flex: 1;
 font-size: 14px;
 font-weight: 400;
 font-family: NanumSquare;
-padding-bottom: 4px;
+padding-top: 13px;
+padding-bottom: 13px;
+padding-left: 16px;
 color: #131F3C;
 `;
 
@@ -59,11 +58,9 @@ color: #00D1FF;
 `;
 
 const CommentUploadContainer = Styled.View`
-position: absolute;
-right: 0px;
 justify-content: center;
 padding-right: 16px;
-padding-left: 16px;
+padding-left: 10px;
 padding-top: 8px;
 padding-bottom: 8px;
 `;

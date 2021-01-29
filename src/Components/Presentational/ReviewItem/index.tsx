@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useLayoutEffect} from 'react';
+import React, {useState, useEffect, useLayoutEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback} from 'react-native';
 import {
@@ -316,6 +316,8 @@ const ReviewItem = ({
   dentalObj,
   moveToDentalDetail,
 }: Props) => {
+
+  const [formattedDescriptions, setFormattedDescriptions] = useState<string>("");
   const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
   const jwtToken = currentUser.jwtToken;
@@ -323,42 +325,36 @@ const ReviewItem = ({
   let formatedCreatedAtDate = '';
   let formatedTreatmentDate = '';
 
-  imageArray.forEach((item, index) => {
-    if (item.img_before_after === 'after') {
-      const tmp = item;
-      imageArray.splice(index, 1);
-      imageArray.unshift(tmp);
-    }
-  });
+  useEffect(() => {
 
-  const cutDescriptionsOver = (descriptions: string) => {
+    imageArray.forEach((item, index) => {
+      if (item.img_before_after === 'after') {
+        const tmp = item;
+        imageArray.splice(index, 1);
+        imageArray.unshift(tmp);
+      }
+    });
+    
     if (descriptions.length > 100) {
-      return descriptions.substr(0, 100) + ' ...';
+      setFormattedDescriptions(descriptions.substr(0, 100) + ' ...');
     } else {
-      return descriptions;
+      setFormattedDescriptions(descriptions)
     }
-  };
 
-  if (descriptions.length > 100) {
-    var tmpDescripPreview = descriptions.substr(0, 100);
-  }
+  }, [imageArray, descriptions])
 
-  const formatCreatedAtDate = (date: string) => {
-    const tmpDate = new Date(date);
+  const formatDate = useCallback((createdAt: string) => {
+    const currentYear = new Date(Date.now()).getFullYear();
 
-    var year = tmpDate.getFullYear() + '',
-      month = tmpDate.getMonth() + 1 + '',
-      day = tmpDate.getDate() + '';
+    const [date, time] = createdAt.split(' ');
+    const [year, month, day] = date.split('-');
 
-    month = Number(month) >= 10 ? month : '0' + month;
-    day = Number(day) >= 10 ? day : '0' + day;
-
-    const result = year + '년 ' + month + '월 ' + day + '일';
-
-    formatedCreatedAtDate = result;
-
-    return result;
-  };
+    if (String(currentYear) === year) {
+      return parseInt(month) + '월 ' + parseInt(day) + '일';
+    } else {
+      return year + '년 ' + parseInt(month) + '월 ' + parseInt(day) + '일';
+    }
+  }, [createdAt]);
 
   const formatTreatmentDate = (date: string) => {
     const dateArray = date.split('-');
@@ -473,7 +469,7 @@ const ReviewItem = ({
                 <CreatedAtText>
                   {visibleElapsedTime
                     ? elapsedTimeText
-                    : formatCreatedAtDate(createdAt)}
+                    : formatDate(createdAt)}
                 </CreatedAtText>
               </NicknameCreatedAtContainer>
             </ProfileLeftContainer>
@@ -516,7 +512,7 @@ const ReviewItem = ({
             </InfoItemContainer>
           </DateRatingContainer>
           <DescripContainer>
-            <DescripText>{cutDescriptionsOver(descriptions)}</DescripText>
+            <DescripText>{(formattedDescriptions)}</DescripText>
           </DescripContainer>
         </InfoContainer>
         <ActionContainer>

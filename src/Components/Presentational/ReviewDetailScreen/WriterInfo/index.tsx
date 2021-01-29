@@ -86,6 +86,8 @@ interface Props {
 
 const WriterInfo = ({writerObj, elapsedTime, isVisibleElapsedTime, createdDate, moveToAnotherProfile}: Props) => {
 
+    console.log("WriterInfo elapsedTime", elapsedTime)
+
     return (
         <Container>
             <TouchableWithoutFeedback onPress={() => moveToAnotherProfile(writerObj.userId, writerObj.nickname, writerObj.profileImage)}>
@@ -94,12 +96,7 @@ const WriterInfo = ({writerObj, elapsedTime, isVisibleElapsedTime, createdDate, 
                 source={{uri:writerObj?.profileImage}}/>
                 <ProfileRightContainer>
                     <NicknameText>{writerObj?.nickname}</NicknameText>
-                    {isVisibleElapsedTime && (
                     <ElapsedTimeText>{elapsedTime}</ElapsedTimeText>
-                    )}
-                    {!isVisibleElapsedTime && (
-                    <ElapsedTimeText>{createdDate}</ElapsedTimeText>
-                    )}
                 </ProfileRightContainer>
             </ProfileContainer>
             </TouchableWithoutFeedback>

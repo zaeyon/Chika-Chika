@@ -24,6 +24,7 @@ const POSTReply = ({jwtToken, commentId, type, description, targetUser, postId}:
     console.log("POSTReply type", type);
     console.log("POSTReply description", description);
     console.log("POSTReply targetUser", targetUser);
+    console.log("POSTReply uri", uri);
 
     const formData = new FormData();
     formData.append("description", description);

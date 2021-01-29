@@ -39,7 +39,7 @@ import HomeScreen from '~/Components/Container/HomeScreen';
 import ReviewListScreen from '~/Components/Container/ReviewListScreen';
 import ReviewDetailScreen from '~/Components/Container/ReviewDetailScreen';
 import FullImagesScreen from '~/Components/Container/FullImagesScreen';
-import ReviewCommentListScreen from '~/Components/Container/ReviewCommentListScreen';
+import CommentListScreen from '~/Components/Container/CommentListScreen';
 import ReplyPostScreen from '~/Components/Container/ReplyPostScreen';
 
 // Review Upload Stack Screen
@@ -197,8 +197,8 @@ function ReviewStackScreen() {
         component={DentalClinicStackScreen}
       />
       <ReviewStack.Screen
-        name="ReviewCommentListScreen"
-        component={ReviewCommentListScreen}
+        name="CommentListScreen"
+        component={CommentListScreen}
       />
       <ReviewStack.Screen name="ReplyPostScreen" component={ReplyPostScreen} />
       <ReviewStack.Screen

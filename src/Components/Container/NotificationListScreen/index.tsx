@@ -1,14 +1,19 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import SafeAreaView from 'react-native-safe-area-view';
 import Styled from 'styled-components/native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {useSelector} from 'react-redux';
 
 // Local Component
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import NotificationList from '~/Components/Presentational/NotificationListScreen/NotificationList';
+
+// Route
+import GETUserNotifications from '~/Routes/Notification/GETUserNotifications';
+import DELETEUserNotifications from '~/Routes/Notification/DELETEUserNotifications';
 
 const Container = Styled.View`
 flex: 1;
@@ -18,7 +23,6 @@ background-color: #ffffff;
 const BodyContainer = Styled.View`
 flex: 1;
 background-color: #F5F7F9;
-padding-top: 16px;
 padding-bottom: 16px;
 `;
 
@@ -30,8 +34,58 @@ interface Props {
 
 const NotificationListScreen = ({navigation, route}: Props) => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
-    const [notificationArray, setNotificationArray] = useState<any>(TEST_NOTIFICATION_DATA);
-    const [selectedArray, setSelectedArray] = useState<Array<any>>([]);
+
+    const [likeNotificationArray, setLikeNotificationArray] = useState<Array<any>>([]);
+    const [eventNotificationArray, setEventNotificationArray] = useState<Array<any>>([]);
+    const [commentNotificationArray, setCommentNotificationArray] = useState<Array<any>>([]);
+    const [changeNotificationArray, setChangeNotificationArray] = useState<boolean>(false);
+
+    const [likeNotifyIdArray, setLikeNotifyIdArray] = useState<Array<any>>(["null"]);
+    const [eventNotifyIdArray, setEventNotifyIdArray] = useState<Array<any>>(["null"]);
+    const [commentNotifyIdArray, setCommentNotifyIdArray] = useState<Array<any>>(["null"]);
+
+    const [loadingGetLikeNotify, setLoadingGetLikeNotify] = useState<boolean>(true);
+    const [loadingGetCommentNotify, setLoadingGetCommentNotify] = useState<boolean>(true);
+    const [loadingGetEventNotify, setLoadingGetEventNotify] = useState<boolean>(true);
+    const [refreshingNotification, setRefreshingNotification] = useState<boolean>(false);
+
+    const jwtToken = useSelector((state: any) => state.currentUser).jwtToken;
+
+    useEffect(() => {
+
+        GETUserNotifications(jwtToken, "Like")
+        .then((response: any) => {
+            console.log("GETUserNotifications response", response);
+            setLikeNotificationArray(response);
+            setLoadingGetLikeNotify(false);
+        })
+        .catch((error) => {
+            console.log("GETUserNotifications error", error);
+            setLoadingGetLikeNotify(false);
+        })
+
+        GETUserNotifications(jwtToken, "Event")
+        .then((response: any) => {
+            console.log("GETUserNotifications response", response);
+            setEventNotificationArray(response);
+            setLoadingGetEventNotify(false);
+        })
+        .catch((error) => {
+            console.log("GETUserNotifications error", error);
+            setLoadingGetLikeNotify(false);
+        })
+
+        GETUserNotifications(jwtToken, "Comment")
+        .then((response: any) => {
+            console.log("GETUserNotifications response", response);
+            setCommentNotificationArray(response);
+            setLoadingGetCommentNotify(false);
+        })
+        .catch((error) => {
+            console.log("GETUserNotifications error", error);
+            setLoadingGetLikeNotify(false);
+        })
+    }, [])
     
     const goBack = () => {
         navigation.goBack();
@@ -41,19 +95,159 @@ const NotificationListScreen = ({navigation, route}: Props) => {
         setIsEditing(true);
     }
 
-    const deleteNotification = () => {
-        setIsEditing(false);
-    }
-
-    const selectNotificationItem = (notificationId: number, type: string) => {
-        
-    }
-
-    const unselectNotificationItem = (notificationId: number) => {
-
-    }
-
+    const onRefreshNotificationArray = () => {
+        setRefreshingNotification(true);
+        try {
+            GETUserNotifications(jwtToken, "Like")
+            .then((response: any) => {
+                console.log("GETUserNotifications response", response);
+                setLikeNotificationArray(response);
+            })
+            .catch((error) => {
+                console.log("GETUserNotifications error", error);
+            })
     
+            GETUserNotifications(jwtToken, "Event")
+            .then((response: any) => {
+                console.log("GETUserNotifications response", response);
+                setEventNotificationArray(response);
+            })
+            .catch((error) => {
+                console.log("GETUserNotifications error", error);
+            })
+    
+            GETUserNotifications(jwtToken, "Comment")
+            .then((response: any) => {
+                console.log("GETUserNotifications response", response);
+                setCommentNotificationArray(response);
+            })
+            .catch((error) => {
+                console.log("GETUserNotifications error", error);
+            })
+        } catch(e) {
+            setRefreshingNotification(false);
+        } finally {
+            setRefreshingNotification(false);
+        }
+
+    }
+
+    const deleteNotification = async () => {
+        setIsEditing(false);
+
+        console.log("likeNotifyIdArray", likeNotifyIdArray);
+        console.log("eventNotifyIdArray", eventNotifyIdArray);
+        console.log("commentNotifyIdArray", commentNotifyIdArray);
+        // setSelectedIdArray([]);
+        // console.log("deleteNotification")
+
+        const tmpLikeArray = [...likeNotificationArray];
+        const tmpEventArray = [...eventNotificationArray];
+        const tmpCommentArray = [...commentNotificationArray];
+
+        const formattedIdArray = new Array();
+
+        function deleteNotifyIdArray() {
+            for (let i = commentNotifyIdArray.length - 1; i >= 1; i--) {
+                tmpCommentArray.splice(commentNotifyIdArray[i].index, 1);
+                formattedIdArray.push(commentNotifyIdArray[i].id);
+            }
+
+            for (let i = likeNotifyIdArray.length - 1; i >= 1; i--) {
+                tmpLikeArray.splice(likeNotifyIdArray[i].index, 1);
+                formattedIdArray.push(commentNotifyIdArray[i].id);
+            }
+
+            for (let i = eventNotifyIdArray.length - 1; i >= 1; i--) {
+                tmpEventArray.splice(eventNotifyIdArray[i].index, 1);
+                formattedIdArray.push(commentNotifyIdArray[i].id);
+            }
+        }
+
+        await deleteNotifyIdArray();
+        setCommentNotificationArray(tmpCommentArray);
+        setLikeNotificationArray(tmpLikeArray);
+        setEventNotificationArray(tmpEventArray);
+        setCommentNotifyIdArray(["null"]);
+        setLikeNotifyIdArray(["null"]);
+        setEventNotifyIdArray(["null"]);
+
+        DELETEUserNotifications({jwtToken, formattedIdArray})
+        .then((response) => {
+            console.log("DELETEUserNotifications response", response)
+        })
+        .catch((error) => {
+            console.log("DELETEUserNotifications error", error)
+        })
+    }
+
+    const selectNotificationItem = (id: number, type: string, index: number) => {
+
+        const notificationObj = {
+            id,
+            index,
+        }
+
+        if(type === "Like") {
+            setLikeNotifyIdArray((prevState) => {
+                const selectedIndex = prevState.findIndex((item, index) => {
+                    if(id === item.id) {
+                        return index;
+                    }
+                });
+    
+                if(selectedIndex === -1) {
+                    const tmpPrevState = [...prevState];
+                    tmpPrevState.push(notificationObj);
+    
+                    return tmpPrevState;
+                } else {
+                    const tmpPrevState = prevState.concat();
+                    tmpPrevState.splice(selectedIndex, 1)
+                    return tmpPrevState;
+                }
+            })
+        } else if(type === "Event") {
+            setEventNotifyIdArray((prevState) => {
+                const selectedIndex = prevState.findIndex((item, index) => {
+                    if(id === item.id) {
+                        return index;
+                    }
+                });
+    
+                if(selectedIndex === -1) {
+                    const tmpPrevState = [...prevState];
+                    tmpPrevState.push(notificationObj);
+    
+                    return tmpPrevState;
+                } else {
+                    const tmpPrevState = prevState.concat();
+                    tmpPrevState.splice(selectedIndex, 1)
+                    return tmpPrevState;
+                }
+            })
+        } else if(type === "Comment") {
+            setCommentNotifyIdArray((prevState) => {
+                const selectedIndex = prevState.findIndex((item, index) => {
+                    if(id === item.id) {
+                        return index;
+                    }
+                });
+    
+                if(selectedIndex === -1) {
+                    const tmpPrevState = [...prevState];
+                    tmpPrevState.push(notificationObj);
+    
+                    return tmpPrevState;
+                } else {
+                    const tmpPrevState = prevState.concat();
+                    tmpPrevState.splice(selectedIndex, 1)
+                    return tmpPrevState;
+                }
+            })
+        }
+
+    }
 
     return (
         <Container as={SafeAreaView} forceInset={{top: 'always'}}>
@@ -64,10 +258,21 @@ const NotificationListScreen = ({navigation, route}: Props) => {
             />
             <BodyContainer>
                 <NotificationList
+                navigation={navigation}
+                route={route}
+                refreshingNotification={refreshingNotification}
+                onRefreshNotificationArray={onRefreshNotificationArray}
+                loadingGetEventNotify={loadingGetEventNotify}
+                loadingGetCommentNotify={loadingGetCommentNotify}
+                loadingGetLikeNotify={loadingGetLikeNotify}
+                commentNotifyIdArray={commentNotifyIdArray}
+                likeNotifyIdArray={likeNotifyIdArray}
+                eventNotifyIdArray={eventNotifyIdArray}
                 selectNotificationItem={selectNotificationItem}
-                unselectNotificationItem={unselectNotificationItem}
                 isEditing={isEditing}
-                notificationArray={notificationArray}/>
+                likeNotificationArray={likeNotificationArray}
+                eventNotificationArray={eventNotificationArray}
+                commentNotificationArray={commentNotificationArray}/>
             </BodyContainer>
         </Container>
     )

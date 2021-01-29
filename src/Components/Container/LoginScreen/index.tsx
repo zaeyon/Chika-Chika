@@ -152,8 +152,8 @@ padding-bottom: 30px;
 
 const InvalidInputText = Styled.Text`
  position: absolute;
- bottom: -18;
- left: 5;
+ bottom: -18px;
+ left: 5px;
  margin-left: 3px;
  margin-top: 5px;
  color: #FF5656;

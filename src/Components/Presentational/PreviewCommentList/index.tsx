@@ -74,7 +74,7 @@ height: ${wp('4.266%')}px;
 let commentObj: object;
 
 interface Props {
-    commentList: Array<object>,
+    previewCommentArray: Array<object>,
     clickReply: (commentOb: any, targetUserNickname: string) => void,
     clickReplyOfReply: (commentObj: any, targetUserNickname: string) => void,
     openCommentActionSheet: (userId: string, nickname: string, commentId: number) => void;
@@ -83,44 +83,40 @@ interface Props {
     moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
 }
     
-const PreviewCommentList = ({commentList, clickReply, clickReplyOfReply, openCommentActionSheet, moveToCommentList, commentCount, moveToAnotherProfile}: Props) => {
+const PreviewCommentList = ({previewCommentArray, clickReply, clickReplyOfReply, openCommentActionSheet, moveToCommentList, commentCount, moveToAnotherProfile}: Props) => {
     const [isViewTotal, setIsViewTotal] = useState<boolean>(false);
     const [previewCommentList, setPreviewCommentList] = useState<Array<any>>([]);
-    console.log("PreviewCommentList commentList", commentList);
     
-    useEffect(() => {
+    // useEffect(() => {
 
-        let tmpCommentList = new Array();
-        tmpCommentList = commentList;
+    //     let tmpCommentList = new Array();
+    //     tmpCommentList = commentList;
 
-        if(commentCount > 7) {
-            let remainingCount = 7;
-            for (var i = 0; i < commentList.length; i++) {
-                console.log("ReviewPreviewCommentList commentList[i].Replys.length", commentList[i].Replys.length);
+    //     if(commentCount > 10) {
+    //         let remainingCount = 10;
+    //         for (var i = 0; i < tmpCommentList.length; i++) {
 
-                remainingCount = remainingCount - (1 + commentList[i].Replys.length);
-                console.log("ReviewPreviewCommentList remainingCount", remainingCount);
+    //             remainingCount = remainingCount - (1 + tmpCommentList[i].Replys.length);
+    //             console.log("ReviewPreviewCommentList remainingCount", remainingCount);
 
-                if(remainingCount <= 0) {
-                     const deletedCommentArr = commentList.slice(0, i+1);
-                     const tmpReplyArr = commentList[i].Replys;
-                     const deletedReplyArr = tmpReplyArr.slice(0, (tmpReplyArr.length - Math.abs(remainingCount)))
-                     console.log("deletedReplyArr", deletedReplyArr);
+    //             if(remainingCount <= 0) {
+    //                  const deletedCommentArr = tmpCommentList.slice(0, i+1);
+    //                  const tmpReplyArr = tmpCommentList[i].Replys;
+    //                  const deletedReplyArr = tmpReplyArr.slice(0, (tmpReplyArr.length - Math.abs(remainingCount)))
+    //                  console.log("deletedReplyArr", deletedReplyArr);
                     
-                     deletedCommentArr[i].Replys = deletedReplyArr;
+    //                  deletedCommentArr[i].Replys = deletedReplyArr;
 
-                     setPreviewCommentList(deletedCommentArr)
-                     
+    //                  setPreviewCommentList(deletedCommentArr)
+    //                  break
+    //             }
+    //         }
+    //         setIsViewTotal(true);
+    //     } else {
+    //         setPreviewCommentList(commentList);
+    //     }
 
-                     break
-                }
-            }
-            setIsViewTotal(true);
-        } else {
-            setPreviewCommentList(commentList);
-        }
-
-    }, [commentList])
+    // }, [commentList])
 
     const renderCommentItem = ({item, index}: any) => {
         commentObj = item;
@@ -185,15 +181,15 @@ const PreviewCommentList = ({commentList, clickReply, clickReplyOfReply, openCom
                 </ViewTotalCommentContainer>
                 </TouchableWithoutFeedback>
             </HeaderContainer>
-            {commentList.length > 0 && (
+            {previewCommentArray.length > 0 && (
             <CommentListContainer>
                 <FlatList
-                data={previewCommentList}
+                data={previewCommentArray}
                 renderItem={renderCommentItem}
                 keyExtractor={item => `${item.id}`}/>
             </CommentListContainer>
             )}
-            {commentList.length === 0 && (
+            {previewCommentArray.length === 0 && (
             <NoCommentContainer>
                 <NoCommentText>{"등록된 댓글이 없어요!"}</NoCommentText>
             </NoCommentContainer>

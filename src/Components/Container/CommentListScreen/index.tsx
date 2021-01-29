@@ -24,7 +24,7 @@ import allActions from '~/actions';
 
 // local component
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
-import CommentPostBottomBar from '~/Components/Presentational/ReviewCommentListScreen/CommentPostBottomBar';
+import CommentPostBottomBar from '~/Components/Presentational/CommentListScreen/CommentPostBottomBar';
 import CommentItem from '~/Components/Presentational/CommentItem';
 import ReplyItem from '~/Components/Presentational/ReplyItem';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
@@ -49,8 +49,6 @@ background-color: #ffffff;
 
 const BottomBarContainer = Styled.View`
 background-color: #ffffff;
-position: absolute;
-bottom: 0;
 width: ${wp('100%')}px;
 `;
 
@@ -100,7 +98,7 @@ let commentObj: object;
 
 let selectedCommentId: number;
 
-const ReviewCommentListScreen = ({navigation, route}: Props) => {
+const CommentListScreen = ({navigation, route}: Props) => {
     const [loadingCommentPost, setLoadingCommentPost] = useState<boolean>(false);
     //const [commentArray, setCommentArray] = useState<Array<any>>(route.params?.commentArray);
     const [changeCommentArray ,setChangeCommentArray] = useState<boolean>(false);
@@ -111,7 +109,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
 
     const currentUser = useSelector((state: any) => state.currentUser);
     const jwtToken = currentUser.jwtToken;
-    const reviewId = route.params?.reviewId;
+    const postId = route.params?.postId;
     const userProfile = currentUser.profile;
 
     const commentState = useSelector((state: any) => state.commentList);
@@ -136,7 +134,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
     }, [route.params?.refreshCommentList])
 
     useEffect(() => {
-        console.log("ReviewCommentListScreen route.params?.request", route.params?.request);
+        console.log("CommentListScreen route.params?.request", route.params?.request);
 
         Keyboard.addListener("keyboardWillShow", keyboardWillShow)
         Keyboard.addListener("keyboardWillHide", keyboardWillHide)
@@ -201,7 +199,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
         navigation.navigate("ReplyPostScreen", {
             commentObj: commentObj,
             targetUserNickname: targetUserNickname,
-            reviewId: reviewId
+            postId: postId
         });
     }
 
@@ -209,7 +207,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
         navigation.navigate("ReplyPostScreen", {
             commentObj: commentObj,
             targetUserNickname: targetUserNickname,
-            reviewId: reviewId,
+            postId: postId,
         })
     }
 
@@ -230,7 +228,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
 
     const onRefreshCommentFlat = () => {
         setRefreshing(true);
-        const id = reviewId;
+        const id = postId;
         const type = 'review'
         GETCommentList({jwtToken, type, id})
         .then((response: any) => {
@@ -247,7 +245,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
     }
 
     const refreshCommentList = () => {
-        const id = reviewId;
+        const id = postId;
         const type = 'review'
         GETCommentList({jwtToken, type, id})
         .then((response: any) => {
@@ -265,7 +263,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
     Keyboard.dismiss()
     setLoadingCommentPost(true);
     const type = 'review';
-    const id = reviewId;
+    const id = postId;
 
     POSTComment({jwtToken, id, type, description})
     .then((response: any) => {
@@ -346,7 +344,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
     const commentId = selectedCommentId;
     const type = 'review';
 
-    DELETEComment({jwtToken, commentId, type, reviewId})
+    DELETEComment({jwtToken, commentId, type, postId})
       .then((response: any) => {
         console.log("DELETEComment response", response);
         dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
@@ -418,6 +416,7 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
             {commentArray.length > 0 && (
             <CommentListContainer>
                 <KeyboardAwareFlatList
+                keyboardDismissMode={"none"}
                 refreshing={refreshing}
                 onRefresh={onRefreshCommentFlat}
                 ref={commentFlatListRef}
@@ -451,10 +450,11 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
             </NoCommentListContainer>
             </TouchableWithoutFeedback>
             )}
-            <KeyboardAvoidingView behavior={"position"}>
+            <KeyboardAvoidingView
+            behavior={"padding"}>
             <BottomBarContainer>
                 <CommentPostBottomBar
-                requestScreen={"ReviewCommentListScreen"}
+                requestScreen={"CommentListScreen"}
                 cancelReplyInput={cancelReplyInput}
                 replyTargetNickname={replyTargetNickname.current}
                 commentInputRef={commentInputRef}
@@ -501,4 +501,4 @@ const ReviewCommentListScreen = ({navigation, route}: Props) => {
     )
 }
 
-export default ReviewCommentListScreen;
+export default CommentListScreen;

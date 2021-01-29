@@ -11,7 +11,7 @@ import {
 const Container = Styled.View`
 padding-top: 22px;
 padding-left: 16px;
-padding-right: 16px;
+padding-right: 10px;
 `;
 
 const ContentContainer = Styled.View`
@@ -20,8 +20,7 @@ flex-direction: row;
 
 const BottomDivier = Styled.View`
 margin-top: 22px;
-flex: 1;
-height: 0.5px;
+height: 0.7px;
 background-color: #F5F7F9;
 `;
 
@@ -30,6 +29,7 @@ flex-direction: row;
 `;
 
 const ProfileImageContainer = Styled.View`
+background-color: #ffffff;
 `;
 
 const ProfileImage = Styled.Image`
@@ -44,6 +44,7 @@ const BodyContainer = Styled.View`
 flex: 1;
 margin-left: 8px;
 justify-content: center;
+background-color: #ffffff;
 `;
 
 const NicknameText = Styled.Text`
@@ -65,6 +66,7 @@ const DateContainer = Styled.View`
 `;
 
 const DateText = Styled.Text`
+margin-right: 6px;
 font-weight: 600;
 font-size: 13px;
 line-height: 16px;
@@ -93,44 +95,49 @@ height: ${wp('6.4%')}px;
 interface Props {
     notificationObj: any,
     isEditing: boolean,
-    selectNotificationItem: (notificationId: number) => void,
-    unselectNotificationItem: (notificationId: number) => void,
+    selectNotificationItem: (notificationId: number, type: string, index: number) => void,
     selected: boolean,
+    index: number,
+    moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
+    moveToNotifiedPost: (postId: number, type: string) => void,
 }
 
-const NotificationItem = ({notificationObj, isEditing, selectNotificationItem, unselectNotificationItem, selected}: Props) => {
+const NotificationItem = ({notificationObj, isEditing, selectNotificationItem, selected, index, moveToAnotherProfile, moveToNotifiedPost}: Props) => {
 
-    const formatNotifyDate = useCallback((date: any) => {
+    console.log("NotificationItem notificationObj", notificationObj);
 
-        const tmpDate = new Date(date);
+    const formatDate = useCallback((createdAt: string) => {
+    const currentYear = new Date(Date.now()).getFullYear();
 
-        var year = '' + tmpDate.getFullYear(),
-            month = '' + (tmpDate.getMonth() + 1),
-            day = '' + tmpDate.getDate();
+    const [date, time] = createdAt.split(' ');
+    const [year, month, day] = date.split('-');
 
-            return month + '월 ' + day + '일'
-        
-    }, [notificationObj])
+    if (String(currentYear) === year) {
+      return parseInt(month) + '월 ' + parseInt(day) + '일';
+    } else {
+      return year + '년 ' + parseInt(month) + '월 ' + parseInt(day) + '일';
+    }
+  }, [notificationObj]);
+
 
     return (
         <Container>
             <ContentContainer>
+            <TouchableWithoutFeedback onPress={() => moveToAnotherProfile(notificationObj.senders.id, notificationObj.senders.nickname, notificationObj.senders.profileImg)}>
             <ProfileImageContainer>
                 <ProfileImage
-                source={{uri: notificationObj.user.profileImageUri}}/>
+                source={{uri: notificationObj.senders.profileImg ? notificationObj.senders.profileImg : "https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/436/8142f53e51d2ec31bc0fa4bec241a919_crop.jpeg"}}/>
             </ProfileImageContainer>
+            </TouchableWithoutFeedback>
             <BodyContainer>
                 <NicknameContainer>
-                    <NicknameText>{notificationObj.user.nickname}</NicknameText>
-                    <DateText>{formatNotifyDate(notificationObj.data)}</DateText>
+                    <NicknameText>{notificationObj.senders.nickname}</NicknameText>
+                    <DateText>{formatDate(notificationObj.createdAt)}</DateText>
                 </NicknameContainer>
-                <NotifyDescripText>{notificationObj.description}</NotifyDescripText>
+                <NotifyDescripText>{notificationObj.message}</NotifyDescripText>
             </BodyContainer>
             {isEditing && (
-                <TouchableWithoutFeedback onPress={() =>
-                    selected 
-                    ? unselectNotificationItem(notificationObj.id, notificationObj.type)
-                    : selectNotificationItem(notificationObj.id, notificationObj.type)
+                <TouchableWithoutFeedback onPress={() => selectNotificationItem(notificationObj.id, notificationObj.type, index)
                 }>
                 <SelectButtonContainer>
                     <SelectButtonIcon
@@ -148,4 +155,8 @@ const NotificationItem = ({notificationObj, isEditing, selectNotificationItem, u
     )
 }
 
-export default React.memo(NotificationItem);
+function isEqual(prevItem: any, nextItem: any) {
+    return (prevItem.notificationObj.id === nextItem.notificationObj.id) && (prevItem.selected === nextItem.selected) && (prevItem.isEditing === nextItem.isEditing)
+}
+
+export default React.memo(NotificationItem, isEqual);

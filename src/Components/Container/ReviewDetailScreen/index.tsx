@@ -208,6 +208,8 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const [totalPrice, setTotalPrice] = useState<object>({});
   const [detailPriceList, setDetailPriceList] = useState<Array<object>>([]);
 
+  const [previewCommentArray, setPreviewCommentArray] = useState<Array<any>>([]);
+
   // 화면에 표시되는 정보
   const [paragraphArrayDisplay, setParagraphArrayDisplay] = useState<
     Array<any>
@@ -334,19 +336,112 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     route.params?.dentalObj,
   ]);
 
+  // useEffect(() => {
+
+  //   let tmpCommentArray = commentArray.slice();
+  //   let remainingCount = 20;
+
+  //   if(commentCount > 10) {
+
+  //     for(var i = 0; i < tmpCommentArray.length; i++) {
+  //       remainingCount = remainingCount - (1 + tmpCommentArray[i].Replys.length);
+
+  //       if(remainingCount <= 0) {
+  //         const deletedCommentArray = tmpCommentArray.slice(0, i+1);
+  //         const tmpReplyArray = tmpCommentArray[i].Replys;
+  //         const deletedReplyArray = tmpReplyArray.slice(0, (tmpReplyArray.length - Math.abs(remainingCount)));
+
+  //         deletedCommentArray[i].Replys = deletedReplyArray;
+
+  //         setPreviewCommentArray(deletedCommentArray);
+
+  //         break
+  //       }
+  //     }
+  //   } else {
+  //     setPreviewCommentArray(tmpCommentArray);
+  //   }
+  // }, [commentArray])
+
+  useEffect(() => {
+    const id = reviewId;
+    const type = 'review'
+    GETCommentList({jwtToken, type, id})
+    .then((response: any) => {
+        console.log("GETCommentList response", response)
+        //setCommentArray(response.reverse())
+        //dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
+        //dispatch(allActions.commentListActions.setCommentCount(response.commentsNum.commentsNum));
+
+        let tmpCommentArray = response.comments.reverse().slice();
+        let remainingCount = 10;
+
+        if(commentCount > 10) {
+
+          for(var i = 0; i < tmpCommentArray.length; i++) {
+            remainingCount = remainingCount - (1 + tmpCommentArray[i].Replys.length);
+
+            if(remainingCount <= 0) {
+              const deletedCommentArray = tmpCommentArray.slice(0, i+1);
+              const tmpReplyArray = tmpCommentArray[i].Replys;
+              const deletedReplyArray = tmpReplyArray.slice(0, (tmpReplyArray.length - Math.abs(remainingCount)));
+
+              deletedCommentArray[i].Replys = deletedReplyArray;
+
+              setPreviewCommentArray(deletedCommentArray);
+
+              break
+            }
+          }
+        } else {
+          setPreviewCommentArray(tmpCommentArray);
+        }
+    })
+    .catch((error: any) => {
+        console.log("GETCommentList error", error);
+    })
+  }, [commentArray])
+
+
+  const formatDate = useCallback((createdAt: string) => {
+    const currentYear = new Date(Date.now()).getFullYear();
+
+    const [date, time] = createdAt.split(' ');
+    const [year, month, day] = date.split('-');
+
+    if (String(currentYear) === year) {
+      return parseInt(month) + '월 ' + parseInt(day) + '일';
+    } else {
+      return year + '년 ' + parseInt(month) + '월 ' + parseInt(day) + '일';
+    }
+  }, []);
+
   const getReviewDetail = () => {
     GETReviewDetail(jwtToken, reviewId)
       .then((response: any) => {
         console.log('GETReviewDetail response', response);
-        console.log(
-          'GETReviewDetail response.reviewBody.TreatmentItems',
-          response.reviewBody.TreatmentItems,
-        );
-        console.log(
-          'GETReviewDetail response.reviewBody.review_contents',
-          response.reviewBody.review_contents,
-        );
 
+
+      let elapsedTimeText = '';
+      let visibleElapsedTime = false;
+
+      const elapsedMin = response.reviewBody['createdDiff(second)'] / 60;
+      const elapsedHour = response.reviewBody['createdDiff(second)'] / 3600;
+      const elapsedDay = response.reviewBody['createdDiff(second)'] / 86400;
+
+      if (elapsedMin < 1) {
+        elapsedTimeText = '방금 전';
+        setElapsedTime(elapsedTimeText)
+      } else if (1 <= elapsedMin && elapsedHour < 1) {
+        elapsedTimeText = `${Math.floor(elapsedMin)}분 전`;
+        setElapsedTime(elapsedTimeText)
+      } else if (1 <= elapsedHour && elapsedDay < 1) {
+        elapsedTimeText = `${Math.floor(elapsedHour)}시간 전`;
+        setElapsedTime(elapsedTimeText)
+      } else if (elapsedDay >= 1) {
+        setElapsedTime(formatDate(response.reviewBody.createdAt))
+      }
+      
         const tmpTreatPriceObj = {
           displayTreatPrice: (response.reviewBody.totalCost).toLocaleString() + "원",
           treatPrice: response.reviewBody.totalCost
@@ -356,8 +451,6 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         setLoadingReviewDetail(false);
         setIsCertifiedReceipt(response.reviewBody.certifiedBill);
         setRefreshingReviewDetail(false);
-        endTime = new Date();
-        console.log("경과 시간", endTime - startTime);
 
         const tmpTreatmentDate = new Date(response.reviewBody.treatmentDate);
           const splitedTreatmentDate = response.reviewBody.treatmentDate.split(
@@ -501,10 +594,34 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           //setCommentArray(response.reverse())
           dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
           dispatch(allActions.commentListActions.setCommentCount(response.commentsNum.commentsNum));
-      })
-      .catch((error: any) => {
+
+          let tmpCommentArray = response.comments.reverse().slice();
+          let remainingCount = 10;
+
+          if(commentCount > 10) {
+
+            for(var i = 0; i < tmpCommentArray.length; i++) {
+              remainingCount = remainingCount - (1 + tmpCommentArray[i].Replys.length);
+
+            if(remainingCount <= 0) {
+              const deletedCommentArray = tmpCommentArray.slice(0, i+1);
+              const tmpReplyArray = tmpCommentArray[i].Replys;
+              const deletedReplyArray = tmpReplyArray.slice(0, (tmpReplyArray.length - Math.abs(remainingCount)));
+
+              deletedCommentArray[i].Replys = deletedReplyArray;
+
+              setPreviewCommentArray(deletedCommentArray);
+
+              break
+              }
+            }
+          } else {
+            setPreviewCommentArray(tmpCommentArray);
+          }
+        })
+        .catch((error: any) => {
           console.log("GETCommentList error", error);
-      })
+        })
   }
 
 
@@ -559,8 +676,8 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   }
 
   const moveToCommentList = (request: string) => {
-    navigation.navigate("ReviewCommentListScreen", {
-      reviewId: reviewId,
+    navigation.navigate("CommentListScreen", {
+      postId: reviewId,
     });
   }
 
@@ -779,7 +896,7 @@ const onPressOtherCommentActionSheet = (index: number) => {
       navigation.navigate("ReplyPostScreen", {
           commentObj: commentObj,
           targetUserNickname: targetUserNickname,
-          reviewId: reviewId,
+          postId: reviewId,
           request: "ReviewDetailScreen",
       });
   };
@@ -788,7 +905,7 @@ const onPressOtherCommentActionSheet = (index: number) => {
     navigation.navigate("ReplyPostScreen", {
       commentObj: commentObj,
       targetUserNickname: targetUserNickname,
-      reviewId: reviewId,
+      postId: reviewId,
       request: "ReviewDetailScreen",
     })
   }
@@ -862,7 +979,7 @@ const onPressOtherCommentActionSheet = (index: number) => {
                 clickReply={clickReply}
                 clickReplyOfReply={clickReplyOfReply}
                 openCommentActionSheet={openCommentActionSheet}
-                commentList={commentArray}
+                previewCommentArray={previewCommentArray}
                 commentCount={commentCount}
               />
             </CommentListContainer>
