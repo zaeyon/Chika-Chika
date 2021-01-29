@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -6,10 +6,8 @@ import {
 } from 'react-native-responsive-screen';
 import {
   TouchableWithoutFeedback,
-  View,
-  TouchableOpacity,
-  Keyboard,
   KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
 import {getBottomSpace} from 'react-native-iphone-x-helper';
 import DeviceInfo from 'react-native-device-info';
@@ -17,9 +15,12 @@ import DeviceInfo from 'react-native-device-info';
 const Container = Styled.View`
 border-top-width: 0.5px;
 border-color: #E2E6ED;
+width: ${wp('100%')}px;
 height: ${DeviceInfo.hasNotch() ? hp('6.77%') : hp('8%')}px;
 background-color: #ffffff;
 padding: 8px 16px;
+position: absolute;
+bottom: 0;
 `;
 
 const CommentInputContainer = Styled.View`
@@ -68,82 +69,54 @@ padding-top: 8px;
 padding-bottom: 8px;
 `;
 
-const ReplyRepresentContainer = Styled.View`
-width: ${wp('100%')}px;
-height: ${hp('4.6%')}px;
-align-items: center;
-background-color: #F5F7F9;
-flex-direction: row;
-justify-content: space-between;
-`;
+const ActionTypeIndicatorView = Styled.View``;
 
-const ReplyRepresentText = Styled.Text`
-padding: 11px 16px 11px 16px;
-font-size: 12px;
-font-family: NanumSquare;
-color: #9AA2A9;
-`;
+const ActionTypeIndicatorTitleText = Styled.Text``;
 
-const ReplyTagetNicknameText = Styled.Text`
-font-size: 12px;
-font-family: NanumSquare;
-color: #00D1FF;
-`;
+const ActionTypeIndicatorText = Styled.Text``;
 
-const ReplyCancelContainer = Styled.View`
-padding: 11px 16px 11px 16px;
-`;
-
-const ReplyCancelText = Styled.Text`
-font-weight: 700;
-font-size: 12px;
-color: #9AA2A9;
-`;
+const ActionTypeIndicatorImage = Styled.Image``;
 
 interface Props {
-  isFocusedInputProp?:boolean
-  postReviewComment: (description: string) => void,
-  inputType: string,
-  commentInputRef: any,
-  replyTargetNickname?: string,
-  cancelReplyInput: () => void,
-  requestScreen: string,
+  postComment: any;
+  postReply: any;
+  commentActionType: string;
+  commentInputRef: any;
+  targetUserNickname: string;
 }
 
 const CommentPostBottomBar = ({
-  isFocusedInputProp,
-  postReviewComment,
-  inputType,
+  postComment,
+  postReply,
+  commentActionType,
   commentInputRef,
-  replyTargetNickname,
-  cancelReplyInput,
-  requestScreen,
+  targetUserNickname,
 }: Props) => {
-  const [commentDescrip, setCommentDescrip] = useState<string>('');
-  const [isFocusedInput, setIsFocusedInput] = useState<boolean>()
+  const [input, setInput] = useState<string>('');
 
-  useEffect(() => {
-    if(requestScreen === "ReplyPostScreen") {
-      if(commentInputRef.current) {
-        setTimeout(() => {
-          commentInputRef.current.focus()
-        }, 10)
-      }
+  const onChangeCommentInput = useCallback((text: string) => {
+    setInput(text);
+  }, []);
+
+  const onSubmit = useCallback(() => {
+    if (commentActionType === 'comment') {
+      postComment(input);
+    } else {
+      postReply(input);
     }
-
-  }, [])
-
-  const onChangeCommentInput = (text: string) => {
-    setCommentDescrip(text);
-  };
-
-  const clickPostComment = () => {
-    postReviewComment(commentDescrip);
-    setCommentDescrip('');
-  };
+    setInput('');
+  }, [commentActionType, input]);
 
   return (
-    <Container>
+    <KeyboardAvoidingView behavior={'position'}>
+      <Container>
+        <ActionTypeIndicatorView>
+          <ActionTypeIndicatorTitleText>
+            {targetUserNickname}
+          </ActionTypeIndicatorTitleText>
+          <ActionTypeIndicatorText></ActionTypeIndicatorText>
+          <ActionTypeIndicatorImage />
+        </ActionTypeIndicatorView>
         <CommentInputContainer>
           <CommentTextInput
             ref={commentInputRef}
@@ -153,23 +126,24 @@ const CommentPostBottomBar = ({
             autoCorrect={false}
             placeholder="댓글 입력"
             placeholderTextColor={'grey'}
-            value={commentDescrip}
+            value={input}
             onChangeText={(text: string) => onChangeCommentInput(text)}
           />
-            {commentDescrip.length === 0 && (
-              <CommentUploadContainer>
-                <DisabledCommentUploadText>게시</DisabledCommentUploadText>
-              </CommentUploadContainer>
-            )}
-            {commentDescrip.length > 0 && (
-              <TouchableWithoutFeedback onPress={() => clickPostComment()}>
+          {input.length === 0 && (
+            <CommentUploadContainer>
+              <DisabledCommentUploadText>게시</DisabledCommentUploadText>
+            </CommentUploadContainer>
+          )}
+          {input.length > 0 && (
+            <TouchableWithoutFeedback onPress={() => onSubmit()}>
               <CommentUploadContainer>
                 <CommentUploadText>게시</CommentUploadText>
               </CommentUploadContainer>
-              </TouchableWithoutFeedback>
-            )}
+            </TouchableWithoutFeedback>
+          )}
         </CommentInputContainer>
-    </Container>
+      </Container>
+    </KeyboardAvoidingView>
   );
 };
 

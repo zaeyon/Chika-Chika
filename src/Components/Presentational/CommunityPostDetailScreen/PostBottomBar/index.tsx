@@ -87,109 +87,80 @@ const PostBottomBar = ({
     viewerLikeCommunityPost,
     viewerScrapCommunityPost,
   } = data;
-  useEffect(() => {
-    Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
-    Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
-
-    // cleanup function
-    return () => {
-      Keyboard.removeListener('keyboardWillShow', _keyboardWillShow);
-      Keyboard.removeListener('keyboardWillHide', _keyboardWillHide);
-    };
-  }, []);
-
-  const _keyboardWillShow = useCallback((e: any) => {
-    toggleKeyboardAnimation(e.endCoordinates.height - getBottomSpace());
-  }, []);
-  const _keyboardWillHide = useCallback((e: any) => {
-    toggleKeyboardAnimation(-(e.endCoordinates.height - getBottomSpace()));
-
-    setIsFocused(false);
-  }, []);
   return (
-    <KeyboardAvoidingView
-      behavior="position"
-      style={{
-        backgroundColor: 'white',
-        position: 'absolute',
-        bottom: getBottomSpace(),
-        width: wp('100%'),
-        left: 0,
-      }}>
-      <CommentBottomBarContainerView>
-        {isFocused ? null : (
-          <SocialInfoContainerView>
-            <TouchableOpacity
-              style={{
-                marginRight: 16,
-              }}
-              onPress={() => {
-                toggleSocialLike(id, viewerLikeCommunityPost, type);
-              }}>
-              <SocialInfoView>
-                <Image
-                  style={{
-                    tintColor: viewerLikeCommunityPost ? '#FF5656' : '#c3c3c3',
-                  }}
-                  source={require('~/Assets/Images/Review/ic_like_inline.png')}
-                />
-                <SoicalInfoText>{postLikeNum}</SoicalInfoText>
-              </SocialInfoView>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                toggleSocialScrap(id, viewerScrapCommunityPost, type);
-              }}>
-              <SocialInfoView
-                style={{
-                  marginRight: 24,
-                }}>
-                <Image
-                  style={{
-                    tintColor: viewerScrapCommunityPost ? '#000000' : '#c3c3c3',
-                  }}
-                  source={require('~/Assets/Images/Review/ic_scrap_inline.png')}
-                />
-              </SocialInfoView>
-            </TouchableOpacity>
-          </SocialInfoContainerView>
-        )}
-
-        <CommentTextInput
-          multiline
-          clearButtonMode="always"
-          onFocus={() => {
-            setIsFocused(true);
-          }}
-          autoCorrect={false}
-          placeholder="댓글 입력"
-          placeholderTextColor={isFocused ? 'black' : 'grey'}
-          style={{
-            borderWidth: 1,
-            borderColor: '#E9E9E9',
-            backgroundColor: isFocused ? 'white' : '#E9E9E9',
-          }}
-          value={commentText}
-          onChangeText={(text) => {
-            setCommentText(text);
-          }}
-        />
-        {isFocused ? (
+    <CommentBottomBarContainerView>
+      {isFocused ? null : (
+        <SocialInfoContainerView>
           <TouchableOpacity
             style={{
-              justifyContent: 'center',
-              marginLeft: 16,
+              marginRight: 16,
             }}
             onPress={() => {
-              uploadComment(commentText);
-              setCommentText('');
-              Keyboard.dismiss();
+              toggleSocialLike(id, viewerLikeCommunityPost, type);
             }}>
-            <CommentUploadText>게시</CommentUploadText>
+            <SocialInfoView>
+              <Image
+                style={{
+                  tintColor: viewerLikeCommunityPost ? '#FF5656' : '#c3c3c3',
+                }}
+                source={require('~/Assets/Images/Review/ic_like_inline.png')}
+              />
+              <SoicalInfoText>{postLikeNum}</SoicalInfoText>
+            </SocialInfoView>
           </TouchableOpacity>
-        ) : null}
-      </CommentBottomBarContainerView>
-    </KeyboardAvoidingView>
+          <TouchableOpacity
+            onPress={() => {
+              toggleSocialScrap(id, viewerScrapCommunityPost, type);
+            }}>
+            <SocialInfoView
+              style={{
+                marginRight: 24,
+              }}>
+              <Image
+                style={{
+                  tintColor: viewerScrapCommunityPost ? '#000000' : '#c3c3c3',
+                }}
+                source={require('~/Assets/Images/Review/ic_scrap_inline.png')}
+              />
+            </SocialInfoView>
+          </TouchableOpacity>
+        </SocialInfoContainerView>
+      )}
+
+      <CommentTextInput
+        multiline
+        clearButtonMode="always"
+        onFocus={() => {
+          setIsFocused(true);
+        }}
+        autoCorrect={false}
+        placeholder="댓글 입력"
+        placeholderTextColor={isFocused ? 'black' : 'grey'}
+        style={{
+          borderWidth: 1,
+          borderColor: '#E9E9E9',
+          backgroundColor: isFocused ? 'white' : '#E9E9E9',
+        }}
+        value={commentText}
+        onChangeText={(text) => {
+          setCommentText(text);
+        }}
+      />
+      {isFocused ? (
+        <TouchableOpacity
+          style={{
+            justifyContent: 'center',
+            marginLeft: 16,
+          }}
+          onPress={() => {
+            uploadComment(commentText);
+            setCommentText('');
+            Keyboard.dismiss();
+          }}>
+          <CommentUploadText>게시</CommentUploadText>
+        </TouchableOpacity>
+      ) : null}
+    </CommentBottomBarContainerView>
   );
 };
 
