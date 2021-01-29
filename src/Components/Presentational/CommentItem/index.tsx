@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -137,7 +137,7 @@ background-color: #9AA2A9;
 `;
 
 interface Props {
-  commentObj: any,
+  commentObj: any;
   userId: any;
   commentId: number;
   profileImage: string;
@@ -145,14 +145,18 @@ interface Props {
   description: string;
   createdDate: string;
   replys: Array<Object>;
-  clickReply: (commentObj: any, nickname: string) => void;
+  clickReply: any;
   isVisibleReplyButton: boolean;
   openCommentActionSheet: (
     userId: string,
     nickname: string,
     commentId: number,
   ) => void;
-  moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
+  moveToAnotherProfile: (
+    userId: string,
+    nickname: string,
+    profileImageUri: string,
+  ) => void;
 }
 
 const CommentItem = ({
@@ -167,20 +171,33 @@ const CommentItem = ({
   clickReply,
   openCommentActionSheet,
   isVisibleReplyButton,
-  moveToAnotherProfile
+  moveToAnotherProfile,
 }: Props) => {
   const currentUser = useSelector((state: any) => state.currentUser);
   const userProfile = currentUser.profile;
+  const containerRef = useRef();
+  const [positionY, setPositionY] = useState(0);
 
-  function getDateFormat(dateStr: string) {
-    const date = new Date(dateStr);
-    let year = date.getFullYear();
-    let month = 1 + date.getMonth();
-    let monthStr = month >= 10 ? month : '0' + month;
-    let day = date.getDate();
-    let dayStr = day >= 10 ? day : '0' + day;
-    return year + '.' + monthStr + '.' + dayStr;
-  }
+  useEffect(() => {
+    containerRef.current &&
+      containerRef.current.measure((fx, fy, width, height, px, py) => {
+        console.log(fx, fy, width, height, px, py);
+        setPositionY(py + height / 2);
+      });
+  }, [containerRef]);
+
+  const getDateFormat = useCallback((createdAt: string) => {
+    const currentYear = new Date(Date.now()).getFullYear();
+
+    const [date, time] = createdAt.split(' ');
+    const [year, month, day] = date.split('-');
+
+    if (String(currentYear) === year) {
+      return parseInt(month) + '월 ' + parseInt(day) + '일';
+    } else {
+      return year + '년 ' + parseInt(month) + '월 ' + parseInt(day) + '일';
+    }
+  }, []);
 
   function getElapsedTime(createdDiff: string) {
     let elapsedTimeText = '';
@@ -190,63 +207,69 @@ const CommentItem = ({
     const elapsedDay = commentObj['createdDiff(second)'] / 86400;
 
     if (elapsedMin < 1) {
-
       elapsedTimeText = '방금 전';
-      return elapsedTimeText
-
+      return elapsedTimeText;
     } else if (1 <= elapsedMin && elapsedHour < 1) {
-
       elapsedTimeText = `${Math.floor(elapsedMin)}분 전`;
-      return elapsedTimeText
-
+      return elapsedTimeText;
     } else if (1 <= elapsedHour && elapsedDay < 1) {
-
       elapsedTimeText = `${Math.floor(elapsedHour)}시간 전`;
-      return elapsedTimeText
-
+      return elapsedTimeText;
     } else if (elapsedDay >= 1) {
-
       elapsedTimeText = getDateFormat(createdDate);
-      return elapsedTimeText
+      return elapsedTimeText;
     }
-  } 
+  }
 
   return (
-      <Container>
-        <TouchableWithoutFeedback onPress={() => moveToAnotherProfile(userId, nickname, profileImage)}>
-          <ProfileImageContainer>
-            <ProfileImage source={{uri: profileImage ? profileImage : "https://pickk.one/images/defaultProfile.jpg"}} />
-          </ProfileImageContainer>
-        </TouchableWithoutFeedback>
-        <CommentRightContainer>
-          <HeaderContainer>
-            <HeaderLeftContainer>
+    <Container
+      onLayout={(e) => console.log(e.nativeEvent.layout)}
+      ref={containerRef}>
+      <TouchableWithoutFeedback
+        onPress={() => moveToAnotherProfile(userId, nickname, profileImage)}>
+        <ProfileImageContainer>
+          <ProfileImage
+            source={{
+              uri: profileImage
+                ? profileImage
+                : 'https://pickk.one/images/defaultProfile.jpg',
+            }}
+          />
+        </ProfileImageContainer>
+      </TouchableWithoutFeedback>
+      <CommentRightContainer>
+        <HeaderContainer>
+          <HeaderLeftContainer>
             <NicknameText>{nickname}</NicknameText>
-            </HeaderLeftContainer>
-            <TouchableWithoutFeedback onPress={() => openCommentActionSheet(userId, nickname, commentId)}>
+          </HeaderLeftContainer>
+          <TouchableWithoutFeedback
+            onPress={() => openCommentActionSheet(userId, nickname, commentId)}>
             <MoreViewContainer>
               <MoreViewIcon
-              source={require('~/Assets/Images/Comment/ic_moreView.png')}/>
+                source={require('~/Assets/Images/Comment/ic_moreView.png')}
+              />
             </MoreViewContainer>
-            </TouchableWithoutFeedback>
-          </HeaderContainer>
-          <BodyContainer>
+          </TouchableWithoutFeedback>
+        </HeaderContainer>
+        <BodyContainer>
           <CommentDescripText>{description}</CommentDescripText>
-          </BodyContainer>
-          <FooterContainer>
-          <CreateAtText>{getElapsedTime(commentObj['createdDiff(second)'])}</CreateAtText>
-            {isVisibleReplyButton && (
+        </BodyContainer>
+        <FooterContainer>
+          <CreateAtText>
+            {getElapsedTime(commentObj['createdDiff(second)'])}
+          </CreateAtText>
+          {isVisibleReplyButton && (
             <TouchableWithoutFeedback
-              onPress={() => clickReply(commentObj, nickname)}>
+              onPress={() => clickReply(commentObj, nickname, positionY)}>
               <ReplyContainer>
-              <PointDivider/>
-              <ReplyText>{"답글달기"}</ReplyText>
+                <PointDivider />
+                <ReplyText>{'답글달기'}</ReplyText>
               </ReplyContainer>
             </TouchableWithoutFeedback>
-            )}
-          </FooterContainer>
-        </CommentRightContainer>
-      </Container>
+          )}
+        </FooterContainer>
+      </CommentRightContainer>
+    </Container>
   );
 };
 

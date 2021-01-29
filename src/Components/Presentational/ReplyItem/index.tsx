@@ -142,8 +142,9 @@ color: #00D1FF;
 `;
 
 interface Props {
-  replyObj: any,
-  commentObj: any,
+  index: number;
+  replyObj: any;
+  commentObj: any;
   userId: any;
   commentId: number;
   profileImage: string;
@@ -151,17 +152,22 @@ interface Props {
   description: string;
   createdDate: string;
   replys: Array<Object>;
-  clickReplyOfReply: (commentObj: any, nickname: string) => void;
+  clickReply: (commentObj: any, nickname: string, index: number) => void;
   isVisibleReplyButton: boolean;
   openCommentActionSheet: (
     userId: string,
     nickname: string,
     commentId: number,
   ) => void;
-  moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
+  moveToAnotherProfile: (
+    userId: string,
+    nickname: string,
+    profileImageUri: string,
+  ) => void;
 }
 
 const ReplyItem = ({
+  index,
   userId,
   commentId,
   profileImage,
@@ -169,7 +175,7 @@ const ReplyItem = ({
   description,
   createdDate,
   replys,
-  clickReplyOfReply,
+  clickReply,
   openCommentActionSheet,
   isVisibleReplyButton,
   moveToAnotherProfile,
@@ -178,7 +184,7 @@ const ReplyItem = ({
 }: Props) => {
   const currentUser = useSelector((state: any) => state.currentUser);
   const userProfile = currentUser.profile;
-  
+
   function getDateFormat(dateStr: string) {
     const date = new Date(dateStr);
     let year = date.getFullYear();
@@ -189,7 +195,6 @@ const ReplyItem = ({
     return year + '.' + monthStr + '.' + dayStr;
   }
 
-  
   function getElapsedTime(createdDiff: string) {
     let elapsedTimeText = '';
 
@@ -198,64 +203,72 @@ const ReplyItem = ({
     const elapsedDay = replyObj['createdDiff(second)'] / 86400;
 
     if (elapsedMin < 1) {
-
       elapsedTimeText = '방금 전';
-      return elapsedTimeText
-
+      return elapsedTimeText;
     } else if (1 <= elapsedMin && elapsedHour < 1) {
-
       elapsedTimeText = `${Math.floor(elapsedMin)}분 전`;
-      return elapsedTimeText
-
+      return elapsedTimeText;
     } else if (1 <= elapsedHour && elapsedDay < 1) {
-
       elapsedTimeText = `${Math.floor(elapsedHour)}시간 전`;
-      return elapsedTimeText
-
+      return elapsedTimeText;
     } else if (elapsedDay >= 1) {
-
       elapsedTimeText = getDateFormat(createdDate);
-      return elapsedTimeText
+      return elapsedTimeText;
     }
-  } 
-
+  }
 
   return (
-      <Container>
-        <TouchableWithoutFeedback onPress={() => moveToAnotherProfile(userId, nickname, profileImage)}>
-          <ProfileImageContainer>
-            <ProfileImage source={{uri: profileImage ? profileImage : "https://pickk.one/images/defaultProfile.jpg"}} />
-          </ProfileImageContainer>
-        </TouchableWithoutFeedback>
-        <CommentRightContainer>
-          <HeaderContainer>
-            <HeaderLeftContainer>
+    <Container>
+      <TouchableWithoutFeedback
+        onPress={() => moveToAnotherProfile(userId, nickname, profileImage)}>
+        <ProfileImageContainer>
+          <ProfileImage
+            source={{
+              uri: profileImage
+                ? profileImage
+                : 'https://pickk.one/images/defaultProfile.jpg',
+            }}
+          />
+        </ProfileImageContainer>
+      </TouchableWithoutFeedback>
+      <CommentRightContainer>
+        <HeaderContainer>
+          <HeaderLeftContainer>
             <NicknameText>{nickname}</NicknameText>
-            </HeaderLeftContainer>
-            <TouchableWithoutFeedback onPress={() => openCommentActionSheet(userId, nickname, replyObj.id)}>
+          </HeaderLeftContainer>
+          <TouchableWithoutFeedback
+            onPress={() =>
+              openCommentActionSheet(userId, nickname, replyObj.id)
+            }>
             <MoreViewContainer>
               <MoreViewIcon
-              source={require('~/Assets/Images/Comment/ic_moreView.png')}/>
+                source={require('~/Assets/Images/Comment/ic_moreView.png')}
+              />
             </MoreViewContainer>
-            </TouchableWithoutFeedback>
-          </HeaderContainer>
-          <BodyContainer>
-          <CommentDescripText><TargetUserText>{`@${replyObj.targetUserNickname} `}</TargetUserText>{description}</CommentDescripText>
-          </BodyContainer>
-          <FooterContainer>
-          <CreateAtText>{getElapsedTime(replyObj['createdDiff(second)'])}</CreateAtText>
-            {isVisibleReplyButton && (
+          </TouchableWithoutFeedback>
+        </HeaderContainer>
+        <BodyContainer>
+          <CommentDescripText>
+            <TargetUserText>{`@${replyObj.targetUserNickname} `}</TargetUserText>
+            {description}
+          </CommentDescripText>
+        </BodyContainer>
+        <FooterContainer>
+          <CreateAtText>
+            {getElapsedTime(replyObj['createdDiff(second)'])}
+          </CreateAtText>
+          {isVisibleReplyButton && (
             <TouchableWithoutFeedback
-              onPress={() => clickReplyOfReply(commentObj, nickname)}>
+              onPress={() => clickReply(commentObj, nickname, index)}>
               <ReplyContainer>
-              <PointDivider/>
-              <ReplyText>{"답글달기"}</ReplyText>
+                <PointDivider />
+                <ReplyText>{'답글달기'}</ReplyText>
               </ReplyContainer>
             </TouchableWithoutFeedback>
-            )}
-          </FooterContainer>
-        </CommentRightContainer>
-      </Container>
+          )}
+        </FooterContainer>
+      </CommentRightContainer>
+    </Container>
   );
 };
 

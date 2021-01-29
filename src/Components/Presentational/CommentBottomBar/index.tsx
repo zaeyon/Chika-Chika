@@ -11,6 +11,10 @@ import {
 } from 'react-native';
 import Styled from 'styled-components/native';
 import {
+  KeyboardAwareFlatList,
+  listenToKeyboardEvents,
+} from 'react-native-keyboard-aware-scroll-view';
+import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';

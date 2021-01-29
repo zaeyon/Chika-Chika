@@ -62,7 +62,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
     (state: any) => state.communityPostList.FreeTalkPosts,
   );
   const mainHometown = useSelector((state: any) =>
-    state.currentUser.hometown.find((item) => item.UsersCities.now === true),
+    state.currentUser.hometown.find((item) => item?.UsersCities?.now === true),
   );
   const [selectedHometown, setSelectedHometown] = useState(mainHometown);
 

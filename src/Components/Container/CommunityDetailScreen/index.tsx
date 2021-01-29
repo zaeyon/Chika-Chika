@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
-  FlatList,
+  TouchableOpacity,
   KeyboardAvoidingView,
   View,
   Animated,
@@ -17,11 +17,10 @@ import {
 } from 'react-native-responsive-screen';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
+import ActionSheet from 'react-native-actionsheet';
 // Local Components
-import PostInformation from '~/Components/Presentational/CommunityPostDetailScreen/PostInformation';
+import PreviewCommentList from '~/Components/Presentational/PreviewCommentList';
 import PostContent from '~/Components/Presentational/CommunityPostDetailScreen/PostContent';
-import DentistComment from '~/Components/Presentational/CommunityPostDetailScreen/DentistComment';
-import PostCommentList from '~/Components/Presentational/CommunityPostDetailScreen/PostCommentList';
 import PostBottomBar from '~/Components/Presentational/CommunityPostDetailScreen/PostBottomBar';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 // fetch
@@ -52,11 +51,17 @@ margin-bottom: ${hp('100%') * 0.08}px;
 const ActivityIndicatorContianerView = Styled.View`
 width: 100%;
 height: 50px;
-
 align-items: center;
 justify-content: center;
 `;
 
+const BackdropView = Styled.View`
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
+position: absolute;
+background: transparent;
+z-index: 11;
+`;
 const FloatingView = Styled.View`
 width: 114px;
 height: 146px;
@@ -68,7 +73,6 @@ border-width: 1px;
 border-color: #E2E6ED;
 box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
 border-radius: 12px;
-z-index: 11;
 `;
 
 const FloatingContentView = Styled.View`
@@ -100,10 +104,17 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   const scrollView: any = useRef();
   const scrollY: Animated.Value = useRef(new Animated.Value(0)).current;
   const keyboardHeight: Animated.Value = useRef(new Animated.Value(0)).current;
-  const [comments, setComments] = useState([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const commentState = useSelector((state: any) => state.commentList);
+  const commentArray = commentState.commentList;
+  const commentCount = commentState.commentCount;
+
   const [formattedDescription, setFormattedDescription] = useState('');
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [floatingVisible, setFloatingVisible] = useState(false);
+
   const currentUser = useSelector((state: any) => state.currentUser);
   const postList = useSelector((state: any) => {
     if (route.params.type === 'Question') {
@@ -163,29 +174,37 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
       },
     );
     fetchPostComments(route.params.id);
+    return function cleanup() {
+      dispatch(allActions.commentListActions.setCommentCount(0));
+      dispatch(allActions.commentListActions.setCommentList([]));
+    };
   }, []);
 
   const renderFloatingView = useCallback(
     () => (
-      <FloatingView>
-        <TouchableWithoutFeedback onPress={() => onPressDeletePost()}>
-          <FloatingContentView>
-            <FloatingContentText>{'삭제'}</FloatingContentText>
-          </FloatingContentView>
-        </TouchableWithoutFeedback>
-        <VerticalPartitionView />
-        <TouchableWithoutFeedback onPress={() => console.log('report')}>
-          <FloatingContentView>
-            <FloatingContentText>{'신고'}</FloatingContentText>
-          </FloatingContentView>
-        </TouchableWithoutFeedback>
-        <VerticalPartitionView />
-        <TouchableWithoutFeedback onPress={() => console.log('share')}>
-          <FloatingContentView>
-            <FloatingContentText>{'공유'}</FloatingContentText>
-          </FloatingContentView>
-        </TouchableWithoutFeedback>
-      </FloatingView>
+      <TouchableWithoutFeedback onPress={() => setFloatingVisible(false)}>
+        <BackdropView>
+          <FloatingView>
+            <TouchableOpacity onPress={() => onPressDeletePost()}>
+              <FloatingContentView>
+                <FloatingContentText>{'삭제'}</FloatingContentText>
+              </FloatingContentView>
+            </TouchableOpacity>
+            <VerticalPartitionView />
+            <TouchableOpacity onPress={() => console.log('report')}>
+              <FloatingContentView>
+                <FloatingContentText>{'신고'}</FloatingContentText>
+              </FloatingContentView>
+            </TouchableOpacity>
+            <VerticalPartitionView />
+            <TouchableOpacity onPress={() => console.log('share')}>
+              <FloatingContentView>
+                <FloatingContentText>{'공유'}</FloatingContentText>
+              </FloatingContentView>
+            </TouchableOpacity>
+          </FloatingView>
+        </BackdropView>
+      </TouchableWithoutFeedback>
     ),
     [],
   );
@@ -199,31 +218,37 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     [scrollView, scrollY],
   );
 
-  const uploadComment = useCallback(
-    (comment: string) => {
-      POSTCommunityPostComment(jwtToken, postData.id, comment)
-        .then((response: any) => {
-          console.log('Created!');
-          const form = {
-            type: postData.type,
-            id: postData.id,
-          };
-          dispatch(allActions.communityActions.createComment(form));
-          setComments(response);
-        })
-        .catch((e) => {
-          console.log(e.body.message);
-        });
-    },
-    [jwtToken, postData],
-  );
+  // const uploadComment = useCallback(
+  //   (comment: string) => {
+  //     POSTCommunityPostComment(jwtToken, postData.id, comment)
+  //       .then((response: any) => {
+  //         console.log('Created!');
+  //         const form = {
+  //           type: postData.type,
+  //           id: postData.id,
+  //         };
+  //         dispatch(allActions.communityActions.createComment(form));
+  //         setComments(response.comments);
+  //       })
+  //       .catch((e) => {
+  //         console.log(e.body.message);
+  //       });
+  //   },
+  //   [jwtToken, postData],
+  // );
 
   const fetchPostComments = useCallback(
     (postId: string) => {
       console.log('fetch comments', postId);
       GETCommunityPostComments(jwtToken, postId).then((response: any) => {
         setIsLoading(false);
-        setComments(response);
+        console.log(response);
+        dispatch(
+          allActions.commentListActions.setCommentCount(response.commentsNum),
+        );
+        dispatch(
+          allActions.commentListActions.setCommentList(response.comments),
+        );
       });
     },
     [jwtToken],
@@ -299,6 +324,16 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     });
   }, []);
 
+  const moveToCommentList = useCallback(
+    (request: string) => {
+      navigation.navigate('CommentListScreen', {
+        postId: postData.id,
+        postType: 'community',
+      });
+    },
+    [postData],
+  );
+
   const toggleSocialLike = useCallback(
     (postId: number, prevState: number, type: string) => {
       const form = {
@@ -364,7 +399,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   if (postData) {
     return (
       <ContainerView>
-        {renderFloatingView()}
+        {floatingVisible ? renderFloatingView() : null}
         <NavigationHeader
           headerLeftProps={{
             type: 'arrow',
@@ -373,46 +408,51 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
           }}
           headerRightProps={{
             type: 'viewMore',
-            onPress: () => console.log('s'),
+            onPress: () => setFloatingVisible((prev) => !prev),
           }}
         />
-        <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
-          <BodyContainerScrollView
-            showsVerticalScrollIndicator={false}
-            ref={scrollView}
-            scrollEventThrottle={16}
-            onScroll={Animated.event(
-              [
-                {
-                  nativeEvent: {
-                    contentOffset: {
-                      y: scrollY,
-                    },
+        <BodyContainerScrollView
+          showsVerticalScrollIndicator={false}
+          ref={scrollView}
+          scrollEventThrottle={16}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    y: scrollY,
                   },
                 },
-              ],
-              {useNativeDriver: false},
-            )}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }>
-            <PostContent
-              moveToAnotherProfile={moveToAnotherProfile}
-              moveToImageDetail={moveToImageDetail}
-              data={postData}
-            />
+              },
+            ],
+            {useNativeDriver: false},
+          )}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
+          <PostContent
+            moveToAnotherProfile={moveToAnotherProfile}
+            moveToImageDetail={moveToImageDetail}
+            data={postData}
+          />
 
-            {isLoading ? (
-              <ActivityIndicatorContianerView>
-                <ActivityIndicator size="small" />
-              </ActivityIndicatorContianerView>
-            ) : // <PostCommentList commentList={comments} />
-            null}
-          </BodyContainerScrollView>
-        </KeyboardAvoidingView>
+          {isLoading ? (
+            <ActivityIndicatorContianerView>
+              <ActivityIndicator size="small" />
+            </ActivityIndicatorContianerView>
+          ) : (
+            // <PostCommentList commentList={comments} />
+            <PreviewCommentList
+              commentList={commentArray}
+              currentUser={currentUser}
+              navigation={navigation}
+              postId={postData.id}
+              postType="community"
+            />
+          )}
+        </BodyContainerScrollView>
         <PostBottomBar
           toggleKeyboardAnimation={toggleKeyboardAnimation}
-          uploadComment={uploadComment}
           toggleSocialLike={toggleSocialLike}
           toggleSocialScrap={toggleSocialScrap}
           data={postData}

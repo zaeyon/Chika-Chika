@@ -3,31 +3,24 @@ import serverConfig from '../server.config';
 
 interface Props {
     jwtToken: string,
-    commentId: number,
-    type: string,
+    commentId: string,
+    postType: string,
     description: string,
-    targetUser: string,
+    targetUserNickname: string,
     postId: number,
 }
 
-const POSTReply = ({jwtToken, commentId, type, description, targetUser, postId}: Props) => {
+const POSTReply = ({jwtToken, commentId, postType, description, targetUserNickname, postId}: Props) => {
+    let requestId = ""
+    if(postType === "review") requestId = "reviewId"
+    else if(postType === "community") requestId = "postId"
 
-    let uri = ""
-    if(type === "review") {
-        uri = serverConfig.baseUri + `/api/v1/comments/reply?type=${type}&commentId=${commentId}&reviewId=${postId}`
-    } else {
 
-    }
-
-    console.log("POSTReply jwtToken", jwtToken);
-    console.log("POSTReply commentId", commentId);
-    console.log("POSTReply type", type);
-    console.log("POSTReply description", description);
-    console.log("POSTReply targetUser", targetUser);
+    const uri = serverConfig.baseUri + `/api/v1/comments/reply?type=${postType}&commentId=${commentId}&${requestId}=${postId}`
 
     const formData = new FormData();
     formData.append("description", description);
-    formData.append("targetUserNickname", targetUser);
+    formData.append("targetUserNickname", targetUserNickname);
 
     return new Promise((resolve, reject) => {
         
