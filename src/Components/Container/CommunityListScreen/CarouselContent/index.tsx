@@ -16,7 +16,6 @@ background: #FFFFFF;
 `;
 
 const TitleText = Styled.Text`
- 
 font-style: normal;
 font-weight: bold;
 font-size: 16px;

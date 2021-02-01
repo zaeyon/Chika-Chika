@@ -135,7 +135,6 @@ border-color: #E2E6ED;
 `;
 
 const MoreViewItemLabelText = Styled.Text`
- 
 font-size: 16px;
 font-weight: 700;
 color: #000000;
@@ -213,7 +212,9 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const [totalPrice, setTotalPrice] = useState<object>({});
   const [detailPriceList, setDetailPriceList] = useState<Array<object>>([]);
 
-  const [previewCommentArray, setPreviewCommentArray] = useState<Array<any>>([]);
+  const [previewCommentArray, setPreviewCommentArray] = useState<Array<any>>(
+    [],
+  );
 
   // 화면에 표시되는 정보
   const [paragraphArrayDisplay, setParagraphArrayDisplay] = useState<
@@ -385,10 +386,10 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     const id = reviewId;
-    const type = 'review'
+    const type = 'review';
     GETCommentList({jwtToken, type, id})
-    .then((response: any) => {
-        console.log("GETCommentList response", response)
+      .then((response: any) => {
+        console.log('GETCommentList response', response);
         //setCommentArray(response.reverse())
         //dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
         //dispatch(allActions.commentListActions.setCommentCount(response.commentsNum.commentsNum));
@@ -396,32 +397,34 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         let tmpCommentArray = response.comments.reverse().slice();
         let remainingCount = 10;
 
-        if(commentCount > 10) {
+        if (commentCount > 10) {
+          for (var i = 0; i < tmpCommentArray.length; i++) {
+            remainingCount =
+              remainingCount - (1 + tmpCommentArray[i].Replys.length);
 
-          for(var i = 0; i < tmpCommentArray.length; i++) {
-            remainingCount = remainingCount - (1 + tmpCommentArray[i].Replys.length);
-
-            if(remainingCount <= 0) {
-              const deletedCommentArray = tmpCommentArray.slice(0, i+1);
+            if (remainingCount <= 0) {
+              const deletedCommentArray = tmpCommentArray.slice(0, i + 1);
               const tmpReplyArray = tmpCommentArray[i].Replys;
-              const deletedReplyArray = tmpReplyArray.slice(0, (tmpReplyArray.length - Math.abs(remainingCount)));
+              const deletedReplyArray = tmpReplyArray.slice(
+                0,
+                tmpReplyArray.length - Math.abs(remainingCount),
+              );
 
               deletedCommentArray[i].Replys = deletedReplyArray;
 
               setPreviewCommentArray(deletedCommentArray);
 
-              break
+              break;
             }
           }
         } else {
           setPreviewCommentArray(tmpCommentArray);
         }
-    })
-    .catch((error: any) => {
-        console.log("GETCommentList error", error);
-    })
-  }, [commentArray])
-
+      })
+      .catch((error: any) => {
+        console.log('GETCommentList error', error);
+      });
+  }, [commentArray]);
 
   const formatDate = useCallback((createdAt: string) => {
     const currentYear = new Date(Date.now()).getFullYear();
@@ -448,27 +451,27 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       }
 
       setWriterObj(tmpWriterObj);
-
-      let elapsedTimeText = '';
-      let visibleElapsedTime = false;
-
-      const elapsedMin = response.reviewBody['createdDiff(second)'] / 60;
-      const elapsedHour = response.reviewBody['createdDiff(second)'] / 3600;
-      const elapsedDay = response.reviewBody['createdDiff(second)'] / 86400;
-
-      if (elapsedMin < 1) {
-        elapsedTimeText = '방금 전';
-        setElapsedTime(elapsedTimeText)
-      } else if (1 <= elapsedMin && elapsedHour < 1) {
-        elapsedTimeText = `${Math.floor(elapsedMin)}분 전`;
-        setElapsedTime(elapsedTimeText)
-      } else if (1 <= elapsedHour && elapsedDay < 1) {
-        elapsedTimeText = `${Math.floor(elapsedHour)}시간 전`;
-        setElapsedTime(elapsedTimeText)
-      } else if (elapsedDay >= 1) {
-        setElapsedTime(formatDate(response.reviewBody.createdAt))
-      }
       
+        let elapsedTimeText = '';
+        let visibleElapsedTime = false;
+
+        const elapsedMin = response.reviewBody['createdDiff(second)'] / 60;
+        const elapsedHour = response.reviewBody['createdDiff(second)'] / 3600;
+        const elapsedDay = response.reviewBody['createdDiff(second)'] / 86400;
+
+        if (elapsedMin < 1) {
+          elapsedTimeText = '방금 전';
+          setElapsedTime(elapsedTimeText);
+        } else if (1 <= elapsedMin && elapsedHour < 1) {
+          elapsedTimeText = `${Math.floor(elapsedMin)}분 전`;
+          setElapsedTime(elapsedTimeText);
+        } else if (1 <= elapsedHour && elapsedDay < 1) {
+          elapsedTimeText = `${Math.floor(elapsedHour)}시간 전`;
+          setElapsedTime(elapsedTimeText);
+        } else if (elapsedDay >= 1) {
+          setElapsedTime(formatDate(response.reviewBody.createdAt));
+        }
+
         const tmpTreatPriceObj = {
           displayTreatPrice:
             response.reviewBody.totalCost.toLocaleString() + '원',
@@ -616,40 +619,47 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     const type = 'review';
     GETCommentList({jwtToken, type, id})
       .then((response: any) => {
-          console.log("GETCommentList response", response)
-          //setCommentArray(response.reverse())
-          dispatch(allActions.commentListActions.setCommentList(response.comments.reverse()));
-          dispatch(allActions.commentListActions.setCommentCount(response.commentsNum.commentsNum));
+        console.log('GETCommentList response', response);
+        //setCommentArray(response.reverse())
+        dispatch(
+          allActions.commentListActions.setCommentList(
+            response.comments.reverse(),
+          ),
+        );
+        dispatch(
+          allActions.commentListActions.setCommentCount(
+            response.commentsNum.commentsNum,
+          ),
+        );
 
-          // let tmpCommentArray = response.comments.reverse().slice();
-          // let remainingCount = 10;
+        // let tmpCommentArray = response.comments.reverse().slice();
+        // let remainingCount = 10;
 
-          // if(commentCount > 10) {
+        // if(commentCount > 10) {
 
-          //   for(var i = 0; i < tmpCommentArray.length; i++) {
-          //     remainingCount = remainingCount - (1 + tmpCommentArray[i].Replys.length);
+        //   for(var i = 0; i < tmpCommentArray.length; i++) {
+        //     remainingCount = remainingCount - (1 + tmpCommentArray[i].Replys.length);
 
-          //   if(remainingCount <= 0) {
-          //     const deletedCommentArray = tmpCommentArray.slice(0, i+1);
-          //     const tmpReplyArray = tmpCommentArray[i].Replys;
-          //     const deletedReplyArray = tmpReplyArray.slice(0, (tmpReplyArray.length - Math.abs(remainingCount)));
+        //   if(remainingCount <= 0) {
+        //     const deletedCommentArray = tmpCommentArray.slice(0, i+1);
+        //     const tmpReplyArray = tmpCommentArray[i].Replys;
+        //     const deletedReplyArray = tmpReplyArray.slice(0, (tmpReplyArray.length - Math.abs(remainingCount)));
 
-          //     deletedCommentArray[i].Replys = deletedReplyArray;
+        //     deletedCommentArray[i].Replys = deletedReplyArray;
 
-          //     setPreviewCommentArray(deletedCommentArray);
+        //     setPreviewCommentArray(deletedCommentArray);
 
-          //     break
-          //     }
-          //   }
-          // } else {
-          //   setPreviewCommentArray(tmpCommentArray);
-          // }
-        })
-        .catch((error: any) => {
-          console.log("GETCommentList error", error);
-        })
-  }
-
+        //     break
+        //     }
+        //   }
+        // } else {
+        //   setPreviewCommentArray(tmpCommentArray);
+        // }
+      })
+      .catch((error: any) => {
+        console.log('GETCommentList error', error);
+      });
+  };
 
   const moveToAnotherProfile = useCallback(
     (userId: string, nickname: string, profileImageUri: string) => {
@@ -704,7 +714,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   };
 
   const moveToCommentList = (request: string) => {
-    navigation.navigate("CommentListScreen", {
+    navigation.navigate('CommentListScreen', {
       postId: reviewId,
     });
   };
@@ -919,19 +929,19 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   };
 
   const clickReply = (commentObj: any, targetUserNickname: string) => {
-      //console.log("clickReply userNickname, id", userNickname, id);
-      // setInputType("reply");
-      // commentInputRef.current.focus();
-      // replyTargetId = id;
-      // isClickReply = true;
-      // replyTargetNickname.current = userNickname;
+    //console.log("clickReply userNickname, id", userNickname, id);
+    // setInputType("reply");
+    // commentInputRef.current.focus();
+    // replyTargetId = id;
+    // isClickReply = true;
+    // replyTargetNickname.current = userNickname;
 
-      navigation.navigate("ReplyPostScreen", {
-          commentObj: commentObj,
-          targetUserNickname: targetUserNickname,
-          postId: reviewId,
-          request: "ReviewDetailScreen",
-      });
+    navigation.navigate('ReplyPostScreen', {
+      commentObj: commentObj,
+      targetUserNickname: targetUserNickname,
+      postId: reviewId,
+      request: 'ReviewDetailScreen',
+    });
   };
 
   const clickReplyOfReply = (commentObj: any, targetUserNickname: string) => {
@@ -939,9 +949,9 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       commentObj: commentObj,
       targetUserNickname: targetUserNickname,
       postId: reviewId,
-      request: "ReviewDetailScreen",
-    })
-  }
+      request: 'ReviewDetailScreen',
+    });
+  };
 
   const pressBackground = () => {
     if (isOwnReview) {

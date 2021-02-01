@@ -44,7 +44,6 @@ z-index: 2;
 `;
 
 const HeaderNicknameText = Styled.Text`
- 
 font-style: normal;
 font-weight: 800;
 font-size: 23px;
@@ -110,7 +109,6 @@ padding: 0px 16px
 `;
 
 const ProfileReservationTitleText = Styled.Text`
- 
 font-style: normal;
 font-weight: normal;
 font-size: 16px;
@@ -118,7 +116,6 @@ line-height: 24px;
 `;
 
 const ProfileReservationText = Styled.Text`
- 
 font-style: normal;
 font-weight: 800;
 font-size: 18px;
@@ -187,6 +184,7 @@ interface Props {
 
 interface State {
   currentIndex: number;
+  lastScrollY: number;
   isModalVisible: boolean;
   index: number;
   routes: any;
@@ -214,8 +212,8 @@ interface Residence {
 }
 
 export default class MyProfile extends React.PureComponent<Props, State> {
-  reviewRef: React.RefObject<unknown>;
-  communityRef: React.RefObject<unknown>;
+  reviewRef: any;
+  communityRef: any;
 
   constructor(props: Props) {
     super(props);
@@ -228,6 +226,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         {key: 'second', title: '내가 쓴 수다글'},
       ],
       currentScrollY: new Animated.Value(0),
+      lastScrollY: 0,
       positionX: new Animated.Value(0),
       minusValue: new Animated.Value(-1),
       headerHeightValue: new Animated.Value(PROFILEHEIGHT),
@@ -248,10 +247,6 @@ export default class MyProfile extends React.PureComponent<Props, State> {
       index,
     });
   };
-  componentDidUpdate() {
-    console.log(this.state.index);
-  }
-
   closeModal = () => {
     this.setState({
       isModalVisible: false,
@@ -334,8 +329,8 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         isCurUserScrapProp={item.viewerScrapedReview}
         refreshingReviewList={this.props.isReviewRefreshing}
         moveToReviewDetail={this.props.moveToReviewDetail}
-        moveToWriterProfile={this.props.moveToWriterProfile}
         moveToDentalDetail={this.props.moveToDentalDetail}
+        moveToAnotherProfile={this.props.moveToAnotherProfile}
       />
     );
   };
@@ -368,19 +363,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
             {
               nativeEvent: {
                 contentOffset: {
-                  y: (y: number) =>
-                    Animated.block([
-                      Animated.set(this.state.currentScrollY, y),
-                      Animated.call([y], ([offsetY]) => {
-                        if (this.state.index === 1) {
-                          this.reviewRef &&
-                            this.reviewRef.getNode().scrollToOffset({
-                              offset: Math.min(PROFILEHEIGHT, offsetY),
-                              animated: false,
-                            });
-                        }
-                      }),
-                    ]),
+                  y: this.state.currentScrollY,
                 },
               },
             },
@@ -389,6 +372,18 @@ export default class MyProfile extends React.PureComponent<Props, State> {
             useNativeDriver: true,
           },
         )}
+        onScrollEndDrag={(e: any) => {
+          console.log('review scrollend');
+          this.setState({
+            lastScrollY: e.nativeEvent.contentOffset.y,
+          });
+        }}
+        onMomentumScrollEnd={(e: any) => {
+          console.log('review moscrollend');
+          this.setState({
+            lastScrollY: e.nativeEvent.contentOffset.y,
+          });
+        }}
         onEndReached={this.props.onCommunityEndReached}
         onEndReachedThreshold={5}
         ListFooterComponent={
@@ -439,20 +434,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
             {
               nativeEvent: {
                 contentOffset: {
-                  y: (y: number) =>
-                    Animated.block([
-                      Animated.set(this.state.currentScrollY, y),
-                      Animated.call([y], ([offsetY]) => {
-                        if (this.state.index === 0) {
-                          this.communityRef &&
-                            this.communityRef.getNode &&
-                            this.communityRef.getNode().scrollToOffset({
-                              offset: Math.min(PROFILEHEIGHT, offsetY),
-                              animated: false,
-                            });
-                        }
-                      }),
-                    ]),
+                  y: this.state.currentScrollY,
                 },
               },
             },
@@ -461,6 +443,18 @@ export default class MyProfile extends React.PureComponent<Props, State> {
             useNativeDriver: true,
           },
         )}
+        onScrollEndDrag={(e: any) => {
+          console.log('review scrollend');
+          this.setState({
+            lastScrollY: e.nativeEvent.contentOffset.y,
+          });
+        }}
+        onMomentumScrollEnd={(e: any) => {
+          console.log('review moscrollend');
+          this.setState({
+            lastScrollY: e.nativeEvent.contentOffset.y,
+          });
+        }}
         onEndReached={this.props.onReviewEndReached}
         onEndReachedThreshold={5}
         ListFooterComponent={
@@ -492,46 +486,66 @@ export default class MyProfile extends React.PureComponent<Props, State> {
     }
   };
 
-  renderTabBar = (props: any) => (
-    <TabBarView
-      style={{
-        transform: [
-          {
-            translateY: Animated.multiply(
-              this.state.minusValue,
-              Animated.min(
-                this.state.headerHeightValue,
-                this.state.currentScrollY,
-              ),
-            ),
-          },
-        ],
-      }}>
-      <TabBar
-        {...props}
+  renderTabBar = (props: any) => {
+    return (
+      <TabBarView
         style={{
-          backgroundColor: '#FFFFFF',
-        }}
-        indicatorStyle={{
-          height: 2,
-          backgroundColor: '#00D1FF',
-          borderRadius: 100,
-        }}
-        activeColor="#131F3C"
-        inactiveColor="#9AA2A9"
-        tabStyle={{
-          height: 54,
-        }}
-        labelStyle={{
-          fontFamily: 'NanumSquare',
-          fontStyle: 'normal',
-          fontWeight: 'bold',
-          fontSize: 16,
-          lineHeight: 24,
-        }}
-      />
-    </TabBarView>
-  );
+          transform: [
+            {
+              translateY: Animated.multiply(
+                this.state.minusValue,
+                Animated.min(
+                  this.state.headerHeightValue,
+                  this.state.currentScrollY,
+                ),
+              ),
+            },
+          ],
+        }}>
+        <TabBar
+          {...props}
+          onTabPress={({route}) => {
+            if (route.key === 'first') {
+              console.log('post scrollend');
+              this.reviewRef &&
+                this.reviewRef.getNode &&
+                this.reviewRef.getNode().scrollToOffset({
+                  offset: Math.min(PROFILEHEIGHT, this.state.lastScrollY),
+                  animated: false,
+                });
+            } else if (route.key === 'second') {
+              this.communityRef &&
+                this.communityRef.getNode &&
+                this.communityRef.getNode().scrollToOffset({
+                  offset: Math.min(PROFILEHEIGHT, this.state.lastScrollY),
+                  animated: false,
+                });
+            }
+          }}
+          style={{
+            backgroundColor: '#FFFFFF',
+          }}
+          indicatorStyle={{
+            height: 2,
+            backgroundColor: '#00D1FF',
+            borderRadius: 100,
+          }}
+          activeColor="#131F3C"
+          inactiveColor="#9AA2A9"
+          tabStyle={{
+            height: 54,
+          }}
+          labelStyle={{
+            fontFamily: 'NanumSquare',
+            fontStyle: 'normal',
+            fontWeight: 'bold',
+            fontSize: 16,
+            lineHeight: 24,
+          }}
+        />
+      </TabBarView>
+    );
+  };
 
   render() {
     return (
@@ -598,6 +612,24 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           </ProfileContainerView>
         </FloatingView>
         <TabView
+          onSwipeStart={() => {
+            if (this.state.index === 1) {
+              console.log('post scrollend');
+              this.reviewRef &&
+                this.reviewRef.getNode &&
+                this.reviewRef.getNode().scrollToOffset({
+                  offset: Math.min(PROFILEHEIGHT, this.state.lastScrollY),
+                  animated: false,
+                });
+            } else if (this.state.index === 0) {
+              this.communityRef &&
+                this.communityRef.getNode &&
+                this.communityRef.getNode().scrollToOffset({
+                  offset: Math.min(PROFILEHEIGHT, this.state.lastScrollY),
+                  animated: false,
+                });
+            }
+          }}
           navigationState={{index: this.state.index, routes: this.state.routes}}
           renderScene={this.renderScene}
           onIndexChange={(index) => this.setState({index})}

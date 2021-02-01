@@ -44,8 +44,6 @@ const ContainerView = Styled.SafeAreaView`
 
 const BodyContainerScrollView = Styled.ScrollView`
 flex: 1;
-margin-bottom: ${hp('100%') * 0.08}px;
-
 `;
 
 const ActivityIndicatorContianerView = Styled.View`
@@ -444,6 +442,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
             // <PostCommentList commentList={comments} />
             <PreviewCommentList
               commentList={commentArray}
+              commentCount={commentCount}
               currentUser={currentUser}
               navigation={navigation}
               postId={postData.id}

@@ -15,7 +15,6 @@ padding: 16px 0px;
 `;
 
 const OrderContentFocusedText = Styled.Text`
- 
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
@@ -28,7 +27,6 @@ height: 100%;
 padding: 0px 16px;
 `;
 const OrderContentUnFocusedText = Styled.Text`
- 
 font-style: normal;
 font-weight: bold;
 font-size: 14px;

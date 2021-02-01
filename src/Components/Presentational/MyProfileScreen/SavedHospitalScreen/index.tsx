@@ -39,7 +39,6 @@ margin-bottom: 8px;
 `;
 
 const SavedHospitalItemTitleText = Styled.Text`
- 
 font-style: normal;
 font-weight: bold;
 font-size: 18px;
@@ -54,7 +53,6 @@ align-items: center;
 `;
 
 const SavedHospitalItemLocationText = Styled.Text`
- 
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
@@ -63,7 +61,6 @@ margin-bottom: 8px;
 `;
 
 const SavedHospitalItemDateText = Styled.Text`
- 
 font-style: normal;
 font-weight: normal;
 font-size: 14px;
@@ -71,7 +68,6 @@ line-height: 24px;
 `;
 
 const SavedHospitalItemTimeText = Styled.Text`
- 
 font-style: normal;
 font-weight: normal;
 font-size: 14px;

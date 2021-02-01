@@ -58,14 +58,12 @@ margin-right: 4px;
 
 const HashTagItemNameText = Styled.Text`
 margin-right: 4px;
- 
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
 `;
 
 const HashTagItemLocationText = Styled.Text`
- 
 font-style: normal;
 font-weight: bold;
 font-size: 12px;

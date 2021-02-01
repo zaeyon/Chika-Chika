@@ -2,12 +2,10 @@ import React from 'react';
 import Styled from 'styled-components/native';
 import {Text, View, TouchableWithoutFeedback} from 'react-native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {Rating} from 'react-native-ratings';
-
-
 
 // Local Component
 import RatingReport from '~/Components/Presentational/RatingReport';
@@ -29,7 +27,6 @@ font-weight: 800;
 font-size: 12px;
 line-height: 16px;
 color: #000000;
- 
 `;
 
 const PriceItemContainer = Styled.View`
@@ -58,7 +55,6 @@ font-weight: 700;
 font-size: 10px;
 line-height: 16px;
 color: #00D1FF;
- 
 `;
 
 const TotalPriceText = Styled.Text`
@@ -67,14 +63,12 @@ font-weight: 700;
 font-size: 12px;
 color: #000000;
 line-height: 16px;
- 
 `;
 
 const ViewDetailPriceText = Styled.Text`
 font-weight: 700;
 font-size: 12px;
 color: #9AA2A9;
- 
 `;
 
 const ViewDetailPriceContainer = Styled.View`
@@ -117,13 +111,11 @@ height: ${wp('4.8%')}px;
 
 const RatingTypeText = Styled.Text`
 margin-left: 8px;
- 
 font-size: 14px;
 color: #9AA2A9;
 `;
 
 const AvgRatingValueText = Styled.Text`
- 
 margin-left: 4px;
 font-weight: 800;
 line-height: 16px;
@@ -141,7 +133,6 @@ font-weight: 400;
 font-size: 12px;
 color: #000000;
 line-height: 16px;
- 
 `;
 
 const DentalInfoContainer = Styled.View`
@@ -160,7 +151,6 @@ const DentalNameText = Styled.Text`
 font-weight: 800;
 font-size: 12px;
 color: #000000;
- 
 line-height: 16px;
 `;
 
@@ -172,7 +162,6 @@ align-items: center;
 `;
 
 const DentalAddressText = Styled.Text`
- 
 font-weight: 400;
 font-size: 10px;
 color: #4E525D;
@@ -241,117 +230,136 @@ background-color: #9AA2A9;
 `;
 
 interface dentalObj {
-    originalName: string,
-    address: string,
-    id: number,
+  originalName: string;
+  address: string;
+  id: number;
 }
 
 interface Props {
-    totalPrice: number,
-    certifiedReceipt: boolean,
-    ratingObj: object,
-    treatmentDate: string,
-    dentalObj: dentalObj,
-    moveToDentalDetail: (dentalId: number) => void,
+  totalPrice: number;
+  certifiedReceipt: boolean;
+  ratingObj: object;
+  treatmentDate: string;
+  dentalObj: dentalObj;
+  moveToDentalDetail: (dentalId: number) => void;
 }
 
-const ReviewMetaInfo = ({totalPrice, certifiedReceipt, ratingObj, treatmentDate, dentalObj, moveToDentalDetail}: Props) => {
-    console.log("RatingMetaInfo ratingObj", ratingObj);
-    console.log("ReviewMetaInfo dentalObj", dentalObj);
-    
+const ReviewMetaInfo = ({
+  totalPrice,
+  certifiedReceipt,
+  ratingObj,
+  treatmentDate,
+  dentalObj,
+  moveToDentalDetail,
+}: Props) => {
+  console.log('RatingMetaInfo ratingObj', ratingObj);
+  console.log('ReviewMetaInfo dentalObj', dentalObj);
 
-    let splitedTreatmentDate = new Array
-    let formattedTreatmentDate = ""
-    // if(treatmentDate) {
+  let splitedTreatmentDate = new Array();
+  let formattedTreatmentDate = '';
+  // if(treatmentDate) {
 
-    //     splitedTreatmentDate = treatmentDate.split("");
-    //     formattedTreatmentDate = splitedTreatmentDate[0] + splitedTreatmentDate[1] + splitedTreatmentDate[2] + splitedTreatmentDate[3] + "." + splitedTreatmentDate[6] + splitedTreatmentDate[7] + "." + splitedTreatmentDate[10] + splitedTreatmentDate[11]
-    // }
+  //     splitedTreatmentDate = treatmentDate.split("");
+  //     formattedTreatmentDate = splitedTreatmentDate[0] + splitedTreatmentDate[1] + splitedTreatmentDate[2] + splitedTreatmentDate[3] + "." + splitedTreatmentDate[6] + splitedTreatmentDate[7] + "." + splitedTreatmentDate[10] + splitedTreatmentDate[11]
+  // }
 
-    let splitedAddress = new Array();
-    let formattedAddress = "";
+  let splitedAddress = new Array();
+  let formattedAddress = '';
 
-    if(dentalObj?.address) {
-        splitedAddress = dentalObj.address.split(" ");
-        formattedAddress = splitedAddress[0] + " " + splitedAddress[1] + " " + splitedAddress[2] + " " + splitedAddress[3] + " " + splitedAddress[4]
-    }
+  if (dentalObj?.address) {
+    splitedAddress = dentalObj.address.split(' ');
+    formattedAddress =
+      splitedAddress[0] +
+      ' ' +
+      splitedAddress[1] +
+      ' ' +
+      splitedAddress[2] +
+      ' ' +
+      splitedAddress[3] +
+      ' ' +
+      splitedAddress[4];
+  }
 
-    return (
-        <Container>
-        <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalObj.id)}>
+  return (
+    <Container>
+      <TouchableWithoutFeedback
+        onPress={() => moveToDentalDetail(dentalObj.id)}>
         <DentalInfoContainer>
-            <DentalNameAddressContainer>
-                <DentalNameText>{dentalObj?.originalName}</DentalNameText>
-                <DentalAddressContainer>
-                    <DentalAddressText>{formattedAddress}</DentalAddressText>
-                </DentalAddressContainer>
-            </DentalNameAddressContainer>
-            <DentalImageContainer>
-                <DentalImage/>
-            </DentalImageContainer>
+          <DentalNameAddressContainer>
+            <DentalNameText>{dentalObj?.originalName}</DentalNameText>
+            <DentalAddressContainer>
+              <DentalAddressText>{formattedAddress}</DentalAddressText>
+            </DentalAddressContainer>
+          </DentalNameAddressContainer>
+          <DentalImageContainer>
+            <DentalImage />
+          </DentalImageContainer>
         </DentalInfoContainer>
-        </TouchableWithoutFeedback>
-        <SectionDevider/>
-            <RatingInfoContainer>
-                <InfoLabelText>{"회원님의 병원 만족도"}</InfoLabelText>
-                <RatingValueContainer>
-                <AvgRatingValueContainer>
-                <Rating
-                type={"custom"}
-                ratingImage={require('~/Assets/Images/Review/ic_ratingStar_swipe.png')}
-                ratingColor={"#00D1FF"}
-                ratingBackgroundColor={"#E2E6ED"}
-                imageSize={wp('4.26%')}
-                ratingCount={5}
-                startingValue={ratingObj?.avgRating}
-                readonly={true}/>
-                <AvgRatingValueText>{ratingObj?.avgRating}</AvgRatingValueText>
-                </AvgRatingValueContainer>
-                <DetailRatingContainer>
-                    <DetailRatingTypeText>{"시술"}</DetailRatingTypeText>
-                    <DetailRatingValueText>{ratingObj?.treatRating}</DetailRatingValueText>
-                    <DetailRatingDivider/>
-                    <DetailRatingTypeText>{"서비스"}</DetailRatingTypeText>
-                    <DetailRatingValueText>{ratingObj?.serviceRating}</DetailRatingValueText>
-                    <DetailRatingDivider/>
-                    <DetailRatingTypeText>{"가격"}</DetailRatingTypeText>
-                    <DetailRatingValueText>{ratingObj?.priceRating}</DetailRatingValueText>
-                </DetailRatingContainer>
-                </RatingValueContainer>
-            </RatingInfoContainer>
-            <SectionDevider/>
-            <PriceInfoContainer>
-                <InfoLabelText>{"전체 시술 비용"}</InfoLabelText>
-                <PriceItemContainer>
-                    <View style={{flexDirection: "row", alignItems: "center"}}>
-                    {/* {certifiedReceipt && ( */}
-                    <ReceiptCertificationContainer>
-                        <ReceiptCertificationText>
-                            {"영수증인증"}
-                        </ReceiptCertificationText>
-                    </ReceiptCertificationContainer>
-                    {/* )} */}
-                    <TotalPriceText>
-                        {totalPrice}
-                    </TotalPriceText>
-                    </View>
-                    <ViewDetailPriceContainer>
-                    <ViewDetailPriceText>{"상세 비용"}</ViewDetailPriceText>
-                    </ViewDetailPriceContainer>
-                </PriceItemContainer>
-            </PriceInfoContainer>
-            <SectionDevider/>
-            <TreatmentDateInfoContainer>
-                <InfoLabelText>{"방문 일자"}</InfoLabelText>
-                <TreatmentDateText>{treatmentDate}</TreatmentDateText>
-            </TreatmentDateInfoContainer>
-        </Container>
-    )
-}
+      </TouchableWithoutFeedback>
+      <SectionDevider />
+      <RatingInfoContainer>
+        <InfoLabelText>{'회원님의 병원 만족도'}</InfoLabelText>
+        <RatingValueContainer>
+          <AvgRatingValueContainer>
+            <Rating
+              type={'custom'}
+              ratingImage={require('~/Assets/Images/Review/ic_ratingStar_swipe.png')}
+              ratingColor={'#00D1FF'}
+              ratingBackgroundColor={'#E2E6ED'}
+              imageSize={wp('4.26%')}
+              ratingCount={5}
+              startingValue={ratingObj?.avgRating}
+              readonly={true}
+            />
+            <AvgRatingValueText>{ratingObj?.avgRating}</AvgRatingValueText>
+          </AvgRatingValueContainer>
+          <DetailRatingContainer>
+            <DetailRatingTypeText>{'시술'}</DetailRatingTypeText>
+            <DetailRatingValueText>
+              {ratingObj?.treatRating}
+            </DetailRatingValueText>
+            <DetailRatingDivider />
+            <DetailRatingTypeText>{'서비스'}</DetailRatingTypeText>
+            <DetailRatingValueText>
+              {ratingObj?.serviceRating}
+            </DetailRatingValueText>
+            <DetailRatingDivider />
+            <DetailRatingTypeText>{'가격'}</DetailRatingTypeText>
+            <DetailRatingValueText>
+              {ratingObj?.priceRating}
+            </DetailRatingValueText>
+          </DetailRatingContainer>
+        </RatingValueContainer>
+      </RatingInfoContainer>
+      <SectionDevider />
+      <PriceInfoContainer>
+        <InfoLabelText>{'전체 시술 비용'}</InfoLabelText>
+        <PriceItemContainer>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            {/* {certifiedReceipt && ( */}
+            <ReceiptCertificationContainer>
+              <ReceiptCertificationText>
+                {'영수증인증'}
+              </ReceiptCertificationText>
+            </ReceiptCertificationContainer>
+            {/* )} */}
+            <TotalPriceText>{totalPrice}</TotalPriceText>
+          </View>
+          <ViewDetailPriceContainer>
+            <ViewDetailPriceText>{'상세 비용'}</ViewDetailPriceText>
+          </ViewDetailPriceContainer>
+        </PriceItemContainer>
+      </PriceInfoContainer>
+      <SectionDevider />
+      <TreatmentDateInfoContainer>
+        <InfoLabelText>{'방문 일자'}</InfoLabelText>
+        <TreatmentDateText>{treatmentDate}</TreatmentDateText>
+      </TreatmentDateInfoContainer>
+    </Container>
+  );
+};
 
-export default ReviewMetaInfo
-
-
+export default ReviewMetaInfo;
 
 /*
 
@@ -436,4 +444,3 @@ export default ReviewMetaInfo
             </PriceInfoContainer>
         </Container>
 */
-

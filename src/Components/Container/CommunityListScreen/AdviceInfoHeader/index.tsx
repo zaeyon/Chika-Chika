@@ -27,7 +27,6 @@ border-radius: 8px;
 `;
 
 const TitleText = Styled.Text`
- 
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
@@ -43,7 +42,6 @@ margin-left: auto;
 `;
 
 const ButtonText = Styled.Text`
- 
 font-style: normal;
 font-weight: normal;
 font-size: 16px;

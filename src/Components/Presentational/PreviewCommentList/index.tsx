@@ -10,7 +10,6 @@ import CommentItem from '~/Components/Presentational/CommentItem';
 import ReplyItem from '~/Components/Presentational/ReplyItem';
 
 const Container = Styled.View`
-padding-bottom: 35px;
 padding-top: 12px;
 `;
 
@@ -33,13 +32,6 @@ border-bottom-width: 8px;
 border-color: #F5F7F9;
 `;
 
-const ViewTotalCommentText = Styled.Text`
-align-self: flex-end;
-font-weight: 700;
-font-size: 14px;
-color: #9AA2A9;
-`;
-
 const ViewTotalCommentContainer = Styled.View`
 padding-top: 12px;
 padding-bottom: 5px;
@@ -58,9 +50,6 @@ padding-bottom: 50px;
 const NoCommentText = Styled.Text`
 font-size: 14px;
 color: #9AA2A9;
-`;
-
-const CommentItemContainer = Styled.View`
 `;
 
 const ViewTotalCommentIcon = Styled.Image`
@@ -103,6 +92,8 @@ const PreviewCommentList = ({
   const [selectedCommentId, setSelectedCommentId] = useState<number>(); //for action sheet
 
   useEffect(() => {
+    console.log('reorder', commentList);
+    let reachLimit = false;
     let count = 0;
     for (let i = 0; i < commentList.length; i++) {
       console.log('len', commentList[i].Replys);
@@ -112,6 +103,7 @@ const PreviewCommentList = ({
         if (commentList[i].Replys.length === 0) {
           const slicedComments = commentList.slice(0, i).concat();
           setPreviewCommentList(slicedComments);
+          reachLimit = true;
           break;
         } else {
           const slicedComments = commentList.slice(0, i + 1).concat();
@@ -120,62 +112,29 @@ const PreviewCommentList = ({
             Replys: slicedComments[i].Replys.slice(0, maxCommentNum - count),
           });
           setPreviewCommentList(slicedComments);
+          reachLimit = true;
           break;
         }
       }
     }
-    setPreviewCommentList((prev) => {
-      if (prev.length === 0) {
-        return commentList;
-      } else {
-        return prev;
-      }
-    });
-
-    // let tmpCommentList = new Array();
-    // tmpCommentList = commentList;
-
-    // if(commentCount > 7) {
-    //     let remainingCount = 7;
-    //     for (var i = 0; i < commentList.length; i++) {
-    //         console.log("ReviewPreviewCommentList commentList[i].Replys.length", commentList[i].Replys.length);
-
-    //         remainingCount = remainingCount - (1 + commentList[i].Replys.length);
-    //         console.log("ReviewPreviewCommentList remainingCount", remainingCount);
-
-    //         if(remainingCount <= 0) {
-    //              const deletedCommentArr = commentList.slice(0, i+1);
-    //              const tmpReplyArr = commentList[i].Replys;
-    //              const deletedReplyArr = tmpReplyArr.slice(0, (tmpReplyArr.length - Math.abs(remainingCount)))
-    //              console.log("deletedReplyArr", deletedReplyArr);
-
-    //              deletedCommentArr[i].Replys = deletedReplyArr;
-
-    //              setPreviewCommentList(deletedCommentArr)
-
-    //              break
-    //         }
-    //     }
-    //     setIsViewTotal(true);
-    // } else {
-    //     setPreviewCommentList(commentList);
-    // }
+    if (!reachLimit) {
+      setPreviewCommentList(commentList);
+    }
   }, [commentList, maxCommentNum]);
 
   const renderCommentItem = useCallback(({item, index}: any) => {
     return (
-      <CommentItemContainer>
+      <>
         <CommentItem
+          index={index}
           commentObj={item}
           isVisibleReplyButton={true}
           clickReply={clickReply}
           userId={item.user?.id}
-          commentId={item.id}
           profileImage={item.user?.profileImg}
           nickname={item.user?.nickname}
           description={item.description}
           createdDate={item.createdAt}
-          replys={item.Replys}
           openCommentActionSheet={openCommentActionSheet}
           moveToAnotherProfile={moveToAnotherProfile}
         />
@@ -183,7 +142,7 @@ const PreviewCommentList = ({
           item.Replys.map((replyItem: any) =>
             renderReplyItem(replyItem, index, item),
           )}
-      </CommentItemContainer>
+      </>
     );
   }, []);
 
@@ -197,12 +156,10 @@ const PreviewCommentList = ({
         commentObj={commentItem}
         isVisibleReplyButton={true}
         userId={item.user.id}
-        commentId={item.id}
         profileImage={item.user.profileImg}
         nickname={item.user.nickname}
         description={item.description}
         createdDate={item.createdAt}
-        replys={item.Replys}
         openCommentActionSheet={openCommentActionSheet}
         moveToAnotherProfile={moveToAnotherProfile}
       />
@@ -245,9 +202,18 @@ const PreviewCommentList = ({
     [currentUser],
   );
 
-  const moveToAnotherProfile = useCallback(() => {
-    navigation.navigate('AnotherProfileScreen');
-  }, []);
+  const moveToAnotherProfile = useCallback(
+    (userId: string, nickname: string, profileImageUri: string) => {
+      navigation.navigate('AnotherProfileStackScreen', {
+        targetUser: {
+          userId,
+          nickname,
+          profileImageUri,
+        },
+      });
+    },
+    [],
+  );
 
   const moveToCommentList = useCallback(() => {
     navigation.navigate('CommentListScreen', {
@@ -258,7 +224,12 @@ const PreviewCommentList = ({
   }, [postId, postType]);
 
   const clickReply = useCallback(
-    (commentObj: any, targetUserNickname: string, positionY: number) => {
+    (
+      commentObj: any,
+      targetUserNickname: string,
+      index: number,
+      positionY: number,
+    ) => {
       navigation.navigate('CommentListScreen', {
         commentObj: commentObj,
         targetUserNickname: targetUserNickname,
@@ -266,7 +237,7 @@ const PreviewCommentList = ({
         postType,
         commentActionType: 'reply',
         request: 'CommunityDetailScreen',
-        commentMode: 'reply',
+        index,
         positionY,
       });
     },
@@ -278,7 +249,7 @@ const PreviewCommentList = ({
       <HeaderContainer>
         <TouchableWithoutFeedback onPress={() => moveToCommentList()}>
           <ViewTotalCommentContainer>
-            <HeaderCommentCountText>{`댓글 ${commentList.length}`}</HeaderCommentCountText>
+            <HeaderCommentCountText>{`댓글 ${commentCount}`}</HeaderCommentCountText>
             <ViewTotalCommentIcon
               source={require('~/Assets/Images/Arrow/ic_viewTotalComments.png')}
             />
@@ -289,7 +260,7 @@ const PreviewCommentList = ({
         <CommentListContainer>
           <FlatList
             data={previewCommentList}
-            renderItem={renderCommentItem}
+            CellRendererComponent={renderCommentItem}
             keyExtractor={(item) => `${item.id}`}
           />
         </CommentListContainer>

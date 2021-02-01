@@ -2,14 +2,14 @@ import React from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback} from 'react-native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import DeviceInfo from 'react-native-device-info';
 
 const Container = Styled.View`
 width: ${wp('100%')}px;
-height: ${DeviceInfo.hasNotch() ? hp('8.128%')+34 : hp('11.2')}px;
+height: ${DeviceInfo.hasNotch() ? hp('8.128%') + 34 : hp('11.2')}px;
 background-color: #ffffff;
 border-top-width: 1px;
 border-color: #E2E6ED;
@@ -48,7 +48,6 @@ justify-content: center;
 `;
 
 const ReserveText = Styled.Text`
- 
 font-weight: 700;
 font-size: 16px;
 line-height: 24px;
@@ -56,44 +55,41 @@ color: #ffffff;
 `;
 
 interface Props {
-    postDentalScrap: () => void,
-    deleteDentalScrap: () => void,
-    isCurUserScrap: boolean, 
+  postDentalScrap: () => void;
+  deleteDentalScrap: () => void;
+  isCurUserScrap: boolean;
 }
 
-const DentalBottomBar = ({postDentalScrap, deleteDentalScrap, isCurUserScrap}: Props) => {
-
-    return (
-        <Container>
-            {isCurUserScrap && (
-            <TouchableWithoutFeedback onPress={() => deleteDentalScrap()}>
-            <ScrapButton>
-                <ScrapImage
-                source={require('~/Assets/Images/Indicator/ic_scrap_focus.png')}/>
-            </ScrapButton>
-            </TouchableWithoutFeedback>
-            )}
-            {!isCurUserScrap && (
-            <TouchableWithoutFeedback onPress={() => postDentalScrap()}>
-            <ScrapButton>
-                <ScrapImage
-                source={require('~/Assets/Images/Indicator/ic_scrap_unfocus.png')}/>
-            </ScrapButton>
-            </TouchableWithoutFeedback>
-            )}
-            <ReserveButton>
-                <ReserveText>
-                    {"전화예약"}
-                </ReserveText>
-            </ReserveButton>
-        </Container>
-    )
-}
+const DentalBottomBar = ({
+  postDentalScrap,
+  deleteDentalScrap,
+  isCurUserScrap,
+}: Props) => {
+  return (
+    <Container>
+      {isCurUserScrap && (
+        <TouchableWithoutFeedback onPress={() => deleteDentalScrap()}>
+          <ScrapButton>
+            <ScrapImage
+              source={require('~/Assets/Images/Indicator/ic_scrap_focus.png')}
+            />
+          </ScrapButton>
+        </TouchableWithoutFeedback>
+      )}
+      {!isCurUserScrap && (
+        <TouchableWithoutFeedback onPress={() => postDentalScrap()}>
+          <ScrapButton>
+            <ScrapImage
+              source={require('~/Assets/Images/Indicator/ic_scrap_unfocus.png')}
+            />
+          </ScrapButton>
+        </TouchableWithoutFeedback>
+      )}
+      <ReserveButton>
+        <ReserveText>{'전화예약'}</ReserveText>
+      </ReserveButton>
+    </Container>
+  );
+};
 
 export default DentalBottomBar;
-
-
-
-
-
-

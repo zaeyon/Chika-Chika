@@ -50,7 +50,6 @@ border-color: #C4C4C4;
 `;
 
 const ModalButtonText = Styled.Text<{color: string | undefined}>`
- 
 font-style: normal;
 font-weight: normal;
 font-size: 16px;

@@ -20,7 +20,6 @@ padding-right: 16px;
 const DescripText = Styled.Text`
 font-size: 14px;
 color: #131F3C;
- 
 font-weight: 400;
 `;
 
@@ -39,7 +38,6 @@ padding-right: 16px;
 font-size: 18px;
 font-weight: 800;
 color: #131F3C;
- 
 `;
 
 const ParagraphContainer = Styled.View`
@@ -65,26 +63,29 @@ const ReviewContent = ({paragraphArray, moveToFullImages}: Props) => {
   const renderParagraphItem = ({item, index}: any) => {
     return (
       <View>
-      <ParagraphContainer>
-        {item.img_url && (
-          <ImageContainer>
-          <ReviewImageTypeText>{item.img_before_after === "before" ? "Before" : (item.img_before_after === "after" ? "After" : "")}</ReviewImageTypeText>
-          <TouchableWithoutFeedback
-            onPress={() => moveToFullImages(item.img_url)}>
-              <ReviewImage source={{uri: item.img_url}} />
-          </TouchableWithoutFeedback>
-          </ImageContainer>
-        )}
-        {item.description && (
-          <DescripContainer
-          style={item.img_url && {marginTop: 24}}>
-            <DescripText>{item.description}</DescripText>
-          </DescripContainer>
-        )}
-      </ParagraphContainer>
-      {index !== paragraphArray.length - 1 && (
-      <ParagraphDivider/>
-      )}
+        <ParagraphContainer>
+          {item.img_url && (
+            <ImageContainer>
+              <ReviewImageTypeText>
+                {item.img_before_after === 'before'
+                  ? 'Before'
+                  : item.img_before_after === 'after'
+                  ? 'After'
+                  : ''}
+              </ReviewImageTypeText>
+              <TouchableWithoutFeedback
+                onPress={() => moveToFullImages(item.img_url)}>
+                <ReviewImage source={{uri: item.img_url}} />
+              </TouchableWithoutFeedback>
+            </ImageContainer>
+          )}
+          {item.description && (
+            <DescripContainer style={item.img_url && {marginTop: 24}}>
+              <DescripText>{item.description}</DescripText>
+            </DescripContainer>
+          )}
+        </ParagraphContainer>
+        {index !== paragraphArray.length - 1 && <ParagraphDivider />}
       </View>
     );
   };

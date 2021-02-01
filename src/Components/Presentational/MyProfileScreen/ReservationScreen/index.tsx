@@ -36,7 +36,6 @@ margin-bottom: 16px;
 `;
 
 const ReservationItemTitleText = Styled.Text`
- 
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
@@ -65,7 +64,6 @@ height: auto;
 `;
 
 const ReservationItemDateText = Styled.Text`
- 
 font-style: normal;
 font-weight: normal;
 font-size: 14px;
@@ -75,7 +73,6 @@ margin-bottom: 6px;
 `;
 
 const ReservationItemClinicText = Styled.Text`
- 
 font-style: normal;
 font-weight: 800;
 font-size: 18px;
@@ -89,7 +86,6 @@ flex-direction: row;
 align-items: center;
 `;
 const ReservationItemNavigationText = Styled.Text`
- 
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
@@ -114,7 +110,6 @@ justify-content: center;
 align-items: center;
 `;
 const CreateReviewText = Styled.Text`
- 
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
@@ -131,7 +126,6 @@ justify-content: center;
 align-items: center;
 `;
 const ReReservationText = Styled.Text`
- 
 font-style: normal;
 font-weight: bold;
 font-size: 14px;

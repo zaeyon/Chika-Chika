@@ -101,7 +101,6 @@ const RepresentingKeywordText = Styled.Text`
 font-size: 12px;
 font-weight: 800;
 color: #ffffff;
- 
 `;
 
 const ContentContainer = Styled.View`
@@ -134,7 +133,6 @@ const BasicInfoLabelText = Styled.Text`
 color: #000000;
 font-weight: 400;
 font-size: 14px;
- 
 `;
 
 const BasicInfoLabelDivider = Styled.View`
@@ -149,7 +147,6 @@ const BasicInfoValueText = Styled.Text`
 color: #000000;
 font-weight: bold;
 font-size: 14px;
- 
 `;
 
 const BasicHeaderContainer = Styled.View`
@@ -167,7 +164,6 @@ const DentalNameText = Styled.Text`
 font-weight: 800;
 font-size: 20px;
 color: #000000;
- 
 `;
 
 const RatingStarIcon = Styled.Image`
@@ -178,7 +174,6 @@ margin-top: 12px;
 font-weight: bold;
 color: #000000;
 font-size: 14px;
- 
 `;
 
 const HomePageLinkText = Styled.Text`
@@ -517,7 +512,6 @@ margin-left: 2px;
 font-weight: 700;
 font-size: 20px;
 color: #000000;
- 
 `
 
 const RatingListContainer = Styled.View`
@@ -534,14 +528,12 @@ const RatingTypeText = Styled.Text`
 font-weight: 800;
 font-size: 14px;
 color: #2F2F2F;
- 
 `;
 
 const RatingValueText = Styled.Text`
 font-weight: 800;
 font-size: 14px;
 color: #2F2F2F;
- 
 `;
 
 const TEST_DENTAL_DETAIL_DATA = {
