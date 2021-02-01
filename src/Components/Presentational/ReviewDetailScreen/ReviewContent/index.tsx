@@ -20,7 +20,7 @@ padding-right: 16px;
 const DescripText = Styled.Text`
 font-size: 14px;
 color: #131F3C;
-font-family: NanumSquare;
+ 
 font-weight: 400;
 `;
 
@@ -39,7 +39,7 @@ padding-right: 16px;
 font-size: 18px;
 font-weight: 800;
 color: #131F3C;
-font-family: NanumSquare;
+ 
 `;
 
 const ParagraphContainer = Styled.View`

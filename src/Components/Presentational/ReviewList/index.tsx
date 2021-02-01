@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
@@ -41,24 +41,7 @@ interface Props {
   onRefreshReviewList: () => void;
   onEndReachedReviewList: () => void;
   loadingMoreReview: boolean;
-  moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
-  moveToReviewDetail: (
-    reviewId: number,
-    writer: object,
-    createdAt: string,
-    treatmentArray: Array<object>,
-    ratingObj: Object,
-    treatmentDate: string,
-    imageArray: Array<object>,
-    isCurUserLike: boolean,
-    likeCount: number,
-    commentCount: number,
-    isCurUserScrap: boolean,
-    dentalObj: object,
-    visibleElapsedTime: boolean,
-    elapsedTime: string,
-  ) => void;
-  moveToDentalDetail: (dentalId: number) => void;
+  navigation: any;
 }
 
 interface ReviewData {
@@ -86,13 +69,11 @@ interface ReviewData {
 
 const ReviewList = ({
   reviewList,
-  moveToReviewDetail,
   refreshingReviewList,
   onRefreshReviewList,
   onEndReachedReviewList,
   loadingMoreReview,
-  moveToAnotherProfile,
-  moveToDentalDetail,
+  navigation,
 }: Props) => {
   const currentUser = useSelector((state: any) => state.currentUser);
   const jwtToken = currentUser.jwtToken;
@@ -100,6 +81,66 @@ const ReviewList = ({
 
   var offset = 0;
   var limit = 10;
+
+
+  const moveToDentalDetail = (dentalId: number) => {
+    navigation.navigate('DentalClinicStack', {
+      screen: 'DentalDetailScreen',
+      params: {
+        dentalId: dentalId,
+      },
+    });
+  };
+
+  const moveToAnotherProfile = useCallback((userId: string, nickname: string, profileImageUri: string) => {
+    navigation.navigate("AnotherProfileStackScreen", {
+        targetUser: {
+            userId,
+            nickname,
+            profileImageUri,
+        }
+    })
+}, [])
+
+  const moveToReviewDetail = (
+    reviewId: number,
+    writer: object,
+    createdAt: string,
+    treatmentArray: Array<object>,
+    ratingObj: object,
+    treatmentDate: string,
+    imageArray: Array<object>,
+    isCurUserLike: boolean,
+    likeCount: number,
+    commentCount: number,
+    isCurUserScrap: boolean,
+    dentalObj: object,
+    visibleElapsedTime: boolean,
+    elapsedTime: string,
+  ) => {
+    console.log('moveToReviewDetail reviewId', reviewId);
+
+    navigation.navigate('ReviewStackScreen', {
+      screen: 'ReviewDetailScreen',
+      params: {
+        reviewId: reviewId,
+        writer: writer,
+        createdAt: createdAt,
+        treatmentArray: treatmentArray,
+        ratingObj: ratingObj,
+        treatmentDate: treatmentDate,
+        imageArray: imageArray,
+        isCurUserLike: isCurUserLike,
+        isCurUserScrap: isCurUserScrap,
+        likeCount: likeCount,
+        commentCount: commentCount,
+        dentalObj: dentalObj,
+        visibleElapsedTime: visibleElapsedTime,
+        elapsedTime: elapsedTime,
+      },
+    });
+  };
+
 
   const renderEndRechedIndicator = ({item, index}: any) => {
     console.log(
@@ -200,7 +241,6 @@ const ReviewList = ({
     <Container>
       <ReviewListContainer>
         <FlatList
-
           keyExtractor={(item, index) => `${index}`}
           refreshing={refreshingReviewList}
           onRefresh={onRefreshReviewList}

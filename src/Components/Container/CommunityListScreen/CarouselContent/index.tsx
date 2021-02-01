@@ -16,7 +16,7 @@ background: #FFFFFF;
 `;
 
 const TitleText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 16px;

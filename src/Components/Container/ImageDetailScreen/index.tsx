@@ -39,7 +39,7 @@ margin-right: 16px;
 `;
 
 const HeaderIndicatorText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 18px;

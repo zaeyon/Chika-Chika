@@ -78,7 +78,7 @@ const AvgRatingText = Styled.Text`
 font-weight: 800;
 font-size: 18px;
 color: #000000;
-font-family: NanumSquare;
+ 
 `
 
 const RatingListContainer = Styled.View`
@@ -97,7 +97,7 @@ font-weight: 800;
 font-size: 14px;
 line-height: 24px;
 color: #000000;
-font-family: NanumSquare;
+ 
 `;
 
 
@@ -107,7 +107,7 @@ font-weight: 400;
 font-size: 14px;
 line-height: 24px;
 color: #000000;
-font-family: NanumSquare;
+ 
 `;
 
 const RatingItemDivider = Styled.View`

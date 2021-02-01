@@ -135,7 +135,7 @@ border-color: #E2E6ED;
 `;
 
 const MoreViewItemLabelText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-size: 16px;
 font-weight: 700;
 color: #000000;
@@ -243,9 +243,9 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const [isCertifiedReceipt, setIsCertifiedReceipt] = useState<boolean>(false);
   const [changeCommentArray, setChangeCommentArray] = useState<boolean>(false);
 
-  const [imageArray, setImageArray] = useState<Array<any>>(
-    route.params?.imageArray,
-  );
+  const [writerObj, setWriterObj] = useState<WriterObj>(route.params?.writer);
+
+  const [imageArray, setImageArray] = useState<Array<any>>(route.params?.imageArray);
 
   const scrollViewRef = useRef<any>();
   const reviewScrollViewRef = useRef<any>(null);
@@ -265,17 +265,16 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const userProfile = currentUser.profile;
 
   const reviewId = route.params?.reviewId;
-  const writerObj = route.params?.writer;
 
   const createdDate = route.params?.createdAt;
   const isVisibleElapsedTime = route.params?.visibleElapsedTime;
   //const imageArray = route.params?.imageArray;
-  const isOwnReview = route.params?.writer.userId === userProfile?.id;
+  const isOwnReview = route.params?.writer?.userId === userProfile?.id;
 
   console.log('route.params?.reviewId', route.params?.reviewId);
   console.log('route.params?.imageArray', route.params?.imageArray);
   console.log('route.params?.writer', route.params?.writer);
-  console.log('route.params?.writer.userId', route.params?.writer.userId);
+  console.log('route.params?.writer.userId', route.params?.writer?.userId);
   console.log('userProfile.id', userProfile?.id);
   console.log('route.params?.ratingObj', route.params?.ratingObj);
   console.log('route.params?.dentalObj', route.params?.dentalObj);
@@ -442,6 +441,13 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       .then((response: any) => {
         console.log('GETReviewDetail response', response);
 
+      const tmpWriterObj = {
+        nickname: response.reviewBody.user.nickname,
+        profileImage: response.reviewBody.user.profileImg,
+        userId: response.reviewBody.user.userId,
+      }
+
+      setWriterObj(tmpWriterObj);
 
       let elapsedTimeText = '';
       let visibleElapsedTime = false;
@@ -967,20 +973,21 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           }>
           <TouchableWithoutFeedback onPress={() => pressBackground()}>
             <ScrollViewContainer>
-              <WriterInfoContainer>
-                <WriterInfo
-                  moveToAnotherProfile={moveToAnotherProfile}
-                  writerObj={writerObj}
-                  elapsedTime={elapsedTime}
-                  isVisibleElapsedTime={isVisibleElapsedTime}
-                  createdDate={createdDate}
-                />
-              </WriterInfoContainer>
-              <TreatmentListContainer>
-                <TreatmentList treatmentArray={treatmentArrayDisplay} />
-              </TreatmentListContainer>
+              
               {!loadingReviewDetail && (
                 <BodyContainer style={{paddingBottom: paddingBottom}}>
+                  <WriterInfoContainer>
+                    <WriterInfo
+                    moveToAnotherProfile={moveToAnotherProfile}
+                    writerObj={writerObj}
+                    elapsedTime={elapsedTime}
+                    isVisibleElapsedTime={isVisibleElapsedTime}
+                    createdDate={createdDate}
+                    />
+                  </WriterInfoContainer>
+                  <TreatmentListContainer>
+                    <TreatmentList treatmentArray={treatmentArrayDisplay} />
+                  </TreatmentListContainer>
                   <ReviewContentContainer>
                     <ReviewContent
                       moveToFullImages={moveToFullImages}

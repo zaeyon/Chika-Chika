@@ -10,7 +10,7 @@
 
  const OneUnitImageContainer = Styled.View`
  width: ${wp('91.46%')}px;
- height: ${wp('80%')}px;
+ height: ${wp('93.33%')}px;
  border-radius: 8px;
  background-color: #f6f6f6;
  `;
@@ -33,14 +33,14 @@
 
  const FirstImageInOneUnit = Styled.Image`
  width: ${wp('91.46%')}px;
- height: ${wp('80%')}px;
+ height: ${wp('93.33%')}px;
  border-radius: 8px;
  background-color: #f6f6f6;
  `;
 
  const TwoUnitImageContainer = Styled.View`
  width: ${wp('91.46%')}px;
- height: ${wp('53.529%')}px;
+ height: ${wp('45%')}px;
  border-radius: 8px;
  flex-direction: row;
  align-items: center;
@@ -48,26 +48,26 @@
  
  const FirstImageInTwoUnit = Styled.Image`
  width: ${wp('45%')}px;
- height: ${wp('53.25%')}px;
+ height: ${wp('45%')}px;
  border-top-left-radius: 8px;
  border-bottom-left-radius: 8px;
  `;
 
  const SecondImageInTwoUnit = Styled.Image`
  width: ${wp('45%')}px;
- height: ${wp('53.25%')}px;
+ height: ${wp('45%')}px;
  border-top-right-radius: 8px;
  border-bottom-right-radius: 8px;
  `;
  
  const ManyUnitImageContainer = Styled.View`
- width: ${wp('91.46%')}px;
+ width: ${wp('92.26%')}px;
  height: ${wp('80%')}px;
  border-radius: 8px;
  `;
 
  const MainImageInThreeUnit = Styled.Image`
- width: ${wp('91.46%')}px;
+ width: ${wp('92.26%')}px;
  height: ${wp('47.73%')}px;
  border-top-left-radius: 8px;
  border-top-right-radius: 8px;
@@ -91,9 +91,9 @@
  position: absolute;
  top: 0;
  left: 0;
- width: ${wp('8.5%')}px;
- height: ${wp('8.5%')}px;
- background-color: #00000040;
+ width: ${wp('6.5%')}px;
+ height: ${wp('6.5%')}px;
+ background-color: #00000070;
  align-items: center;
  justify-content: center;
  border-top-left-radius: 8px;
@@ -104,9 +104,9 @@
  position: absolute;
  top: 0;
  left: 0;
- width: ${wp('8.5%')}px;
- height: ${wp('8.5%')}px;
- background-color: #00000040;
+ width: ${wp('6.5%')}px;
+ height: ${wp('6.5%')}px;
+ background-color: #00000070;
  align-items: center;
  justify-content: center;
  border-bottom-right-radius: 8px;
@@ -114,13 +114,14 @@
 
 
  const OrderTypeText = Styled.Text`
- font-size: 14px;
+ font-size: 13px;
  font-weight: 400;
+ line-height: 16px;
  color: #ffffff;
  `;
 
  const MainImageInFourUnit = Styled.Image`
- width: ${wp('91.46%')}px;
+ width: ${wp('92.26%')}px;
  height: ${wp('53.25%')}px;
  border-top-left-radius: 8px;
  border-top-right-radius: 8px;

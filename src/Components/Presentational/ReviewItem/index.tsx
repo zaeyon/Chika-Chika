@@ -19,7 +19,7 @@ import POSTReviewScrap from '~/Routes/Review/POSTReviewScrap';
 import DELETEReviewScrap from '~/Routes/Review/DELETEReviewScrap';
 
 const Container = Styled.View`
- padding-top: 24px;
+ padding-top: 8px;
  padding-left: 16px;
  padding-right: 16px;
  padding-bottom: 10px;
@@ -28,12 +28,16 @@ const Container = Styled.View`
  flex-direction: column;
  border-bottom-width: 1px;
  border-color: #E5E5E5;
+ align-items: center;
 `;
 
 const ProfileContainer = Styled.View`
+width: ${wp('91.46%')}px;
  flex-direction: row;
  align-items: center;
  justify-content: space-between;
+ background-color: #ffffff;
+ padding: 8px 0px;
 `;
 
 const ProfileLeftContainer = Styled.View`
@@ -43,19 +47,22 @@ const ProfileLeftContainer = Styled.View`
 `;
 
 const ScrapContainer = Styled.View`
+flex-direction: row;
 padding: 10px;
 align-items: center;
 justify-content: center;
 `;
 
 const ProfileImage = Styled.Image`
- width: ${wp('10.66')}px;
- height: ${wp('10.66%')}px;
+ width: ${wp('7.46')}px;
+ height: ${wp('7.46%')}px;
  border-radius: 40px;
  background-color: #ececec;
 `;
 
 const NicknameCreatedAtContainer = Styled.View`
+flex-direction: row;
+align-items: center;
  margin-left: 8px;
 `;
 
@@ -66,42 +73,55 @@ const NicknameText = Styled.Text`
 `;
 
 const CreatedAtText = Styled.Text`
- margin-top: 2px;
- font-size: 13px;
- color: #a2a2a2;
+margin-left: 4px;
+font-size: 13px;
+line-height: 16px;
+color: #9AA2A9;
 `;
 
 const ImagesPreviewContainer = Styled.View`
-margin-top: 15px;
+width: ${wp('91.46%')}px;
+padding-top: 9px;
+padding-bottom: 9px;
 `;
 
 const InfoContainer = Styled.View`
+width: ${wp('91.46%')}px;
 `;
 
 const TagListContainer = Styled.View`
-margin-top: 8px;
+padding-top: 8px;
+padding-bottom: 8px;
 flex-direction: row;
 `;
 
 const TagText = Styled.Text`
-font-size: 14px;
-color: #000000;
+font-weight: 500;
+font-size: 13px;
+color: #4E525D;
+`;
+
+const HashText = Styled.Text`
+font-weight: 500;
+font-size: 12px;
+line-height: 16px;
+color: #9AA2A9;
 `;
 
 const TagBackground = Styled.View`
-padding-left: 12px;
-padding-right: 12px;
-padding-top: 4px;
-padding-bottom: 4px;
-background-color: #f1f1f1;
+padding-left: 10px;
+padding-right: 10px;
+padding-top: 6px;
+padding-bottom: 6px;
+background-color: #F5F7F9;
 border-radius: 4px;
-margin-right: 4px;
+margin-right: 8px;
 flex-direction: row;
 align-items: center;
 `;
 
 const DateRatingContainer = Styled.View`
-margin-top: 8px;
+margin-top: 4px;
 `;
 
 const InfoLabelBackground = Styled.View`
@@ -121,24 +141,28 @@ align-items: center;
 `;
 
 const InfoLabelText = Styled.Text`
-font-weight: 700;
-color: #878787;
+line-height: 16px;
+font-weight: 500;
+color: #9AA2A9;
 font-size: 14px;
 `;
 
 const InfoValueText = Styled.Text`
-font-weight: 400;
+font-weight: 500;
 margin-left: 8px;
 font-size: 14px;
-color: #878787;
+line-height: 16px;
+color: #9AA2A9;
 `;
 
 const DescripContainer = Styled.View`
-margin-top: 12px;
+padding-top: 6px;
 `;
 
 const DescripText = Styled.Text`
+font-weight: 500;
  font-size: 14px;
+ line-height: 24px;
  color: #000000;
 `;
 
@@ -165,13 +189,14 @@ margin-left: 4px;
 `;
 
 const ActionContainer = Styled.View`
+width: ${wp('91.46%')}px;
 margin-top: 16px;
 flex-direction: row;
 justify-content: space-between;
 align-items: center;
 `;
 
-const LikeScrapContainer = Styled.View`
+const LikeCommentContainer = Styled.View`
  flex-direction: row;
  align-items: center;
 `;
@@ -184,26 +209,38 @@ const LikeIcon = Styled.Image`
 const IndicatorCountText = Styled.Text`
  position: absolute;
  left: ${wp('7%')}px;
- color: #56575C;
- font-size: 16px;
+ color: #131F3C;
+ font-size: 13px;
+ line-height: 16px;
 `;
 
 const LikeContainer = Styled.View`
+padding-bottom: 5px;
+padding-top: 5px;
 align-items: center;
 justify-content: center;
 flex-direction: row;
 `;
 
 const CommentContainer = Styled.View`
-margin-left: 20px;
+margin-left: 23px;
 align-items: center;
 justify-content: center;
 flex-direction: row;
 `;
 
 const ScrapIcon = Styled.Image`
- width: ${wp('6.4%')}px;
- height: ${wp('6.4%')}px;
+ width: ${wp('6%')}px;
+ height: ${wp('6%')}px;
+ tint-color: #131F3C;
+`;
+
+const ScrapText = Styled.Text`
+margin-left: 4px;
+font-weight: 500;
+font-size: 14px;
+line-height: 16px;
+color: #131F3C;
 `;
 
 const CommentIcon = Styled.Image`
@@ -429,7 +466,7 @@ const ReviewItem = ({
   const renderTreatmentItem = ({item, index}: any) => {
     return (
       <TagBackground>
-        <TagText>{item.name}</TagText>
+        <TagText><HashText>{"# "}</HashText>{item.name}</TagText>
       </TagBackground>
     );
   };
@@ -474,18 +511,6 @@ const ReviewItem = ({
               </NicknameCreatedAtContainer>
             </ProfileLeftContainer>
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => clickScrap()}>
-            <ScrapContainer>
-              <ScrapIcon
-                style={
-                  isCurUserScrapProp
-                    ? {tintColor: '#FFE600'}
-                    : {tintColor: '#C3C3C3'}
-                }
-                source={require('~/Assets/Images/Review/ic_scrap_inline.png')}
-              />
-            </ScrapContainer>
-          </TouchableWithoutFeedback>
         </ProfileContainer>
         <InfoContainer>
           <ImagesPreviewContainer>
@@ -516,31 +541,34 @@ const ReviewItem = ({
           </DescripContainer>
         </InfoContainer>
         <ActionContainer>
-          <LikeScrapContainer>
+          <LikeCommentContainer>
             <TouchableWithoutFeedback onPress={() => clickLike()}>
               <LikeContainer>
                 <LikeIcon
-                  style={
+                  style={!isCurUserLikeProp && {tintColor: "#131F3C"}}
+                  source={
                     isCurUserLikeProp
-                      ? {tintColor: '#FF5656'}
-                      : {tintColor: '#c3c3c3'}
-                  }
-                  source={require('~/Assets/Images/Review/ic_like_inline.png')}
+                    ? require('~/Assets/Images/Indicator/list/ic_like_focus.png')
+                    : require('~/Assets/Images/Indicator/list/ic_like_unfocus.png')}
                 />
                 <IndicatorCountText>{likeCountProp}</IndicatorCountText>
               </LikeContainer>
             </TouchableWithoutFeedback>
             <CommentContainer>
               <CommentIcon
-                source={require('~/Assets/Images/Review/ic_comment_inline.png')}
+                style={{tintColor: "#131F3C"}}
+                source={require('~/Assets/Images/Indicator/list/ic_comment.png')}
               />
               <IndicatorCountText>{commentCount}</IndicatorCountText>
             </CommentContainer>
-          </LikeScrapContainer>
-          <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalObj.id)}>
-            <GetTreatInfoButton>
-              <GetTreatInfoText>{'병원정보'}</GetTreatInfoText>
-            </GetTreatInfoButton>
+          </LikeCommentContainer>
+            <TouchableWithoutFeedback onPress={() => clickScrap()}>
+            <ScrapContainer>
+              <ScrapIcon
+                source={require('~/Assets/Images/Indicator/list/ic_scrap_unfocus.png')}
+              />
+              <ScrapText>{"저장하기"}</ScrapText>
+            </ScrapContainer>
           </TouchableWithoutFeedback>
         </ActionContainer>
       </Container>

@@ -46,7 +46,7 @@ align-items: center;
 background: #FFFFFF;
 `;
 const SectionContentTitleText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
@@ -54,7 +54,7 @@ line-height: 24px;
 color: #131F3C;`;
 
 const SectionContentText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
@@ -75,7 +75,7 @@ margin-left: auto;
 `;
 
 const ModalText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 14px;

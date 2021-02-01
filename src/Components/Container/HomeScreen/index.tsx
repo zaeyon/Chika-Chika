@@ -14,10 +14,16 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import allActions from '~/actions';
+
 //Local Component
 import HomeMainScreen from '~/Components/Presentational/HomeScreen';
 import RootSiblings from 'react-native-root-siblings';
 import ToastMessage from '~/Components/Presentational/ToastMessage';
+import {useSelector, useDispatch} from 'react-redux';
+
+import GETSearchRecord from '~/Routes/Search/GETSearchRecord';
+
 
 const ContainerView = Styled.View`
 flex: 1;
@@ -60,7 +66,25 @@ var id = 0;
 var elements = [];
 
 const HomeScreen = ({navigation, route}: Props) => {
+  const jwtToken = useSelector((state: any) => state.currentUser).jwtToken;
+  const dispatch = useDispatch();
+
   let sibling: any
+
+  
+  useEffect(() => {
+    const category = "keyword";
+
+    GETSearchRecord({jwtToken, category})
+    .then((response: any) => {
+      console.log("GETSearchRecord response", response);
+      dispatch(allActions.userActions.setSearchRecord(response));
+    })
+    .catch((error) => {
+      console.log("GETSearchRecord error", error);
+    })
+
+  }, []);
 
   const addSibling = () => {
     ToastMessage.show("Toast Message Text in Home Screen");

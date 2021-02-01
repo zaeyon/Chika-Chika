@@ -77,7 +77,7 @@ background: #FFFFFF;
 `;
 const SectionContentTitleText = Styled.Text`
 width: 94px;
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
@@ -85,7 +85,7 @@ line-height: 24px;
 color: #131F3C;`;
 
 const SectionContentText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
@@ -105,7 +105,7 @@ margin-left: auto;
 `;
 
 const VerifiedBadgeText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 10px;

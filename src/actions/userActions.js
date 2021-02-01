@@ -81,6 +81,13 @@ const deleteHometown = (hometownId) => {
   }
 }
 
+const setSearchRecord = (searchRecordArray) => {
+  return {
+    type: "SET_SEARCH_RECORD",
+    payload: searchRecordArray,
+  }
+}
+
 export default {
   setUser,
   logOut,
@@ -94,4 +101,5 @@ export default {
   addHometown,
   deleteHometown,
   changeMainHometown,
+  setSearchRecord,
 };

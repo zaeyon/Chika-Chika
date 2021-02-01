@@ -82,13 +82,13 @@ import ImageSelectScreen from '~/Components/Container/ImageSelectScreen';
 import ImageSelectOneScreen from '~/Components/Container/ImageSelectOneScreen';
 import FullImageScreen from '~/Components/Container/ImageSelectOneScreen/FullImageScreen';
 import ImageDetailScreen from '~/Components/Container/ImageDetailScreen';
+
 // Dental Clinic Stack Screen
 import NearDentalMap from '~/Components/Container/NearDentalMap';
 import DentalTotalSearchScreen from '~/Components/Container/DentalTotalSearchScreen';
 import DentalDetailScreen from '~/Components/Container/DentalDetailScreen';
 import DentalInfoEditRequestScreen from '~/Components/Container/DentalDetailScreen/DentalInfoEditRequestScreen';
 import DentalLocationMapScreen from '~/Components/Container/DentalDetailScreen/DentalLocationMapScreen';
-import NotificationListScreen from '~/Components/Container/NotificationListScreen';
 
 // Teeth Care Stack Screen
 import GuideScreen from '~/Components/Container/TeethCareScreen/GuideScreen';
@@ -106,7 +106,10 @@ import HometownSettingScreen from '~/Components/Container/HometownSettingScreen'
 import HometownSearchScreen from '~/Components/Container/HometownSearchScreen';
 
 // Keyword Search Screen
-import KeywordSearchScreen from '~/Components/Container/KeywordSearchScreen';
+import TotalKeywordSearchScreen from '~/Components/Container/TotalKeywordSearchScreen';
+
+// Notification Stack Screen
+import NotificationListScreen from '~/Components/Container/NotificationListScreen';
 
 const Tab = createBottomTabNavigator();
 const AuthStack = createStackNavigator();
@@ -121,7 +124,9 @@ const CommunityStack = createStackNavigator();
 const CommunityPostUploadStack = createStackNavigator();
 const DentalClinicStack = createStackNavigator();
 const TeethCareStack = createStackNavigator();
-const KeywordSearchStack = createStackNavigator();
+const TotalKeywordSearchStack = createStackNavigator();
+const NotificationStack = createStackNavigator();
+
 const EditProfileStack = createSharedElementStackNavigator();
 const ImageSelectOneStack = createSharedElementStackNavigator();
 
@@ -257,6 +262,7 @@ function AnotherProfileStackScreen({route}) {
   );
 }
 
+
 function HomeStackScreen() {
   return (
     <HomeStack.Navigator
@@ -279,6 +285,30 @@ function HomeStackScreen() {
         options={{
           gestureEnabled: false,
         }}
+      />
+      <HomeStack.Screen
+        name="TotalKeywordSearchStackScreen"
+        component={TotalKeywordSearchStackScreen}
+        options={() => ({
+          gestureEnabled: false,
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {duration: 0},
+            },
+            close: {
+              animation: 'timing',
+              config: {duration: 0},
+            },
+          },
+          cardStyleInterpolator: ({current: {progress}}) => {
+            return {
+              cardStyle: {
+                opacity: progress,
+              },
+            };
+          },
+        })}
       />
     </HomeStack.Navigator>
   );
@@ -703,18 +733,18 @@ function CommunityStackScreen() {
         // }}
       />
       <CommunityStack.Screen
-        name="KeywordSearchStackScreen"
-        component={KeywordSearchStackScreen}
+        name="TotalKeywordSearchStackScreen"
+        component={TotalKeywordSearchStackScreen}
         options={() => ({
           gestureEnabled: false,
           transitionSpec: {
             open: {
               animation: 'timing',
-              config: {duration: 150},
+              config: {duration: 0},
             },
             close: {
               animation: 'timing',
-              config: {duration: 150},
+              config: {duration: 0},
             },
           },
           cardStyleInterpolator: ({current: {progress}}) => {
@@ -727,8 +757,8 @@ function CommunityStackScreen() {
         })}
       />
       <CommunityStack.Screen
-        name="NotificationListScreen"
-        component={NotificationListScreen}
+        name="NotificationStackScreen"
+        component={NotificationStackScreen}
       />
       <CommunityStack.Screen
         name="HometownSearchScreen"
@@ -742,15 +772,29 @@ function CommunityStackScreen() {
   );
 }
 
-function KeywordSearchStackScreen() {
+function TotalKeywordSearchStackScreen() {
   return (
-    <KeywordSearchStack.Navigator headerMode="none">
-      <KeywordSearchStack.Screen
-        name="KeywordSearchScreen"
-        component={KeywordSearchScreen}
+    <TotalKeywordSearchStack.Navigator headerMode="none">
+      <TotalKeywordSearchStack.Screen
+        name="TotalKeywordSearchScreen"
+        component={TotalKeywordSearchScreen}
       />
-    </KeywordSearchStack.Navigator>
+    </TotalKeywordSearchStack.Navigator>
   );
+}
+
+function NotificationStackScreen() {
+  return (
+    <NotificationStack.Navigator headerMode="none">
+      <NotificationStack.Screen
+      name="NotificationListScreen"
+      component={NotificationListScreen}/>
+      <NotificationStack.Screen
+      name="ReviewStackScreen"
+      component={ReviewStackScreen}/>
+    </NotificationStack.Navigator>
+
+  )
 }
 
 function BottomTab() {

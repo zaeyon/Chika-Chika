@@ -26,7 +26,7 @@ background: #FFFFFF;
 `;
 const SectionContentTitleText = Styled.Text`
 width: 94px;
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
@@ -35,7 +35,7 @@ color: #131F3C;
 `;
 
 const SectionContentTextInput = Styled.TextInput`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-size: 16px;
 font-weight: bold;
@@ -44,7 +44,7 @@ flex: 1;
 `;
 
 const SectionContentText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 16px;

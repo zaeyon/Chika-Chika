@@ -4,6 +4,7 @@ const currentUser = (
       latitude: 37.566515657875435,
       longitude: 126.9781164904998,
     },
+    searchRecordArray: []
   },
   action,
 ) => {
@@ -78,6 +79,13 @@ const currentUser = (
           ...state,
           hometown: tmpHometownArray
         };
+      }
+    case 'SET_SEARCH_RECORD':
+      {
+        return {
+          ...state,
+          searchRecordArray: action.payload,
+        }
       }
     default:
       return state;

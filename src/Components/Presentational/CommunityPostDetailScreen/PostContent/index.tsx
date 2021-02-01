@@ -63,7 +63,7 @@ background-color: #C4C4C4;
 color: '#rgb(0, 0, 0)'
 `;
 const HashTagIconText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: normal;
 font-size: 14px;
@@ -85,7 +85,7 @@ height: auto;
 padding-left: 8px;
 `;
 const ProfileNameText = Styled.Text`
-font-family: NanumSquareR;
+ 
 font-style: normal;
 font-weight: normal;
 font-size: 14px;
@@ -94,7 +94,7 @@ margin-bottom: 2px;
 `;
 
 const ProfileDescriptionText = Styled.Text`
-font-family: NanumSquareR;
+ 
 font-style: normal;
 font-weight: normal;
 font-size: 12px;
@@ -110,7 +110,7 @@ margin: 8px 0px;
 `;
 
 const ContentText = Styled.Text`
-font-family: NanumSquareR;
+ 
 font-style: normal;
 font-weight: normal;
 font-size: 14px;

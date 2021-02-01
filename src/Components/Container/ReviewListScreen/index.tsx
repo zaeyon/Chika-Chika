@@ -435,70 +435,6 @@ const ReviewListScreen = ({navigation}: Props) => {
     }
   };
 
-  const moveToWriterProfile = () => {
-    navigation.navigate('AnotherProfileStackScreen', {
-      screen: 'AnotherProfileScreen',
-    });
-  };
-
-  const moveToDentalDetail = (dentalId: number) => {
-    navigation.navigate('DentalClinicStack', {
-      screen: 'DentalDetailScreen',
-      params: {
-        dentalId: dentalId,
-      },
-    });
-  };
-
-  const moveToAnotherProfile = useCallback((userId: string, nickname: string, profileImageUri: string) => {
-    navigation.navigate("AnotherProfileStackScreen", {
-        targetUser: {
-            userId,
-            nickname,
-            profileImageUri,
-        }
-    })
-}, [])
-
-  const moveToReviewDetail = (
-    reviewId: number,
-    writer: object,
-    createdAt: string,
-    treatmentArray: Array<object>,
-    ratingObj: object,
-    treatmentDate: string,
-    imageArray: Array<object>,
-    isCurUserLike: boolean,
-    likeCount: number,
-    commentCount: number,
-    isCurUserScrap: boolean,
-    dentalObj: object,
-    visibleElapsedTime: boolean,
-    elapsedTime: string,
-  ) => {
-    console.log('moveToReviewDetail reviewId', reviewId);
-
-    navigation.navigate('ReviewStackScreen', {
-      screen: 'ReviewDetailScreen',
-      params: {
-        reviewId: reviewId,
-        writer: writer,
-        createdAt: createdAt,
-        treatmentArray: treatmentArray,
-        ratingObj: ratingObj,
-        treatmentDate: treatmentDate,
-        imageArray: imageArray,
-        isCurUserLike: isCurUserLike,
-        isCurUserScrap: isCurUserScrap,
-        likeCount: likeCount,
-        commentCount: commentCount,
-        dentalObj: dentalObj,
-        visibleElapsedTime: visibleElapsedTime,
-        elapsedTime: elapsedTime,
-      },
-    });
-  };
-
   return (
     <Container as={SafeAreaView} forceInset={{top: 'always'}}>
       <HeaderBar>
@@ -517,14 +453,12 @@ const ReviewListScreen = ({navigation}: Props) => {
       {!loadingReviewList && (
         <ReviewListContainer>
           <ReviewList
+            navigation={navigation}
             loadingMoreReview={loadingMoreReview}
             refreshingReviewList={refreshingReviewList}
             onRefreshReviewList={onRefreshReviewList}
             reviewList={reviewList.mainReviewList}
-            moveToReviewDetail={moveToReviewDetail}
-            moveToAnotherProfile={moveToAnotherProfile}
             onEndReachedReviewList={onEndReachedReviewList}
-            moveToDentalDetail={moveToDentalDetail}
           />
         </ReviewListContainer>
       )}

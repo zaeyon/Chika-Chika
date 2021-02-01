@@ -40,7 +40,7 @@ font-weight: bold;
 font-size: 16px;
 line-height: 18px;
 margin-right: 4px;
-font-family: NanumSquareR;
+ 
 `;
 
 const HeaderTitleButtonImage = Styled.Image`
@@ -68,7 +68,7 @@ align-items: center;
 `;
 
 const MainContentTitleKeyText = Styled.Text`
-font-family: NanumSquareR;
+ 
 font-style: normal;
 font-weight: normal;
 font-size: 20px;
@@ -77,7 +77,7 @@ margin-right: 8px;
 `;
 
 const MainContentTitleValueText = Styled.Text`
-font-family: NanumSquareR;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 20px;
@@ -94,7 +94,7 @@ margin-top: 24px;
 const SerachBarTextInput = Styled.TextInput`
 width: 100%;
 height: 100%;
-font-family: NanumSquareR;
+ 
 padding: 0px 16px;
 font-style: normal;
 font-weight: normal;
@@ -149,7 +149,7 @@ align-items: center;
 justify-content: center;
 `;
 const HorizontalListTitleText = Styled.Text`
-font-family: NanumSquareR;
+ 
 font-style: normal;
 font-weight: normal;
 font-size: 14px;
@@ -167,7 +167,7 @@ margin-top: 24px;
 padding: 22px;
 `;
 const PopupTitleText = Styled.Text`
-font-family: NanumSquareR;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
@@ -175,7 +175,7 @@ line-height: 24px;
 `;
 
 const PopupText = Styled.Text`
-font-family: NanumSquareR;
+ 
 font-style: normal;
 font-weight: normal;
 font-size: 14px;
@@ -198,7 +198,7 @@ padding: 0px 24px;
 flex-direction: row;
 `;
 const ReviewContentTitleText = Styled.Text`
-font-family: NanumSquareR;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
@@ -207,7 +207,7 @@ margin-right: 4px;
 `;
 
 const ReviewContentText = Styled.Text`
-font-family: NanumSquareR;
+ 
 font-style: normal;
 font-weight: normal;
 font-size: 16px;
@@ -221,7 +221,7 @@ margin-left: auto;
 `;
 
 const ReviewContentDetailButtonText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: normal;
 font-size: 16px;
@@ -301,6 +301,14 @@ const HomeMainScreen = ({navigation, route}: Props) => {
     });
   };
 
+  const moveToTotalKeywordSearch = () => {
+    console.log("moveToTotalKeywordSearch")
+    navigation.navigate('TotalKeywordSearchStackScreen', {
+      screen: 'TotalKeywordSearchScreen',
+    });
+  };
+
+
   const renderFlatListImagesCallback = useCallback(
     ({item, index}) => (
       <TouchableWithoutFeedback
@@ -345,6 +353,8 @@ const HomeMainScreen = ({navigation, route}: Props) => {
           </MainContentTitleView>
           <SearchBarView>
             <SerachBarTextInput
+              onFocus={() => moveToTotalKeywordSearch()}
+              editable={true}
               placeholder="검색어를 입력하세요"
               placeholderTextColor="#BABABA"
             />

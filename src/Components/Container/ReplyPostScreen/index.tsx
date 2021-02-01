@@ -54,7 +54,6 @@ interface Props {
 }
 
 const ReplyPostScreen = ({navigation, route}: Props) => {
-<<<<<<< HEAD
     const [loadingReplyPost, setLoadingReplyPost] = useState<boolean>(false);
     console.log("ReplyPostScreen route.params?.commentObj", route.params?.commentObj)
     console.log("ReplyPostScreen targetUserNickname", route.params.targetUserNickname);
@@ -108,110 +107,6 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
 
     const goBack = () => {
         navigation.goBack()
-=======
-  const [loadingReplyPost, setLoadingReplyPost] = useState<boolean>(false);
-  console.log(
-    'ReplyPostScreen route.params?.commentObj',
-    route.params?.commentObj,
-  );
-  console.log(
-    'ReplyPostScreen targetUserNickname',
-    route.params.targetUserNickname,
-  );
-  if (route.params?.replyObj) {
-    console.log(
-      'ReplyPostScreen route.params?.replyObj',
-      route.params.replyObj,
-    );
-  }
-  const jwtToken = useSelector((state: any) => state.currentUser).jwtToken;
-  const dispatch = useDispatch();
-  const commentItem = route.params?.commentObj;
-  const reviewId = route.params?.reviewId;
-  const commentInputRef = useRef();
-
-  useEffect(() => {
-    // if(route.params?.request === "ReviewDetailScreen") {
-    //     navigation.dispatch((state: any) => {
-    //         console.log("state.routes[state.routes.length - 2]", state.routes[state.routes.length - 2]);
-    //             const reviewCommentListRoutes = {
-    //                 name: "ReviewCommentListScreen",
-    //                 params: {reviewId: reviewId},
-    //             }
-    //             let routes = state.routes.slice(0, state.routes.length);
-    //             routes.splice(routes.length - 1, 0, reviewCommentListRoutes)
-    //             console.log("변경된 routes", routes);
-    //             return CommonActions.reset({
-    //                 ...state,
-    //                 routes,
-    //                 index: routes.length - 1,
-    //             })
-    //     });
-    // }
-  }, []);
-
-  const moveToAnotherProfile = useCallback(
-    (userId: string, nickname: string, profileImageUri: string) => {
-      navigation.navigate('AnotherProfileStackScreen', {
-        targetUser: {
-          userId,
-          nickname,
-          profileImageUri,
-        },
-      });
-    },
-    [],
-  );
-
-  const goBack = () => {
-    navigation.goBack();
-  };
-
-  const renderReplyItem = ({item, index}: any) => {
-    return (
-      <ReplyItemContainer>
-        <ReplyItem
-          replyObj={item}
-          isVisibleReplyButton={false}
-          userId={item.user.id}
-          commentId={item.id}
-          profileImage={item.user.profileImg}
-          nickname={item.user.nickname}
-          description={item.description}
-          createdDate={item.createdAt}
-          replys={item.Replys}
-          clickReply={() => 0}
-          moveToAnotherProfile={moveToAnotherProfile}
-        />
-      </ReplyItemContainer>
-    );
-  };
-
-  const postCommentReply = (description: string) => {
-    if (route.params?.request === 'ReviewDetailScreen') {
-      navigation.dispatch((state: any) => {
-        console.log(
-          'state.routes[state.routes.length - 2]',
-          state.routes[state.routes.length - 2],
-        );
-
-        const reviewCommentListRoutes = {
-          name: 'ReviewCommentListScreen',
-          params: {reviewId: reviewId},
-        };
-
-        let routes = state.routes.slice(0, state.routes.length);
-        routes.splice(routes.length - 1, 0, reviewCommentListRoutes);
-
-        console.log('변경된 routes', routes);
-
-        return CommonActions.reset({
-          ...state,
-          routes,
-          index: routes.length - 1,
-        });
-      });
->>>>>>> a5bb8bd05c0d84f0ffdb4858ae517070652e29e5
     }
 
     Keyboard.dismiss();
@@ -277,7 +172,6 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
             createdDate={commentItem.createdAt}
             replys={commentItem.Replys}
             clickReply={() => 0}
-<<<<<<< HEAD
             moveToAnotherProfile={moveToAnotherProfile}
             />
             </ReplyItemContainer>
@@ -389,31 +283,3 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
 }
 
 export default ReplyPostScreen;
-=======
-          />
-          {commentItem.Replys[0] && (
-            <FlatList data={commentItem.Replys} renderItem={renderReplyItem} />
-          )}
-        </CommentItemContainer>
-      </KeyboardAwareScrollView>
-      <KeyboardAvoidingView behavior={'position'}>
-        <BottomBarContainer>
-          <CommentPostBottomBar
-            requestScreen={'ReplyPostScreen'}
-            cancelReplyInput={() => 0}
-            replyTargetNickname={''}
-            commentInputRef={commentInputRef}
-            inputType={''}
-            postReviewComment={postCommentReply}
-          />
-        </BottomBarContainer>
-      </KeyboardAvoidingView>
-      {loadingReplyPost && (
-        <TouchBlockIndicatorCover loading={loadingReplyPost} />
-      )}
-    </Container>
-  );
-};
-
-export default ReplyPostScreen;
->>>>>>> a5bb8bd05c0d84f0ffdb4858ae517070652e29e5

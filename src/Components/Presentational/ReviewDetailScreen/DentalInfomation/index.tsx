@@ -26,7 +26,7 @@ const DentalIntroText = Styled.Text`
 font-weight: 700;
 font-size: 14px;
 color: #9AA2A9;
-font-family: NanumSquare;
+ 
 `;
 
 const DentalImage = Styled.Image`
@@ -44,7 +44,7 @@ const DentalNameText = Styled.Text`
 font-weight: 800;
 font-size: 18px;
 color: #131F3C;
-font-family: NanumSquare;
+ 
 `;
 
 const DentalDescripText = Styled.Text`
@@ -62,7 +62,7 @@ align-items: center;
 `;
 
 const DentalAddressText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-weight: 700;
 font-size: 13px;
 color: #9AA2A9;

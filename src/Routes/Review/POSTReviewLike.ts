@@ -10,6 +10,8 @@ const POSTReviewLike = ({jwtToken, reviewId}: Props) => {
 
     const uri = serverConfig.baseUri + `/like/review?reviewId=${reviewId}`
 
+    console.log("POSTReviewLike reviewId", reviewId);
+
     const formData = new FormData();
 
     return new Promise((resolve, reject) => {
@@ -24,7 +26,7 @@ const POSTReviewLike = ({jwtToken, reviewId}: Props) => {
             resolve(response)
         })
         .catch((error) => {
-            reject(error)
+            reject(error.response)
         })
     })
 }

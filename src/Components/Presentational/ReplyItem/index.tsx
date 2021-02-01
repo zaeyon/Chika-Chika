@@ -68,7 +68,7 @@ const NicknameText = Styled.Text`
 line-height: 16px;
  font-size: 14px;
  font-weight: 800;
- font-family: NanumSquare;
+  
  color: #131F3C
 `;
 
@@ -76,13 +76,13 @@ const CommentDescripText = Styled.Text`
 font-weight: 400;
 font-size: 14px;
 line-height: 16px;
-font-family: NanumSquare;
+ 
 color: #131F3C;
 `;
 
 const CreateAtText = Styled.Text`
 font-weight: 400;
-font-family: NanumSquare;
+ 
 font-size: 12px;
 line-height: 16px;
  color: #9AA2A9;
@@ -90,7 +90,7 @@ line-height: 16px;
 
 const ReplyText = Styled.Text`
 font-weight: 800;
-font-family: NanumSquare;
+ 
 line-height: 16px;
 font-size: 12px;
  color: #9AA2A9;
@@ -135,7 +135,7 @@ background-color: #9AA2A9;
 `;
 
 const TargetUserText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-size: 14px;
 line-height: 24px;
 color: #00D1FF;

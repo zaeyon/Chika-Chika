@@ -29,7 +29,7 @@ font-weight: 800;
 font-size: 12px;
 line-height: 16px;
 color: #000000;
-font-family: NanumSquare;
+ 
 `;
 
 const PriceItemContainer = Styled.View`
@@ -58,7 +58,7 @@ font-weight: 700;
 font-size: 10px;
 line-height: 16px;
 color: #00D1FF;
-font-family: NanumSquare;
+ 
 `;
 
 const TotalPriceText = Styled.Text`
@@ -67,14 +67,14 @@ font-weight: 700;
 font-size: 12px;
 color: #000000;
 line-height: 16px;
-font-family: NanumSquare;
+ 
 `;
 
 const ViewDetailPriceText = Styled.Text`
 font-weight: 700;
 font-size: 12px;
 color: #9AA2A9;
-font-family: NanumSquare;
+ 
 `;
 
 const ViewDetailPriceContainer = Styled.View`
@@ -117,13 +117,13 @@ height: ${wp('4.8%')}px;
 
 const RatingTypeText = Styled.Text`
 margin-left: 8px;
-font-family: NanumSquare;
+ 
 font-size: 14px;
 color: #9AA2A9;
 `;
 
 const AvgRatingValueText = Styled.Text`
-font-family: NanumSquare;
+ 
 margin-left: 4px;
 font-weight: 800;
 line-height: 16px;
@@ -141,7 +141,7 @@ font-weight: 400;
 font-size: 12px;
 color: #000000;
 line-height: 16px;
-font-family: NanumSquare;
+ 
 `;
 
 const DentalInfoContainer = Styled.View`
@@ -160,7 +160,7 @@ const DentalNameText = Styled.Text`
 font-weight: 800;
 font-size: 12px;
 color: #000000;
-font-family: NanumSquare;
+ 
 line-height: 16px;
 `;
 
@@ -172,7 +172,7 @@ align-items: center;
 `;
 
 const DentalAddressText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-weight: 400;
 font-size: 10px;
 color: #4E525D;

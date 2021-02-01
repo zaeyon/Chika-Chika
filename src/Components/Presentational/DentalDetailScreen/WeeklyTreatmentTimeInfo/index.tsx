@@ -14,7 +14,7 @@ const TodayInfoContainer = Styled.View`
 `;
 
 const TodayTitleText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-weight: 800;
 font-size: 18px;
 color: #131F3C;
@@ -22,7 +22,7 @@ color: #131F3C;
 
 const TodayTreatmentTimeText = Styled.Text`
 margin-top: 10px;
-font-family: NanumSquare;
+ 
 font-weight: 400;
 font-size: 18px;
 color: #000000;
@@ -30,7 +30,7 @@ color: #000000;
 
 const TodayLunchTimeText = Styled.Text`
 margin-top: 6px;
-font-family: NanumSquare;
+ 
 font-weight: 400;
 font-size: 18px;
 color: #9AA2A9;
@@ -58,7 +58,7 @@ flex-direction: column;
 `;
 
 const WeekdayText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-weight: 800;
 font-size: 14px;
 line-height: 24px;
@@ -66,7 +66,7 @@ color: #000000;
 `;
 
 const WeekendText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-weight: 800;
 font-size: 14px;
 line-height: 24px;
@@ -75,7 +75,7 @@ color: #00D1FF;
 
 const TreatmentTimeText = Styled.Text`
 margin-top: 10px;
-font-family: NanumSquare;
+ 
 font-size: 14px;
 font-weight: 400;
 color: #000000;

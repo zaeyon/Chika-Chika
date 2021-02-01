@@ -27,7 +27,7 @@ border-radius: 4px;
 `;
 
 const TreatmentText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-weight: 700;
 font-size: 12px;
 line-height: 20px;
@@ -35,7 +35,7 @@ color: #131F3C;
 `;
 
 const HashText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-weight: 700;
 font-size: 12px;
 line-height: 20px;

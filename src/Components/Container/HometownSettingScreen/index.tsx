@@ -64,7 +64,7 @@ height: ${wp('3.73%')}px;
 
 const HometownSettingGuideText = Styled.Text`
 margin-left: 5px;
-font-family: NanumSquare;
+ 
 font-weight: 700;
 font-size: 13px;
 color: #131F3C;
@@ -84,7 +84,7 @@ border-color: #E2E6ED;
 `;
 
 const HometownEmdNameText = Styled.Text`
-font-family: NanumSquare;
+ 
 line-height: 24px;
 font-size: 16px;
 font-weight: 800;
@@ -156,7 +156,7 @@ background-color: #ffffff;
 `;
 
 const ModalTitleText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
@@ -165,7 +165,7 @@ color: #131F3C;
 `;
 
 const ModalDescriptionText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: normal;
 font-size: 12px;

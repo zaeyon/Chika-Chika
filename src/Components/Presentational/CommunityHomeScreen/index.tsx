@@ -34,7 +34,7 @@ overflow: visible;
 `;
 
 const ContentTitleText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
@@ -86,7 +86,7 @@ margin-top: 8px;
 `;
 
 const HospitalItemLocationText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: normal;
 font-size: 12px;
@@ -96,7 +96,7 @@ margin-bottom: 4px;
 `;
 
 const HospitalItemNameText = Styled.Text`
-font-family: NanumSquare;
+ 
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
