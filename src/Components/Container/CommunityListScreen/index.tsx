@@ -48,7 +48,7 @@ justify-content: center;
 `;
 
 const HeaderTitleText = Styled.Text`
-font-family: NanumSquareR;
+
 font-style: normal;
 font-weight: bold;
 font-size: 20px;
@@ -57,7 +57,7 @@ color: #131F3C;
 `;
 
 const HeaderLocationText = Styled.Text`
-font-family: NanumSquareR;
+
 font-style: normal;
 font-weight: bold;
 font-size: 14px;

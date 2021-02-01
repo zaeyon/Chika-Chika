@@ -56,7 +56,7 @@ border-radius: 4px;
 background-color: #F5F7F9;
 `;
 const HashTagIconText = Styled.Text`
-font-family: NanumSquare;
+
 font-style: normal;
 font-weight: 500;
 font-size: 13px;
@@ -82,7 +82,7 @@ align-items: center;
 padding-left: 8px;
 `;
 const ProfileNameText = Styled.Text`
-font-family: NanumSquareR;
+
 font-style: normal;
 font-weight: bold;
 font-size: 13px;
@@ -99,7 +99,7 @@ margin: 0px 6px;
 `;
 // font-size, line-height ++ 1px
 const ProfileDescriptionText = Styled.Text`
-font-family: NanumSquareR;
+
 font-style: normal;
 font-weight: bold;
 font-size: 13px;
@@ -114,7 +114,7 @@ margin: 6px 2px;
 `;
 
 const ContentText = Styled.Text`
-font-family: NanumSquareR;
+
 font-style: normal;
 font-weight: 500;
 font-size: 14px;
@@ -164,7 +164,7 @@ flex-direction: row;
 align-items: center;
 `;
 const SocialInfoText = Styled.Text`
-font-family: NanumSquare;
+
 font-style: normal;
 font-weight: bold;
 font-size: 13px;

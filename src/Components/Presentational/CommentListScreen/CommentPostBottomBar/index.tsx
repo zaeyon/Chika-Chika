@@ -16,6 +16,9 @@ const Container = Styled.View`
 border-top-width: 0.5px;
 border-color: #E2E6ED;
 background-color: #ffffff;
+`;
+
+const CommentContentView = Styled.View`
 padding: 8px 16px;
 `;
 
@@ -46,7 +49,7 @@ color: #9AA2A9;
 `;
 
 const CommentUploadText = Styled.Text`
-font-family: NanumSquare;
+
 font-weight: 700;
 font-size: 14px;
 line-height: 24px;
@@ -61,13 +64,35 @@ padding-top: 8px;
 padding-bottom: 8px;
 `;
 
-const ActionTypeIndicatorView = Styled.View``;
+const ActionTypeIndicatorView = Styled.View`
+background: #F5F7F9;
+flex-direction: row;
+align-items: center;
+`;
 
-const ActionTypeIndicatorTitleText = Styled.Text``;
+const ActionTypeIndicatorTitleText = Styled.Text`
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+line-height: 16px;
+color: #131F3C;
+`;
 
-const ActionTypeIndicatorText = Styled.Text``;
+const ActionTypeIndicatorText = Styled.Text`
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 16px;
+color: #131F3C;
+margin: 12px 16px;
+`;
 
-const ActionTypeIndicatorImage = Styled.Image``;
+const ActionTypeIndicatorButtonView = Styled.View`
+margin-left: auto;
+padding: 12px 16px 12px 12px;
+`;
+const ActionTypeIndicatorImage = Styled.Image`
+`;
 
 interface Props {
   postComment: any;
@@ -75,6 +100,7 @@ interface Props {
   commentActionType: string;
   commentInputRef: any;
   targetUserNickname: string;
+  onReplyCancel: any;
 }
 
 const CommentPostBottomBar = ({
@@ -83,6 +109,7 @@ const CommentPostBottomBar = ({
   commentActionType,
   commentInputRef,
   targetUserNickname,
+  onReplyCancel,
 }: Props) => {
   const [input, setInput] = useState<string>('');
 
@@ -100,15 +127,25 @@ const CommentPostBottomBar = ({
   }, [commentActionType, input]);
 
   return (
-    <KeyboardAvoidingView behavior={'position'}>
-      <Container>
+    <Container>
+      {commentActionType === 'reply' ? (
         <ActionTypeIndicatorView>
-          <ActionTypeIndicatorTitleText>
-            {targetUserNickname}
-          </ActionTypeIndicatorTitleText>
-          <ActionTypeIndicatorText></ActionTypeIndicatorText>
-          <ActionTypeIndicatorImage />
+          <ActionTypeIndicatorText>
+            <ActionTypeIndicatorTitleText>
+              {`@${targetUserNickname}`}
+            </ActionTypeIndicatorTitleText>
+            {'에게 댓글 다는 중'}
+          </ActionTypeIndicatorText>
+          <TouchableWithoutFeedback onPress={() => onReplyCancel()}>
+            <ActionTypeIndicatorButtonView>
+              <ActionTypeIndicatorImage
+                source={require('~/Assets/Images/Social/cancel.png')}
+              />
+            </ActionTypeIndicatorButtonView>
+          </TouchableWithoutFeedback>
         </ActionTypeIndicatorView>
+      ) : null}
+      <CommentContentView>
         <CommentInputContainer>
           <CommentTextInput
             ref={commentInputRef}
@@ -134,8 +171,8 @@ const CommentPostBottomBar = ({
             </TouchableWithoutFeedback>
           )}
         </CommentInputContainer>
-      </Container>
-    </KeyboardAvoidingView>
+      </CommentContentView>
+    </Container>
   );
 };
 

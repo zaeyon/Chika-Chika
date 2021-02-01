@@ -60,7 +60,7 @@ border-bottom-width: 1px;
 `;
 
 const CategoryTitleText = Styled.Text`
-font-family: NanumSquare;
+
 font-style: normal;
 font-weight: normal;
 font-size: 14px;
@@ -75,7 +75,7 @@ flex-direction: row;
 `;
 
 const CategoryContentFocusedText = Styled.Text`
-font-family: NanumSquare;
+
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
@@ -83,7 +83,7 @@ line-height: 24px;
 color: #FFFFFF;
 `;
 const CategoryContentText = Styled.Text`
-font-family: NanumSquare;
+
 font-style: normal;
 font-weight: normal;
 font-size: 14px;
@@ -118,7 +118,7 @@ border-radius: 8px;
 `;
 
 const PopupAdviceText = Styled.Text`
-font-family: NanumSquare;
+
 font-style: normal;
 font-weight: normal;
 font-size: 14px;

@@ -28,7 +28,7 @@ margin-right: 12px;
 const ContentView = Styled.View`
 `;
 const TitleText = Styled.Text`
-font-family: NanumSquare;
+
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
@@ -37,7 +37,7 @@ line-height: 24px;
 `;
 
 const DescriptionText = Styled.Text`
-font-family: NanumSquare;
+
 font-style: normal;
 font-weight: normal;
 font-size: 13px;

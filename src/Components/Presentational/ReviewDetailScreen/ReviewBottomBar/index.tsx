@@ -18,7 +18,7 @@ import DeviceInfo from 'react-native-device-info';
 const Container = Styled.View`
 width: ${wp('100%')}px;
 flex-direction: row;
-height: ${DeviceInfo.hasNotch() ? hp('8.128%')+34 : hp('11.2')}px;
+height: ${DeviceInfo.hasNotch() ? hp('8.128%') + 34 : hp('11.2')}px;
 border-top-width: 1px;
 border-color: #E2E6ED;
 background-color: #ffffff;
@@ -111,7 +111,7 @@ justify-content: center;
 `;
 
 const SeeDentalInfoText = Styled.Text`
-font-family: NanumSquare;
+
 font-weight: 700;
 font-size: 16px;
 color: #ffffff;
@@ -124,7 +124,7 @@ interface Props {
   clickReviewScrap: () => void;
   isCurUserLike: boolean;
   isCurUserScrap: boolean;
-  moveToDentalDetail: () => void,
+  moveToDentalDetail: () => void;
 }
 
 const ReviewBottomBar = ({
@@ -136,71 +136,70 @@ const ReviewBottomBar = ({
   isCurUserScrap,
   moveToDentalDetail,
 }: Props) => {
-
   const [isCommentInput, setIsCommentInput] = useState<boolean>(false);
   const [commentDescrip, setCommentDescrip] = useState<string>('');
   const likeIconScale = useRef(new Animated.Value(1)).current;
 
   return (
     <Container>
-          <SocialInfoListContainer>
-            <TouchableWithoutFeedback onPress={() => {
-              clickReviewLike();
-              if(!isCurUserLike) {
-                likeIconScale.setValue(0.7);
-                Animated.spring(likeIconScale, {
-                  toValue: 1,
-                  friction: 6,
-                  tension: 400,
-                  useNativeDriver: true,
-                }).start()
+      <SocialInfoListContainer>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            clickReviewLike();
+            if (!isCurUserLike) {
+              likeIconScale.setValue(0.7);
+              Animated.spring(likeIconScale, {
+                toValue: 1,
+                friction: 6,
+                tension: 400,
+                useNativeDriver: true,
+              }).start();
+            }
+          }}>
+          <SocialItemContainer>
+            <Animated.Image
+              style={{
+                width: wp('6.4%'),
+                height: wp('6.4%'),
+                transform: [{scale: likeIconScale}],
+              }}
+              source={
+                isCurUserLike
+                  ? require('~/Assets/Images/Indicator/ic_like_focus.png')
+                  : require('~/Assets/Images/Indicator/ic_like_unfocus.png')
               }
-            }}>
-              <SocialItemContainer>
-                <Animated.Image
-                style={{
-                  width: wp('6.4%'),
-                  height: wp('6.4%'),
-                  transform: [{scale: likeIconScale}],
-                }}
-                  source={
-                    isCurUserLike 
-                    ? require('~/Assets/Images/Indicator/ic_like_focus.png')
-                    : require('~/Assets/Images/Indicator/ic_like_unfocus.png')
-                  }
-                />
-              </SocialItemContainer>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => clickReviewScrap()}>
-              <SocialItemContainer style={{marginLeft: 8}}>
-                <ScrapIcon
-                  source={
-                    isCurUserScrap
-                    ? require('~/Assets/Images/Indicator/ic_scrap_focus.png')
-                    : require('~/Assets/Images/Indicator/ic_scrap_unfocus.png')
-                  }
-                />
-              </SocialItemContainer>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => clickCommentIcon("post")}>
-              <SocialItemContainer style={{marginLeft: 8}}>
-                <CommentIcon
-                  source={require('~/Assets/Images/Indicator/ic_comment.png')}
-                />
-              </SocialItemContainer>
-            </TouchableWithoutFeedback>
-          </SocialInfoListContainer>
-          <TouchableWithoutFeedback onPress={() => moveToDentalDetail()}>
-          <SeeDentalInfoButton>
-            <SeeDentalInfoText>{'병원정보'}</SeeDentalInfoText>
-          </SeeDentalInfoButton>
-          </TouchableWithoutFeedback>
+            />
+          </SocialItemContainer>
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={() => clickReviewScrap()}>
+          <SocialItemContainer style={{marginLeft: 8}}>
+            <ScrapIcon
+              source={
+                isCurUserScrap
+                  ? require('~/Assets/Images/Indicator/ic_scrap_focus.png')
+                  : require('~/Assets/Images/Indicator/ic_scrap_unfocus.png')
+              }
+            />
+          </SocialItemContainer>
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={() => clickCommentIcon('post')}>
+          <SocialItemContainer style={{marginLeft: 8}}>
+            <CommentIcon
+              source={require('~/Assets/Images/Indicator/ic_comment.png')}
+            />
+          </SocialItemContainer>
+        </TouchableWithoutFeedback>
+      </SocialInfoListContainer>
+      <TouchableWithoutFeedback onPress={() => moveToDentalDetail()}>
+        <SeeDentalInfoButton>
+          <SeeDentalInfoText>{'병원정보'}</SeeDentalInfoText>
+        </SeeDentalInfoButton>
+      </TouchableWithoutFeedback>
     </Container>
   );
 };
 
 export default ReviewBottomBar;
-
 
 /*
     <Container>

@@ -1,12 +1,10 @@
 import React from 'react';
 import Styled from 'styled-components/native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {
-    TouchableWithoutFeedback
-} from 'react-native';
+import {TouchableWithoutFeedback} from 'react-native';
 
 const Container = Styled.View`
 padding-top: ${hp('2.70%')}px;
@@ -37,7 +35,7 @@ margin-left: 12px;
 `;
 
 const NicknameText = Styled.Text`
-font-family: NanumSquare;
+
 font-weight: 700;
 line-height: 18px;
 font-size: 14px;
@@ -45,7 +43,7 @@ color: #131F3C;
 `;
 
 const ElapsedTimeText = Styled.Text`
-font-family: NanumSquare;
+
 font-weight: 700;
 line-height: 16px;
 font-size: 12px;
@@ -64,7 +62,7 @@ border-color: #00D1FF;
 `;
 
 const ViewWriterProfileText = Styled.Text`
-font-family: NanumSquare;
+
 font-weight: 700;
 font-size: 12px;
 color: #00D1FF;
@@ -77,38 +75,51 @@ interface WriterObj {
 }
 
 interface Props {
-    writerObj: WriterObj,
-    elapsedTime: string,
-    isVisibleElapsedTime: boolean,
-    createdDate: string,
-    moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
+  writerObj: WriterObj;
+  elapsedTime: string;
+  isVisibleElapsedTime: boolean;
+  createdDate: string;
+  moveToAnotherProfile: (
+    userId: string,
+    nickname: string,
+    profileImageUri: string,
+  ) => void;
 }
 
-const WriterInfo = ({writerObj, elapsedTime, isVisibleElapsedTime, createdDate, moveToAnotherProfile}: Props) => {
+const WriterInfo = ({
+  writerObj,
+  elapsedTime,
+  isVisibleElapsedTime,
+  createdDate,
+  moveToAnotherProfile,
+}: Props) => {
+  console.log('WriterInfo elapsedTime', elapsedTime);
 
-    console.log("WriterInfo elapsedTime", elapsedTime)
-
-    return (
-        <Container>
-            <TouchableWithoutFeedback onPress={() => moveToAnotherProfile(writerObj.userId, writerObj.nickname, writerObj.profileImage)}>
-            <ProfileContainer>
-                <ProfileImage
-                source={{uri:writerObj?.profileImage}}/>
-                <ProfileRightContainer>
-                    <NicknameText>{writerObj?.nickname}</NicknameText>
-                    <ElapsedTimeText>{elapsedTime}</ElapsedTimeText>
-                </ProfileRightContainer>
-            </ProfileContainer>
-            </TouchableWithoutFeedback>
-            {/*
+  return (
+    <Container>
+      <TouchableWithoutFeedback
+        onPress={() =>
+          moveToAnotherProfile(
+            writerObj.userId,
+            writerObj.nickname,
+            writerObj.profileImage,
+          )
+        }>
+        <ProfileContainer>
+          <ProfileImage source={{uri: writerObj?.profileImage}} />
+          <ProfileRightContainer>
+            <NicknameText>{writerObj?.nickname}</NicknameText>
+            <ElapsedTimeText>{elapsedTime}</ElapsedTimeText>
+          </ProfileRightContainer>
+        </ProfileContainer>
+      </TouchableWithoutFeedback>
+      {/*
             <ViewWriterProfileButton>
                 <ViewWriterProfileText>{"프로필 방문"}</ViewWriterProfileText>
             </ViewWriterProfileButton>
             */}
-        </Container>
-    )
-}
+    </Container>
+  );
+};
 
-export default WriterInfo
-
-
+export default WriterInfo;

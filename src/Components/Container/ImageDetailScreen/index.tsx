@@ -39,7 +39,7 @@ margin-right: 16px;
 `;
 
 const HeaderIndicatorText = Styled.Text`
-font-family: NanumSquare;
+
 font-style: normal;
 font-weight: bold;
 font-size: 18px;
@@ -117,7 +117,7 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const dragY = useRef(new Animated.Value(0)).current;
 
-  console.log("ImageDetailScreen", route.params?.imageArray);
+  console.log('ImageDetailScreen', route.params?.imageArray);
 
   const scrollRef: any = useRef();
 
