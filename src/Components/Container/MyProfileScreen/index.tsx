@@ -8,7 +8,6 @@ import {
 import {TouchableWithoutFeedback, FlatList, View} from 'react-native';
 import {isIphoneX} from 'react-native-iphone-x-helper';
 import SafeAreaView from 'react-native-safe-area-view';
-import Animated from 'react-native-reanimated';
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 //Local Component
@@ -214,7 +213,6 @@ const MyProfileScreen = ({navigation, route}: Props) => {
   const moveToSavedHospitalTabScreen = useCallback(() => {
     navigation.navigate('SavedHospitalTabScreen');
   }, []);
-
 
   const toggleSocialLike = useCallback(
     (postId: number, prevState: number, type: string) => {

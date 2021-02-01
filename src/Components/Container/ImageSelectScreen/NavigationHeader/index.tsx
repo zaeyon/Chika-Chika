@@ -28,7 +28,7 @@ const HeaderBar = Styled.View`
 `;
 
 const HeaderText = Styled.Text`
-font-family: NanumSquare;
+
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
@@ -57,7 +57,7 @@ align-items: center;
 flex-direction: row;
 `;
 const HeaderTitleText = Styled.Text`
-font-family: NanumSquare;
+
 font-weight: 700;
 font-size: 16px; 
 margin-right: 5px;

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef, useState, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -22,6 +22,8 @@ const Container = Styled.View`
 `;
 
 const ProfileImageContainer = Styled.View`
+padding: 0px 8px 16px 8px;
+margin-bottom: auto;
 `;
 
 const CommentRightContainer = Styled.View`
@@ -29,11 +31,10 @@ flex: 1;
 `;
 
 const HeaderContainer = Styled.View`
-background-color: #ffffff;
+background-color: #FFFFFF;
 align-items: center;
 flex-direction: row;
 justify-content: space-between;
-padding-left: 8px;
 padding-top: 6px;
 `;
 
@@ -46,7 +47,6 @@ justify-content: center;
 
 const BodyContainer = Styled.View`
 padding-top: 3px;
-padding-left: 8px;
 padding-right: 85px;
 `;
 
@@ -68,7 +68,7 @@ const NicknameText = Styled.Text`
 line-height: 16px;
  font-size: 14px;
  font-weight: 800;
- font-family: NanumSquare;
+ 
  color: #131F3C
 `;
 
@@ -76,13 +76,13 @@ const CommentDescripText = Styled.Text`
 font-weight: 400;
 font-size: 14px;
 line-height: 16px;
-font-family: NanumSquare;
+
 color: #131F3C;
 `;
 
 const CreateAtText = Styled.Text`
 font-weight: 400;
-font-family: NanumSquare;
+
 font-size: 12px;
 line-height: 16px;
  color: #9AA2A9;
@@ -90,7 +90,7 @@ line-height: 16px;
 
 const ReplyText = Styled.Text`
 font-weight: 800;
-font-family: NanumSquare;
+
 line-height: 16px;
 font-size: 12px;
  color: #9AA2A9;
@@ -110,8 +110,7 @@ color: #979797;
 const HeaderLeftContainer = Styled.View`
 `;
 
-const MoreViewContainer = Styled.View`
-background-color: #ffffff;
+const MoreViewContainer = Styled.TouchableOpacity`
 top: 0px;
 right: 0px;
 position: absolute;
@@ -135,7 +134,7 @@ background-color: #9AA2A9;
 `;
 
 const TargetUserText = Styled.Text`
-font-family: NanumSquare;
+
 font-size: 14px;
 line-height: 24px;
 color: #00D1FF;
@@ -146,13 +145,16 @@ interface Props {
   replyObj: any;
   commentObj: any;
   userId: any;
-  commentId: number;
   profileImage: string;
   nickname: string;
   description: string;
   createdDate: string;
-  replys: Array<Object>;
-  clickReply: (commentObj: any, nickname: string, index: number) => void;
+  clickReply: (
+    commentObj: any,
+    nickname: string,
+    index: number,
+    positionY: number,
+  ) => void;
   isVisibleReplyButton: boolean;
   openCommentActionSheet: (
     userId: string,
@@ -169,12 +171,10 @@ interface Props {
 const ReplyItem = ({
   index,
   userId,
-  commentId,
   profileImage,
   nickname,
   description,
   createdDate,
-  replys,
   clickReply,
   openCommentActionSheet,
   isVisibleReplyButton,
@@ -184,18 +184,23 @@ const ReplyItem = ({
 }: Props) => {
   const currentUser = useSelector((state: any) => state.currentUser);
   const userProfile = currentUser.profile;
+  const containerRef: any = useRef();
+  const [positionY, setPositionY] = useState(0);
 
-  function getDateFormat(dateStr: string) {
-    const date = new Date(dateStr);
-    let year = date.getFullYear();
-    let month = 1 + date.getMonth();
-    let monthStr = month >= 10 ? month : '0' + month;
-    let day = date.getDate();
-    let dayStr = day >= 10 ? day : '0' + day;
-    return year + '.' + monthStr + '.' + dayStr;
-  }
+  const getDateFormat = useCallback((createdAt: string) => {
+    const currentYear = new Date(Date.now()).getFullYear();
 
-  function getElapsedTime(createdDiff: string) {
+    const [date, time] = createdAt.split(' ');
+    const [year, month, day] = date.split('-');
+
+    if (String(currentYear) === year) {
+      return parseInt(month) + '월 ' + parseInt(day) + '일';
+    } else {
+      return year + '년 ' + parseInt(month) + '월 ' + parseInt(day) + '일';
+    }
+  }, []);
+
+  const getElapsedTime = useCallback((createdDiff: string) => {
     let elapsedTimeText = '';
 
     const elapsedMin = replyObj['createdDiff(second)'] / 60;
@@ -215,10 +220,18 @@ const ReplyItem = ({
       elapsedTimeText = getDateFormat(createdDate);
       return elapsedTimeText;
     }
-  }
+  }, []);
 
   return (
-    <Container>
+    <Container
+      ref={containerRef}
+      onLayout={(e) => {
+        containerRef.current &&
+          containerRef.current.measure((fx, fy, width, height, px, py) => {
+            console.log('reply', description, fx, fy, width, height, px, py);
+            setPositionY(fy);
+          });
+      }}>
       <TouchableWithoutFeedback
         onPress={() => moveToAnotherProfile(userId, nickname, profileImage)}>
         <ProfileImageContainer>
@@ -233,19 +246,22 @@ const ReplyItem = ({
       </TouchableWithoutFeedback>
       <CommentRightContainer>
         <HeaderContainer>
-          <HeaderLeftContainer>
-            <NicknameText>{nickname}</NicknameText>
-          </HeaderLeftContainer>
           <TouchableWithoutFeedback
+            onPress={() =>
+              moveToAnotherProfile(userId, nickname, profileImage)
+            }>
+            <HeaderLeftContainer>
+              <NicknameText>{nickname}</NicknameText>
+            </HeaderLeftContainer>
+          </TouchableWithoutFeedback>
+          <MoreViewContainer
             onPress={() =>
               openCommentActionSheet(userId, nickname, replyObj.id)
             }>
-            <MoreViewContainer>
-              <MoreViewIcon
-                source={require('~/Assets/Images/Comment/ic_moreView.png')}
-              />
-            </MoreViewContainer>
-          </TouchableWithoutFeedback>
+            <MoreViewIcon
+              source={require('~/Assets/Images/Comment/ic_moreView.png')}
+            />
+          </MoreViewContainer>
         </HeaderContainer>
         <BodyContainer>
           <CommentDescripText>
@@ -259,7 +275,9 @@ const ReplyItem = ({
           </CreateAtText>
           {isVisibleReplyButton && (
             <TouchableWithoutFeedback
-              onPress={() => clickReply(commentObj, nickname, index)}>
+              onPress={() =>
+                clickReply(commentObj, nickname, index, positionY)
+              }>
               <ReplyContainer>
                 <PointDivider />
                 <ReplyText>{'답글달기'}</ReplyText>

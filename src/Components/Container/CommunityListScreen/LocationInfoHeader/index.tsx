@@ -50,7 +50,7 @@ padding: 20px 0px
 `;
 
 const LocationSelectedText = Styled.Text`
-font-family: NanumSquare;
+
 font-style: normal;
 font-weight: 800;
 font-size: 16px;
@@ -61,7 +61,7 @@ color: #131F3C;
 `;
 
 const LocationText = Styled.Text`
-font-family: NanumSquare;
+
 font-style: normal;
 font-weight: bold;
 font-size: 16px;

@@ -48,7 +48,7 @@ margin-right: 12px;
 `;
 
 const ContentTitleText = Styled.Text`
-font-family: NanumSquareR;
+
 font-style: normal;
 font-weight: bold;
 font-size: 16px;

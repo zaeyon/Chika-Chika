@@ -36,7 +36,7 @@ const ContainerView = Styled.SafeAreaView`
 `;
 
 const ModalContentText = Styled.Text`
-font-family: NanumSquare;
+
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
@@ -402,8 +402,6 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
       }
     });
   }, []);
-
-  
 
   return (
     <ContainerView>

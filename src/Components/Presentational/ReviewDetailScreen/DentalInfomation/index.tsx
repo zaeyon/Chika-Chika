@@ -1,8 +1,8 @@
 import React from 'react';
 import Styled from 'styled-components/native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {TouchableWithoutFeedback} from 'react-native';
 
@@ -26,7 +26,7 @@ const DentalIntroText = Styled.Text`
 font-weight: 700;
 font-size: 14px;
 color: #9AA2A9;
-font-family: NanumSquare;
+
 `;
 
 const DentalImage = Styled.Image`
@@ -44,7 +44,7 @@ const DentalNameText = Styled.Text`
 font-weight: 800;
 font-size: 18px;
 color: #131F3C;
-font-family: NanumSquare;
+
 `;
 
 const DentalDescripText = Styled.Text`
@@ -62,7 +62,7 @@ align-items: center;
 `;
 
 const DentalAddressText = Styled.Text`
-font-family: NanumSquare;
+
 font-weight: 700;
 font-size: 13px;
 color: #9AA2A9;
@@ -82,43 +82,51 @@ height: ${wp('4.26%')}px;
 `;
 
 interface Props {
-    dentalInfo: any,
-    name: string,
-    address: string,
-    dentalId: number,
-    moveToDentalDetail: (dentalId: number) => void,
+  dentalInfo: any;
+  name: string;
+  address: string;
+  dentalId: number;
+  moveToDentalDetail: (dentalId: number) => void;
 }
 
 const DentalInfomation = ({dentalInfo, moveToDentalDetail}: Props) => {
-    console.log("DentalInformation dentalInfo", dentalInfo);
+  console.log('DentalInformation dentalInfo', dentalInfo);
 
-    let splitedAddress = new Array();
-    let formattedAddress = "";
+  let splitedAddress = new Array();
+  let formattedAddress = '';
 
-    if(dentalInfo.address) {
-        splitedAddress = dentalInfo.address.split(" ");
-        formattedAddress = splitedAddress[0] + " " + splitedAddress[1] + " " + splitedAddress[2] + " " + splitedAddress[3] + " " + splitedAddress[4]
+  if (dentalInfo.address) {
+    splitedAddress = dentalInfo.address.split(' ');
+    formattedAddress =
+      splitedAddress[0] +
+      ' ' +
+      splitedAddress[1] +
+      ' ' +
+      splitedAddress[2] +
+      ' ' +
+      splitedAddress[3] +
+      ' ' +
+      splitedAddress[4];
+  }
 
-    }
+  return (
+    <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalInfo.id)}>
+      <Container>
+        <DentalInfoContainer>
+          <DentalNameText>{dentalInfo.originalName}</DentalNameText>
+          <DentalAddressContainer>
+            <DentalMarkerIcon
+              source={require('~/Assets/Images/Review/ic_dentalMarker.png')}
+            />
+            <DentalAddressText>{formattedAddress}</DentalAddressText>
+          </DentalAddressContainer>
+        </DentalInfoContainer>
+        <DentalImageContainer>
+          <DentalImage />
+        </DentalImageContainer>
+      </Container>
+    </TouchableWithoutFeedback>
+  );
+};
 
-    return (
-        <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalInfo.id)}>
-        <Container>
-            <DentalInfoContainer>
-                <DentalNameText>{dentalInfo.originalName}</DentalNameText>
-                <DentalAddressContainer>
-                <DentalMarkerIcon
-                source={require('~/Assets/Images/Review/ic_dentalMarker.png')}/>
-                <DentalAddressText>{formattedAddress}</DentalAddressText>
-                </DentalAddressContainer>
-            </DentalInfoContainer>
-            <DentalImageContainer>
-                <DentalImage/>
-            </DentalImageContainer>
-        </Container>
-        </TouchableWithoutFeedback>
-    )
-}
-
-export default DentalInfomation
-
+export default DentalInfomation;

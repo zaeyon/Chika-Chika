@@ -51,7 +51,7 @@ border-radius: 100px;
 `;
 
 const SelectedOrderText = Styled.Text`
-font-family: NanumSquare;
+
 font-style: normal;
 font-weight: 800;
 font-size: 11px;
