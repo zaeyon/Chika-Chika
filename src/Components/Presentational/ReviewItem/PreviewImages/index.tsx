@@ -10,9 +10,8 @@
 
  const OneUnitImageContainer = Styled.View`
  width: ${wp('91.46%')}px;
- height: ${wp('93.33%')}px;
+ height: ${wp('93.32%')}px;
  border-radius: 8px;
- background-color: #f6f6f6;
  `;
 
  const ImagesRowContainer = Styled.View`
@@ -23,7 +22,7 @@
 
  const ImagesColumnContainer = Styled.View`
  width: ${wp('91.46%')}px;
- height: ${wp('80%')}px;
+ height: ${wp('79.72%')}px;
  flex-direction: column;
  justify-content: space-between;
  `;
@@ -33,56 +32,56 @@
 
  const FirstImageInOneUnit = Styled.Image`
  width: ${wp('91.46%')}px;
- height: ${wp('93.33%')}px;
+ height: ${wp('93.32%')}px;
  border-radius: 8px;
  background-color: #f6f6f6;
  `;
 
  const TwoUnitImageContainer = Styled.View`
  width: ${wp('91.46%')}px;
- height: ${wp('45%')}px;
+ height: ${wp('45.13%')}px;
  border-radius: 8px;
  flex-direction: row;
  align-items: center;
  `;
  
  const FirstImageInTwoUnit = Styled.Image`
- width: ${wp('45%')}px;
- height: ${wp('45%')}px;
+ width: ${wp('45.13%')}px;
+ height: ${wp('45.13%')}px;
  border-top-left-radius: 8px;
  border-bottom-left-radius: 8px;
  `;
 
  const SecondImageInTwoUnit = Styled.Image`
- width: ${wp('45%')}px;
- height: ${wp('45%')}px;
+ width: ${wp('45.13%')}px;
+ height: ${wp('45.13%')}px;
  border-top-right-radius: 8px;
  border-bottom-right-radius: 8px;
  `;
  
  const ManyUnitImageContainer = Styled.View`
- width: ${wp('92.26%')}px;
- height: ${wp('80%')}px;
+ width: ${wp('91.46%')}px;
+ height: ${wp('79.72%')}px;
  border-radius: 8px;
  `;
 
  const MainImageInThreeUnit = Styled.Image`
- width: ${wp('92.26%')}px;
- height: ${wp('47.73%')}px;
+ width: ${wp('91.46%')}px;
+ height: ${wp('48.52%')}px;
  border-top-left-radius: 8px;
  border-top-right-radius: 8px;
  `;
 
  const SubImageInThreeUnit = Styled.Image`
- width: ${wp('45%')}px;
- height: ${wp('30.8%')}px;
+ width: ${wp('45.13%')}px;
+ height: ${wp('30%')}px;
  border-bottom-left-radius: 8px;
  `;
 
  const ThirdImageInThreeUnit = Styled.Image`
  margin-top: 5px;
  margin-left: 5px;
- width: ${wp('45%')}px;
+ width: ${wp('45.13%')}px;
  height: ${wp('30.8%')}px;
  border-bottom-right-radius: 8px;
  `;
@@ -121,35 +120,35 @@
  `;
 
  const MainImageInFourUnit = Styled.Image`
- width: ${wp('92.26%')}px;
- height: ${wp('53.25%')}px;
+ width: ${wp('91.46%')}px;
+ height: ${wp('48.52%')}px;
  border-top-left-radius: 8px;
  border-top-right-radius: 8px;
  `;
 
  const SubImageInFourUnit = Styled.Image`
  width: ${wp('29.6%')}px;
- height: ${wp('25.6%')}px;
+ height: ${wp('30.13%')}px;
  `;
 
  const MainImageInFiveUnit = Styled.Image`
- width: ${wp('45%')}px;
- height: ${wp('53.25%')}px;
+ width: ${wp('45.13%')}px;
+ height: ${wp('48.46%')}px;
  `;
 
  const SubImageInFiveUnit = Styled.Image`
  width: ${wp('29.6%')}px;
- height: ${wp('25.6%')}px;
+ height: ${wp('30.13%')}px;
  `;
 
  const MainImageInSixUnit = Styled.Image`
  width: ${wp('60.53%')}px;
- height: ${wp('53%')}px;
+ height: ${wp('61.86%')}px;
  `;
 
  const SubImageInSixUnit = Styled.Image`
  width: ${wp('29.6%')}px;
- height: ${wp('25.86%')}px;
+ height: ${wp('30.13%')}px;
  `;
 
  const SixUnitImagesColumnContainer = Styled.View`
@@ -160,7 +159,7 @@
  const RemainCountCoverContainer = Styled.View`
  position: absolute;
  width: ${wp('29.6%')}px;
- height: ${wp('25.86%')}px;
+ height: ${wp('30.13%')}px;
  border-bottom-right-radius: 8px;
  background-color: #00000070;
  align-items: center;
@@ -168,9 +167,30 @@
  `;
 
  const RemainCountText = Styled.Text`
- font-size: 14px;
+ font-weight: 700;
+ font-size: 20px;
  color: #ffffff;
  `;
+
+ const MoreUnitImageContainer = Styled.View`
+ width: ${wp('91.46%')}px;
+ height: ${wp('93.32%')}px;
+ border-radius: 8px;
+`;
+
+
+const MoreImagesRowContainer = Styled.View`
+width: ${wp('91.46%')}px;
+flex-direction: row;
+justify-content: space-between;
+`;
+
+const MoreImagesColumnContainer = Styled.View`
+width: ${wp('91.46%')}px;
+height: ${wp('93.32%')}px;
+flex-direction: column;
+justify-content: space-between;
+`;
 
 
  interface Props {
@@ -356,9 +376,9 @@
                 </ManyUnitImageContainer>
             )}
             {sortedImageArray.length === 6 && (
-                <ManyUnitImageContainer>
-                    <ImagesColumnContainer>
-                        <ImagesRowContainer>
+                <MoreUnitImageContainer>
+                    <MoreImagesColumnContainer>
+                        <MoreImagesRowContainer>
                         <ImageContainer>
                             <MainImageInSixUnit
                             style={{borderTopLeftRadius: 8}}
@@ -384,7 +404,7 @@
                                 </OrderTypeIndicator2>
                             </ImageContainer>
                         </SixUnitImagesColumnContainer>
-                        </ImagesRowContainer>
+                        </MoreImagesRowContainer>
                         <ImagesRowContainer>
                             <ImageContainer>
                                 <SubImageInSixUnit
@@ -410,13 +430,13 @@
                                 </OrderTypeIndicator2>
                             </ImageContainer>
                         </ImagesRowContainer>
-                    </ImagesColumnContainer>
-                </ManyUnitImageContainer>
+                    </MoreImagesColumnContainer>
+                </MoreUnitImageContainer>
             )}
             {sortedImageArray.length > 6 && (
-                <ManyUnitImageContainer>
-                    <ImagesColumnContainer>
-                        <ImagesRowContainer>
+                <MoreUnitImageContainer>
+                    <MoreImagesColumnContainer>
+                        <MoreImagesRowContainer>
                         <ImageContainer>
                             <MainImageInSixUnit
                             style={{borderTopLeftRadius: 8}}
@@ -442,7 +462,7 @@
                                 </OrderTypeIndicator2>
                             </ImageContainer>
                         </SixUnitImagesColumnContainer>
-                        </ImagesRowContainer>
+                        </MoreImagesRowContainer>
                         <ImagesRowContainer>
                             <ImageContainer>
                                 <SubImageInSixUnit
@@ -473,8 +493,8 @@
                                 </RemainCountCoverContainer>
                             </ImageContainer>
                         </ImagesRowContainer>
-                    </ImagesColumnContainer>
-                </ManyUnitImageContainer>
+                    </MoreImagesColumnContainer>
+                </MoreUnitImageContainer>
             )}
         </Container>
     )

@@ -623,12 +623,12 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         //setCommentArray(response.reverse())
         dispatch(
           allActions.commentListActions.setCommentList(
-            response.comments.reverse(),
+            response.comments,
           ),
         );
         dispatch(
           allActions.commentListActions.setCommentCount(
-            response.commentsNum.commentsNum,
+            response.commentsNum,
           ),
         );
 
@@ -716,6 +716,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const moveToCommentList = (request: string) => {
     navigation.navigate('CommentListScreen', {
       postId: reviewId,
+      postType: 'review',
     });
   };
 
@@ -889,12 +890,12 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         console.log('DELETEComment response', response);
         dispatch(
           allActions.commentListActions.setCommentList(
-            response.comments.reverse(),
+            response.comments,
           ),
         );
         dispatch(
           allActions.commentListActions.setCommentCount(
-            response.commentsNum.commentsNum,
+            response.commentsNum,
           ),
         );
       })

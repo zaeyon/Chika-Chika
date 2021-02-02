@@ -5,14 +5,17 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
+import RatingStarList from '~/Components/Presentational/RatingStarList';
+
 const Container = Styled.View`
-width: ${wp('87.2%')}px;
-height: ${wp('45%')}px;
+width: ${wp('91.46%')}px;
+flex-direction: row;
+justify-content: space-between;
 background-color: #ffffff;
-border-radius: 12px;
+border-radius: 8px;
 border-width: 1px;
-border-color: #c4c4c4;
-padding: 24px 24px 24px 24px;
+border-color: #E2E6ED;
+padding: 16px;
 `;
 
 const DentalImageContainer = Styled.View`
@@ -28,22 +31,21 @@ height: ${wp('25%')}px;
 const HeaderContainer = Styled.View`
 flex-direction: row;
 align-items: center;
-justify-content: space-between;
+`;
+
+const OpenStatusContainer = Styled.View`
+background-color: #ffffff;
+margin-left: 4px;
+border-radius: 100px;
+border-width: 1px;
+border-color: #00D1FF;
+padding: 2px 6px 2px 6px;
 `;
 
 const CurrentStatusContainer = Styled.View`
 flex-direction: row;
-align-items: center;
 `;
 
-const OpenStatusContainer = Styled.View`
-border-radius: 2px;
-border-width: 1px;
-border-color: #c4c4c4;
-padding: 3px 8px 3px 8px;
-align-items: center;
-justify-content: center;
-`;
 
 const LauchTimeStatusContainer = Styled.View`
 border-radius: 2px;
@@ -56,12 +58,14 @@ justify-content: center;
 `;
 
 const CurrentStatusText = Styled.Text`
-font-size: 12px;
+font-size: 11px;
+line-height: 18px;
 font-weight: 400;
-color: #7a7a7a;
+color: #00D1FF;
 `;
 
 const ReviewRatingContainer = Styled.View`
+margin-top: 8px;
 flex-direction: row;
 align-items: center;
 `;
@@ -99,14 +103,14 @@ font-size: 14px;
 `;
 
 const DentalInfoContainer = Styled.View`
-margin-top: 8px;
 flex-direction: column;
 `;
 
 const DentalNameText = Styled.Text`
-font-weight: 400;
-color: #000000;
+font-weight: 600;
+color: #131F3C;
 font-size: 18px;
+line-height: 24px;
 `;
 
 const DentalAddressText = Styled.Text`
@@ -147,7 +151,16 @@ color: #000000;
 font-size: 14px;
 `;
 
+const CallContainer = Styled.View`
+`;
+
+const CallButtonImage = Styled.Image`
+width: ${wp('13.86%')}px;
+height: ${wp('13.86%')}px;
+`;
+
 interface Props {
+  dentalObj: any,
   isOpen: boolean;
   isLunchTime: boolean;
   rating: number;
@@ -160,6 +173,7 @@ interface Props {
 }
 
 const DentalCarouselItem = ({
+  dentalObj,
   isOpen,
   isLunchTime,
   rating,
@@ -170,50 +184,52 @@ const DentalCarouselItem = ({
   openTime,
   closeTime,
 }: Props) => {
+
+  console.log("DentalCarouselItem dentalObj", dentalObj)
+
   return (
     <Container>
+    <DentalInfoContainer>
       <HeaderContainer>
+      <DentalNameText>{name}</DentalNameText>
         <CurrentStatusContainer>
+          {(dentalObj.confidentTOL === 1) && isLunchTime && (
+          <OpenStatusContainer
+            style={{borderColor: '#00D1FF'}}>
+            <CurrentStatusText
+              style={{color: '#00D1FF'}}>
+              {'점심시간'}
+            </CurrentStatusText>
+          </OpenStatusContainer>
+          )}
+          {(dentalObj.confidentConsulationTime === 1) && !isLunchTime && (
           <OpenStatusContainer
             style={
               isOpen
-                ? {backgroundColor: '#0075FF'}
-                : {backgroundColor: '#ffffff'}
+                ? {borderColor: '#00D1FF'}
+                : {borderColor: '#9AA2A9'}
             }>
             <CurrentStatusText
-              style={isOpen ? {color: '#ffffff'} : {color: '#7a7a7a'}}>
+              style={isOpen ? {color: '#00D1FF'} : {color: '#9AA2A9'}}>
               {'진료중'}
             </CurrentStatusText>
           </OpenStatusContainer>
-          <LauchTimeStatusContainer
-            style={
-              isLunchTime
-                ? {backgroundColor: '#0075FF'}
-                : {backgroundColor: '#ffffff'}
-            }>
-            <CurrentStatusText
-              style={isLunchTime ? {color: '#ffffff'} : {color: '#7a7a7a'}}>
-              {'점심시간'}
-            </CurrentStatusText>
-          </LauchTimeStatusContainer>
+          )}
         </CurrentStatusContainer>
+      </HeaderContainer>
         <ReviewRatingContainer>
           <RatingContainer>
-            <RatingStarIcon
-              source={require('~/Assets/Images/Indicator/ic_ratingStar.png')}
-            />
             <RatingText>{rating}</RatingText>
           </RatingContainer>
           <DividerBar />
           <ReviewText>{'리뷰 ' + reviewCount + '개'}</ReviewText>
         </ReviewRatingContainer>
-      </HeaderContainer>
-      <DentalInfoContainer>
-        <DentalNameText>{name}</DentalNameText>
-        <DentalAddressText>{address}</DentalAddressText>
-        <LauchTimeText>{'점심시간  ' + lunchTime}</LauchTimeText>
-        <OpenTimeText>{'영업시간  ' + openTime + '~' + closeTime}</OpenTimeText>
-      </DentalInfoContainer>
+      <DentalAddressText>{address}</DentalAddressText>
+    </DentalInfoContainer>
+    <CallContainer>
+      <CallButtonImage
+      source={require('~/Assets/Images/Dental/ic_call.png')}/>
+    </CallContainer>
     </Container>
   );
 };

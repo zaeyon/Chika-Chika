@@ -1,7 +1,7 @@
 import axios from 'axios';
 import serverConfig from '../server.config';
 
-const POSTSocialUserCheck = (provider: string, email: string) => {
+const POSTSocialUserCheck = (provider: string, email: string, fcmToken: string) => {
 
     const uri = serverConfig.baseUri + "/socialUserCheck";
 
@@ -10,8 +10,11 @@ const POSTSocialUserCheck = (provider: string, email: string) => {
 
     const bodyParam = `{
         "provider": "${provider}",
-        "email": "${email}"
+        "email": "${email}",
+        "fcmToken": "${fcmToken}"
     }`
+
+    console.log("POSTSocialUserCheck bodyParam", bodyParam);
 
     return new Promise(function(resolve, reject) {
 

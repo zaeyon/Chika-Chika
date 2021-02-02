@@ -45,7 +45,6 @@ align-items: center;
 
 const LocationFilterContainer = Styled.View`
 flex-direction: row;
-align-items: center;
 padding-top: 16px;
 padding-bottom: 16px;
 padding-left: 16px;
@@ -63,7 +62,7 @@ padding: 6px 16px;
 const OrderFilterText = Styled.Text`
 font-weight: 400;
 font-size: 14px;
-line-height: 24px;
+line-height: 23px;
 color: #131F3C;
 `;
 

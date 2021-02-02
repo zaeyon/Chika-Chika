@@ -225,10 +225,8 @@ interface Props {
 
 var limitTime = 300;
 var timeout: any;
-//var isUser = false;
-  let fcmToken = '';
 
-const LoginScreen = ({navigation}: Props) => {
+const LoginScreen = ({navigation, route}: Props) => {
   const [number, setNumber] = useState('');
   const [authCode, setAuthCode] = useState<string>('');
   const [validNumber, setValidNumber] = useState<boolean>(false);
@@ -259,14 +257,6 @@ const LoginScreen = ({navigation}: Props) => {
 
   const numberInputRef = useRef(null);
   const authCodeInputRef = useRef(null);
-
-  useEffect(() => {
-    getFcmToken();
-  }, []);
-
-  const getFcmToken = async () => {
-    fcmToken = await messaging().getToken();
-  };
 
   let submitingNumber: any;
   let submitingPassword: any;
@@ -452,8 +442,9 @@ const LoginScreen = ({navigation}: Props) => {
   const login = (submitPhoneNumber: string, submitAuthCode: string) => {
     const phoneNumber = submitPhoneNumber;
     const authCode = submitAuthCode;
+    const fcmToken = route.params?.fcmToken
 
-    POSTLogin({phoneNumber, authCode})
+    POSTLogin({phoneNumber, authCode, fcmToken})
       .then(function (response: any) {
         console.log('POSTLogin response', response);
         if (response.statusText === 'Accepted') {

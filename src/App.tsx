@@ -34,16 +34,6 @@ async function hasAndroidPermission() {
   return status === 'granted';
 }
 
-async function requestMessagingPermission() {
-  const authStatus = await messaging().requestPermission();
-  const enabled =
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-  if (enabled) {
-    console.log('Authorization status:', authStatus);
-  }
-}
 
 // Waring 경고창 숨기기
 console.disableYellowBox = true;
@@ -52,7 +42,6 @@ const App = () => {
 
   useEffect(() => {
     hasAndroidPermission()
-    requestMessagingPermission()
   }, [])
 
   return (

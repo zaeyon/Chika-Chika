@@ -14,7 +14,6 @@ import allActions from '~/actions';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 
 // route
-import POSTLogin from '~/Routes/Auth/POSTLogin';
 import POSTRegister from '~/Routes/Auth/POSTRegister';
 import POSTSocialUserCheck from '~/Routes/Auth/POSTSocialUserCheck';
 
@@ -124,11 +123,14 @@ interface Props {
   navigation: any;
   route: any;
 }
+
 let fcmToken = '';
 
 const UnauthorizedScreen = ({navigation, route}: Props) => {
   const [loadingSocial, setLoadingSocial] = useState<boolean>(false);
   const dispatch = useDispatch();
+
+  
 
 
   useEffect(() => {
@@ -136,8 +138,16 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
   }, []);
 
   const getFcmToken = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+    console.log('Authorization status:', authStatus);
     fcmToken = await messaging().getToken();
     console.log("getFcmToken fcmToken", fcmToken);
+    }
   };
 
   /*
@@ -150,11 +160,9 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
   GoogleSignin.configure();
 
   const moveToLocalLogin = () => {
-    navigation.navigate('LoginScreen');
-  };
-
-  const moveToLocalSignUp = () => {
-    navigation.navigate('VerifyPhoneNumberScreen');
+    navigation.navigate('LoginScreen',{
+      fcmToken: fcmToken,
+    });
   };
 
   const loginWithKakao = () => {
@@ -296,7 +304,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
     phoneNumber: string,
     userProfile: any,
   ) => {
-    POSTSocialUserCheck(provider, email)
+    POSTSocialUserCheck(provider, email, fcmToken)
       .then((response: any) => {
         console.log('POSTSocialUserCheck response', response);
         setLoadingSocial(false);
@@ -349,7 +357,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
     email: string,
     userProfile: any,
   ) => {
-    POSTSocialUserCheck(provider, userProfile.socialId)
+    POSTSocialUserCheck(provider, userProfile.socialId, fcmToken)
       .then((response: any) => {
         console.log('POSTSocialUserCheck response', response);
         setLoadingSocial(false);

@@ -66,6 +66,20 @@ line-height: 24px;
 color: #131F3C;
 `;
 
+const ClearTextButtonContainer = Styled.View`
+position: absolute;
+right: 0px;
+justify-content: center;
+height: ${hp('7%')}px;
+padding-left: 16px;
+padding-right: 16px;
+`;
+
+const ClearTextIcon = Styled.Image`
+width: ${wp('5.3%')}px;
+height: ${wp('5.3%')}px;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -190,6 +204,12 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
     }
   }
 
+  const clearTextInput = () => {
+    setQuery("");
+    searchInputRef.current.clear();
+    searchInputRef.current.focus();
+  }
+
   return (
     <ContainerView forceInset={{top: 'always'}}>
       <HeaderContentView>
@@ -212,7 +232,6 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
           placeholder="검색어를 입력해주세요."
           placeholderTextColor="#E2E6ED"
           selectionColor="#131F3C"
-          clearButtonMode="always"
           value={query}
           onChangeText={(text) => {
             setQuery(text);
@@ -222,6 +241,14 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
           onSubmitEditing={() => searchTotalKeyword(query)}
           onFocus={() => onFocusSearchKeywordInput()}
           />
+          {query.length > 0 && (
+          <TouchableWithoutFeedback onPress={() => clearTextInput()}>
+          <ClearTextButtonContainer>
+            <ClearTextIcon
+            source={require('~/Assets/Images/Search/ic_clearText.png')}/>
+          </ClearTextButtonContainer>
+          </TouchableWithoutFeedback>
+          )}
         </SearchInputConatinerView>
       </HeaderContentView>
       {isVisibleAutoCompletedKeyword && (

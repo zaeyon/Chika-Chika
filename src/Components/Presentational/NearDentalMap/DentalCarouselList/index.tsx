@@ -16,8 +16,7 @@ import DentalCarouselItem from '~/Components/Presentational/NearDentalMap/Dental
 
 const DentalCarouselListContainer = Styled.View`
 position: absolute;
-padding-bottom: ${DeviceInfo.hasNotch() ? hp('3.5%') : hp('4%')}px;
-bottom: 0;
+bottom: ${hp('2.9%')};
 align-items: center;
 `;
 
@@ -36,11 +35,14 @@ padding-top: 8px;
 
 
 const carouselItem = (({item, index, todayIndex, moveToDentalDetail}: any) => {
-    console.log("renderCarouselItem item", item);
 
     const isLunchTime = item.lunchTimeNow == 1 ? true : false;
     const isOpen = item.conclustionNow == 1 ? true : false;
     const rating = item.reviewAVGStarRate ? item.reviewAVGStarRate : "평가없음";
+
+    const splitedAddressArray = item.address.split(" ");
+
+    const deletedAddress = splitedAddressArray[0] + " " + splitedAddressArray[1] + " " + splitedAddressArray[2];
     
     let todayStartTime = ""
     let todayEndTime = ""
@@ -72,12 +74,13 @@ const carouselItem = (({item, index, todayIndex, moveToDentalDetail}: any) => {
         <TouchableWithoutFeedback onPress={() => moveToDentalDetail(item.id)}>
         <DentalCarouselItemContainer>
             <DentalCarouselItem
+            dentalObj={item}
             isOpen={isOpen}
             isLunchTime={isLunchTime}
             rating={rating}
             reviewCount={item.reviewNum}
             name={item.originalName}
-            address={item.address}
+            address={deletedAddress}
             lunchTime={item.lunchTime}
             openTime={todayStartTime}
             closeTime={todayEndTime}/>
@@ -107,9 +110,9 @@ const DentalCarouselList = ({searchedDentalArr, onSnapToDentalCarouselItem, sele
     return (
         <DentalCarouselListContainer>
         <Carousel
-        contentContainerCustomStyle={{justifyContent: "center"}}
+        slideStyle={{alignItems: 'center', borderWidth: 1}}
         inactiveSlideOpacity={1}
-        inactiveSlideScale={0.93}
+        inactiveSlideScale={1}
         inactiveSlideShift={0}
         onSnapToItem={(index) => onSnapToDentalCarouselItem(index)}
         ref={dentalCarouselRef}
@@ -117,11 +120,7 @@ const DentalCarouselList = ({searchedDentalArr, onSnapToDentalCarouselItem, sele
         renderItem={renderCarouselItem}
         sliderWidth={wp('100%')}
         firstItem={selectedDentalIndex}
-        itemWidth={wp('87.2%')}/>
-        <CarouselIndexContainer>
-            <CarouselIndexText style={styles.carouselIndexShadow}>{selectedDentalIndex+1 + " / " + searchedDentalArr.length}
-            </CarouselIndexText>
-        </CarouselIndexContainer>
+        itemWidth={wp('93.6%')}/>
         </DentalCarouselListContainer>
     );
 }
@@ -140,3 +139,12 @@ const styles = StyleSheet.create({
 
 
 export default DentalCarouselList;
+
+
+/*
+
+        <CarouselIndexContainer>
+            <CarouselIndexText style={styles.carouselIndexShadow}>{selectedDentalIndex+1 + " / " + searchedDentalArr.length}
+            </CarouselIndexText>
+        </CarouselIndexContainer>
+*/

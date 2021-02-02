@@ -4,9 +4,10 @@ import serverConfig from '../server.config';
 interface params {
     phoneNumber: string,
     authCode: string,
+    fcmToken: string,
 }
 
-const POSTLogin = ({phoneNumber, authCode}: params) => {
+const POSTLogin = ({phoneNumber, authCode, fcmToken}: params) => {
     const uri = serverConfig.baseUri + "/login";
 
     console.log("POSTLogin userPhoneNumber", phoneNumber);
@@ -14,8 +15,11 @@ const POSTLogin = ({phoneNumber, authCode}: params) => {
 
     const bodyParam = `{
         "userPhoneNumber": "${phoneNumber}",
-        "token": "${authCode}"
+        "token": "${authCode}",
+        "fcmToken": "${fcmToken}"
     }`
+
+    console.log("POSTLogin bodyParam", bodyParam);
 
     return new Promise(function(resolve, reject) {
 

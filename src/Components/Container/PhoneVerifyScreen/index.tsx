@@ -27,7 +27,6 @@ import {storeUserInfo} from '~/storage/currentUser';
 // Route
 import POSTSendTokenToPhone from '~/Routes/Auth/POSTSendTokenToPhone';
 import POSTVerifyPhoneNumber from '~/Routes/Auth/POSTVerifyPhoneNumber';
-import POSTLogin from '~/Routes/Auth/POSTLogin';
 
 const Input = Styled.TextInput`
 position: relative;

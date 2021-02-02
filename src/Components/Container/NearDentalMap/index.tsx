@@ -8,7 +8,6 @@ import React, {
   memo,
 } from 'react';
 import Styled from 'styled-components/native';
-import SafeAreaView from 'react-native-safe-area-view';
 import {
   TouchableWithoutFeedback,
   TouchableHighlight,
@@ -32,6 +31,7 @@ import NaverMapView, {Circle, Marker} from 'react-native-nmap';
 import {isIphoneX} from 'react-native-iphone-x-helper';
 import Geolocation from 'react-native-geolocation-service';
 import DeviceInfo from 'react-native-device-info';
+import getStateBarHeight, { getStatusBarHeight } from 'react-native-status-bar-height';
 import Carousel from 'react-native-snap-carousel';
 import ActionSheet from 'react-native-actionsheet';
 import Modal from 'react-native-modal';
@@ -45,21 +45,17 @@ import DentalList from '~/Components/Presentational/DentalList';
 import GETAroundDental from '~/Routes/Dental/GETAroundDental';
 import GETDentalTotalSearch from '~/Routes/Search/GETDentalTotalSearch';
 
-const mapHeight =
-  hp('100%') - (wp('11.7%') - (isIphoneX() ? wp('21%') : wp('15%')));
 
 const Container = Styled.View`
 flex: 1;
-background-color: #ffffff;
 `;
 
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
- height: ${wp('16.8%')}px;
+ padding-top: 5px;
  flex-direction: row;
  align-items: center;
  justify-content: space-between;
- background-color:#ffffff;
  padding-left: 16px;
  padding-right: 16px;
  border-bottom-width: 2px;
@@ -258,6 +254,7 @@ height: ${wp('4.53%')}px;
 `;
 
 const MapHeaderContainer = Styled.View`
+padding-top: ${getStatusBarHeight()}
 position: absolute;
 top: 0;
 align-items: flex-end;
@@ -373,6 +370,10 @@ let limit = 20;
 let sort = 'distance';
 let isNearDentalList = true;
 
+const bottomTabheight = DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%');
+
+const mapHeight = hp('100%') - bottomTabheight;
+  
 const NearDentalMap = ({navigation, route}: Props) => {
   console.log('NearDentalMap route', route.params?.isOpenDentalList);
   const [currentLocation, setCurrentLocation] = useState<Coord>(
@@ -1103,39 +1104,15 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeAreaStyle} forceInset={{top: 'always'}}>
       <Container>
-        <HeaderBar>
-          <TouchableWithoutFeedback onPress={() => moveToDentalList()}>
-            <ViewDentalListButton>
-              <ViewDentalListText>{'목록'}</ViewDentalListText>
-            </ViewDentalListButton>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => focusSearchInput()}>
-            <SearchInputContainer style={{marginLeft: 8}}>
-              <SearchIcon
-                source={require('~/Assets/Images/Search/ic_search.png')}
-              />
-              {searchedKeyword === '' && (
-                <SearchPlaceHolderText>
-                  {'병원, 지역을 검색해 보세요.'}
-                </SearchPlaceHolderText>
-              )}
-              {searchedKeyword.length > 0 && (
-                <SearchText>{searchedKeyword}</SearchText>
-              )}
-            </SearchInputContainer>
-          </TouchableWithoutFeedback>
-        </HeaderBar>
         <MapContainer>
           <NaverMapContainer>
             <NaverMapView
               ref={mapRef}
               compass={false}
               style={{
-                width: '100%',
-                height:
-                  hp('100%') - (DeviceInfo.hasNotch() ? wp('49%') : wp('33%')),
+                width: wp('100%'),
+                height: hp('100%') - bottomTabheight,
               }}
               showsMyLocationButton={false}
               center={{...mapLocation, zoom: mapZoom}}
@@ -1162,6 +1139,28 @@ const NearDentalMap = ({navigation, route}: Props) => {
             </NaverMapView>
           </NaverMapContainer>
           <MapHeaderContainer>
+          <HeaderBar>
+          <TouchableWithoutFeedback onPress={() => moveToDentalList()}>
+            <ViewDentalListButton>
+              <ViewDentalListText>{'목록'}</ViewDentalListText>
+            </ViewDentalListButton>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => focusSearchInput()}>
+            <SearchInputContainer style={{marginLeft: 8}}>
+              <SearchIcon
+                source={require('~/Assets/Images/Search/ic_search.png')}
+              />
+              {searchedKeyword === '' && (
+                <SearchPlaceHolderText>
+                  {'병원, 지역을 검색해 보세요.'}
+                </SearchPlaceHolderText>
+              )}
+              {searchedKeyword.length > 0 && (
+                <SearchText>{searchedKeyword}</SearchText>
+              )}
+            </SearchInputContainer>
+          </TouchableWithoutFeedback>
+          </HeaderBar>
             <FilterListContainer>
               <ScrollView
                 horizontal={true}
@@ -1387,7 +1386,6 @@ const NearDentalMap = ({navigation, route}: Props) => {
           onPress={(index: any) => onPressTimeFilterActionSheet(index)}
         />
       </Container>
-    </SafeAreaView>
   );
 };
 

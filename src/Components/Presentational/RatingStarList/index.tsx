@@ -9,6 +9,7 @@ const Container = Styled.View`
 `;
 
 const RatingStarListContainer = Styled.View`
+margin-left: 4px;
 flex-direction: row;
 align-items: center;
 `;
@@ -19,8 +20,16 @@ width: ${wp('4.266%')}px;
 height: ${wp('4.266%')}px;
 `;
 
+const RatingValueContainer = Styled.Text`
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+color: #00D1FF;
+`;
+
 interface Props {
-    ratingValue: number
+    ratingValue: number,
+    reviewCount: number,
 }
 
 const RatingStarList = ({ratingValue}: Props) => {
