@@ -14,11 +14,10 @@ import {useSelector} from 'react-redux';
 
 const Container = Styled.View`
  width: ${wp('100%')}px;
- padding-top: 10px;
- padding-bottom: 10px;
+ padding-top: 24px;
  padding-left: 60px;
  flex-direction: row;
- background-color: #ffffff;
+ background: #FFFFFF;
 `;
 
 const ProfileImageContainer = Styled.View`
@@ -51,10 +50,8 @@ padding-right: 85px;
 `;
 
 const FooterContainer = Styled.View`
-padding-left: 8px;
 flex-direction: row;
-padding-top: 8px;
-align-items: center;
+align-items: flex-end;
 `;
 
 const ProfileImage = Styled.Image`
@@ -90,7 +87,6 @@ line-height: 16px;
 
 const ReplyText = Styled.Text`
 font-weight: 800;
-
 line-height: 16px;
 font-size: 12px;
  color: #9AA2A9;
@@ -98,6 +94,7 @@ font-size: 12px;
 
 const ReplyContainer = Styled.View`
 flex-direction: row;
+padding-top: 4px;
 align-items: center;
 `;
 

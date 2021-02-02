@@ -202,9 +202,18 @@ const MyProfileScreen = ({navigation, route}: Props) => {
     [],
   );
 
-  const moveToAnotherProfile = useCallback(() => {
-    navigation.navigate('AnotherProfileScreen');
-  }, []);
+  const moveToAnotherProfile = useCallback(
+    (userId: string, nickname: string, profileImageUri: string) => {
+      navigation.navigate('AnotherProfileStackScreen', {
+        targetUser: {
+          userId,
+          nickname,
+          profileImageUri,
+        },
+      });
+    },
+    [],
+  );
 
   const moveToReservationTabScreen = useCallback(() => {
     navigation.navigate('ReservationTabScreen');

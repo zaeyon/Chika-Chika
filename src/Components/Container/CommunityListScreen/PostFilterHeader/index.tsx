@@ -19,7 +19,7 @@ const OrderContentFocusedText = Styled.Text`
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
-line-height: 24px;
+line-height: 16px;
 color: #131F3C;
 `;
 
@@ -32,7 +32,7 @@ const OrderContentUnFocusedText = Styled.Text`
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
-line-height: 24px;
+line-height: 16px;
 color: #9AA2A9;
 `;
 

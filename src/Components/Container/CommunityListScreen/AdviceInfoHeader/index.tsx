@@ -10,7 +10,7 @@ const ContianerView = Styled.View`
 width: auto;
 height: auto;
 margin: 0px 8px;
-padding: 24px 16px;
+padding: 20px 16px;
 flex-direction: row;
 align-items: center;
 background: #00D1FF;
@@ -31,7 +31,6 @@ const TitleText = Styled.Text`
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
-line-height: 16px;
 color: #FFFFFF;
 `;
 
@@ -46,9 +45,10 @@ const ButtonText = Styled.Text`
 
 font-style: normal;
 font-weight: normal;
-font-size: 16px;
-line-height: 24px;
+font-size: 14px;
+line-height: 16px;
 color: #FFFFFF;
+
 `;
 
 const ButtonUnderlineView = Styled.View`

@@ -184,6 +184,7 @@ interface Props {
 
 interface State {
   currentIndex: number;
+  lastScrollY: number;
   isModalVisible: boolean;
   index: number;
   routes: any;
@@ -225,6 +226,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
         {key: 'second', title: '작성한 수다글'},
       ],
       currentScrollY: new Animated.Value(0),
+      lastScrollY: 0,
       positionX: new Animated.Value(0),
       minusValue: new Animated.Value(-1),
       profileHeight: new Animated.Value(PROFILEHEIGHT),
@@ -361,19 +363,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
             {
               nativeEvent: {
                 contentOffset: {
-                  y: (y: number) =>
-                    Animated.block([
-                      Animated.set(this.state.currentScrollY, y),
-                      Animated.call([y], ([offsetY]) => {
-                        if (this.state.index === 1) {
-                          this.reviewRef &&
-                            this.reviewRef.getNode().scrollToOffset({
-                              offset: Math.min(PROFILEHEIGHT, offsetY),
-                              animated: false,
-                            });
-                        }
-                      }),
-                    ]),
+                  y: this.state.currentScrollY,
                 },
               },
             },
@@ -382,6 +372,18 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
             useNativeDriver: true,
           },
         )}
+        onScrollEndDrag={(e: any) => {
+          console.log('review scrollend');
+          this.setState({
+            lastScrollY: e.nativeEvent.contentOffset.y,
+          });
+        }}
+        onMomentumScrollEnd={(e: any) => {
+          console.log('review moscrollend');
+          this.setState({
+            lastScrollY: e.nativeEvent.contentOffset.y,
+          });
+        }}
         onEndReached={this.props.onCommunityEndReached}
         onEndReachedThreshold={5}
         ListFooterComponent={
@@ -432,20 +434,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
             {
               nativeEvent: {
                 contentOffset: {
-                  y: (y: number) =>
-                    Animated.block([
-                      Animated.set(this.state.currentScrollY, y),
-                      Animated.call([y], ([offsetY]) => {
-                        if (this.state.index === 0) {
-                          this.communityRef &&
-                            this.communityRef.getNode &&
-                            this.communityRef.getNode().scrollToOffset({
-                              offset: Math.min(PROFILEHEIGHT, offsetY),
-                              animated: false,
-                            });
-                        }
-                      }),
-                    ]),
+                  y: this.state.currentScrollY,
                 },
               },
             },
@@ -454,6 +443,18 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
             useNativeDriver: true,
           },
         )}
+        onScrollEndDrag={(e: any) => {
+          console.log('review scrollend');
+          this.setState({
+            lastScrollY: e.nativeEvent.contentOffset.y,
+          });
+        }}
+        onMomentumScrollEnd={(e: any) => {
+          console.log('review moscrollend');
+          this.setState({
+            lastScrollY: e.nativeEvent.contentOffset.y,
+          });
+        }}
         onEndReached={this.props.onReviewEndReached}
         onEndReachedThreshold={5}
         ListFooterComponent={
@@ -499,6 +500,24 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
       }}>
       <TabBar
         {...props}
+        onTabPress={({route}) => {
+          if (route.key === 'first') {
+            console.log('post scrollend');
+            this.reviewRef &&
+              this.reviewRef.getNode &&
+              this.reviewRef.getNode().scrollToOffset({
+                offset: Math.min(PROFILEHEIGHT, this.state.lastScrollY),
+                animated: false,
+              });
+          } else if (route.key === 'second') {
+            this.communityRef &&
+              this.communityRef.getNode &&
+              this.communityRef.getNode().scrollToOffset({
+                offset: Math.min(PROFILEHEIGHT, this.state.lastScrollY),
+                animated: false,
+              });
+          }
+        }}
         style={{
           backgroundColor: '#FFFFFF',
         }}
@@ -569,6 +588,24 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
           </ProfileContainerView>
         </FloatingView>
         <TabView
+          onSwipeStart={() => {
+            if (this.state.index === 1) {
+              console.log('post scrollend');
+              this.reviewRef &&
+                this.reviewRef.getNode &&
+                this.reviewRef.getNode().scrollToOffset({
+                  offset: Math.min(PROFILEHEIGHT, this.state.lastScrollY),
+                  animated: false,
+                });
+            } else if (this.state.index === 0) {
+              this.communityRef &&
+                this.communityRef.getNode &&
+                this.communityRef.getNode().scrollToOffset({
+                  offset: Math.min(PROFILEHEIGHT, this.state.lastScrollY),
+                  animated: false,
+                });
+            }
+          }}
           navigationState={{index: this.state.index, routes: this.state.routes}}
           renderScene={this.renderScene}
           onIndexChange={(index) => this.setState({index})}

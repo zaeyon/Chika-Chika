@@ -33,11 +33,11 @@ border-radius: 100px;
 margin-right: 8px;
 `;
 const ProfileNameText = Styled.Text`
-
+line-height: 16px;
 font-style: normal;
 font-weight: bold;
 font-size: 13px;
-margin-right: 4px;
+margin-right: 8px;
 `;
 
 const ProfileSplitView = Styled.View`
@@ -51,7 +51,7 @@ margin: 0px 6px;
 const ProfileDescriptionText = Styled.Text`
 
 font-style: normal;
-font-weight: bold;
+font-weight: normal;
 font-size: 13px;
 color: #9AA2A9;
 `;
@@ -72,7 +72,7 @@ line-height: 24px;
 `;
 
 const HashTagText = Styled.Text`
-  color: #0075FF;
+  color: #00D1FF;
 `;
 
 const SocialInfoContainerView = Styled.View`

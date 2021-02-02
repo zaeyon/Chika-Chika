@@ -22,7 +22,7 @@ const HeaderBar = Styled.View`
 
 const HeaderText = Styled.Text<{disabled: boolean; color: string}>`
 font-style: normal;
-font-weight: 400;
+font-weight: normal;
 font-size: 16px;
 line-height: 24px;
 color: ${(props) => (props.disabled ? '#9AA2A9' : props.color)};
@@ -63,7 +63,7 @@ color: #131F3C;
 
 const HeaderTitleText = Styled.Text`
 font-style: normal;
-font-weight: normal;
+font-weight: 400;
 font-size: 16px;
 line-height: 24px;
 color: #131F3C;

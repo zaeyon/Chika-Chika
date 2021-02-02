@@ -62,7 +62,7 @@ z-index: 11;
 `;
 const FloatingView = Styled.View`
 width: 114px;
-height: 146px;
+height: auto;
 position: absolute;
 top: ${getStatusBarHeight() + 45}px;
 right: 16px;
@@ -101,13 +101,10 @@ interface Props {
 const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   const scrollView: any = useRef();
   const scrollY: Animated.Value = useRef(new Animated.Value(0)).current;
-  const keyboardHeight: Animated.Value = useRef(new Animated.Value(0)).current;
 
   const commentState = useSelector((state: any) => state.commentList);
   const commentArray = commentState.commentList;
   const commentCount = commentState.commentCount;
-
-  const [formattedDescription, setFormattedDescription] = useState('');
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -138,6 +135,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   const [postData, setPostData] = useState(
     postList.find((item: any) => item.id === route.params.id),
   );
+  const [categoryTitle, setCategoryTitle] = useState(postData.type);
 
   const jwtToken = currentUser.jwtToken;
 
@@ -150,10 +148,12 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     if (newPostData) {
       console.log('hi');
       setPostData(newPostData);
+      setCategoryTitle(newPostData.type);
     } else {
       GETCommunityPostDetail(jwtToken, String(route.params.id)).then(
         (response: any) => {
-          console.log(response);
+          console.log('cant get communityPostDetail, fetching...');
+          setPostData(response);
         },
       );
     }
@@ -183,17 +183,27 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
       <TouchableWithoutFeedback onPress={() => setFloatingVisible(false)}>
         <BackdropView>
           <FloatingView>
-            <TouchableOpacity onPress={() => onPressDeletePost()}>
-              <FloatingContentView>
-                <FloatingContentText>{'삭제'}</FloatingContentText>
-              </FloatingContentView>
-            </TouchableOpacity>
-            <VerticalPartitionView />
-            <TouchableOpacity onPress={() => console.log('report')}>
-              <FloatingContentView>
-                <FloatingContentText>{'신고'}</FloatingContentText>
-              </FloatingContentView>
-            </TouchableOpacity>
+            {postData.userId === currentUser.profile.id ? (
+              <>
+                <TouchableOpacity onPress={() => onPressDeletePost()}>
+                  <FloatingContentView>
+                    <FloatingContentText>{'삭제'}</FloatingContentText>
+                  </FloatingContentView>
+                </TouchableOpacity>
+                <VerticalPartitionView />
+                <TouchableOpacity onPress={() => onPressEditPost()}>
+                  <FloatingContentView>
+                    <FloatingContentText>{'수정'}</FloatingContentText>
+                  </FloatingContentView>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <TouchableOpacity onPress={() => console.log('report')}>
+                <FloatingContentView>
+                  <FloatingContentText>{'신고'}</FloatingContentText>
+                </FloatingContentView>
+              </TouchableOpacity>
+            )}
             <VerticalPartitionView />
             <TouchableOpacity onPress={() => console.log('share')}>
               <FloatingContentView>
@@ -394,6 +404,15 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     );
   }, []);
 
+  const formatCategory = useCallback(() => {
+    switch (categoryTitle) {
+      case 'Question':
+        return '질문방';
+      case 'FreeTalk':
+        return '수다방';
+    }
+  }, [categoryTitle]);
+
   if (postData) {
     return (
       <ContainerView>
@@ -401,7 +420,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
         <NavigationHeader
           headerLeftProps={{
             type: 'arrow',
-            text: '수다방',
+            text: formatCategory(),
             onPress: () => navigation.goBack(),
           }}
           headerRightProps={{

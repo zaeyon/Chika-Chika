@@ -60,14 +60,14 @@ const HashTagItemNameText = Styled.Text`
 margin-right: 4px;
 
 font-style: normal;
-font-weight: bold;
+font-weight: normal;
 font-size: 16px;
 `;
 
 const HashTagItemLocationText = Styled.Text`
 
 font-style: normal;
-font-weight: bold;
+font-weight: normal;
 font-size: 12px;
 line-height: 16px;
 color: #9AA2A9;
@@ -103,6 +103,7 @@ interface Tag {
   sigungu: string | undefined;
   emdName: string | undefined;
   adCity: string | undefined;
+  cityName: string | undefined;
   fullCityName: string | undefined;
   relativeAddress: string | undefined;
 }
@@ -166,16 +167,14 @@ const SuggestionBarView = ({
 
   const renderHashTagItemView = useCallback(
     ({item, index}: {item: Tag; index: number}) => {
-      if (
-        item.category === 'city' &&
-        item.fullCityName?.includes(searchQuery)
-      ) {
+      console.log(item);
+      if (item.category === 'city' && item.cityName?.includes(searchQuery)) {
         return (
           <TouchableHighlight
             activeOpacity={1}
             underlayColor="#EEEEEE"
             onPress={() => {
-              completeCurrentHashTag(item.fullCityName);
+              completeCurrentHashTag(item.cityName);
             }}>
             <HashTagItemView style={{borderTopWidth: index === 0 ? 0.5 : 0}}>
               <HashTagItemIconImage source={iconDic[item.category]} />
@@ -186,7 +185,7 @@ const SuggestionBarView = ({
                   }}>
                   {searchQuery}
                 </HashTagItemNameText>
-                {item.fullCityName?.slice(searchQuery.length)}
+                {item.cityName?.slice(searchQuery.length)}
               </HashTagItemNameText>
               <HashTagItemLocationText>
                 {item.sido + ' ' + item.sigungu + ' ' + item.adCity}
