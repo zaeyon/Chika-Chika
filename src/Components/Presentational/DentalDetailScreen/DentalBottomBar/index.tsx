@@ -48,7 +48,6 @@ justify-content: center;
 `;
 
 const ReserveText = Styled.Text`
-
 font-weight: 700;
 font-size: 16px;
 line-height: 24px;

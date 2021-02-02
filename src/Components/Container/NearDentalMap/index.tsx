@@ -347,7 +347,6 @@ background-color: #eeeeee;
 `;
 
 const ViewDentalListText = Styled.Text`
-
 font-size: 16px;
 `;
 

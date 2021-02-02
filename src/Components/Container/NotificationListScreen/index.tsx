@@ -100,7 +100,7 @@ const NotificationListScreen = ({navigation, route}: Props) => {
         try {
             GETUserNotifications(jwtToken, "Like")
             .then((response: any) => {
-                console.log("GETUserNotifications response", response);
+                console.log("GETUserNotifications response like", response);
                 setLikeNotificationArray(response);
             })
             .catch((error) => {
@@ -109,7 +109,7 @@ const NotificationListScreen = ({navigation, route}: Props) => {
     
             GETUserNotifications(jwtToken, "Event")
             .then((response: any) => {
-                console.log("GETUserNotifications response", response);
+                console.log("GETUserNotifications response event", response);
                 setEventNotificationArray(response);
             })
             .catch((error) => {
@@ -118,7 +118,7 @@ const NotificationListScreen = ({navigation, route}: Props) => {
     
             GETUserNotifications(jwtToken, "Comment")
             .then((response: any) => {
-                console.log("GETUserNotifications response", response);
+                console.log("GETUserNotifications response comment", response);
                 setCommentNotificationArray(response);
             })
             .catch((error) => {

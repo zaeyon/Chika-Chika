@@ -39,7 +39,6 @@ margin-right: 16px;
 `;
 
 const HeaderIndicatorText = Styled.Text`
-
 font-style: normal;
 font-weight: bold;
 font-size: 18px;

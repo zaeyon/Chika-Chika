@@ -73,13 +73,11 @@ const CommentDescripText = Styled.Text`
 font-weight: 400;
 font-size: 14px;
 line-height: 16px;
-
 color: #131F3C;
 `;
 
 const CreateAtText = Styled.Text`
 font-weight: 400;
-
 font-size: 12px;
 line-height: 16px;
  color: #9AA2A9;
@@ -131,7 +129,6 @@ background-color: #9AA2A9;
 `;
 
 const TargetUserText = Styled.Text`
-
 font-size: 14px;
 line-height: 24px;
 color: #00D1FF;

@@ -121,6 +121,7 @@ const NotificationItem = ({notificationObj, isEditing, selectNotificationItem, s
 
 
     return (
+        <TouchableWithoutFeedback onPress={() => moveToNotifiedPost(notificationObj.reviewId, notificationObj.type)}>
         <Container>
             <ContentContainer>
             <TouchableWithoutFeedback onPress={() => moveToAnotherProfile(notificationObj.senders.id, notificationObj.senders.nickname, notificationObj.senders.profileImg)}>
@@ -152,6 +153,7 @@ const NotificationItem = ({notificationObj, isEditing, selectNotificationItem, s
             </ContentContainer>
             <BottomDivier/>
         </Container>
+        </TouchableWithoutFeedback>
     )
 }
 

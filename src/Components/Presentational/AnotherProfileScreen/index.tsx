@@ -44,7 +44,6 @@ z-index: 2;
 `;
 
 const HeaderNicknameText = Styled.Text`
-
 font-style: normal;
 font-weight: 800;
 font-size: 23px;
@@ -110,7 +109,6 @@ padding: 0px 16px
 `;
 
 const ProfileReservationTitleText = Styled.Text`
-
 font-style: normal;
 font-weight: normal;
 font-size: 16px;
@@ -118,7 +116,6 @@ line-height: 24px;
 `;
 
 const ProfileReservationText = Styled.Text`
-
 font-style: normal;
 font-weight: 800;
 font-size: 18px;

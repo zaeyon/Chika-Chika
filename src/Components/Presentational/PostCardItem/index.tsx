@@ -49,7 +49,6 @@ margin: 0px 6px;
 `;
 // font-size, line-height ++ 1px
 const ProfileDescriptionText = Styled.Text`
-
 font-style: normal;
 font-weight: normal;
 font-size: 13px;
@@ -64,7 +63,6 @@ background: #FFFFFF;
 `;
 
 const ContentText = Styled.Text`
-
 font-style: normal;
 font-weight: normal;
 font-size: 14px;
@@ -83,7 +81,6 @@ background: #FFFFFF;
 `;
 
 const SocialInfoText = Styled.Text`
-
 font-style: normal;
 font-weight: normal;
 font-size: 12px;

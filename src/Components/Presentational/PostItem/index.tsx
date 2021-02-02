@@ -55,7 +55,6 @@ border-radius: 4px;
 background-color: #F5F7F9;
 `;
 const HashTagIconText = Styled.Text`
-
 font-style: normal;
 font-weight: 500;
 font-size: 13px;
@@ -81,7 +80,6 @@ align-items: center;
 padding-left: 8px;
 `;
 const ProfileNameText = Styled.Text`
-
 font-style: normal;
 font-weight: bold;
 font-size: 13px;
@@ -113,7 +111,6 @@ margin: 6px 2px;
 `;
 
 const ContentText = Styled.Text`
-
 font-style: normal;
 font-weight: 500;
 font-size: 14px;
@@ -165,7 +162,6 @@ flex-direction: row;
 align-items: center;
 `;
 const SocialInfoText = Styled.Text`
-
 font-style: normal;
 font-weight: 500;
 font-size: 13px;

@@ -132,7 +132,15 @@ const NotificationList = ({navigation, route, isEditing, loadingGetLikeNotify, l
     }
 
     const moveToNotifiedPost = (postId: number, type: string) => {
-        
+        console.log("moveToNotifiedPost type", type)
+        if(type === "Comment") {
+            navigation.navigate("ReviewStackScreen", {
+                screen: "ReviewDetailScreen",
+                params: {
+                    reviewId: postId
+                }
+            })
+        }
     }
     
     const renderCommentNotificationItem = ({item, index}: any) => {

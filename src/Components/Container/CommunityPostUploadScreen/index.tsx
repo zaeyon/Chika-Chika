@@ -36,7 +36,6 @@ const ContainerView = Styled.SafeAreaView`
 `;
 
 const ModalContentText = Styled.Text`
-
 font-style: normal;
 font-weight: normal;
 font-size: 14px;

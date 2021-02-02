@@ -182,6 +182,47 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
       });
   }
 
+
+  const moveToReviewDetail = (
+    reviewId: number,
+    writer: object,
+    createdAt: string,
+    treatmentArray: Array<object>,
+    ratingObj: object,
+    treatmentDate: string,
+    imageArray: Array<object>,
+    isCurUserLike: boolean,
+    likeCount: number,
+    commentCount: number,
+    isCurUserScrap: boolean,
+    dentalObj: object,
+    visibleElapsedTime: boolean,
+    elapsedTime: string,
+  ) => {
+    console.log('moveToReviewDetail reviewId', reviewId);
+
+    navigation.push('ReviewStackScreen', {
+      screen: 'ReviewDetailScreen',
+      params: {
+        reviewId: reviewId,
+        writer: writer,
+        createdAt: createdAt,
+        treatmentArray: treatmentArray,
+        ratingObj: ratingObj,
+        treatmentDate: treatmentDate,
+        imageArray: imageArray,
+        isCurUserLike: isCurUserLike,
+        isCurUserScrap: isCurUserScrap,
+        likeCount: likeCount,
+        commentCount: commentCount,
+        dentalObj: dentalObj,
+        visibleElapsedTime: visibleElapsedTime,
+        elapsedTime: elapsedTime,
+        requestScreen: "DentalDetailScreen",
+      },
+    });
+  };
+
   const moveToAnotherProfile = useCallback((userId: string, nickname: string, profileImageUri: string) => {
       navigation.navigate("AnotherProfileStackScreen", {
           targetUser: {
@@ -203,6 +244,7 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
           {!loadingGetDentalDetail && (
           <DentalTabContainer>
             <DentalCollapsibleTabView
+            moveToReviewDetail={moveToReviewDetail}
             moveToAnotherProfile={moveToAnotherProfile}
             moveToDentalLocationMap={moveToDentalLocationMap}
             moveToDentalInfoEdit={moveToDentalInfoEdit}

@@ -34,7 +34,6 @@ background: #FFFFFF;
 `;
 
 const ModaContentlText = Styled.Text`
-
 font-style: normal;
 font-weight: bold;
 font-size: 14px;

@@ -21,7 +21,6 @@ align-items: center;
 `;
 
 const PlaceholderTitleText = Styled.Text`
-
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
@@ -55,7 +54,6 @@ z-index: -1;
 `;
 
 const LocalHospitalText = Styled.Text`
-
 font-style: normal;
 font-weight: 800;
 font-size: 16px;
@@ -77,7 +75,6 @@ margin-right: 4px;
 `;
 
 const LocalIndicatorText = Styled.Text`
-
 font-style: normal;
 font-weight: 800;
 font-size: 13px;
@@ -95,7 +92,6 @@ margin-bottom: 16px;
 
 const LocalCommunityTitleText = Styled.Text`
 margin: 12px 0px;
-
 font-style: normal;
 font-weight: 800;
 font-size: 18px;
@@ -132,7 +128,6 @@ margin-bottom: 12px;
 `;
 
 const LocalCommunityItemText = Styled.Text`
-
 font-style: normal;
 font-weight: 800;
 font-size: 14px;
@@ -157,7 +152,6 @@ margin: 12px 0px;
 `;
 
 const NavigatoinButtonText = Styled.Text`
-
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
@@ -177,7 +171,6 @@ margin-bottom: 16px;
 
 const LocalClinicTitleText = Styled.Text`
 margin: 12px 0px;
-
 font-style: normal;
 font-weight: 800;
 font-size: 18px;
@@ -212,7 +205,6 @@ const LocalClinicContentView = Styled.View`
 `;
 
 const LocalClinicItemTitleText = Styled.Text`
-
 font-style: normal;
 font-weight: 800;
 font-size: 16px;
@@ -227,7 +219,6 @@ margin-bottom: 4px;
 background: #F5F7F9`;
 
 const LocalClinicItemText = Styled.Text`
-
 font-style: normal;
 font-weight: normal;
 font-size: 13px;
@@ -255,7 +246,6 @@ border-radius: 4px;
 `;
 
 const LocalClinicItemTagText = Styled.Text`
-
 font-style: normal;
 font-weight: normal;
 font-size: 12px;

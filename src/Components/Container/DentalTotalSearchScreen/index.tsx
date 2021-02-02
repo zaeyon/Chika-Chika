@@ -305,7 +305,6 @@ background-color: #eeeeee;
 `;
 
 const ViewDentalMapText = Styled.Text`
-
 font-size: 16px;
 `;
 

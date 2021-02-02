@@ -48,7 +48,6 @@ justify-content: center;
 `;
 
 const HeaderTitleText = Styled.Text`
-
 font-style: normal;
 font-weight: bold;
 font-size: 20px;
@@ -57,7 +56,6 @@ color: #131F3C;
 `;
 
 const HeaderLocationText = Styled.Text`
-
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
@@ -101,14 +99,16 @@ const CommunityListScreen = ({navigation, route}: Props) => {
   const hometown = currentUser.hometown;
   const jwtToken = currentUser.jwtToken;
 
-  const moveToKeywordSearch = () => {
-    navigation.navigate('KeywordSearchStackScreen', {
-      screen: 'KeywordSearchScreen',
+  const moveToTotalKeywordSearch = () => {
+    navigation.navigate('TotalKeywordSearchStackScreen', {
+      screen: 'TotalKeywordSearchScreen',
     });
   };
 
   const moveToNotificationList = () => {
-    navigation.navigate('NotificationListScreen');
+    navigation.navigate('NotificationStackScreen', {
+      screen: "NotificationListScreen"
+    });
   };
 
   useEffect(() => {
@@ -155,7 +155,7 @@ const CommunityListScreen = ({navigation, route}: Props) => {
           <HeaderTitleText>{'커뮤니티'}</HeaderTitleText>
         </HeaderTitleView>
         <HeaderIconContainerView>
-          <HeaderIconTouchableOpacity onPress={moveToKeywordSearch}>
+          <HeaderIconTouchableOpacity onPress={moveToTotalKeywordSearch}>
             <Image source={require('~/Assets/Images/TopTab/ic/search.png')} />
           </HeaderIconTouchableOpacity>
           <HeaderIconTouchableOpacity onPress={() => moveToNotificationList()}>

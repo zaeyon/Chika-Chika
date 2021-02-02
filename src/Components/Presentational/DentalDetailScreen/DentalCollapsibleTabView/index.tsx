@@ -506,11 +506,26 @@ interface Props {
   moveToReviewUpload: () => void,
   moveToDentalLocationMap: () => void,
   moveToDentalInfoEdit: () => void,
-  moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
+  moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,moveToReviewDetail: (
+    reviewId: number,
+    writer: object,
+    createdAt: string,
+    treatmentArray: Array<object>,
+    ratingObj: Object,
+    treatmentDate: string,
+    imageArray: Array<object>,
+    isCurUserLike: boolean,
+    likeCount: number,
+    commentCount: number,
+    isCurUserScrap: boolean,
+    dentalObj: object,
+    visibleElapsedTime: boolean,
+    elapsedTime: string,
+  ) => void;
   dentalReviewArray: Array<any>,
 }
 
-const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload, moveToDentalLocationMap, moveToDentalInfoEdit, dentalReviewArray, moveToAnotherProfile}: Props) => {
+const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload, moveToDentalLocationMap, moveToDentalInfoEdit, dentalReviewArray, moveToAnotherProfile, moveToReviewDetail}: Props) => {
   console.log("DentalCollapsibleTabView dentalDetailInfo", dentalDetailInfo);
   console.log("DentalCollapsibleTabView dentalReviewArray", dentalReviewArray);
 
@@ -1150,7 +1165,8 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
                   <ReviewListContainer>
                   <ReviewList 
                   reviewList={dentalReviewArray}
-                  moveToAnotherProfile={moveToAnotherProfile}/>
+                  moveToAnotherProfile={moveToAnotherProfile}
+                  moveToReviewDetail={moveToReviewDetail}/>
                   </ReviewListContainer>
                   <RequestReviseInfoContainer>
                   <TouchableWithoutFeedback onPress={() => moveToDentalInfoEdit()}>
@@ -1237,6 +1253,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
           transform: [{translateY: y}],
           width: '100%',
         }}>
+
         <TabBar
           {...props}
           onTabPress={({route, preventDefault}) => {

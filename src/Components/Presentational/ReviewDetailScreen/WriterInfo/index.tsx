@@ -35,7 +35,6 @@ margin-left: 12px;
 `;
 
 const NicknameText = Styled.Text`
-
 font-weight: 700;
 line-height: 18px;
 font-size: 14px;
@@ -43,7 +42,6 @@ color: #131F3C;
 `;
 
 const ElapsedTimeText = Styled.Text`
-
 font-weight: 700;
 line-height: 16px;
 font-size: 12px;
@@ -62,7 +60,6 @@ border-color: #00D1FF;
 `;
 
 const ViewWriterProfileText = Styled.Text`
-
 font-weight: 700;
 font-size: 12px;
 color: #00D1FF;

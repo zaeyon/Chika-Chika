@@ -81,7 +81,6 @@ color: #131F3C;
 
 const CreateAtText = Styled.Text`
 font-weight: 400;
-
 font-size: 12px;
 line-height: 16px;
  color: #9AA2A9;
@@ -89,7 +88,6 @@ line-height: 16px;
 
 const ReplyText = Styled.Text`
 font-weight: 800;
-
 line-height: 16px;
 font-size: 12px;
  color: #9AA2A9;

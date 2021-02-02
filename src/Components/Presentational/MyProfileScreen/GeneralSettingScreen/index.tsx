@@ -46,7 +46,6 @@ align-items: center;
 background: #FFFFFF;
 `;
 const SectionContentTitleText = Styled.Text`
-
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
@@ -54,7 +53,6 @@ line-height: 24px;
 color: #131F3C;`;
 
 const SectionContentText = Styled.Text`
-
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
@@ -75,13 +73,13 @@ margin-left: auto;
 `;
 
 const ModalText = Styled.Text`
-
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
 line-height: 20px;
 color: #131F3C;
 `;
+
 interface Props {
   navigation: any;
   route: any;

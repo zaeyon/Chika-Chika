@@ -49,7 +49,6 @@ color: #9AA2A9;
 `;
 
 const CommentUploadText = Styled.Text`
-
 font-weight: 700;
 font-size: 14px;
 line-height: 24px;

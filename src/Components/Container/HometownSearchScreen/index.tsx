@@ -7,6 +7,7 @@ import {
   PermissionsAndroid,
   Alert,
   ActivityIndicator,
+  Keyboard
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -111,7 +112,6 @@ height: ${wp('4.26%')}px;
 `;
 
 const FindAroundCitesText = Styled.Text`
-
 font-weight: 800;
 font-size: 14px;
 line-height: 24px;
@@ -133,7 +133,6 @@ padding-right: 16px;
 `;
 
 const ListLabelText = Styled.Text`
-
 font-weight: 700;
 font-size: 13px;
 line-height: 24px;
@@ -150,7 +149,6 @@ border-color: #eeeeee;
 `;
 
 const HometownNameText = Styled.Text`
-
 line-height: 24px;
 font-weight: 400;
 font-size: 14px;
@@ -164,6 +162,7 @@ height: ${hp('100%')}px;
 background-color: #00000040;
 align-items: center;
 justify-content: center;
+z-index: 10;
 `;
 
 const LoadingCitiesContainer = Styled.View`
@@ -175,7 +174,6 @@ padding-bottom: ${hp('9.8%')}px;
 `;
 
 const ModalTitleText = Styled.Text`
-
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
@@ -186,7 +184,6 @@ color: #131F3C;
 const HeaderSearchInput = Styled.TextInput`
 flex: 1;
 background-color: #ffffff;
-
 padding-bottom: 3px;
 font-weight: 400;
 font-size: 16px;
@@ -269,7 +266,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
           console.log('사용자 현재 위치 불러오기 실패 error', error);
           ToastMessage.show('현재 위치를 불러올 수 없습니다 ㅠㅠ');
         },
-        {enableHighAccuracy: false, timeout: 10000, maximumAge: 10000},
+        {enableHighAccuracy: false, timeout: 5000, maximumAge: 5000},
       );
     }
   }, []);
@@ -312,12 +309,13 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
           console.log('사용자 현재 위치 불러오기 실패 error', error);
           ToastMessage.show('현재 위치를 불러올 수 없습니다 ㅠㅠ');
         },
-        {enableHighAccuracy: false, timeout: 10000, maximumAge: 10000},
+        {enableHighAccuracy: false, timeout: 5000, maximumAge: 5000},
       );
     }
   }
 
   const signUp = (hometown: any) => {
+    Keyboard.dismiss();
     setLoadingSignUp(true);
 
     const certifiedPhoneNumber = route.params.certifiedPhoneNumber;
@@ -371,6 +369,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
 
   const signUpSocial = (hometown: any) => {
     console.log('signUpSocial hometown', hometown);
+    Keyboard.dismiss();
     setLoadingSignUp(true);
 
     const certifiedPhoneNumber = route.params.certifiedPhoneNumber;

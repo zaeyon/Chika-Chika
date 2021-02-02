@@ -30,7 +30,6 @@ const HeaderBar = Styled.View`
 `;
 
 const HeaderText = Styled.Text`
-
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
@@ -60,7 +59,6 @@ align-items: center;
 flex-direction: row;
 `;
 const HeaderTitleText = Styled.Text`
-
 font-weight: 700;
 font-size: 16px; 
 margin-right: 5px;
