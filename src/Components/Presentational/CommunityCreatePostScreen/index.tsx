@@ -75,7 +75,7 @@ flex-direction: row;
 
 const CategoryContentFocusedText = Styled.Text`
 font-style: normal;
-font-weight: bold;
+font-weight: normal;
 font-size: 14px;
 line-height: 24px;
 color: #FFFFFF;
@@ -89,7 +89,7 @@ color: #131F3C;
 `;
 
 const CategorySelectorView = Styled.View`
-width: 63px;
+width: 59px;
 height: 100%;
 justify-content: center;
 align-items: center;
@@ -107,6 +107,19 @@ justify-content: center;
 align-items: center;
 z-index: 1;
 `;
+
+const CategoryItemSelectedView = Styled.View`
+width: auto;
+height: auto;
+margin-right: 8px;
+padding: 4px 12px;
+justify-content: center;
+align-items: center;
+z-index: 1;
+border-radius: 100;
+background: #00D1FF;
+`;
+
 const PopupAdviceView = Styled.View`
 margin: 16px 16px 0px 16px;
 padding: 16px;
@@ -125,7 +138,7 @@ color: #131F3C;
 const ParagraphTextInput = Styled.TextInput`
 width: 100%;
 flex: 1;
-padding: 0px 16px;
+padding: 0px 24px;
 font-size: 16px;
 line-height: 24px;
 `;
@@ -270,30 +283,26 @@ const CommunityCreatePostScreen = ({
             key={'category' + index}
             onPress={() => {
               Keyboard.dismiss();
-              Animated.spring(categoryIndex, {
-                toValue: index,
-                velocity: 7,
-                friction: 100,
-                tension: 100,
-                useNativeDriver: false,
-              }).start();
+              LayoutAnimation.configureNext(
+                LayoutAnimation.create(
+                  100,
+                  'easeInEaseOut',
+                  LayoutAnimation.Properties.scaleXY,
+                ),
+              );
               setCategory(categoryList[index]);
             }}>
-            <CategoryItemView>
-              {index === 0 ? (
-                category === '질문방' ? (
-                  <CategoryContentFocusedText>
-                    {item}
-                  </CategoryContentFocusedText>
-                ) : (
-                  <CategoryContentText>{item}</CategoryContentText>
-                )
-              ) : category === '수다방' ? (
-                <CategoryContentFocusedText>{item}</CategoryContentFocusedText>
-              ) : (
-                <CategoryContentText>{item}</CategoryContentText>
-              )}
-            </CategoryItemView>
+            {category === categoryList[index] ? (
+              <CategoryItemSelectedView>
+                <CategoryContentFocusedText>
+                  {categoryList[index]}
+                </CategoryContentFocusedText>
+              </CategoryItemSelectedView>
+            ) : (
+              <CategoryItemView>
+                <CategoryContentText>{categoryList[index]}</CategoryContentText>
+              </CategoryItemView>
+            )}
           </TouchableWithoutFeedback>
         );
       });
@@ -303,20 +312,35 @@ const CommunityCreatePostScreen = ({
 
   const completeCurrentHashTag = useCallback(
     (selectedHashTag: any) => {
-      const newParagraph =
-        paragraph.charAt(currentHashTagInfo.endIndex) === ' '
-          ? paragraph.slice(0, currentHashTagInfo.startIndex + 1) +
-            selectedHashTag +
-            paragraph.slice(currentHashTagInfo.endIndex)
-          : paragraph.slice(0, currentHashTagInfo.startIndex + 1) +
-            selectedHashTag +
-            ' ' +
-            paragraph.slice(currentHashTagInfo.endIndex);
-
-      setParagraph(newParagraph);
-      setSearchQuery('');
+      setParagraph((prev) => {
+        const newParagraph =
+          paragraph.charAt(currentHashTagInfo.endIndex) === ' '
+            ? paragraph.slice(0, currentHashTagInfo.startIndex + 1) +
+              selectedHashTag +
+              paragraph.slice(currentHashTagInfo.endIndex)
+            : paragraph.slice(0, currentHashTagInfo.startIndex + 1) +
+              selectedHashTag +
+              ' ' +
+              paragraph.slice(currentHashTagInfo.endIndex);
+        return newParagraph;
+      });
+      console.log(
+        'at',
+        paragraph.charAt(
+          currentHashTagInfo.startIndex + 1 + selectedHashTag.length,
+        ),
+      );
+      setTimeout(() => {
+        textInputRef.current.setNativeProps({
+          selection: {
+            start: currentHashTagInfo.startIndex + 2 + selectedHashTag.length,
+            end: currentHashTagInfo.startIndex + 2 + selectedHashTag.length,
+          },
+        });
+        setSearchQuery('');
+      }, 100);
     },
-    [currentHashTagInfo],
+    [currentHashTagInfo, textInputRef],
   );
 
   const getCursorInfo = useCallback(
@@ -408,20 +432,6 @@ const CommunityCreatePostScreen = ({
             <CategoryTitleText>카테고리</CategoryTitleText>
             <CategoryContentView>
               {renderCategories(categoryList)}
-              <CategorySelectorView
-                as={Animated.View}
-                style={{
-                  transform: [
-                    {
-                      translateX: categoryIndex.interpolate({
-                        inputRange: [0, categoryList.length - 1],
-                        outputRange: [0, 71 * (categoryList.length - 1)],
-                        extrapolate: 'clamp',
-                      }),
-                    },
-                  ],
-                }}
-              />
             </CategoryContentView>
           </CategoryContainerView>
           {isPopupShown ? (
@@ -431,8 +441,8 @@ const CommunityCreatePostScreen = ({
                   flex: 1,
                   position: 'absolute',
                   zIndex: 1,
-                  right: 12,
-                  top: 12,
+                  right: 16,
+                  top: 16,
                 }}
                 onPress={() => {
                   LayoutAnimation.configureNext(
@@ -470,8 +480,8 @@ const CommunityCreatePostScreen = ({
               placeholderTextColor="#C4C4C4"
               placeholder={
                 category === '질문방'
-                  ? '질문방에 올릴 게시물을 작성해주세요!'
-                  : '수다방에 올릴 게시물을 작성해주세요!'
+                  ? '질문방에 올릴 게시물을 작성해주세요.'
+                  : '수다방에 올릴 게시물을 작성해주세요.'
               }
               multiline
               value={paragraph}

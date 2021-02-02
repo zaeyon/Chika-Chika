@@ -185,6 +185,7 @@ interface Props {
 interface State {
   currentIndex: number;
   lastScrollY: number;
+  prevScrollY: number;
   isModalVisible: boolean;
   index: number;
   routes: any;
@@ -227,6 +228,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
       ],
       currentScrollY: new Animated.Value(0),
       lastScrollY: 0,
+      prevScrollY: 0,
       positionX: new Animated.Value(0),
       minusValue: new Animated.Value(-1),
       headerHeightValue: new Animated.Value(PROFILEHEIGHT),
@@ -373,13 +375,11 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           },
         )}
         onScrollEndDrag={(e: any) => {
-          console.log('review scrollend');
           this.setState({
             lastScrollY: e.nativeEvent.contentOffset.y,
           });
         }}
         onMomentumScrollEnd={(e: any) => {
-          console.log('review moscrollend');
           this.setState({
             lastScrollY: e.nativeEvent.contentOffset.y,
           });
@@ -444,13 +444,11 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           },
         )}
         onScrollEndDrag={(e: any) => {
-          console.log('review scrollend');
           this.setState({
             lastScrollY: e.nativeEvent.contentOffset.y,
           });
         }}
         onMomentumScrollEnd={(e: any) => {
-          console.log('review moscrollend');
           this.setState({
             lastScrollY: e.nativeEvent.contentOffset.y,
           });
@@ -504,9 +502,15 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         }}>
         <TabBar
           {...props}
-          onTabPress={({route}) => {
+          onTabPress={({route, preventDefault}) => {
+            if (
+              this.state.prevScrollY ===
+              Math.min(PROFILEHEIGHT, this.state.lastScrollY)
+            ) {
+              return;
+            }
             if (route.key === 'first') {
-              console.log('post scrollend');
+              console.log('review scrollend');
               this.reviewRef &&
                 this.reviewRef.getNode &&
                 this.reviewRef.getNode().scrollToOffset({
@@ -514,6 +518,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
                   animated: false,
                 });
             } else if (route.key === 'second') {
+              console.log('post scrollend');
               this.communityRef &&
                 this.communityRef.getNode &&
                 this.communityRef.getNode().scrollToOffset({
@@ -521,6 +526,9 @@ export default class MyProfile extends React.PureComponent<Props, State> {
                   animated: false,
                 });
             }
+            this.setState({
+              prevScrollY: Math.min(PROFILEHEIGHT, this.state.lastScrollY),
+            });
           }}
           style={{
             backgroundColor: '#FFFFFF',
@@ -613,8 +621,14 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         </FloatingView>
         <TabView
           onSwipeStart={() => {
+            if (
+              this.state.prevScrollY ===
+              Math.min(PROFILEHEIGHT, this.state.lastScrollY)
+            ) {
+              return;
+            }
             if (this.state.index === 1) {
-              console.log('post scrollend');
+              console.log('review swipe');
               this.reviewRef &&
                 this.reviewRef.getNode &&
                 this.reviewRef.getNode().scrollToOffset({
@@ -622,6 +636,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
                   animated: false,
                 });
             } else if (this.state.index === 0) {
+              console.log('post swipe');
               this.communityRef &&
                 this.communityRef.getNode &&
                 this.communityRef.getNode().scrollToOffset({
@@ -629,6 +644,11 @@ export default class MyProfile extends React.PureComponent<Props, State> {
                   animated: false,
                 });
             }
+          }}
+          onSwipeEnd={() => {
+            this.setState({
+              prevScrollY: Math.min(PROFILEHEIGHT, this.state.lastScrollY),
+            });
           }}
           navigationState={{index: this.state.index, routes: this.state.routes}}
           renderScene={this.renderScene}

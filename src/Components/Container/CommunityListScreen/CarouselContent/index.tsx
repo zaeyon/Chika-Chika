@@ -11,7 +11,7 @@ import PostCardItem from '~/Components/Presentational/PostCardItem';
 const ContainerView = Styled.View`
 width: ${wp('100%')}px;
 
-padding: 24px 0px;
+padding: 16px;
 background: #FFFFFF;
 `;
 
@@ -20,14 +20,13 @@ font-style: normal;
 font-weight: bold;
 font-size: 16px;
 line-height: 24px;
-margin: 0px 0px 16px 24px;
+margin-bottom: 16px;
 `;
 
 const ContentFlatList = Styled.FlatList`
 width: ${wp('100%')}px;
 height: auto;
 overflow: visible;
-padding: 0px 16px;
 background: #FFFFFF;
 `;
 

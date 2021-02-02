@@ -37,7 +37,7 @@ const ContainerView = Styled.SafeAreaView`
 
 const ModalContentText = Styled.Text`
 font-style: normal;
-font-weight: bold;
+font-weight: normal;
 font-size: 14px;
 line-height: 20px;
 color: #131F3C;
@@ -340,11 +340,15 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
       };
       PUTCommunityPost(jwtToken, postData, prevData.id).then(
         (response: any) => {
-          const form = {
-            id: prevData.id,
-            data: response.body.updateCommunityPost,
-          };
-          dispatch(allActions.communityActions.editPost(form));
+          if (prevData.type === formattedCategory) {
+            const form = {
+              id: prevData.id,
+              data: response.body.updateCommunityPost,
+            };
+            dispatch(allActions.communityActions.editPost(form));
+          } else {
+            dispatch(allActions.communityActions.deletePost(prevData.id));
+          }
           navigation.navigate('CommunityDetailScreen', {
             id: prevData.id,
             type: formattedCategory,

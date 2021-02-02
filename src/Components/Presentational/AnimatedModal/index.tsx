@@ -21,7 +21,7 @@ justify-content: center;
 `;
 
 const ModalContentView = Styled.View`
-width: ${wp('70%')}px;
+width: ${wp('69%')}px;
 height: auto;
 padding-top: 26px;
 align-items: center;

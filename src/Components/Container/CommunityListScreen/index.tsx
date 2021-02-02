@@ -158,6 +158,11 @@ const CommunityListScreen = ({navigation, route}: Props) => {
           <HeaderIconTouchableOpacity onPress={moveToTotalKeywordSearch}>
             <Image source={require('~/Assets/Images/TopTab/ic/search.png')} />
           </HeaderIconTouchableOpacity>
+          <HeaderIconTouchableOpacity onPress={() => moveToNotificationList()}>
+            <Image
+              source={require('~/Assets/Images/TopTab/ic/alarm/focus.png')}
+            />
+          </HeaderIconTouchableOpacity>
           <HeaderIconTouchableOpacity
             onPress={() =>
               navigation.navigate('CommunityPostUploadStackScreen', {
@@ -168,11 +173,6 @@ const CommunityListScreen = ({navigation, route}: Props) => {
             }>
             <Image
               source={require('~/Assets/Images/TopTab/ic/write/black.png')}
-            />
-          </HeaderIconTouchableOpacity>
-          <HeaderIconTouchableOpacity onPress={() => moveToNotificationList()}>
-            <Image
-              source={require('~/Assets/Images/TopTab/ic/alarm/focus.png')}
             />
           </HeaderIconTouchableOpacity>
         </HeaderIconContainerView>

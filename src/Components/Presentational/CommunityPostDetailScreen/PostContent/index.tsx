@@ -85,7 +85,7 @@ padding-left: 8px;
 `;
 const ProfileNameText = Styled.Text`
 font-style: normal;
-font-weight: normal;
+font-weight: bold;
 font-size: 14px;
 line-height: 16px;
 margin-bottom: 2px;
@@ -93,7 +93,7 @@ margin-bottom: 2px;
 
 const ProfileDescriptionText = Styled.Text`
 font-style: normal;
-font-weight: normal;
+font-weight: 500;
 font-size: 12px;
 line-height: 16px;
 color: #9AA2A9;
@@ -187,7 +187,7 @@ const PostContent = ({
     } else if (elapsedTime / (3600 * 1000) >= 1) {
       // in hours
       const hour = Math.floor(elapsedTime / (3600 * 1000));
-      return `${hour}시간 전`;
+      return `${hour}시간전`;
     } else if (elapsedTime / (60 * 1000) >= 1) {
       // in minutes
       const minute = Math.floor(elapsedTime / (60 * 1000));

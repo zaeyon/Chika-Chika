@@ -16,11 +16,11 @@ import ReplyItem from '~/Components/Presentational/ReplyItem';
 
 const Container = Styled.View`
  width: ${wp('100%')}px;
- padding-top: 10px;
+ padding-top: 24px;
  padding-left: 18px;
  padding-right: 0px;
  flex-direction: row;
- background-color: #ffffff;
+ background-color: #FFFFFF;
 `;
 
 const ProfileImageContainer = Styled.View`
@@ -53,9 +53,8 @@ padding-right: 85px;
 `;
 
 const FooterContainer = Styled.View`
-padding-left: 8px;
  flex-direction: row;
- align-items: center;
+ align-items: flex-end;
 `;
 
 const ProfileImage = Styled.Image`
@@ -77,7 +76,6 @@ const CommentDescripText = Styled.Text`
 font-weight: 400;
 font-size: 14px;
 line-height: 24px;
-
 color: #131F3C;
 `;
 
@@ -98,8 +96,7 @@ font-size: 12px;
 const ReplyContainer = Styled.View`
 flex-direction: row;
 align-items: center;
-padding-top: 8px;
-padding-bottom: 8px;
+padding-top: 4px;
 `;
 
 const ReportText = Styled.Text`

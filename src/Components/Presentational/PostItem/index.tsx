@@ -17,8 +17,7 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 const ContainerView = Styled.View`
 width: ${wp('100%')}px;
 height: auto;
-border-bottom-width: 0.5px;
-border-color: #9AA2A9;
+margin-bottom: 8px;
 background: #FFFFFF;
 `;
 
@@ -98,10 +97,11 @@ margin: 0px 6px;
 // font-size, line-height ++ 1px
 const ProfileDescriptionText = Styled.Text`
 font-style: normal;
-font-weight: bold;
+font-weight: normal;
 font-size: 13px;
 line-height: 16px;
 color: #9AA2A9;
+
 `;
 // font-size, line-height ++ 1px
 const ContentView = Styled.View`
@@ -132,6 +132,8 @@ width: 124px;
 height: 124px;
 background-color: #F5F7F9;
 border-radius: 8px;
+border-color: #F5F7F9;
+border-width: 1px;
 `;
 
 const ImageSeperatorView = Styled.View`
@@ -161,13 +163,14 @@ align-items: center;
 `;
 const SocialInfoText = Styled.Text`
 font-style: normal;
-font-weight: bold;
+font-weight: 500;
 font-size: 13px;
 line-height: 16px;
 margin-left: 4px;
+color: #131F3C;
 `;
 const HashTagHighlightText = Styled.Text`
-  color: #0075FF;
+  color: #00D1FF;
 `;
 
 const HashTagText = Styled.Text`
