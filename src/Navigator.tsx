@@ -262,7 +262,6 @@ function AnotherProfileStackScreen({route}) {
   );
 }
 
-
 function HomeStackScreen() {
   return (
     <HomeStack.Navigator
@@ -740,11 +739,11 @@ function CommunityStackScreen() {
           transitionSpec: {
             open: {
               animation: 'timing',
-              config: {duration: 0},
+              config: {duration: 100},
             },
             close: {
               animation: 'timing',
-              config: {duration: 0},
+              config: {duration: 100},
             },
           },
           cardStyleInterpolator: ({current: {progress}}) => {
@@ -787,14 +786,15 @@ function NotificationStackScreen() {
   return (
     <NotificationStack.Navigator headerMode="none">
       <NotificationStack.Screen
-      name="NotificationListScreen"
-      component={NotificationListScreen}/>
+        name="NotificationListScreen"
+        component={NotificationListScreen}
+      />
       <NotificationStack.Screen
-      name="ReviewStackScreen"
-      component={ReviewStackScreen}/>
+        name="ReviewStackScreen"
+        component={ReviewStackScreen}
+      />
     </NotificationStack.Navigator>
-
-  )
+  );
 }
 
 function BottomTab() {
@@ -871,6 +871,12 @@ function BottomTab() {
     if (
       stackRouteName === 'CommunityStackScreen' ||
       routeName.name === 'CommentListScreen'
+    ) {
+      return false;
+    }
+    if (
+      stackRouteName === 'CommunityStackScreen' ||
+      routeName.name === 'TotalKeywordSearchStackScreen'
     ) {
       return false;
     }

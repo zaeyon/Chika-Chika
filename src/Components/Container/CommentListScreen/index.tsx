@@ -128,7 +128,7 @@ const CommentListScreen = ({navigation, route}: Props) => {
           index: index,
           viewOffset: -relativeY,
         });
-      }, 500);
+      }, 1000);
     },
     [commentFlatListRef, commentInputRef],
   );
@@ -396,6 +396,9 @@ const CommentListScreen = ({navigation, route}: Props) => {
                 }, 100);
                 setInitialScroll(false);
               }
+            }}
+            contentContainerStyle={{
+              paddingVertical: 12,
             }}
             refreshing={refreshing}
             onRefresh={onRefreshCommentFlat}

@@ -16,9 +16,7 @@ import ReplyItem from '~/Components/Presentational/ReplyItem';
 
 const Container = Styled.View`
  width: ${wp('100%')}px;
- padding-top: 24px;
- padding-left: 18px;
- padding-right: 0px;
+ padding: 12px 0px 12px 18px;
  flex-direction: row;
  background-color: #FFFFFF;
 `;
@@ -68,7 +66,6 @@ const NicknameText = Styled.Text`
 line-height: 16px;
  font-size: 14px;
  font-weight: 800;
- 
  color: #131F3C
 `;
 

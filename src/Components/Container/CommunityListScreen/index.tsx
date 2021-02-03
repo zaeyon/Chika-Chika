@@ -107,21 +107,22 @@ const CommunityListScreen = ({navigation, route}: Props) => {
 
   const moveToNotificationList = () => {
     navigation.navigate('NotificationStackScreen', {
-      screen: "NotificationListScreen"
+      screen: 'NotificationListScreen',
     });
   };
 
   useEffect(() => {
+    console.log('question initialize');
     const questionform = {
       type: 'Question',
-      limit: 10,
+      limit: 20,
       offset: 0,
       order: 'createdAt',
       region: 'all',
     };
     const freetalkform = {
       type: 'FreeTalk',
-      limit: 10,
+      limit: 20,
       offset: 0,
       order: 'createdAt',
       region: 'all',

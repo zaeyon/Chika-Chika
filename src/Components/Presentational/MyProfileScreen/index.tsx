@@ -186,6 +186,7 @@ interface State {
   currentIndex: number;
   lastScrollY: number;
   prevScrollY: number;
+  scrolling: boolean;
   isModalVisible: boolean;
   index: number;
   routes: any;
@@ -229,6 +230,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
       currentScrollY: new Animated.Value(0),
       lastScrollY: 0,
       prevScrollY: 0,
+      scrolling: false,
       positionX: new Animated.Value(0),
       minusValue: new Animated.Value(-1),
       headerHeightValue: new Animated.Value(PROFILEHEIGHT),
@@ -382,6 +384,12 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         onMomentumScrollEnd={(e: any) => {
           this.setState({
             lastScrollY: e.nativeEvent.contentOffset.y,
+            scrolling: false,
+          });
+        }}
+        onMomentumScrollBegin={() => {
+          this.setState({
+            scrolling: true,
           });
         }}
         onEndReached={this.props.onCommunityEndReached}
@@ -451,6 +459,12 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         onMomentumScrollEnd={(e: any) => {
           this.setState({
             lastScrollY: e.nativeEvent.contentOffset.y,
+            scrolling: false,
+          });
+        }}
+        onMomentumScrollBegin={() => {
+          this.setState({
+            scrolling: true,
           });
         }}
         onEndReached={this.props.onReviewEndReached}
@@ -507,6 +521,10 @@ export default class MyProfile extends React.PureComponent<Props, State> {
               this.state.prevScrollY ===
               Math.min(PROFILEHEIGHT, this.state.lastScrollY)
             ) {
+              return;
+            }
+            if (this.state.scrolling) {
+              preventDefault();
               return;
             }
             if (route.key === 'first') {
