@@ -4,18 +4,19 @@ import serverConfig from '../server.config'
 interface Params {
     jwtToken: string,
     query: string,
-    type: string,
-    limit: number,
-    offset: number,
+    category: string,
+    pathType: string,
+    communityType?: string | undefined;
+    limit: string,
+    offset: string,
     order: string,
     region: string,
-    cityId: number,
+    cityId: string,
 }
 
-const GETTotalSearch = ({jwtToken, query, type, limit, offset, order, region, cityId}: Params) => {
+const GETTotalSearch = ({jwtToken, query, category, pathType, communityType="All", limit, offset, order, region, cityId}: Params) => {
 
-    const uri = serverConfig.baseUri + `/search/${type}?query=${query}&type=${type}&limit=${limit}&offset=${offset}&order=${order}&region=${region}&cityId=${cityId}`
-
+    const uri = serverConfig.baseUri + `/search/${pathType}?query=${query}&category=${category}&type=${communityType}&limit=${String(limit)}&offset=${String(offset)}&order=${order}&region=${region}&cityId=${cityId}`
 
     return new Promise((resolve, reject) => {
         axios

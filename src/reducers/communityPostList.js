@@ -7,6 +7,7 @@ const communityPostList = (
     LikedCommunityPosts: [],
     ScrapedCommunityPosts: [],
     CommentedCommunityPosts: [],
+    SearchResultPosts: [],
   },
   action,
 ) => {
@@ -17,6 +18,7 @@ const communityPostList = (
   const newLikedCommunityPosts = state.LikedCommunityPosts.concat();
   const newScrapedCommunityPosts = state.ScrapedCommunityPosts.concat();
   const newCommentedCommunityPosts = state.CommentedCommunityPosts.concat();
+  const newSearchResultPosts = state.SearchResultPosts.concat();
 
   switch (action.type) {
     case 'EDIT_POST':
@@ -39,6 +41,9 @@ const communityPostList = (
         (item) => item.id === action.payload.id,
       );
       const editTargetFreeTalkPostIndex = state.FreeTalkPosts.findIndex(
+        (item) => item.id === action.payload.id,
+      );
+      const editTargetSearchResultPostIndex = state.SearchResultPosts.findIndex(
         (item) => item.id === action.payload.id,
       );
       console.log(action.payload.data);
@@ -87,6 +92,13 @@ const communityPostList = (
           action.payload.data,
         );
       }
+      if (editTargetSearchResultPostIndex >= 0) {
+        newSearchResultPosts.splice(
+          editTargetSearchResultPostIndex,
+          1,
+          action.payload.data,
+        );
+      }
       return {
         ...state,
         MyPosts: newMyPosts,
@@ -96,6 +108,7 @@ const communityPostList = (
         CommentedCommunityPosts: newCommentedCommunityPosts,
         QuestionPosts: newQuestionPosts,
         FreeTalkPosts: newFreeTalkPosts,
+        SearchResultPosts: newSearchResultPosts,
       };
     case 'DELETE_POST':
       const deleteTargetMyPostIndex = state.MyPosts.findIndex(
@@ -117,6 +130,9 @@ const communityPostList = (
         (item) => item.id === action.payload,
       );
       const deleteTargetFreeTalkPostIndex = state.FreeTalkPosts.findIndex(
+        (item) => item.id === action.payload,
+      );
+      const deleteTargetSearchResultPostIndex = state.SearchResultPosts.findIndex(
         (item) => item.id === action.payload,
       );
       console.log('delete', deleteTargetMyPostIndex);
@@ -147,7 +163,9 @@ const communityPostList = (
       if (deleteTargetFreeTalkPostIndex >= 0) {
         newFreeTalkPosts.splice(deleteTargetFreeTalkPostIndex, 1);
       }
-
+      if (deleteTargetSearchResultPostIndex >= 0) {
+        newSearchResultPosts.splice(deleteTargetSearchResultPostIndex, 1);
+      }
       return {
         ...state,
         MyPosts: newMyPosts,
@@ -157,6 +175,7 @@ const communityPostList = (
         CommentedCommunityPosts: newCommentedCommunityPosts,
         QuestionPosts: newQuestionPosts,
         FreeTalkPosts: newFreeTalkPosts,
+        SearchResultPosts: newSearchResultPosts,
       };
 
     case 'SET_POSTS':
@@ -196,6 +215,11 @@ const communityPostList = (
             ...state,
             CommentedCommunityPosts: action.payload.posts,
           };
+        case 'SearchResult':
+          return {
+            ...state,
+            SearchResultPosts: action.payload.posts,
+          };
       }
 
     case 'TOGGLE_LIKE':
@@ -212,6 +236,9 @@ const communityPostList = (
         (item) => item.id === action.payload.id,
       );
       const toggleLikeCommentedCommunityPostIndex = state.CommentedCommunityPosts.findIndex(
+        (item) => item.id === action.payload.id,
+      );
+      const toggleLikeSearchResultPostIndex = state.SearchResultPosts.findIndex(
         (item) => item.id === action.payload.id,
       );
 
@@ -298,6 +325,21 @@ const communityPostList = (
           },
         );
       }
+      if (toggleLikeSearchResultPostIndex >= 0) {
+        newSearchResultPosts.splice(toggleLikeSearchResultPostIndex, 1, {
+          ...state.SearchResultPosts[toggleLikeSearchResultPostIndex],
+          viewerLikeCommunityPost: !state.SearchResultPosts[
+            toggleLikeSearchResultPostIndex
+          ].viewerLikeCommunityPost,
+          postLikeNum:
+            state.SearchResultPosts[toggleLikeSearchResultPostIndex]
+              .postLikeNum +
+            (state.SearchResultPosts[toggleLikeSearchResultPostIndex]
+              .viewerLikeCommunityPost
+              ? -1
+              : 1),
+        });
+      }
       switch (action.payload.type) {
         case 'Question':
           console.log(action.payload.id);
@@ -325,6 +367,7 @@ const communityPostList = (
             CommentedCommunityPosts: newCommentedCommunityPosts,
             MyPosts: newMyPosts,
             OpponentPosts: newOpponentPosts,
+            SearchResultPosts: newSearchResultPosts,
             QuestionPosts: newQuestionPosts,
           };
         case 'FreeTalk':
@@ -353,6 +396,7 @@ const communityPostList = (
             CommentedCommunityPosts: newCommentedCommunityPosts,
             MyPosts: newMyPosts,
             OpponentPosts: newOpponentPosts,
+            SearchResultPosts: newSearchResultPosts,
             FreeTalkPosts: newFreeTalkPosts,
           };
       }
@@ -371,6 +415,9 @@ const communityPostList = (
         (item) => item.id === action.payload.id,
       );
       const toggleScrapCommentedCommunityPostIndex = state.CommentedCommunityPosts.findIndex(
+        (item) => item.id === action.payload.id,
+      );
+      const toggleScrapSearchResultPostIndex = state.SearchResultPosts.findIndex(
         (item) => item.id === action.payload.id,
       );
       if (toggleScrapMyPostIndex >= 0) {
@@ -425,6 +472,14 @@ const communityPostList = (
           },
         );
       }
+      if (toggleScrapSearchResultPostIndex >= 0) {
+        newSearchResultPosts.splice(toggleScrapSearchResultPostIndex, 1, {
+          ...state.SearchResultPosts[toggleScrapSearchResultPostIndex],
+          viewerScrapCommunityPost: !state.SearchResultPosts[
+            toggleScrapSearchResultPostIndex
+          ].viewerScrapCommunityPost,
+        });
+      }
       switch (action.payload.type) {
         case 'Question':
           console.log(action.payload.id);
@@ -446,6 +501,7 @@ const communityPostList = (
             CommentedCommunityPosts: newCommentedCommunityPosts,
             MyPosts: newMyPosts,
             OpponentPosts: newOpponentPosts,
+            SearchResultPosts: newSearchResultPosts,
             QuestionPosts: newQuestionPosts,
           };
         case 'FreeTalk':
@@ -468,6 +524,7 @@ const communityPostList = (
             CommentedCommunityPosts: newCommentedCommunityPosts,
             MyPosts: newMyPosts,
             OpponentPosts: newOpponentPosts,
+            SearchResultPosts: newSearchResultPosts,
             FreeTalkPosts: newFreeTalkPosts,
           };
       }

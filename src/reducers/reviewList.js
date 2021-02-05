@@ -6,6 +6,7 @@ const reviewList = (
     LikedReviews: [],
     ScrapedReviews: [],
     CommentedReviews: [],
+    SearchResultReviews: [],
   },
   action,
 ) => {
@@ -256,6 +257,11 @@ const reviewList = (
       return {
         ...state,
         CommentedReviews: action.payload,
+      };
+    case 'SET_SEARCHRESULT_REVIEWS':
+      return {
+        ...state,
+        SearchResultReviews: action.payload,
       };
     default:
       return state;

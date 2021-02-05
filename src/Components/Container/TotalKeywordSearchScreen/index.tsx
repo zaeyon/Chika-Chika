@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {TouchableWithoutFeedback, LayoutAnimation} from 'react-native';
 import Styled from 'styled-components/native';
 import {
@@ -14,10 +14,12 @@ import TotalSearchResultTabView from '~/Components/Presentational/TotalKeywordSe
 
 // Routes
 import GETAllTagSearch from '~/Routes/Search/GETAllTagSearch';
-import DELETESearchRecord from '~/Routes/Search/DELETESearchRecord';
 import GETTotalSearch from '~/Routes/Search/GETTotalSearch';
+import GETSearchRecord from '~/Routes/Search/GETSearchRecord';
+import DELETESearchRecord from '~/Routes/Search/DELETESearchRecord';
 
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import allActions from '~/actions';
 
 const ContainerView = Styled(
   (SafeAreaView as unknown) as new () => SafeAreaView,
@@ -94,29 +96,23 @@ interface Props {
 
 const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   const [query, setQuery] = useState('');
+  const [category, setCategory] = useState('');
   const [autoCompletedKeywordArr, setAutoCompletedKeywordArr] = useState([]);
   const [
     isVisibleAutoCompletedKeyword,
     setIsVisibleAutoCompletedKeyword,
   ] = useState<boolean>(true);
-  const [searchResultArray, setSearchResultArray] = useState<Array<any>>([]);
-
-  const [reviewSearchResultArray, setReviewSearchResultArray] = useState<
-    Array<any>
-  >(TEST_REVIEW_DATA);
-
-  const [totalSearchOrder, setTotalSearchOrder] = useState<string>('createdAt');
-  const [communitySearchOrder, setCommunitySearchOrder] = useState<string>(
-    'createdAt',
+  const [searchResult, setSearchResult] = useState<Array<any>>([]);
+  const [reviewSearchResult, setReviewSearchResult] = useState<Array<any>>(
+    TEST_REVIEW_DATA,
   );
-  const [reviewSearchOrder, setReviewSearchOrder] = useState<string>(
-    'createdAt',
+  const communitySearchResult = useSelector(
+    (state: any) => state.communityPostList.SearchResultPosts,
   );
-  const [dentalSearchOrder, setDentalSearchOrder] = useState<string>(
-    'createdAt',
-  );
-  const [eventSearchOrder, setEventSearchOrder] = useState<string>('createdAt');
+  const [clinicSearchResult, setClinicSearchResult] = useState([]);
+  const [eventSearchResult, setEventSearchResult] = useState([]);
 
+  const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state.currentUser);
   const jwtToken = currentUser.jwtToken;
   const hometown = currentUser.hometown;
@@ -138,6 +134,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
           );
           setQuery((prev) => {
             if (prev !== query) {
+              console.log('diff');
             } else {
               console.log('GETAllTagSearch response', response);
               setAutoCompletedKeywordArr(response);
@@ -152,11 +149,49 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
     fetchData();
   }, [query]);
 
+  const fetchSearchResult = useCallback(
+    (
+      {pathType, communityType, region, cityId, order, offset, limit},
+      callback = () => console.log('callback'),
+    ) => {
+      console.log('query:', query);
+      if (query === '') {
+        console.log('query is empty!', query);
+        return;
+      } else {
+        GETTotalSearch({
+          jwtToken,
+          query,
+          category,
+          pathType,
+          communityType,
+          limit: String(limit),
+          offset: String(offset),
+          order,
+          region,
+          cityId: String(cityId),
+        })
+          .then((response: any) => {
+            callback(response);
+            GETSearchRecord({jwtToken})
+              .then((response: any) => {
+                console.log('GETSearchRecord response', response);
+                dispatch(allActions.userActions.setSearchRecord(response));
+              })
+              .catch((error) => {
+                console.log('GETSearchRecord error', error);
+              });
+          })
+          .catch((e) => {});
+      }
+    },
+    [jwtToken, query, category],
+  );
+
   const deleteAllSearchRecord = () => {
     const searchId = 'all';
-    const category = 'keyword';
 
-    DELETESearchRecord({jwtToken, searchId, category})
+    DELETESearchRecord({jwtToken, searchId})
       .then((response) => {
         console.log('DELETESearchRecord response', response);
       })
@@ -168,7 +203,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   const deleteSingleSearchRecord = (id: number, category: string) => {
     const searchId = id;
 
-    DELETESearchRecord({jwtToken, searchId, category})
+    DELETESearchRecord({jwtToken, searchId})
       .then((response) => {
         console.log('DELETESearchRecord response', response);
       })
@@ -177,56 +212,38 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
       });
   };
 
-  const searchTotalKeyword = (keyword: string) => {
-    if (query.trim() === '') {
-    } else {
+  const searchTotalKeyword = useCallback(
+    ({keyword, category}: {keyword: string; category: string}) => {
+      // if (query.trim() === '') {
+      // } else {
       LayoutAnimation.configureNext(
-        LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+        LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
       );
       searchInputRef.current.blur();
-      setIsVisibleAutoCompletedKeyword(false);
-      setQuery(keyword);
-    }
-  };
+      setIsVisibleAutoCompletedKeyword((prev) => {
+        setQuery(keyword);
+        setCategory(category);
+        return false;
+      });
+      // }
+    },
+    [],
+  );
 
   const onFocusSearchKeywordInput = () => {
     if (!isVisibleAutoCompletedKeyword) {
       LayoutAnimation.configureNext(
-        LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+        LayoutAnimation.create(150, 'easeInEaseOut', 'opacity'),
       );
       setIsVisibleAutoCompletedKeyword(true);
     }
   };
 
-  const changeSearchOrder = (value: string, type: string) => {
-    if (type === 'total') {
-      if (value !== totalSearchOrder) {
-        setTotalSearchOrder(value);
-      }
-    } else if (type === 'community') {
-      if (value !== communitySearchOrder) {
-        setCommunitySearchOrder(value);
-      }
-    } else if (type === 'review') {
-      if (value !== reviewSearchOrder) {
-        setReviewSearchOrder(value);
-      }
-    } else if (type === 'dental') {
-      if (value !== dentalSearchOrder) {
-        setDentalSearchOrder(value);
-      }
-    } else if (type === 'event') {
-      if (value !== eventSearchOrder) {
-        setEventSearchOrder(value);
-      }
-    }
-  };
-
-  const clearTextInput = () => {
+  const clearTextInput = useCallback(() => {
     setQuery('');
     searchInputRef.current.clear();
     searchInputRef.current.focus();
-  };
+  }, []);
 
   return (
     <ContainerView forceInset={{top: 'always'}}>
@@ -255,7 +272,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
             }}
             autoCorrect={false}
             autoFocus={true}
-            onSubmitEditing={() => searchTotalKeyword(query)}
+            onSubmitEditing={() => searchInputRef.current.blur()}
             onFocus={() => onFocusSearchKeywordInput()}
           />
           {query.length > 0 && (
@@ -284,14 +301,12 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
           />
         )}
         <TotalSearchResultTabView
-          searchResultArray={searchResultArray}
-          reviewSearchResultArray={reviewSearchResultArray}
-          totalSearchOrder={totalSearchOrder}
-          communitySearchOrder={communitySearchOrder}
-          reviewSearchOrder={reviewSearchOrder}
-          dentalSearchOrder={dentalSearchOrder}
-          eventSearchOrder={eventSearchOrder}
-          changeSearchOrder={changeSearchOrder}
+          isRequestChanged={isVisibleAutoCompletedKeyword}
+          searchResult={searchResult}
+          reviewSearchResult={reviewSearchResult}
+          communitySearchResult={communitySearchResult}
+          fetchSearchResult={fetchSearchResult}
+          navigation={navigation}
         />
       </BodyContent>
     </ContainerView>

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, StatusBar, Image} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -11,12 +11,13 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 import DeviceInfo from 'react-native-device-info';
-import messaging from '@react-native-firebase/messaging';
 import {enableScreens} from 'react-native-screens';
 import SplashScreen from 'react-native-splash-screen';
 
 import allActions from '~/actions';
 
+// Firebase
+import messaging from '@react-native-firebase/messaging';
 // Routes
 import GETUserInfo from '~/Routes/Auth/GETUserInfo';
 // Async Storage
@@ -271,6 +272,10 @@ function HomeStackScreen() {
       }}>
       <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
       <HomeStack.Screen
+        name="CommunityStackScreen"
+        component={CommunityStackScreen}
+      />
+      <HomeStack.Screen
         name="ReviewStackScreen"
         component={ReviewStackScreen}
       />
@@ -505,7 +510,6 @@ function EditProfileStackScreen() {
         name="EditProfileTabScreen"
         component={EditProfileTabScreen}
         sharedElementsConfig={(route, otherRoute, showing) => {
-          console.log(otherRoute);
           if (otherRoute.name === 'EditNicknameScreen') {
             return [{id: 'nicknameInput'}];
           }
@@ -549,7 +553,6 @@ function ImageSelectOneStackScreen({route}) {
         component={FullImageScreen}
         initialParams={route.params}
         sharedElementsConfig={(route, otherRoute, showing) => {
-          console.log('me', otherRoute);
           if (
             otherRoute.name === 'FullImageScreen' ||
             otherRoute.name === 'ImageSelectOneScreen'
@@ -778,6 +781,14 @@ function TotalKeywordSearchStackScreen() {
         name="TotalKeywordSearchScreen"
         component={TotalKeywordSearchScreen}
       />
+      <TotalKeywordSearchStack.Screen
+        name="CommunityStackScreen"
+        component={CommunityStackScreen}
+      />
+      <TotalKeywordSearchStack.Screen
+        name="ReviewStackScreen"
+        component={ReviewStackScreen}
+      />
     </TotalKeywordSearchStack.Navigator>
   );
 }
@@ -890,9 +901,6 @@ function BottomTab() {
     const stackRouteName = routeName.state
       ? routeName.state.routes[routeName.state.index].name
       : '';
-
-    console.log('routeName', routeName);
-    console.log('stackRouteName', stackRouteName);
 
     if (
       routeName.name === 'BrushDetritionCamera' ||
@@ -1072,7 +1080,6 @@ const Navigator = () => {
               }),
             );
             dispatch(allActions.userActions.setHometown(response.Residences));
-
             SplashScreen.hide();
           })
           .catch((error: any) => {

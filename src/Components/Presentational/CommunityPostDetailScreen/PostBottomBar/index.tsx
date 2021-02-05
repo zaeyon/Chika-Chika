@@ -1,166 +1,151 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  FlatList,
-  Text,
-  View,
-  Image,
-  Keyboard,
-  KeyboardAvoidingView,
-} from 'react-native';
+import {TouchableWithoutFeedback, Animated, Image} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
-import Animated from 'react-native-reanimated';
-import {AnyAction} from 'redux';
-
-const CommentBottomBarContainerView = Styled.View`
-height: auto;
-min-height: ${hp('100%') * 0.08}px;
-max-height: ${hp('100%') * 0.15}px;
-flex-direction: row;
-padding: 12px 16px;
-border-top-width: 1px;
-border-color: #C4C4C4;
-margin: auto 0px;
-background: white;
-`;
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 const SocialInfoContainerView = Styled.View`
-margin: auto 0px;
+width: ${wp('100%')}px;
+align-items: center;
 flex-direction: row;
-
+padding: 8.5px 16px;
+border-top-width: 0.5px;
+border-color: #E2E6ED;
+box-shadow: 0px -2px 8px rgba(218, 218, 218, 0.3);
+overflow: visible;
 `;
+
+const SocialInfoContentView = Styled.View`
+min-width: 60px;
+`;
+
 const SocialInfoView = Styled.View`
+width: auto;
+height: 44px;
+margin-right: auto;
+padding: 0px 4px;
 flex-direction: row;
 align-items: center;
 `;
-
-const SoicalInfoText = Styled.Text`
+const SocialInfoText = Styled.Text`
+font-style: normal;
+font-weight: normal;
 font-size: 14px;
 line-height: 16px;
 margin-left: 4px;
+color: #9AA2A9;
 `;
-
-const CommentTextInput = Styled.TextInput`
-border-radius: 8px;
-font-size: 14px;
-line-height: 16px;
-flex: 1;
-padding: ${hp('100%') * 0.016}px ${hp('100%') * 0.0197}px ${
-  hp('100%') * 0.01478 - 1
-}px ${hp('100%') * 0.0197}px;
-
-`;
-const CommentUploadText = Styled.Text`
-font-size: 14px;
-line-height: 16px;
-`;
-
-const CommentSubmitText = Styled.Text``;
 
 interface Props {
-  toggleKeyboardAnimation: any;
-  uploadComment: any;
+  moveToCommentList: any;
   toggleSocialLike: any;
   toggleSocialScrap: any;
   data: any;
 }
 const PostBottomBar = ({
-  toggleKeyboardAnimation,
-  uploadComment,
+  moveToCommentList,
   toggleSocialLike,
   toggleSocialScrap,
   data,
 }: Props) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const [commentText, setCommentText] = useState('');
-
   const {
     id,
     type,
     postLikeNum,
+    postCommentsNum,
     viewerLikeCommunityPost,
     viewerScrapCommunityPost,
   } = data;
-  return (
-    <CommentBottomBarContainerView>
-      {isFocused ? null : (
-        <SocialInfoContainerView>
-          <TouchableOpacity
-            style={{
-              marginRight: 16,
-            }}
-            onPress={() => {
-              toggleSocialLike(id, viewerLikeCommunityPost, type);
-            }}>
-            <SocialInfoView>
-              <Image
-                style={{
-                  tintColor: viewerLikeCommunityPost ? '#FF5656' : '#c3c3c3',
-                }}
-                source={require('~/Assets/Images/Review/ic_like_inline.png')}
-              />
-              <SoicalInfoText>{postLikeNum}</SoicalInfoText>
-            </SocialInfoView>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              toggleSocialScrap(id, viewerScrapCommunityPost, type);
-            }}>
-            <SocialInfoView
-              style={{
-                marginRight: 24,
-              }}>
-              <Image
-                style={{
-                  tintColor: viewerScrapCommunityPost ? '#000000' : '#c3c3c3',
-                }}
-                source={require('~/Assets/Images/Review/ic_scrap_inline.png')}
-              />
-            </SocialInfoView>
-          </TouchableOpacity>
-        </SocialInfoContainerView>
-      )}
 
-      <CommentTextInput
-        multiline
-        clearButtonMode="always"
-        onFocus={() => {
-          setIsFocused(true);
-        }}
-        autoCorrect={false}
-        placeholder="댓글 입력"
-        placeholderTextColor={isFocused ? 'black' : 'grey'}
-        style={{
-          borderWidth: 1,
-          borderColor: '#E9E9E9',
-          backgroundColor: isFocused ? 'white' : '#E9E9E9',
-        }}
-        value={commentText}
-        onChangeText={(text) => {
-          setCommentText(text);
-        }}
-      />
-      {isFocused ? (
-        <TouchableOpacity
-          style={{
-            justifyContent: 'center',
-            marginLeft: 16,
-          }}
+  const likeButtonScale = useRef(new Animated.Value(1)).current;
+  const scrapButtonScale = useRef(new Animated.Value(1)).current;
+
+  const [isLiked, setIsLiked] = useState(viewerLikeCommunityPost);
+  const [isScraped, setIsScraped] = useState(viewerScrapCommunityPost);
+
+  return (
+    <SocialInfoContainerView>
+      <SocialInfoContentView>
+        <TouchableWithoutFeedback
           onPress={() => {
-            uploadComment(commentText);
-            setCommentText('');
-            Keyboard.dismiss();
+            toggleSocialLike(id, viewerLikeCommunityPost, type);
+            setIsLiked((prev) => !prev);
+            if (!viewerLikeCommunityPost) {
+              ReactNativeHapticFeedback.trigger('impactLight');
+            }
+            likeButtonScale.setValue(0.8);
+            Animated.spring(likeButtonScale, {
+              toValue: 1,
+              friction: 8,
+              tension: 300,
+              useNativeDriver: true,
+            }).start();
           }}>
-          <CommentUploadText>게시</CommentUploadText>
-        </TouchableOpacity>
-      ) : null}
-    </CommentBottomBarContainerView>
+          <SocialInfoView>
+            <Animated.Image
+              style={{
+                transform: [{scale: likeButtonScale}],
+              }}
+              source={
+                isLiked
+                  ? require('~/Assets/Images/Community/bottomBar/like/focus.png')
+                  : require('~/Assets/Images/Community/bottomBar/like/unfocus.png')
+              }
+            />
+            <SocialInfoText>{postLikeNum}</SocialInfoText>
+          </SocialInfoView>
+        </TouchableWithoutFeedback>
+      </SocialInfoContentView>
+      <SocialInfoContentView>
+        <TouchableWithoutFeedback onPress={() => moveToCommentList()}>
+          <SocialInfoView>
+            <Image
+              source={require('~/Assets/Images/Community/bottomBar/comment.png')}
+            />
+            <SocialInfoText>{postCommentsNum}</SocialInfoText>
+          </SocialInfoView>
+        </TouchableWithoutFeedback>
+      </SocialInfoContentView>
+
+      <TouchableWithoutFeedback
+        onPress={() => {
+          toggleSocialScrap(id, viewerScrapCommunityPost, type);
+          setIsScraped((prev) => !prev);
+          if (!viewerScrapCommunityPost) {
+            ReactNativeHapticFeedback.trigger('impactLight');
+          }
+          scrapButtonScale.setValue(0.8);
+          Animated.spring(scrapButtonScale, {
+            toValue: 1,
+            friction: 8,
+            tension: 300,
+            useNativeDriver: true,
+          }).start();
+        }}>
+        <SocialInfoView style={{marginLeft: 'auto', marginRight: 0}}>
+          <Animated.Image
+            style={{
+              transform: [{scale: scrapButtonScale}],
+            }}
+            source={
+              isScraped
+                ? require('~/Assets/Images/Community/bottomBar/scrap/focus.png')
+                : require('~/Assets/Images/Community/bottomBar/scrap/unfocus.png')
+            }
+          />
+          <SocialInfoText
+            style={{
+              color: '#131F3C',
+            }}>
+            {'저장하기'}
+          </SocialInfoText>
+        </SocialInfoView>
+      </TouchableWithoutFeedback>
+    </SocialInfoContainerView>
   );
 };
 

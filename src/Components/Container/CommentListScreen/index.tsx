@@ -11,6 +11,7 @@ import {
   Platform,
   UIManager,
   Animated,
+  ActivityIndicator,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import ActionSheet from 'react-native-actionsheet';
@@ -35,6 +36,12 @@ const Container = Styled.SafeAreaView`
   background-color: #ffffff;
   `;
 
+const LoadingContainerView = Styled.View`
+flex: 1;
+background: #ffffff;
+align-items: center;
+justify-content: center;
+`;
 const CommentFlatList = Styled.FlatList`
   flex: 1;
   `;
@@ -349,76 +356,83 @@ const CommentListScreen = ({navigation, route}: Props) => {
         headerLeftProps={{type: 'arrow', onPress: goBack}}
         headerTitle={`댓글(${commentCount})`}
       />
-      <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
-        {commentArray.length === 0 ? (
-          <TouchableWithoutFeedback onPress={() => clickBackground()}>
-            <NoCommentListContainer>
-              <Animated.View
-                style={{
-                  backgroundColor: '#ffffff',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  paddingBottom: hp('10%'),
-                  transform: [
-                    {
-                      translateY: noCommentYAnim,
-                    },
-                  ],
-                }}>
-                <NoCommentImage
-                  source={require('~/Assets/Images/Comment/ic_noComment.png')}
-                />
-                <NoCommentText>
-                  {'등록된 댓글이 없습니다.\n댓글을 남겨주세요.'}
-                </NoCommentText>
-              </Animated.View>
-            </NoCommentListContainer>
-          </TouchableWithoutFeedback>
-        ) : (
-          <CommentFlatList
-            onLayout={(e) => {
-              console.log('list layout', e.nativeEvent.layout);
-              if (
-                route.params?.commentActionType === 'reply' &&
-                initialScroll
-              ) {
-                console.log('inital scroll');
-                setCommentActionType('reply');
-                setReplyTargetInfo({
-                  targetUserNickname: route.params?.targetUserNickname,
-                  commentId: route.params?.commentObj.id,
-                });
-                commentInputRef.current.focus();
-                setTimeout(() => {
-                  commentFlatListRef.current.scrollToOffset({
-                    offset: route.params?.positionY,
+      {route.params?.isLoading && commentArray.length === 0 ? (
+        <LoadingContainerView>
+          <ActivityIndicator />
+        </LoadingContainerView>
+      ) : (
+        <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
+          {commentArray.length === 0 ? (
+            <TouchableWithoutFeedback onPress={() => clickBackground()}>
+              <NoCommentListContainer>
+                <Animated.View
+                  style={{
+                    backgroundColor: '#ffffff',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingBottom: hp('10%'),
+                    transform: [
+                      {
+                        translateY: noCommentYAnim,
+                      },
+                    ],
+                  }}>
+                  <NoCommentImage
+                    source={require('~/Assets/Images/Comment/ic_noComment.png')}
+                  />
+                  <NoCommentText>
+                    {'등록된 댓글이 없습니다.\n댓글을 남겨주세요.'}
+                  </NoCommentText>
+                </Animated.View>
+              </NoCommentListContainer>
+            </TouchableWithoutFeedback>
+          ) : (
+            <CommentFlatList
+              onLayout={(e) => {
+                console.log('list layout', e.nativeEvent.layout);
+                if (
+                  route.params?.commentActionType === 'reply' &&
+                  initialScroll
+                ) {
+                  console.log('inital scroll');
+                  setCommentActionType('reply');
+                  setReplyTargetInfo({
+                    targetUserNickname: route.params?.targetUserNickname,
+                    commentId: route.params?.commentObj.id,
                   });
-                }, 100);
-                setInitialScroll(false);
+                  commentInputRef.current.focus();
+                  setTimeout(() => {
+                    commentFlatListRef.current.scrollToOffset({
+                      offset: route.params?.positionY,
+                    });
+                  }, 100);
+                  setInitialScroll(false);
+                }
+              }}
+              contentContainerStyle={{
+                paddingVertical: 12,
+              }}
+              refreshing={refreshing}
+              onRefresh={onRefreshCommentFlat}
+              ref={commentFlatListRef}
+              showsVerticalScrollIndicator={false}
+              data={commentArray}
+              renderItem={renderCommentItem}
+              keyExtractor={(item: any, index: number) =>
+                item.id + String(index)
               }
-            }}
-            contentContainerStyle={{
-              paddingVertical: 12,
-            }}
-            refreshing={refreshing}
-            onRefresh={onRefreshCommentFlat}
-            ref={commentFlatListRef}
-            showsVerticalScrollIndicator={false}
-            data={commentArray}
-            renderItem={renderCommentItem}
-            keyExtractor={(item: any, index: number) => item.id + String(index)}
+            />
+          )}
+          <CommentPostBottomBar
+            commentInputRef={commentInputRef}
+            commentActionType={commentActionType}
+            postComment={postComment}
+            postReply={postReply}
+            targetUserNickname={replyTargetInfo.targetUserNickname}
+            onReplyCancel={onReplyCancel}
           />
-        )}
-        <CommentPostBottomBar
-          commentInputRef={commentInputRef}
-          commentActionType={commentActionType}
-          postComment={postComment}
-          postReply={postReply}
-          targetUserNickname={replyTargetInfo.targetUserNickname}
-          onReplyCancel={onReplyCancel}
-        />
-      </KeyboardAvoidingView>
-
+        </KeyboardAvoidingView>
+      )}
       {loadingCommentPost && (
         <TouchBlockIndicatorCover loading={loadingCommentPost} />
       )}
