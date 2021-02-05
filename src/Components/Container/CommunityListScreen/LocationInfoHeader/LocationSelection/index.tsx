@@ -11,6 +11,7 @@ position: absolute;
 width: ${wp('100%')}px;
 height: ${hp('100%')}px;
 background: transparent;
+z-index: 2;
 `;
 
 const HometownSettingFloatView = Styled.View`

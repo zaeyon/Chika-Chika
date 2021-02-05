@@ -14,8 +14,7 @@ import {useSelector} from 'react-redux';
 
 const Container = Styled.View`
  width: ${wp('100%')}px;
- padding-top: 24px;
- padding-left: 60px;
+ padding: 12px 0px 12px 60px;
  flex-direction: row;
  background: #FFFFFF;
 `;

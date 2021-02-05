@@ -185,11 +185,11 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
 
   const onEndReached = useCallback(
     (info: any) => {
+      console.log('onQuestionEnd');
       if (isDataFinish || !postData.length || postData.length % limit !== 0) {
         return;
       }
       if (!isEndReached) {
-        console.log(postData.length);
         setIsEndReached(true);
         const pageIndex = Math.floor(postData.length / 10);
 
@@ -202,7 +202,6 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         };
         GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
           (response: any) => {
-            console.log(response.length);
             if (response.length === 0) {
               setIsDataFinish(true);
             }

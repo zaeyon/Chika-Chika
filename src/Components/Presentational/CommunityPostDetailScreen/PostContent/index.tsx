@@ -85,17 +85,17 @@ padding-left: 8px;
 `;
 const ProfileNameText = Styled.Text`
 font-style: normal;
-font-weight: bold;
-font-size: 14px;
+font-weight: 600;
+font-size: 15px;
 line-height: 16px;
 margin-bottom: 2px;
+color: #131F3C;
 `;
 
 const ProfileDescriptionText = Styled.Text`
 font-style: normal;
 font-weight: 500;
-font-size: 12px;
-line-height: 16px;
+font-size: 13px;
 color: #9AA2A9;
 `;
 
@@ -111,6 +111,7 @@ font-style: normal;
 font-weight: normal;
 font-size: 14px;
 line-height: 24px;
+color: #131F3C;
 `;
 
 const ImageContainerView = Styled.View`

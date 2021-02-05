@@ -149,7 +149,7 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
 
   const onScrollEnd = useCallback((e) => {
     setIndex(
-      Math.max(Math.floor(e.nativeEvent.contentOffset.x / wp('100%')), 0),
+      Math.max(Math.round(e.nativeEvent.contentOffset.x / wp('100%')), 0),
     );
   }, []);
 
@@ -193,7 +193,7 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
           })}
           onScrollBeginDrag={() => console.log('startss')}
           data={route.params.imageArray}
-          onMomentumScrollEnd={onScrollEnd}
+          onScroll={onScroll}
           showsHorizontalScrollIndicator={false}
           keyExtractor={(_, index) => 'image-detail-' + String(index)}
           pagingEnabled={true}

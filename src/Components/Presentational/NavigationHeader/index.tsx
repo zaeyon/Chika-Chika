@@ -227,7 +227,7 @@ const NavigationHeader = ({
   );
 };
 
-export default React.memo(NavigationHeader);
+export default NavigationHeader;
 
 // return (
 //   <HeaderBar>

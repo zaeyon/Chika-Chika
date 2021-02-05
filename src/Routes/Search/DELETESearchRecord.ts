@@ -7,10 +7,11 @@ interface Params {
     category?: string,
 }
 
-const DELETESearchRecord = ({jwtToken, searchId, category}: Params) => {
+const DELETESearchRecord = ({jwtToken, searchId}: Params) => {
     
-    const uri = serverConfig.baseUri + `/search/recent?category=${category}&searchId=${searchId}`
+    const uri = serverConfig.baseUri + `/search/recent?searchId=${searchId}`
 
+    console.log(uri)
     return new Promise((resolve, reject) => {
         axios
         .delete(uri, {

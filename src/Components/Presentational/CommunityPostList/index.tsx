@@ -106,9 +106,7 @@ const CommunityPostList = ({
         />
       }
       keyExtractor={getItemKey}
-      scrollIndicatorInsets={{
-        bottom: isIphoneX() ? wp('13%') : wp('15%'),
-      }}
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={{
         paddingBottom: isIphoneX() ? wp('13%') : wp('15%'),
       }}

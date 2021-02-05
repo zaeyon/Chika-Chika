@@ -64,8 +64,8 @@ color: #4E525D;
 `;
 // View => Image when ready
 const ProfileImage = Styled.Image<{source: any}>`
-width: 28px;
-height: 28px;
+width: ${wp('7.46')}px;
+ height: ${wp('7.46%')}px;
 background-color: grey;
 border-width: 0.5px
 border-color: #E2E6ED;
@@ -81,8 +81,8 @@ padding-left: 8px;
 `;
 const ProfileNameText = Styled.Text`
 font-style: normal;
-font-weight: bold;
-font-size: 13px;
+font-weight: 600;
+font-size: 13.5px;
 line-height: 16px;
 margin-right: 4px;
 `;
@@ -98,8 +98,7 @@ margin: 0px 6px;
 const ProfileDescriptionText = Styled.Text`
 font-style: normal;
 font-weight: normal;
-font-size: 13px;
-line-height: 16px;
+font-size: 13.5px;
 color: #9AA2A9;
 
 `;

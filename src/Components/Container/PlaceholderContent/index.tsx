@@ -1,6 +1,6 @@
 import React, {useEffect, useCallback, useState} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback} from 'react-native';
+import {TouchableWithoutFeedback, LayoutAnimation} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {
   widthPercentageToDP as wp,
@@ -113,7 +113,8 @@ const LocalCommunityItemImage = Styled.Image`
 width: 100%;
 height: ${wp('32%')}px;
 background: #F5F7F9;
-border: 0.5px #E2E6ED;
+border-width: 0.5px;
+border-color: #E2E6ED;
 border-radius: 8px;
 margin-bottom: 12px;
 `;
@@ -122,7 +123,8 @@ const LocalCommunityItemImageSkeletonView = Styled.View`
 width: ${wp('41%')}px;
 height: ${wp('32%')}px;
 background: #F5F7F9;
-border: 0.5px #E2E6ED;
+border-width: 0.5px;
+border-color: #E2E6ED;
 border-radius: 8px;
 margin-bottom: 12px;
 `;
@@ -188,7 +190,8 @@ const LocalClinicItemImage = Styled.Image`
 width: 72px;
 height: 72px;
 background: #F5F7F9;
-border: 0.5px #E2E6ED;
+border-width: 0.5px;
+border-color: #E2E6ED;
 border-radius: 100px;
 margin-right: 12px;
 `;
@@ -197,7 +200,8 @@ const LocalClinicItemImageSkeletonView = Styled.View`
 width: 72px;
 height: 72px;
 background: #F5F7F9;
-border: 0.5px #E2E6ED;
+border-width: 0.5px;
+border-color: #E2E6ED;
 border-radius: 100px;
 margin-right: 12px;
 `;
@@ -358,25 +362,27 @@ const PlaceholderContent = ({navigation, title}: Props) => {
     [],
   );
 
-  const renderLocalCommunityItem = useCallback(
-    () =>
-      communityPost.map((item: any) => (
-        <TouchableWithoutFeedback
-          onPress={() => moveToCommunityDetail(item.id, item.type)}>
-          <LocalCommunityItemView onLayout={(e) => console.log(e.nativeEvent)}>
-            <LocalCommunityItemImage
-              source={{
-                uri: item.community_imgs[0].img_url,
-              }}
-            />
-            <LocalCommunityItemText numberOfLines={1}>
-              {formatDescription(item.description)}
-            </LocalCommunityItemText>
-          </LocalCommunityItemView>
-        </TouchableWithoutFeedback>
-      )),
-    [communityPost],
-  );
+  const renderLocalCommunityItem = useCallback(() => {
+    LayoutAnimation.configureNext(
+      LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+    );
+    return communityPost.map((item: any) => (
+      <TouchableWithoutFeedback
+        key={String(item.id)}
+        onPress={() => moveToCommunityDetail(item.id, item.type)}>
+        <LocalCommunityItemView onLayout={(e) => console.log(e.nativeEvent)}>
+          <LocalCommunityItemImage
+            source={{
+              uri: item.community_imgs[0]?.img_url,
+            }}
+          />
+          <LocalCommunityItemText numberOfLines={1}>
+            {formatDescription(item.description)}
+          </LocalCommunityItemText>
+        </LocalCommunityItemView>
+      </TouchableWithoutFeedback>
+    ));
+  }, [communityPost]);
 
   const renderLocalCommunityItemSkeleton = useCallback(
     () => [
@@ -392,43 +398,44 @@ const PlaceholderContent = ({navigation, title}: Props) => {
     [],
   );
 
-  const renderLocalClinicItem = useCallback(
-    () =>
-      localClinic.map((item: any) => (
-        <TouchableWithoutFeedback>
-          <LocalClinicItemView>
-            <LocalClinicItemImage />
-            <LocalClinicContentView>
-              <LocalClinicItemTitleText>
-                {item.originalName}
-              </LocalClinicItemTitleText>
-              <LocalClinicItemText>
-                {item.reviewAVGStarRate
-                  ? `리뷰 ${item.reviewAVGStarRate}(${item.reviewNum})`
-                  : '리뷰가 아직 없어요.'}
-              </LocalClinicItemText>
-              <LocalClinicItemTagContainerView>
-                {item.dentalTransparent ? (
-                  <LocalClinicItemTagView>
-                    <LocalClinicItemTagText>
-                      {`우리동네좋은치과`}
-                    </LocalClinicItemTagText>
-                  </LocalClinicItemTagView>
-                ) : null}
-                {item.surgeonNum > 0 ? (
-                  <LocalClinicItemTagView>
-                    <LocalClinicItemTagText>
-                      {`전문의 ${item.surgeonNum}명`}
-                    </LocalClinicItemTagText>
-                  </LocalClinicItemTagView>
-                ) : null}
-              </LocalClinicItemTagContainerView>
-            </LocalClinicContentView>
-          </LocalClinicItemView>
-        </TouchableWithoutFeedback>
-      )),
-    [localClinic],
-  );
+  const renderLocalClinicItem = useCallback(() => {
+    LayoutAnimation.configureNext(
+      LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+    );
+    return localClinic.map((item: any) => (
+      <TouchableWithoutFeedback key={String(item.id)}>
+        <LocalClinicItemView>
+          <LocalClinicItemImage />
+          <LocalClinicContentView>
+            <LocalClinicItemTitleText>
+              {item.originalName}
+            </LocalClinicItemTitleText>
+            <LocalClinicItemText>
+              {item.reviewAVGStarRate
+                ? `리뷰 ${item.reviewAVGStarRate}(${item.reviewNum})`
+                : '리뷰가 아직 없어요.'}
+            </LocalClinicItemText>
+            <LocalClinicItemTagContainerView>
+              {item.dentalTransparent ? (
+                <LocalClinicItemTagView>
+                  <LocalClinicItemTagText>
+                    {`우리동네좋은치과`}
+                  </LocalClinicItemTagText>
+                </LocalClinicItemTagView>
+              ) : null}
+              {item.surgeonNum > 0 ? (
+                <LocalClinicItemTagView>
+                  <LocalClinicItemTagText>
+                    {`전문의 ${item.surgeonNum}명`}
+                  </LocalClinicItemTagText>
+                </LocalClinicItemTagView>
+              ) : null}
+            </LocalClinicItemTagContainerView>
+          </LocalClinicContentView>
+        </LocalClinicItemView>
+      </TouchableWithoutFeedback>
+    ));
+  }, [localClinic]);
 
   const renderLocalClinicItemSkeleton = useCallback(
     () => [

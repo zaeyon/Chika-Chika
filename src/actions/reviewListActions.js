@@ -53,6 +53,13 @@ const setCommentedReviews = (reviewList) => {
     payload: reviewList,
   };
 };
+
+const setSearchResultReviews = (reviewList) => {
+  return {
+    type: 'SET_SEARCHRESULT_REVIEWS',
+    payload: reviewList,
+  };
+};
 export default {
   setMainReviewList,
   setOpponentReviews,
@@ -62,4 +69,5 @@ export default {
   setLikedReviews,
   setScrapedReviews,
   setCommentedReviews,
+  setSearchResultReviews,
 };

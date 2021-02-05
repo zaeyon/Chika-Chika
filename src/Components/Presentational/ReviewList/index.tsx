@@ -22,12 +22,9 @@ const Container = Styled.SafeAreaView`
  flex: 1;
 `;
 
-
-
 const ReviewListContainer = Styled.View`
 flex: 1;
 `;
-
 
 const EndReachedIndicatorContainer = Styled.View`
 height: ${hp('9%')}px;
@@ -42,6 +39,7 @@ interface Props {
   onEndReachedReviewList: () => void;
   loadingMoreReview: boolean;
   navigation: any;
+  renderHeaderComponent: any;
 }
 
 interface ReviewData {
@@ -74,79 +72,80 @@ const ReviewList = ({
   onEndReachedReviewList,
   loadingMoreReview,
   navigation,
+  renderHeaderComponent,
 }: Props) => {
   const currentUser = useSelector((state: any) => state.currentUser);
   const jwtToken = currentUser.jwtToken;
   const userProfile = currentUser.profile;
 
-  var offset = 0;
-  var limit = 10;
-
-
-  const moveToDentalDetail = (dentalId: number) => {
+  useEffect(() => {
+    console.log('re');
+  });
+  const moveToDentalDetail = useCallback((dentalId: number) => {
     navigation.navigate('DentalClinicStack', {
       screen: 'DentalDetailScreen',
       params: {
         dentalId: dentalId,
       },
     });
-  };
+  }, []);
 
-  const moveToAnotherProfile = useCallback((userId: string, nickname: string, profileImageUri: string) => {
-    navigation.navigate("AnotherProfileStackScreen", {
+  const moveToAnotherProfile = useCallback(
+    (userId: string, nickname: string, profileImageUri: string) => {
+      navigation.navigate('AnotherProfileStackScreen', {
         targetUser: {
-            userId,
-            nickname,
-            profileImageUri,
-        }
-    })
-}, [])
+          userId,
+          nickname,
+          profileImageUri,
+        },
+      });
+    },
+    [],
+  );
 
-  const moveToReviewDetail = (
-    reviewId: number,
-    writer: object,
-    createdAt: string,
-    treatmentArray: Array<object>,
-    ratingObj: object,
-    treatmentDate: string,
-    imageArray: Array<object>,
-    isCurUserLike: boolean,
-    likeCount: number,
-    commentCount: number,
-    isCurUserScrap: boolean,
-    dentalObj: object,
-    visibleElapsedTime: boolean,
-    elapsedTime: string,
-  ) => {
-    console.log('moveToReviewDetail reviewId', reviewId);
+  const moveToReviewDetail = useCallback(
+    (
+      reviewId: number,
+      writer: object,
+      createdAt: string,
+      treatmentArray: Array<object>,
+      ratingObj: object,
+      treatmentDate: string,
+      imageArray: Array<object>,
+      isCurUserLike: boolean,
+      likeCount: number,
+      commentCount: number,
+      isCurUserScrap: boolean,
+      dentalObj: object,
+      visibleElapsedTime: boolean,
+      elapsedTime: string,
+    ) => {
+      console.log('moveToReviewDetail reviewId', reviewId);
 
-    navigation.navigate('ReviewStackScreen', {
-      screen: 'ReviewDetailScreen',
-      params: {
-        reviewId: reviewId,
-        writer: writer,
-        createdAt: createdAt,
-        treatmentArray: treatmentArray,
-        ratingObj: ratingObj,
-        treatmentDate: treatmentDate,
-        imageArray: imageArray,
-        isCurUserLike: isCurUserLike,
-        isCurUserScrap: isCurUserScrap,
-        likeCount: likeCount,
-        commentCount: commentCount,
-        dentalObj: dentalObj,
-        visibleElapsedTime: visibleElapsedTime,
-        elapsedTime: elapsedTime,
-      },
-    });
-  };
+      navigation.navigate('ReviewStackScreen', {
+        screen: 'ReviewDetailScreen',
+        params: {
+          reviewId: reviewId,
+          writer: writer,
+          createdAt: createdAt,
+          treatmentArray: treatmentArray,
+          ratingObj: ratingObj,
+          treatmentDate: treatmentDate,
+          imageArray: imageArray,
+          isCurUserLike: isCurUserLike,
+          isCurUserScrap: isCurUserScrap,
+          likeCount: likeCount,
+          commentCount: commentCount,
+          dentalObj: dentalObj,
+          visibleElapsedTime: visibleElapsedTime,
+          elapsedTime: elapsedTime,
+        },
+      });
+    },
+    [],
+  );
 
-
-  const renderEndRechedIndicator = ({item, index}: any) => {
-    console.log(
-      'renderEndRechedIndicator loadingMoreReview',
-      loadingMoreReview,
-    );
+  const renderEndRechedIndicator = useCallback(() => {
     if (loadingMoreReview) {
       return (
         <EndReachedIndicatorContainer>
@@ -156,9 +155,9 @@ const ReviewList = ({
     } else {
       return <EndReachedIndicatorContainer style={{height: 10}} />;
     }
-  };
+  }, [loadingMoreReview]);
 
-  const renderReviewItem = ({item, index}: any) => {
+  const renderReviewItem = useCallback(({item, index}: any) => {
     const ratingObj = {
       avgRating: Number(
         (
@@ -173,9 +172,9 @@ const ReviewList = ({
       treatRating: Number(item.starRate_treatment),
     };
 
-    let writer = {}
+    let writer = {};
 
-    if(item.user !== null) {
+    if (item.user !== null) {
       writer = {
         nickname: item.user.nickname,
         profileImage: item.user.profileImg,
@@ -183,12 +182,11 @@ const ReviewList = ({
       };
     } else {
       writer = {
-        nickname: "알수없음",
-        profileImage: "null",
-        userId: "null",
-      }
+        nickname: '알수없음',
+        profileImage: 'null',
+        userId: 'null',
+      };
     }
-    
 
     let elapsedTimeText = '';
     let visibleElapsedTime = false;
@@ -235,25 +233,26 @@ const ReviewList = ({
         moveToDentalDetail={moveToDentalDetail}
       />
     );
-  };
+  }, []);
 
   return (
-    <Container>
-      <ReviewListContainer>
-        <FlatList
-          keyExtractor={(item, index) => `${index}`}
-          refreshing={refreshingReviewList}
-          onRefresh={onRefreshReviewList}
-          horizontal={false}
-          showsVerticalScrollIndicator={true}
-          data={reviewList}
-          renderItem={renderReviewItem}
-          onEndReached={onEndReachedReviewList}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={renderEndRechedIndicator}
-        />
-      </ReviewListContainer>
-    </Container>
+    <FlatList
+      style={{
+        width: wp('100%'),
+        flex: 1,
+      }}
+      keyExtractor={(item, index) => `${index}`}
+      refreshing={refreshingReviewList}
+      onRefresh={onRefreshReviewList}
+      horizontal={false}
+      showsVerticalScrollIndicator={true}
+      data={reviewList}
+      renderItem={renderReviewItem}
+      onEndReached={onEndReachedReviewList}
+      onEndReachedThreshold={0.5}
+      ListHeaderComponent={renderHeaderComponent}
+      ListFooterComponent={renderEndRechedIndicator}
+    />
   );
 };
 
