@@ -188,6 +188,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
 
   const onEndReached = useCallback(
     (info: any) => {
+      console.log('onGeneralEnd');
       if (isDataFinish || !postData.length || postData.length % limit !== 0) {
         return;
       }

@@ -130,32 +130,28 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     } else if (route.params.type === 'Commented') {
       console.log('Commented');
       return state.communityPostList.CommentedCommunityPosts;
+    } else if (route.params.type === 'Notification') {
+      return [];
     }
   });
   const [postData, setPostData] = useState(
-    postList.find((item: any) => item.id === route.params.id),
+    postList?.find((item: any) => item.id === route.params.id),
   );
-  const [categoryTitle, setCategoryTitle] = useState(postData.type);
+  const [categoryTitle, setCategoryTitle] = useState(postData?.type);
 
   const jwtToken = currentUser.jwtToken;
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const newPostData = postList.find(
+    console.log('fofofo');
+    const newPostData = postList?.find(
       (item: any) => item.id === route.params.id,
     );
     if (newPostData) {
       console.log('hi');
       setPostData(newPostData);
       setCategoryTitle(newPostData.type);
-    } else {
-      GETCommunityPostDetail(jwtToken, String(route.params.id)).then(
-        (response: any) => {
-          console.log('cant get communityPostDetail, fetching...');
-          setPostData(response);
-        },
-      );
     }
   }, [postList]);
 
@@ -172,6 +168,14 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
       },
     );
     fetchPostComments(route.params.id);
+    if (route.params?.type === 'Notification') {
+      navigation.navigate('CommentListScreen', {
+        postId: route.params.id,
+        postType: 'community',
+        commentActionType: 'comment',
+        isLoading,
+      });
+    }
     return function cleanup() {
       dispatch(allActions.commentListActions.setCommentCount(0));
       dispatch(allActions.commentListActions.setCommentList([]));
@@ -332,15 +336,12 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     });
   }, []);
 
-  const moveToCommentList = useCallback(
-    (request: string) => {
-      navigation.navigate('CommentListScreen', {
-        postId: postData.id,
-        postType: 'community',
-      });
-    },
-    [postData],
-  );
+  const moveToCommentList = useCallback(() => {
+    navigation.navigate('CommentListScreen', {
+      postId: postData.id,
+      postType: 'community',
+    });
+  }, [postData]);
 
   const toggleSocialLike = useCallback(
     (postId: number, prevState: number, type: string) => {
@@ -470,7 +471,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
           )}
         </BodyContainerScrollView>
         <PostBottomBar
-          toggleKeyboardAnimation={toggleKeyboardAnimation}
+          moveToCommentList={moveToCommentList}
           toggleSocialLike={toggleSocialLike}
           toggleSocialScrap={toggleSocialScrap}
           data={postData}

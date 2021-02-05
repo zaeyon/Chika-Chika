@@ -35,9 +35,9 @@ margin-right: 8px;
 const ProfileNameText = Styled.Text`
 line-height: 16px;
 font-style: normal;
-font-weight: bold;
-font-size: 13px;
-margin-right: 8px;
+font-weight: 600;
+font-size: 13.5px;
+margin-right: 4px;
 `;
 
 const ProfileSplitView = Styled.View`
@@ -51,7 +51,8 @@ margin: 0px 6px;
 const ProfileDescriptionText = Styled.Text`
 font-style: normal;
 font-weight: normal;
-font-size: 13px;
+font-size: 13.5px;
+line-height: 16px;
 color: #9AA2A9;
 `;
 
@@ -140,9 +141,9 @@ const PostCardItem = ({
     // month = Number(month) >= 10 ? month : '0' + month;
     // day = Number(day) >= 10 ? day : '0' + day;
     if (String(currentYear) === year) {
-      return month + '월 ' + day + '일';
+      return parseInt(month) + '월 ' + parseInt(day) + '일';
     } else {
-      return year + '년 ' + month + '월 ' + day + '일';
+      return year + '년 ' + parseInt(month) + '월 ' + parseInt(day) + '일';
     }
   }, []);
 

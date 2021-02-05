@@ -1,20 +1,27 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
-import {Text, Dimensions, StyleSheet, TouchableWithoutFeedback} from 'react-native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  TouchableOpacity,
+  Dimensions,
+  StyleSheet,
+  TouchableWithoutFeedback,
+} from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {TabView, TabBar, SceneMap} from 'react-native-tab-view';
 
-import ReviewList from '~/Components/Presentational/ReviewList';
+// Local Components
+import CommunityRoute from '~/Components/Presentational/TotalKeywordSearchScreen/TotalSearchResultTabView/CommunityRoute';
+import ReviewRoute from '~/Components/Presentational/TotalKeywordSearchScreen/TotalSearchResultTabView/ReviewRoute';
 
 const Container = Styled.View`
 flex: 1;
 background-color: #ffffff;
 `;
 
-const TabContainer = Styled.ScrollView`
+const TabContainer = Styled.View`
 flex: 1;
 background-color: #F5F7F9;
 `;
@@ -27,7 +34,7 @@ color: #131F3C;
 `;
 
 const FilterContainer = Styled.View`
-margin-top: 8px;
+margin: 8px 0px;
 background-color: #ffffff;
 flex-direction: row;
 align-items: center;
@@ -86,289 +93,343 @@ margin-top: 8px;
 `;
 
 interface RouteProps {
-    order: string,
-    changeSearchOrder: (value: string, type: string) => void,
+  result: any;
+  fetchSearchResult: (
+    {
+      mode,
+      pathType,
+      communityType,
+      region,
+      cityId,
+      order,
+      offset,
+      limit,
+    }: FetchProps,
+    callback: any,
+  ) => void;
+  navigation: any;
 }
 
-interface ReviewRouteProps {
-    order: string,
-    changeSearchOrder: (value: string, type: string) => void,
-    reviewSearchResultArray: Array<any>,
-}
-
-const TotalRoute = ({order, changeSearchOrder}: RouteProps) => {
-    console.log("Total Search Result Route rendering");
-
-    return (
-        <TabContainer>
-            <FilterContainer>
-                <OrderFilterContainer>
-                    <TouchableWithoutFeedback onPress={() => changeSearchOrder("popular" ,"total")}>
-                    <OrderFilterItemContainer
-                    style={order === "popular" && {borderColor: "#00D1FF"}}>
-                        <OrderFilterText
-                        style={order === "popular" && {color: "#00D1FF"}}>{"인기순"}</OrderFilterText>
-                    </OrderFilterItemContainer>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => changeSearchOrder("createdAt", "total")}>
-                    <OrderFilterItemContainer style={[{marginLeft: 6}, order === "createdAt" && {borderColor: "#00D1FF"}]}>
-                        <OrderFilterText
-                        style={order === "createdAt" && {color: "#00D1FF"}}>{"최신순"}</OrderFilterText>
-                    </OrderFilterItemContainer>
-                    </TouchableWithoutFeedback>
-                </OrderFilterContainer>
-                <LocationFilterContainer>
-                    <LocationFilterText>{"전국"}</LocationFilterText>
-                    <LocationFilterDropdownIcon
-                    source={require('~/Assets/Images/Arrow/ic_dropdown.png')}/>
-                </LocationFilterContainer>
-            </FilterContainer>
-        </TabContainer>
-    )
-}
-
-const CommunityRoute = ({order, changeSearchOrder}: RouteProps) => {
-    console.log("Community Search Result Route rendering")
-    return (
-        <TabContainer>
-            <FilterContainer>
-                <OrderFilterContainer>
-                    <TouchableWithoutFeedback onPress={() => changeSearchOrder("popular" ,"community")}>
-                    <OrderFilterItemContainer
-                    style={order === "popular" && {borderColor: "#00D1FF"}}>
-                        <OrderFilterText
-                        style={order === "popular" && {color: "#00D1FF"}}>{"인기순"}</OrderFilterText>
-                    </OrderFilterItemContainer>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => changeSearchOrder("createdAt", "community")}>
-                    <OrderFilterItemContainer style={[{marginLeft: 6}, order === "createdAt" && {borderColor: "#00D1FF"}]}>
-                        <OrderFilterText
-                        style={order === "createdAt" && {color: "#00D1FF"}}>{"최신순"}</OrderFilterText>
-                    </OrderFilterItemContainer>
-                    </TouchableWithoutFeedback>
-                </OrderFilterContainer>
-                <LocationFilterContainer>
-                    <LocationFilterText>{"전국"}</LocationFilterText>
-                    <LocationFilterDropdownIcon
-                    source={require('~/Assets/Images/Arrow/ic_dropdown.png')}/>
-                </LocationFilterContainer>
-            </FilterContainer>
-        </TabContainer>
-    )
-}
-const ReviewRoute = ({order, changeSearchOrder, reviewSearchResultArray}: ReviewRouteProps) => {
-    console.log("Review Search Result Route rendering");
+const TotalRoute = React.memo(
+  ({isRequestChanged, result, fetchSearchResult}: RouteProps) => {
+    console.log('Total Search Result Route rendering');
+    const [order, setOrder] = useState();
 
     return (
-        <TabContainer>
-            <FilterContainer>
-                <OrderFilterContainer>
-                    <TouchableWithoutFeedback onPress={() => changeSearchOrder("popular" ,"review")}>
-                    <OrderFilterItemContainer
-                    style={order === "popular" && {borderColor: "#00D1FF"}}>
-                        <OrderFilterText
-                        style={order === "popular" && {color: "#00D1FF"}}>{"인기순"}</OrderFilterText>
-                    </OrderFilterItemContainer>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => changeSearchOrder("createdAt", "review")}>
-                    <OrderFilterItemContainer style={[{marginLeft: 6}, order === "createdAt" && {borderColor: "#00D1FF"}]}>
-                        <OrderFilterText
-                        style={order === "createdAt" && {color: "#00D1FF"}}>{"최신순"}</OrderFilterText>
-                    </OrderFilterItemContainer>
-                    </TouchableWithoutFeedback>
-                </OrderFilterContainer>
-                <LocationFilterContainer>
-                    <LocationFilterText>{"전국"}</LocationFilterText>
-                    <LocationFilterDropdownIcon
-                    source={require('~/Assets/Images/Arrow/ic_dropdown.png')}/>
-                </LocationFilterContainer>
-            </FilterContainer>
-            <ReviewListContainer>
-                <ReviewList
-                reviewList={reviewSearchResultArray}/>
-            </ReviewListContainer>
-        </TabContainer>
-    )
-}
+      <TabContainer>
+        <FilterContainer>
+          <OrderFilterContainer>
+            <TouchableWithoutFeedback>
+              <OrderFilterItemContainer
+                style={order === 'popular' && {borderColor: '#00D1FF'}}>
+                <OrderFilterText
+                  style={order === 'popular' && {color: '#00D1FF'}}>
+                  {'인기순'}
+                </OrderFilterText>
+              </OrderFilterItemContainer>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback>
+              <OrderFilterItemContainer
+                style={[
+                  {marginLeft: 6},
+                  order === 'createdAt' && {borderColor: '#00D1FF'},
+                ]}>
+                <OrderFilterText
+                  style={order === 'createdAt' && {color: '#00D1FF'}}>
+                  {'최신순'}
+                </OrderFilterText>
+              </OrderFilterItemContainer>
+            </TouchableWithoutFeedback>
+          </OrderFilterContainer>
+          <LocationFilterContainer>
+            <LocationFilterText>{'전국'}</LocationFilterText>
+            <LocationFilterDropdownIcon
+              source={require('~/Assets/Images/Arrow/ic_dropdown.png')}
+            />
+          </LocationFilterContainer>
+        </FilterContainer>
+      </TabContainer>
+    );
+  },
+);
 
-const DentalRoute = ({order, changeSearchOrder}: RouteProps) => {
-    console.log("Dental Search Result Route rendering")
-    return (
-        <TabContainer>
-            <FilterContainer>
-                <OrderFilterContainer>
-                    <TouchableWithoutFeedback onPress={() => changeSearchOrder("popular" ,"dental")}>
-                    <OrderFilterItemContainer
-                    style={order === "popular" && {borderColor: "#00D1FF"}}>
-                        <OrderFilterText
-                        style={order === "popular" && {color: "#00D1FF"}}>{"인기순"}</OrderFilterText>
-                    </OrderFilterItemContainer>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => changeSearchOrder("createdAt", "dental")}>
-                    <OrderFilterItemContainer style={[{marginLeft: 6}, order === "createdAt" && {borderColor: "#00D1FF"}]}>
-                        <OrderFilterText
-                        style={order === "createdAt" && {color: "#00D1FF"}}>{"최신순"}</OrderFilterText>
-                    </OrderFilterItemContainer>
-                    </TouchableWithoutFeedback>
-                </OrderFilterContainer>
-                <LocationFilterContainer>
-                    <LocationFilterText>{"전국"}</LocationFilterText>
-                    <LocationFilterDropdownIcon
-                    source={require('~/Assets/Images/Arrow/ic_dropdown.png')}/>
-                </LocationFilterContainer>
-            </FilterContainer>
-        </TabContainer>
-    )
-}
+const ClinicRoute = React.memo(({result, fetchSearchResult}: RouteProps) => {
+  console.log('Dental Search Result Route rendering');
+  const [order, setOrder] = useState();
+  return (
+    <TabContainer>
+      <FilterContainer>
+        <OrderFilterContainer>
+          <TouchableWithoutFeedback>
+            <OrderFilterItemContainer
+              style={order === 'popular' && {borderColor: '#00D1FF'}}>
+              <OrderFilterText
+                style={order === 'popular' && {color: '#00D1FF'}}>
+                {'인기순'}
+              </OrderFilterText>
+            </OrderFilterItemContainer>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback>
+            <OrderFilterItemContainer
+              style={[
+                {marginLeft: 6},
+                order === 'createdAt' && {borderColor: '#00D1FF'},
+              ]}>
+              <OrderFilterText
+                style={order === 'createdAt' && {color: '#00D1FF'}}>
+                {'최신순'}
+              </OrderFilterText>
+            </OrderFilterItemContainer>
+          </TouchableWithoutFeedback>
+        </OrderFilterContainer>
+        <LocationFilterContainer>
+          <LocationFilterText>{'전국'}</LocationFilterText>
+          <LocationFilterDropdownIcon
+            source={require('~/Assets/Images/Arrow/ic_dropdown.png')}
+          />
+        </LocationFilterContainer>
+      </FilterContainer>
+    </TabContainer>
+  );
+});
 
-const EventRoute = ({order, changeSearchOrder}: RouteProps) => {
-    console.log("Event Search Result Route rendering")
-    return (
-        <TabContainer>
-            <FilterContainer>
-                <OrderFilterContainer>
-                    <TouchableWithoutFeedback onPress={() => changeSearchOrder("popular" ,"event")}>
-                    <OrderFilterItemContainer
-                    style={order === "popular" && {borderColor: "#00D1FF"}}>
-                        <OrderFilterText
-                        style={order === "popular" && {color: "#00D1FF"}}>{"인기순"}</OrderFilterText>
-                    </OrderFilterItemContainer>
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => changeSearchOrder("createdAt", "event")}>
-                    <OrderFilterItemContainer style={[{marginLeft: 6}, order === "createdAt" && {borderColor: "#00D1FF"}]}>
-                        <OrderFilterText
-                        style={order === "createdAt" && {color: "#00D1FF"}}>{"최신순"}</OrderFilterText>
-                    </OrderFilterItemContainer>
-                    </TouchableWithoutFeedback>
-                </OrderFilterContainer>
-                <LocationFilterContainer>
-                    <LocationFilterText>{"전국"}</LocationFilterText>
-                    <LocationFilterDropdownIcon
-                    source={require('~/Assets/Images/Arrow/ic_dropdown.png')}/>
-                </LocationFilterContainer>
-            </FilterContainer>
-        </TabContainer>
-    )
-}
+const EventRoute = React.memo(({result, fetchSearchResult}: RouteProps) => {
+  console.log('Event Search Result Route rendering');
+  const [order, setOrder] = useState();
+  return (
+    <TabContainer>
+      <FilterContainer>
+        <OrderFilterContainer>
+          <TouchableWithoutFeedback>
+            <OrderFilterItemContainer
+              style={order === 'popular' && {borderColor: '#00D1FF'}}>
+              <OrderFilterText
+                style={order === 'popular' && {color: '#00D1FF'}}>
+                {'인기순'}
+              </OrderFilterText>
+            </OrderFilterItemContainer>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback>
+            <OrderFilterItemContainer
+              style={[
+                {marginLeft: 6},
+                order === 'createdAt' && {borderColor: '#00D1FF'},
+              ]}>
+              <OrderFilterText
+                style={order === 'createdAt' && {color: '#00D1FF'}}>
+                {'최신순'}
+              </OrderFilterText>
+            </OrderFilterItemContainer>
+          </TouchableWithoutFeedback>
+        </OrderFilterContainer>
+        <LocationFilterContainer>
+          <LocationFilterText>{'전국'}</LocationFilterText>
+          <LocationFilterDropdownIcon
+            source={require('~/Assets/Images/Arrow/ic_dropdown.png')}
+          />
+        </LocationFilterContainer>
+      </FilterContainer>
+    </TabContainer>
+  );
+});
 
 function isEqual(prevItem: any, nextItem: any) {
-    return (prevItem.order === nextItem.order)
+  return prevItem.order === nextItem.order;
 }
 
-const MemoizedTotalRoute = React.memo(TotalRoute, isEqual)
-const MemoizedCommunityRoute = React.memo(CommunityRoute, isEqual)
-const MemoizedReviewRoute = React.memo(ReviewRoute, isEqual)
-const MemoizedDentalRoute = React.memo(DentalRoute, isEqual)
-const MemoizedEventRoute = React.memo(EventRoute, isEqual)
+const initialLayout = {width: Dimensions.get('window').width};
 
-const initialLayout = { width: Dimensions.get('window').width };
-
+interface FetchProps {
+  mode: string;
+  pathType: string;
+  communityType: string;
+  region: string;
+  cityId: number;
+  order: string;
+  offset: number;
+  limit: number;
+}
 interface Props {
-    searchResultArray: any;
-    reviewSearchResultArray: Array<any>;
-    totalSearchOrder: string;
-    communitySearchOrder: string;
-    reviewSearchOrder: string;
-    dentalSearchOrder: string;
-    eventSearchOrder: string;
-    changeSearchOrder: (value: string, type: string) => void,
+  isRequestChanged: boolean;
+  searchResult: any;
+  reviewSearchResult: any;
+  communitySearchResult: any;
+  clinicSearchResult: any;
+  eventSearchResult: any;
+  fetchSearchResult: (
+    {
+      mode,
+      pathType,
+      communityType,
+      region,
+      cityId,
+      order,
+      offset,
+      limit,
+    }: FetchProps,
+    callback: any,
+  ) => void;
+  navigation: any;
 }
 
-const TotalSearchResultTabView = ({searchResultArray, reviewSearchResultArray, totalSearchOrder, communitySearchOrder, reviewSearchOrder, dentalSearchOrder, eventSearchOrder, changeSearchOrder}: Props) => {
-    const [tabIndex, setTabIndex] = useState<number>(0);
-    const [routes] = useState([
-        {key: 'total', title: '통합검색'},
-        {key: 'community', title: '커뮤니티'},
-        {key: 'review', title: '리뷰'},
-        {key: 'dental', title: "병원"},
-        {key: 'event', title: '이벤트'}
-    ]);
+const TotalSearchResultTabView = ({
+  isRequestChanged,
+  searchResult,
+  communitySearchResult,
+  reviewSearchResult,
+  clinicSearchResult,
+  eventSearchResult,
+  fetchSearchResult,
+  navigation,
+}: Props) => {
+  const [tabIndex, setTabIndex] = useState<number>(0);
+  const [routes] = useState([
+    {key: 'total', title: '통합검색'},
+    {key: 'community', title: '커뮤니티'},
+    {key: 'review', title: '리뷰'},
+    {key: 'dental', title: '병원'},
+    {key: 'event', title: '이벤트'},
+  ]);
 
-    const renderTabBar = (props: any) => {
+  const renderTabBar = (props: any) => {
+    return (
+      <TabBar
+        {...props}
+        style={styles.tabBarStyle}
+        scrollEnabled={true}
+        renderLabel={renderLabel}
+        indicatorStyle={styles.indicatorStyle}
+        tabStyle={[styles.tabItemStyle]}
+        pressOpacity={1}
+      />
+    );
+  };
 
-        return (
-            <TabBar
-            {...props}
-            style={styles.tabBarStyle}
-            scrollEnabled={true}
-            renderLabel={renderLabel}
-            indicatorStyle={styles.indicatorStyle}
-            tabStyle={[styles.tabItemStyle]}
-            pressOpacity={1}
+  const renderLabel = ({route, focused, color}: any) => (
+    <TabLabelText style={focused && {color: '#00D1FF'}}>
+      {route.title}
+    </TabLabelText>
+  );
+
+  const renderHeaderComponent = useCallback(
+    (order, selectedHometown, onFiltering, setFloatVisible) => (
+      <FilterContainer>
+        <OrderFilterContainer>
+          <TouchableWithoutFeedback onPress={() => onFiltering('popular')}>
+            <OrderFilterItemContainer
+              style={order === 'popular' && {borderColor: '#00D1FF'}}>
+              <OrderFilterText
+                style={order === 'popular' && {color: '#00D1FF'}}>
+                {'인기순'}
+              </OrderFilterText>
+            </OrderFilterItemContainer>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => onFiltering('createdAt')}>
+            <OrderFilterItemContainer
+              style={[
+                {marginLeft: 6},
+                order === 'createdAt' && {borderColor: '#00D1FF'},
+              ]}>
+              <OrderFilterText
+                style={order === 'createdAt' && {color: '#00D1FF'}}>
+                {'최신순'}
+              </OrderFilterText>
+            </OrderFilterItemContainer>
+          </TouchableWithoutFeedback>
+        </OrderFilterContainer>
+        <TouchableOpacity onPress={() => setFloatVisible(true)}>
+          <LocationFilterContainer>
+            <LocationFilterText>{selectedHometown.emdName}</LocationFilterText>
+            <LocationFilterDropdownIcon
+              source={require('~/Assets/Images/Arrow/ic_dropdown.png')}
             />
-        )
+          </LocationFilterContainer>
+        </TouchableOpacity>
+      </FilterContainer>
+    ),
+    [],
+  );
+
+  const renderScene = ({route}: any) => {
+    switch (route.key) {
+      case 'total':
+        return (
+          <TotalRoute
+            isRequestChanged={isRequestChanged}
+            result={searchResult}
+            fetchSearchResult={fetchSearchResult}
+            navigation={navigation}
+          />
+        );
+      case 'community':
+        return (
+          <CommunityRoute
+            isRequestChanged={isRequestChanged}
+            fetchSearchResult={fetchSearchResult}
+            navigation={navigation}
+            renderHeaderComponent={renderHeaderComponent}
+          />
+        );
+      case 'review':
+        return (
+          <ReviewRoute
+            isRequestChanged={isRequestChanged}
+            fetchSearchResult={fetchSearchResult}
+            navigation={navigation}
+            renderHeaderComponent={renderHeaderComponent}
+          />
+        );
+      case 'dental':
+        return (
+          <ClinicRoute
+            isRequestChanged={isRequestChanged}
+            result={clinicSearchResult}
+            fetchSearchResult={fetchSearchResult}
+            navigation={navigation}
+          />
+        );
+      case 'event':
+        return (
+          <EventRoute
+            isRequestChanged={isRequestChanged}
+            result={eventSearchResult}
+            fetchSearchResult={fetchSearchResult}
+            navigation={navigation}
+          />
+        );
     }
-
-    const renderLabel = ({route, focused, color}: any) => (
-        <TabLabelText style={focused && {color: "#00D1FF"}}>{route.title}</TabLabelText>
-
-    )
-
-    const renderScene = ({route}: any) => {
-        switch (route.key) {
-            case 'total':
-                return (
-                    <MemoizedTotalRoute
-                    changeSearchOrder={changeSearchOrder}
-                    order={totalSearchOrder}/>
-                )
-            case 'community':
-                return (
-                    <MemoizedCommunityRoute
-                    changeSearchOrder={changeSearchOrder}
-                    order={communitySearchOrder}/>
-                )
-            case 'review':
-                return (
-                    <MemoizedReviewRoute
-                    changeSearchOrder={changeSearchOrder}
-                    reviewSearchResultArray={reviewSearchResultArray}
-                    order={reviewSearchOrder}/>
-                )
-            case 'dental':
-                return (
-                    <MemoizedDentalRoute
-                    changeSearchOrder={changeSearchOrder}
-                    order={dentalSearchOrder}/>
-                )
-            case 'event':
-                return (
-                    <MemoizedEventRoute
-                    changeSearchOrder={changeSearchOrder}
-                    order={eventSearchOrder}/>
-                )
-        }
-    }
-    return(
-        <Container>
-            <TabView
-            navigationState={{index: tabIndex, routes}}
-            renderTabBar={renderTabBar}
-            renderScene={renderScene}
-            onIndexChange={setTabIndex}
-            initialLayout={initialLayout}/>
-        </Container>
-    )
-}
+  };
+  return (
+    <Container>
+      <TabView
+        navigationState={{index: tabIndex, routes}}
+        renderTabBar={renderTabBar}
+        renderScene={renderScene}
+        onIndexChange={setTabIndex}
+        initialLayout={initialLayout}
+      />
+    </Container>
+  );
+};
 
 const styles = StyleSheet.create({
-    indicatorStyle: {
-        width: 0,
-        height: 0,
-    },
-    tabItemStyle: {
-        width: 'auto',
-        backgroundColor: "#ffffff",
-        paddingTop: 16,
-        paddingBottom: 16,
-        paddingLeft: 20,
-        paddingRight: 20,
-    },
-    tabBarStyle: {
-        backgroundColor: "#ffffff",
-        borderBottomWidth: 0.3,
-        borderColor: "#E2E6ED",
-    }
-})
+  indicatorStyle: {
+    width: 0,
+    height: 0,
+  },
+  tabItemStyle: {
+    width: 'auto',
+    backgroundColor: '#ffffff',
+    paddingTop: 16,
+    paddingBottom: 16,
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
+  tabBarStyle: {
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 0.3,
+    borderColor: '#E2E6ED',
+  },
+});
 
 export default TotalSearchResultTabView;
