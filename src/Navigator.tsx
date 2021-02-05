@@ -885,8 +885,6 @@ function BottomTab() {
       ? routeName.state.routes[routeName.state.index].name
       : '';
 
-    console.log('routeName', routeName);
-    console.log('stackRouteName', stackRouteName);
 
     if (
       routeName.name === 'BrushDetritionCamera' ||

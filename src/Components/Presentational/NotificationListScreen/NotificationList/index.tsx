@@ -304,7 +304,7 @@ const NotificationList = ({navigation, route, isEditing, loadingGetLikeNotify, l
             <NotificationListContainer>
                 <FlatList
                 scrollEnabled={false}
-                contentContainerStyle={[{backgroundColor: "#ffffff", borderRadius: 8, marginTop: 16, marginLeft: 16, marginRight: 16}, styles.notificationListShadow]}
+                contentContainerStyle={[{marginTop: 16, marginLeft: 16, marginRight: 16, borderRadius: 8, backgroundColor: "#ffffff"}, styles.notificationListShadow]}
                 data={commentNotificationArray}
                 renderItem={renderCommentNotificationItem}/>
                 <GuideContainer>

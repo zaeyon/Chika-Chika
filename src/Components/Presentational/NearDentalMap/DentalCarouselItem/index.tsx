@@ -1,5 +1,6 @@
 import React from 'react';
 import Styled from 'styled-components/native';
+import {StyleSheet} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -9,13 +10,13 @@ import RatingStarList from '~/Components/Presentational/RatingStarList';
 
 const Container = Styled.View`
 width: ${wp('91.46%')}px;
+padding: 16px;
 flex-direction: row;
 justify-content: space-between;
 background-color: #ffffff;
 border-radius: 8px;
 border-width: 1px;
 border-color: #E2E6ED;
-padding: 16px;
 `;
 
 const DentalImageContainer = Styled.View`
@@ -70,37 +71,6 @@ flex-direction: row;
 align-items: center;
 `;
 
-const RatingContainer = Styled.View`
-flex-direction: row;
-align-items: center;
-`;
-
-const RatingStarIcon = Styled.Image`
-width:${wp('3%')}px;
-height: ${wp('3%')}px;
-margin-bottom: 2px;
-`;
-
-const RatingText = Styled.Text`
-margin-left: 4px;
-font-weight: 400;
-font-size: 14px;
-color: #7a7a7a;
-`;
-
-const DividerBar = Styled.View`
-width: 1px;
-height: ${hp('1%')}px;
-background-color: #c4c4c4;
-margin-left: 8px;
-margin-right: 8px;
-`;
-
-const ReviewText = Styled.Text`
-font-weight: 400;
-color: #464646;
-font-size: 14px;
-`;
 
 const DentalInfoContainer = Styled.View`
 flex-direction: column;
@@ -114,10 +84,10 @@ line-height: 24px;
 `;
 
 const DentalAddressText = Styled.Text`
-margin-top: 4px;
 font-weight: 400;
-font-size: 12px;
-color: #979797;
+font-size: 14px;
+color: #4E525D;
+line-height: 16px;
 `;
 
 const LauchTimeText = Styled.Text`
@@ -159,6 +129,31 @@ width: ${wp('13.86%')}px;
 height: ${wp('13.86%')}px;
 `;
 
+const FooterContainer = Styled.View`
+margin-top: 9px;
+flex-direction: row;
+align-items: center;
+`;
+
+const VerticalDivider = Styled.View`
+margin-left: 4px;
+margin-right: 4px;
+width: 0.5px;
+height: ${hp('0.98%')}px;
+background-color: #E2E6ED;
+`;
+
+const DistanceText = Styled.Text`
+font-weight: 400;
+color: #00D1FF;
+font-size: 14px;
+line-height: 18px;
+`;
+
+
+
+
+
 interface Props {
   dentalObj: any,
   isOpen: boolean;
@@ -187,8 +182,11 @@ const DentalCarouselItem = ({
 
   console.log("DentalCarouselItem dentalObj", dentalObj)
 
+  const distance = dentalObj['distance(km)'] * 1000;
+
   return (
-    <Container>
+    <Container
+    style={styles.containerShadow}>
     <DentalInfoContainer>
       <HeaderContainer>
       <DentalNameText>{name}</DentalNameText>
@@ -218,13 +216,16 @@ const DentalCarouselItem = ({
         </CurrentStatusContainer>
       </HeaderContainer>
         <ReviewRatingContainer>
-          <RatingContainer>
-            <RatingText>{rating}</RatingText>
-          </RatingContainer>
-          <DividerBar />
-          <ReviewText>{'리뷰 ' + reviewCount + '개'}</ReviewText>
+          <RatingStarList
+          ratingValue={reviewCount > 0 ? (rating.toFixed(1)) : (0)}
+          reviewCount={reviewCount}/>
         </ReviewRatingContainer>
+      <FooterContainer>
       <DentalAddressText>{address}</DentalAddressText>
+      <VerticalDivider/>
+      <DistanceText>{distance + "m"}</DistanceText>
+
+      </FooterContainer>
     </DentalInfoContainer>
     <CallContainer>
       <CallButtonImage
@@ -233,5 +234,18 @@ const DentalCarouselItem = ({
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  containerShadow: {
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+  }
+
+
+})
 
 export default DentalCarouselItem;

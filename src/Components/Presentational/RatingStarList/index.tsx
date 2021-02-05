@@ -6,6 +6,8 @@ import {
 } from 'react-native-responsive-screen';
 
 const Container = Styled.View`
+flex-direction: row;
+align-items: center;
 `;
 
 const RatingStarListContainer = Styled.View`
@@ -20,11 +22,43 @@ width: ${wp('4.266%')}px;
 height: ${wp('4.266%')}px;
 `;
 
-const RatingValueContainer = Styled.Text`
-font-weight: 400;
+const RatingValueContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+`;
+
+const RatingValueText = Styled.Text`
+font-weight: 700;
 font-size: 14px;
 line-height: 18px;
 color: #00D1FF;
+`;
+
+const NoRatingValueText = Styled.Text`
+font-weight: 700;
+font-size: 14px;
+line-height: 18px;
+color: #9AA2A9;
+`;
+
+const VerticalDivider = Styled.View`
+margin-left: 4px;
+margin-right: 4px;
+width: 0.5px;
+height: ${hp('0.98%')}px;
+background-color: #E2E6ED;
+`;
+
+const ReviewCountText = Styled.Text`
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+color: #9AA2A9;
+`;
+
+const ReviewCountContainer = Styled.View`
+flex-direction: row;
+align-items: center;
 `;
 
 interface Props {
@@ -32,7 +66,7 @@ interface Props {
     reviewCount: number,
 }
 
-const RatingStarList = ({ratingValue}: Props) => {
+const RatingStarList = ({ratingValue, reviewCount}: Props) => {
 
     const integerValue = Math.floor(ratingValue);
     const remainderValue = ((ratingValue % 1) * 10);
@@ -42,12 +76,21 @@ const RatingStarList = ({ratingValue}: Props) => {
     for(var i = 0; i < integerValue; i++) {
         ratingArray[i] = 10;
 
-        
         console.log("RatingStarList ratingArray", ratingArray)
     }
 
     return (
         <Container>
+            {(reviewCount > 0) && (
+            <RatingValueContainer>
+                <RatingValueText>{ratingValue}</RatingValueText>
+            </RatingValueContainer>
+            )}
+            {(reviewCount === 0) && (
+            <RatingValueContainer>
+                <NoRatingValueText>{"평가없음(0)"}</NoRatingValueText>
+            </RatingValueContainer>
+            )}
             <RatingStarListContainer>
             {ratingArray.map((item, index) => {
                 if(item == 10) {
@@ -109,8 +152,21 @@ const RatingStarList = ({ratingValue}: Props) => {
             })
             }
             </RatingStarListContainer>
+            {(reviewCount > 0) && (
+            <ReviewCountContainer>
+            <VerticalDivider/>
+            <ReviewCountText>
+                {`리뷰 ${reviewCount}`}
+            </ReviewCountText>
+            </ReviewCountContainer>
+            )}
         </Container>
     )
 }
+
+function isEqual(prevItem: any, nextItem: any) {
+    return (prevItem.ratingValue === nextItem.ratingBalue && prevItem.reviewCount === nextItem.reviewCount)
+}
+
 
 export default RatingStarList;

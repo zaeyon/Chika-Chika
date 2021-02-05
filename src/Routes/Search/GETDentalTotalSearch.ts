@@ -8,6 +8,7 @@ interface params {
     lat: number,
     long: number,
     query: string,
+    category: string,
     sort: string,
     timeFilter?: string,
     dayFilter?: string,
@@ -15,9 +16,9 @@ interface params {
     parkingFilter?: string,
 }
 
-const GETDentalTotalSearch = ({jwtToken, offset, limit, lat, long, query, sort, dayFilter, timeFilter, holidayFilter, parkingFilter}: params) => {
+const GETDentalTotalSearch = ({jwtToken, offset, limit, lat, long, category, query, sort, dayFilter, timeFilter, holidayFilter, parkingFilter}: params) => {
 
-    const uri = serverConfig.baseUri + `/clinics?lat=${lat}&long=${long}&query=${query}&sort=${sort}&days=${dayFilter}&time=${timeFilter}&wantParking=${parkingFilter}&holiday=${holidayFilter}&limit=${limit}&offset=${offset}`;
+    const uri = serverConfig.baseUri + `/clinics?lat=${lat}&long=${long}&query=${query}&sort=${sort}&days=${dayFilter}&time=${timeFilter}&wantParking=${parkingFilter}&holiday=${holidayFilter}&limit=${limit}&offset=${offset}&category=${category}`;
 
     console.log("GETDentalTotalSearch jwtToken", jwtToken);
     console.log("GETDentalTotalSearch offset", offset);

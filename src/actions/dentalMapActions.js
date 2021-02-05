@@ -1,7 +1,7 @@
-const setNearDentalList = (nearDentalList) => {
+const setNearDentalArray = (nearDentalArray) => {
     return {
-        type: "SET_NEAR_DENTAL_LIST",
-        payload: nearDentalList,
+        type: "SET_NEAR_DENTAL_ARRAY",
+        payload: nearDentalArray,
     }
 }
 
@@ -19,10 +19,10 @@ const setSearchedKeyword = (searchedKeyword) => {
     }
 }
 
-const setSearchedDentalArr = (searchedDentalArr) => {
+const setSearchedDentalArray = (searchedDentalArray) => {
     return {
-        type: "SET_SEARCHED_DENTAL_ARR",
-        payload: searchedDentalArr,
+        type: "SET_SEARCHED_DENTAL_ARRAY",
+        payload: searchedDentalArray,
     }
 }
 
@@ -41,10 +41,10 @@ const setLoadingGetDental = (loadingGetDental) => {
 }
 
 export default {
-    setNearDentalList,
+    setNearDentalArray,
     setMapLocation,
     setSearchedKeyword,
-    setSearchedDentalArr,
+    setSearchedDentalArray,
     setAutoCompletedKeywordArr,
     setLoadingGetDental,
 }

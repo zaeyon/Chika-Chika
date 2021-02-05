@@ -1,9 +1,9 @@
-const dentalMap = (state = { nearDentalList: TEST_NEAR_DENTAL_DATA, mapLocation: TEST_COORDINATE, mapZoom: 16, searchedKeyword: "", searchedDentalArr: [] , autoCompletedKeywordArr: [], loadingGetDental: true}, action) => {
+const dentalMap = (state = { nearDentalArray: [], mapLocation: TEST_COORDINATE, mapZoom: 16, searchedKeyword: "", searchedDentalArray: [] , autoCompletedKeywordArr: [], loadingGetDental: true}, action) => {
     switch(action.type) {
-        case "SET_NEAR_DENTAL_LIST":
+        case "SET_NEAR_DENTAL_ARRAY":
             return {
                 ...state,
-                nearDentalList: action.payload,
+                nearDentalArray: action.payload,
             }
         case "SET_MAP_LOCATION":
             return {
@@ -16,10 +16,10 @@ const dentalMap = (state = { nearDentalList: TEST_NEAR_DENTAL_DATA, mapLocation:
                 ...state,
                 searchedKeyword: action.payload,
             }
-        case "SET_SEARCHED_DENTAL_ARR":
+        case "SET_SEARCHED_DENTAL_ARRAY":
             return {
                 ...state,
-                searchedDentalArr: action.payload,
+                searchedDentalArray: action.payload,
             }
         case "SET_AUTO_COMPLETED_KEYWORD_ARR":
             return {

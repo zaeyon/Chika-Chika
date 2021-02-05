@@ -838,13 +838,8 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
                 </AddressContainer>
                 <RatingContainer>
                   <RatingStarList
+                  reviewCount={basicInfo?.reviewNum}
                   ratingValue={basicInfo?.reviewAVGStarRate?.all?.toFixed(1)}/>
-                  {basicInfo?.reviewAVGStarRate?.all !== null && (
-                  <AvgRatingText>{`${basicInfo?.reviewAVGStarRate?.all?.toFixed(1)}(${basicInfo.reviewNum})`}</AvgRatingText>
-                  )}
-                  {basicInfo?.reviewAVGStarRate?.all === null && (
-                  <AvgRatingText>{"평가없음(0)"}</AvgRatingText>
-                  )}
                 </RatingContainer>
             </BasicInfoContainer>
             </CollapsibleContainer>

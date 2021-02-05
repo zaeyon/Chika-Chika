@@ -23,6 +23,20 @@ const dentalFilter = (state = {
                 }
 
             }
+        case "INITIALIZE_DAY_LIST":
+            {
+                let tmpDayList = state.dayList;
+                const initializedDayList = tmpDayList.map((item, index) => {
+                    item.selected = false
+
+                    return item
+                })
+
+                return {
+                    ...state,
+                    dayList: initializedDayList,
+                }
+            }
         
         case "SET_SELECTED_DAY_LIST":
             return {
@@ -98,17 +112,17 @@ const DAY_LIST = [
         selected: false
     },
     {
-        day: "전체",
-        value: "all",
-        selected: false
-    },
-    {
-        day: "null",
+        day: "월요일",
         value: "null",
         selected: false
     },
     {
-        day: "null",
+        day: "월요일",
+        value: "null",
+        selected: false
+    },
+    {
+        day: "월요일",
         value: "null",
         selected: false
     }

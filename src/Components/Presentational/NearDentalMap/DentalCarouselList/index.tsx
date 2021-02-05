@@ -15,8 +15,6 @@ import DentalCarouselItem from '~/Components/Presentational/NearDentalMap/Dental
 
 
 const DentalCarouselListContainer = Styled.View`
-position: absolute;
-bottom: ${hp('2.9%')};
 align-items: center;
 `;
 
@@ -91,7 +89,7 @@ const carouselItem = (({item, index, todayIndex, moveToDentalDetail}: any) => {
 
 
 function isEqualItem(prevItem: any, nextItem: any) {
-    return prevItem.id === nextItem.id;
+    return (prevItem.item === nextItem.item)
 }
 
 const MemoizedCarouselItem = memo(carouselItem, isEqualItem);
@@ -110,7 +108,7 @@ const DentalCarouselList = ({searchedDentalArr, onSnapToDentalCarouselItem, sele
     return (
         <DentalCarouselListContainer>
         <Carousel
-        slideStyle={{alignItems: 'center', borderWidth: 1}}
+        slideStyle={{alignItems: 'center', paddingTop: 20, paddingBottom: hp('2.9%')}}
         inactiveSlideOpacity={1}
         inactiveSlideScale={1}
         inactiveSlideShift={0}

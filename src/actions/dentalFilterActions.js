@@ -26,6 +26,12 @@ const selectDayItem = (index) => {
     }
 }
 
+const initializeDayList = () => {
+    return {
+        type: 'INITIALIZE_DAY_LIST',
+    }
+}
+
 const setTimeFilter = (timeFilter) => {
     return {
         type: 'SET_TIME_FILTER',
@@ -55,4 +61,5 @@ export default {
     setTimeFilter,
     setHolidayFilter,
     setParkingFilter,
+    initializeDayList,
 }

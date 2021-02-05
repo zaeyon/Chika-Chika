@@ -219,7 +219,6 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
           }}>
           <BackIconView>
             <BackIconImage
-        
               source={require('~/Assets/Images/Search/ic_back.png')}
             />
           </BackIconView>
@@ -254,8 +253,6 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
       {isVisibleAutoCompletedKeyword && (
       <AutoCompletedTotalKeywordFlatList
         searchRecordArray={searchRecordArray}
-        navigation={navigation}
-        route={route}
         query={query}
         setQuery={setQuery}
         autoCompletedKeywordArr={autoCompletedKeywordArr}

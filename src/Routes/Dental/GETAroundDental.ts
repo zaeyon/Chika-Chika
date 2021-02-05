@@ -23,8 +23,8 @@ const GETAroundDental = ({jwtToken, lat, long, sort, timeFilter, dayFilter, holi
     console.log("GETAroundDental wantParking", parkingFilter);
 
     // TEST 서울 시청 위도, 경도
-    lat = 37.566515657875435
-    long = 126.9781164904998
+    //lat = 37.566515657875435
+    //long = 126.9781164904998
 
     const uri = serverConfig.baseUri + `/around/clinics?lat=${lat}&long=${long}&wantParking=${parkingFilter}&sort=${sort}&days=${dayFilter}&time=${timeFilter}&holiday=${holidayFilter}`;
 
