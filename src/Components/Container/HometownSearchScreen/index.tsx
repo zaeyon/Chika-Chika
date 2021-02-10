@@ -183,11 +183,30 @@ color: #131F3C;
 
 const HeaderSearchInput = Styled.TextInput`
 flex: 1;
-background-color: #ffffff;
 padding-bottom: 3px;
 font-weight: 400;
-font-size: 16px;
+font-size: 21px;
 color: #131F3C;
+`;
+
+const SearchInputContainer = Styled.View`
+flex: 1;
+`;
+
+const ClearTextButtonContainer = Styled.View`
+position: absolute;
+right: 0px;
+justify-content: center;
+align-items: center;
+height: ${hp('7%')}px;
+padding-left: 16px;
+padding-right: 0px;
+padding-bottom: 8px;
+`;
+
+const ClearTextIcon = Styled.Image`
+width: ${wp('5.3%')}px;
+height: ${wp('5.3%')}px;
 `;
 
 interface Props {
@@ -215,6 +234,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
   const [loadingFindAroundCites, setLoadingFindAroundCites] = useState<boolean>(
     false,
   );
+
   const [loadingAddCity, setLoadingAddCity] = useState<boolean>(false);
   const [cityArray, setCityArray] = useState<Array<CityData>>([]);
   const [loadingSignUp, setLoadingSignUp] = useState<boolean>(false);
@@ -228,6 +248,8 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
   const jwtToken = useSelector((state: any) => state.currentUser).jwtToken;
 
   const provider = route.params?.provider;
+
+  const searchInputRef = useRef<any>();
   var curLocationHometown = '';
 
   useEffect(() => {
@@ -550,6 +572,14 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
     console.log('입력 끝');
   };
 
+
+  const clearTextInput = () => {
+    setInputText("");
+    setCityArray([]);
+    searchInputRef.current.clear();
+    searchInputRef.current.focus();
+  }
+
   const renderHometownItem = ({item, index}: any) => {
     //console.log('renderHometownItem item', item);
 
@@ -568,15 +598,27 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
 
   const renderSearchInput = () => {
     return (
+      <SearchInputContainer>
       <HeaderSearchInput
+        ref={searchInputRef}
+        value={inputText}
+        selectionColor={"#131F3C"}
         autoCapitalize={'none'}
-        placeholder={'동명(읍, 면)으로 검색(ex. 이의동)'}
-        placeholderTextColor={'#9AA2A9'}
-        clearButtonMode={'while-editing'}
+        placeholder={'동,읍,면을 검색해보세요.'}
+        placeholderTextColor={'#E2E6ED'}
         onChangeText={onChangeHometownInput}
         onEndEditing={onEndEditingHometownInput}
         returnKeyType={'search'}
       />
+      {inputText.length > 0 && (
+          <TouchableWithoutFeedback onPress={() => clearTextInput()}>
+          <ClearTextButtonContainer>
+            <ClearTextIcon
+            source={require('~/Assets/Images/Search/ic_clearText.png')}/>
+          </ClearTextButtonContainer>
+          </TouchableWithoutFeedback>
+      )}
+      </SearchInputContainer>
     );
   };
 
@@ -611,8 +653,9 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
         )}
         {!loadingFindAroundCites && (
           <HometownListContainer>
-            <KeyboardAwareFlatList
+            <FlatList
               keyboardShouldPersistTaps={'always'}
+              keyboardDismissMode={"on-drag"}
               contentContainerStyle={{paddingBottom: hp('16%')}}
               showsVerticalScrollIndicator={false}
               data={cityArray}

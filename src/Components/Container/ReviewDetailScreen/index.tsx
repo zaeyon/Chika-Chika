@@ -984,7 +984,6 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           }>
           <TouchableWithoutFeedback onPress={() => pressBackground()}>
             <ScrollViewContainer>
-              
               {!loadingReviewDetail && (
                 <BodyContainer style={{paddingBottom: paddingBottom}}>
                   <WriterInfoContainer>

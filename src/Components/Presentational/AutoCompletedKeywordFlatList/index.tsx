@@ -18,24 +18,16 @@ import {KeyboardAwareFlatList, KeyboardAwareScrollView} from 'react-native-keybo
 const ContinaerView = Styled.View`
 background-color: #ffffff;
 min-height: ${hp('100%')}px;
+flex: 1;
 `;
 
-const BodyContentView = Styled.View`
+const BodyContainer = Styled.View`
+flex: 1;
+background-color: #F5F7F9;
 `;
+
 
 const SearchResultFlatList = Styled(FlatList as new () => FlatList)`
-`;
-
-const SearchResultItemView = Styled.View`
-width: 100%;
-height: 80px;
-flex-direction: row;
-align-items: center;
-padding: 16px;
-`;
-
-const SearchResultItemTitleText = Styled.Text`
-font-size: 20px;
 `;
 
 const RecentKeywordContainer = Styled.View`
@@ -101,6 +93,13 @@ color: #131F3C;
 const SearchRecordListContainer = Styled.View`
 `;
 
+const SearchRecordContentView = Styled.View`
+flex: 1;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px 12px;
+`;
+
 const SearchRecordItemContainer = Styled.View`
 flex-direction: row;
 align-items: center;
@@ -141,34 +140,49 @@ const AutoCompletedKeywordFlatList = ({
 
   const renderSearchRecordItem = ({item, index}: any) => {
 
-    if(item.category === "keyword") {
+    const renderIcon = (category: string) => {
+      switch (category) {
+        case 'clinic':
+          return require('~/Assets/Images/Search/ic_dentalKeyword.png');
+        case 'city':
+          return require('~/Assets/Images/Search/ic_locationKeyword.png');
+        case 'treatment':
+          return require('~/Assets/Images/Search/ic_treatmentKeyword.png');
+        case 'symptom':
+          return require('~/Assets/Images/Search/ic_symptomKeyword.png');
+        case 'general':
+          return require('~/Assets/Images/Search/ic_generalKeyword.png');
+        default:
+          return require('~/Assets/Images/Search/ic/ic_search2.png');
+      }
+    };
+
+    if(item.category === 'clinic' || item.category === 'city') {
       return (
-        <TouchableWithoutFeedback onPress={() => searchTotalKeyword(item.query, item.category)}>
-        <SearchRecordItemContainer>
-          <View
-          style={{flexDirection: 'row', alignItems: 'center', paddingTop: 16, paddingBottom: 16, paddingLeft: 12, paddingRight: 12}}>
-          <RepresentIcon
-          source={require('~/Assets/Images/Search/ic_search2.png')}/>
-          <AutoCompletedKeywordText>{item.query}</AutoCompletedKeywordText>
-          </View>
-          <TouchableWithoutFeedback onPress={() => deleteSingleSearchRecord(item.id, item.category)}>
-          <DeleteSearchRecordContainer>
-            <DeleteSearchRecordIcon
-            source={require('~/Assets/Images/Search/ic_deleteRecord.png')}/>
-          </DeleteSearchRecordContainer>
-          </TouchableWithoutFeedback>
-        </SearchRecordItemContainer>
-        </TouchableWithoutFeedback>
-      )
-    } else {
-      return (
-        <View
-        style={{width: 0, height: 0}}
-        />
-      )
+        <TouchableHighlight
+          underlayColor="#F5F7F9"
+          style={{
+            backgroundColor: '#FFFFFF',
+          }}
+          onPress={() => searchTotalKeyword(item.query, item.category)}>
+          <SearchRecordItemContainer>
+            <SearchRecordContentView>
+              <RepresentIcon source={renderIcon(item.category)} />
+              <AutoCompletedKeywordText>{item.query}</AutoCompletedKeywordText>
+            </SearchRecordContentView>
+            <TouchableWithoutFeedback
+              onPress={() => deleteSingleSearchRecord(item.id, item.category)}>
+              <DeleteSearchRecordContainer>
+                <DeleteSearchRecordIcon
+                  source={require('~/Assets/Images/Search/ic_deleteRecord.png')}
+                />
+              </DeleteSearchRecordContainer>
+            </TouchableWithoutFeedback>
+          </SearchRecordItemContainer>
+        </TouchableHighlight>
+      );
     }
-    
-  }
+  };
 
   const renderResultItem = useCallback(
     ({item, index}: any) => {
@@ -206,31 +220,30 @@ const AutoCompletedKeywordFlatList = ({
         )
       } else if(item.category === "city") {
 
-        const splitedItemName  = item.emdName?.split("");
-        const startIndex = item.emdName?.indexOf(query);
+        const splitedItemName  = item.fullName?.split("");
+        const startIndex = item.fullName?.indexOf(query);
         const endIndex = startIndex + (query.length - 1);
 
         return (
-          // <TouchableWithoutFeedback onPress={() => searchTotalKeyword(item.emdName)}>
-          // <AutoCompletedKeywordItemContainer>
-          //   <RepresentIcon
-          //   source={require('~/Assets/Images/Search/ic_locationKeyword.png')}/>
-          //   {splitedItemName.map((item: any, index: number) => {
-          //     if(startIndex <= index && index <= endIndex && (startIndex !== -1)) {
-          //       return (
-          //           <AutoCompletedKeywordText
-          //           style={{color: "#00D1FF"}}>{item}</AutoCompletedKeywordText>
-          //       )
-          //     } else {
-          //       return (
-          //           <AutoCompletedKeywordText>{item}</AutoCompletedKeywordText>
-          //       )
-          //     }
-          //   }
-          //   )}}
-          // </AutoCompletedKeywordItemContainer>
-          // </TouchableWithoutFeedback>
-          <View></View>
+          <TouchableWithoutFeedback onPress={() => searchTotalKeyword(item.fullName, item.category)}>
+          <AutoCompletedKeywordItemContainer>
+            <RepresentIcon
+            source={require('~/Assets/Images/Search/ic_locationKeyword.png')}/>
+            {splitedItemName.map((item: any, index: number) => {
+              if(startIndex <= index && index <= endIndex && (startIndex !== -1)) {
+                return (
+                    <AutoCompletedKeywordText
+                    style={{color: "#00D1FF"}}>{item}</AutoCompletedKeywordText>
+                )
+              } else {
+                return (
+                    <AutoCompletedKeywordText>{item}</AutoCompletedKeywordText>
+                )
+              }
+            }
+            )}
+          </AutoCompletedKeywordItemContainer>
+          </TouchableWithoutFeedback>
         )
       } else if(item.category === "treatment") {
 
@@ -277,8 +290,7 @@ const AutoCompletedKeywordFlatList = ({
 
   return (
     <ContinaerView>
-        
-      <BodyContentView>
+      <BodyContainer>
         {query === "" && (
         <RecentKeywordContainer>
           <RecentKeywoardHeaderContainer>
@@ -300,20 +312,22 @@ const AutoCompletedKeywordFlatList = ({
           {searchRecordArray?.length > 0 && (
           <SearchRecordListContainer>
             <FlatList
+            contentContainerStyle={{paddingBottom: hp('28%')}}
             keyboardShouldPersistTaps={"always"}
+            keyboardDismissMode="on-drag"
             showsVerticalScrollIndicator={false}
             bounces={false}
             alwaysBounceVertical={false}
             data={searchRecordArray}
             renderItem={renderSearchRecordItem}
-            keyExtractor/>
+            keyExtractor={(item: any, index: number) => `${index}`}/>
           </SearchRecordListContainer>
           )}
         </RecentKeywordContainer>
         )}
         {query !== "" && (
         <SearchResultFlatList
-          keyboardShouldPersistTaps={"never"}
+          keyboardShouldPersistTaps={"handled"}
           showsVerticalScrollIndicator={false}
           bounces={false}
           contentContainerStyle={{backgroundColor: "#ffffff"}}
@@ -321,11 +335,11 @@ const AutoCompletedKeywordFlatList = ({
           keyboardDismissMode="on-drag"
           scrollEnabled={true}
           data={autoCompletedKeywordArr}
-          keyExtractor={(item: any, index: number) => item.name + index}
+          keyExtractor={(item: any, index: number) => `${index}`}
           renderItem={renderResultItem}
         />
         )}
-      </BodyContentView>
+        </BodyContainer>
     </ContinaerView>
   );
 };

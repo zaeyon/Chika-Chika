@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
 import {
@@ -14,73 +14,27 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {Rating} from '~/Components/Presentational/Rating';
 
-const ratingImage = require('~/Assets/Images/Review/ic_swipeStar.png');
+// Local Components
+import NavigationHeader from '~/Components/Presentational/NavigationHeader';
+
+const ratingImage = require('~/Assets/Images/Upload/ic_swipeStar.png');
 
 const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
- align-items: center;
-`;
-
-const HeaderBar = Styled.View`
- width: ${wp('100%')}px;
- height: ${wp('13.8%')}px;
- flex-direction: row;
- align-items: center;
- justify-content: space-between;
- background-color:#ffffff;
- border-bottom-width: 0.6px;
- border-color: #ECECEE;
-`;
-
-const HeaderLeftContainer = Styled.View`
-height: ${wp('13.8%')}px;
-padding: 0px 16px 0px 16px;
- align-items: center;
- justify-content: center;
- flex-direction: row;
-`;
-
-const HeaderBackIcon = Styled.Image`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
-`;
-
-const HeaderTitleText = Styled.Text`
-margin-top: 5px;
-font-size: 18px;
-color: #000000;
-font-weight: bold
-`;
-
-const HeaderRightContainer = Styled.View`
-height: ${wp('13.8%')}px;
-padding: 0px 16px 0px 16px;
- align-items: center;
- justify-content: center;
- flex-direction: row;
-`;
-
-const HeaderSkipContainer = Styled.View`
-position: absolute;
-right: 0px;
-padding: 14px 16px 13px 15px;
-`;
-
-const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
 `;
 
 const BodyContainer = Styled.View`
-align-items: center;
-padding-top: 30px;
+flex: 1;
+background-color: #F5F7F9;
+padding-top: 16px;
+padding-left: 16px;
+padding-right: 16px;
 `;
 
 const FooterContainer = Styled.View`
 position: absolute;
 bottom: 53px;
-
 `;
 
 const FinishButton = Styled.View`
@@ -125,40 +79,47 @@ background-color: #f6f7f8;
 border-radius: 8px;
 `;
 
-const DetailPriceInput = Styled.TextInput`
-width: ${wp('69.6%')}px;
-height: ${wp('11.2%')}px;
-font-size: 16px;
-color: #ffffff00;
-`;
-
-const DisplayDetailPriceText = Styled.Text`
-position: absolute;
-left: 12px;
-font-size: 16px;
-color: #0075FF;
-`;
-
 const RatingItemContainer = Styled.View`
-width: ${wp('91.73')}px;
-height: ${wp('27.99%')}px;
-justify-content: center;
+padding-top: 24px;
+padding-bottom: 24px;
+padding-left: 16px;
+padding-right: 29px;
+justify-content: space-between;
 align-items: center;
-flex-direction: column;
-border-width: 1px;
-border-color: #c6c6c6;
-border-radius: 8px;
+flex-direction: row;
+border-radius: 12px;
 background-color: #ffffff;
 `;
 
 const RatingLabelText = Styled.Text`
-font-size: 16px;
+font-weight: 700;
+font-size: 14px;
+line-height: 24px;
+color: #313131;
+`;
+
+const RatingValueText = Styled.Text`
+font-weight: 700;
+font-size: 14px;
+line-height: 24px;
 color: #313131;
 `;
 
 const SwipeRatingContainer = Styled.View`
+position: absolute;
+right: 31;
+align-items: center;
+padding-right: 40px;
+background-color: #ffffff;
 flex-direction: row;
-margin-top: 7px;
+`;
+
+const RatingValueContainer = Styled.View`
+position: absolute;
+right: 0px;
+`;
+
+const RatingLabelContainer = Styled.View`
 `;
 
 interface Props {
@@ -168,156 +129,154 @@ interface Props {
 
 const RatingScreen = ({navigation, route}: Props) => {
   const [serviceRating, setServiceRating] = useState<number>(0);
-  const [treatRating, setTreatRating] = useState<number>(0);
+  const [treatmentRating, setTreatmentRating] = useState<number>(0);
   const [priceRating, setPriceRating] = useState<number>(0);
 
-  const [serviceRatingEnroll, setServiceRatingEnroll] = useState<boolean>(
-    false,
-  );
-  const [treatRatingEnroll, setTreatRatingEnroll] = useState<boolean>(false);
-  const [priceRatingEnroll, setPriceRatingEnroll] = useState<boolean>(false);
+  const [isActivatedFinish, setIsActivatedFinish] = useState<boolean>(false);
 
   useEffect(() => {
-    if (route.params?.inputedRating) {
-      console.log('route.params.inputedRating', route.params.inputedRating);
+    if (route.params?.ratingObj.serviceRating) {
 
-      setServiceRating(route.params.inputedRating.serviceRating);
-      setTreatRating(route.params.inputedRating.treatRating);
-      setPriceRating(route.params.inputedRating.priceRating);
+      console.log("route.params?.ratingObj", route.params?.ratingObj);
+      setServiceRating(route.params.ratingObj.serviceRating);
+      setTreatmentRating(route.params.ratingObj.treatmentRating);
+      setPriceRating(route.params.ratingObj.priceRating);
     }
-  }, [route.params?.inputedRating]);
+  }, [route.params?.ratingObj]);
+
+  useEffect(() => {
+    if(serviceRating > 0 && treatmentRating > 0 && priceRating > 0 && !isActivatedFinish) {
+      setIsActivatedFinish(true);
+    }
+  }, [serviceRating, treatmentRating, priceRating])
 
   const goBack = () => {
     navigation.goBack();
   };
 
   const completeServiceRating = (rating: any) => {
-    console.log('rating', rating);
     setServiceRating(rating);
-    setServiceRatingEnroll(true);
   };
 
   const movingServiceRating = (rating: any) => {
-    console.log('rating changed', rating);
+    setServiceRating(rating);
   };
 
-  const completeTreatRating = (rating: any) => {
-    console.log('rating', rating);
-    setTreatRating(rating);
-    setTreatRatingEnroll(true);
+  const completeTreatmentRating = (rating: any) => {
+    setTreatmentRating(rating);
   };
 
-  const movingTreatRating = (rating: any) => {
-    console.log('rating changed', rating);
+  const movingTreatmentRating = (rating: any) => {
+    setTreatmentRating(rating);
   };
 
   const completePriceRating = (rating: any) => {
     setPriceRating(rating);
-    setPriceRatingEnroll(true);
   };
 
   const movingPriceRating = (rating: any) => {
-    console.log('rating changed', rating);
+    setPriceRating(rating);
   };
 
   const onPressFinishButton = () => {
-    if (serviceRating > 0 && treatRating > 0 && priceRating > 0) {
-      if (route.params.requestPage === 'detailPrice') {
-        navigation.navigate('ContentPostScreen', {
-          selectedTreatList: route.params?.selectedTreatList,
-          dentalClinic: route.params?.dentalClinic,
-          treatDate: route.params?.treatDate,
-          treatPrice: route.params?.treatPrice,
-          rating: {
-            serviceRating: serviceRating,
-            treatRating: treatRating,
-            priceRating: priceRating,
-            avgRating: (
-              (serviceRating + treatRating + priceRating) /
-              3
-            ).toFixed(1),
-          },
-          detailPriceList: route.params?.detailPriceList,
-          requestType: route.params?.requestType,
-        });
-      } else if (route.params?.requestPage === 'content') {
-        navigation.navigate('ContentPostScreen', {
-          rating: {
-            serviceRating: serviceRating,
-            treatRating: treatRating,
-            priceRating: priceRating,
-            avgRating: (
-              (serviceRating + treatRating + priceRating) /
-              3
-            ).toFixed(1),
-          },
-          requestType: route.params?.requestType,
-        });
+    navigation.navigate('ReviewMetaDataScreen', {
+      ratingObj: {
+        serviceRating: serviceRating,
+        priceRating: priceRating,
+        treatmentRating: treatmentRating,
       }
-    } else {
-      Alert.alert('평점을 등록해주세요!');
-    }
+    })
   };
+
+  const renderSwipeServiceRating = useCallback(() => {
+    return (
+        <Rating
+        type="custom"
+        ratingImage={ratingImage}
+        imageSize={wp('8.53%')}
+        fractions={2}
+        startingValue={serviceRating}
+        onFinishRating={completeServiceRating}
+        setRatingInMove={movingServiceRating}/>
+    )
+  }, [serviceRating])
+
+  const renderSwipeTreatmentRating = useCallback(() => {
+    return (
+      <Rating
+      type="custom"
+      ratingImage={ratingImage}
+      imageSize={wp('8.53%')}
+      fractions={2}
+      startingValue={treatmentRating}
+      onFinishRating={completeTreatmentRating}
+      setRatingInMove={movingTreatmentRating}/>
+    )
+  }, [treatmentRating])
+
+  const renderSwipePriceRating = useCallback(() => {
+    return (
+      <Rating
+      type="custom"
+      ratingImage={ratingImage}
+      imageSize={wp('8.53%')}
+      fractions={2}
+      startingValue={priceRating}
+      onFinishRating={completePriceRating}
+      setRatingInMove={movingPriceRating}/>
+    )
+  }, [priceRating])
+
 
   return (
     <Container as={SafeAreaView} forceInset={{top: 'always'}}>
-      <HeaderBar>
-        <TouchableWithoutFeedback onPress={() => goBack()}>
-          <HeaderLeftContainer>
-            <HeaderBackIcon
-              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
-            />
-          </HeaderLeftContainer>
-        </TouchableWithoutFeedback>
-        <HeaderTitleText>만족도</HeaderTitleText>
-        <HeaderRightContainer>
-          <HeaderEmptyContainer />
-        </HeaderRightContainer>
-      </HeaderBar>
+      <NavigationHeader
+      headerLeftProps={{type: 'arrow', onPress: goBack}}
+      headerTitle={"병원 만족도"}
+      headerRightProps={{type: 'text', text: '완료', onPress: onPressFinishButton}}
+      headerRightActiveColor={'#00D1FF'}
+      headerRightDisabled={!isActivatedFinish}
+      />
       <BodyContainer>
-        <RatingItemContainer>
-          <RatingLabelText>{'서비스 만족도'}</RatingLabelText>
-          <SwipeRatingContainer>
-            <Rating
-              type="custom"
-              ratingImage={ratingImage}
-              imageSize={wp('11%')}
-              fractions={2}
-              startingValue={serviceRating}
-              onFinishRating={completeServiceRating}
-              setRatingInMove={movingServiceRating}
-            />
-          </SwipeRatingContainer>
-        </RatingItemContainer>
-        <RatingItemContainer style={{marginTop: 24}}>
+        <RatingItemContainer style={{marginTop: 0}}>
           <RatingLabelText>{'진료 만족도'}</RatingLabelText>
           <SwipeRatingContainer>
-            <Rating
-              type={'custom'}
-              ratingImage={ratingImage}
-              imageSize={wp('11%')}
-              fractions={2}
-              startingValue={treatRating}
-              onFinishRating={completeTreatRating}
-              setRatingInMove={movingTreatRating}
-            />
+            {renderSwipeTreatmentRating()}
+            <RatingValueContainer>
+            <RatingValueText>{treatmentRating.toFixed(1)}</RatingValueText>
+            </RatingValueContainer>
           </SwipeRatingContainer>
         </RatingItemContainer>
-        <RatingItemContainer style={{marginTop: 24}}>
+        <RatingItemContainer style={{marginTop: 16}}>
           <RatingLabelText>{'비용 만족도'}</RatingLabelText>
           <SwipeRatingContainer>
-            <Rating
-              type={'custom'}
-              ratingImage={ratingImage}
-              imageSize={wp('11%')}
-              fractions={2}
-              startingValue={priceRating}
-              onFinishRating={completePriceRating}
-              setRatingInMove={movingPriceRating}
-            />
+            {renderSwipePriceRating()}
+            <RatingValueContainer>
+            <RatingValueText>{priceRating.toFixed(1)}</RatingValueText>
+            </RatingValueContainer>
+          </SwipeRatingContainer>
+        </RatingItemContainer>
+        <RatingItemContainer style={{marginTop: 16}}>
+          <RatingLabelContainer>
+          <RatingLabelText>{'서비스 만족도'}</RatingLabelText>
+          </RatingLabelContainer>
+          <SwipeRatingContainer>
+            {renderSwipeServiceRating()}
+            <RatingValueContainer>
+            <RatingValueText>{serviceRating.toFixed(1)}</RatingValueText>
+            </RatingValueContainer>
           </SwipeRatingContainer>
         </RatingItemContainer>
       </BodyContainer>
+    </Container>
+  );
+};
+
+export default RatingScreen;
+
+
+/*
+
       <FooterContainer>
         <TouchableWithoutFeedback onPress={() => onPressFinishButton()}>
           <FinishButton>
@@ -325,8 +284,4 @@ const RatingScreen = ({navigation, route}: Props) => {
           </FinishButton>
         </TouchableWithoutFeedback>
       </FooterContainer>
-    </Container>
-  );
-};
-
-export default RatingScreen;
+*/

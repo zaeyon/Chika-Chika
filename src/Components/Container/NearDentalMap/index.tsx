@@ -18,6 +18,7 @@ import {
   StyleSheet,
   Keyboard,
   PanResponder,
+  ActivityIndicator,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -40,6 +41,7 @@ import Modal from 'react-native-modal';
 import DentalCarouselList from '~/Components/Presentational/NearDentalMap/DentalCarouselList';
 import TouchBloackIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 import DentalList from '~/Components/Presentational/DentalList';
+import ToastMessage from '~/Components/Presentational/ToastMessage';
 
 // Route
 import GETAroundDental from '~/Routes/Dental/GETAroundDental';
@@ -59,6 +61,8 @@ const HeaderBar = Styled.View`
 `;
 
 const MapContainer = Styled.View`
+align-items: center;
+justify-content: center;
 `;
 
 const SearchContainer = Styled.View`
@@ -336,17 +340,14 @@ const MapActionButtonContainer = Styled.View`
 flex: 1;
 align-items: flex-end;
 padding-top: 16px;
-padding-right: 16px;
+padding-right: 9px;
 `;
 
 const MyLocationTrackingButton = Styled.View`
-margin-top: 16px;
-width: ${wp('10.66%')}px;
-height: ${wp('10.66%')}px;
-border-radius: 4px;
+width: ${wp('10%')}px;
+height: ${wp('10%')}px;
+border-radius: 3px;
 background-color: #ffffff;
-border-width: 1px;
-border-color: #E2E6ED;
 align-items: center;
 justify-content: center;
 `;
@@ -354,34 +355,6 @@ justify-content: center;
 const TargetIcon = Styled.Image`
 width: ${wp('4.266%')}px;
 height: ${wp('4.266%')}px;
-`;
-
-
-const ZoomInOutButton = Styled.View`
-width: ${wp('10.66%')}px;
-height: ${wp('21.33%')}px;
-background-color: #ffffff;
-border-radius: 4px;
-border-width: 1px;
-border-color: #E2E6ED;
-`;
-
-const ZoomInContainer = Styled.View`
-width: ${wp('10.66%')}px;
-height: ${wp('10.66%')}px;
-align-items: center;
-justify-content: center;
-border-bottom-width: 0.5px;
-border-color: #E2E6ED;
-`;
-
-const ZoomOutContainer = Styled.View`
-width: ${wp('10.66%')}px;
-height: ${wp('10.66%')}px;
-align-items: center;
-justify-content: center;
-border-top-width: 0.5px;
-border-color: #E2E6ED;
 `;
 
 const DentalListContainer = Styled.View`
@@ -392,6 +365,10 @@ bottom: 0;
 const ViewDentalListIcon = Styled.Image`
 width: ${wp('5.3%')}px;
 height: ${wp('5.3%')}px;
+`;
+
+const LoadingGetNearDentalContainer = Styled.View`
+position: absolute;
 `;
 
 interface Props {
@@ -412,7 +389,6 @@ const TEST_COORDINATE = {
 let offset = 0;
 let limit = 20;
 let sort = 'distance';
-let isNearDentalList = true;
 
 const bottomTabheight = DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%');
 
@@ -445,10 +421,6 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
   const [changeDentalList, setChangeDentalList] = useState<boolean>(false);
   const [changeDayFilter, setChangeDayFilter] = useState<boolean>(false);
-
-  const [isVisibleCarouselList, setIsVisibleCarouselList] = useState<boolean>(
-    true,
-  );
 
   const [selectedDentalIndex, setSelectedDentalIndex] = useState<number>(0);
 
@@ -496,8 +468,13 @@ const NearDentalMap = ({navigation, route}: Props) => {
      zoom: mapZoom,
    });
 
+  const isNearDentalList = useRef<boolean>(true);
+
   useEffect(() => {
-    //mapRef.current.setLocationTrackingMode(2)
+    if(isNearDentalList.current) {
+      console.log("사용자 위치 추적")
+      mapRef.current.setLocationTrackingMode(2)
+    }
 
     const getInitialNearDental = async () => {
       if (Platform.OS == 'android') {
@@ -511,6 +488,13 @@ const NearDentalMap = ({navigation, route}: Props) => {
   }, []);
 
   useEffect(() => {
+
+    if (route.params?.searchedDentalLocation) {
+      console.log("mapLocation", mapLocation);
+      isNearDentalList.current = route.params?.isNearDentalList;
+      mapRef.current.setLocationTrackingMode(0);
+    }
+
     if (route.params?.offset || route.params?.limit) {
       console.log(
         'offset, limit 존재',
@@ -527,11 +511,12 @@ const NearDentalMap = ({navigation, route}: Props) => {
     }
 
     if (searchedKeyword.length > 0) {
-      isNearDentalList = false;
+      isNearDentalList.current = false;
     }
 
     sort = 'accuracy';
-  }, [route.params?.offset, route.params?.limit, searchedKeyword]);
+
+  }, [route.params?.offset, route.params?.limit, searchedKeyword, route.params?.isNearDentalList, route.params?.searchedDentalLocation]);
 
   useEffect(() => {
     getNearDental();
@@ -593,7 +578,32 @@ const NearDentalMap = ({navigation, route}: Props) => {
             error.code,
             error.message,
           );
-          dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
+
+          ToastMessage.show("현재 위치를 불러오는데 실패했습니다ㅠㅠ");
+
+          // 서울 시청 좌표
+          const lat = 37.566515657875435
+          const long = 126.9781164904998
+
+          GETAroundDental({
+            jwtToken,
+            lat,
+            long,
+            sort,
+            timeFilter,
+            dayFilter,
+            holidayFilter,
+            parkingFilter,
+          })
+            .then((response: any) => {
+              console.log('GETAroundDental response.length', response.length);
+              dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
+              dispatch(allActions.dentalMapActions.setNearDentalArray(response));
+            })
+            .catch((error) => {
+              console.log('GETAroundDental error', error);
+              dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
+            });
 
           return false;
         },
@@ -657,7 +667,33 @@ const NearDentalMap = ({navigation, route}: Props) => {
         },
         (error) => {
           console.log('사용자 현재 위치 불러오기 실패', error);
-          dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
+          ToastMessage.show("현재 위치를 불러오는데 실패했습니다ㅠㅠ");
+
+          // 서울 시청 좌표
+          const lat = 37.566515657875435
+          const long = 126.9781164904998
+
+          GETAroundDental({
+            jwtToken,
+            lat,
+            long,
+            sort,
+            timeFilter,
+            dayFilter,
+            holidayFilter,
+            parkingFilter,
+          })
+            .then((response: any) => {
+              console.log('GETAroundDental response.length', response.length);
+              dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
+              dispatch(allActions.dentalMapActions.setNearDentalArray(response));
+            })
+            .catch((error) => {
+              console.log('GETAroundDental error', error);
+              dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
+            });
+
+
 
           return false;
         },
@@ -667,8 +703,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
   }
 
   const getNearDental = () => {
-    const lat = currentLocation.latitude;
-    const long = currentLocation.longitude;
+    const lat = currentMapLocation.current.latitude;
+    const long = currentMapLocation.current.longitude;
     const sort = 'd';
     dispatch(allActions.dentalMapActions.setLoadingGetDental(true));
     setSelectedDentalIndex(0);
@@ -687,13 +723,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
       .then((response: any) => {
         console.log('GETAroundDental response in NearDentalMap', response);
         dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
-        //const slicedDentalList = response.slice(0, 70);
-        //slicedDentalList[0].selected = true;
-        //setNearDentalList(response);
-        //dispatch(allActions.dentalMapActions.setNearDentalList(response));
-        //dispatch(allActions.dentalMapActions.setSearchedDentalArr(response));
+        dispatch(allActions.dentalMapActions.setNearDentalArray(response));
 
-        setChangeDentalList(!changeDentalList);
       })
       .catch((error) => {
         console.log('GETAroundDental error', error);
@@ -707,8 +738,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
     tmpParkingFilter: string,
     tmpHolidayFilter: boolean,
   ) => {
-    const lat = currentLocation.latitude;
-    const long = currentLocation.longitude;
+    const lat = currentMapLocation.current.latitude;
+    const long = currentMapLocation.current.longitude;
     const sort = 'd';
     const timeFilter = tmpTimeFilter;
     const dayFilter = tmpDayFilter;
@@ -732,12 +763,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
       .then((response) => {
         console.log('GETAroundDental response in NearDentalMap', response);
         dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
-        //const slicedDentalList = response.slice(0, 70);
-        //slicedDentalList[0].selected = true;
-        //setNearDentalList(response);
-        //dispatch(allActions.dentalMapActions.setNearDentalList(response));
-        dispatch(allActions.dentalMapActions.setSearchedDentalArray(response));
-        setChangeDentalList(!changeDentalList);
+        dispatch(allActions.dentalMapActions.setNearDentalArray(response));
       })
       .catch((error) => {
         console.log('GETAroundDental error', error);
@@ -753,8 +779,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
     tmpHolidayFilter: boolean,
   ) => {
     dispatch(allActions.dentalMapActions.setLoadingGetDental(true));
-    const lat = currentLocation.latitude;
-    const long = currentLocation.longitude;
+    const lat = currentMapLocation.current.latitude;
+    const long = currentMapLocation.current.longitude;
 
     const dayFilter = tmpDayFilter;
     const timeFilter = tmpTimeFilter;
@@ -779,9 +805,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
         console.log('GETDentalTotalSearch response', response);
 
         if (response.length > 0) {
-          dispatch(allActions.dentalMapActions.setSearchedDentalArr(response));
+          dispatch(allActions.dentalMapActions.setNearDentalArray(response));
         } else {
-          dispatch(allActions.dentalMapActions.setSearchedDentalArr([]));
+          dispatch(allActions.dentalMapActions.setNearDentalArray([]));
         }
       })
       .catch((error: any) => {
@@ -798,24 +824,17 @@ const NearDentalMap = ({navigation, route}: Props) => {
     navigation.navigate('DentalTotalSearchScreen', {
       currentLocation: currentLocation,
       requestType: 'search',
+      isNearDentalList: isNearDentalList.current,
+      currentMapLongitude: currentMapLocation.current.longitude,
+      currentMapLatitude: currentMapLocation.current.latitude, 
     });
   };
 
   const clickDentalMarker = (selectedIndex: number) => {
-    if (!isVisibleCarouselList) {
-      setIsVisibleCarouselList(true);
-    }
-
+    
     setSelectedDentalIndex(selectedIndex);
 
     dentalCarouselRef.current?.snapToItem(selectedIndex, false);
-  };
-
-  const onMapClick = () => {
-    if (isVisibleCarouselList) {
-      setSelectedDentalIndex(-1);
-      setIsVisibleCarouselList(false);
-    }
   };
 
   const clickDayFilter = () => {
@@ -840,10 +859,14 @@ const NearDentalMap = ({navigation, route}: Props) => {
     navigation.navigate('DentalTotalSearchScreen', {
       currentLocation: currentLocation,
       requestType: 'dentalList',
+      isNearDentalList: isNearDentalList.current,
+      currentMapLongitude: currentMapLocation.current.longitude,
+      currentMapLatitude: currentMapLocation.current.latitude,
     });
   };
 
   const clickMyLocationTrackingButton = () => {
+    isNearDentalList.current = true;
     mapRef.current.setLocationTrackingMode(2);
   };
 
@@ -854,12 +877,37 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
   const onMapCameraChange = (event: any) => {
     console.log('onMapCameraChange event', event);
+    const prevMapLocation = {...currentMapLocation.current}
     currentMapLocation.current = event;
+
+    const distance = getDistanceFromLatLonInKm(prevMapLocation.latitude, prevMapLocation.longitude, currentMapLocation.current.latitude, currentMapLocation.current.longitude);
+
+    console.log("onMapCameraChange distance", distance);
+
+    // 이전의 지도 중심 좌표와 거리가 1km이상 차이날때 현재 위치에서 주변의 병원 다시 불러옴.
+    if(distance > 0.2) {
+      getNearDental();
+    }
   };
+
+  // 두 좌표 사이의 거리를 구하는 함수
+  function getDistanceFromLatLonInKm(lat1: number, lng1: number, lat2: number, lng2: number) {
+    function deg2rad(deg) {
+        return deg * (Math.PI/180)
+    }
+
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2-lat1);  // deg2rad below
+    var dLon = deg2rad(lng2-lng1);
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var d = R * c; // Distance in km
+    return d;
+}
 
   const changeHolidayFilter = () => {
     console.log('changeHolidayFilter holidayFilter', holidayFilter);
-    if (isNearDentalList) {
+    if (isNearDentalList.current) {
       filterNearDental(dayFilter, timeFilter, parkingFilter, !holidayFilter);
     } else {
       filterSearchedDental(
@@ -876,7 +924,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
   const changeParkingFilter = () => {
     if (parkingFilter === 'y') {
-      if (isNearDentalList) {
+      if (isNearDentalList.current) {
         filterNearDental(dayFilter, timeFilter, 'n', holidayFilter);
       } else {
         filterSearchedDental(
@@ -890,7 +938,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
       dispatch(allActions.dentalFilterActions.setParkingFilter('n'));
     } else if (parkingFilter === 'n') {
-      if (isNearDentalList) {
+      if (isNearDentalList.current) {
         filterNearDental(dayFilter, timeFilter, 'y', holidayFilter);
       } else {
         filterSearchedDental(
@@ -915,7 +963,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
       dispatch(allActions.dentalFilterActions.initializeDayList());
       dispatch(allActions.dentalFilterActions.setSelectedDayList([]));
 
-      if (isNearDentalList) {
+      if (isNearDentalList.current) {
         filterNearDental(
           tmpDayFilter,
           timeFilter,
@@ -943,7 +991,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
       const tmpTimeFilter = "";
 
-      if(isNearDentalList) {
+      if(isNearDentalList.current) {
         filterNearDental(
           dayFilter,
           tmpTimeFilter,
@@ -1011,7 +1059,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
         allActions.dentalFilterActions.setSelectedDayList(tmpSelectedDayList),
       );
 
-      if (isNearDentalList) {
+      if (isNearDentalList.current) {
         filterNearDental(
           tmpDayFilter,
           timeFilter,
@@ -1077,7 +1125,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
       if (timeFilter !== formattedTime) {
         dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
 
-        if (isNearDentalList) {
+        if (isNearDentalList.current) {
           filterNearDental(
             dayFilter,
             formattedTime,
@@ -1101,7 +1149,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
       if (timeFilter !== formattedTime) {
         dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
 
-        if (isNearDentalList) {
+        if (isNearDentalList.current) {
           filterNearDental(
             dayFilter,
             formattedTime,
@@ -1174,7 +1222,6 @@ const NearDentalMap = ({navigation, route}: Props) => {
               }}
               showsMyLocationButton={false}
               center={{...mapLocation, zoom: mapZoom}}
-              onMapClick={(event: any) => onMapClick()}
               onCameraChange={(event: any) => onMapCameraChange(event)}
               zoomControl={true}>
               {nearDentalArray.map((item: any, index: number) => {
@@ -1242,16 +1289,20 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
                       <FilterItemContainer
                         style={[{marginLeft: 16, backgroundColor: '#ffffff', borderColor: "#9AA2A9"}, styles.filterItemShadow]}>
-                        {selectedDayList.map((item, index) => {
+                        {selectedDayList.map((item: any, index: number) => {
                           if (index === 0) {
                             return (
-                              <FilterItemText style={{color: '#4E525D'}}>
+                              <FilterItemText 
+                              key={index}
+                              style={{color: '#4E525D'}}>
                                 {item.day + '요일'}
                               </FilterItemText>
                             );
                           } else {
                             return (
-                              <FilterItemText style={{color: '#4E525D'}}>
+                              <FilterItemText
+                              key={index}
+                              style={{color: '#4E525D'}}>
                                 {', ' + item.day + '요일'}
                               </FilterItemText>
                             );
@@ -1302,7 +1353,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
             </FilterListContainer>
             <MapActionButtonContainer>
               <TouchableHighlight
-                style={{borderRadius: 8}}
+                style={{borderRadius: 3}}
                 activeOpacity={0.85}
                 onPress={() => clickMyLocationTrackingButton()}>
                 <MyLocationTrackingButton style={styles.mapActionButtonShadow}>
@@ -1335,6 +1386,13 @@ const NearDentalMap = ({navigation, route}: Props) => {
           />
           </DentalListContainer>
           )}
+        {loadingGetDental && (
+          <LoadingGetNearDentalContainer>
+          <ActivityIndicator
+          color={"#000000"}
+          style={{zIndex: 10}}/>
+          </LoadingGetNearDentalContainer>
+        )}
         </MapContainer>
         <Modal
           isVisible={visibleDayFilterModal}
@@ -1452,7 +1510,6 @@ const NearDentalMap = ({navigation, route}: Props) => {
               </TimeFilterModalContainer>
           </DetailFilterModalContainer>
         </Modal>
-        <TouchBloackIndicatorCover loading={loadingGetDental} />
         <ActionSheet
           ref={timeFilterActionSheet}
           options={['취소', '수정하기', '삭제하기']}
@@ -1492,10 +1549,10 @@ const styles = StyleSheet.create({
   mapActionButtonShadow: {
     shadowOffset: {
       width: 0,
-      height: 0,
+      height: 1,
     },
-    shadowRadius: 5,
-    shadowOpacity: 0.15,
+    shadowRadius: 1,
+    shadowOpacity: 0.3,
   },
   dayFilterModalView: {
     justifyContent: 'flex-end',
@@ -1530,123 +1587,3 @@ const styles = StyleSheet.create({
 });
 
 export default NearDentalMap;
-
-/*
-<DentalListSlidingUpPanel
-navigation={navigation}
-route={route}
-/>
-*/
-
-
-/*
-<Modal
-          isVisible={visibleDayFilterModal}
-          style={styles.dayFilterModalView}
-          onBackdropPress={() => cancelDayFilter()}
-          swipeDirection={['down']}
-          onSwipeComplete={() => setVisibleDayFilterModal(false)}
-          backdropOpacity={0.25}>
-          <DetailFilterModalContainer>
-            <DetailFilterHeaderContainer>
-              <TouchableWithoutFeedback onPress={() => cancelDayFilter()}>
-                <DetailFilterHeaderLeftContainer>
-                  <DetailFilterCancelText>{'취소'}</DetailFilterCancelText>
-                </DetailFilterHeaderLeftContainer>
-              </TouchableWithoutFeedback>
-              <DetailFilterTitleText>{'방문일 설정'}</DetailFilterTitleText>
-              <TouchableWithoutFeedback onPress={() => registerDayFilter()}>
-                <DetailFilterHeaderRightContainer>
-                  <DetailFilterRegisterText>{'저장'}</DetailFilterRegisterText>
-                </DetailFilterHeaderRightContainer>
-              </TouchableWithoutFeedback>
-            </DetailFilterHeaderContainer>
-            <DetailFilterListContainer>
-              <FlatList
-                columnWrapperStyle={{
-                  justifyContent: 'space-between',
-                  marginTop: 12,
-                }}
-                data={dayList}
-                keyExtractor={(item, index) => `${index}`}
-                numColumns={5}
-                renderItem={renderDayFilterItem}
-              />
-            </DetailFilterListContainer>
-          </DetailFilterModalContainer>
-        </Modal>
-*/
-
-
-/*
-
-        <Modal
-          isVisible={visibleTimeFilterModal}
-          style={styles.timeFilterModalView}
-          onBackdropPress={() => cancelTimeFilter()}
-          backdropOpacity={0.25}>
-          <DetailFilterModalContainer>
-            <DetailFilterHeaderContainer>
-              <TouchableWithoutFeedback onPress={() => cancelTimeFilter()}>
-                <DetailFilterHeaderLeftContainer>
-                  <DetailFilterCancelText>{'취소'}</DetailFilterCancelText>
-                </DetailFilterHeaderLeftContainer>
-              </TouchableWithoutFeedback>
-              <DetailFilterTitleText>{'방문시간 설정'}</DetailFilterTitleText>
-              <TouchableWithoutFeedback onPress={() => registerTimeFilter()}>
-                <DetailFilterHeaderRightContainer>
-                  <DetailFilterRegisterText>{'저장'}</DetailFilterRegisterText>
-                </DetailFilterHeaderRightContainer>
-              </TouchableWithoutFeedback>
-            </DetailFilterHeaderContainer>
-            <TimeFilterModalContainer>
-              <TimePickerContainer>
-                <Picker
-                  selectedValue={hourPickerValue}
-                  onValueChange={(itemValue, itemIndex) =>
-                    onValueChangeHourPicker(itemValue, itemIndex)
-                  }
-                  style={{width: wp('26%'), height: hp('26%')}}>
-                  <Picker.Item label={'1'} value="1" />
-                  <Picker.Item label={'2'} value="2" />
-                  <Picker.Item label={'3'} value="3" />
-                  <Picker.Item label={'4'} value="4" />
-                  <Picker.Item label={'5'} value="5" />
-                  <Picker.Item label={'6'} value="6" />
-                  <Picker.Item label={'7'} value="7" />
-                  <Picker.Item label={'8'} value="8" />
-                  <Picker.Item label={'9'} value="9" />
-                  <Picker.Item label={'10'} value="10" />
-                  <Picker.Item label={'11'} value="11" />
-                  <Picker.Item label={'12'} value="12" />
-                </Picker>
-                <TimePickerLabelText>{'시'}</TimePickerLabelText>
-                <Picker
-                  style={{width: wp('26%'), height: hp('26%')}}
-                  onValueChange={(itemValue, itemIndex) =>
-                    onValueChangeMinutePicker(itemValue, itemIndex)
-                  }
-                  selectedValue={minutePickerValue}>
-                  <Picker.Item label={'00'} value="00" />
-                  <Picker.Item label={'15'} value="15" />
-                  <Picker.Item label={'30'} value="30" />
-                  <Picker.Item label={'45'} value="45" />
-                </Picker>
-                <TimePickerLabelText>{'분'}</TimePickerLabelText>
-                <Picker
-                  style={{width: wp('26%'), height: hp('26%')}}
-                  onValueChange={(itemValue, itemIndex) =>
-                    onValueChangeTimeSlotPicker(itemValue, itemIndex)
-                  }
-                  selectedValue={timeSlotPickerValue}>
-                  <Picker.Item label={'오전'} value="오전" />
-                  <Picker.Item label={'오후'} value="오후" />
-                </Picker>
-              </TimePickerContainer>
-            </TimeFilterModalContainer>
-          </DetailFilterModalContainer>
-        </Modal>
-*/
-
-const TEST_NEAR_DENTAL_LIST = [{"Fri_Consulation_end_time": "18:00:00", "Fri_Consulation_start_time": "10:00:00", "accuracyPoint": 2, "address": "서울특별시 중구 세종대로20길 23 516호 (무교동, 원창빌딩)", "conclustionNow": 0, "confidentConsulationTime": 1, "confidentTOL": 1, "distance(km)": 0.09, "geographLat": "37.5671513", "geographLong": "126.9787673", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 3913, "local": "서울특별시 중구 무교동", "lunchTimeNow": 0, "originalName": "이치과의원", "reviewAVGStarRate": 3.3, "reviewNum": 1, "telNumber": "02-776-4117", "website": "", "weekday_TOL_end": "14:00:00", "weekday_TOL_start": "12:30:00", "weekend_non_consulation_notice": "전부휴진"}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 1, "address": "서울특별시 중구 세종대로 124 지하1층 (태평로1가, 프레스센터 아케이드)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.1, "geographLat": "37.5674232", "geographLong": "126.9778908", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 4582, "local": "서울특별시 중구 태평로1가", "lunchTimeNow": 0, "originalName": "프레스치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "733-2714", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "19:00:00", "Fri_Consulation_start_time": "11:00:00", "accuracyPoint": 3, "address": "서울특별시 중구 무교로 15 2층 202호 (무교동, 남강건설회관빌딩)", "conclustionNow": 1, "confidentConsulationTime": 1, "confidentTOL": 1, "distance(km)": 0.11, "geographLat": "37.567289", "geographLong": "126.9789374", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 205, "local": "서울특별시 중구 무교동", "lunchTimeNow": 0, "originalName": "강북센트럴치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-318-2854", "website": "", "weekday_TOL_end": "14:30:00", "weekday_TOL_start": "13:00:00", "weekend_non_consulation_notice": "일요일 휴진"}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 1, "address": "서울특별시 중구 무교로 15 9층 906호 (무교동, 남강빌딩)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.11, "geographLat": "37.567289", "geographLong": "126.9789374", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 2015, "local": "서울특별시 중구 무교동", "lunchTimeNow": 0, "originalName": "서울세연치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-755-0203", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 2, "address": "서울특별시 중구 남대문로9길 51 3층 301호 (을지로1가, 효덕빌딩)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.13, "geographLat": "37.5668152", "geographLong": "126.9795087", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 4771, "local": "서울특별시 중구 을지로1가", "lunchTimeNow": 0, "originalName": "행복한예인치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-756-2829", "website": "http://www.yeindental.co.kr", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "18:00:00", "Fri_Consulation_start_time": "09:00:00", "accuracyPoint": 3, "address": "서울특별시 중구 무교로 12 3층 (무교동, 정오빌딩)", "conclustionNow": 0, "confidentConsulationTime": 1, "confidentTOL": 1, "distance(km)": 0.13, "geographLat": "37.5670515", "geographLong": "126.9793882", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 2738, "local": "서울특별시 중구 무교동", "lunchTimeNow": 0, "originalName": "아이비치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-752-3014", "website": "http://www.implantist.com", "weekday_TOL_end": "14:00:00", "weekday_TOL_start": "13:00:00", "weekend_non_consulation_notice": "휴진"}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 1, "address": "서울특별시 중구 을지로 16 606호 (을지로1가, 프레지던트호텔)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.15, "geographLat": "37.5656664", "geographLong": "126.9793772", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 3851, "local": "서울특별시 중구 을지로1가", "lunchTimeNow": 0, "originalName": "이원철치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-779-2277", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 1, "address": "서울특별시 중구 세종대로 136 지하1층 (태평로1가, 파이낸스빌딩)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.21, "geographLat": "37.5684246", "geographLong": "126.9782701", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 4624, "local": "서울특별시 중구 태평로1가", "lunchTimeNow": 0, "originalName": "하버디안치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "3783-0660", "website": "http://www.harvardian.co.kr/", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 2, "address": "서울특별시 중구 남대문로9길 40 3층 306호 (다동, 센터플레이스)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.21, "geographLat": "37.5670959", "geographLong": "126.9803692", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 1679, "local": "서울특별시 중구 다동", "lunchTimeNow": 0, "originalName": "산치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-723-0020", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 2, "address": "서울특별시 중구 세종대로 93 광학빌딩 800호 (태평로2가)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.24, "geographLat": "37.5647017", "geographLong": "126.9766451", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 1501, "local": "서울특별시 중구 태평로2가", "lunchTimeNow": 0, "originalName": "백송치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "752-6663", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 1, "address": "서울특별시 중구 무교로 28 시그너스빌딩 2층 202호 (무교동)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.25, "geographLat": "37.5684713", "geographLong": "126.9796007", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 363, "local": "서울특별시 중구 무교동", "lunchTimeNow": 0, "originalName": "광화문예치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "318-3633", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 2, "address": "서울특별시 중구 세종대로 92 지하1층 (태평로2가, 한화금융센터 태평로)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.26, "geographLat": "37.5642574", "geographLong": "126.9775934", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 656, "local": "서울특별시 중구 태평로2가", "lunchTimeNow": 0, "originalName": "남도현프로덴탈치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-6366-2875", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 2, "address": "서울특별시 중구 세종대로 135-9 3층 (태평로1가)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.3, "geographLat": "37.5688262", "geographLong": "126.9763175", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 361, "local": "서울특별시 중구 태평로1가", "lunchTimeNow": 0, "originalName": "광화문선치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-734-8272", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 2, "address": "서울특별시 중구 세종대로21길 52 1층 (태평로1가)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.3, "geographLat": "37.5687647", "geographLong": "126.9761617", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 362, "local": "서울특별시 중구 태평로1가", "lunchTimeNow": 0, "originalName": "광화문연치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "722-8272", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 1, "address": "서울특별시 중구 덕수궁길 15 (서소문동, 시청별관 2동 1층)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.31, "geographLat": "37.5645542", "geographLong": "126.9756136", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 2283, "local": "서울특별시 중구 서소문동", "lunchTimeNow": 0, "originalName": "서울특별시청치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-2133-1827", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "19:00:00", "Fri_Consulation_start_time": "10:00:00", "accuracyPoint": 4, "address": "서울특별시 중구 세종대로18길 36 201호 (소공동, 동양빌딩)", "conclustionNow": 1, "confidentConsulationTime": 1, "confidentTOL": 1, "distance(km)": 0.32, "geographLat": "37.5637746", "geographLong": "126.9791858", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 1335, "local": "서울특별시 중구 소공동", "lunchTimeNow": 0, "originalName": "밀레니엄연세치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-773-8863", "website": "", "weekday_TOL_end": "14:00:00", "weekday_TOL_start": "13:00:00", "weekend_non_consulation_notice": "전부휴진"}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 2, "address": "서울특별시 중구 남대문로9길 12 나전빌딩 3층 302,303호 (다동)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.32, "geographLat": "37.5668624", "geographLong": "126.9817579", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 1473, "local": "서울특별시 중구 다동", "lunchTimeNow": 0, "originalName": "밝은미소치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-752-2880", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 2, "address": "서울특별시 중구 을지로 30 6층 (소공동, 롯데호텔)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.33, "geographLat": "37.5654272", "geographLong": "126.9816208", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 1595, "local": "서울특별시 중구 소공동", "lunchTimeNow": 0, "originalName": "뷰티페이스치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-753-4002", "website": "http://www.bfdental.kr/", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 1, "address": "서울특별시 중구 을지로 35 8층 (을지로1가, 하나은행)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.33, "geographLat": "37.5664918", "geographLong": "126.9818658", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 81, "local": "서울특별시 중구 을지로1가", "lunchTimeNow": 0, "originalName": "KEB하나은행부속치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "2002-2147", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 3, "address": "서울특별시 중구 세종대로18길 16 204호 (북창동, 우성빌딩)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.33, "geographLat": "37.5635365", "geographLong": "126.9780269", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 3054, "local": "서울특별시 중구 북창동", "lunchTimeNow": 0, "originalName": "연세수치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-319-7528", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 1, "address": "서울특별시 중구 세종대로16길 23 (북창동)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.35, "geographLat": "37.5633799", "geographLong": "126.978295", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 782, "local": "서울특별시 중구 북창동", "lunchTimeNow": 0, "originalName": "닥터노아치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-3789-7524", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 1, "address": "서울특별시 중구 서소문로 138 300호 (태평로2가, 대한일보빌딩)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.35, "geographLat": "37.5636696", "geographLong": "126.976307", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 4716, "local": "서울특별시 중구 태평로2가", "lunchTimeNow": 0, "originalName": "한일치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-776-1594", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "18:00:00", "Fri_Consulation_start_time": "10:00:00", "accuracyPoint": 2, "address": "서울특별시 중구 다동길 46 3층 (다동)", "conclustionNow": 0, "confidentConsulationTime": 1, "confidentTOL": 1, "distance(km)": 0.35, "geographLat": "37.5678421", "geographLong": "126.9817151", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 4209, "local": "서울특별시 중구 다동", "lunchTimeNow": 0, "originalName": "종로치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-752-2802", "website": "", "weekday_TOL_end": "14:00:00", "weekday_TOL_start": "12:00:00", "weekend_non_consulation_notice": "전부휴진"}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 1, "address": "서울특별시 중구 다동길 43 지하104호 (다동, 한외빌딩)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.36, "geographLat": "37.5682206", "geographLong": "126.9816321", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 540, "local": "서울특별시 중구 다동", "lunchTimeNow": 0, "originalName": "김용호치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-757-2275", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": "휴진"}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 1, "address": "서울특별시 종로구 종로 14 지하1층 (서린동)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.37, "geographLat": "37.5698162", "geographLong": "126.9788787", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 1764, "local": "서울특별시 종로구 서린동", "lunchTimeNow": 0, "originalName": "서린연세치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-720-2840", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "18:30:00", "Fri_Consulation_start_time": "10:00:00", "accuracyPoint": 3, "address": "서울특별시 중구 서소문로 134 3층 (서소문동, 블루베리빌딩)", "conclustionNow": 1, "confidentConsulationTime": 1, "confidentTOL": 1, "distance(km)": 0.38, "geographLat": "37.5635723", "geographLong": "126.9758925", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 4154, "local": "서울특별시 중구 서소문동", "lunchTimeNow": 0, "originalName": "제일치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-318-2828", "website": "", "weekday_TOL_end": "14:00:00", "weekday_TOL_start": "13:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 0, "address": "서울특별시 중구 서소문로 136 3층 302호 (태평로2가)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.38, "geographLat": "37.56356", "geographLong": "126.9760425", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 3680, "local": "서울특별시 중구 태평로2가", "lunchTimeNow": 0, "originalName": "의료법인 풍성치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-774-2880", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 1, "address": "서울특별시 중구 남대문로7길 15 3층 (소공동)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.39, "geographLat": "37.5638092", "geographLong": "126.9809897", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 2483, "local": "서울특별시 중구 소공동", "lunchTimeNow": 0, "originalName": "소공치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-757-8285", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 1, "address": "서울특별시 중구 남대문로7길 13 3층 (소공동)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.4, "geographLat": "37.5638037", "geographLong": "126.9811196", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 4124, "local": "서울특별시 중구 소공동", "lunchTimeNow": 0, "originalName": "정치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-775-7473", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}, {"Fri_Consulation_end_time": "00:00:00", "Fri_Consulation_start_time": "00:00:00", "accuracyPoint": 1, "address": "서울특별시 종로구 종로 22 603호 (서린동, 인주빌딩)", "conclustionNow": 0, "confidentConsulationTime": 0, "confidentTOL": 0, "distance(km)": 0.4, "geographLat": "37.5698831", "geographLong": "126.9797107", "holiday_treatment_end_time": null, "holiday_treatment_start_time": null, "id": 1729, "local": "서울특별시 종로구 서린동", "lunchTimeNow": 0, "originalName": "새서울치과의원", "reviewAVGStarRate": null, "reviewNum": 0, "telNumber": "02-735-2288", "website": "", "weekday_TOL_end": "00:00:00", "weekday_TOL_start": "00:00:00", "weekend_non_consulation_notice": ""}]
-

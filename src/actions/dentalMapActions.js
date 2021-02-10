@@ -26,6 +26,13 @@ const setSearchedDentalArray = (searchedDentalArray) => {
     }
 }
 
+const addSearchedDentalArray = (newSearchedDentalArray) => {
+    return {
+        type: 'ADD_SEARCHED_DENTAL_ARRAY',
+        payload: newSearchedDentalArray,
+    }
+}
+
 const setAutoCompletedKeywordArr = (autoCompletedKeywordArr) => {
     return {
         type: "SET_AUTO_COMPLETED_KEYWORD_ARR",
@@ -40,6 +47,7 @@ const setLoadingGetDental = (loadingGetDental) => {
     }
 }
 
+
 export default {
     setNearDentalArray,
     setMapLocation,
@@ -47,4 +55,5 @@ export default {
     setSearchedDentalArray,
     setAutoCompletedKeywordArr,
     setLoadingGetDental,
+    addSearchedDentalArray,
 }

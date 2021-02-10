@@ -1066,6 +1066,11 @@ const Navigator = () => {
 
   useEffect(() => {
     //getFcmToken();
+
+    const setUserLogined = async (jwtToken: string, profile: object) => {
+      await dispatch(allActions.userActions.setUser({jwtToken, profile}))
+    }
+    
     getUserInfo()
       .then((jwtToken) => {
         console.log('getUserInfo response', jwtToken);
@@ -1073,13 +1078,10 @@ const Navigator = () => {
           .then((response: any) => {
             const profile = response;
             console.log('profile', profile);
-            dispatch(
-              allActions.userActions.setUser({
-                jwtToken,
-                profile,
-              }),
-            );
+          
             dispatch(allActions.userActions.setHometown(response.Residences));
+
+            setUserLogined(jwtToken, profile);
             SplashScreen.hide();
           })
           .catch((error: any) => {

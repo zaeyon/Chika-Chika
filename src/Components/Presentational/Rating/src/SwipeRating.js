@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 // RATING IMAGES WITH STATIC BACKGROUND COLOR (white)
-const STAR_IMAGE = require('~/Assets/Images/Review/ic_swipeStar.png');
+const STAR_IMAGE = require('~/Assets/Images/Upload/ic_swipeStar.png');
 const HEART_IMAGE = require('./images/heart.png');
 const ROCKET_IMAGE = require('./images/rocket.png');
 const BELL_IMAGE = require('./images/bell.png');
@@ -39,13 +39,14 @@ const TYPES = {
 export default class SwipeRating extends Component {
   static defaultProps = {
     type: 'star',
-    ratingImage: require('~/Assets/Images/Review/ic_swipeStar.png'),
-    ratingColor: '#F6D211',
-    ratingBackgroundColor: '#e4e4e4',
+    ratingImage: require('~/Assets/Images/Upload/ic_swipeStar.png'),
+    ratingColor: '#00D1FF',
+    ratingBackgroundColor: '#E2E6ED',
     ratingCount: 5,
     imageSize: 40,
     onFinishRating: () => console.log('Attach a onFinishRating function here.'),
-    minValue: 0
+    minValue: 0,
+    interval: 4,
   };
 
   constructor(props) {
@@ -202,12 +203,12 @@ export default class SwipeRating extends Component {
   }
 
   renderRatings() {
-    const { imageSize, ratingCount, type, tintColor } = this.props;
+    const { imageSize, ratingCount, type, tintColor} = this.props;
     const source = TYPES[type].source;
 
     return times(ratingCount, index => (
-      <View key={index} style={styles.starContainer}>
-        <Image source={source} style={{width: imageSize, height: imageSize, tintColor }} />
+      <View key={index} style={[styles.starContainer]}>
+        <Image source={source} style={{width: imageSize, height: imageSize, tintColor}} />
       </View>
     ));
   }

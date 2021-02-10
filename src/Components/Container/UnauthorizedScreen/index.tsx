@@ -22,13 +22,28 @@ import {storeUserInfo} from '~/storage/currentUser';
 const Container = Styled.View`
   width: ${wp('100%')}px;
   height: ${hp('100%')}px;
-  background-color: #0075ff;
+  background-color: #F5F7F9;
   flex: 1;
 `;
 
 const LogoContainer = Styled.View`
- flex: 3.5;
+ flex: 3.85;
+ padding-left: 32px;
+ justify-content: center;
 `;
+
+const Icon = Styled.Image`
+margin-top: 75px;
+width: ${wp('24.26%')}px;
+height: ${wp('24.26%')}px;
+`;
+
+const LogoImage = Styled.Image`
+margin-top: 6px;
+width: ${wp('44.53%')}px;
+height: ${wp('10.399%')}px;
+`;
+
 
 const SocialContainer = Styled.View`
  flex: 1.5;
@@ -41,17 +56,24 @@ const LocalContainer = Styled.View`
  align-items: center;
  padding-left: 20px;
  padding-right: 20px;
- justify-content: center;
+ padding-top: 16px;
 `;
 
 const LocalLoginContainer = Styled.View`
+padding-top: 16px;
+padding-bottom: 16px;
+padding-left: 5px;
+padding-right: 5px;
  align-items: center;
  justify-content: center;
 `;
 
 const LocalLoginText = Styled.Text`
- color: #ffffff;
+font-weight: 400;
+ color: #131F3C;
  font-size: 16px;
+ line-height: 24px;
+
 `;
 
 const LocalSignUpContainer = Styled.View`
@@ -69,14 +91,23 @@ const KakaoLoginButton = Styled.View`
 width: ${wp('91.46%')}px;
 height: ${wp('14.93%')}px;
 border-radius: 8px;
-background-color: #FFE600;
+background-color: #FFE500;
 align-items: center;
 justify-content: center;
 `;
 
+const SocialIcon = Styled.Image`
+position: absolute;
+left: 16px;
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
+`;
+
 const KakaoLoginText = Styled.Text`
+font-weight: 700;
 font-size: 16px;
-color: #000000;
+line-height: 24px;
+color: #131F3C;
 `;
 
 const GoogleLoginButton = Styled.View`
@@ -84,15 +115,17 @@ margin-top: 16px;
 width: ${wp('91.46%')}px;
 height: ${wp('14.93%')}px;
 border-radius: 8px;
-background-color: #F4F4F4;
+background-color: #ffffff;
 
 align-items: center;
 justify-content: center;
 `;
 
 const GoogleLoginText = Styled.Text`
+font-weight: 700;
 font-size: 16px;
-color: #000000;
+line-height: 24px;
+color: #131F3C;
 `;
 
 const AppleLoginButton = Styled.View`
@@ -100,13 +133,15 @@ margin-top: 16px;
 width: ${wp('91.46%')}px;
 height: ${wp('14.93%')}px;
 border-radius: 8px;
-background-color: #000000;
+background-color: #131F3C;
 align-items: center;
 justify-content: center;
 `;
 
 const AppleLoginText = Styled.Text`
+font-weight: 700;
 font-size: 16px;
+line-height: 24px;
 color: #ffffff;
 `;
 
@@ -117,6 +152,11 @@ height: ${hp('100%')}px;
 background-color: #00000040;
 align-items: center;
 justify-content: center;
+`;
+
+const TextBottomLine = Styled.View`
+width: 100px;
+
 `;
 
 interface Props {
@@ -260,38 +300,45 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
     console.log('appleAuth.isSupported', appleAuth.isSupported);
     if (appleAuth.isSupported) {
       setLoadingSocial(true);
-      // performs login request
-      const appleAuthRequestResponse = await appleAuth.performRequest({
-        requestedOperation: appleAuth.Operation.LOGIN,
-        requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
-      });
 
-      // get current authentication state for user
-      // /!\ This method must be tested on a real device. On the iOS simulator it always throws an error.
+      try {
+        // performs login request
+        const appleAuthRequestResponse = await appleAuth.performRequest({
+          requestedOperation: appleAuth.Operation.LOGIN,
+          requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+        });
 
-      const credentialState = await appleAuth.getCredentialStateForUser(
-        appleAuthRequestResponse.user,
-      );
+        // get current authentication state for user
+        // /!\ This method must be tested on a real device. On the iOS simulator it always throws an error.
+        const credentialState = await appleAuth.getCredentialStateForUser(
+          appleAuthRequestResponse.user,
+        );
 
-      // use credentialState response to ensure the user is authenticated
-      if (credentialState === appleAuth.State.AUTHORIZED) {
-        console.log('Apple Login Success credentialState', credentialState);
-        console.log('appleAuthRequestResponse', appleAuthRequestResponse);
-        Alert.alert('로그인성공');
+        // use credentialState response to ensure the user is authenticated
+        if (credentialState === appleAuth.State.AUTHORIZED) {
+          console.log('Apple Login Success credentialState', credentialState);
+          console.log('appleAuthRequestResponse', appleAuthRequestResponse);
+        
+          Alert.alert('로그인성공');
 
-        const userProfile = {
-          birthdate: '',
-          profileImg: '',
-          //nickname: appleAuthRequestResponse.fullName?.givenName ? (appleAuthRequestResponse.fullName.familyName ? (appleAuthRequestResponse.fullName.familyName + appleAuthRequestResponse.fullName.givenName) : appleAuthRequestResponse.fullName.givenName) : ("TEST" + Date.now()),
-          nickname: 'TEST' + Date.now(),
-          socialId: appleAuthRequestResponse.identityToken,
-        };
+          const userProfile = {
+            birthdate: '',
+            profileImg: '',
+            //nickname: appleAuthRequestResponse.fullName?.givenName ? (appleAuthRequestResponse.fullName.familyName ? (appleAuthRequestResponse.fullName.familyName + appleAuthRequestResponse.fullName.givenName) : appleAuthRequestResponse.fullName.givenName) : ("TEST" + Date.now()),
+            nickname: 'TEST' + Date.now(),
+            socialId: appleAuthRequestResponse.identityToken,
+          };
 
-        const email = appleAuthRequestResponse.email
-          ? appleAuthRequestResponse.email
-          : '';
+          const email = appleAuthRequestResponse.email
+            ? appleAuthRequestResponse.email
+            : '';
 
-        progressAppleLogin('apple', email, userProfile);
+          progressAppleLogin('apple', email, userProfile);
+        } 
+      } catch {
+        console.log("Apple Login Fail appleAuth.State", appleAuth.State)
+        setLoadingSocial(false);
+
       }
     } else {
       Alert.alert('애플로그인을 지원하지 않는 디바이스입니다.');
@@ -407,20 +454,31 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
 
   return (
     <Container>
-      <LogoContainer></LogoContainer>
+      <LogoContainer>
+        <Icon
+        source={require('~/Assets/Images/Logo/ic_icon.png')}/>
+        <LogoImage
+        source={require('~/Assets/Images/Logo/ic_logo.png')}/>
+      </LogoContainer>
       <SocialContainer>
         <TouchableWithoutFeedback onPress={() => loginWithKakao()}>
           <KakaoLoginButton>
+            <SocialIcon
+            source={require('~/Assets/Images/Social/ic_kakao.png')}/>
             <KakaoLoginText>카카오로 로그인</KakaoLoginText>
           </KakaoLoginButton>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={() => loginWithGoogle()}>
           <GoogleLoginButton>
+            <SocialIcon
+            source={require('~/Assets/Images/Social/ic_google.png')}/>
             <GoogleLoginText>구글로 로그인</GoogleLoginText>
           </GoogleLoginButton>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={() => loginWithApple()}>
           <AppleLoginButton>
+            <SocialIcon
+            source={require('~/Assets/Images/Social/ic_apple.png')}/>
             <AppleLoginText>Apple로 로그인</AppleLoginText>
           </AppleLoginButton>
         </TouchableWithoutFeedback>
@@ -428,7 +486,8 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
       <LocalContainer>
         <TouchableWithoutFeedback onPress={() => moveToLocalLogin()}>
           <LocalLoginContainer>
-            <LocalLoginText>전화번호로 로그인 / 회원가입</LocalLoginText>
+            <LocalLoginText>전화번호로 <LocalLoginText
+            style={{textDecorationLine: 'underline', textDecorationColor: '#131F3C' }}>{"로그인 및 회원가입"}</LocalLoginText></LocalLoginText>
           </LocalLoginContainer>
         </TouchableWithoutFeedback>
       </LocalContainer>

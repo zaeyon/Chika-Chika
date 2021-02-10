@@ -19,32 +19,29 @@ import {
 import messaging from '@react-native-firebase/messaging';
 import AboveKeyboard from 'react-native-above-keyboard';
 //import {getStatusBarHeight} from 'react-native-status-bar-height'
-import {getStatusBarHeight} from 'react-native-iphone-x-helper';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 // Async Storage
 import {storeUserInfo} from '~/storage/currentUser';
+
+// Local Components
+import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 
 // Route
 import POSTSendTokenToPhone from '~/Routes/Auth/POSTSendTokenToPhone';
 import POSTVerifyPhoneNumber from '~/Routes/Auth/POSTVerifyPhoneNumber';
 import POSTLogin from '~/Routes/Auth/POSTLogin';
 
-const Input = Styled.TextInput`
-position: relative;
-top: 5px;
-width: ${wp('80%')}px;
-height: 50px;
-`;
 
 const Container = Styled.View`
-  padding-top: 44px;
+  padding-top: ${getStatusBarHeight()};
   flex: 1;
   background-color: #FEFFFF;
 `;
 
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
- height: ${wp('11.7%')}px;
+ height: ${hp('6.5%')}px;
  flex-direction: row;
  align-items: center;
  justify-content: space-between;
@@ -52,7 +49,7 @@ const HeaderBar = Styled.View`
 `;
 
 const HeaderLeftContainer = Styled.View`
-padding: 7px 15px 13px 16px;
+padding: 12px 15px 13px 16px;
 align-items: center;
 justify-content: center;
 background-color: #ffffff;
@@ -85,55 +82,82 @@ const HeaderEmptyContainer = Styled.View`
 `;
 
 const BodyContainer = Styled.View`
- padding-top: 16px;
- padding-left: 16px;
- padding-right: 16px;
+ padding-top: 32px;
+ padding-left: 24px;
+ padding-right: 24px;
  flex: 1;
+`;
+
+const MainLabelText = Styled.Text`
+font-size: 24px;
+line-height: 24px;
+color: #131F3C;
 `;
 
 const ItemContainer = Styled.View`
 `;
 
 const ItemTextInput = Styled.TextInput`
-width: ${wp('91.46%')}px;
 color: #000000;
 height: 50px;
-border-radius: 8px;
-background-color: #F0F0F0;
-padding-left: 10px;
+background-color: #ffffff;
 padding-right: 10px;
-border-width: 1.5px;
-border-color: #F0F0F0;
-font-size: 17px;
+border-bottom-width: 1px;
+border-color: #E2E6ED;
+font-size: 16px;
+line-height: 18px;
 `;
 
-const DisabledLoginButton = Styled.View`
-width: ${wp('91.46%')}px;
+const VerifyText = Styled.Text`
+color: #9AA2A9;
+font-size: 16px;
+font-weight: 700;
+line-height: 24px;
+`;
+
+const TimeLimitText = Styled.Text`
+color: #00D1FF;
+font-size: 16px;
+font-weight: 700;
+line-height: 24px;
+`;
+
+const VerifyTextContainer = Styled.View`
 height: 50px;
-background-color: #c5c5c5;
-border-radius: 8px;
+position: absolute;
+left: ${wp('73.46%')}px;
+padding-right: 10px;
+padding-left: 20px;
+align-items: center;
+justify-content: center;
+`;
+
+
+const DisabledLoginButton = Styled.View`
+width: ${wp('100%')}px;
+height: ${hp('6.89%')}px;
+background-color: #E2E6ED;
 justify-content: center;
 align-items: center;
 `;
 
 const DisabledLoginText = Styled.Text`
 font-weight: bold;
-font-size: 16px;
+font-size: 19px;
 color: #ffffff;
 `;
 
 const AbledLoginButton = Styled.View`
-width: ${wp('91.46%')}px;
-height: 50px;
-background-color: #267DFF;
-border-radius: 8px;
+width: ${wp('100%')}px;
+height: ${hp('6.89%')}px;
+background-color: #00D1FF;
 justify-content: center;
 align-items: center;
 `;
 
 const AbledLoginText = Styled.Text`
 font-weight: bold;
-font-size: 16px;
+font-size: 19px;
 color: #FFFFFF;
 `;
 
@@ -152,11 +176,9 @@ padding-bottom: 30px;
 
 const InvalidInputText = Styled.Text`
  position: absolute;
- bottom: -18px;
- left: 5px;
- margin-left: 3px;
- margin-top: 5px;
- color: #FF5656;
+ bottom: -23px;
+ left: 0px;
+ color: #00D1FF;
  font-size: 13px;
 `;
 
@@ -167,26 +189,6 @@ const LoadingContainer = Styled.View`
  align-items: center;
  justify-content: center;
  background-color: #00000030;
-`;
-
-const VerifyText = Styled.Text`
-font-size: 17px;
-color: #0075FF;
-`;
-
-const TimeLimitText = Styled.Text`
-font-size: 17px;
-color: #0075FF;
-`;
-
-const VerifyTextContainer = Styled.View`
-height: 50px;
-position: absolute;
-left: ${wp('73.46%')}px;
-padding-right: 10px;
-padding-left: 20px;
-align-items: center;
-justify-content: center;
 `;
 
 const TimeLimitTextContainer = Styled.View`
@@ -200,9 +202,8 @@ left: ${wp('73.46%')}px;
 
 const FinishButtonContainer = Styled.View`
 width: ${wp('100%')}px;
-padding-left: ${wp('4.2%')}px;
 position:absolute;
-bottom: 16px;
+bottom: 0px;
 background-color : #707070;
 `;
 
@@ -501,29 +502,25 @@ const LoginScreen = ({navigation, route}: Props) => {
             />
           </HeaderLeftContainer>
         </TouchableWithoutFeedback>
-        <HeaderTitleText>본인인증</HeaderTitleText>
         <HeaderRightContainer>
           <HeaderEmptyContainer />
         </HeaderRightContainer>
       </HeaderBar>
       <BodyContainer>
-        {/*
-        <LoginDescipText>
-          <LoginDescipText style={{fontWeight:'bold'}}>로그인하고</LoginDescipText>
-          {"\n"}맞춤 치과 정보 받기!</LoginDescipText>
-        */}
-        <ItemContainer style={{marginTop: 0}}>
+        <MainLabelText>{"전화번호 인증"}</MainLabelText>
+        <ItemContainer style={{marginTop: 20}}>
           <ItemTextInput
             ref={numberInputRef}
-            placeholder={' - 없이 번호 입력'}
-            placeholderTextColor={'#7e7e7e'}
+            placeholder={'휴대전화 번호'}
+            placeholderTextColor={'#9AA2A9'}
             style={[
               (numberInputState === 'invalid' && {borderColor: '#FF3B30'}) ||
                 (numberInputFocus && {
-                  borderColor: '#267DFF',
+                  borderColor: '#00D1FF',
                   backgroundColor: '#FFFFFF',
                 }),
             ]}
+            selectionColor={"#00D1FF"}
             onChangeText={(text: string) => onChangeNumberInput(text)}
             autoCapitalize={'none'}
             onSubmitEditing={(text) =>
@@ -551,18 +548,21 @@ const LoginScreen = ({navigation, route}: Props) => {
           <ItemContainer style={{marginTop: 16}}>
             <ItemTextInput
               ref={authCodeInputRef}
+              placeholder={'인증번호 입력'}
+              placeholderTextColor={'#9AA2A9'}
               style={
                 (authCodeInputFocus &&
                   !timeOver &&
                   !invalidAuthCode && {
-                    borderColor: '#267DFF',
+                    borderColor: '#00D1FF',
                     backgroundColor: '#ffffff',
                   }) ||
                 ((timeOver || invalidAuthCode) && {
-                  borderColor: '#FF5656',
+                  borderColor: '#00D1FF',
                   backgroundColor: '#ffffff',
                 })
               }
+              selectionColor={"#00D1FF"}
               onFocus={() => onFocusAuthCodeInput()}
               onSubmitEditing={(text: any) =>
                 onUnfocusAuthCodeInput(text.nativeEvent.text)
@@ -573,13 +573,10 @@ const LoginScreen = ({navigation, route}: Props) => {
               onChangeText={(text: string) => onChangeAuthCodeInput(text)}
               keyboardType={'number-pad'}
               autoCapitalize={'none'}
-              clearButtonMode={timeOver ? 'always' : 'never'}
               autoFocus={true}
             />
-            <TimeLimitTextContainer>
-              {!timeOver && (
+            <TimeLimitTextContainer>  
                 <TimeLimitText>{limitMin + ':' + limitSec}</TimeLimitText>
-              )}
             </TimeLimitTextContainer>
             {timeOver && (
               <InvalidInputText>

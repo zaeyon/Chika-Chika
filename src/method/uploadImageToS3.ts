@@ -5,7 +5,7 @@ export async function uploadImageToS3(imageFile: any) {
     const imageId = String(imageFile.uri).replace("ph://", "")
     const imageIdArray = imageId.split("/");
     const filenameArray = imageFile.filename.split(".");
-    const imageType = `image/${String(filenameArray[1]).toLowerCase()}`
+    const imageType = `image/jpeg`
     const imagePath = imageFile.uri.includes('file://') ? imageFile.uri : `assets-library://asset/asset.${'JPG'}?id=${imageId}&ext=${'JPG'}`
     const imageSize = imageFile.fileSize
     const width = imageFile.width;
@@ -20,8 +20,8 @@ export async function uploadImageToS3(imageFile: any) {
     }
 
     const options = {
-        keyPrefix: "original/",
-        bucket: "chikachika-review-images",
+        keyPrefix: "communities/",
+        bucket: "chikachika",
         region: "ap-northeast-2",
         accessKey: "AKIA257435TNVCTR6JP2",
         secretKey: "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",

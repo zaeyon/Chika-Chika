@@ -187,11 +187,13 @@ const DentalListItem = ({
   moveToDentalDetail,
 }: Prop) => {
 
-  const splitedAddressArray = address.split(" ");
+  console.log("dentalObj", dentalObj);
 
+  const splitedAddressArray = address?.split(" ");
+  
   const deletedAddress = splitedAddressArray[0] + " " + splitedAddressArray[1] + " " + splitedAddressArray[2];
 
-  const distance = dentalObj['distance(km)'] * 1000;
+  const distance = Math.round(dentalObj['distance(km)'] * 1000);
 
   return (
     <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalId)}>
@@ -249,4 +251,10 @@ const DentalListItem = ({
   );
 };
 
-export default DentalListItem;
+function isEqualItem(prevItem: any, nextItem: any) {
+  return prevItem.dentalId === prevItem.dentalId
+}
+
+const MemoizedDentalListItem = React.memo(DentalListItem, isEqualItem)
+
+export default MemoizedDentalListItem;

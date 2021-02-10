@@ -180,9 +180,7 @@ const DentalCarouselItem = ({
   closeTime,
 }: Props) => {
 
-  console.log("DentalCarouselItem dentalObj", dentalObj)
-
-  const distance = dentalObj['distance(km)'] * 1000;
+  const distance = Math.round(dentalObj['distance(km)'] * 1000);
 
   return (
     <Container
