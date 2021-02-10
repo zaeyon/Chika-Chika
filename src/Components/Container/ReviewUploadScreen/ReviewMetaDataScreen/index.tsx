@@ -566,9 +566,6 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   };
 
   const onFocusTotalPriceInput = () => {
-    if(isVisibleDatePicker) {
-      setIsVisibleDatePicker(false)
-    }
     setIsFocusedTotalPriceInput(true);
   }
 
