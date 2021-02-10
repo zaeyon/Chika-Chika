@@ -28,7 +28,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 
 import NaverMapView, {Circle, Marker} from 'react-native-nmap';
-import {isIphoneX} from 'react-native-iphone-x-helper';
+import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 import Geolocation from 'react-native-geolocation-service';
 import DeviceInfo from 'react-native-device-info';
 import getStateBarHeight, { getStatusBarHeight } from 'react-native-status-bar-height';

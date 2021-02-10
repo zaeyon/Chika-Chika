@@ -1057,6 +1057,7 @@ function BottomTab() {
 }
 
 const Navigator = () => {
+  const [isUser, setIsUser] = useState(false);
   const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
   // const getFcmToken = async () => {

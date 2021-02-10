@@ -15,6 +15,9 @@ import {TabView, TabBar, SceneMap} from 'react-native-tab-view';
 // Local Components
 import CommunityRoute from '~/Components/Presentational/TotalKeywordSearchScreen/TotalSearchResultTabView/CommunityRoute';
 import ReviewRoute from '~/Components/Presentational/TotalKeywordSearchScreen/TotalSearchResultTabView/ReviewRoute';
+import EventRoute from '~/Components/Presentational/TotalKeywordSearchScreen/TotalSearchResultTabView/EventRoute';
+import TotalRoute from '~/Components/Presentational/TotalKeywordSearchScreen/TotalSearchResultTabView/TotalRoute';
+import ClinicRoute from '~/Components/Presentational/TotalKeywordSearchScreen/TotalSearchResultTabView/ClinicRoute';
 
 const Container = Styled.View`
 flex: 1;
@@ -108,133 +111,6 @@ interface RouteProps {
     callback: any,
   ) => void;
   navigation: any;
-}
-
-const TotalRoute = React.memo(
-  ({isRequestChanged, result, fetchSearchResult}: RouteProps) => {
-    console.log('Total Search Result Route rendering');
-    const [order, setOrder] = useState();
-
-    return (
-      <TabContainer>
-        <FilterContainer>
-          <OrderFilterContainer>
-            <TouchableWithoutFeedback>
-              <OrderFilterItemContainer
-                style={order === 'popular' && {borderColor: '#00D1FF'}}>
-                <OrderFilterText
-                  style={order === 'popular' && {color: '#00D1FF'}}>
-                  {'인기순'}
-                </OrderFilterText>
-              </OrderFilterItemContainer>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback>
-              <OrderFilterItemContainer
-                style={[
-                  {marginLeft: 6},
-                  order === 'createdAt' && {borderColor: '#00D1FF'},
-                ]}>
-                <OrderFilterText
-                  style={order === 'createdAt' && {color: '#00D1FF'}}>
-                  {'최신순'}
-                </OrderFilterText>
-              </OrderFilterItemContainer>
-            </TouchableWithoutFeedback>
-          </OrderFilterContainer>
-          <LocationFilterContainer>
-            <LocationFilterText>{'전국'}</LocationFilterText>
-            <LocationFilterDropdownIcon
-              source={require('~/Assets/Images/Arrow/ic_dropdown.png')}
-            />
-          </LocationFilterContainer>
-        </FilterContainer>
-      </TabContainer>
-    );
-  },
-);
-
-const ClinicRoute = React.memo(({result, fetchSearchResult}: RouteProps) => {
-  console.log('Dental Search Result Route rendering');
-  const [order, setOrder] = useState();
-  return (
-    <TabContainer>
-      <FilterContainer>
-        <OrderFilterContainer>
-          <TouchableWithoutFeedback>
-            <OrderFilterItemContainer
-              style={order === 'popular' && {borderColor: '#00D1FF'}}>
-              <OrderFilterText
-                style={order === 'popular' && {color: '#00D1FF'}}>
-                {'인기순'}
-              </OrderFilterText>
-            </OrderFilterItemContainer>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
-            <OrderFilterItemContainer
-              style={[
-                {marginLeft: 6},
-                order === 'createdAt' && {borderColor: '#00D1FF'},
-              ]}>
-              <OrderFilterText
-                style={order === 'createdAt' && {color: '#00D1FF'}}>
-                {'최신순'}
-              </OrderFilterText>
-            </OrderFilterItemContainer>
-          </TouchableWithoutFeedback>
-        </OrderFilterContainer>
-        <LocationFilterContainer>
-          <LocationFilterText>{'전국'}</LocationFilterText>
-          <LocationFilterDropdownIcon
-            source={require('~/Assets/Images/Arrow/ic_dropdown.png')}
-          />
-        </LocationFilterContainer>
-      </FilterContainer>
-    </TabContainer>
-  );
-});
-
-const EventRoute = React.memo(({result, fetchSearchResult}: RouteProps) => {
-  console.log('Event Search Result Route rendering');
-  const [order, setOrder] = useState();
-  return (
-    <TabContainer>
-      <FilterContainer>
-        <OrderFilterContainer>
-          <TouchableWithoutFeedback>
-            <OrderFilterItemContainer
-              style={order === 'popular' && {borderColor: '#00D1FF'}}>
-              <OrderFilterText
-                style={order === 'popular' && {color: '#00D1FF'}}>
-                {'인기순'}
-              </OrderFilterText>
-            </OrderFilterItemContainer>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
-            <OrderFilterItemContainer
-              style={[
-                {marginLeft: 6},
-                order === 'createdAt' && {borderColor: '#00D1FF'},
-              ]}>
-              <OrderFilterText
-                style={order === 'createdAt' && {color: '#00D1FF'}}>
-                {'최신순'}
-              </OrderFilterText>
-            </OrderFilterItemContainer>
-          </TouchableWithoutFeedback>
-        </OrderFilterContainer>
-        <LocationFilterContainer>
-          <LocationFilterText>{'전국'}</LocationFilterText>
-          <LocationFilterDropdownIcon
-            source={require('~/Assets/Images/Arrow/ic_dropdown.png')}
-          />
-        </LocationFilterContainer>
-      </FilterContainer>
-    </TabContainer>
-  );
-});
-
-function isEqual(prevItem: any, nextItem: any) {
-  return prevItem.order === nextItem.order;
 }
 
 const initialLayout = {width: Dimensions.get('window').width};

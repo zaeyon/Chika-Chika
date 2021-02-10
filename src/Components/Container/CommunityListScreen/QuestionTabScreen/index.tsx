@@ -382,7 +382,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         <TopBanner type="question" />
         <CarouselContent
           postData={postData}
-          titleText="답변을 기다리는 질문"
+          titleText="💬 답변을 기다리는 질문"
           moveToCommunityDetail={moveToCommunityDetail}
           moveToAnotherProfile={moveToAnotherProfile}
         />

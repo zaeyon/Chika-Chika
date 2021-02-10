@@ -183,6 +183,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         setSuggestionList([]);
         GETAllTagSearch(jwtToken, searchQuery, 'autoComplete')
           .then((response: any) => {
+            console.log(response);
             setSearchQuery((prev) => {
               if (prev !== searchQuery) {
               } else {
@@ -222,7 +223,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
           };
           return imageObj;
         } else {
-          const res: any = await uploadImageToS3(item);
+          const res: any = await uploadImageToS3(item, 'communities');
           console.log('res', res);
           const imageObj = {
             index,

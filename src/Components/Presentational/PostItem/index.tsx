@@ -98,7 +98,7 @@ margin: 0px 6px;
 const ProfileDescriptionText = Styled.Text`
 font-style: normal;
 font-weight: normal;
-font-size: 13.5px;
+font-size: 13px;
 color: #9AA2A9;
 
 `;
@@ -323,11 +323,12 @@ const PostItem = ({
       <TouchableWithoutFeedback
         onPress={() => {
           moveToCommunityDetail(id, type);
+          console.log(item);
         }}>
         <ImageView
           key={'image' + index}
           source={{
-            url: item.img_url,
+            url: item.img_thumbNail,
             cache: 'force-cache',
           }}
         />
