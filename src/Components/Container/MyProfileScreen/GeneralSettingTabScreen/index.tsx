@@ -1,10 +1,18 @@
-import React, {useState, useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import Styled from 'styled-components/native';
+import SafeAreaView from 'react-native-safe-area-view';
 
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import GeneralSettingScreen from '~/Components/Presentational/MyProfileScreen/GeneralSettingScreen';
+// Redux
+import {useSelector, useDispatch} from 'react-redux';
+import allActions from '~/actions';
+// Routes
+import PUTUserNotifications, {
+  Config,
+} from '~/Routes/Notification/PUTUserNotifications';
 
-const ContainerView = Styled.SafeAreaView`
+const ContainerView = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
 `;
@@ -14,12 +22,25 @@ interface Props {
 }
 
 const GeneralSettingTabScreen = ({navigation, route}: Props) => {
+  const currentUser = useSelector((state: any) => state.currentUser);
+  const jwtToken = currentUser.jwtToken;
+  const profile = currentUser.profile;
+
   const headerLeftAction = () => {
     navigation.goBack();
   };
 
+  const changeNotificationSetting = useCallback(
+    (config: Config) => {
+      PUTUserNotifications(jwtToken, config).then((response: any) => {
+        console.log(response);
+      });
+    },
+    [jwtToken],
+  );
+
   return (
-    <ContainerView>
+    <ContainerView as={SafeAreaView}>
       <NavigationHeader
         headerLeftProps={{
           onPress: headerLeftAction,
@@ -27,7 +48,10 @@ const GeneralSettingTabScreen = ({navigation, route}: Props) => {
         }}
         headerTitle="설정"
       />
-      <GeneralSettingScreen navigation={navigation} route={route} />
+      <GeneralSettingScreen
+        changeNotificationSetting={changeNotificationSetting}
+        profile={profile}
+      />
     </ContainerView>
   );
 };

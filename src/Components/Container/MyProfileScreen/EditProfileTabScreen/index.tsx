@@ -6,6 +6,7 @@ import {launchCamera, ImagePickerResponse} from 'react-native-image-picker';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import EditProfileScreen from '~/Components/Presentational/MyProfileScreen/EditProfileScreen';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
+import ToastMessage from '~/Components/Presentational/ToastMessage';
 // Redux
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
@@ -38,8 +39,16 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
     }
   }, [route]);
 
+  const showToastMessage = useCallback((message: string) => {
+    ToastMessage.show(message);
+  }, []);
+
   const updateUserProfile = useCallback(
-    (form: any, callback: any = () => console.log('change profile...')) => {
+    (
+      form: any,
+      message: string,
+      callback: any = () => console.log('change profile...'),
+    ) => {
       PUTEditProfile(jwtToken, form)
         .then((response: any) => {
           console.log('프로필 변경 성공', response.body.message);
@@ -50,6 +59,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
                 profile: response,
               }),
             );
+            showToastMessage(message);
             setIsLoading(false);
           });
           callback();
@@ -82,12 +92,12 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
 
   const changeProfileImage = useCallback((selectedImage: any) => {
     setIsLoading(true);
-    uploadImageToS3(selectedImage).then((res: any) => {
+    uploadImageToS3(selectedImage, 'userProfileImgs').then((res: any) => {
       console.log('change profile img', res);
       const form = {
         profileImg: res.response.location,
       };
-      updateUserProfile(form, () => {
+      updateUserProfile(form, '프로필 사진이 변경되었습니다.', () => {
         navigation.setParams({
           selectedImage: null,
         });
@@ -100,7 +110,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
     const form = {
       nickname,
     };
-    updateUserProfile(form);
+    updateUserProfile(form, '닉네임이 변경되었습니다.');
   }, []);
 
   const changeProfileBirthdate = useCallback((birthdate: string) => {
@@ -108,7 +118,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
     const form = {
       birthdate,
     };
-    updateUserProfile(form);
+    updateUserProfile(form, '생일이 변경되었습니다.');
   }, []);
 
   const changeProfileGender = useCallback((gender: string) => {
@@ -116,7 +126,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
     const form = {
       gender,
     };
-    updateUserProfile(form);
+    updateUserProfile(form, '성별이 변경되었습니다.');
   }, []);
 
   const headerLeftAction = useCallback(() => {

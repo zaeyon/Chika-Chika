@@ -55,38 +55,45 @@ const setCurrentLocation = (currentLocation) => {
 
 const setHometown = (hometown) => {
   return {
-    type: "SET_HOMETOWN",
+    type: 'SET_HOMETOWN',
     payload: hometown,
-  }
-}
+  };
+};
 
 const changeMainHometown = (index) => {
   return {
-    type: "CHANGE_MAIN_HOMETOWN",
+    type: 'CHANGE_MAIN_HOMETOWN',
     payload: index,
-  }
-}
+  };
+};
 
 const addHometown = (hometownItem) => {
   return {
-    type: "ADD_HOMETOWN",
+    type: 'ADD_HOMETOWN',
     payload: hometownItem,
-  }
-}
+  };
+};
 
 const deleteHometown = (hometownId) => {
   return {
-    type: "DELETE_HOMETOWN",
+    type: 'DELETE_HOMETOWN',
     payload: hometownId,
-  }
-}
+  };
+};
 
 const setSearchRecord = (searchRecordArray) => {
   return {
-    type: "SET_SEARCH_RECORD",
+    type: 'SET_SEARCH_RECORD',
     payload: searchRecordArray,
-  }
-}
+  };
+};
+
+const setNotification = (notificationConfig) => {
+  return {
+    type: 'SET_NOTIFICATION',
+    payload: notificationConfig,
+  };
+};
 
 export default {
   setUser,
@@ -102,4 +109,5 @@ export default {
   deleteHometown,
   changeMainHometown,
   setSearchRecord,
+  setNotification,
 };

@@ -130,9 +130,6 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
   const [loadingSocial, setLoadingSocial] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  
-
-
   useEffect(() => {
     getFcmToken();
   }, []);
@@ -144,9 +141,9 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
     if (enabled) {
-    console.log('Authorization status:', authStatus);
-    fcmToken = await messaging().getToken();
-    console.log("getFcmToken fcmToken", fcmToken);
+      console.log('Authorization status:', authStatus);
+      fcmToken = await messaging().getToken();
+      console.log('getFcmToken fcmToken', fcmToken);
     }
   };
 
@@ -160,7 +157,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
   GoogleSignin.configure();
 
   const moveToLocalLogin = () => {
-    navigation.navigate('LoginScreen',{
+    navigation.navigate('LoginScreen', {
       fcmToken: fcmToken,
     });
   };
@@ -328,7 +325,9 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
           };
           storeUserInfo(response.token);
           dispatch(allActions.userActions.setUser(userInfo));
-          dispatch(allActions.userActions.setHometown(response.user.userResidences));
+          dispatch(
+            allActions.userActions.setHometown(response.user.userResidences),
+          );
         }
       })
       .catch((error) => {
@@ -337,7 +336,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
         if (error.status === 401) {
           console.log('등록된 소셜 계정 없음');
           navigation.navigate('HometownSearchScreen', {
-            requestType: "signUp",
+            requestType: 'signUp',
             certifiedPhoneNumber: phoneNumber ? true : false,
             birthdate: userProfile.birthdate,
             profileImg: userProfile.profileImg,
@@ -381,7 +380,9 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
           };
           storeUserInfo(response.token);
           dispatch(allActions.userActions.setUser(userInfo));
-          dispatch(allActions.userActions.setHometown(response.user.userResidences));
+          dispatch(
+            allActions.userActions.setHometown(response.user.userResidences),
+          );
         }
       })
       .catch((error) => {
@@ -390,7 +391,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
         if (error.status === 401) {
           console.log('등록된 소셜 계정 없음');
           navigation.navigate('HometownSearchScreen', {
-            requestType: "signUp",
+            requestType: 'signUp',
             certifiedPhoneNumber: false,
             birthdate: userProfile.birthdate,
             profileImg: userProfile.profileImg,

@@ -12,11 +12,15 @@ import {
 } from 'react-native-responsive-screen';
 import ActionSheet from 'react-native-actionsheet';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 import {SharedElement} from 'react-navigation-shared-element';
+import {Picker} from '@react-native-picker/picker';
+import Modal from 'react-native-modal';
+import SafeAreaView from 'react-native-safe-area-view';
 // Local Component
 import AnimatedModal from '~/Components/Presentational/AnimatedModal';
 
-const ContainerView = Styled.ScrollView`
+const ContainerView = Styled.View`
 flex: 1;
 background: #F5F7F9;
 `;
@@ -110,6 +114,101 @@ line-height: 16px;
 color: #FFFFFF;
 `;
 
+const DetailFilterModalContainer = Styled.View`
+width: ${wp('100%')}px;
+background-color: #ffffff;
+border-top-left-radius: 20px;
+border-top-right-radius: 20px;
+position: absolute;
+bottom: 0;
+`;
+
+const FilterDividingText = Styled.Text`
+font-weight: normal;
+font-size: 18px;
+line-height: 24px;
+color: #131F3C;
+`;
+
+const DetailFilterHeaderContainer = Styled.View`
+flex-direction: row;
+padding-top: 16px;
+padding-bottom: 16px;
+padding-left: 16px;
+align-items: center;
+border-bottom-width: 1px;
+border-color: #F5F7F9;
+`;
+
+const DetailFilterTitleText = Styled.Text`
+font-weight: 700;
+font-size: 14px;
+line-height: 19px;
+color: #000000;
+`;
+
+const DetailFilterFooterContainer = Styled.View`
+padding: 16px 16px ${isIphoneX() ? getBottomSpace() : 16}px 0px
+flex-direction: row;
+align-items: center;
+justify-content: space-between;
+`;
+
+const TimeFilterModalContainer = Styled.View`
+`;
+
+const TimePickerContainer = Styled.View`
+align-items: center;
+padding: 0px 25px;
+justify-content: space-between;
+flex-direction: row;
+border-bottom-width: 1px;
+border-color: #F5F7F9;
+`;
+
+const TimePickerLabelText = Styled.Text`
+font-size: 20px;
+color: #000000;
+`;
+
+const InitializeFilterContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 16px;
+padding-right: 16px;
+`;
+
+const InitializeFilterText = Styled.Text`
+font-weight: normal;
+font-size: 12px;
+line-height: 16px;
+color: #9AA2A9;
+`;
+
+const InitializeFilterIcon = Styled.Image`
+margin-left: 4px;
+width: ${wp('2.66%')}px;
+height: ${wp('2.66%')}px;
+`;
+
+const RegisterFilterButton = Styled.View`
+width: ${wp('55.46%')}px;
+align-items: center;
+border-radius: 4px;
+background-color: #131F3C;
+padding-top: 12px;
+padding-bottom: 12px;
+`;
+
+const RegisterFilterText = Styled.Text`
+font-weight: 700;
+font-size: 14px;
+line-height: 24px;
+color: #ffffff;
+`;
+
 const BitrhdateModal = Styled.Modal`
 `;
 
@@ -118,24 +217,6 @@ background: #000000;
 position: absolute;
 width: ${wp('100%')}px;
 height: ${hp('100%')}px;
-`;
-
-const BirthdateContentView = Styled.View`
-position: absolute;
-width: ${wp('100%')}px;
-bottom: 0px;
-`;
-
-const BirthdateContentHeaderView = Styled.View`
-background: rgb(240,241,243);
-padding: 12px;
-`;
-
-const BirthdateContentHeaderText = Styled.Text`
-margin-left: auto;
-font-size: 16px;
-font-weight: bold;
-color: #2288FF;
 `;
 
 interface Props {
@@ -166,6 +247,17 @@ const EditProfileScreen = ({
   const [sectionArrow, setSectionArrow] = useState(
     require('~/Assets/Images/MyPage/common/gan/list/profile_edit_section_arrow.png'),
   );
+  console.log(currentUser.profile);
+  const [selectedBirthYear, setSelectedBirthYear] = useState(
+    currentUser.profile.birthdate.split('-')[0],
+  );
+  const [selectedBirthMonth, setSelectedBirthMonth] = useState(
+    String(parseInt(currentUser.profile.birthdate.split('-')[1])),
+  );
+  const [selectedBirthDay, setSelectedBirthDay] = useState(
+    String(parseInt(currentUser.profile.birthdate.split('-')[2])),
+  );
+
   const genderActionSheetRef: any = useRef();
   const imageActionSheetRef: any = useRef();
 
@@ -177,7 +269,7 @@ const EditProfileScreen = ({
     '현재 사진 삭제',
   ];
 
-  const modalContentY = useRef(new Animated.Value(hp('40%'))).current;
+  const modalContentY = useRef(new Animated.Value(hp('50%'))).current;
   const [date, setDate] = useState<Date>(
     new Date(currentUser.profile.birthdate || Date.now()),
   );
@@ -222,21 +314,25 @@ const EditProfileScreen = ({
       tension: 68,
       useNativeDriver: true,
     }).start();
-  }, [modalContentY]);
+  }, []);
+
   const closeModal = useCallback(() => {
     Animated.timing(modalContentY, {
-      toValue: hp('40%'),
-      duration: 200,
+      toValue: hp('50%'),
+      duration: 250,
       useNativeDriver: true,
     }).start(() => setIsModalVisible(false));
-  }, [modalContentY]);
-
+  }, []);
   const setUserBirthdate = useCallback(() => {
-    const formattedDate = date.toISOString();
+    Animated.timing(modalContentY, {
+      toValue: hp('50%'),
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => setIsModalVisible(false));
+    const formattedDate = `${selectedBirthYear}-${selectedBirthMonth}-${selectedBirthDay}`;
     console.log(formattedDate);
     changeProfileBirthdate(formattedDate);
-    setIsModalVisible(false);
-  }, [date]);
+  }, [selectedBirthYear, selectedBirthMonth, selectedBirthDay]);
 
   const onChangeText = useCallback(
     (input: string) => setTextInput(input.replace(/\s/g, '')),
@@ -267,10 +363,52 @@ const EditProfileScreen = ({
         return '없음';
     }
   }, []);
+
+  const renderYearPickerItem = useCallback(() => {
+    const startYear = 1900;
+    const currentYear = new Date(Date.now()).getFullYear();
+    const result = [];
+    for (let i = 0; i < currentYear - startYear; i++) {
+      result.push(
+        <Picker.Item
+          label={String(startYear + i)}
+          value={String(startYear + i)}
+        />,
+      );
+    }
+    return result;
+  }, []);
+
+  const renderMonthPickerItem = useCallback(() => {
+    const result = [];
+    for (let i = 1; i <= 12; i++) {
+      result.push(<Picker.Item label={String(i)} value={String(i)} />);
+    }
+    return result;
+  }, []);
+
+  const renderDayPickerItem = useCallback(() => {
+    const result = [];
+    for (let i = 1; i <= 31; i++) {
+      result.push(<Picker.Item label={String(i)} value={String(i)} />);
+    }
+    return result;
+  }, []);
+  const initializeBirthDate = useCallback(() => {
+    setSelectedBirthYear(
+      String(parseInt(currentUser.profile.birthdate.split('-')[0])),
+    );
+    setSelectedBirthMonth(
+      String(parseInt(currentUser.profile.birthdate.split('-')[1])),
+    );
+    setSelectedBirthDay(
+      String(parseInt(currentUser.profile.birthdate.split('-')[2])),
+    );
+  }, [currentUser]);
+
+  const registerTimeFilter = useCallback(() => {}, []);
   return (
-    <ContainerView
-      keyboardShouldPersistTaps={'always'}
-      showsVerticalScrollIndicator={false}>
+    <ContainerView as={SafeAreaView} forceInset={{top: 'always'}}>
       <ProfileImageContainerView>
         <TouchableWithoutFeedback
           onPress={() => imageActionSheetRef.current.show()}>
@@ -386,34 +524,84 @@ const EditProfileScreen = ({
             as={Animated.View}
             style={{
               opacity: modalContentY.interpolate({
-                inputRange: [0, hp('40%')],
+                inputRange: [0, hp('50%')],
                 outputRange: [0.3, 0],
                 extrapolate: 'clamp',
               }),
             }}></BirthdateModalContinerView>
         </TouchableWithoutFeedback>
-        <BirthdateContentView
+        <DetailFilterModalContainer
           as={Animated.View}
-          style={{transform: [{translateY: modalContentY}]}}>
-          <BirthdateContentHeaderView>
-            <TouchableWithoutFeedback onPress={() => setUserBirthdate()}>
-              <BirthdateContentHeaderText>{'완료'}</BirthdateContentHeaderText>
-            </TouchableWithoutFeedback>
-          </BirthdateContentHeaderView>
-          <DateTimePicker
-            style={{
-              width: '100%',
-              height: 217,
-              backgroundColor: '#FFFFFF',
-            }}
-            testID="dateTimePicker"
-            value={date}
-            mode="date"
-            is24Hour={true}
-            display="spinner"
-            onChange={onChange}
-          />
-        </BirthdateContentView>
+          style={{
+            opacity: modalContentY.interpolate({
+              inputRange: [0, hp('40%')],
+              outputRange: [1, 0],
+              extrapolate: 'clamp',
+            }),
+            transform: [{translateY: modalContentY}],
+          }}>
+          <DetailFilterHeaderContainer>
+            <DetailFilterTitleText>{'생일 설정'}</DetailFilterTitleText>
+          </DetailFilterHeaderContainer>
+          <TimeFilterModalContainer>
+            <TimePickerContainer>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                style={{width: wp('20%'), height: '100%'}}
+                onValueChange={(itemValue) => setSelectedBirthYear(itemValue)}
+                selectedValue={selectedBirthYear}>
+                {renderYearPickerItem()}
+              </Picker>
+              <FilterDividingText>{'년'}</FilterDividingText>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                selectedValue={selectedBirthMonth}
+                onValueChange={(itemValue) => setSelectedBirthMonth(itemValue)}
+                style={{width: wp('20%'), height: '100%'}}>
+                {renderMonthPickerItem()}
+              </Picker>
+              <FilterDividingText>{'월'}</FilterDividingText>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                style={{width: wp('20%'), height: '100%'}}
+                onValueChange={(itemValue) => setSelectedBirthDay(itemValue)}
+                selectedValue={selectedBirthDay}>
+                {renderDayPickerItem()}
+              </Picker>
+              <FilterDividingText>{'일'}</FilterDividingText>
+            </TimePickerContainer>
+            <DetailFilterFooterContainer>
+              <TouchableWithoutFeedback onPress={() => initializeBirthDate()}>
+                <InitializeFilterContainer>
+                  <InitializeFilterText>{'생일 초기화'}</InitializeFilterText>
+                  <InitializeFilterIcon
+                    source={require('~/Assets/Images/Map/ic_initialize.png')}
+                  />
+                </InitializeFilterContainer>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback onPress={() => setUserBirthdate()}>
+                <RegisterFilterButton>
+                  <RegisterFilterText>{'적용하기'}</RegisterFilterText>
+                </RegisterFilterButton>
+              </TouchableWithoutFeedback>
+            </DetailFilterFooterContainer>
+          </TimeFilterModalContainer>
+        </DetailFilterModalContainer>
       </BitrhdateModal>
       <ActionSheet
         ref={genderActionSheetRef}
