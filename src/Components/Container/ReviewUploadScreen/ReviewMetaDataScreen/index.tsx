@@ -429,27 +429,20 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }, [route.params?.ratingObj]);
 
   useEffect(() => {
+    Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
 
-    Keyboard.addListener('keyboardWillShow', keyboardWillShow);
-    Keyboard.addListener('keyboardWillHide', keyboardWillHide);
-
+    // cleanup function
     return () => {
-      Keyboard.removeListener('keyboardWillShow', keyboardWillShow);
-      Keyboard.removeListener('keyboardWillHide', keyboardWillHide);
-    }
-  }, [])
+      Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
+    };
+  }, []);
 
-  const keyboardWillShow = () => {
+  const _keyboardDidHide = () => {
+    console.log("Keyboard Hidden");
     if(isFocusedTotalPriceInput) {
-      setIsFocusedTotalPriceInput(false)
+      setIsFocusedTotalPriceInput(false);
     }
-  }
-
-  const keyboardWillHide = () => {
-    if(!isFocusedTotalPriceInput) {
-      setIsFocusedTotalPriceInput(true);
-    }
-  }
+  };
 
   const unSelectImage = useCallback((image) => {
     setSelectedProofImages((prev) => {
@@ -498,6 +491,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     if (priceInputRef.current.isFocused()) priceInputRef.current.blur();
     else priceInputRef.current.focus();
   };
+
 
   const convertDisplayDate = (date: any) => {
     console.log('convertDisplayDate date', date);
@@ -548,9 +542,9 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
       setIsVisibleDatePicker(false);
     }
 
-    if(isFocusedTotalPriceInput) {
-      setIsFocusedTotalPriceInput(false); 
-    }
+    // if(isFocusedTotalPriceInput) {
+    //   setIsFocusedTotalPriceInput(false); 
+    // }
 
     Keyboard.dismiss();
   };
@@ -566,7 +560,9 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   };
 
   const onFocusTotalPriceInput = () => {
-    setIsFocusedTotalPriceInput(true);
+    if(!isFocusedTotalPriceInput) {
+      setIsFocusedTotalPriceInput(true);
+    }
   }
 
   const onPressFinishButton = () => {

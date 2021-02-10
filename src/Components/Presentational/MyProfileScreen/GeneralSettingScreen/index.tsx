@@ -81,14 +81,14 @@ color: #131F3C;
 `;
 
 interface Props {
-  navigation: any;
-  route: any;
+  changeNotificationSetting: any;
+  profile: any;
 }
 interface Props {
   navigation: any;
   route: any;
 }
-const GeneralSettingScreen = ({navigation, route}: Props) => {
+const GeneralSettingScreen = ({changeNotificationSetting, profile}: Props) => {
   const dispatch = useDispatch();
 
   const [sectionArrow, setSectionArrow] = useState(
@@ -98,13 +98,54 @@ const GeneralSettingScreen = ({navigation, route}: Props) => {
     require('~/Assets/Images/Setting/list/children_indicator.png'),
   );
 
-  const [isAlertEnabled, setIsAlertEnabled] = useState(false);
-  const [isLikesAlertEnabled, setIsLikesAlertEnabled] = useState(false);
-  const [isCommentsAlertEnabled, setIsCommentsAlertEnabled] = useState(false);
-  const [isEventAlertEnabled, setIsEventAlertEnabled] = useState(false);
+  const [isAlertEnabled, setIsAlertEnabled] = useState(
+    profile.notificationConfig?.ALOTrue === 1 ? true : false,
+  );
+  const [isLikesAlertEnabled, setIsLikesAlertEnabled] = useState(
+    profile.notificationConfig?.like,
+  );
+  const [isCommentsAlertEnabled, setIsCommentsAlertEnabled] = useState(
+    profile.notificationConfig?.comment,
+  );
+  const [isEventAlertEnabled, setIsEventAlertEnabled] = useState(
+    profile.notificationConfig?.event,
+  );
 
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [signoutModalVisible, setSignoutModalVisible] = useState(false);
+
+  useEffect(() => {
+    return cleanup;
+  }, []);
+
+  useEffect(() => {
+    dispatch(
+      allActions.userActions.setNotification({
+        ALOTrue: isAlertEnabled ? 1 : 0,
+        comment: isCommentsAlertEnabled,
+        like: isLikesAlertEnabled,
+        event: isEventAlertEnabled,
+      }),
+    );
+  }, [
+    isAlertEnabled,
+    isLikesAlertEnabled,
+    isCommentsAlertEnabled,
+    isEventAlertEnabled,
+  ]);
+
+  const cleanup = useCallback(() => {
+    console.log(
+      isLikesAlertEnabled,
+      isCommentsAlertEnabled,
+      isEventAlertEnabled,
+    );
+    changeNotificationSetting({
+      like: isLikesAlertEnabled,
+      comment: isCommentsAlertEnabled,
+      event: isEventAlertEnabled,
+    });
+  }, [isLikesAlertEnabled, isCommentsAlertEnabled, isEventAlertEnabled]);
 
   const logout = useCallback(() => {
     storeUserInfo(null);
@@ -160,9 +201,9 @@ const GeneralSettingScreen = ({navigation, route}: Props) => {
                 LayoutAnimation.create(150, 'easeInEaseOut', 'opacity'),
               );
               setIsAlertEnabled((prev) => !prev);
-              setIsLikesAlertEnabled(false);
-              setIsCommentsAlertEnabled(false);
-              setIsEventAlertEnabled(false);
+              setIsLikesAlertEnabled(!isAlertEnabled);
+              setIsCommentsAlertEnabled(!isAlertEnabled);
+              setIsEventAlertEnabled(!isAlertEnabled);
             }}
             value={isAlertEnabled}
           />
@@ -178,7 +219,19 @@ const GeneralSettingScreen = ({navigation, route}: Props) => {
                   false: '#E2E6ED',
                 }}
                 onValueChange={() => {
-                  setIsLikesAlertEnabled((prev) => !prev);
+                  setIsLikesAlertEnabled((prev) => {
+                    if (
+                      !isEventAlertEnabled &&
+                      !isCommentsAlertEnabled &&
+                      prev
+                    ) {
+                      LayoutAnimation.configureNext(
+                        LayoutAnimation.create(150, 'easeInEaseOut', 'opacity'),
+                      );
+                      setIsAlertEnabled(false);
+                    }
+                    return !prev;
+                  });
                 }}
                 value={isLikesAlertEnabled}
               />
@@ -192,7 +245,15 @@ const GeneralSettingScreen = ({navigation, route}: Props) => {
                   false: '#E2E6ED',
                 }}
                 onValueChange={() => {
-                  setIsCommentsAlertEnabled((prev) => !prev);
+                  setIsCommentsAlertEnabled((prev) => {
+                    if (!isLikesAlertEnabled && !isEventAlertEnabled && prev) {
+                      LayoutAnimation.configureNext(
+                        LayoutAnimation.create(150, 'easeInEaseOut', 'opacity'),
+                      );
+                      setIsAlertEnabled(false);
+                    }
+                    return !prev;
+                  });
                 }}
                 value={isCommentsAlertEnabled}
               />
@@ -206,7 +267,19 @@ const GeneralSettingScreen = ({navigation, route}: Props) => {
                   false: '#E2E6ED',
                 }}
                 onValueChange={() => {
-                  setIsEventAlertEnabled((prev) => !prev);
+                  setIsEventAlertEnabled((prev) => {
+                    if (
+                      !isLikesAlertEnabled &&
+                      !isCommentsAlertEnabled &&
+                      prev
+                    ) {
+                      LayoutAnimation.configureNext(
+                        LayoutAnimation.create(150, 'easeInEaseOut', 'opacity'),
+                      );
+                      setIsAlertEnabled(false);
+                    }
+                    return !prev;
+                  });
                 }}
                 value={isEventAlertEnabled}
               />

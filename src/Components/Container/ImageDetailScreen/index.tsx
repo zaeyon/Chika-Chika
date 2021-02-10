@@ -147,7 +147,7 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
     [index, dragY],
   );
 
-  const onScrollEnd = useCallback((e) => {
+  const onScroll = useCallback((e) => {
     setIndex(
       Math.max(Math.round(e.nativeEvent.contentOffset.x / wp('100%')), 0),
     );

@@ -97,6 +97,7 @@ interface Props {
 const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('');
+  const [tagId, setTagId] = useState('');
   const [autoCompletedKeywordArr, setAutoCompletedKeywordArr] = useState([]);
   const [
     isVisibleAutoCompletedKeyword,
@@ -122,6 +123,16 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
 
   const searchInputRef = useRef<any>();
 
+  useEffect(() => {
+    GETSearchRecord({jwtToken})
+      .then((response: any) => {
+        console.log('GETSearchRecord response', response);
+        dispatch(allActions.userActions.setSearchRecord(response));
+      })
+      .catch((error) => {
+        console.log('GETSearchRecord error', error);
+      });
+  }, []);
   useEffect(() => {
     async function fetchData() {
       const incompleteKorean = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
@@ -163,6 +174,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
           jwtToken,
           query,
           category,
+          tagId,
           pathType,
           communityType,
           limit: String(limit),
@@ -173,19 +185,11 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
         })
           .then((response: any) => {
             callback(response);
-            GETSearchRecord({jwtToken})
-              .then((response: any) => {
-                console.log('GETSearchRecord response', response);
-                dispatch(allActions.userActions.setSearchRecord(response));
-              })
-              .catch((error) => {
-                console.log('GETSearchRecord error', error);
-              });
           })
           .catch((e) => {});
       }
     },
-    [jwtToken, query, category],
+    [jwtToken, query, category, tagId],
   );
 
   const deleteAllSearchRecord = () => {
@@ -213,7 +217,14 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   };
 
   const searchTotalKeyword = useCallback(
-    ({keyword, category}: {keyword: string; category: string}) => {
+    ({
+      keyword,
+      category,
+    }: {
+      keyword: string;
+      category: string;
+      tagId: string;
+    }) => {
       // if (query.trim() === '') {
       // } else {
       LayoutAnimation.configureNext(
@@ -223,6 +234,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
       setIsVisibleAutoCompletedKeyword((prev) => {
         setQuery(keyword);
         setCategory(category);
+        setTagId(tagId);
         return false;
       });
       // }
@@ -287,7 +299,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
         </SearchInputConatinerView>
       </HeaderBar>
       <BodyContent>
-        {isVisibleAutoCompletedKeyword && (
+        {isVisibleAutoCompletedKeyword ? (
           <AutoCompletedTotalKeywordFlatList
             searchRecordArray={searchRecordArray}
             navigation={navigation}
@@ -299,15 +311,16 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
             deleteSingleSearchRecord={deleteSingleSearchRecord}
             searchTotalKeyword={searchTotalKeyword}
           />
+        ) : (
+          <TotalSearchResultTabView
+            isRequestChanged={isVisibleAutoCompletedKeyword}
+            searchResult={searchResult}
+            reviewSearchResult={reviewSearchResult}
+            communitySearchResult={communitySearchResult}
+            fetchSearchResult={fetchSearchResult}
+            navigation={navigation}
+          />
         )}
-        <TotalSearchResultTabView
-          isRequestChanged={isVisibleAutoCompletedKeyword}
-          searchResult={searchResult}
-          reviewSearchResult={reviewSearchResult}
-          communitySearchResult={communitySearchResult}
-          fetchSearchResult={fetchSearchResult}
-          navigation={navigation}
-        />
       </BodyContent>
     </ContainerView>
   );

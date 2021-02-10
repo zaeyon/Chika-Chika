@@ -100,6 +100,18 @@ line-height: 24px;
 color: #131F3C;
 `;
 
+const AutoCompletedKeywordDescriptionView = Styled.View`
+margin-left: 8px;
+flex-direction: row;
+`;
+
+const AutoCompletedKeywordDescriptionText = Styled.Text`
+font-weight: normal;
+font-size: 12px;
+line-height: 16px;
+color: #9AA2A9;
+`;
+
 const SearchRecordListContainer = Styled.View`
 `;
 
@@ -152,9 +164,11 @@ interface Props {
   searchTotalKeyword: ({
     keyword,
     category,
+    tagId,
   }: {
     keyword: string;
     category: string;
+    tagId: string;
   }) => void;
   searchRecordArray: Array<any>;
 }
@@ -195,7 +209,11 @@ const AutoCompletedTotalKeywordFlatList = ({
           backgroundColor: '#FFFFFF',
         }}
         onPress={() =>
-          searchTotalKeyword({keyword: item.query, category: item.category})
+          searchTotalKeyword({
+            keyword: item.query,
+            category: item.category,
+            tagId: item.id,
+          })
         }>
         <SearchRecordItemContainer>
           <SearchRecordContentView>
@@ -230,7 +248,11 @@ const AutoCompletedTotalKeywordFlatList = ({
               backgroundColor: '#FFFFFF',
             }}
             onPress={() =>
-              searchTotalKeyword({keyword: item.name, category: item.category})
+              searchTotalKeyword({
+                keyword: item.name,
+                category: item.category,
+                tagId: item.id,
+              })
             }>
             <AutoCompletedKeywordItemContainer>
               <RepresentIcon
@@ -257,9 +279,15 @@ const AutoCompletedTotalKeywordFlatList = ({
           </TouchableHighlight>
         );
       } else if (item.category === 'city') {
-        const splitedItemName = item.emdName.split('');
-        const startIndex = item.emdName.indexOf(query);
+        const splitedItemName = item.name.split('');
+        const startIndex = item.name.indexOf(query);
         const endIndex = startIndex + (query.length - 1);
+
+        const splitedAddress = item.fullAddress && item.fullAddress.split('');
+        const addressStartIndex =
+          item.fullAddress && item.fullAddress.indexOf(query);
+        const addressEndIndex =
+          addressStartIndex && addressStartIndex + (query.length - 1);
 
         return (
           <TouchableHighlight
@@ -269,8 +297,9 @@ const AutoCompletedTotalKeywordFlatList = ({
             }}
             onPress={() =>
               searchTotalKeyword({
-                keyword: item.emdName,
+                keyword: item.name,
                 category: item.category,
+                tagId: item.id,
               })
             }>
             <AutoCompletedKeywordItemContainer>
@@ -294,6 +323,30 @@ const AutoCompletedTotalKeywordFlatList = ({
                   );
                 }
               })}
+              <AutoCompletedKeywordDescriptionView>
+                {item.isEMD
+                  ? splitedAddress.map((item: any, index: number) => {
+                      if (
+                        addressStartIndex <= index &&
+                        index <= addressEndIndex &&
+                        addressStartIndex !== -1
+                      ) {
+                        return (
+                          <AutoCompletedKeywordDescriptionText
+                            style={{color: '#00D1FF'}}>
+                            {item}
+                          </AutoCompletedKeywordDescriptionText>
+                        );
+                      } else {
+                        return (
+                          <AutoCompletedKeywordDescriptionText>
+                            {item}
+                          </AutoCompletedKeywordDescriptionText>
+                        );
+                      }
+                    })
+                  : null}
+              </AutoCompletedKeywordDescriptionView>
             </AutoCompletedKeywordItemContainer>
           </TouchableHighlight>
         );
@@ -309,7 +362,11 @@ const AutoCompletedTotalKeywordFlatList = ({
               backgroundColor: '#FFFFFF',
             }}
             onPress={() =>
-              searchTotalKeyword({keyword: item.name, category: item.category})
+              searchTotalKeyword({
+                keyword: item.name,
+                category: item.category,
+                tagId: item.id,
+              })
             }>
             <AutoCompletedKeywordItemContainer>
               <RepresentIcon
@@ -347,7 +404,11 @@ const AutoCompletedTotalKeywordFlatList = ({
               backgroundColor: '#FFFFFF',
             }}
             onPress={() =>
-              searchTotalKeyword({keyword: item.name, category: item.category})
+              searchTotalKeyword({
+                keyword: item.name,
+                category: item.category,
+                tagId: item.id,
+              })
             }>
             <AutoCompletedKeywordItemContainer>
               <RepresentIcon
@@ -385,7 +446,11 @@ const AutoCompletedTotalKeywordFlatList = ({
               backgroundColor: '#FFFFFF',
             }}
             onPress={() =>
-              searchTotalKeyword({keyword: item.name, category: item.category})
+              searchTotalKeyword({
+                keyword: item.name,
+                category: item.category,
+                tagId: item.id,
+              })
             }>
             <AutoCompletedKeywordItemContainer>
               <RepresentIcon
@@ -478,7 +543,7 @@ const AutoCompletedTotalKeywordFlatList = ({
           keyboardShouldPersistTaps="always"
           keyboardDismissMode="on-drag"
           data={autoCompletedKeywordArr}
-          keyExtractor={(item) => item.name}
+          keyExtractor={(item) => item.id}
           renderItem={renderResultItem}
         />
       )}

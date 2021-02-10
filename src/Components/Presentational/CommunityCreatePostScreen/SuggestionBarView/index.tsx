@@ -103,6 +103,7 @@ interface Tag {
   adCity: string | undefined;
   cityName: string | undefined;
   fullCityName: string | undefined;
+  fullAddress: string | undefined;
   relativeAddress: string | undefined;
 }
 
@@ -183,10 +184,10 @@ const SuggestionBarView = ({
                   }}>
                   {searchQuery}
                 </HashTagItemNameText>
-                {item.cityName?.slice(searchQuery.length)}
+                {item.emdName?.slice(searchQuery.length)}
               </HashTagItemNameText>
               <HashTagItemLocationText>
-                {item.sido + ' ' + item.sigungu + ' ' + item.adCity}
+                {item.fullAddress}
               </HashTagItemLocationText>
             </HashTagItemView>
           </TouchableHighlight>

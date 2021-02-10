@@ -78,9 +78,6 @@ const ReviewList = ({
   const jwtToken = currentUser.jwtToken;
   const userProfile = currentUser.profile;
 
-  useEffect(() => {
-    console.log('re');
-  });
   const moveToDentalDetail = useCallback((dentalId: number) => {
     navigation.navigate('DentalClinicStack', {
       screen: 'DentalDetailScreen',

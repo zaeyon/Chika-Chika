@@ -10,7 +10,6 @@ import PostCardItem from '~/Components/Presentational/PostCardItem';
 
 const ContainerView = Styled.View`
 width: ${wp('100%')}px;
-
 padding: 16px;
 background: #FFFFFF;
 `;
@@ -18,7 +17,7 @@ background: #FFFFFF;
 const TitleText = Styled.Text`
 font-style: normal;
 font-weight: bold;
-font-size: 16px;
+font-size: 14px;
 line-height: 24px;
 margin-bottom: 16px;
 `;
@@ -59,6 +58,9 @@ const CarouselContent = ({
       <TitleText>{titleText}</TitleText>
       <ContentFlatList
         horizontal
+        contentContainerStyle={{
+          paddingRight: 16,
+        }}
         keyExtractor={(item: any) => String(item.id)}
         showsHorizontalScrollIndicator={false}
         snapToInterval={wp('76%') + 16}

@@ -78,6 +78,7 @@ const ReviewRoute = ({
   }, [isRequestChanged]);
 
   useEffect(() => {
+    console.log(selectedHometown);
     setOrder('createdAt');
     setRefreshingReviewList(true);
     setRegion(selectedHometown.id === -1 ? 'all' : 'residence');
@@ -91,6 +92,7 @@ const ReviewRoute = ({
     };
 
     fetchSearchResult(form, (response: any) => {
+      console.log(response);
       setRefreshingReviewList(false);
       dispatch(allActions.reviewListActions.setSearchResultReviews(response));
     });

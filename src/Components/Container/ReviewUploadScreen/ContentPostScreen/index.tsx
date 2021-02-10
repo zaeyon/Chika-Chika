@@ -342,7 +342,10 @@ const ContentPostScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     if (route.params.requestType === 'revise') {
-      console.log("리뷰 수정 요청 route.params.paragraphArray", route.params.paragraphArray);
+      console.log(
+        '리뷰 수정 요청 route.params.paragraphArray',
+        route.params.paragraphArray,
+      );
       const tmpParagraphArray = route.params.paragraphArray;
       setParagraphList(tmpParagraphArray);
       setTotalPrice(route.params?.totalPrice);
@@ -739,15 +742,22 @@ const ContentPostScreen = ({navigation, route}: Props) => {
           'PUTReviswRevise response.updateReview.reviewBody.TreatmentItems',
           response.updateReview.reviewBody.TreatmentItems,
         );
-        console.log('PUTReviewRevise response.updateReview.reviewBody.dental_clinic', response.updateReview.reviewBody.dental_clinic);
-        console.log("PUTReviewRevise response.updateReview.reviewBody.review_contents", response.updateReview.reviewBody.review_contents)
+        console.log(
+          'PUTReviewRevise response.updateReview.reviewBody.dental_clinic',
+          response.updateReview.reviewBody.dental_clinic,
+        );
+        console.log(
+          'PUTReviewRevise response.updateReview.reviewBody.review_contents',
+          response.updateReview.reviewBody.review_contents,
+        );
 
         const dentalObj = {
           id: response.updateReview.reviewBody.dentalClinicId,
           address: response.updateReview.reviewBody.dental_clinic.address,
-          originalName: response.updateReview.reviewBody.dental_clinic.originalName,
-          name: response.updateReview.reviewBody.dental_clinic.name
-        }
+          originalName:
+            response.updateReview.reviewBody.dental_clinic.originalName,
+          name: response.updateReview.reviewBody.dental_clinic.name,
+        };
 
         const tmpRating = {
           avgRating: (
@@ -761,12 +771,12 @@ const ContentPostScreen = ({navigation, route}: Props) => {
           treatRating: response.updateReview.reviewBody.starRate_treatment,
         };
 
-        console.log("PUTReviewRevise treatDate", treatDate);
+        console.log('PUTReviewRevise treatDate', treatDate);
 
         const treatmentDateObj = {
           treatDate: new Date(response.updateReview.reviewBody.treatmentDate),
           displayTreatDate: response.updateReview.reviewBody.treatmentDate,
-        }
+        };
 
         navigation.navigate('ReviewDetailScreen', {
           isRevised: true,
@@ -791,7 +801,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
           console.log('formatParagraph item', item);
 
           if (item.isPreExis) {
-            console.log("기존에 있던 사진 item", item)
+            console.log('기존에 있던 사진 item', item);
             const paragraphObj = {
               index: item.index,
               location: item.image.uri,
@@ -807,7 +817,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
 
             return paragraphObj;
           } else {
-            const result: any = await uploadImageToS3(item.image);
+            const result: any = await uploadImageToS3(item.image, 'reviews');
 
             const paragraphObj = {
               index: index,
@@ -823,7 +833,6 @@ const ContentPostScreen = ({navigation, route}: Props) => {
             };
 
             return paragraphObj;
-
           }
         } else {
           const paragraphObj = {
@@ -840,7 +849,6 @@ const ContentPostScreen = ({navigation, route}: Props) => {
           };
 
           return paragraphObj;
-
         }
       }),
     );
@@ -908,10 +916,11 @@ const ContentPostScreen = ({navigation, route}: Props) => {
               <TouchableWithoutFeedback
                 onLongPress={() => clickInsertedImage(index)}
                 delayLongPress={300}>
-                <ParaImage 
-                source={{
-                  uri: item.image.uri,
-                }}/>
+                <ParaImage
+                  source={{
+                    uri: item.image.uri,
+                  }}
+                />
               </TouchableWithoutFeedback>
               <SelectOrderContainer>
                 <TouchableWithoutFeedback

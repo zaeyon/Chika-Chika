@@ -70,9 +70,7 @@ flex-direction: row;
 margin-left: auto;
 `;
 
-const HeaderIconTouchableOpacity = Styled(
-  TouchableOpacity as new () => TouchableOpacity,
-)`
+const HeaderIconTouchableOpacity = Styled.TouchableOpacity`
 width: 30px;
 height: 30px;
 margin-left: 16px;

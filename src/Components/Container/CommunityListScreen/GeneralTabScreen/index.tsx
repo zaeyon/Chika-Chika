@@ -385,7 +385,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
         <TopBanner type="freetalk" />
         <CarouselContent
           postData={postData}
-          titleText="지금 뜨는 인기 글"
+          titleText="🔥 지금 뜨는 인기 글"
           moveToCommunityDetail={moveToCommunityDetail}
           moveToAnotherProfile={moveToAnotherProfile}
         />
