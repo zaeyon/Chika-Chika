@@ -149,7 +149,7 @@ const HomeScreen = ({navigation, route}: Props) => {
           query: tagItem.name,
           category: tagItem.category,
           pathType: 'review',
-          limit: '4',
+          limit: '5',
           offset: '0',
           order: 'createdAt',
           region: 'residence',

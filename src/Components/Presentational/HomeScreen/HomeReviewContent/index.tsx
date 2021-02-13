@@ -72,6 +72,7 @@ color: #FFFFFF;
 position: absolute;
 left: 12px;
 bottom: 12px;
+max-width: 80%;
 `;
 
 interface Props {
@@ -117,7 +118,6 @@ const HomeReviewContent = ({
     return (
       selectedReviewData &&
       selectedReviewData.data.map((item: any, index: number) => {
-        console.log(item);
         return (
           <ImageBackground
             style={{

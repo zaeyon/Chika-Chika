@@ -53,9 +53,9 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
         .then((response: any) => {
           console.log('프로필 변경 성공', response.body.message);
           GETUserInfo(jwtToken).then((response: any) => {
+            console.log('get user info res', response);
             dispatch(
               allActions.userActions.setUser({
-                //depart
                 profile: response,
               }),
             );

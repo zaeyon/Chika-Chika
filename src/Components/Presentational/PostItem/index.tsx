@@ -375,14 +375,14 @@ const PostItem = ({
         <BodyContainerView>
           <TouchableWithoutFeedback
             onPress={() => {
-              moveToAnotherProfile(userId, user.nickname, user.profileImg);
+              moveToAnotherProfile(userId, user.nickname, user.img_thumbNail);
             }}>
             <ProfileContainerView>
               <ProfileImage
                 source={
-                  user.profileImg
+                  user.img_thumbNail
                     ? {
-                        uri: user.profileImg,
+                        uri: user.img_thumbNail,
                         cache: 'force-cache',
                       }
                     : require('~/Assets/Images/appIcon_chika.png')
