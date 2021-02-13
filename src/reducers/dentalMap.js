@@ -21,6 +21,16 @@ const dentalMap = (state = { nearDentalArray: [], mapLocation: TEST_COORDINATE, 
                 ...state,
                 searchedDentalArray: action.payload,
             }
+        case "ADD_SEARCHED_DENTAL_ARRAY":
+            {
+                const prevSearchedDentalArray = (state.searchedDentalArray).slice();
+                const addedSearchedDentalArray = prevSearchedDentalArray.concat(action.payload);
+
+                return {
+                    ...state,
+                    searchedDentalArray: addedSearchedDentalArray
+                }
+            }
         case "SET_AUTO_COMPLETED_KEYWORD_ARR":
             return {
                 ...state,

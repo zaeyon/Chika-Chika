@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList} from 'react-native';
+import {TouchableWithoutFeedback, FlatList, StyleSheet} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -11,6 +11,9 @@ import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import DeviceInfo from 'react-native-device-info';
 import {useSelector} from 'react-redux';
 
+// Local Components
+import NavigationHeader from '~/Components/Presentational/NavigationHeader';
+
 // route
 import GETDentalNameSearch from '~/Routes/Search/GETDentalNameSearch';
 
@@ -19,54 +22,10 @@ const Container = Styled.View`
  background-color: #FFFFFF;
 `;
 
-const HeaderBar = Styled.View`
+const SearchContainer = Styled.View`
  width: ${wp('100%')}px;
- height: ${wp('13.8%')}px;
- flex-direction: row;
- align-items: center;
- justify-content: space-between;
- background-color:#ffffff;
- border-bottom-width: 0.6px;
- border-color: #ECECEE;
-`;
-
-const HeaderLeftContainer = Styled.View`
-height: ${wp('13.8%')}px;
-padding: 0px 16px 0px 16px;
- align-items: center;
- justify-content: center;
- flex-direction: row;
-`;
-
-const HeaderCancelIcon = Styled.Image`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
-`;
-
-const HeaderTitleText = Styled.Text`
-margin-top: 5px;
-font-size: 18px;
-color: #000000;
-font-weight: bold
-`;
-
-const HeaderRightContainer = Styled.View`
-height: ${wp('13.8%')}px;
-padding: 0px 16px 0px 16px;
- align-items: center;
- justify-content: center;
- flex-direction: row;
-`;
-
-const HeaderSearchText = Styled.Text`
-font-weight: 300;
-font-size: 16px;
-color: #000000;
-`;
-
-const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
+ padding: 12px 16px 12px 16px;
+ background-color: #F5F7F9;
 `;
 
 const BodyContainer = Styled.View`
@@ -74,70 +33,25 @@ align-items: center;
 padding-bottom: ${DeviceInfo.hasNotch() ? hp('3s%') : hp('14%')}px;
 `;
 
-const TakePhotoText = Styled.Text`
-`;
-
-const GalleryText = Styled.Text`
-margin-top: 30px;
-`;
-
-const MetaDataItemContainer = Styled.View`
-width: ${wp('91.46%')}px;
-height: ${wp('12.799%')}px;
-background-color: #F0F6FC;
-border-radius: 8px;
-justify-content: center;
-padding-left: 12px;
-padding-right: 12px;
-`;
-
-const MetaDataText = Styled.Text`
-font-weight: 300
-font-size: 16px;
-color: #0075FF
-`;
-
-const FooterContainer = Styled.View`
-position: absolute;
-bottom: 53px;
-
-`;
-
-const FinishButton = Styled.View`
-width: ${wp('91.46%')}px;
-height: ${wp('12.799%')}px;
-border-radius: 8px;
-background-color: #0075FF;
-align-items: center;
-justify-content: center;
-`;
-
-const FinishText = Styled.Text`
-font-weight: bold;
-font-size: 16px;
-color: #ffffff;
-`;
-
 const SearchInputContainer = Styled.View`
-width: ${wp('71.73%')}px;
-height: ${wp('10.666%')}px;
 border-radius: 8px;
-background-color: #F6F7F8;
+background-color: #ffffff;
 flex-direction: row;
 align-items: center;
-padding-left: 12px;
+padding: 8px;
 `;
 
 const SearchIcon = Styled.Image`
-width: ${wp('4.2%')}px;
-height: ${wp('4.2%')}px;
+width: ${wp('5.3%')}px;
+height: ${wp('5.3%')}px;
 `;
 
 const SearchTextInput = Styled.TextInput`
+flex: 1;
+background-color: #ffffff;
 margin-left: 8px;
-width: ${wp('65%')}px;
-font-weight: 300;
-font-size: 16px;
+font-weight: 400;
+font-size: 14px;
 `;
 
 const DentalListContainer = Styled.View`
@@ -145,22 +59,30 @@ const DentalListContainer = Styled.View`
 
 const DentalClinicItemContainer = Styled.View`
 width: ${wp('100%')}
-padding-left: 20px;
-padding-top: 13px;
-padding-right: 13px;
-padding-bottom: 20px;
+padding-left: 16px;
+padding-top: 16px;
+padding-right: 16px;
 `;
 
 const DentalClinicNameText = Styled.Text`
-font-weight: 300;
-font-size: 16px;
-color: #000000;
+font-weight: 700;
+font-size: 14px;
+color: #131F3C;
+line-height: 16px;
 `;
 
 const DentalClinicAddressText = Styled.Text`
-font-weight: 300;
-font-size: 13px;
-color: #9a9a9a;
+margin-top: 4px;
+font-weight: 400;
+font-size: 12px;
+color: #9AA2A9;
+line-height: 16px;
+`;
+
+const HorizontalDivider = Styled.View`
+margin-top: 16px;
+height: 1px;
+background-color: #F5F7F9;
 `;
 
 
@@ -190,7 +112,7 @@ const DentalNameSearchScreen = ({navigation, route}: Props) => {
   const onPressDentalClinicItem = (selectedDental: object) => {
     if (route.params?.requestPage === 'metadata') {
       navigation.navigate('ReviewMetaDataScreen', {
-        dentalClinic: selectedDental,
+        dentalObj: selectedDental,
       });
     } else if (route.params?.requestPage === 'content') {
       navigation.navigate('ContentPostScreen', {
@@ -206,6 +128,7 @@ const DentalNameSearchScreen = ({navigation, route}: Props) => {
         <DentalClinicItemContainer>
           <DentalClinicNameText>{item.originalName}</DentalClinicNameText>
           <DentalClinicAddressText>{item.address}</DentalClinicAddressText>
+          <HorizontalDivider/>
         </DentalClinicItemContainer>
       </TouchableWithoutFeedback>
     );
@@ -234,34 +157,31 @@ const DentalNameSearchScreen = ({navigation, route}: Props) => {
 
   return (
     <Container as={SafeAreaView} forceInset={{top: 'always'}}>
-      <HeaderBar>
-        <TouchableWithoutFeedback onPress={() => goBack()}>
-          <HeaderLeftContainer>
-            <HeaderCancelIcon
-              source={require('~/Assets/Images/HeaderBar/ic_X.png')}
-            />
-          </HeaderLeftContainer>
-        </TouchableWithoutFeedback>
+      <NavigationHeader
+      headerLeftProps={{type: 'arrow', onPress: goBack}}
+      headerTitle={"병원 선택"}/>
+      <SearchContainer
+      style={styles.searchInputShadow}>
         <SearchInputContainer>
           <SearchIcon
-            source={require('~/Assets/Images/HeaderBar/ic_search.png')}
+            style={{tintColor: "#4E525D"}}
+            source={require('~/Assets/Images/Search/ic_search.png')}
           />
           <SearchTextInput
+            selectionColor={"#00D1FF"}
             autoCapitalize={'none'}
             autoFocus={true}
-            placeholder={'병원 검색'}
-            placeholderTextColor={'#ABA5A5'}
+            placeholder={'병원 이름을 검색하세요.'}
+            placeholderTextColor={'#9AA2A9'}
             onChangeText={(text: string) => onChangeDentalInput(text)}
           />
         </SearchInputContainer>
-        <HeaderRightContainer>
-          <HeaderSearchText>검색</HeaderSearchText>
-        </HeaderRightContainer>
-      </HeaderBar>
+      </SearchContainer>
       <BodyContainer>
         <DentalListContainer>
-          <KeyboardAwareFlatList
-            contentContainerStyle={{paddingTop: 10}}
+          <FlatList
+            keyboardDismissMode={"on-drag"}
+            contentContainerStyle={{paddingTop: 5, paddingBottom: hp('7%')}}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps={'always'}
             data={autoCompletedDentalList}
@@ -272,5 +192,16 @@ const DentalNameSearchScreen = ({navigation, route}: Props) => {
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  searchInputShadow: {
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowRadius: 12,
+    shadowOpacity: 0.1,
+  }
+})
 
 export default DentalNameSearchScreen;

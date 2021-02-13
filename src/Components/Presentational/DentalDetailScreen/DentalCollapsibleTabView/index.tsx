@@ -615,11 +615,31 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
      return splitedAddress[0] + " " + splitedAddress[1] + " " + splitedAddress[2] + " " + splitedAddress[3];
    }
 
+   const introKeywordArray = new Array();
 
+   if(basicInfo?.launchDate) {
 
-   
+    const tmpLaunchDate = {
+      launchDate: basicInfo.launchDate,
+      type: "launchDate",
+    }
+     introKeywordArray.push(tmpLaunchDate)
+   }
 
-  
+   if(basicInfo?.dentalTransparent === true) {
+     const tmpDentalTransparent = {
+       type: 'dentalTransparent'
+     }
+     introKeywordArray.push(tmpDentalTransparent)
+   }
+
+   if(basicInfo?.specialistDentist > 0) {
+     const tmpSpecialistDentist = {
+       type: 'specialistDentist',
+       specialistDentist: dentistInfo.specialistDentist,
+     }
+     introKeywordArray.push(tmpSpecialistDentist);
+   }
 
   /**
    * PanResponder for header
@@ -862,6 +882,45 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
     let renderTabScene;
     switch (route.key) {
       case 'detailInfo':
+
+        const renderIntroKeywordArray = ({item, index}: any) => {
+          if(item.type === "launchDate") {
+            return (
+                <IntroKeywordItemContainer style={[styles.introKeywordShadow, , {marginRight: 8}]}>
+                  <IntroKeywordIcon
+                  source={require('~/Assets/Images/Dental/ic_establish.png')}/>
+                  <IntroKeywordText>
+                    {`설립 ${getEstablishedElapsedYear(item.launchDate)}년차`}
+                  </IntroKeywordText>
+                </IntroKeywordItemContainer>
+            )
+          } else if(item.type === 'dentalTransparent') {
+            return (
+                <IntroKeywordItemContainer style={[styles.introKeywordShadow]}>
+                  <IntroKeywordIcon
+                  source={require('~/Assets/Images/Dental/ic_goodHospital.png')}/>
+                  <IntroKeywordText>
+                  {'우리동네좋은치과 지정'}
+                  </IntroKeywordText>
+                </IntroKeywordItemContainer>
+            )
+          } else if(item.type === 'specialistDentist') {
+            return (
+              <IntroKeywordItemContainer  style={styles.introKeywordShadow}>
+                <IntroKeywordIcon
+                source={require('~/Assets/Images/Dental/ic_doctor.png')}/>
+                <IntroKeywordText>
+                  {`전문의 ${item.specialistDentist}명`}
+                </IntroKeywordText>
+              </IntroKeywordItemContainer>
+            )
+          } else {
+            return (
+              <View/>
+            )
+          }
+        }
+
         return (
           <Animated.ScrollView
             {...tabPanResponder.panHandlers}
@@ -931,37 +990,12 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
             ><DetailInfoTabContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"병원 소개"}</DetailInfoLabelText>
-              {/*
-              <DetailInfoDescripText>{introduction> 0 ? introduction : "-"}</DetailInfoDescripText>
-              */}
               <IntroKeywordListContainer>
-              {basicInfo?.launchDate && (
-                <IntroKeywordItemContainer style={[styles.introKeywordShadow, , {marginRight: 8}]}>
-                  <IntroKeywordIcon
-                  source={require('~/Assets/Images/Dental/ic_establish.png')}/>
-                  <IntroKeywordText>
-                    {`설립 ${getEstablishedElapsedYear(basicInfo?.launchDate)}년차`}
-                  </IntroKeywordText>
-                </IntroKeywordItemContainer>
-              )}
-              {basicInfo?.dentalTransparent === true && (
-                <IntroKeywordItemContainer style={[styles.introKeywordShadow]}>
-                  <IntroKeywordIcon
-                  source={require('~/Assets/Images/Dental/ic_goodHospital.png')}/>
-                  <IntroKeywordText>
-                    {'우리동네좋은치과 지정'}
-                  </IntroKeywordText>
-                </IntroKeywordItemContainer>
-              )}
-              {dentistInfo.specialistDentist > 0 && (
-                <IntroKeywordItemContainer  style={styles.introKeywordShadow}>
-                  <IntroKeywordIcon
-                  source={require('~/Assets/Images/Dental/ic_doctor.png')}/>
-                  <IntroKeywordText>
-                    {`전문의 ${dentistInfo.specialistDentist}명`}
-                  </IntroKeywordText>
-                </IntroKeywordItemContainer>
-              )}
+                <FlatList
+                data={introKeywordArray}
+                renderItem={renderIntroKeywordArray}
+                keyExtractor={(item: any, index: number) => `${index}`}
+                numColumns={2}/>
               </IntroKeywordListContainer>
             </DetailInfoItemContainer>
             <DetailInfoItemContainer>

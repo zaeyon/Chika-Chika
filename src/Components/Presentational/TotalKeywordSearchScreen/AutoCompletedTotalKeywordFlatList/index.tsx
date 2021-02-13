@@ -184,6 +184,7 @@ const AutoCompletedTotalKeywordFlatList = ({
   searchTotalKeyword,
   searchRecordArray,
 }: Props) => {
+  
   const renderSearchRecordItem = ({item, index}: any) => {
     const renderIcon = (category: string) => {
       switch (category) {
