@@ -114,12 +114,12 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   const [eventSearchResult, setEventSearchResult] = useState([]);
 
   const dispatch = useDispatch();
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.jwtToken;
-  const hometown = currentUser.hometown;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const hometown = useSelector((state: any) => state.currentUser.hometown);
 
-  const searchRecordArray = useSelector((state: any) => state.currentUser)
-    .searchRecordArray;
+  const searchRecordArray = useSelector(
+    (state: any) => state.currentUser.searchRecordArray,
+  );
 
   const searchInputRef = useRef<any>();
 
@@ -220,6 +220,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
     ({
       keyword,
       category,
+      tagId,
     }: {
       keyword: string;
       category: string;

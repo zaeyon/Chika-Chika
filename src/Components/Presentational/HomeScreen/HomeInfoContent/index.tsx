@@ -1,6 +1,9 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
+import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
 import Styled from 'styled-components/native';
 import {Image, TouchableOpacity, Animated, LayoutAnimation} from 'react-native';
+
+// Local Component
+import LocationSelection from '~/Components/Container/CommunityListScreen/LocationInfoHeader/LocationSelection';
 
 const ContainerView = Styled.View`
 flex: 1;
@@ -32,6 +35,7 @@ box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
 border-radius: 8px;
 padding: 16px;
 margin-bottom: 16px;
+z-index: 3;
 `;
 
 const LocationIndicationText = Styled.Text`
@@ -140,18 +144,32 @@ text-align: right;
 height: 30px;
 `;
 
+const FloatContainerView = Styled.View`
+position: absolute;
+flex: 1;
+z-index: 3;
+top: 0px;
+background: red;
+`;
+
 interface Props {
-  scrollY: any;
-  selectedHometown: string;
+  jwtToken: string;
+  hometown: any;
+  selectedHometown: any;
+  setSelectedHometown: any;
   localClinicCount: number;
   localReviewCount: number;
+  moveToHomeTownSetting: () => void;
 }
 
 const HomeInfoContent = ({
-  scrollY,
+  jwtToken,
+  hometown,
   selectedHometown,
+  setSelectedHometown,
   localClinicCount,
   localReviewCount,
+  moveToHomeTownSetting,
 }: Props) => {
   const initialY = useRef(new Animated.Value(0)).current;
   const secondY = useRef(new Animated.Value(0)).current;
@@ -159,6 +177,9 @@ const HomeInfoContent = ({
 
   const slotY = useRef(new Animated.Value(0)).current;
   const imageY = useRef(new Animated.Value(0)).current;
+  const hometownScale = useRef(new Animated.Value(1)).current;
+
+  const [floatVisible, setFloatVisible] = useState(false);
 
   useEffect(() => {
     Animated.timing(initialY, {
@@ -186,19 +207,44 @@ const HomeInfoContent = ({
         }).start();
         Animated.spring(slotY, {
           toValue: 1,
-          friction: 10,
-          tension: 30,
+          friction: 12,
+          tension: 68,
           useNativeDriver: true,
         }).start();
       });
     });
   }, []);
 
+  useEffect(() => {
+    console.log('selectedHometown changed');
+    if (selectedHometown) {
+      Animated.spring(hometownScale, {
+        toValue: 1.2,
+        friction: 17,
+        tension: 68,
+        useNativeDriver: true,
+      }).start(() => {
+        Animated.spring(hometownScale, {
+          toValue: 1,
+          friction: 17,
+          tension: 68,
+          useNativeDriver: true,
+        }).start();
+      });
+    }
+  }, [selectedHometown]);
+
   const renderSlotNumber = useCallback((number: number) => {
+    console.log('render slot number');
     return (
       <SlotContainerView
         as={Animated.View}
         style={{
+          opacity: slotY.interpolate({
+            inputRange: [0, 0.1, 0.5, 0.9, 1],
+            outputRange: [1, 0.3, 0.2, 0.3, 1],
+            extrapolate: 'clamp',
+          }),
           transform: [
             {
               translateY: slotY.interpolate({
@@ -214,6 +260,13 @@ const HomeInfoContent = ({
       </SlotContainerView>
     );
   }, []);
+
+  const memoClinicCount = useMemo(() => renderSlotNumber(localClinicCount), [
+    localClinicCount,
+  ]);
+  const memoReviewCount = useMemo(() => renderSlotNumber(localReviewCount), [
+    localReviewCount,
+  ]);
 
   return (
     <ContainerView>
@@ -256,15 +309,44 @@ const HomeInfoContent = ({
             },
           ],
         }}>
+        {floatVisible ? (
+          <LocationSelection
+            jwtToken={jwtToken}
+            hometown={hometown}
+            selectedHometown={selectedHometown}
+            setSelectedHometown={setSelectedHometown}
+            setFloatVisible={setFloatVisible}
+            moveToHomeTownSetting={moveToHomeTownSetting}
+            manageMode={true}
+            style={{
+              top: 86,
+              right: 48,
+            }}
+          />
+        ) : null}
         <LocationIndicationText>{'지금 내 동네'}</LocationIndicationText>
         <LocationContentView>
           <LocationHighlightContainerView>
-            <LocationUnderlineView />
-            <LocationIndicationTitleText>
-              {selectedHometown}
+            <LocationUnderlineView
+              as={Animated.View}
+              style={{
+                opacity: hometownScale.interpolate({
+                  inputRange: [1, 1.2],
+                  outputRange: [1, 0],
+                  extrapolate: 'clamp',
+                }),
+              }}
+            />
+            <LocationIndicationTitleText
+              as={Animated.Text}
+              style={{
+                transform: [{scale: hometownScale}],
+              }}>
+              {selectedHometown?.emdName}
             </LocationIndicationTitleText>
           </LocationHighlightContainerView>
           <TouchableOpacity
+            onPress={() => setFloatVisible((prev) => !prev)}
             style={{
               marginLeft: 'auto',
             }}>
@@ -304,7 +386,7 @@ const HomeInfoContent = ({
             <LocalInfoIconImage
               source={require('~/Assets/Images/Home/ic_clinic.png')}
             />
-            {renderSlotNumber(localClinicCount)}
+            {memoClinicCount}
             <LocalInfoContentText>{'개'}</LocalInfoContentText>
           </LocalInfoDescriptionView>
         </LocalInfoContentView>
@@ -317,7 +399,7 @@ const HomeInfoContent = ({
             <LocalInfoIconImage
               source={require('~/Assets/Images/Home/ic_review.png')}
             />
-            {renderSlotNumber(localReviewCount)}
+            {memoReviewCount}
             <LocalInfoContentText>{'개'}</LocalInfoContentText>
           </LocalInfoDescriptionView>
         </LocalInfoContentView>
@@ -344,4 +426,4 @@ const HomeInfoContent = ({
   );
 };
 
-export default HomeInfoContent;
+export default React.memo(HomeInfoContent);

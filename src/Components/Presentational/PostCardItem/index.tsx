@@ -203,7 +203,7 @@ const PostCardItem = ({
           <ProfileImage
             source={
               user.profileImg
-                ? {url: user.profileImg, cache: 'force-cache'}
+                ? {url: user.img_thumbNail, cache: 'force-cache'}
                 : require('~/Assets/Images/appIcon_chika.png')
             }
           />

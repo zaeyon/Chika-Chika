@@ -60,7 +60,7 @@ const ReplyPostScreen = ({navigation, route}: Props) => {
     if(route.params?.replyObj) {
         console.log("ReplyPostScreen route.params?.replyObj", route.params.replyObj);
     }
-    const jwtToken = useSelector((state: any) => state.currentUser).jwtToken;
+    const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
     const dispatch = useDispatch();
     const commentItem = route.params?.commentObj
     const postId = route.params?.postId;

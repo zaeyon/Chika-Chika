@@ -32,7 +32,9 @@ import NaverMapView, {Circle, Marker} from 'react-native-nmap';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 import Geolocation from 'react-native-geolocation-service';
 import DeviceInfo from 'react-native-device-info';
-import getStateBarHeight, { getStatusBarHeight } from 'react-native-status-bar-height';
+import getStateBarHeight, {
+  getStatusBarHeight,
+} from 'react-native-status-bar-height';
 import Carousel from 'react-native-snap-carousel';
 import ActionSheet from 'react-native-actionsheet';
 import Modal from 'react-native-modal';
@@ -46,7 +48,6 @@ import ToastMessage from '~/Components/Presentational/ToastMessage';
 // Route
 import GETAroundDental from '~/Routes/Dental/GETAroundDental';
 import GETDentalTotalSearch from '~/Routes/Search/GETDentalTotalSearch';
-
 
 const Container = Styled.View`
 flex: 1;
@@ -71,7 +72,6 @@ padding-left: 15px;
 padding-right: 15px;
 padding-bottom: 0px;
 `;
-
 
 const SearchInputContainer = Styled.View`
 flex-direction: row;
@@ -104,7 +104,6 @@ color: #9AA2A9;
 `;
 
 const FilterListContainer = Styled.View`
-
 flex-direction: row;
 align-items: center;
 `;
@@ -125,13 +124,10 @@ font-size: 14px;
 line-height: 19px;
 `;
 
-
-
 const SearchIcon = Styled.Image`
 width: ${wp('5.866%')}px;
 height: ${wp('5.866%')}px;
 `;
-
 
 const MapHeaderContainer = Styled.View`
 width: ${wp('100%')}px;
@@ -337,15 +333,13 @@ const NaverMapContainer = Styled.View`
 `;
 
 const MapActionButtonContainer = Styled.View`
-flex: 1;
-align-items: flex-end;
-padding-top: 16px;
-padding-right: 9px;
+margin-left: auto;
+margin-right: 13px;
 `;
 
 const MyLocationTrackingButton = Styled.View`
-width: ${wp('10%')}px;
-height: ${wp('10%')}px;
+width: ${wp('9.6%')}px;
+height: ${wp('9.6%')}px;
 border-radius: 3px;
 background-color: #ffffff;
 align-items: center;
@@ -393,7 +387,7 @@ let sort = 'distance';
 const bottomTabheight = DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%');
 
 const mapHeight = hp('100%') - bottomTabheight;
-  
+
 const NearDentalMap = ({navigation, route}: Props) => {
   console.log('NearDentalMap route', route.params?.isOpenDentalList);
   const [currentLocation, setCurrentLocation] = useState<Coord>(
@@ -431,7 +425,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
   const timeFilterActionSheet = createRef<any>();
   const dispatch = useDispatch();
 
-  const currentUser = useSelector((state: any) => state.currentUser);
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 
   // 방문일 설정 redux state
   const dayList = useSelector((state: any) => state.dentalFilter).dayList;
@@ -459,21 +453,20 @@ const NearDentalMap = ({navigation, route}: Props) => {
   const searchedKeyword = dentalMapRedux.searchedKeyword;
   const loadingGetDental = dentalMapRedux.loadingGetDental;
 
-  const jwtToken = currentUser.jwtToken;
   const todayIndex = new Date().getDay();
 
   const currentMapLocation = useRef<any>({
-     longitude: mapLocation.longitude,
-     latitude: mapLocation.latitude,
-     zoom: mapZoom,
-   });
+    longitude: mapLocation.longitude,
+    latitude: mapLocation.latitude,
+    zoom: mapZoom,
+  });
 
   const isNearDentalList = useRef<boolean>(true);
 
   useEffect(() => {
-    if(isNearDentalList.current) {
-      console.log("사용자 위치 추적")
-      mapRef.current.setLocationTrackingMode(2)
+    if (isNearDentalList.current) {
+      console.log('사용자 위치 추적');
+      mapRef.current.setLocationTrackingMode(2);
     }
 
     const getInitialNearDental = async () => {
@@ -488,9 +481,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
   }, []);
 
   useEffect(() => {
-
     if (route.params?.searchedDentalLocation) {
-      console.log("mapLocation", mapLocation);
+      console.log('mapLocation', mapLocation);
       isNearDentalList.current = route.params?.isNearDentalList;
       mapRef.current.setLocationTrackingMode(0);
     }
@@ -515,8 +507,13 @@ const NearDentalMap = ({navigation, route}: Props) => {
     }
 
     sort = 'accuracy';
-
-  }, [route.params?.offset, route.params?.limit, searchedKeyword, route.params?.isNearDentalList, route.params?.searchedDentalLocation]);
+  }, [
+    route.params?.offset,
+    route.params?.limit,
+    searchedKeyword,
+    route.params?.isNearDentalList,
+    route.params?.searchedDentalLocation,
+  ]);
 
   useEffect(() => {
     getNearDental();
@@ -563,7 +560,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
             .then((response: any) => {
               //setLoadingGetDental(false);
               dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
-              dispatch(allActions.dentalMapActions.setNearDentalArray(response));
+              dispatch(
+                allActions.dentalMapActions.setNearDentalArray(response),
+              );
             })
             .catch((error) => {
               console.log('GETAroundDental error', error);
@@ -579,11 +578,11 @@ const NearDentalMap = ({navigation, route}: Props) => {
             error.message,
           );
 
-          ToastMessage.show("현재 위치를 불러오는데 실패했습니다ㅠㅠ");
+          ToastMessage.show('현재 위치를 불러오는데 실패했습니다ㅠㅠ');
 
           // 서울 시청 좌표
-          const lat = 37.566515657875435
-          const long = 126.9781164904998
+          const lat = 37.566515657875435;
+          const long = 126.9781164904998;
 
           GETAroundDental({
             jwtToken,
@@ -598,7 +597,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
             .then((response: any) => {
               console.log('GETAroundDental response.length', response.length);
               dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
-              dispatch(allActions.dentalMapActions.setNearDentalArray(response));
+              dispatch(
+                allActions.dentalMapActions.setNearDentalArray(response),
+              );
             })
             .catch((error) => {
               console.log('GETAroundDental error', error);
@@ -656,7 +657,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
             .then((response: any) => {
               console.log('GETAroundDental response.length', response.length);
               dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
-              dispatch(allActions.dentalMapActions.setNearDentalArray(response));
+              dispatch(
+                allActions.dentalMapActions.setNearDentalArray(response),
+              );
             })
             .catch((error) => {
               console.log('GETAroundDental error', error);
@@ -667,11 +670,11 @@ const NearDentalMap = ({navigation, route}: Props) => {
         },
         (error) => {
           console.log('사용자 현재 위치 불러오기 실패', error);
-          ToastMessage.show("현재 위치를 불러오는데 실패했습니다ㅠㅠ");
+          ToastMessage.show('현재 위치를 불러오는데 실패했습니다ㅠㅠ');
 
           // 서울 시청 좌표
-          const lat = 37.566515657875435
-          const long = 126.9781164904998
+          const lat = 37.566515657875435;
+          const long = 126.9781164904998;
 
           GETAroundDental({
             jwtToken,
@@ -686,14 +689,14 @@ const NearDentalMap = ({navigation, route}: Props) => {
             .then((response: any) => {
               console.log('GETAroundDental response.length', response.length);
               dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
-              dispatch(allActions.dentalMapActions.setNearDentalArray(response));
+              dispatch(
+                allActions.dentalMapActions.setNearDentalArray(response),
+              );
             })
             .catch((error) => {
               console.log('GETAroundDental error', error);
               dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
             });
-
-
 
           return false;
         },
@@ -724,7 +727,6 @@ const NearDentalMap = ({navigation, route}: Props) => {
         console.log('GETAroundDental response in NearDentalMap', response);
         dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
         dispatch(allActions.dentalMapActions.setNearDentalArray(response));
-
       })
       .catch((error) => {
         console.log('GETAroundDental error', error);
@@ -826,12 +828,11 @@ const NearDentalMap = ({navigation, route}: Props) => {
       requestType: 'search',
       isNearDentalList: isNearDentalList.current,
       currentMapLongitude: currentMapLocation.current.longitude,
-      currentMapLatitude: currentMapLocation.current.latitude, 
+      currentMapLatitude: currentMapLocation.current.latitude,
     });
   };
 
   const clickDentalMarker = (selectedIndex: number) => {
-    
     setSelectedDentalIndex(selectedIndex);
 
     dentalCarouselRef.current?.snapToItem(selectedIndex, false);
@@ -842,7 +843,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   const clickTimeFilter = () => {
-      setVisibleTimeFilterModal(true);
+    setVisibleTimeFilterModal(true);
   };
 
   const moveToDentalDetail = (dentalId: number) => {
@@ -855,7 +856,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   const moveToDentalList = () => {
-    dispatch(allActions.dentalMapActions.setSearchedDentalArray(nearDentalArray));
+    dispatch(
+      allActions.dentalMapActions.setSearchedDentalArray(nearDentalArray),
+    );
     navigation.navigate('DentalTotalSearchScreen', {
       currentLocation: currentLocation,
       requestType: 'dentalList',
@@ -877,33 +880,48 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
   const onMapCameraChange = (event: any) => {
     console.log('onMapCameraChange event', event);
-    const prevMapLocation = {...currentMapLocation.current}
+    const prevMapLocation = {...currentMapLocation.current};
     currentMapLocation.current = event;
 
-    const distance = getDistanceFromLatLonInKm(prevMapLocation.latitude, prevMapLocation.longitude, currentMapLocation.current.latitude, currentMapLocation.current.longitude);
+    const distance = getDistanceFromLatLonInKm(
+      prevMapLocation.latitude,
+      prevMapLocation.longitude,
+      currentMapLocation.current.latitude,
+      currentMapLocation.current.longitude,
+    );
 
-    console.log("onMapCameraChange distance", distance);
+    console.log('onMapCameraChange distance', distance);
 
     // 이전의 지도 중심 좌표와 거리가 1km이상 차이날때 현재 위치에서 주변의 병원 다시 불러옴.
-    if(distance > 0.2) {
+    if (distance > 0.2) {
       getNearDental();
     }
   };
 
   // 두 좌표 사이의 거리를 구하는 함수
-  function getDistanceFromLatLonInKm(lat1: number, lng1: number, lat2: number, lng2: number) {
+  function getDistanceFromLatLonInKm(
+    lat1: number,
+    lng1: number,
+    lat2: number,
+    lng2: number,
+  ) {
     function deg2rad(deg) {
-        return deg * (Math.PI/180)
+      return deg * (Math.PI / 180);
     }
 
     var R = 6371; // Radius of the earth in km
-    var dLat = deg2rad(lat2-lat1);  // deg2rad below
-    var dLon = deg2rad(lng2-lng1);
-    var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var dLat = deg2rad(lat2 - lat1); // deg2rad below
+    var dLon = deg2rad(lng2 - lng1);
+    var a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c; // Distance in km
     return d;
-}
+  }
 
   const changeHolidayFilter = () => {
     console.log('changeHolidayFilter holidayFilter', holidayFilter);
@@ -955,9 +973,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   const initializeDayFilter = () => {
-
     if (selectedDayList.length > 0) {
-
       const tmpDayFilter = new Array([]);
 
       dispatch(allActions.dentalFilterActions.initializeDayList());
@@ -982,16 +998,15 @@ const NearDentalMap = ({navigation, route}: Props) => {
     }
 
     setVisibleDayFilterModal(false);
-  }
+  };
 
   const initializeTimeFilter = () => {
-
-    if(timeFilter !== '') {
+    if (timeFilter !== '') {
       dispatch(allActions.dentalFilterActions.setTimeFilter(''));
 
-      const tmpTimeFilter = "";
+      const tmpTimeFilter = '';
 
-      if(isNearDentalList.current) {
+      if (isNearDentalList.current) {
         filterNearDental(
           dayFilter,
           tmpTimeFilter,
@@ -1007,10 +1022,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
           holidayFilter,
         );
       }
-
     }
     setVisibleTimeFilterModal(false);
-  }
+  };
 
   const cancelDayFilter = () => {
     console.log('cancelDayFilter selectedDayFilter', selectDayFilterItem);
@@ -1036,8 +1050,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   const registerDayFilter = () => {
-    console.log("dayFilter", dayFilter);
-    console.log("selectedDayFilter", selectedDayList);
+    console.log('dayFilter', dayFilter);
+    console.log('selectedDayFilter', selectedDayList);
 
     var tmpDayList = dayList;
 
@@ -1183,18 +1197,16 @@ const NearDentalMap = ({navigation, route}: Props) => {
         <TouchableWithoutFeedback
           onPress={() => selectDayFilterItem(item, index)}>
           <DetailFilterItemContainer
-            style={
-              [item.selected
+            style={[
+              item.selected
                 ? {backgroundColor: '#00D1FF'}
                 : {backgroundColor: '#ffffff'},
-              styles.detailFilterItemShadow]
-            }>
+              styles.detailFilterItemShadow,
+            ]}>
             <DetailFilterItemText
-            style={
-              item.selected
-              ? {color: "#FFFFFF"}
-              : {color: "#9AA2A9"}
-            }>{item.day + '요일'}</DetailFilterItemText>
+              style={item.selected ? {color: '#FFFFFF'} : {color: '#9AA2A9'}}>
+              {item.day + '요일'}
+            </DetailFilterItemText>
           </DetailFilterItemContainer>
         </TouchableWithoutFeedback>
       );
@@ -1210,314 +1222,355 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   return (
-      <Container>
-        <MapContainer>
-          <NaverMapContainer>
-            <NaverMapView
-              ref={mapRef}
-              compass={false}
-              style={{
-                width: wp('100%'),
-                height: hp('100%') - bottomTabheight,
-              }}
-              showsMyLocationButton={false}
-              center={{...mapLocation, zoom: mapZoom}}
-              onCameraChange={(event: any) => onMapCameraChange(event)}
-              zoomControl={true}>
-              {nearDentalArray.map((item: any, index: number) => {
-                return (
-                  <Marker
-                    key={index}
-                    coordinate={{
-                      latitude: Number(item.geographLat),
-                      longitude: Number(item.geographLong),
-                    }}
-                    onClick={() => clickDentalMarker(index)}
-                    image={
-                      index == selectedDentalIndex
-                        ? require('~/Assets/Images/Map/ic_dentalMarker_selected.png')
-                        : require('~/Assets/Images/Map/ic_dentalMarker_unselected.png')
-                    }
-                  />
-                );
-              })}
-            </NaverMapView>
-          </NaverMapContainer>
-          <MapHeaderContainer>
+    <Container>
+      <MapContainer>
+        <NaverMapContainer>
+          <NaverMapView
+            ref={mapRef}
+            compass={false}
+            style={{
+              width: wp('100%'),
+              height: hp('100%') - bottomTabheight,
+            }}
+            showsMyLocationButton={false}
+            center={{...mapLocation, zoom: mapZoom}}
+            onCameraChange={(event: any) => onMapCameraChange(event)}
+            zoomControl={true}>
+            {nearDentalArray.map((item: any, index: number) => {
+              return (
+                <Marker
+                  key={index}
+                  coordinate={{
+                    latitude: Number(item.geographLat),
+                    longitude: Number(item.geographLong),
+                  }}
+                  onClick={() => clickDentalMarker(index)}
+                  image={
+                    index == selectedDentalIndex
+                      ? require('~/Assets/Images/Map/ic_dentalMarker_selected.png')
+                      : require('~/Assets/Images/Map/ic_dentalMarker_unselected.png')
+                  }
+                />
+              );
+            })}
+          </NaverMapView>
+        </NaverMapContainer>
+        <MapHeaderContainer>
           <SearchContainer>
-          <TouchableWithoutFeedback onPress={() => moveToDentalSearch()}>
-            <SearchInputContainer
-            style={styles.searchInputShadow}>
-              <SearchIcon
-                source={require('~/Assets/Images/Search/ic_search.png')}
-              />
-              {searchedKeyword === '' && (
-                <SearchPlaceHolderText>
-                  {'지역, 병원을 검색해 보세요.'}
-                </SearchPlaceHolderText>
-              )}
-              {searchedKeyword.length > 0 && (
-                <SearchText>{searchedKeyword}</SearchText>
-              )}
-            </SearchInputContainer>
-          </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => moveToDentalSearch()}>
+              <SearchInputContainer style={styles.searchInputShadow}>
+                <SearchIcon
+                  source={require('~/Assets/Images/Search/ic_search.png')}
+                />
+                {searchedKeyword === '' && (
+                  <SearchPlaceHolderText>
+                    {'지역, 병원을 검색해 보세요.'}
+                  </SearchPlaceHolderText>
+                )}
+                {searchedKeyword.length > 0 && (
+                  <SearchText>{searchedKeyword}</SearchText>
+                )}
+              </SearchInputContainer>
+            </TouchableWithoutFeedback>
           </SearchContainer>
-            <FilterListContainer>
-              <ScrollView
-                contentContainerStyle={{paddingTop: 12, paddingBottom: 12}}
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}>
-                {selectedDayList.length === 0 && (
+          <FilterListContainer>
+            <ScrollView
+              contentContainerStyle={{paddingTop: 12, paddingBottom: 12}}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}>
+              {selectedDayList.length === 0 && (
+                <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
+                  <FilterItemContainer
+                    style={[{marginLeft: 16}, styles.filterItemShadow]}>
+                    <FilterItemText>{'방문일'}</FilterItemText>
+                  </FilterItemContainer>
+                </TouchableWithoutFeedback>
+              )}
+              {selectedDayList.length === 1 && (
+                <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
+                  <FilterItemContainer
+                    style={[
+                      {
+                        marginLeft: 16,
+                        backgroundColor: '#ffffff',
+                        borderColor: '#9AA2A9',
+                      },
+                      styles.filterItemShadow,
+                    ]}>
+                    <FilterItemText style={{color: '#4E525D'}}>
+                      {selectedDayList[0].day + '요일'}
+                    </FilterItemText>
+                  </FilterItemContainer>
+                </TouchableWithoutFeedback>
+              )}
+              {selectedDayList.length > 1 &&
+                selectedDayList.indexOf('전체') === -1 && (
                   <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
-                    <FilterItemContainer style={[{marginLeft: 16}, styles.filterItemShadow]}>
-                      <FilterItemText>{'방문일'}</FilterItemText>
+                    <FilterItemContainer
+                      style={[
+                        {
+                          marginLeft: 16,
+                          backgroundColor: '#ffffff',
+                          borderColor: '#9AA2A9',
+                        },
+                        styles.filterItemShadow,
+                      ]}>
+                      {selectedDayList.map((item: any, index: number) => {
+                        if (index === 0) {
+                          return (
+                            <FilterItemText
+                              key={index}
+                              style={{color: '#4E525D'}}>
+                              {item.day + '요일'}
+                            </FilterItemText>
+                          );
+                        } else {
+                          return (
+                            <FilterItemText
+                              key={index}
+                              style={{color: '#4E525D'}}>
+                              {', ' + item.day + '요일'}
+                            </FilterItemText>
+                          );
+                        }
+                      })}
                     </FilterItemContainer>
                   </TouchableWithoutFeedback>
                 )}
-                {selectedDayList.length === 1 && (
-                    <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
-                      <FilterItemContainer
-                        style={[{marginLeft: 16, backgroundColor: '#ffffff', borderColor: "#9AA2A9"}, styles.filterItemShadow]}>
-                        <FilterItemText style={{color: '#4E525D'}}>
-                          {selectedDayList[0].day + '요일'}
-                        </FilterItemText>
-                      </FilterItemContainer>
-                    </TouchableWithoutFeedback>
-                  )}
-                {selectedDayList.length > 1 &&
-                  selectedDayList.indexOf('전체') === -1 && (
-                    <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
-                      <FilterItemContainer
-                        style={[{marginLeft: 16, backgroundColor: '#ffffff', borderColor: "#9AA2A9"}, styles.filterItemShadow]}>
-                        {selectedDayList.map((item: any, index: number) => {
-                          if (index === 0) {
-                            return (
-                              <FilterItemText 
-                              key={index}
-                              style={{color: '#4E525D'}}>
-                                {item.day + '요일'}
-                              </FilterItemText>
-                            );
-                          } else {
-                            return (
-                              <FilterItemText
-                              key={index}
-                              style={{color: '#4E525D'}}>
-                                {', ' + item.day + '요일'}
-                              </FilterItemText>
-                            );
-                          }
-                        })}
-                      </FilterItemContainer>
-                    </TouchableWithoutFeedback>
-                  )}
-                <TouchableWithoutFeedback onPress={() => clickTimeFilter()}>
-                  <FilterItemContainer
-                    style={[
-                      {marginLeft: 8},
-                      timeFilter !== '' && {backgroundColor: '#ffffff', borderColor: "#9AA2A9"},
-                      styles.filterItemShadow
-                    ]}>
-                    <FilterItemText
-                      style={timeFilter !== '' && {color: '#4E525D'}}>
-                      {timeFilter ? timeFilter.slice(0, 5) : '방문시간'}
-                    </FilterItemText>
-                  </FilterItemContainer>
-                </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => changeHolidayFilter()}>
-                  <FilterItemContainer
-                    style={[
-                      {marginLeft: 8},
-                      holidayFilter && {backgroundColor: '#ffffff', borderColor: "#9AA2A9"},
-                      styles.filterItemShadow,
-                    ]}>
-                    <FilterItemText style={holidayFilter && {color: '#4E525D'}}>
-                      {'일요일･공휴일 진료'}
-                    </FilterItemText>
-                  </FilterItemContainer>
-                </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => changeParkingFilter()}>
-                  <FilterItemContainer
-                    style={[
-                      {marginLeft: 8, marginRight: 16},
-                      parkingFilter === 'y' && {backgroundColor: '#ffffff', borderColor: '#9AA2A9'},
-                      styles.filterItemShadow,
-                    ]}>
-                    <FilterItemText
-                      style={parkingFilter === 'y' && {color: '#4E525D'}}>
-                      {'주차가능'}
-                    </FilterItemText>
-                  </FilterItemContainer>
-                </TouchableWithoutFeedback>
-              </ScrollView>
-            </FilterListContainer>
-            <MapActionButtonContainer>
-              <TouchableHighlight
-                style={{borderRadius: 3}}
-                activeOpacity={0.85}
-                onPress={() => clickMyLocationTrackingButton()}>
-                <MyLocationTrackingButton style={styles.mapActionButtonShadow}>
-                  <TargetIcon
-                    source={require('~/Assets/Images/Map/ic_target.png')}
-                  />
-                </MyLocationTrackingButton>
-              </TouchableHighlight>
-            </MapActionButtonContainer>
-          </MapHeaderContainer>
-          {nearDentalArray.length > 0 && (
+              <TouchableWithoutFeedback onPress={() => clickTimeFilter()}>
+                <FilterItemContainer
+                  style={[
+                    {marginLeft: 8},
+                    timeFilter !== '' && {
+                      backgroundColor: '#ffffff',
+                      borderColor: '#9AA2A9',
+                    },
+                    styles.filterItemShadow,
+                  ]}>
+                  <FilterItemText
+                    style={timeFilter !== '' && {color: '#4E525D'}}>
+                    {timeFilter ? timeFilter.slice(0, 5) : '방문시간'}
+                  </FilterItemText>
+                </FilterItemContainer>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback onPress={() => changeHolidayFilter()}>
+                <FilterItemContainer
+                  style={[
+                    {marginLeft: 8},
+                    holidayFilter && {
+                      backgroundColor: '#ffffff',
+                      borderColor: '#9AA2A9',
+                    },
+                    styles.filterItemShadow,
+                  ]}>
+                  <FilterItemText style={holidayFilter && {color: '#4E525D'}}>
+                    {'일요일･공휴일 진료'}
+                  </FilterItemText>
+                </FilterItemContainer>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback onPress={() => changeParkingFilter()}>
+                <FilterItemContainer
+                  style={[
+                    {marginLeft: 8, marginRight: 16},
+                    parkingFilter === 'y' && {
+                      backgroundColor: '#ffffff',
+                      borderColor: '#9AA2A9',
+                    },
+                    styles.filterItemShadow,
+                  ]}>
+                  <FilterItemText
+                    style={parkingFilter === 'y' && {color: '#4E525D'}}>
+                    {'주차가능'}
+                  </FilterItemText>
+                </FilterItemContainer>
+              </TouchableWithoutFeedback>
+            </ScrollView>
+          </FilterListContainer>
+          <MapActionButtonContainer>
+            <TouchableHighlight
+              style={{borderRadius: 3}}
+              activeOpacity={0.85}
+              onPress={() => clickMyLocationTrackingButton()}>
+              <MyLocationTrackingButton style={styles.mapActionButtonShadow}>
+                <TargetIcon
+                  source={require('~/Assets/Images/Map/ic_target.png')}
+                />
+              </MyLocationTrackingButton>
+            </TouchableHighlight>
+          </MapActionButtonContainer>
+        </MapHeaderContainer>
+        {nearDentalArray.length > 0 && (
           <DentalListContainer>
-          <MapInsetBottomShadow style={styles.insetShadow} />
-          <ViewDentalListContainer>
-          <TouchableWithoutFeedback onPress={() => moveToDentalList()}>
-            <ViewDentalListButton>
-              <ViewDentalListIcon
-              source={require('~/Assets/Images/Map/ic_viewDentalList.png')}/>
-              <ViewDentalListText>{'목록보기'}</ViewDentalListText>
-            </ViewDentalListButton>
-          </TouchableWithoutFeedback>
-          </ViewDentalListContainer>
-          <DentalCarouselList
-            searchedDentalArr={nearDentalArray}
-            moveToDentalDetail={moveToDentalDetail}
-            onSnapToDentalCarouselItem={onSnapToDentalCarouselItem}
-            todayIndex={todayIndex}
-            selectedDentalIndex={selectedDentalIndex}
-            dentalCarouselRef={dentalCarouselRef}
-          />
+            <MapInsetBottomShadow style={styles.insetShadow} />
+            <ViewDentalListContainer>
+              <TouchableWithoutFeedback onPress={() => moveToDentalList()}>
+                <ViewDentalListButton>
+                  <ViewDentalListIcon
+                    source={require('~/Assets/Images/Map/ic_viewDentalList.png')}
+                  />
+                  <ViewDentalListText>{'목록보기'}</ViewDentalListText>
+                </ViewDentalListButton>
+              </TouchableWithoutFeedback>
+            </ViewDentalListContainer>
+            <DentalCarouselList
+              searchedDentalArr={nearDentalArray}
+              moveToDentalDetail={moveToDentalDetail}
+              onSnapToDentalCarouselItem={onSnapToDentalCarouselItem}
+              todayIndex={todayIndex}
+              selectedDentalIndex={selectedDentalIndex}
+              dentalCarouselRef={dentalCarouselRef}
+            />
           </DentalListContainer>
-          )}
+        )}
         {loadingGetDental && (
           <LoadingGetNearDentalContainer>
-          <ActivityIndicator
-          color={"#000000"}
-          style={{zIndex: 10}}/>
+            <ActivityIndicator color={'#000000'} style={{zIndex: 10}} />
           </LoadingGetNearDentalContainer>
         )}
-        </MapContainer>
-        <Modal
-          isVisible={visibleDayFilterModal}
-          style={styles.dayFilterModalView}
-          onBackdropPress={() => cancelDayFilter()}
-          swipeDirection={['down']}
-          onSwipeComplete={() => setVisibleDayFilterModal(false)}
-          backdropOpacity={0.25}>
-          <DetailFilterModalContainer>
-            <DetailFilterHeaderContainer>
-              <DetailFilterTitleText>{'방문일 설정'}</DetailFilterTitleText>
-            </DetailFilterHeaderContainer>
-            <DetailFilterListContainer>
-              <FlatList
+      </MapContainer>
+      <Modal
+        isVisible={visibleDayFilterModal}
+        style={styles.dayFilterModalView}
+        onBackdropPress={() => cancelDayFilter()}
+        swipeDirection={['down']}
+        onSwipeComplete={() => setVisibleDayFilterModal(false)}
+        backdropOpacity={0.25}>
+        <DetailFilterModalContainer>
+          <DetailFilterHeaderContainer>
+            <DetailFilterTitleText>{'방문일 설정'}</DetailFilterTitleText>
+          </DetailFilterHeaderContainer>
+          <DetailFilterListContainer>
+            <FlatList
               contentContainerStyle={{
                 paddingBottom: 16,
                 paddingLeft: 16,
                 paddingRight: 16,
               }}
-                columnWrapperStyle={{
-                  justifyContent: 'space-between',
-                  paddingTop: 16,
-                }}
-                data={dayList}
-                keyExtractor={(item, index) => `${index}`}
-                numColumns={5}
-                renderItem={renderDayFilterItem}
-              />
-            </DetailFilterListContainer>
-            <DetailFilterFooterContainer>
-              <TouchableWithoutFeedback onPress={() => initializeDayFilter()}>
+              columnWrapperStyle={{
+                justifyContent: 'space-between',
+                paddingTop: 16,
+              }}
+              data={dayList}
+              keyExtractor={(item, index) => `${index}`}
+              numColumns={5}
+              renderItem={renderDayFilterItem}
+            />
+          </DetailFilterListContainer>
+          <DetailFilterFooterContainer>
+            <TouchableWithoutFeedback onPress={() => initializeDayFilter()}>
               <InitializeFilterContainer>
-                <InitializeFilterText>{"방문일 초기화"}</InitializeFilterText>
+                <InitializeFilterText>{'방문일 초기화'}</InitializeFilterText>
                 <InitializeFilterIcon
-                source={require('~/Assets/Images/Map/ic_initialize.png')}/>
+                  source={require('~/Assets/Images/Map/ic_initialize.png')}
+                />
               </InitializeFilterContainer>
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback onPress={() => registerDayFilter()}>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => registerDayFilter()}>
               <RegisterFilterButton>
-                <RegisterFilterText>{"적용하기"}</RegisterFilterText>
+                <RegisterFilterText>{'적용하기'}</RegisterFilterText>
               </RegisterFilterButton>
+            </TouchableWithoutFeedback>
+          </DetailFilterFooterContainer>
+        </DetailFilterModalContainer>
+      </Modal>
+      <Modal
+        isVisible={visibleTimeFilterModal}
+        style={styles.timeFilterModalView}
+        onBackdropPress={() => cancelTimeFilter()}
+        backdropOpacity={0.25}>
+        <DetailFilterModalContainer>
+          <DetailFilterHeaderContainer>
+            <DetailFilterTitleText>{'방문시간 설정'}</DetailFilterTitleText>
+          </DetailFilterHeaderContainer>
+          <TimeFilterModalContainer>
+            <TimePickerContainer>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                style={{width: wp('20%'), height: hp('26%')}}
+                onValueChange={(itemValue, itemIndex) =>
+                  onValueChangeTimeSlotPicker(itemValue, itemIndex)
+                }
+                selectedValue={timeSlotPickerValue}>
+                <Picker.Item label={'오전'} value="오전" />
+                <Picker.Item label={'오후'} value="오후" />
+              </Picker>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                selectedValue={hourPickerValue}
+                onValueChange={(itemValue, itemIndex) =>
+                  onValueChangeHourPicker(itemValue, itemIndex)
+                }
+                style={{width: wp('20%'), height: hp('26%')}}>
+                <Picker.Item label={'1'} value="1" />
+                <Picker.Item label={'2'} value="2" />
+                <Picker.Item label={'3'} value="3" />
+                <Picker.Item label={'4'} value="4" />
+                <Picker.Item label={'5'} value="5" />
+                <Picker.Item label={'6'} value="6" />
+                <Picker.Item label={'7'} value="7" />
+                <Picker.Item label={'8'} value="8" />
+                <Picker.Item label={'9'} value="9" />
+                <Picker.Item label={'10'} value="10" />
+                <Picker.Item label={'11'} value="11" />
+                <Picker.Item label={'12'} value="12" />
+              </Picker>
+              <TimePickerLabelText>{':'}</TimePickerLabelText>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                style={{width: wp('20%'), height: hp('26%')}}
+                onValueChange={(itemValue, itemIndex) =>
+                  onValueChangeMinutePicker(itemValue, itemIndex)
+                }
+                selectedValue={minutePickerValue}>
+                <Picker.Item label={'00'} value="00" />
+                <Picker.Item label={'15'} value="15" />
+                <Picker.Item label={'30'} value="30" />
+                <Picker.Item label={'45'} value="45" />
+              </Picker>
+            </TimePickerContainer>
+            <DetailFilterFooterContainer>
+              <TouchableWithoutFeedback onPress={() => initializeTimeFilter()}>
+                <InitializeFilterContainer>
+                  <InitializeFilterText>
+                    {'방문시간 초기화'}
+                  </InitializeFilterText>
+                  <InitializeFilterIcon
+                    source={require('~/Assets/Images/Map/ic_initialize.png')}
+                  />
+                </InitializeFilterContainer>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback onPress={() => registerTimeFilter()}>
+                <RegisterFilterButton>
+                  <RegisterFilterText>{'적용하기'}</RegisterFilterText>
+                </RegisterFilterButton>
               </TouchableWithoutFeedback>
             </DetailFilterFooterContainer>
-          </DetailFilterModalContainer>
-        </Modal>
-        <Modal
-          isVisible={visibleTimeFilterModal}
-          style={styles.timeFilterModalView}
-          onBackdropPress={() => cancelTimeFilter()}
-          backdropOpacity={0.25}>
-          <DetailFilterModalContainer>
-            <DetailFilterHeaderContainer>
-              <DetailFilterTitleText>{'방문시간 설정'}</DetailFilterTitleText>
-            </DetailFilterHeaderContainer>
-            <TimeFilterModalContainer>
-              <TimePickerContainer>
-                <Picker
-                  itemStyle={{fontSize: 20, fontWeight: "700", lineHeight: 24, color: "#131F3C"}}
-                  style={{width: wp('20%'), height: hp('26%')}}
-                  onValueChange={(itemValue, itemIndex) =>
-                    onValueChangeTimeSlotPicker(itemValue, itemIndex)
-                  }
-                  selectedValue={timeSlotPickerValue}>
-                  <Picker.Item label={'오전'} value="오전" />
-                  <Picker.Item label={'오후'} value="오후" />
-                </Picker>
-                <Picker
-                  itemStyle={{fontSize: 20, fontWeight: "700", lineHeight: 24, color: "#131F3C"}}
-                  selectedValue={hourPickerValue}
-                  onValueChange={(itemValue, itemIndex) =>
-                    onValueChangeHourPicker(itemValue, itemIndex)
-                  }
-                  style={{width: wp('20%'), height: hp('26%')}}>
-                  <Picker.Item label={'1'} value="1" />
-                  <Picker.Item label={'2'} value="2" />
-                  <Picker.Item label={'3'} value="3" />
-                  <Picker.Item label={'4'} value="4" />
-                  <Picker.Item label={'5'} value="5" />
-                  <Picker.Item label={'6'} value="6" />
-                  <Picker.Item label={'7'} value="7" />
-                  <Picker.Item label={'8'} value="8" />
-                  <Picker.Item label={'9'} value="9" />
-                  <Picker.Item label={'10'} value="10" />
-                  <Picker.Item label={'11'} value="11" />
-                  <Picker.Item label={'12'} value="12" />
-                </Picker>
-                <TimePickerLabelText>{':'}</TimePickerLabelText>
-                <Picker
-                  itemStyle={{fontSize: 20, fontWeight: "700", lineHeight: 24, color: "#131F3C"}}
-                  style={{width: wp('20%'), height: hp('26%')}}
-                  onValueChange={(itemValue, itemIndex) =>
-                    onValueChangeMinutePicker(itemValue, itemIndex)
-                  }
-                  selectedValue={minutePickerValue}>
-                  <Picker.Item label={'00'} value="00" />
-                  <Picker.Item label={'15'} value="15" />
-                  <Picker.Item label={'30'} value="30" />
-                  <Picker.Item label={'45'} value="45" />
-                </Picker>
-              </TimePickerContainer>
-              <DetailFilterFooterContainer>
-                <TouchableWithoutFeedback onPress={() => initializeTimeFilter()}>
-                <InitializeFilterContainer>
-                  <InitializeFilterText>{"방문시간 초기화"}</InitializeFilterText>
-                  <InitializeFilterIcon
-                  source={require('~/Assets/Images/Map/ic_initialize.png')}/>
-                </InitializeFilterContainer>
-                </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => registerTimeFilter()}>
-                <RegisterFilterButton>
-                  <RegisterFilterText>{"적용하기"}</RegisterFilterText>
-                </RegisterFilterButton>
-                </TouchableWithoutFeedback>
-              </DetailFilterFooterContainer>
-              </TimeFilterModalContainer>
-          </DetailFilterModalContainer>
-        </Modal>
-        <ActionSheet
-          ref={timeFilterActionSheet}
-          options={['취소', '수정하기', '삭제하기']}
-          cancelButtonIndex={0}
-          destructiveButtonIndex={2}
-          onPress={(index: any) => onPressTimeFilterActionSheet(index)}
-        />
-      </Container>
+          </TimeFilterModalContainer>
+        </DetailFilterModalContainer>
+      </Modal>
+      <ActionSheet
+        ref={timeFilterActionSheet}
+        options={['취소', '수정하기', '삭제하기']}
+        cancelButtonIndex={0}
+        destructiveButtonIndex={2}
+        onPress={(index: any) => onPressTimeFilterActionSheet(index)}
+      />
+    </Container>
   );
 };
 

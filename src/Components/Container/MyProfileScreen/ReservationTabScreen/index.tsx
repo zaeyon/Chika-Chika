@@ -25,12 +25,12 @@ const ReservationTabScreen = ({navigation, route}: Props) => {
           onPress: headerLeftAction,
           type: 'arrow',
         }}
-        headerTitle="예약"
+        headerTitle="예약피드"
       />
       <ReservationScreen
         navigation={navigation}
         route={route}
-        reservations={[{id: '1'}]}
+        reservations={[]}
       />
     </ContainerView>
   );

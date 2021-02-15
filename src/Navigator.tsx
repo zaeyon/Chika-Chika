@@ -268,7 +268,7 @@ function HomeStackScreen() {
     <HomeStack.Navigator
       headerMode="none"
       screenOptions={{
-        gestureEnabled: false,
+        gestureEnabled: true,
       }}>
       <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
       <HomeStack.Screen
@@ -289,6 +289,10 @@ function HomeStackScreen() {
         options={{
           gestureEnabled: false,
         }}
+      />
+      <HomeStack.Screen
+        name="HometownSettingScreen"
+        component={HometownSettingScreen}
       />
       <HomeStack.Screen
         name="TotalKeywordSearchStackScreen"
@@ -831,6 +835,14 @@ function BottomTab() {
       return false;
     }
 
+    if (routeName.name === 'CommunityStackScreen') {
+      return false;
+    }
+
+    if (routeName.name === 'HometownSettingScreen') {
+      return false;
+    }
+
     return true;
   };
 
@@ -1069,9 +1081,9 @@ const Navigator = () => {
     //getFcmToken();
 
     const setUserLogined = async (jwtToken: string, profile: object) => {
-      await dispatch(allActions.userActions.setUser({jwtToken, profile}))
-    }
-    
+      await dispatch(allActions.userActions.setUser({jwtToken, profile}));
+    };
+
     getUserInfo()
       .then((jwtToken) => {
         console.log('getUserInfo response', jwtToken);
@@ -1079,7 +1091,7 @@ const Navigator = () => {
           .then((response: any) => {
             const profile = response;
             console.log('profile', profile);
-          
+
             dispatch(allActions.userActions.setHometown(response.Residences));
 
             setUserLogined(jwtToken, profile);

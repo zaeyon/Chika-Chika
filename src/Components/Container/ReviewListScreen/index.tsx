@@ -357,9 +357,8 @@ const ReviewListScreen = ({navigation}: Props) => {
   const [changingReviewList, setChangingReviewList] = useState<boolean>(false);
 
   const dispatch = useDispatch();
-  const currentUser = useSelector((state: any) => state.currentUser);
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
   const reviewList = useSelector((state: any) => state.reviewList);
-  const jwtToken = currentUser.jwtToken;
 
   useEffect(() => {
     offset = 0;

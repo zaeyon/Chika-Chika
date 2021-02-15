@@ -28,9 +28,10 @@ interface Props {
 const EditProfileTabScreen = ({navigation, route}: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.jwtToken;
-  const profile = currentUser.profile;
+  const hometown = useSelector((state: any) => state.currentUser.hometown);
+  const profile = useSelector((state: any) => state.currentUser.profile);
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -92,9 +93,10 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
 
   const changeProfileImage = useCallback((selectedImage: any) => {
     setIsLoading(true);
+    console.log('before S3', selectedImage);
     uploadImageToS3(selectedImage, 'userProfileImgs').then((res: any) => {
-      console.log('change profile img', res);
       const form = {
+        userProfileImgKeyValue: res.response.key,
         profileImg: res.response.location,
       };
       updateUserProfile(form, '프로필 사진이 변경되었습니다.', () => {
@@ -190,7 +192,8 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
         moveToGallery={moveToGallery}
         moveToHomeTownSetting={moveToHomeTownSetting}
         moveToPhoneVerify={moveToPhoneVerify}
-        currentUser={currentUser}
+        profile={profile}
+        hometown={hometown}
         changeProfileNickname={changeProfileNickname}
         changeProfileGender={changeProfileGender}
         changeProfileBirthdate={changeProfileBirthdate}

@@ -165,8 +165,7 @@ const CommentItem = ({
   isVisibleReplyButton,
   moveToAnotherProfile,
 }: Props) => {
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const userProfile = currentUser.profile;
+  const userProfile = useSelector((state: any) => state.currentUser.profile);
   const containerRef: any = useRef();
   const [positionY, setPositionY] = useState(0);
 

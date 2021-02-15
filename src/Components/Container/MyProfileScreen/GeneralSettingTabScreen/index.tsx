@@ -22,9 +22,8 @@ interface Props {
 }
 
 const GeneralSettingTabScreen = ({navigation, route}: Props) => {
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.jwtToken;
-  const profile = currentUser.profile;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const profile = useSelector((state: any) => state.currentUser.profile);
 
   const headerLeftAction = () => {
     navigation.goBack();

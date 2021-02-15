@@ -62,13 +62,13 @@ interface Props {
   commentList: Array<any>;
   commentCount: number;
   navigation: any;
-  currentUser: any;
+  profile: any;
   postId: string;
   postType: string;
 }
 
 const PreviewCommentList = ({
-  currentUser,
+  profile,
   commentList,
   commentCount,
   navigation,
@@ -193,13 +193,13 @@ const PreviewCommentList = ({
   const openCommentActionSheet = useCallback(
     (userId: string, nickname: string, commentId: number) => {
       setSelectedCommentId(commentId);
-      if (userId === currentUser.profile.id) {
+      if (userId === profile.id) {
         ownCommentActionSheetRef.current.show();
       } else {
         otherCommentActionSheetRef.current.show();
       }
     },
-    [currentUser],
+    [profile],
   );
 
   const moveToAnotherProfile = useCallback(

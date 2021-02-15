@@ -326,7 +326,11 @@ interface Props {
     visibleElapsedtime: boolean,
     elapsedTime: string,
   ) => void;
-  moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
+  moveToAnotherProfile: (
+    userId: string,
+    nickname: string,
+    profileImageUri: string,
+  ) => void;
   moveToDentalDetail: (dentalId: number) => void;
 }
 
@@ -353,17 +357,16 @@ const ReviewItem = ({
   dentalObj,
   moveToDentalDetail,
 }: Props) => {
-
-  const [formattedDescriptions, setFormattedDescriptions] = useState<string>("");
-  const currentUser = useSelector((state: any) => state.currentUser);
+  const [formattedDescriptions, setFormattedDescriptions] = useState<string>(
+    '',
+  );
   const dispatch = useDispatch();
-  const jwtToken = currentUser.jwtToken;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 
   let formatedCreatedAtDate = '';
   let formatedTreatmentDate = '';
 
   useEffect(() => {
-
     imageArray.forEach((item, index) => {
       if (item.img_before_after === 'after') {
         const tmp = item;
@@ -371,27 +374,29 @@ const ReviewItem = ({
         imageArray.unshift(tmp);
       }
     });
-    
+
     if (descriptions.length > 100) {
       setFormattedDescriptions(descriptions.substr(0, 100) + ' ...');
     } else {
-      setFormattedDescriptions(descriptions)
+      setFormattedDescriptions(descriptions);
     }
+  }, [imageArray, descriptions]);
 
-  }, [imageArray, descriptions])
+  const formatDate = useCallback(
+    (createdAt: string) => {
+      const currentYear = new Date(Date.now()).getFullYear();
 
-  const formatDate = useCallback((createdAt: string) => {
-    const currentYear = new Date(Date.now()).getFullYear();
+      const [date, time] = createdAt.split(' ');
+      const [year, month, day] = date.split('-');
 
-    const [date, time] = createdAt.split(' ');
-    const [year, month, day] = date.split('-');
-
-    if (String(currentYear) === year) {
-      return parseInt(month) + '월 ' + parseInt(day) + '일';
-    } else {
-      return year + '년 ' + parseInt(month) + '월 ' + parseInt(day) + '일';
-    }
-  }, [createdAt]);
+      if (String(currentYear) === year) {
+        return parseInt(month) + '월 ' + parseInt(day) + '일';
+      } else {
+        return year + '년 ' + parseInt(month) + '월 ' + parseInt(day) + '일';
+      }
+    },
+    [createdAt],
+  );
 
   const formatTreatmentDate = (date: string) => {
     const dateArray = date.split('-');
@@ -466,7 +471,10 @@ const ReviewItem = ({
   const renderTreatmentItem = ({item, index}: any) => {
     return (
       <TagBackground>
-        <TagText><HashText>{"# "}</HashText>{item.name}</TagText>
+        <TagText>
+          <HashText>{'# '}</HashText>
+          {item.name}
+        </TagText>
       </TagBackground>
     );
   };
@@ -494,7 +502,13 @@ const ReviewItem = ({
       <Container>
         <ProfileContainer>
           <TouchableWithoutFeedback
-            onPress={() => moveToAnotherProfile(writer.id, writer.nickname, writer.profileImage)}>
+            onPress={() =>
+              moveToAnotherProfile(
+                writer.id,
+                writer.nickname,
+                writer.profileImage,
+              )
+            }>
             <ProfileLeftContainer>
               <ProfileImage
                 source={{
@@ -504,9 +518,7 @@ const ReviewItem = ({
               <NicknameCreatedAtContainer>
                 <NicknameText>{writer.nickname}</NicknameText>
                 <CreatedAtText>
-                  {visibleElapsedTime
-                    ? elapsedTimeText
-                    : formatDate(createdAt)}
+                  {visibleElapsedTime ? elapsedTimeText : formatDate(createdAt)}
                 </CreatedAtText>
               </NicknameCreatedAtContainer>
             </ProfileLeftContainer>
@@ -537,7 +549,7 @@ const ReviewItem = ({
             </InfoItemContainer>
           </DateRatingContainer>
           <DescripContainer>
-            <DescripText>{(formattedDescriptions)}</DescripText>
+            <DescripText>{formattedDescriptions}</DescripText>
           </DescripContainer>
         </InfoContainer>
         <ActionContainer>
@@ -545,29 +557,30 @@ const ReviewItem = ({
             <TouchableWithoutFeedback onPress={() => clickLike()}>
               <LikeContainer>
                 <LikeIcon
-                  style={!isCurUserLikeProp && {tintColor: "#131F3C"}}
+                  style={!isCurUserLikeProp && {tintColor: '#131F3C'}}
                   source={
                     isCurUserLikeProp
-                    ? require('~/Assets/Images/Indicator/list/ic_like_focus.png')
-                    : require('~/Assets/Images/Indicator/list/ic_like_unfocus.png')}
+                      ? require('~/Assets/Images/Indicator/list/ic_like_focus.png')
+                      : require('~/Assets/Images/Indicator/list/ic_like_unfocus.png')
+                  }
                 />
                 <IndicatorCountText>{likeCountProp}</IndicatorCountText>
               </LikeContainer>
             </TouchableWithoutFeedback>
             <CommentContainer>
               <CommentIcon
-                style={{tintColor: "#131F3C"}}
+                style={{tintColor: '#131F3C'}}
                 source={require('~/Assets/Images/Indicator/list/ic_comment.png')}
               />
               <IndicatorCountText>{commentCount}</IndicatorCountText>
             </CommentContainer>
           </LikeCommentContainer>
-            <TouchableWithoutFeedback onPress={() => clickScrap()}>
+          <TouchableWithoutFeedback onPress={() => clickScrap()}>
             <ScrapContainer>
               <ScrapIcon
                 source={require('~/Assets/Images/Indicator/list/ic_scrap_unfocus.png')}
               />
-              <ScrapText>{"저장하기"}</ScrapText>
+              <ScrapText>{'저장하기'}</ScrapText>
             </ScrapContainer>
           </TouchableWithoutFeedback>
         </ActionContainer>
