@@ -110,7 +110,9 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   const [refreshing, setRefreshing] = useState(false);
   const [floatingVisible, setFloatingVisible] = useState(false);
 
-  const currentUser = useSelector((state: any) => state.currentUser);
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const profile = useSelector((state: any) => state.currentUser.profile);
+
   const postList = useSelector((state: any) => {
     if (route.params.type === 'Question') {
       console.log('Q');
@@ -138,8 +140,6 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     postList?.find((item: any) => item.id === route.params.id),
   );
   const [categoryTitle, setCategoryTitle] = useState(postData?.type);
-
-  const jwtToken = currentUser.jwtToken;
 
   const dispatch = useDispatch();
 
@@ -187,7 +187,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
       <TouchableWithoutFeedback onPress={() => setFloatingVisible(false)}>
         <BackdropView>
           <FloatingView>
-            {postData.userId === currentUser.profile.id ? (
+            {postData.userId === profile.id ? (
               <>
                 <TouchableOpacity onPress={() => onPressDeletePost()}>
                   <FloatingContentView>
@@ -463,7 +463,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
             <PreviewCommentList
               commentList={commentArray}
               commentCount={commentCount}
-              currentUser={currentUser}
+              profile={profile}
               navigation={navigation}
               postId={postData.id}
               postType="community"

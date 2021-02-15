@@ -21,7 +21,7 @@ import AboveKeyboard from 'react-native-above-keyboard';
 import ActionSheet from 'react-native-actionsheet';
 import Modal from 'react-native-modal';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
-import DeviceInfo from 'react-native-device-info'; 
+import DeviceInfo from 'react-native-device-info';
 
 import {isIphoneX} from 'react-native-iphone-x-helper';
 
@@ -117,7 +117,6 @@ const ViewMapIcon = Styled.Image`
 width: ${wp('5.3%')}px;
 height: ${wp('5.3%')}px;
 `;
-
 
 const ViewMapText = Styled.Text`
 margin-left: 4px;
@@ -282,7 +281,6 @@ width: ${wp('5.3%')}px;
 height: ${wp('5.3%')}px;
 `;
 
-
 const DetailFilterFooterContainer = Styled.View`
 padding-top: 16px;
 padding-left: 0px;
@@ -397,8 +395,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const [timeSlotPickerValue, setTimeSlotPickerValue] = useState<string>(
     '오전',
   );
-  
-  const [loadingSearchDental, setLoadingSearchDental] = useState<boolean>(false);
+
+  const [loadingSearchDental, setLoadingSearchDental] = useState<boolean>(
+    false,
+  );
   const [loadingMoreDental, setLoadingMoreDental] = useState<boolean>(false);
   const [refreshingDentalFlat, setRefreshingDentalFlat] = useState<boolean>(
     false,
@@ -408,16 +408,16 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     route.params?.requestType === 'search' ? true : false,
   );
 
-
-  const [query, setQuery] = useState<string>("");
+  const [query, setQuery] = useState<string>('');
 
   const timeFilterActionSheet = createRef<any>();
   const searchInputRef = createRef<any>();
-  const currentUser = useSelector((state: any) => state.currentUser);
+
   const currentLocation = useSelector((state: any) => state.currentUser)
     .currentLocation;
   const dispatch = useDispatch();
-  const jwtToken = currentUser.jwtToken;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+
   const todayIndex = new Date().getDay();
 
   const long = route.params?.currentMapLongitude;
@@ -446,7 +446,9 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const searchedDentalArray = dentalMapRedux.searchedDentalArray;
   const autoCompletedKeywordArr = dentalMapRedux.autoCompletedKeywordArr;
 
-  const searchRecordArray = useSelector((state: any) => state.currentUser).searchRecordArray;
+  const searchRecordArray = useSelector(
+    (state: any) => state.currentUser.searchRecordArray,
+  );
 
   const isNearDentalList = useRef<boolean>(route.params?.isNearDentalList);
   const noMoreDentalData = useRef<boolean>(false);
@@ -454,7 +456,6 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const keywordRef = useRef<any>();
 
   useEffect(() => {
-
     return () => {
       dispatch(allActions.dentalMapActions.setAutoCompletedKeywordArr([]));
     };
@@ -465,12 +466,11 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   const moveToDentalMap = () => {
+    console.log('moveToDentalMap searchedDentalArray', searchedDentalArray);
 
-    console.log("moveToDentalMap searchedDentalArray", searchedDentalArray);
-    
     let searchedDentalLocation;
-    
-    if(searchedDentalArray[0]) {
+
+    if (searchedDentalArray[0]) {
       searchedDentalLocation = {
         coordinate: {
           latitude: Number(searchedDentalArray[0].geographLat),
@@ -479,7 +479,9 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         zoom: 13,
       };
 
-      dispatch(allActions.dentalMapActions.setMapLocation(searchedDentalLocation))
+      dispatch(
+        allActions.dentalMapActions.setMapLocation(searchedDentalLocation),
+      );
     }
 
     navigation.navigate('NearDentalMap', {
@@ -489,15 +491,15 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       searchedDentalLocation: searchedDentalLocation,
     });
 
-
     setTimeout(() => {
       dispatch(allActions.dentalMapActions.setSearchedKeyword(query));
-      dispatch(allActions.dentalMapActions.setNearDentalArray(searchedDentalArray));
-    }, 10)
+      dispatch(
+        allActions.dentalMapActions.setNearDentalArray(searchedDentalArray),
+      );
+    }, 10);
   };
 
   const onChangeSearchInput = (text: string) => {
-
     inputingText = text;
     setQuery(text);
 
@@ -511,7 +513,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const onSubmitSearchInput = (keyword: string) => {
     console.log('onSubmitSearchInput keyword', keyword);
 
-    if(keyword.trim() !== '') {
+    if (keyword.trim() !== '') {
       setIsFocusedSearchInput(false);
       searchDental(keyword);
     }
@@ -555,7 +557,9 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         setLoadingSearchDental(false);
 
         if (response.length > 0) {
-          dispatch(allActions.dentalMapActions.setSearchedDentalArray(response));
+          dispatch(
+            allActions.dentalMapActions.setSearchedDentalArray(response),
+          );
           isNearDentalList.current = false;
         } else {
           dispatch(allActions.dentalMapActions.setSearchedDentalArray([]));
@@ -597,16 +601,18 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       parkingFilter,
     })
       .then((response: any) => {
-        console.log("filterDental 실행")
+        console.log('filterDental 실행');
         setLoadingSearchDental(false);
         console.log('GETDentalTotalSearch response', response);
 
         if (response.length > 0) {
-          dispatch(allActions.dentalMapActions.setSearchedDentalArray(response));
-          
+          dispatch(
+            allActions.dentalMapActions.setSearchedDentalArray(response),
+          );
+
           isNearDentalList.current = false;
         } else {
-          dispatch(allActions.dentalMapActions.setSearchedDentalArray([]))
+          dispatch(allActions.dentalMapActions.setSearchedDentalArray([]));
         }
       })
       .catch((error: any) => {
@@ -628,7 +634,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       parkingFilter,
     })
       .then((response: any) => {
-        console.log('GETAroundDental response in DentalTotalSearchScreen', response);
+        console.log(
+          'GETAroundDental response in DentalTotalSearchScreen',
+          response,
+        );
         setRefreshingDentalFlat(false);
         dispatch(allActions.dentalMapActions.setSearchedDentalArray(response));
       })
@@ -637,7 +646,6 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         setRefreshingDentalFlat(false);
       });
   };
-
 
   const filterNearDental = (
     tmpDayFilter: any,
@@ -664,7 +672,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       parkingFilter,
     })
       .then((response) => {
-        console.log('GETAroundDental response in DentalTotalSearchScreen', response);
+        console.log(
+          'GETAroundDental response in DentalTotalSearchScreen',
+          response,
+        );
         setLoadingSearchDental(false);
         dispatch(allActions.dentalMapActions.setSearchedDentalArray(response));
       })
@@ -689,16 +700,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const changeHolidayFilter = () => {
     dispatch(allActions.dentalFilterActions.setHolidayFilter(!holidayFilter));
 
-    if(isNearDentalList.current) {
+    if (isNearDentalList.current) {
       filterNearDental(dayFilter, timeFilter, !holidayFilter, parkingFilter);
     } else {
-      filterDental(
-        query,
-        dayFilter,
-        timeFilter,
-        !holidayFilter,
-        parkingFilter
-      );
+      filterDental(query, dayFilter, timeFilter, !holidayFilter, parkingFilter);
     }
   };
 
@@ -706,15 +711,14 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     if (parkingFilter === 'y') {
       dispatch(allActions.dentalFilterActions.setParkingFilter('n'));
 
-      if(isNearDentalList.current) {
+      if (isNearDentalList.current) {
         filterNearDental(dayFilter, timeFilter, holidayFilter, 'n');
       } else {
         filterDental(query, dayFilter, timeFilter, holidayFilter, 'n');
       }
-      
     } else if (parkingFilter === 'n') {
       dispatch(allActions.dentalFilterActions.setParkingFilter('y'));
-      if(isNearDentalList.current) {
+      if (isNearDentalList.current) {
         filterNearDental(dayFilter, timeFilter, holidayFilter, 'y');
       } else {
         filterDental(query, dayFilter, timeFilter, holidayFilter, 'y');
@@ -745,19 +749,20 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     setVisibleDayFilterModal(false);
   };
 
-
   const initializeDayFilter = () => {
-
     if (selectedDayList.length > 0) {
-
       const tmpDayFilter = new Array([]);
 
       dispatch(allActions.dentalFilterActions.initializeDayList());
       dispatch(allActions.dentalFilterActions.setSelectedDayList([]));
 
-
-      if(isNearDentalList.current) {
-        filterNearDental(tmpDayFilter, timeFilter, holidayFilter, parkingFilter); 
+      if (isNearDentalList.current) {
+        filterNearDental(
+          tmpDayFilter,
+          timeFilter,
+          holidayFilter,
+          parkingFilter,
+        );
       } else {
         filterDental(
           query,
@@ -770,7 +775,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     }
 
     setVisibleDayFilterModal(false);
-  }
+  };
 
   const registerDayFilter = () => {
     var tmpDayList = dayList;
@@ -792,8 +797,13 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       );
       offset = 0;
 
-      if(isNearDentalList.current) {
-        filterNearDental(tmpDayFilter, timeFilter, holidayFilter, parkingFilter)
+      if (isNearDentalList.current) {
+        filterNearDental(
+          tmpDayFilter,
+          timeFilter,
+          holidayFilter,
+          parkingFilter,
+        );
       } else {
         filterDental(
           query,
@@ -811,7 +821,6 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const cancelTimeFilter = () => {
     setVisibleTimeFilterModal(false);
   };
-
 
   const deleteAllSearchRecord = () => {
     const searchId = 'all';
@@ -864,16 +873,19 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     setTimeSlotPickerValue(itemValue);
   };
 
-
   const initializeTimeFilter = () => {
-
-    if(timeFilter !== '') {
+    if (timeFilter !== '') {
       dispatch(allActions.dentalFilterActions.setTimeFilter(''));
 
-      const tmpTimeFilter = "";
+      const tmpTimeFilter = '';
 
-      if(isNearDentalList.current) {
-        filterNearDental(dayFilter, tmpTimeFilter, holidayFilter, parkingFilter)
+      if (isNearDentalList.current) {
+        filterNearDental(
+          dayFilter,
+          tmpTimeFilter,
+          holidayFilter,
+          parkingFilter,
+        );
       } else {
         filterDental(
           query,
@@ -881,13 +893,11 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
           tmpTimeFilter,
           holidayFilter,
           parkingFilter,
-        )
+        );
       }
-
-
     }
     setVisibleTimeFilterModal(false);
-  }
+  };
 
   const registerTimeFilter = () => {
     setVisibleTimeFilterModal(false);
@@ -900,8 +910,13 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       if (timeFilter !== formattedTime) {
         dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
 
-        if(isNearDentalList.current) {
-          filterNearDental(dayFilter, formattedTime, holidayFilter, parkingFilter);
+        if (isNearDentalList.current) {
+          filterNearDental(
+            dayFilter,
+            formattedTime,
+            holidayFilter,
+            parkingFilter,
+          );
         } else {
           filterDental(
             query,
@@ -911,7 +926,6 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
             parkingFilter,
           );
         }
-        
       }
     } else if (timeSlotPickerValue == '오후') {
       const formattedTime =
@@ -921,8 +935,13 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       if (timeFilter !== formattedTime) {
         dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
 
-        if(isNearDentalList.current) {
-          filterNearDental(dayFilter, formattedTime, holidayFilter,parkingFilter);
+        if (isNearDentalList.current) {
+          filterNearDental(
+            dayFilter,
+            formattedTime,
+            holidayFilter,
+            parkingFilter,
+          );
         } else {
           filterDental(
             query,
@@ -946,7 +965,11 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   const onEndReachedDentalFlat = () => {
-    if (!noMoreDentalData.current && !loadingMoreDental && !isNearDentalList.current) {
+    if (
+      !noMoreDentalData.current &&
+      !loadingMoreDental &&
+      !isNearDentalList.current
+    ) {
       setLoadingMoreDental(true);
       offset = offset + 20;
       getMoreDentalList();
@@ -978,8 +1001,9 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
 
         if (response.length > 0) {
           noMoreDentalData.current = false;
-          dispatch(allActions.dentalMapActions.addSearchedDentalArray(response));
-
+          dispatch(
+            allActions.dentalMapActions.addSearchedDentalArray(response),
+          );
         } else if (response.length === 0) {
           noMoreDentalData.current = true;
         }
@@ -997,7 +1021,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     offset = 0;
     const category = keywordRef?.current?.category;
 
-    if(isNearDentalList.current) { 
+    if (isNearDentalList.current) {
       const sort = 'd';
       GETAroundDental({
         jwtToken,
@@ -1009,17 +1033,18 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         holidayFilter,
         parkingFilter,
       })
-      .then((response: any) => {
-        console.log('GETAroundDental response in NearDentalMap', response);
-        setRefreshingDentalFlat(false);
-        dispatch(allActions.dentalMapActions.setSearchedDentalArray(response));
-      })
-      .catch((error) => {
-        console.log('GETAroundDental error', error);
-        setRefreshingDentalFlat(false);
-      });
+        .then((response: any) => {
+          console.log('GETAroundDental response in NearDentalMap', response);
+          setRefreshingDentalFlat(false);
+          dispatch(
+            allActions.dentalMapActions.setSearchedDentalArray(response),
+          );
+        })
+        .catch((error) => {
+          console.log('GETAroundDental error', error);
+          setRefreshingDentalFlat(false);
+        });
     } else {
-
       GETDentalTotalSearch({
         jwtToken,
         offset,
@@ -1038,9 +1063,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
           console.log('GETDentalTotalSearch response', response);
           setRefreshingDentalFlat(false);
           if (response.length > 0) {
-          
-            dispatch(allActions.dentalMapActions.setSearchedDentalArray(response));
-      
+            dispatch(
+              allActions.dentalMapActions.setSearchedDentalArray(response),
+            );
+
             isNearDentalList.current = false;
           } else {
             dispatch(allActions.dentalMapActions.setSearchedDentalArray([]));
@@ -1050,7 +1076,6 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
           setLoadingSearchDental(false);
           console.log('GETDentalTotalSearch error', error);
         });
-
     }
   };
 
@@ -1063,9 +1088,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   const selectAutoCompletedKeyword = (keyword: string, category: string) => {
-
-    console.log("selectAutoCompletedKeyword keyword", keyword);
-    console.log("selectAutoCompletedKeyword category", category);
+    console.log('selectAutoCompletedKeyword keyword', keyword);
+    console.log('selectAutoCompletedKeyword category', category);
 
     Keyboard.dismiss();
 
@@ -1076,14 +1100,14 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     keywordRef.current = {
       name: keyword,
       category: category,
-    }
+    };
   };
 
   const clearTextInput = () => {
-    setQuery("");
+    setQuery('');
     searchInputRef.current.clear();
     searchInputRef.current.focus();
-  }
+  };
 
   const renderFooterIndicator = () => {
     if (loadingMoreDental) {
@@ -1093,7 +1117,11 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         </FooterIndicatorContainer>
       );
     } else {
-      return <FooterIndicatorContainer style={{height: 10, backgroundColor: "#F5F7F9"}} />;
+      return (
+        <FooterIndicatorContainer
+          style={{height: 10, backgroundColor: '#F5F7F9'}}
+        />
+      );
     }
   };
 
@@ -1151,18 +1179,16 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         <TouchableWithoutFeedback
           onPress={() => selectDayFilterItem(item, index)}>
           <DetailFilterItemContainer
-            style={
-              [item.selected
+            style={[
+              item.selected
                 ? {backgroundColor: '#00D1FF'}
                 : {backgroundColor: '#ffffff'},
-              styles.detailFilterItemShadow]
-            }>
+              styles.detailFilterItemShadow,
+            ]}>
             <DetailFilterItemText
-            style={
-              item.selected
-              ? {color: "#FFFFFF"}
-              : {color: "#9AA2A9"}
-            }>{item.day + '요일'}</DetailFilterItemText>
+              style={item.selected ? {color: '#FFFFFF'} : {color: '#9AA2A9'}}>
+              {item.day + '요일'}
+            </DetailFilterItemText>
           </DetailFilterItemContainer>
         </TouchableWithoutFeedback>
       );
@@ -1178,11 +1204,12 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   return (
-
     <Container>
       <HeaderBar>
         <BackIconTouchableWithoutFeedback
-          onPress={() => {goBack()}}>
+          onPress={() => {
+            goBack();
+          }}>
           <BackIconView>
             <BackIconImage
               source={require('~/Assets/Images/Search/ic_back.png')}
@@ -1208,20 +1235,24 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
             returnKeyType={'search'}
           />
           {query.length > 0 && (
-          <TouchableWithoutFeedback onPress={() => clearTextInput()}>
-          <ClearTextButtonContainer>
-            <ClearTextIcon
-            source={require('~/Assets/Images/Search/ic_clearText.png')}/>
-          </ClearTextButtonContainer>
-          </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => clearTextInput()}>
+              <ClearTextButtonContainer>
+                <ClearTextIcon
+                  source={require('~/Assets/Images/Search/ic_clearText.png')}
+                />
+              </ClearTextButtonContainer>
+            </TouchableWithoutFeedback>
           )}
         </SearchInputContainer>
       </HeaderBar>
       <BodyContainer>
         <SearchResultContainer
-        style={!isFocusedSearchInput ? {zIndex: 1} : {zIndex: 0, opacity: 0}}>
+          style={!isFocusedSearchInput ? {zIndex: 1} : {zIndex: 0, opacity: 0}}>
           <FilterListContainer
-          style={[{backgroundColor: "#ffffff"}, styles.dentalFilterListShadow]}>
+            style={[
+              {backgroundColor: '#ffffff'},
+              styles.dentalFilterListShadow,
+            ]}>
             <ScrollView
               contentContainerStyle={[{paddingTop: 12, paddingBottom: 12}]}
               horizontal={true}
@@ -1234,47 +1265,62 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                 </TouchableWithoutFeedback>
               )}
               {selectedDayList.length === 1 && (
-                  <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
-                    <FilterItemContainer
-                      style={[{marginLeft: 16, backgroundColor: '#ffffff', borderColor: "#9AA2A9"}]}>
-                      <FilterItemText style={{color: '#4E525D'}}>
-                        {selectedDayList[0].day + '요일'}
-                      </FilterItemText>
-                    </FilterItemContainer>
-                  </TouchableWithoutFeedback>
-                )}
+                <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
+                  <FilterItemContainer
+                    style={[
+                      {
+                        marginLeft: 16,
+                        backgroundColor: '#ffffff',
+                        borderColor: '#9AA2A9',
+                      },
+                    ]}>
+                    <FilterItemText style={{color: '#4E525D'}}>
+                      {selectedDayList[0].day + '요일'}
+                    </FilterItemText>
+                  </FilterItemContainer>
+                </TouchableWithoutFeedback>
+              )}
               {selectedDayList.length > 1 && (
-                  <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
-                    <FilterItemContainer
-                      style={[{marginLeft: 16, backgroundColor: '#ffffff', borderColor: "#9AA2A9"}]}>
-                      {selectedDayList.map((item: any, index: number) => {
-                        if (index === 0) {
-                          return (
-                            <FilterItemText 
+                <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
+                  <FilterItemContainer
+                    style={[
+                      {
+                        marginLeft: 16,
+                        backgroundColor: '#ffffff',
+                        borderColor: '#9AA2A9',
+                      },
+                    ]}>
+                    {selectedDayList.map((item: any, index: number) => {
+                      if (index === 0) {
+                        return (
+                          <FilterItemText
                             key={index}
                             style={{color: '#4E525D'}}>
-                              {item.day + '요일'}
-                            </FilterItemText>
-                          );
-                        } else {
-                          return (
-                            <FilterItemText
+                            {item.day + '요일'}
+                          </FilterItemText>
+                        );
+                      } else {
+                        return (
+                          <FilterItemText
                             key={index}
                             style={{color: '#4E525D'}}>
-                              {', ' + item.day + '요일'}
-                            </FilterItemText>
-                          );
-                        }
-                      })}
-                    </FilterItemContainer>
-                  </TouchableWithoutFeedback>
-                )}
+                            {', ' + item.day + '요일'}
+                          </FilterItemText>
+                        );
+                      }
+                    })}
+                  </FilterItemContainer>
+                </TouchableWithoutFeedback>
+              )}
               <TouchableWithoutFeedback onPress={() => clickTimeFilter()}>
                 <FilterItemContainer
                   style={[
                     {marginLeft: 8},
-                    timeFilter !== '' && {backgroundColor: '#ffffff', borderColor: "#9AA2A9"},
-                    ]}>
+                    timeFilter !== '' && {
+                      backgroundColor: '#ffffff',
+                      borderColor: '#9AA2A9',
+                    },
+                  ]}>
                   <FilterItemText
                     style={timeFilter !== '' && {color: '#4E525D'}}>
                     {timeFilter ? timeFilter.slice(0, 5) : '방문시간'}
@@ -1285,7 +1331,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                 <FilterItemContainer
                   style={[
                     {marginLeft: 8},
-                    holidayFilter && {backgroundColor: '#ffffff', borderColor: "#9AA2A9"},
+                    holidayFilter && {
+                      backgroundColor: '#ffffff',
+                      borderColor: '#9AA2A9',
+                    },
                   ]}>
                   <FilterItemText style={holidayFilter && {color: '#4E525D'}}>
                     {'일요일･공휴일 진료'}
@@ -1296,7 +1345,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                 <FilterItemContainer
                   style={[
                     {marginLeft: 8, marginRight: 16},
-                    parkingFilter === 'y' && {backgroundColor: '#ffffff', borderColor: '#9AA2A9'},
+                    parkingFilter === 'y' && {
+                      backgroundColor: '#ffffff',
+                      borderColor: '#9AA2A9',
+                    },
                   ]}>
                   <FilterItemText
                     style={parkingFilter === 'y' && {color: '#4E525D'}}>
@@ -1309,7 +1361,13 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
           <DentalListContainer>
             {searchedDentalArray.length > 0 && (
               <FlatList
-              contentContainerStyle={{flex: 1, backgroundColor: "#F5F7F9", paddingBottom: DeviceInfo.hasNotch() ? hp('6.8%') : hp('7.5%')}}
+                contentContainerStyle={{
+                  flex: 1,
+                  backgroundColor: '#F5F7F9',
+                  paddingBottom: DeviceInfo.hasNotch()
+                    ? hp('6.8%')
+                    : hp('7.5%'),
+                }}
                 refreshing={refreshingDentalFlat}
                 onRefresh={onRefreshDentalFlat}
                 showsVerticalScrollIndicator={false}
@@ -1329,146 +1387,167 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
             )}
             {loadingSearchDental && (
               <LoadingSearchContainer>
-                <ActivityIndicator/>
+                <ActivityIndicator />
               </LoadingSearchContainer>
             )}
-            </DentalListContainer>
+          </DentalListContainer>
         </SearchResultContainer>
         <AutoCompletedKeywordContainer
-        style={isFocusedSearchInput ? {zIndex : 1} : {zIndex: 0, opacity: 0}}>
+          style={isFocusedSearchInput ? {zIndex: 1} : {zIndex: 0, opacity: 0}}>
           <AutoCompletedKeywordFlatList
-          deleteAllSearchRecord={deleteAllSearchRecord}
-          deleteSingleSearchRecord={deleteSingleSearchRecord}
-          searchRecordArray={searchRecordArray}
-          searchTotalKeyword={selectAutoCompletedKeyword}
-          query={query}
-          autoCompletedKeywordArr={autoCompletedKeywordArr}/>
+            deleteAllSearchRecord={deleteAllSearchRecord}
+            deleteSingleSearchRecord={deleteSingleSearchRecord}
+            searchRecordArray={searchRecordArray}
+            searchTotalKeyword={selectAutoCompletedKeyword}
+            query={query}
+            autoCompletedKeywordArr={autoCompletedKeywordArr}
+          />
         </AutoCompletedKeywordContainer>
-        </BodyContainer>
-        <Modal
-          isVisible={visibleDayFilterModal}
-          style={styles.dayFilterModalView}
-          onBackdropPress={() => cancelDayFilter()}
-          swipeDirection={['down']}
-          onSwipeComplete={() => setVisibleDayFilterModal(false)}
-          backdropOpacity={0.25}>
-          <DetailFilterModalContainer>
-            <DetailFilterHeaderContainer>
-              <DetailFilterTitleText>{'방문일 설정'}</DetailFilterTitleText>
-            </DetailFilterHeaderContainer>
-            <DetailFilterListContainer>
-              <FlatList
+      </BodyContainer>
+      <Modal
+        isVisible={visibleDayFilterModal}
+        style={styles.dayFilterModalView}
+        onBackdropPress={() => cancelDayFilter()}
+        swipeDirection={['down']}
+        onSwipeComplete={() => setVisibleDayFilterModal(false)}
+        backdropOpacity={0.25}>
+        <DetailFilterModalContainer>
+          <DetailFilterHeaderContainer>
+            <DetailFilterTitleText>{'방문일 설정'}</DetailFilterTitleText>
+          </DetailFilterHeaderContainer>
+          <DetailFilterListContainer>
+            <FlatList
               contentContainerStyle={{
                 paddingBottom: 16,
                 paddingLeft: 16,
                 paddingRight: 16,
               }}
-                columnWrapperStyle={{
-                  justifyContent: 'space-between',
-                  paddingTop: 16,
-                }}
-                data={dayList}
-                keyExtractor={(item, index) => `${index}`}
-                numColumns={5}
-                renderItem={renderDayFilterItem}
-              />
-            </DetailFilterListContainer>
-            <DetailFilterFooterContainer>
-              <TouchableWithoutFeedback onPress={() => initializeDayFilter()}>
+              columnWrapperStyle={{
+                justifyContent: 'space-between',
+                paddingTop: 16,
+              }}
+              data={dayList}
+              keyExtractor={(item, index) => `${index}`}
+              numColumns={5}
+              renderItem={renderDayFilterItem}
+            />
+          </DetailFilterListContainer>
+          <DetailFilterFooterContainer>
+            <TouchableWithoutFeedback onPress={() => initializeDayFilter()}>
               <InitializeFilterContainer>
-                <InitializeFilterText>{"방문일 초기화"}</InitializeFilterText>
+                <InitializeFilterText>{'방문일 초기화'}</InitializeFilterText>
                 <InitializeFilterIcon
-                source={require('~/Assets/Images/Map/ic_initialize.png')}/>
+                  source={require('~/Assets/Images/Map/ic_initialize.png')}
+                />
               </InitializeFilterContainer>
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback onPress={() => registerDayFilter()}>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => registerDayFilter()}>
               <RegisterFilterButton>
-                <RegisterFilterText>{"적용하기"}</RegisterFilterText>
+                <RegisterFilterText>{'적용하기'}</RegisterFilterText>
               </RegisterFilterButton>
+            </TouchableWithoutFeedback>
+          </DetailFilterFooterContainer>
+        </DetailFilterModalContainer>
+      </Modal>
+      <Modal
+        isVisible={visibleTimeFilterModal}
+        style={styles.timeFilterModalView}
+        onBackdropPress={() => cancelTimeFilter()}
+        backdropOpacity={0.25}>
+        <DetailFilterModalContainer>
+          <DetailFilterHeaderContainer>
+            <DetailFilterTitleText>{'방문시간 설정'}</DetailFilterTitleText>
+          </DetailFilterHeaderContainer>
+          <TimeFilterModalContainer>
+            <TimePickerContainer>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                style={{width: wp('20%'), height: hp('26%')}}
+                onValueChange={(itemValue, itemIndex) =>
+                  onValueChangeTimeSlotPicker(itemValue, itemIndex)
+                }
+                selectedValue={timeSlotPickerValue}>
+                <Picker.Item label={'오전'} value="오전" key={1} />
+                <Picker.Item label={'오후'} value="오후" key={2} />
+              </Picker>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                selectedValue={hourPickerValue}
+                onValueChange={(itemValue, itemIndex) =>
+                  onValueChangeHourPicker(itemValue, itemIndex)
+                }
+                style={{width: wp('20%'), height: hp('26%')}}>
+                <Picker.Item label={'1'} value="1" key={1} />
+                <Picker.Item label={'2'} value="2" key={2} />
+                <Picker.Item label={'3'} value="3" key={3} />
+                <Picker.Item label={'4'} value="4" key={4} />
+                <Picker.Item label={'5'} value="5" key={5} />
+                <Picker.Item label={'6'} value="6" key={6} />
+                <Picker.Item label={'7'} value="7" key={7} />
+                <Picker.Item label={'8'} value="8" key={8} />
+                <Picker.Item label={'9'} value="9" key={9} />
+                <Picker.Item label={'10'} value="10" key={10} />
+                <Picker.Item label={'11'} value="11" key={11} />
+                <Picker.Item label={'12'} value="12" key={12} />
+              </Picker>
+              <TimePickerLabelText>{':'}</TimePickerLabelText>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                style={{width: wp('20%'), height: hp('26%')}}
+                onValueChange={(itemValue, itemIndex) =>
+                  onValueChangeMinutePicker(itemValue, itemIndex)
+                }
+                selectedValue={minutePickerValue}>
+                <Picker.Item label={'00'} value="00" key={1} />
+                <Picker.Item label={'15'} value="15" key={2} />
+                <Picker.Item label={'30'} value="30" key={3} />
+                <Picker.Item label={'45'} value="45" key={4} />
+              </Picker>
+            </TimePickerContainer>
+            <DetailFilterFooterContainer>
+              <TouchableWithoutFeedback onPress={() => initializeTimeFilter()}>
+                <InitializeFilterContainer>
+                  <InitializeFilterText>
+                    {'방문시간 초기화'}
+                  </InitializeFilterText>
+                  <InitializeFilterIcon
+                    source={require('~/Assets/Images/Map/ic_initialize.png')}
+                  />
+                </InitializeFilterContainer>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback onPress={() => registerTimeFilter()}>
+                <RegisterFilterButton>
+                  <RegisterFilterText>{'적용하기'}</RegisterFilterText>
+                </RegisterFilterButton>
               </TouchableWithoutFeedback>
             </DetailFilterFooterContainer>
-          </DetailFilterModalContainer>
-        </Modal>
-        <Modal
-          isVisible={visibleTimeFilterModal}
-          style={styles.timeFilterModalView}
-          onBackdropPress={() => cancelTimeFilter()}
-          backdropOpacity={0.25}>
-          <DetailFilterModalContainer>
-            <DetailFilterHeaderContainer>
-              <DetailFilterTitleText>{'방문시간 설정'}</DetailFilterTitleText>
-            </DetailFilterHeaderContainer>
-            <TimeFilterModalContainer>
-              <TimePickerContainer>
-                <Picker
-                  itemStyle={{fontSize: 20, fontWeight: "700", lineHeight: 24, color: "#131F3C"}}
-                  style={{width: wp('20%'), height: hp('26%')}}
-                  onValueChange={(itemValue, itemIndex) =>
-                    onValueChangeTimeSlotPicker(itemValue, itemIndex)
-                  }
-                  selectedValue={timeSlotPickerValue}>
-                  <Picker.Item label={'오전'} value="오전" key={1}/>
-                  <Picker.Item label={'오후'} value="오후" key={2}/>
-                </Picker>
-                <Picker
-                  itemStyle={{fontSize: 20, fontWeight: "700", lineHeight: 24, color: "#131F3C"}}
-                  selectedValue={hourPickerValue}
-                  onValueChange={(itemValue, itemIndex) =>
-                    onValueChangeHourPicker(itemValue, itemIndex)
-                  }
-                  style={{width: wp('20%'), height: hp('26%')}}>
-                  <Picker.Item label={'1'} value="1" key={1} />
-                  <Picker.Item label={'2'} value="2" key={2}/>
-                  <Picker.Item label={'3'} value="3" key={3}/>
-                  <Picker.Item label={'4'} value="4" key={4}/>
-                  <Picker.Item label={'5'} value="5" key={5}/>
-                  <Picker.Item label={'6'} value="6" key={6}/>
-                  <Picker.Item label={'7'} value="7" key={7}/>
-                  <Picker.Item label={'8'} value="8" key={8}/>
-                  <Picker.Item label={'9'} value="9" key={9}/>
-                  <Picker.Item label={'10'} value="10" key={10}/>
-                  <Picker.Item label={'11'} value="11" key={11}/>
-                  <Picker.Item label={'12'} value="12" key={12}/>
-                </Picker>
-                <TimePickerLabelText>{':'}</TimePickerLabelText>
-                <Picker
-                  itemStyle={{fontSize: 20, fontWeight: "700", lineHeight: 24, color: "#131F3C"}}
-                  style={{width: wp('20%'), height: hp('26%')}}
-                  onValueChange={(itemValue, itemIndex) =>
-                    onValueChangeMinutePicker(itemValue, itemIndex)
-                  }
-                  selectedValue={minutePickerValue}>
-                  <Picker.Item label={'00'} value="00" key={1}/>
-                  <Picker.Item label={'15'} value="15" key={2} />
-                  <Picker.Item label={'30'} value="30" key={3}/>
-                  <Picker.Item label={'45'} value="45" key={4}/>
-                </Picker>
-              </TimePickerContainer>
-              <DetailFilterFooterContainer>
-                <TouchableWithoutFeedback onPress={() => initializeTimeFilter()}>
-                <InitializeFilterContainer>
-                  <InitializeFilterText>{"방문시간 초기화"}</InitializeFilterText>
-                  <InitializeFilterIcon
-                  source={require('~/Assets/Images/Map/ic_initialize.png')}/>
-                </InitializeFilterContainer>
-                </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => registerTimeFilter()}>
-                <RegisterFilterButton>
-                  <RegisterFilterText>{"적용하기"}</RegisterFilterText>
-                </RegisterFilterButton>
-                </TouchableWithoutFeedback>
-              </DetailFilterFooterContainer>
-              </TimeFilterModalContainer>
-          </DetailFilterModalContainer>
-        </Modal>
+          </TimeFilterModalContainer>
+        </DetailFilterModalContainer>
+      </Modal>
       {!isFocusedSearchInput && (
-      <TouchableWithoutFeedback onPress={() => moveToDentalMap()}>
-      <ViewMapButton>
-        <ViewMapIcon
-        source={require('~/Assets/Images/Map/ic_viewDentalMap.png')}/>
-        <ViewMapText>{"지도보기"}</ViewMapText>
-      </ViewMapButton>
-      </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={() => moveToDentalMap()}>
+          <ViewMapButton>
+            <ViewMapIcon
+              source={require('~/Assets/Images/Map/ic_viewDentalMap.png')}
+            />
+            <ViewMapText>{'지도보기'}</ViewMapText>
+          </ViewMapButton>
+        </TouchableWithoutFeedback>
       )}
     </Container>
   );
@@ -1502,8 +1581,7 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 8,
     shadowOpacity: 0.03,
-  }
+  },
 });
 
 export default DentalTotalSearchScreen;
-

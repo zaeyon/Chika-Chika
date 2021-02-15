@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useMemo, useState, useCallback} from 'react';
 import {TouchableOpacity, ImageBackground, LayoutAnimation} from 'react-native';
 import Styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -6,6 +6,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
 const ContainerView = Styled.View`
 width: 100%;
@@ -79,12 +80,14 @@ interface Props {
   selectedHometown: string;
   tagFilterItems: any;
   reviewData: any;
+  moveToReviewDetail: any;
 }
 
 const HomeReviewContent = ({
   selectedHometown,
   tagFilterItems,
   reviewData,
+  moveToReviewDetail,
 }: Props) => {
   const [selectedTagFilterItem, setSelectedTagFilterItem] = useState('충치');
 
@@ -92,7 +95,9 @@ const HomeReviewContent = ({
     () => (
       <TagFilterContainerView>
         {tagFilterItems.map((item) => (
-          <TouchableOpacity onPress={() => setSelectedTagFilterItem(item.name)}>
+          <TouchableOpacity
+            key={item.name}
+            onPress={() => setSelectedTagFilterItem(item.name)}>
             {selectedTagFilterItem === item.name ? (
               <TagFilterSelectedContentView>
                 <TagFilterSelectedContentText>
@@ -115,46 +120,65 @@ const HomeReviewContent = ({
     const selectedReviewData = reviewData.find(
       (item) => item.name === selectedTagFilterItem,
     );
+    LayoutAnimation.configureNext(
+      LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+    );
     return (
       selectedReviewData &&
       selectedReviewData.data.map((item: any, index: number) => {
         return (
-          <ImageBackground
-            style={{
-              width:
-                ((wp('100%') - 40) / 3) * (index === 0 || index === 3 ? 2 : 1),
-              height: (wp('100%') - 40) / 3,
-              marginBottom: 8,
-              marginRight: index === 0 || index === 2 ? 8 : 0,
-            }}
-            imageStyle={{borderRadius: 12}}
-            source={{
-              uri: item.review_contents[0].img_url,
-              cache: 'force-cache',
-            }}>
-            <LinearGradient
-              colors={['#FFFFFF00', '#FFFFFF00', '#00000050', '#000000']}
+          <TouchableWithoutFeedback
+            key={String(item.id)}
+            onPress={() => moveToReviewDetail()}>
+            <ImageBackground
               style={{
-                flex: 1,
-
-                borderRadius: 12,
+                width:
+                  ((wp('100%') - 40) / 3) *
+                  (index === 0 || index === 3 ? 2 : 1),
+                height: (wp('100%') - 40) / 3,
+                marginBottom: 8,
+                marginRight: index === 0 || index === 2 ? 8 : 0,
               }}
-            />
-            <ReviewThumbnailText numberOfLines={1}>
-              {item.reviewDescriptions}
-            </ReviewThumbnailText>
-          </ImageBackground>
+              imageStyle={{borderRadius: 12}}
+              source={{
+                uri:
+                  item.review_contents[0].img_thumbNail &&
+                  item.review_contents[0].img_url,
+                cache: 'force-cache',
+              }}>
+              <LinearGradient
+                colors={['#FFFFFF00', '#FFFFFF00', '#00000050', '#000000']}
+                style={{
+                  flex: 1,
+
+                  borderRadius: 12,
+                }}
+              />
+              <ReviewThumbnailText numberOfLines={1}>
+                {item.reviewDescriptions}
+              </ReviewThumbnailText>
+            </ImageBackground>
+          </TouchableWithoutFeedback>
         );
       })
     );
   }, [reviewData, selectedTagFilterItem]);
 
+  const memoTagFilter = useMemo(renderTagFilter, [
+    tagFilterItems,
+    selectedTagFilterItem,
+  ]);
+  const memoReviewThumbnail = useMemo(renderReviewThumbnail, [
+    reviewData,
+    selectedTagFilterItem,
+  ]);
+
   return (
     <ContainerView>
       <ContentTitleText>{`👀 최근 올라온 ${selectedHometown} 치과 후기`}</ContentTitleText>
-      {renderTagFilter()}
+      {memoTagFilter}
       <ReviewThumbnailContainerView>
-        {renderReviewThumbnail()}
+        {memoReviewThumbnail}
       </ReviewThumbnailContainerView>
     </ContainerView>
   );

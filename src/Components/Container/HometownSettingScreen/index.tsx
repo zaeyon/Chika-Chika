@@ -187,7 +187,10 @@ let selectedCityType = '';
 let isSelectMainHometown = false;
 
 const HometownSettingScreen = ({navigation, route}: Props) => {
-  const hometownArray = useSelector((state: any) => state.currentUser).hometown;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const hometownArray = useSelector(
+    (state: any) => state.currentUser.hometownArray,
+  );
   const [isVisibleDeleteModal, setIsVisibleDeleteModal] = useState<boolean>(
     false,
   );
@@ -196,7 +199,6 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
   );
 
   const dispatch = useDispatch();
-  const jwtToken = useSelector((state: any) => state.currentUser).jwtToken;
 
   const goBack = () => {
     navigation.goBack();

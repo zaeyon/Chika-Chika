@@ -74,9 +74,8 @@ const ReviewList = ({
   navigation,
   renderHeaderComponent,
 }: Props) => {
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.jwtToken;
-  const userProfile = currentUser.profile;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const userProfile = useSelector((state: any) => state.currentUser.profile);
 
   const moveToDentalDetail = useCallback((dentalId: number) => {
     navigation.navigate('DentalClinicStack', {

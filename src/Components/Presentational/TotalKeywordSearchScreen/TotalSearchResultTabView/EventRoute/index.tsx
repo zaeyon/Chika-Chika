@@ -51,9 +51,8 @@ const EventRoute = ({
 
   const dispatch = useDispatch();
 
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const hometown = currentUser.hometown;
-  const jwtToken = currentUser.jwtToken;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const hometown = useSelector((state: any) => state.currentUser.hometown);
   const [selectedHometown, setSelectedHometown] = useState({
     emdName: '전국',
     id: -1,

@@ -56,10 +56,10 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
     state.currentUser.hometown.find((item) => item.UsersCities.now === true),
   );
   const [selectedHometown, setSelectedHometown] = useState(mainHometown);
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.jwtToken;
-  const hometown = currentUser.hometown;
-  const profile = currentUser.profile;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const profile = useSelector((state: any) => state.currentUser.profile);
+  const hometown = useSelector((state: any) => state.currentUser.hometown);
+
   const postData = useSelector(
     (state: any) => state.communityPostList.QuestionPosts,
   );
@@ -70,39 +70,41 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   }, [mainHometown]);
 
   useEffect(() => {
-    setOrder('createdAt');
-    const form = {
-      type,
-      limit: 10,
-      offset: 0,
-      order: 'createdAt',
-      region,
-    };
-    GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
-      (response: any) => {
-        const data = {
-          type,
-          posts: response,
-        };
-        if (
-          JSON.stringify(response).replace(
-            /"createdDiff\(second\)\"\:\d*\,/gi,
-            '',
-          ) !==
-          JSON.stringify(postData).replace(
-            /"createdDiff\(second\)\"\:\d*\,/gi,
-            '',
-          )
-        ) {
-          console.log('liked post diff1');
-          LayoutAnimation.configureNext(
-            LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-          );
+    if (region === 'residence') {
+      setOrder('createdAt');
+      const form = {
+        type,
+        limit: 10,
+        offset: 0,
+        order: 'createdAt',
+        region,
+      };
+      GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
+        (response: any) => {
+          const data = {
+            type,
+            posts: response,
+          };
+          if (
+            JSON.stringify(response).replace(
+              /"createdDiff\(second\)\"\:\d*\,/gi,
+              '',
+            ) !==
+            JSON.stringify(postData).replace(
+              /"createdDiff\(second\)\"\:\d*\,/gi,
+              '',
+            )
+          ) {
+            console.log('liked post diff1');
+            LayoutAnimation.configureNext(
+              LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+            );
 
-          dispatch(allActions.communityActions.setPosts(data));
-        }
-      },
-    );
+            dispatch(allActions.communityActions.setPosts(data));
+          }
+        },
+      );
+    }
   }, [selectedHometown]);
 
   useEffect(() => {
@@ -393,6 +395,10 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
             setSelectedHometown={setSelectedHometown}
             setFloatVisible={setFloatVisible}
             moveToHomeTownSetting={moveToHomeTownSetting}
+            style={{
+              top: 48,
+              right: 16,
+            }}
           />
         ) : null}
         <PostFilterHeader order={order} setOrder={onFiltering} />

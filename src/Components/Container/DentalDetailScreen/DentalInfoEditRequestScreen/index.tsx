@@ -346,7 +346,7 @@ const DentalInfoEditRequestScreen = ({navigation, route}: Props) => {
 
   const actionSheetRef = useRef() as any;
   const actionSheetItemList = ['취소', '카메라', '앨범'];
-  const jwtToken = useSelector((state: any) => state.currentUser).jwtToken;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 
   useEffect(() => {
     if (route.params?.selectedImages) {

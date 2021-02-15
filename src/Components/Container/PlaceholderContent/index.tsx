@@ -24,7 +24,7 @@ const PlaceholderTitleText = Styled.Text`
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
-line-height: 16px;
+
 `;
 
 const LocalHospitalInfoView = Styled.View`
@@ -265,18 +265,27 @@ background: #F5F7F9;
 border-radius: 4px;
 `;
 
+const BannerContainerView = Styled.View`
+box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
+margin-bottom: 16px;
+`;
+
+const BannerImage = Styled.Image`
+width: 100%;
+border-radius: 8px;
+`;
+
 interface Props {
   navigation: any;
   title: string;
 }
 
 const PlaceholderContent = ({navigation, title}: Props) => {
-  const currentUser = useSelector((state: any) => state.currentUser);
   const [communityPost, setCommunityPost]: any = useState();
   const [localClinic, setLocalClinic]: any = useState();
-  const jwtToken = currentUser.jwtToken;
-  const hometown = currentUser.hometown;
-  const profile = currentUser.profile;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const profile = useSelector((state: any) => state.currentUser.profile);
+  const hometown = useSelector((state: any) => state.currentUser.hometown);
 
   useEffect(() => {
     GETCommunityPosts(jwtToken, hometown[0].id, {
@@ -525,6 +534,11 @@ const PlaceholderContent = ({navigation, title}: Props) => {
           </NavigatoinButtonView>
         </TouchableWithoutFeedback>
       </LocalClinicInfoView>
+      <BannerContainerView>
+        <BannerImage
+          source={require('~/Assets/Images/Banner/banner_review_starbucks.png')}
+        />
+      </BannerContainerView>
     </ContainerView>
   );
 };

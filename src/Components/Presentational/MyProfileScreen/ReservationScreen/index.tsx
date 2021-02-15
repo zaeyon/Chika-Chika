@@ -21,7 +21,7 @@ background: #F8F8F8;
 
 const ReservationItemContainerView = Styled.View`
 width: auto;
-margin: 8px 0px;
+margin-bottom: 8px;
 padding: 16px 0px;
 background: #FFFFFF;
 `;
@@ -78,7 +78,7 @@ font-weight: 800;
 font-size: 18px;
 line-height: 24px;
 color: #131F3C;
-margin-bottom: 12px;s
+margin-bottom: 12px;
 `;
 
 const ReservationItemNavigationView = Styled.View`
@@ -147,6 +147,11 @@ padding: 8px;
 const DeleteIconImage = Styled.Image`
 `;
 
+const BannerImage = Styled.Image`
+width: ${wp('100%')}px;
+margin: 8px 0px;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -203,13 +208,18 @@ const ReservationScreen = ({navigation, route, reservations}: Props) => {
   }, []);
 
   const renderListHeader = useCallback(
-    () => (
-      <PlaceholderContent
-        navigation={navigation}
-        title={'아직 병원 예약 내역이 없습니다.'}
-      />
-    ),
-    [navigation],
+    () =>
+      reservations.length === 0 ? (
+        <PlaceholderContent
+          navigation={navigation}
+          title={'아직 병원 예약 내역이 없습니다.'}
+        />
+      ) : (
+        <BannerImage
+          source={require('~/Assets/Images/Banner/banner_review_starbucks.png')}
+        />
+      ),
+    [navigation, reservations],
   );
   return (
     <ContainerView>

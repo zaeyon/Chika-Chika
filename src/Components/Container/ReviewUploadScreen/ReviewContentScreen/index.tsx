@@ -329,8 +329,7 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
     },
   ]);
 
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.jwtToken;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 
   useEffect(() => {
     if (route.params.requestType === 'revise') {
@@ -1008,84 +1007,88 @@ const ReviewContentScreen = ({navigation, route}: Props) => {
                             </MetaInfoItemText>
                           );
                         }
-                        })
-                        }
-                        </MetaInfoItemTextList>
-                    </MetaInfoItemBackground>
-                    </TouchableWithoutFeedback>
-                    )}
-                    <TouchableWithoutFeedback onPress={() => moveToRating()}>
-                    <MetaInfoItemBackground style={{marginLeft: 8}}>
-                        <RatingStarIcon
-                        source={require('~/Assets/Images/Upload/ic_ratingStar.png')}/>
-                        <MetaInfoItemText style={{marginLeft: 2}}>
-                        {rating.avgRating}
-                        </MetaInfoItemText>
-                    </MetaInfoItemBackground>
-                    </TouchableWithoutFeedback>
-                    {(detailPriceList.length === 0) && (
-                    <TouchableWithoutFeedback onPress={() => moveToDetailPrice()}>
-                    <MetaInfoItemBackground style={{marginLeft: 8, marginRight: 16, backgroundColor: "#f3f3f3"}}>
-                        <MetaInfoItemText style={{color: "#bcbcbc"}}>
-                        {"상세비용"}
-                        </MetaInfoItemText>
-                    </MetaInfoItemBackground>
-                    </TouchableWithoutFeedback>
-                    )}
-                    {(detailPriceList.length > 0) && (
-                    <TouchableWithoutFeedback onPress={() => moveToDetailPrice()}>
-                    <MetaInfoItemBackground style={{marginLeft: 8, marginRight: 16}}>
-                        <MetaInfoItemText>
-                        {"상세비용"}
-                        </MetaInfoItemText>
-                    </MetaInfoItemBackground>
-                    </TouchableWithoutFeedback>
-                    )}
-                </SecondMetaDataListContainer>
-                </ScrollView>
-                </MetaInfoContainer>
-                <ContentContainer>
-                    <KeyboardAwareFlatList
-                    scrollEnabled={true}
-                    showsVerticalScrollIndicator={false}
-                    data={paragraphList}
-                    renderItem={renderParaUnitItem}
-                    ListFooterComponent={renderAddParaUnitItem}/>
-                </ContentContainer>
-            </BodyContainer>
-            {visibleDatePicker && (
-            <DateModalContainer>
-                <ModalHeaderContainer>
-                    <TouchableWithoutFeedback onPress={() => applyTreatDate()}>
-                    <ModalFinishContainer>
-                        <ModalFinishText>완료</ModalFinishText>
-                    </ModalFinishContainer>
-                    </TouchableWithoutFeedback>
-                </ModalHeaderContainer>
-                    <DateTimePicker
-                    locale={'ko_KR.UTF-8'}
-                    style={{flex:1}}
-                    testID="datePicker"
-                    value={treatDate.treatDate}
-                    onChange={(event,date) => onChangeDatePicker(event,date)}
-                    mode={'date'}
-                    display='spinner'
-                    is24Hour={true}
-                    maximumDate={new Date()}
-                    />
-            </DateModalContainer>
-            )}
-            {uploadLoading && (
-            <IndicatorContainer>
-                <ActivityIndicator
-                color={"#ffffff"}/>
-            </IndicatorContainer>
-            )}
-        </Container>
-    )
-}
+                      })}
+                    </MetaInfoItemTextList>
+                  </MetaInfoItemBackground>
+                </TouchableWithoutFeedback>
+              )}
+              <TouchableWithoutFeedback onPress={() => moveToRating()}>
+                <MetaInfoItemBackground style={{marginLeft: 8}}>
+                  <RatingStarIcon
+                    source={require('~/Assets/Images/Upload/ic_ratingStar.png')}
+                  />
+                  <MetaInfoItemText style={{marginLeft: 2}}>
+                    {rating.avgRating}
+                  </MetaInfoItemText>
+                </MetaInfoItemBackground>
+              </TouchableWithoutFeedback>
+              {detailPriceList.length === 0 && (
+                <TouchableWithoutFeedback onPress={() => moveToDetailPrice()}>
+                  <MetaInfoItemBackground
+                    style={{
+                      marginLeft: 8,
+                      marginRight: 16,
+                      backgroundColor: '#f3f3f3',
+                    }}>
+                    <MetaInfoItemText style={{color: '#bcbcbc'}}>
+                      {'상세비용'}
+                    </MetaInfoItemText>
+                  </MetaInfoItemBackground>
+                </TouchableWithoutFeedback>
+              )}
+              {detailPriceList.length > 0 && (
+                <TouchableWithoutFeedback onPress={() => moveToDetailPrice()}>
+                  <MetaInfoItemBackground
+                    style={{marginLeft: 8, marginRight: 16}}>
+                    <MetaInfoItemText>{'상세비용'}</MetaInfoItemText>
+                  </MetaInfoItemBackground>
+                </TouchableWithoutFeedback>
+              )}
+            </SecondMetaDataListContainer>
+          </ScrollView>
+        </MetaInfoContainer>
+        <ContentContainer>
+          <KeyboardAwareFlatList
+            scrollEnabled={true}
+            showsVerticalScrollIndicator={false}
+            data={paragraphList}
+            renderItem={renderParaUnitItem}
+            ListFooterComponent={renderAddParaUnitItem}
+          />
+        </ContentContainer>
+      </BodyContainer>
+      {visibleDatePicker && (
+        <DateModalContainer>
+          <ModalHeaderContainer>
+            <TouchableWithoutFeedback onPress={() => applyTreatDate()}>
+              <ModalFinishContainer>
+                <ModalFinishText>완료</ModalFinishText>
+              </ModalFinishContainer>
+            </TouchableWithoutFeedback>
+          </ModalHeaderContainer>
+          <DateTimePicker
+            locale={'ko_KR.UTF-8'}
+            style={{flex: 1}}
+            testID="datePicker"
+            value={treatDate.treatDate}
+            onChange={(event, date) => onChangeDatePicker(event, date)}
+            mode={'date'}
+            display="spinner"
+            is24Hour={true}
+            maximumDate={new Date()}
+          />
+        </DateModalContainer>
+      )}
+      {uploadLoading && (
+        <IndicatorContainer>
+          <ActivityIndicator color={'#ffffff'} />
+        </IndicatorContainer>
+      )}
+    </Container>
+  );
+};
 
-export default ReviewContentScreen
+export default ReviewContentScreen;
 
 const styles = StyleSheet.create({
   paragraphShadow: {

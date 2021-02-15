@@ -65,9 +65,8 @@ const EditNicknameScreen = ({navigation, route}: Props) => {
 
   const textInputRef: any = useRef();
 
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.jwtToken;
-  const profile = currentUser.profile;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+
   const dispatch = useDispatch();
 
   useEffect(() => {

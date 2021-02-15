@@ -403,7 +403,6 @@ const ProfileInputScreen = ({navigation, route}: Props) => {
   let socialNickname = '';
   let socialGender = '';
 
-  const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
 
   const [keyboardHeight, setKeyboardHeight] = useState(0);

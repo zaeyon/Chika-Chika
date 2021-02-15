@@ -5,6 +5,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 const ContianerView = Styled.View`
 width: ${wp('100%')}px;
@@ -110,7 +111,11 @@ const LocationInfoHeader = ({
   return (
     <ContianerView>
       <LocationToggleContainerView>
-        <LocationToggleTouchableOpacity onPress={() => setRegion('all')}>
+        <LocationToggleTouchableOpacity
+          onPress={() => {
+            ReactNativeHapticFeedback.trigger('impactLight');
+            setRegion('all');
+          }}>
           <LocationToggleContentView>
             {region === 'all' ? (
               <>
@@ -125,6 +130,7 @@ const LocationInfoHeader = ({
         <LocationSplitView />
         <LocationToggleTouchableOpacity
           onPress={() => {
+            ReactNativeHapticFeedback.trigger('impactLight');
             setRegion('residence');
           }}>
           {region === 'residence' ? (

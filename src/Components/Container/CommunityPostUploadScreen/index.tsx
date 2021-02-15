@@ -1,20 +1,13 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
-import {
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  FlatList,
-  View,
-  Text,
-  Alert,
-  LayoutAnimation,
-} from 'react-native';
+import {LayoutAnimation} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {launchCamera} from 'react-native-image-picker';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 // Local Component
 import {uploadImageToS3} from '~/method/uploadImageToS3';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
@@ -94,9 +87,8 @@ interface CameraResponse {
 
 const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.jwtToken;
-  const profile = currentUser.profile;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const profile = useSelector((state: any) => state.currentUser.profile);
   const prevData = useSelector((state: any) => {
     if (route.params.data.routeType === 'Question') {
       console.log('Q');
@@ -431,7 +423,10 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
       </AnimatedModal>
       <NavigationHeader
         headerLeftProps={{
-          onPress: () => setIsModalVisible(true),
+          onPress: () => {
+            ReactNativeHapticFeedback.trigger('impactHeavy');
+            setIsModalVisible(true);
+          },
           type: 'arrow',
         }}
         headerRightProps={

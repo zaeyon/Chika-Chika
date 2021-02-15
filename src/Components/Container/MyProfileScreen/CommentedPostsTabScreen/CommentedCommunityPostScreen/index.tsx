@@ -34,8 +34,7 @@ const CommentedCommunityPostScreen = ({navigation, route}: Props) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
 
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.jwtToken;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 
   const postData = useSelector(
     (state: any) => state.communityPostList.CommentedCommunityPosts,
