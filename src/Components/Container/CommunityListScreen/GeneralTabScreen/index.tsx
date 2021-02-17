@@ -17,11 +17,10 @@ import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 //Local Component
 import CommunityPostList from '~/Components/Presentational/CommunityPostList';
-import LocationInfoHeader from '~/Components/Container/CommunityListScreen/LocationInfoHeader';
+import FilteringHeader from '~/Components/Container/CommunityListScreen/FilteringHeader';
 import TopBanner from '~/Components/Container/CommunityListScreen/TopBanner';
 import CarouselContent from '~/Components/Container/CommunityListScreen/CarouselContent';
 import PostFilterHeader from '~/Components/Container/CommunityListScreen/PostFilterHeader';
-import LocationSelection from '~/Components/Container/CommunityListScreen/LocationInfoHeader/LocationSelection';
 // Routes
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
@@ -47,39 +46,35 @@ interface Props {
 const FreeTalkTabScreen = ({navigation, route}: Props) => {
   const type = 'FreeTalk';
   const limit = 10;
-  const [floatVisible, setFloatVisible] = useState(false);
   const [isDataFinish, setIsDataFinish] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isFiltering, setIsFiltering] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
   const [region, setRegion] = useState('all');
   const [order, setOrder] = useState('createdAt');
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.jwtToken;
-  const hometown = currentUser.hometown;
-  const profile = currentUser.profile;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const profile = useSelector((state: any) => state.currentUser.profile);
+  const hometown = useSelector((state: any) => state.currentUser.hometown);
   const postData = useSelector(
     (state: any) => state.communityPostList.FreeTalkPosts,
   );
-  const mainHometown = useSelector((state: any) =>
-    state.currentUser.hometown.find((item) => item?.UsersCities?.now === true),
-  );
-  const [selectedHometown, setSelectedHometown] = useState(mainHometown);
+
+  const [selectedHometown, setSelectedHometown] = useState({
+    emdName: '전국',
+    id: -1,
+  });
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setSelectedHometown(mainHometown);
-  }, [mainHometown]);
-
-  useEffect(() => {
     setOrder('createdAt');
+    setRegion(selectedHometown.id === -1 ? 'all' : 'residence');
     const form = {
       type,
       limit: 10,
       offset: 0,
       order: 'createdAt',
-      region,
+      region: selectedHometown.id === -1 ? 'all' : 'residence',
     };
     GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
       (response: any) => {
@@ -255,7 +250,7 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
 
   const onFiltering = useCallback(
     (order: string, callback = () => console.log('filtered')) => {
-      setIsFiltering(true);
+      setOrder(order);
       const form = {
         type,
         limit,
@@ -288,10 +283,6 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
 
             dispatch(allActions.communityActions.setPosts(data));
           }
-          setIsFiltering(() => {
-            setOrder(order);
-            return false;
-          });
           callback();
         },
       );
@@ -375,12 +366,13 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
   const renderHeaderComponent = useCallback(() => {
     return (
       <>
-        <LocationInfoHeader
-          type="freetalk"
+        <FilteringHeader
+          onFiltering={onFiltering}
+          hometown={hometown}
+          setSelectedHometown={setSelectedHometown}
           selectedHometown={selectedHometown}
-          region={region}
-          setRegion={onRegionChanged}
-          setFloatVisible={setFloatVisible}
+          order={order}
+          moveToHomeTownSetting={moveToHomeTownSetting}
         />
         <TopBanner type="freetalk" />
         <CarouselContent
@@ -389,21 +381,6 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
           moveToCommunityDetail={moveToCommunityDetail}
           moveToAnotherProfile={moveToAnotherProfile}
         />
-        {floatVisible ? (
-          <LocationSelection
-            hometown={hometown}
-            selectedHometown={selectedHometown}
-            setSelectedHometown={setSelectedHometown}
-            setFloatVisible={setFloatVisible}
-            moveToHomeTownSetting={moveToHomeTownSetting}
-          />
-        ) : null}
-        <PostFilterHeader order={order} setOrder={onFiltering} />
-        {isFiltering ? (
-          <ActivityIndicatorContainerView>
-            <ActivityIndicator />
-          </ActivityIndicatorContainerView>
-        ) : null}
       </>
     );
   }, [
@@ -412,7 +389,6 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
     order,
     isFiltering,
     region,
-    floatVisible,
     hometown,
     selectedHometown,
   ]);

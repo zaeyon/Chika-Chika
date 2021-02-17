@@ -24,7 +24,7 @@ const PlaceholderTitleText = Styled.Text`
 font-style: normal;
 font-weight: bold;
 font-size: 16px;
-line-height: 16px;
+
 `;
 
 const LocalHospitalInfoView = Styled.View`
@@ -206,6 +206,7 @@ border-radius: 100px;
 margin-right: 12px;
 `;
 const LocalClinicContentView = Styled.View`
+
 `;
 
 const LocalClinicItemTitleText = Styled.Text`
@@ -265,21 +266,35 @@ background: #F5F7F9;
 border-radius: 4px;
 `;
 
+const BannerContainerView = Styled.View`
+box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
+margin-bottom: 16px;
+`;
+
+const BannerImage = Styled.Image`
+width: 100%;
+border-radius: 8px;
+`;
+
 interface Props {
   navigation: any;
   title: string;
 }
 
 const PlaceholderContent = ({navigation, title}: Props) => {
-  const currentUser = useSelector((state: any) => state.currentUser);
   const [communityPost, setCommunityPost]: any = useState();
   const [localClinic, setLocalClinic]: any = useState();
-  const jwtToken = currentUser.jwtToken;
-  const hometown = currentUser.hometown;
-  const profile = currentUser.profile;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const profile = useSelector((state: any) => state.currentUser.profile);
+
+  const selectedHometown = useSelector(
+    (state: any) =>
+      state.currentUser.hometown &&
+      state.currentUser.hometown.find((item) => item.UsersCities?.now === true),
+  );
 
   useEffect(() => {
-    GETCommunityPosts(jwtToken, hometown[0].id, {
+    GETCommunityPosts(jwtToken, selectedHometown.id, {
       type: 'FreeTalk',
       limit: 2,
       offset: 0,
@@ -292,7 +307,7 @@ const PlaceholderContent = ({navigation, title}: Props) => {
     GETLocalClinics({jwtToken, limit: 2, offset: 0}).then((response) => {
       setLocalClinic(response);
     });
-  }, [jwtToken, profile]);
+  }, [jwtToken, profile, selectedHometown]);
 
   const formatHashTag = useCallback((text: string, index: number) => {
     return (
@@ -476,7 +491,7 @@ const PlaceholderContent = ({navigation, title}: Props) => {
           <LocalIndicatorImage
             source={require('~/Assets/Images/Map/pick/target_white.png')}
           />
-          <LocalIndicatorText>{hometown[0].emdName}</LocalIndicatorText>
+          <LocalIndicatorText>{selectedHometown.emdName}</LocalIndicatorText>
         </LocalIndicatorView>
       </LocalHospitalInfoView>
       <LocalCommunityInfoView>
@@ -525,6 +540,11 @@ const PlaceholderContent = ({navigation, title}: Props) => {
           </NavigatoinButtonView>
         </TouchableWithoutFeedback>
       </LocalClinicInfoView>
+      <BannerContainerView>
+        <BannerImage
+          source={require('~/Assets/Images/Banner/banner_review_starbucks.png')}
+        />
+      </BannerContainerView>
     </ContainerView>
   );
 };

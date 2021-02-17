@@ -13,7 +13,7 @@ import {
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 import CommunityPostList from '~/Components/Presentational/CommunityPostList';
-import LocationSelection from '~/Components/Container/CommunityListScreen/LocationInfoHeader/LocationSelection';
+import LocationSelection from '~/Components/Container/CommunityListScreen/FilteringHeader/LocationSelection';
 
 // Local Component
 import ReviewList from '~/Components/Presentational/ReviewList';
@@ -60,12 +60,12 @@ const ReviewRoute = ({
   );
 
   const dispatch = useDispatch();
-  const currentUser = useSelector((state: any) => state.currentUser);
+
   const reviewList = useSelector(
     (state: any) => state.reviewList.SearchResultReviews,
   );
-  const hometown = currentUser.hometown;
-  const jwtToken = currentUser.jwtToken;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const hometown = useSelector((state: any) => state.currentUser.hometown);
   const [selectedHometown, setSelectedHometown] = useState({
     emdName: '전국',
     id: -1,

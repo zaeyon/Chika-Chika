@@ -16,9 +16,14 @@ background: #FFFFFF
 `;
 
 const FullImage = Styled.Image`
-width: ${wp('100%')}px;
-height: ${hp('100%') - wp('28.2%')}px;
+flex: 1;
 z-index: -1;
+`;
+
+const FooterContainerView = Styled.View`
+width: ${wp('100%')}px;
+height: ${hp('8%')}px;
+background: #FFFFFF;
 `;
 
 interface Props {
@@ -42,12 +47,7 @@ const FullImageScreen = ({navigation, route}: Props) => {
 
   return (
     <ContainerView as={SafeAreaView}>
-      <SharedElement
-        id="header"
-        style={{
-          position: 'absolute',
-          top: getStatusBarHeight(),
-        }}>
+      <SharedElement id="header" style={{}}>
         <NavigationHeader
           headerLeftProps={{
             type: 'arrow',
@@ -61,14 +61,14 @@ const FullImageScreen = ({navigation, route}: Props) => {
       </SharedElement>
       <FullImage
         style={{
-          position: 'absolute',
-          resizeMode: 'cover',
+          resizeMode: 'contain',
         }}
         source={{
           uri: route?.params?.image.uri,
           cache: 'force-cache',
         }}
       />
+      <FooterContainerView />
     </ContainerView>
   );
 };

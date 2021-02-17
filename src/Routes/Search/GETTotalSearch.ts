@@ -15,7 +15,7 @@ interface Params {
     cityId: string,
 }
 
-const GETTotalSearch = ({jwtToken, query, category, tagId, pathType, communityType="All", limit, offset, order, region, cityId}: Params) => {
+const GETTotalSearch = ({jwtToken, query, category, tagId='-1', pathType, communityType="All", limit, offset, order, region, cityId}: Params) => {
 
     const uri = serverConfig.baseUri + `/search/${pathType}?query=${query}&tagCategory=${category}&tagId=${tagId}&type=${communityType}&limit=${String(limit)}&offset=${String(offset)}&order=${order}&region=${region}&cityId=${cityId}`
 

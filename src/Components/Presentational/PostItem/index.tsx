@@ -44,7 +44,7 @@ margin: 6px 0px;
 flex-direction: row;
 `;
 
-const HashTagIconView = Styled(TouchableOpacity as new () => TouchableOpacity)`
+const HashTagIconView = Styled.TouchableOpacity`
 width: auto;
 height: auto;
 flex-direction: row;
@@ -82,8 +82,7 @@ padding-left: 8px;
 const ProfileNameText = Styled.Text`
 font-style: normal;
 font-weight: 600;
-font-size: 13.5px;
-line-height: 16px;
+font-size: 15px;
 margin-right: 4px;
 `;
 
@@ -149,22 +148,21 @@ padding: 6px 16px;
 `;
 
 const SocialInfoContentView = Styled.View`
-min-width: 48px;
+min-width: 62px;
 `;
 
 const SocialInfoView = Styled.View`
 width: auto;
 height: 44px;
 margin-right: auto;
-padding: 0px 4px;
+padding-left: 4px;
 flex-direction: row;
 align-items: center;
 `;
 const SocialInfoText = Styled.Text`
 font-style: normal;
 font-weight: 500;
-font-size: 13px;
-line-height: 16px;
+font-size: 14px;
 margin-left: 4px;
 color: #131F3C;
 `;
@@ -375,14 +373,14 @@ const PostItem = ({
         <BodyContainerView>
           <TouchableWithoutFeedback
             onPress={() => {
-              moveToAnotherProfile(userId, user.nickname, user.profileImg);
+              moveToAnotherProfile(userId, user.nickname, user.img_thumbNail);
             }}>
             <ProfileContainerView>
               <ProfileImage
                 source={
-                  user.profileImg
+                  user.img_thumbNail
                     ? {
-                        uri: user.profileImg,
+                        uri: user.img_thumbNail,
                         cache: 'force-cache',
                       }
                     : require('~/Assets/Images/appIcon_chika.png')
@@ -440,8 +438,8 @@ const PostItem = ({
               <SocialInfoView>
                 <Animated.Image
                   style={{
-                    width: 20,
-                    height: 20,
+                    width: 24,
+                    height: 24,
                     transform: [{scale: likeButtonScale}],
                   }}
                   source={
@@ -459,8 +457,8 @@ const PostItem = ({
               <SocialInfoView>
                 <Image
                   style={{
-                    width: 20,
-                    height: 20,
+                    width: 24,
+                    height: 24,
                   }}
                   source={require('~/Assets/Images/Social/ic/comment/unfocus.png')}
                 />
@@ -487,8 +485,8 @@ const PostItem = ({
             <SocialInfoView style={{marginLeft: 'auto', marginRight: 0}}>
               <Animated.Image
                 style={{
-                  width: 20,
-                  height: 20,
+                  width: 24,
+                  height: 24,
                   transform: [{scale: scrapButtonScale}],
                 }}
                 source={

@@ -33,11 +33,9 @@ import DELETEDentalScrap from '~/Routes/Dental/DELETEDentalScrap';
 import GETCurUserScrap from '~/Routes/Dental/GETCurUserScrap';
 import GETDentalReview from '~/Routes/Dental/GETDentalReview';
 
-
 const Container = Styled.View`
  flex: 1;
 `;
-
 
 const DentalTabContainer = Styled.View`
 background-color: #F5F7F9;
@@ -61,7 +59,7 @@ let offset = 0;
 let limit = 10;
 
 const DentalDetailScreen = ({navigation, route}: Props) => {
-  console.log("DentalDetailScreen dentalId", route.params?.dentalId);
+  console.log('DentalDetailScreen dentalId', route.params?.dentalId);
   const [dentalDetailInfo, setDentalDetailInfo] = useState<any>();
   const [dentalReviewArray, setDentalReviewArray] = useState<Array<any>>([]);
   const [dentalImageArray, setDentalImageArray] = useState<Array<any>>([]);
@@ -69,24 +67,23 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
   const [isNoDentalImage, setIsNoDentalImage] = useState<boolean>(false);
   const [isCurUserScrap, setIsCurUserScrap] = useState<boolean>(false);
 
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.jwtToken;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
   const dentalId = route.params?.dentalId;
 
   useEffect(() => {
-    if(route.params?.dentalId) {
+    if (route.params?.dentalId) {
       getDentalDetail();
       getCurUserScrap();
       getDentalReview();
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-      if(route.params?.infoEditRequest) {
-          ToastMessage.show("수정 요청이 완료되었습니다:)")
-          navigation.setParams({infoEditRequest: false})
-      }
-  }, [route.params?.infoEditRequest])
+    if (route.params?.infoEditRequest) {
+      ToastMessage.show('수정 요청이 완료되었습니다:)');
+      navigation.setParams({infoEditRequest: false});
+    }
+  }, [route.params?.infoEditRequest]);
 
   const getDentalDetail = () => {
     GETDentalDetail({jwtToken, dentalId})
@@ -117,61 +114,61 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
           name: response.clinicInfoHeader.name,
           originalName: response.clinicInfoHeader.originalName,
           address: response.clinicInfoHeader.address,
-      }
-    })
-    .catch((error) => {
-      console.log("GETDentalDetail error", error);
-      setLoadingGetDentalDetail(false); 
-    })
-  }
+        };
+      })
+      .catch((error) => {
+        console.log('GETDentalDetail error', error);
+        setLoadingGetDentalDetail(false);
+      });
+  };
 
   const getCurUserScrap = () => {
     GETCurUserScrap({jwtToken, dentalId})
-    .then((response: any) => {
-        console.log("GETCurUserScrap response", response)
+      .then((response: any) => {
+        console.log('GETCurUserScrap response', response);
         setIsCurUserScrap(response.scraped);
-    })
-    .catch((error) => {
-        console.log("GETCurUserScrap error", error);
-    })
-  }
+      })
+      .catch((error) => {
+        console.log('GETCurUserScrap error', error);
+      });
+  };
 
   const getDentalReview = () => {
     GETDentalReview({jwtToken, dentalId, offset, limit})
-    .then((response) => {
-        console.log("GETDentalReview response", response)
-        setDentalReviewArray(response)
-    })
-    .catch((error) => {
-        console.log("GETDentalReview error", error);
-    })
-  }
+      .then((response) => {
+        console.log('GETDentalReview response', response);
+        setDentalReviewArray(response);
+      })
+      .catch((error) => {
+        console.log('GETDentalReview error', error);
+      });
+  };
 
   const postDentalScrap = () => {
-      setIsCurUserScrap(true);
-      POSTDentalScrap({jwtToken, dentalId})
+    setIsCurUserScrap(true);
+    POSTDentalScrap({jwtToken, dentalId})
       .then((response) => {
-          console.log("POSTDentalScrap response", response)
+        console.log('POSTDentalScrap response', response);
       })
       .catch((error) => {
-          console.log("POSTDentalScrap error", error);
-      })
-  }
+        console.log('POSTDentalScrap error', error);
+      });
+  };
 
   const deleteDentalScrap = () => {
-      setIsCurUserScrap(false);
-      DELETEDentalScrap({jwtToken, dentalId})
+    setIsCurUserScrap(false);
+    DELETEDentalScrap({jwtToken, dentalId})
       .then((response) => {
-          console.log("DELETEDentalScrap response", response);
+        console.log('DELETEDentalScrap response', response);
       })
       .catch((error) => {
-          console.log("DELETEDentalScrap error", error); 
-      })
-  }
+        console.log('DELETEDentalScrap error', error);
+      });
+  };
 
   const moveToDentalInfoEdit = () => {
     navigation.navigate('DentalInfoEditRequestScreen', {
-        dentalObj: dentalObj,
+      dentalObj: dentalObj,
     });
   };
 
@@ -241,22 +238,23 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
         dentalObj: dentalObj,
         visibleElapsedTime: visibleElapsedTime,
         elapsedTime: elapsedTime,
-        requestScreen: "DentalDetailScreen",
+        requestScreen: 'DentalDetailScreen',
       },
     });
   };
 
-  const moveToAnotherProfile = useCallback((userId: string, nickname: string, profileImageUri: string) => {
-      navigation.navigate("AnotherProfileStackScreen", {
-          targetUser: {
-              userId,
-              nickname,
-              profileImageUri,
-          }
-      })
-  }, [])
-
-  
+  const moveToAnotherProfile = useCallback(
+    (userId: string, nickname: string, profileImageUri: string) => {
+      navigation.navigate('AnotherProfileStackScreen', {
+        targetUser: {
+          userId,
+          nickname,
+          profileImageUri,
+        },
+      });
+    },
+    [],
+  );
 
   const goBack = () => {
     navigation.goBack();
@@ -282,156 +280,117 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
             clickDentalCallReservation={clickDentalCallReservation}
             isCurUserScrap={isCurUserScrap}
             postDentalScrap={postDentalScrap}
-            deleteDentalScrap={deleteDentalScrap}/>
-          </DentalTabContainer>
-          )}
-          {loadingGetDentalDetail && (
-          <IndicatorContainer>
-            <ActivityIndicator/>
-          </IndicatorContainer>
-          )}
-        </Container>
-    )
-}
+            deleteDentalScrap={deleteDentalScrap}
+          />
+        </DentalTabContainer>
+      )}
+      {loadingGetDentalDetail && (
+        <IndicatorContainer>
+          <ActivityIndicator />
+        </IndicatorContainer>
+      )}
+    </Container>
+  );
+};
 
 const styles = StyleSheet.create({
-    certificationIconShadow: {
-        shadowOffset: {
-            height: 0,
-            width: 0,
-        },
-        shadowRadius: 16,
-        shadowOpacity: 0.05,
-        
-    }
-})
+  certificationIconShadow: {
+    shadowOffset: {
+      height: 0,
+      width: 0,
+    },
+    shadowRadius: 16,
+    shadowOpacity: 0.05,
+  },
+});
 
-export default DentalDetailScreen
-
+export default DentalDetailScreen;
 
 const TEST_DENTAL_DETAIL_DATA = {
-  
-  "clinicInfoHeader": {
-      "name": "아너스치과교정과치과의원(강서구-화곡동)",
-      "address": "서울특별시 강서구 강서로 242 3층 307호 (화곡동, 강서힐스테이트상가)",
-      "telNumber": "02-2602-7222",
-      "website": "http://www.honorsdental.com",
-      "launchDate": "2014-10-14",
-      "reviewNum": 15,
-      "conclustionNow": 0,
-      "lunchTimeNow": 0,
-      "reviewAVGStarRate": 3.6
+  clinicInfoHeader: {
+    name: '아너스치과교정과치과의원(강서구-화곡동)',
+    address:
+      '서울특별시 강서구 강서로 242 3층 307호 (화곡동, 강서힐스테이트상가)',
+    telNumber: '02-2602-7222',
+    website: 'http://www.honorsdental.com',
+    launchDate: '2014-10-14',
+    reviewNum: 15,
+    conclustionNow: 0,
+    lunchTimeNow: 0,
+    reviewAVGStarRate: 3.6,
   },
-  "clinicInfoBody": {
-      "description": "",
-      "treatmentTime": {
-          "weekday": {
-              "weekdayReceiptNotice": "",
-              "weekdayLunchTimeNotice": "",
-              "mon": {
-                  "treatmentTime": [
-                      "00:00:00",
-                      "00:00:00"
-                  ],
-                  "lunchTime": [
-                      "00:00:00",
-                      "00:00:00"
-                  ]
-              },
-              "tus": {
-                  "treatmentTime": [
-                      "00:00:00",
-                      "00:00:00"
-                  ],
-                  "lunchTime": [
-                      "00:00:00",
-                      "00:00:00"
-                  ]
-              },
-              "wed": {
-                  "treatmentTime": [
-                      "00:00:00",
-                      "00:00:00"
-                  ],
-                  "lunchTime": [
-                      "00:00:00",
-                      "00:00:00"
-                  ]
-              },
-              "thu": {
-                  "treatmentTime": [
-                      "00:00:00",
-                      "00:00:00"
-                  ],
-                  "lunchTime": [
-                      "00:00:00",
-                      "00:00:00"
-                  ]
-              },
-              "fri": {
-                  "treatmentTime": [
-                      "00:00:00",
-                      "00:00:00"
-                  ],
-                  "lunchTime": [
-                      "00:00:00",
-                      "00:00:00"
-                  ]
-              }
-          },
-          "sat": {
-              "weekendReceiptNotice": "",
-              "weekendLunchTimeNotice": "",
-              "weekend_non_consulation_notice": "",
-              "sat": {
-                  "treatmentTime": [
-                      "00:00:00",
-                      "00:00:00"
-                  ],
-                  "lunchTime": [
-                      "00:00:00",
-                      "00:00:00"
-                  ]
-              }
-          },
-          "sunAndHoliday": {
-              "weekend_non_consulation_notice": "",
-              "treatmentTime": [
-                  null,
-                  null
-              ]
-          }
+  clinicInfoBody: {
+    description: '',
+    treatmentTime: {
+      weekday: {
+        weekdayReceiptNotice: '',
+        weekdayLunchTimeNotice: '',
+        mon: {
+          treatmentTime: ['00:00:00', '00:00:00'],
+          lunchTime: ['00:00:00', '00:00:00'],
+        },
+        tus: {
+          treatmentTime: ['00:00:00', '00:00:00'],
+          lunchTime: ['00:00:00', '00:00:00'],
+        },
+        wed: {
+          treatmentTime: ['00:00:00', '00:00:00'],
+          lunchTime: ['00:00:00', '00:00:00'],
+        },
+        thu: {
+          treatmentTime: ['00:00:00', '00:00:00'],
+          lunchTime: ['00:00:00', '00:00:00'],
+        },
+        fri: {
+          treatmentTime: ['00:00:00', '00:00:00'],
+          lunchTime: ['00:00:00', '00:00:00'],
+        },
       },
-      "treatmentSubject": [
-          {
-              "name": "치과교정과",
-              "Clinic_subject": {
-                  "SpecialistDentist_NUM": 1,
-                  "choiceTreatmentDentist_NUM": 0
-              }
-          }
-      ],
-      "SpecialTreatment": [
-          {
-              "name": "측두하악관절 자극요법"
-          },
-          {
-              "name": "소아야간진료(20시 이후)"
-          }
-      ],
-      "dentistInfo": {
-          "specialistDentist": 1,
-          "generalDentist": 0,
-          "resident": 0,
-          "intern": 1
+      sat: {
+        weekendReceiptNotice: '',
+        weekendLunchTimeNotice: '',
+        weekend_non_consulation_notice: '',
+        sat: {
+          treatmentTime: ['00:00:00', '00:00:00'],
+          lunchTime: ['00:00:00', '00:00:00'],
+        },
       },
-      "parkingInfo": {
-          "parkingAllowNum": 0,
-          "parkingCost": "",
-          "parkingNotice": ""
+      sunAndHoliday: {
+        weekend_non_consulation_notice: '',
+        treatmentTime: [null, null],
       },
-      "location": {
-          "address": "서울특별시 강서구 강서로 242 3층 307호 (화곡동, 강서힐스테이트상가)"
-      }
+    },
+    treatmentSubject: [
+      {
+        name: '치과교정과',
+        Clinic_subject: {
+          SpecialistDentist_NUM: 1,
+          choiceTreatmentDentist_NUM: 0,
+        },
+      },
+    ],
+    SpecialTreatment: [
+      {
+        name: '측두하악관절 자극요법',
+      },
+      {
+        name: '소아야간진료(20시 이후)',
+      },
+    ],
+    dentistInfo: {
+      specialistDentist: 1,
+      generalDentist: 0,
+      resident: 0,
+      intern: 1,
+    },
+    parkingInfo: {
+      parkingAllowNum: 0,
+      parkingCost: '',
+      parkingNotice: '',
+    },
+    location: {
+      address:
+        '서울특별시 강서구 강서로 242 3층 307호 (화곡동, 강서힐스테이트상가)',
+    },
   },
-}
+};

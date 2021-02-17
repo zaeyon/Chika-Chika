@@ -5,6 +5,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 const ContianerView = Styled.View`
 width: ${wp('100%')}px;
@@ -47,7 +48,11 @@ interface Props {
 const PostFilterHeader = ({order, setOrder}: Props) => {
   return (
     <ContianerView>
-      <TouchableWithoutFeedback onPress={() => setOrder('popular')}>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          ReactNativeHapticFeedback.trigger('impactLight');
+          setOrder('popular');
+        }}>
         <OrderContentView>
           {order === 'popular' ? (
             <OrderContentFocusedText>{'인기순'}</OrderContentFocusedText>
@@ -57,7 +62,11 @@ const PostFilterHeader = ({order, setOrder}: Props) => {
         </OrderContentView>
       </TouchableWithoutFeedback>
       <OrderSplitView />
-      <TouchableWithoutFeedback onPress={() => setOrder('createdAt')}>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          ReactNativeHapticFeedback.trigger('impactLight');
+          setOrder('createdAt');
+        }}>
         <OrderContentView>
           {order === 'createdAt' ? (
             <OrderContentFocusedText>{'최신순'}</OrderContentFocusedText>

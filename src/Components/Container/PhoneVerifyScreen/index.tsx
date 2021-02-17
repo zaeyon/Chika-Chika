@@ -251,7 +251,6 @@ const PhoneVerifyScreen = ({navigation}: Props) => {
   );
   const [timeOver, setTimeOver] = useState<boolean>(false);
 
-  const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
 
   const numberInputRef = useRef(null);

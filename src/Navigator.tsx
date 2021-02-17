@@ -271,7 +271,7 @@ function HomeStackScreen() {
     <HomeStack.Navigator
       headerMode="none"
       screenOptions={{
-        gestureEnabled: false,
+        gestureEnabled: true,
       }}>
       <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
       <HomeStack.Screen
@@ -296,6 +296,14 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name="NotificationStackScreen"
         component={NotificationStackScreen}
+      />
+      <HomeStack.Screen
+        name="HometownSettingScreen"
+        component={HometownSettingScreen}
+      />
+      <HomeStack.Screen
+        name="HometownSearchScreen"
+        component={HometownSearchScreen}
       />
       <HomeStack.Screen
         name="TotalKeywordSearchStackScreen"
@@ -547,7 +555,7 @@ function ReviewUploadStackScreen() {
 
 function EditProfileStackScreen() {
   return (
-    <EditProfileStack.Navigator headerMode="none" mode="card">
+    <EditProfileStack.Navigator headerMode="none" mode="modal">
       <EditProfileStack.Screen
         name="EditProfileTabScreen"
         component={EditProfileTabScreen}
@@ -604,6 +612,24 @@ function ImageSelectOneStackScreen({route}) {
         }}
         options={{
           gestureEnabled: false,
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {duration: 200},
+            },
+            close: {
+              animation: 'timing',
+              config: {duration: 200},
+            },
+          },
+          cardStyle: {backgroundColor: 'transparent'},
+          cardStyleInterpolator: ({current: {progress}}) => {
+            return {
+              cardStyle: {
+                opacity: progress,
+              },
+            };
+          },
         }}
       />
     </ImageSelectOneStack.Navigator>
@@ -876,6 +902,14 @@ function BottomTab() {
       return false;
     }
 
+    if (routeName.name === 'CommunityStackScreen') {
+      return false;
+    }
+
+    if (routeName.name === 'HometownSettingScreen') {
+      return false;
+    }
+
     return true;
   };
 
@@ -1107,26 +1141,27 @@ const Navigator = () => {
   //   const fcmToken = await messaging().getToken();
   //   console.log('getFcmToken fcmToken', fcmToken);
   // };
+  useEffect(() => {
+    if (currentUser.hometown) {
+      console.log('hometown', currentUser.hometown);
+      SplashScreen.hide();
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     //getFcmToken();
 
-    const setUserLogined = async (jwtToken: string, profile: object) => {
-      await dispatch(allActions.userActions.setUser({jwtToken, profile}))
-    }
-    
     getUserInfo()
       .then((jwtToken) => {
         console.log('getUserInfo response', jwtToken);
         GETUserInfo(jwtToken)
           .then((response: any) => {
-            const profile = response;
-            console.log('profile', profile);
-          
-            dispatch(allActions.userActions.setHometown(response.Residences));
+            console.log('profile', response);
 
-            setUserLogined(jwtToken, profile);
-            SplashScreen.hide();
+            dispatch(
+              allActions.userActions.setUser({jwtToken, profile: response}),
+            );
+            dispatch(allActions.userActions.setHometown(response.Residences));
           })
           .catch((error: any) => {
             console.log('get user error', error);

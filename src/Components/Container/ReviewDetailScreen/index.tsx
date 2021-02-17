@@ -254,7 +254,9 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
   const [writerObj, setWriterObj] = useState<WriterObj>(route.params?.writer);
 
-  const [imageArray, setImageArray] = useState<Array<any>>(route.params?.imageArray);
+  const [imageArray, setImageArray] = useState<Array<any>>(
+    route.params?.imageArray,
+  );
 
   const scrollViewRef = useRef<any>();
   const reviewScrollViewRef = useRef<any>(null);
@@ -263,15 +265,14 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const otherCommentActionSheetRef = createRef<any>();
 
   const dispatch = useDispatch();
-  const currentUser = useSelector((state: any) => state.currentUser);
   const reviewList = useSelector((state: any) => state.reviewList);
 
   const commentState = useSelector((state: any) => state.commentList);
   const commentArray = commentState.commentList;
   const commentCount = commentState.commentCount;
 
-  const jwtToken = currentUser.jwtToken;
-  const userProfile = currentUser.profile;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const userProfile = useSelector((state: any) => state.currentUser.profile);
 
   const reviewId = route.params?.reviewId;
 
@@ -635,14 +636,10 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         console.log('GETCommentList response', response);
         //setCommentArray(response.reverse())
         dispatch(
-          allActions.commentListActions.setCommentList(
-            response.comments,
-          ),
+          allActions.commentListActions.setCommentList(response.comments),
         );
         dispatch(
-          allActions.commentListActions.setCommentCount(
-            response.commentsNum,
-          ),
+          allActions.commentListActions.setCommentCount(response.commentsNum),
         );
 
         // let tmpCommentArray = response.comments.reverse().slice();
@@ -909,14 +906,10 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       .then((response: any) => {
         console.log('DELETEComment response', response);
         dispatch(
-          allActions.commentListActions.setCommentList(
-            response.comments,
-          ),
+          allActions.commentListActions.setCommentList(response.comments),
         );
         dispatch(
-          allActions.commentListActions.setCommentCount(
-            response.commentsNum,
-          ),
+          allActions.commentListActions.setCommentCount(response.commentsNum),
         );
       })
       .catch((error) => {
@@ -1008,11 +1001,11 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
                 <BodyContainer style={{paddingBottom: paddingBottom}}>
                   <WriterInfoContainer>
                     <WriterInfo
-                    moveToAnotherProfile={moveToAnotherProfile}
-                    writerObj={writerObj}
-                    elapsedTime={elapsedTime}
-                    isVisibleElapsedTime={isVisibleElapsedTime}
-                    createdDate={createdDate}
+                      moveToAnotherProfile={moveToAnotherProfile}
+                      writerObj={writerObj}
+                      elapsedTime={elapsedTime}
+                      isVisibleElapsedTime={isVisibleElapsedTime}
+                      createdDate={createdDate}
                     />
                   </WriterInfoContainer>
                   <TreatmentListContainer>
@@ -1036,7 +1029,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
                       navigation={navigation}
                       commentList={commentArray}
                       commentCount={commentCount}
-                      currentUser={currentUser}
+                      profile={userProfile}
                       postId={reviewId}
                       postType="review"
                     />

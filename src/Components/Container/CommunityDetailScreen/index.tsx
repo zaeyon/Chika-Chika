@@ -40,6 +40,7 @@ const ContainerView = Styled.SafeAreaView`
  flex: 1;
  background-color: white;
  align-items: center;
+ justify-content: center;
 `;
 
 const BodyContainerScrollView = Styled.ScrollView`
@@ -110,7 +111,9 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   const [refreshing, setRefreshing] = useState(false);
   const [floatingVisible, setFloatingVisible] = useState(false);
 
-  const currentUser = useSelector((state: any) => state.currentUser);
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const profile = useSelector((state: any) => state.currentUser.profile);
+
   const postList = useSelector((state: any) => {
     if (route.params.type === 'Question') {
       console.log('Q');
@@ -139,12 +142,9 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   );
   const [categoryTitle, setCategoryTitle] = useState(postData?.type);
 
-  const jwtToken = currentUser.jwtToken;
-
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log('fofofo');
     const newPostData = postList?.find(
       (item: any) => item.id === route.params.id,
     );
@@ -158,15 +158,10 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   useEffect(() => {
     GETCommunityPostDetail(jwtToken, String(route.params.id)).then(
       (response: any) => {
-        setPostData((prev) => {
-          if (!prev) {
-            return response;
-          } else {
-            return prev;
-          }
-        });
+        setPostData(response);
       },
     );
+
     fetchPostComments(route.params.id);
     if (route.params?.type === 'Notification') {
       navigation.navigate('CommentListScreen', {
@@ -187,22 +182,33 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
       <TouchableWithoutFeedback onPress={() => setFloatingVisible(false)}>
         <BackdropView>
           <FloatingView>
-            {postData.userId === currentUser.profile.id ? (
+            {postData.userId === profile.id ? (
               <>
-                <TouchableOpacity onPress={() => onPressDeletePost()}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setFloatingVisible(false);
+                    onPressDeletePost();
+                  }}>
                   <FloatingContentView>
                     <FloatingContentText>{'삭제'}</FloatingContentText>
                   </FloatingContentView>
                 </TouchableOpacity>
                 <VerticalPartitionView />
-                <TouchableOpacity onPress={() => onPressEditPost()}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setFloatingVisible(false);
+                    onPressEditPost();
+                  }}>
                   <FloatingContentView>
                     <FloatingContentText>{'수정'}</FloatingContentText>
                   </FloatingContentView>
                 </TouchableOpacity>
               </>
             ) : (
-              <TouchableOpacity onPress={() => console.log('report')}>
+              <TouchableOpacity
+                onPress={() => {
+                  setFloatingVisible(false);
+                }}>
                 <FloatingContentView>
                   <FloatingContentText>{'신고'}</FloatingContentText>
                 </FloatingContentView>
@@ -403,7 +409,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
         dispatch(allActions.communityActions.editPost(form));
       },
     );
-  }, []);
+  }, [postData]);
 
   const formatCategory = useCallback(() => {
     switch (categoryTitle) {
@@ -463,7 +469,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
             <PreviewCommentList
               commentList={commentArray}
               commentCount={commentCount}
-              currentUser={currentUser}
+              profile={profile}
               navigation={navigation}
               postId={postData.id}
               postType="community"

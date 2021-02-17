@@ -65,9 +65,8 @@ const EditNicknameScreen = ({navigation, route}: Props) => {
 
   const textInputRef: any = useRef();
 
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.jwtToken;
-  const profile = currentUser.profile;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -159,7 +158,7 @@ const EditNicknameScreen = ({navigation, route}: Props) => {
             placeholderTextColor="#E2E6ED"
           />
           <SectionImage
-            source={require('~/Assets/Images/MyPage/common/gan/list/profile_edit_section_arrow.png')}
+            source={require('~/Assets/Images/MyPage/EditProfile/Section/profile_edit_section_arrow.png')}
           />
         </SectionContentView>
       </SharedElement>

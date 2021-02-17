@@ -1,10 +1,16 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+import {useSelector, useDispatch} from 'react-redux';
+import allActions from '~/actions';
+
+import POSTMainHometownChange from '~/Routes/User/POSTMainHometownChange';
 
 const ContainerView = Styled.View`
 position: absolute;
@@ -17,8 +23,6 @@ z-index: 2;
 const HometownSettingFloatView = Styled.View`
 background: #FFFFFF;
 position: absolute;
-right: 16px;
-top: 48px;
 width: 114px;
 border-width: 1px;
 border-color: #E2E6ED;
@@ -66,29 +70,63 @@ const HometownItemContainerView = Styled.View`
 `;
 
 interface Props {
+  jwtToken: string;
   hometown: any;
   selectedHometown: any;
   setSelectedHometown: (hometown: any) => void;
   setFloatVisible: any;
   moveToHomeTownSetting: any;
+  manageMode: boolean;
+  style: any;
 }
 const LocationSelection = ({
+  jwtToken,
   hometown,
   selectedHometown,
-  setSelectedHometown,
+  setSelectedHometown = (hometown: any) => console.log(''),
   setFloatVisible,
   moveToHomeTownSetting,
+  manageMode = false,
+  style,
 }: Props) => {
+  const dispatch = useDispatch();
+
+  const clickHometownItem = useCallback(
+    (index: number) => {
+      if (hometown[index].UsersCities?.now === true) {
+        return;
+      } else if (hometown[index].UsersCities?.now === false) {
+        dispatch(allActions.userActions.changeMainHometown(index));
+        const cityId = hometown[index].id;
+
+        POSTMainHometownChange({jwtToken, cityId})
+          .then((response) => {
+            console.log('POSTMainHometownChange response', response);
+          })
+          .catch((error) => {
+            console.log('POStMainHometownChange error', error);
+          });
+      }
+    },
+    [hometown],
+  );
+
   return (
     <TouchableWithoutFeedback onPress={() => setFloatVisible(false)}>
       <ContainerView>
-        <HometownSettingFloatView>
+        <HometownSettingFloatView style={style}>
           {hometown.map((item: any, index: number) => (
             <HometownItemContainerView
             key={index}>
               <TouchableWithoutFeedback
+                key={String(item.id)}
                 onPress={() => {
+                  if (manageMode) {
+                    clickHometownItem(index);
+                  }
+                  ReactNativeHapticFeedback.trigger('impactLight');
                   setSelectedHometown(item);
+
                   setFloatVisible(false);
                 }}>
                 <HometownSetttingContentView key={item.emdName}>
@@ -106,13 +144,19 @@ const LocationSelection = ({
               <VerticalPartition key={'bar' + String(index)} />
             </HometownItemContainerView>
           ))}
-          <TouchableWithoutFeedback onPress={() => moveToHomeTownSetting()}>
-            <HometownSetttingContentView>
-              <HometownSettingNavigationText>
-                {'동네설정'}
-              </HometownSettingNavigationText>
-            </HometownSetttingContentView>
-          </TouchableWithoutFeedback>
+          {manageMode ? (
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setFloatVisible(false);
+                moveToHomeTownSetting();
+              }}>
+              <HometownSetttingContentView>
+                <HometownSettingNavigationText>
+                  {'동네설정'}
+                </HometownSettingNavigationText>
+              </HometownSetttingContentView>
+            </TouchableWithoutFeedback>
+          ) : null}
         </HometownSettingFloatView>
       </ContainerView>
     </TouchableWithoutFeedback>

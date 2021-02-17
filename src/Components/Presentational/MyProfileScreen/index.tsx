@@ -154,6 +154,23 @@ height: 40px;
 background: #E5E9F1;
 margin: 0px 8px;
 `;
+
+const EmptyContainerView = Styled.View`
+flex: 1;
+justify-content: center;
+align-items: center;
+background: #FFFFFF;
+`;
+
+const EmptyContentImage = Styled.Image``;
+
+const EmptyContentText = Styled.Text`
+margin-top: 12px;
+font-weight: normal;
+font-size: 16px;
+color: #9AA2A9;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -201,6 +218,7 @@ interface User {
   id: string;
   nickname: string;
   profileImg: string;
+  img_thumbNail: string;
   provider: string;
   Residences: Array<Residence>;
   gender: string;
@@ -344,6 +362,13 @@ export default class MyProfile extends React.PureComponent<Props, State> {
       <InitializingView>
         <ActivityIndicator />
       </InitializingView>
+    ) : this.props.communityPostData.length === 0 ? (
+      <EmptyContainerView>
+        <EmptyContentImage
+          source={require('~/Assets/Images/Comment/ic_noComment.png')}
+        />
+        <EmptyContentText>{'내가 쓴 수다글이 없습니다.'}</EmptyContentText>
+      </EmptyContainerView>
     ) : (
       <AnimatedFlatList
         style={{
@@ -419,6 +444,13 @@ export default class MyProfile extends React.PureComponent<Props, State> {
       <InitializingView>
         <ActivityIndicator />
       </InitializingView>
+    ) : this.props.reviewData.length === 0 ? (
+      <EmptyContainerView>
+        <EmptyContentImage
+          source={require('~/Assets/Images/Comment/ic_noComment.png')}
+        />
+        <EmptyContentText>{'내가 쓴 후기가 없습니다.'}</EmptyContentText>
+      </EmptyContainerView>
     ) : (
       <AnimatedFlatList
         style={{
@@ -614,7 +646,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
               <ProfileImageView>
                 <ProfileImage
                   source={{
-                    uri: this.props.currentUser.profileImg,
+                    uri: this.props.currentUser.img_thumbNail,
                     cache: 'force-cache',
                   }}
                 />

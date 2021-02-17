@@ -72,8 +72,9 @@ const AnotherProfileScreen = ({navigation, route}: Props) => {
   );
 
   const dispatch = useDispatch();
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.jwtToken;
+
+  const profile = useSelector((state: any) => state.currentUser.profile);
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 
   const fetchUserInfo = useCallback(() => {
     GETUserInfoById(jwtToken, route.params.targetUser.userId).then(
@@ -387,7 +388,7 @@ const AnotherProfileScreen = ({navigation, route}: Props) => {
           onPress: () => navigation.goBack(),
         }}
         headerRightProps={
-          currentUser.profile.id === route.params.targetUser?.userId
+          profile.id === route.params.targetUser?.userId
             ? undefined
             : {
                 type: 'text',

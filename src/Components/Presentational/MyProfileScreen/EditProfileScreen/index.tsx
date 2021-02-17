@@ -225,7 +225,8 @@ interface Props {
   moveToGallery: any;
   moveToHomeTownSetting: any;
   moveToPhoneVerify: any;
-  currentUser: any;
+  profile: any;
+  hometown: any;
   changeProfileNickname: (nickname: string) => void;
   changeProfileGender: (gender: string) => void;
   changeProfileBirthdate: (birthdate: string) => void;
@@ -237,7 +238,8 @@ const EditProfileScreen = ({
   moveToGallery,
   moveToHomeTownSetting,
   moveToPhoneVerify,
-  currentUser,
+  hometown,
+  profile,
   changeProfileNickname,
   changeProfileGender,
   changeProfileBirthdate,
@@ -245,17 +247,17 @@ const EditProfileScreen = ({
   const [textInput, setTextInput] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [sectionArrow, setSectionArrow] = useState(
-    require('~/Assets/Images/MyPage/common/gan/list/profile_edit_section_arrow.png'),
+    require('~/Assets/Images/MyPage/EditProfile/Section/profile_edit_section_arrow.png'),
   );
-  console.log(currentUser.profile);
+  console.log(profile);
   const [selectedBirthYear, setSelectedBirthYear] = useState(
-    currentUser.profile.birthdate.split('-')[0],
+    profile.birthdate ? profile.birthdate.split('-')[0] : '',
   );
   const [selectedBirthMonth, setSelectedBirthMonth] = useState(
-    String(parseInt(currentUser.profile.birthdate.split('-')[1])),
+    profile.birthdate ? String(parseInt(profile.birthdate.split('-')[1])) : '',
   );
   const [selectedBirthDay, setSelectedBirthDay] = useState(
-    String(parseInt(currentUser.profile.birthdate.split('-')[2])),
+    profile.birthdate ? String(parseInt(profile.birthdate.split('-')[2])) : '',
   );
 
   const genderActionSheetRef: any = useRef();
@@ -271,7 +273,7 @@ const EditProfileScreen = ({
 
   const modalContentY = useRef(new Animated.Value(hp('50%'))).current;
   const [date, setDate] = useState<Date>(
-    new Date(currentUser.profile.birthdate || Date.now()),
+    new Date(profile.birthdate || Date.now()),
   );
 
   const onChange = (event: Event, selectedDate?: Date) => {
@@ -342,7 +344,7 @@ const EditProfileScreen = ({
 
   const renderResidences = useCallback(() => {
     let result = '';
-    currentUser.hometown.map((item: any, index: number) => {
+    hometown.map((item: any, index: number) => {
       if (index === 0) {
         result += item.emdName;
       } else {
@@ -350,7 +352,7 @@ const EditProfileScreen = ({
       }
     });
     return result;
-  }, [currentUser.hometown]);
+  }, [hometown]);
 
   const formatProvider = useCallback((provider: string) => {
     switch (provider) {
@@ -397,16 +399,10 @@ const EditProfileScreen = ({
   }, []);
   
   const initializeBirthDate = useCallback(() => {
-    setSelectedBirthYear(
-      String(parseInt(currentUser.profile.birthdate.split('-')[0])),
-    );
-    setSelectedBirthMonth(
-      String(parseInt(currentUser.profile.birthdate.split('-')[1])),
-    );
-    setSelectedBirthDay(
-      String(parseInt(currentUser.profile.birthdate.split('-')[2])),
-    );
-  }, [currentUser]);
+    setSelectedBirthYear(String(parseInt(profile.birthdate.split('-')[0])));
+    setSelectedBirthMonth(String(parseInt(profile.birthdate.split('-')[1])));
+    setSelectedBirthDay(String(parseInt(profile.birthdate.split('-')[2])));
+  }, [profile]);
 
   const registerTimeFilter = useCallback(() => {}, []);
   return (
@@ -417,10 +413,10 @@ const EditProfileScreen = ({
           <ProfileImageContentView>
             <ProfileImageMaskView>
               <ProfileImageMaskImage
-                source={require('~/Assets/Images/MyPage/common/gan/ic/write/white.png')}
+                source={require('~/Assets/Images/MyPage/EditProfile/ProfileImg/ic_edit_profileImg.png')}
               />
             </ProfileImageMaskView>
-            <ProfileImage source={{uri: currentUser.profile.profileImg}} />
+            <ProfileImage source={{uri: profile.img_thumbNail}} />
           </ProfileImageContentView>
         </TouchableWithoutFeedback>
       </ProfileImageContainerView>
@@ -428,13 +424,11 @@ const EditProfileScreen = ({
         <TouchableHighlight
           activeOpacity={0.9}
           underlayColor="black"
-          onPress={() => moveToEditNickname(currentUser.profile.nickname)}>
+          onPress={() => moveToEditNickname(profile.nickname)}>
           <SharedElement id="nicknameInput">
             <SectionContentView>
               <SectionContentTitleText>{'닉네임'}</SectionContentTitleText>
-              <SectionContentText>
-                {currentUser.profile.nickname}
-              </SectionContentText>
+              <SectionContentText>{profile.nickname}</SectionContentText>
               <SectionImage source={sectionArrow} />
             </SectionContentView>
           </SharedElement>
@@ -460,7 +454,7 @@ const EditProfileScreen = ({
           <SectionContentView>
             <SectionContentTitleText>{'성별'}</SectionContentTitleText>
             <SectionContentText>
-              {currentUser.profile.gender || '미등록'}
+              {profile.gender || '미등록'}
             </SectionContentText>
             <SectionImage source={sectionArrow} />
           </SectionContentView>
@@ -473,7 +467,7 @@ const EditProfileScreen = ({
           <SectionContentView>
             <SectionContentTitleText>{'생일'}</SectionContentTitleText>
             <SectionContentText>
-              {currentUser.profile.birthdate || '미등록'}
+              {profile.birthdate || '미등록'}
             </SectionContentText>
             <SectionImage source={sectionArrow} />
           </SectionContentView>
@@ -488,7 +482,7 @@ const EditProfileScreen = ({
           <SectionContentView>
             <SectionContentTitleText>{'연동계정'}</SectionContentTitleText>
             <SectionContentText>
-              {formatProvider(currentUser.profile.provider)}
+              {formatProvider(profile.provider)}
             </SectionContentText>
             <SectionImage source={sectionArrow} />
           </SectionContentView>
@@ -501,9 +495,9 @@ const EditProfileScreen = ({
           <SectionContentView>
             <SectionContentTitleText>{'본인인증'}</SectionContentTitleText>
             <SectionContentText>
-              {currentUser.profile.phoneNumber || '미인증'}
+              {profile.phoneNumber || '미인증'}
             </SectionContentText>
-            {currentUser.profile.phoneNumber ? (
+            {profile.phoneNumber ? (
               <VerifiedBadgeView>
                 <VerifiedBadgeText>{'인증완료'}</VerifiedBadgeText>
               </VerifiedBadgeView>
@@ -511,7 +505,7 @@ const EditProfileScreen = ({
             <SectionImage
               source={sectionArrow}
               style={{
-                marginLeft: currentUser.profile.phoneNumber ? 8 : 'auto',
+                marginLeft: profile.phoneNumber ? 8 : 'auto',
               }}
             />
           </SectionContentView>

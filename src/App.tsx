@@ -1,15 +1,11 @@
 import React, {useEffect} from 'react';
-import {
-  PermissionsAndroid,
-  Platform,
-  Alert
-} from 'react-native';
-import CameraRoll from "@react-native-community/cameraroll";
+import {PermissionsAndroid, Platform, Alert} from 'react-native';
+import CameraRoll from '@react-native-community/cameraroll';
 import styled from 'styled-components/native';
 import {Provider} from 'react-redux';
 import {createStore} from 'redux';
 import rootReducer from './reducers';
-import Navigator from '~/Navigator'
+import Navigator from '~/Navigator';
 import messaging from '@react-native-firebase/messaging';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {RootSiblingParent, setSiblingWrapper} from 'react-native-root-siblings';
@@ -19,8 +15,7 @@ import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 // Async Storage
 import {getUserInfo} from '~/storage/currentUser';
 
-
-const store = createStore(rootReducer)
+const store = createStore(rootReducer);
 setSiblingWrapper((sibling) => <Provider store={store}>{sibling}</Provider>);
 
 async function checkAndroidPermission() {
@@ -82,14 +77,13 @@ const App = () => {
 
   return (
     <RootSiblingParent>
-    <Provider store={store}>
-      <SafeAreaProvider>
-        <Navigator/>
-      </SafeAreaProvider>
-    </Provider>
+      <Provider store={store}>
+        <SafeAreaProvider>
+          <Navigator />
+        </SafeAreaProvider>
+      </Provider>
     </RootSiblingParent>
   );
 };
-
 
 export default App;

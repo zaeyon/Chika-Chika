@@ -114,12 +114,11 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   const [eventSearchResult, setEventSearchResult] = useState([]);
 
   const dispatch = useDispatch();
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const jwtToken = currentUser.jwtToken;
-  const hometown = currentUser.hometown;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 
-  const searchRecordArray = useSelector((state: any) => state.currentUser)
-    .searchRecordArray;
+  const searchRecordArray = useSelector(
+    (state: any) => state.currentUser.searchRecordArray,
+  );
 
   const searchInputRef = useRef<any>();
 
@@ -197,7 +196,14 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
 
     DELETESearchRecord({jwtToken, searchId})
       .then((response) => {
-        console.log('DELETESearchRecord response', response);
+        GETSearchRecord({jwtToken})
+          .then((response: any) => {
+            console.log('GETSearchRecord response', response);
+            dispatch(allActions.userActions.setSearchRecord(response));
+          })
+          .catch((error) => {
+            console.log('GETSearchRecord error', error);
+          });
       })
       .catch((error) => {
         console.log('DELETESearchRecord error', error);
@@ -209,7 +215,14 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
 
     DELETESearchRecord({jwtToken, searchId})
       .then((response) => {
-        console.log('DELETESearchRecord response', response);
+        GETSearchRecord({jwtToken})
+          .then((response: any) => {
+            console.log('GETSearchRecord response', response);
+            dispatch(allActions.userActions.setSearchRecord(response));
+          })
+          .catch((error) => {
+            console.log('GETSearchRecord error', error);
+          });
       })
       .catch((error) => {
         console.log('DELETESearchRecord error', error);
@@ -220,6 +233,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
     ({
       keyword,
       category,
+      tagId,
     }: {
       keyword: string;
       category: string;
@@ -235,6 +249,12 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
         setQuery(keyword);
         setCategory(category);
         setTagId(tagId);
+        dispatch(
+          allActions.userActions.setSearchRecord([
+            {category, id: tagId, query: keyword},
+            ...searchRecordArray,
+          ]),
+        );
         return false;
       });
       // }

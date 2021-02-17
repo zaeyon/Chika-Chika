@@ -1,18 +1,20 @@
 import React, {useState, useEffect, useCallback, useRef} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {Image, Animated} from 'react-native';
+import {Image, Animated, TouchableOpacity} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import allActions from '~/actions';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 // Firebase
 import messaging from '@react-native-firebase/messaging';
 
 // Redux
 import {useSelector, useDispatch} from 'react-redux';
+import allActions from '~/actions';
 
 //Local Component
 import HomeInfoContent from '~/Components/Presentational/HomeScreen/HomeInfoContent';
@@ -22,11 +24,14 @@ import HomeCommunityContent from '~/Components/Presentational/HomeScreen/HomeCom
 import GETSearchRecord from '~/Routes/Search/GETSearchRecord';
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import GETTotalSearch from '~/Routes/Search/GETTotalSearch';
+import GETLocalClinicAndReviewCount from '~/Routes/Main/GETLocalClinicAndReviewCount';
 
 const ContainerView = Styled.View`
 flex: 1;
 background: #FFFFFF;
 `;
+
+const HomeLogoImage = Styled.Image``;
 
 const PartitionView = Styled.View`
 width: ${wp('100%')}px;
@@ -43,7 +48,9 @@ width: 100%;
 flex-direction: row;
 padding: 20px 16px 15px 16px;
 background: #FFFFFF;
+align-items: center;
 z-index: 2;
+margin-bottom: 24px;
 `;
 
 const HeaderIconContainerView = Styled.View`
@@ -62,6 +69,22 @@ justify-content: center;
 align-items: center;
 `;
 
+const FloatingButtonView = Styled.View`
+position: absolute;
+align-self: center;
+bottom: 70px;
+padding: 8px 24px;
+background: #131F3C;
+box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+border-radius: 100px;
+`;
+
+const FloatingButtonText = Styled.Text`
+font-weight: bold;
+font-size: 16px;
+line-height: 24px;
+color: #FFFFFF;
+`;
 interface Props {
   navigation: any;
   route: any;
@@ -73,12 +96,14 @@ interface ReviewData {
 }
 
 const HomeScreen = ({navigation, route}: Props) => {
-  const [localClinicCount, setLocalClinicCount] = useState<number>(333);
-  const [localReviewCount, setLocalReviewCount] = useState<number>(23);
-  const [selectedHometown, setSelectedHometown] = useState<any>();
+  const [localClinicCount, setLocalClinicCount] = useState<number>(0);
+  const [localReviewCount, setLocalReviewCount] = useState<number>(0);
+
+  const [onMessage, setOnMessage] = useState(false);
+  const alertScale = useRef(new Animated.Value(0)).current;
 
   const [tagFilterItems, setTagFilterItems] = useState([
-    {name: '충치', category: 'treatment'},
+    {name: '충치', category: 'treatment', id: '1386'},
     {name: '교정', category: 'treatment'},
     {name: '임플란트', category: 'treatment'},
   ]);
@@ -86,30 +111,69 @@ const HomeScreen = ({navigation, route}: Props) => {
   const [reviewData, setReviewData] = useState([]);
   const [postData, setPostData] = useState<ReviewData[]>();
 
-  const scrollY = useRef(new Animated.Value(0)).current;
+  const [prevOffsetY, setPrevOffsetY] = useState(0);
+  const [scrollDirection, setScrollDirection] = useState('down');
+  const floatY = useRef(new Animated.Value(0)).current;
 
-  const currentUser = useSelector((state: any) => state.currentUser);
-  const mainHometown = currentUser.hometown;
-  const jwtToken = currentUser.jwtToken;
-  const hometown = currentUser.hometown;
-  const profile = currentUser.profile;
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+
+  const [isMainHomeChanged, setIsMainHomeChanged] = useState(true);
+  const selectedHometown = useSelector(
+    (state: any) =>
+      state.currentUser.hometown &&
+      state.currentUser.hometown.find((item) => item.UsersCities?.now === true),
+  );
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (mainHometown) {
-      setSelectedHometown(
-        mainHometown.find((item) => item.UsersCities?.now === true),
-      );
-    }
-  }, [mainHometown]);
+  useFocusEffect(
+    useCallback(() => {
+      if (selectedHometown) {
+        setIsMainHomeChanged((prev) => {
+          if (prev) {
+            fetchRecentCommunityPosts(selectedHometown);
+            fetchRecentReviews(selectedHometown);
+            fetchLocalInfo(selectedHometown);
+          }
+          return false;
+        });
+      }
+    }, [selectedHometown]),
+  );
 
   useEffect(() => {
     if (selectedHometown) {
-      fetchRecentCommunityPosts();
-      fetchRecentReviews();
+      fetchRecentCommunityPosts(selectedHometown);
+      fetchRecentReviews(selectedHometown);
+      fetchLocalInfo(selectedHometown);
     }
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      setOnMessage(true);
+    });
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    setIsMainHomeChanged(true);
   }, [selectedHometown]);
+
+  useEffect(() => {
+    if (onMessage) {
+      Animated.timing(alertScale, {
+        toValue: 1,
+        duration: 100,
+
+        useNativeDriver: true,
+      }).start(() => {
+        Animated.timing(alertScale, {
+          toValue: 0,
+          duration: 100,
+
+          useNativeDriver: true,
+        }).start();
+      });
+    }
+  }, [onMessage]);
 
   useEffect(() => {
     messaging().onNotificationOpenedApp((remoteMessage: any) => {
@@ -160,46 +224,90 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   }, []);
 
-  const fetchRecentReviews = useCallback(async () => {
-    const result = await Promise.all(
-      tagFilterItems.map(async (tagItem) => {
-        const form = {
-          jwtToken,
-          query: tagItem.name,
-          category: tagItem.category,
-          pathType: 'review',
-          limit: '4',
-          offset: '0',
-          order: 'createdAt',
-          region: 'residence',
-          cityId: String(selectedHometown.id),
-        };
-        console.log(form);
-        const data = await GETTotalSearch(form);
-        return {
-          name: tagItem.name,
-          data,
-        };
-      }),
-    );
-    console.log(result);
-    setReviewData(result);
-  }, [jwtToken, selectedHometown, tagFilterItems]);
+  const fetchLocalInfo = useCallback(
+    (selectedHometown) => {
+      GETLocalClinicAndReviewCount({
+        jwtToken,
+        cityId: String(selectedHometown.id),
+      }).then((response: any) => {
+        setLocalClinicCount(response.residenceClinicsNum);
+        setLocalReviewCount(response.residenceReviewsNum);
+      });
+    },
+    [jwtToken],
+  );
 
-  const fetchRecentCommunityPosts = useCallback(() => {
-    const form = {
-      type: 'All',
-      limit: 10,
-      offset: 0,
-      order: 'createdAt',
-      region: 'residence',
-    };
-    GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
-      (response: any) => {
-        setPostData(response);
-      },
-    );
-  }, [jwtToken, selectedHometown]);
+  const fetchRecentReviews = useCallback(
+    async (selectedHometown: any) => {
+      const result = await Promise.all(
+        tagFilterItems.map(async (tagItem) => {
+          const form = {
+            jwtToken,
+            query: tagItem.name,
+            category: tagItem.category,
+            pathType: 'review',
+            tagId: tagItem.id,
+            limit: '4',
+            offset: '0',
+            order: 'createdAt',
+            region: 'residence',
+            cityId: String(selectedHometown.id),
+          };
+          const data = await GETTotalSearch(form);
+          return {
+            name: tagItem.name,
+            data,
+          };
+        }),
+      );
+      setReviewData(result);
+    },
+    [jwtToken, tagFilterItems],
+  );
+
+  const fetchRecentCommunityPosts = useCallback(
+    (selectedHometown) => {
+      const form = {
+        type: 'All',
+        limit: 10,
+        offset: 0,
+        order: 'createdAt',
+        region: 'residence',
+      };
+      GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
+        (response: any) => {
+          setPostData(response);
+        },
+      );
+    },
+    [jwtToken],
+  );
+
+  const moveToCommunityDetail = useCallback(
+    (postId: number, postType: string) => {
+      navigation.navigate('CommunityStackScreen', {
+        screen: 'CommunityDetailScreen',
+        params: {
+          id: postId,
+          type: postType,
+        },
+      });
+    },
+    [],
+  );
+  
+  const moveToAnotherProfile = useCallback(
+    (userId: string, nickname: string, profileImageUri: string) => {
+      navigation.navigate('AnotherProfileStackScreen', {
+        targetUser: {
+          userId,
+          nickname,
+          profileImageUri,
+        },
+      });
+    },
+    [],
+  );
 
   const moveToTotalKeywordSearch = () => {
     console.log('moveToTotalKeywordSearch');
@@ -223,6 +331,36 @@ const HomeScreen = ({navigation, route}: Props) => {
     });
   }, []);
 
+  const moveToReviewDetail = useCallback(
+    (
+      reviewId: number,
+      writer: object,
+      createdAt: string,
+      treatmentArray: Array<object>,
+      ratingObj: object,
+      treatmentDate: string,
+      imageArray: Array<object>,
+      isCurUserLike: boolean,
+      likeCount: number,
+      commentCount: number,
+      isCurUserScrap: boolean,
+      dentalObj: object,
+      visibleElapsedTime: boolean,
+      elapsedTime: string,
+    ) => {
+      console.log('moveToReviewDetail reviewId', reviewId);
+
+      navigation.navigate('ReviewStackScreen', {
+        screen: 'ReviewDetailScreen',
+      });
+    },
+    [],
+  );
+
+  const moveToHomeTownSetting = useCallback(() => {
+    navigation.navigate('HometownSettingScreen');
+  }, []);
+
   return (
     <ContainerView as={SafeAreaView}>
       <ContentScrollView
@@ -231,29 +369,75 @@ const HomeScreen = ({navigation, route}: Props) => {
           paddingBottom: hp('9.1%'),
         }}
         scrollEventThrottle={16}
-        onScroll={Animated.event(
-          [
-            {
-              nativeEvent: {
-                contentOffset: {
-                  y: scrollY,
-                },
-              },
-            },
-          ],
-          {
-            useNativeDriver: false,
-          },
-        )}>
+        onScroll={(event) => {
+          setPrevOffsetY(event.nativeEvent.contentOffset.y);
+          if (prevOffsetY - event.nativeEvent.contentOffset.y >= 5) {
+            if (
+              scrollDirection === 'down' &&
+              event.nativeEvent.contentOffset.y > 0 &&
+              event.nativeEvent.contentSize.height -
+                event.nativeEvent.layoutMeasurement.height >
+                event.nativeEvent.contentOffset.y
+            ) {
+              Animated.timing(floatY, {
+                toValue: 1,
+                duration: 150,
+                useNativeDriver: true,
+              }).start();
+              setScrollDirection('up');
+            }
+          } else if (event.nativeEvent.contentOffset.y - prevOffsetY >= 5) {
+            if (
+              scrollDirection === 'up' &&
+              event.nativeEvent.contentOffset.y > 0
+            ) {
+              Animated.timing(floatY, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: true,
+              }).start();
+              setScrollDirection('down');
+            }
+          }
+        }}>
         <HeaderContainerView>
+          <HomeLogoImage
+            source={require('~/Assets/Images/Logo/ic_home_logo.png')}
+          />
           <HeaderIconContainerView>
             <HeaderIconTouchableOpacity
               onPress={() => moveToTotalKeywordSearch()}>
               <Image source={require('~/Assets/Images/TopTab/ic/search.png')} />
             </HeaderIconTouchableOpacity>
-            <HeaderIconTouchableOpacity onPress={() => moveToNotificationList()}>
-              <Image
-                source={require('~/Assets/Images/TopTab/ic/alarm/focus.png')}
+            <HeaderIconTouchableOpacity
+              onPress={() => {
+                setOnMessage(false);
+                moveToNotificationList();
+              }}>
+              <Animated.Image
+                style={{
+                  transform: [
+                    {
+                      rotate: alertScale.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['0deg', '15deg'],
+                        extrapolate: 'clamp',
+                      }),
+                    },
+                    {
+                      scale: alertScale.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, 1.15],
+                        extrapolate: 'clamp',
+                      }),
+                    },
+                  ],
+                }}
+                source={
+                  onMessage
+                    ? require('~/Assets/Images/TopTab/ic/alarm/focus.png')
+                    : require('~/Assets/Images/TopTab/ic/alarm/unfocus.png')
+                }
               />
             </HeaderIconTouchableOpacity>
             <HeaderIconTouchableOpacity
@@ -265,22 +449,48 @@ const HomeScreen = ({navigation, route}: Props) => {
           </HeaderIconContainerView>
         </HeaderContainerView>
         <HomeInfoContent
-          scrollY={scrollY}
-          selectedHometown={selectedHometown?.emdName}
+          isMainHomeChanged={isMainHomeChanged}
+          selectedHometown={selectedHometown}
           localClinicCount={localClinicCount}
           localReviewCount={localReviewCount}
+          moveToHomeTownSetting={moveToHomeTownSetting}
         />
         <PartitionView />
         <HomeReviewContent
           selectedHometown={selectedHometown?.emdName}
           tagFilterItems={tagFilterItems}
           reviewData={reviewData}
+          moveToReviewDetail={moveToReviewDetail}
         />
         <HomeCommunityContent
           selectedHometown={selectedHometown?.emdName}
           postData={postData}
+          moveToCommunityDetail={moveToCommunityDetail}
+          moveToAnotherProfile={moveToAnotherProfile}
         />
       </ContentScrollView>
+
+      <FloatingButtonView
+        as={Animated.View}
+        style={{
+          transform: [
+            {
+              translateY: floatY.interpolate({
+                inputRange: [0, 1],
+                outputRange: [120, 0],
+                extrapolate: 'clamp',
+              }),
+            },
+          ],
+        }}>
+        <TouchableOpacity
+          onPress={() => {
+            ReactNativeHapticFeedback.trigger('impactLight');
+            moveToReviewUpload();
+          }}>
+          <FloatingButtonText>{'리뷰 작성하기'}</FloatingButtonText>
+        </TouchableOpacity>
+      </FloatingButtonView>
     </ContainerView>
   );
 };

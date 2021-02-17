@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {TouchableWithoutFeedback} from 'react-native';
+import {TouchableWithoutFeedback, LayoutAnimation} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -63,7 +63,7 @@ color: #131F3C;
 
 const HeaderTitleText = Styled.Text`
 font-style: normal;
-font-weight: 400;
+font-weight: bold;
 font-size: 16px;
 line-height: 24px;
 color: #131F3C;

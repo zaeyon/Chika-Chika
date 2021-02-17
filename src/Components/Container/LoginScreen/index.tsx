@@ -32,7 +32,6 @@ import POSTSendTokenToPhone from '~/Routes/Auth/POSTSendTokenToPhone';
 import POSTVerifyPhoneNumber from '~/Routes/Auth/POSTVerifyPhoneNumber';
 import POSTLogin from '~/Routes/Auth/POSTLogin';
 
-
 const Container = Styled.View`
   padding-top: ${getStatusBarHeight()};
   flex: 1;
@@ -131,7 +130,6 @@ padding-left: 20px;
 align-items: center;
 justify-content: center;
 `;
-
 
 const DisabledLoginButton = Styled.View`
 width: ${wp('100%')}px;
@@ -253,7 +251,6 @@ const LoginScreen = ({navigation, route}: Props) => {
   );
   const [timeOver, setTimeOver] = useState<boolean>(false);
 
-  const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
 
   const numberInputRef = useRef(null);
@@ -393,7 +390,7 @@ const LoginScreen = ({navigation, route}: Props) => {
           console.log('number', number);
 
           navigation.navigate('HometownSearchScreen', {
-            requestType: "signUp",
+            requestType: 'signUp',
             certifiedPhoneNumber: true,
             provider: 'local',
             fcmToken: fcmToken,
@@ -443,7 +440,7 @@ const LoginScreen = ({navigation, route}: Props) => {
   const login = (submitPhoneNumber: string, submitAuthCode: string) => {
     const phoneNumber = submitPhoneNumber;
     const authCode = submitAuthCode;
-    const fcmToken = route.params?.fcmToken
+    const fcmToken = route.params?.fcmToken;
 
     POSTLogin({phoneNumber, authCode, fcmToken})
       .then(function (response: any) {
@@ -471,8 +468,9 @@ const LoginScreen = ({navigation, route}: Props) => {
             }),
           );
 
-        dispatch(allActions.userActions.setHometown(response.user.userResidences));
-          
+          dispatch(
+            allActions.userActions.setHometown(response.user.userResidences),
+          );
         }
       })
       .catch(function (error: any) {
@@ -507,7 +505,7 @@ const LoginScreen = ({navigation, route}: Props) => {
         </HeaderRightContainer>
       </HeaderBar>
       <BodyContainer>
-        <MainLabelText>{"전화번호 인증"}</MainLabelText>
+        <MainLabelText>{'전화번호 인증'}</MainLabelText>
         <ItemContainer style={{marginTop: 20}}>
           <ItemTextInput
             ref={numberInputRef}
@@ -520,7 +518,7 @@ const LoginScreen = ({navigation, route}: Props) => {
                   backgroundColor: '#FFFFFF',
                 }),
             ]}
-            selectionColor={"#00D1FF"}
+            selectionColor={'#00D1FF'}
             onChangeText={(text: string) => onChangeNumberInput(text)}
             autoCapitalize={'none'}
             onSubmitEditing={(text) =>
@@ -562,7 +560,7 @@ const LoginScreen = ({navigation, route}: Props) => {
                   backgroundColor: '#ffffff',
                 })
               }
-              selectionColor={"#00D1FF"}
+              selectionColor={'#00D1FF'}
               onFocus={() => onFocusAuthCodeInput()}
               onSubmitEditing={(text: any) =>
                 onUnfocusAuthCodeInput(text.nativeEvent.text)
@@ -575,8 +573,8 @@ const LoginScreen = ({navigation, route}: Props) => {
               autoCapitalize={'none'}
               autoFocus={true}
             />
-            <TimeLimitTextContainer>  
-                <TimeLimitText>{limitMin + ':' + limitSec}</TimeLimitText>
+            <TimeLimitTextContainer>
+              <TimeLimitText>{limitMin + ':' + limitSec}</TimeLimitText>
             </TimeLimitTextContainer>
             {timeOver && (
               <InvalidInputText>

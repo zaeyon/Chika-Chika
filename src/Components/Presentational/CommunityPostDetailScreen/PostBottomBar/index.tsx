@@ -66,6 +66,9 @@ const PostBottomBar = ({
 
   const [isLiked, setIsLiked] = useState(viewerLikeCommunityPost);
   const [isScraped, setIsScraped] = useState(viewerScrapCommunityPost);
+  const [likeNum, setLikeNum] = useState(
+    postLikeNum - (viewerLikeCommunityPost ? 1 : 0),
+  );
 
   return (
     <SocialInfoContainerView>
@@ -96,7 +99,7 @@ const PostBottomBar = ({
                   : require('~/Assets/Images/Community/bottomBar/like/unfocus.png')
               }
             />
-            <SocialInfoText>{postLikeNum}</SocialInfoText>
+            <SocialInfoText>{likeNum + (isLiked ? 1 : 0)}</SocialInfoText>
           </SocialInfoView>
         </TouchableWithoutFeedback>
       </SocialInfoContentView>

@@ -92,7 +92,7 @@ const GeneralSettingScreen = ({changeNotificationSetting, profile}: Props) => {
   const dispatch = useDispatch();
 
   const [sectionArrow, setSectionArrow] = useState(
-    require('~/Assets/Images/MyPage/common/gan/list/profile_edit_section_arrow.png'),
+    require('~/Assets/Images/MyPage/EditProfile/Section/profile_edit_section_arrow.png'),
   );
   const [childrenIndicator, setChildrenIndicator] = useState(
     require('~/Assets/Images/Setting/list/children_indicator.png'),
