@@ -132,6 +132,13 @@ const RatingScreen = ({navigation, route}: Props) => {
   const [treatmentRating, setTreatmentRating] = useState<number>(0);
   const [priceRating, setPriceRating] = useState<number>(0);
 
+  const [defaultServiceRating, setDefaultServiceRating] = useState<number>(route.params.ratingObj.serviceRating ? route.params.ratingObj.serviceRating : 0);
+
+
+  const [defaultTreatmentRating, setDefaultTreatmentRating] = useState<number>(route.params.ratingObj.treatmentRating ? route.params.ratingObj.treatmentRating : 0);
+
+  const [defaultPriceRating, setDefaultPriceRating] = useState<number>(route.params.ratingObj.priceRating ? route.params.ratingObj.priceRating : 0);
+
   const [isActivatedFinish, setIsActivatedFinish] = useState<boolean>(false);
 
   useEffect(() => {
@@ -141,6 +148,10 @@ const RatingScreen = ({navigation, route}: Props) => {
       setServiceRating(route.params.ratingObj.serviceRating);
       setTreatmentRating(route.params.ratingObj.treatmentRating);
       setPriceRating(route.params.ratingObj.priceRating);
+
+      setDefaultServiceRating(route.params.ratingObj.serviceRating);
+      setDefaultTreatmentRating(route.params.ratingObj.treatmentRating);
+      setDefaultPriceRating(route.params.ratingObj.priceRating);
     }
   }, [route.params?.ratingObj]);
 
@@ -195,11 +206,11 @@ const RatingScreen = ({navigation, route}: Props) => {
         ratingImage={ratingImage}
         imageSize={wp('8.53%')}
         fractions={2}
-        startingValue={serviceRating}
+        startingValue={defaultServiceRating}
         onFinishRating={completeServiceRating}
         setRatingInMove={movingServiceRating}/>
     )
-  }, [serviceRating])
+  }, [defaultServiceRating])
 
   const renderSwipeTreatmentRating = useCallback(() => {
     return (
@@ -208,11 +219,11 @@ const RatingScreen = ({navigation, route}: Props) => {
       ratingImage={ratingImage}
       imageSize={wp('8.53%')}
       fractions={2}
-      startingValue={treatmentRating}
+      startingValue={defaultTreatmentRating}
       onFinishRating={completeTreatmentRating}
       setRatingInMove={movingTreatmentRating}/>
     )
-  }, [treatmentRating])
+  }, [defaultTreatmentRating])
 
   const renderSwipePriceRating = useCallback(() => {
     return (
@@ -221,11 +232,11 @@ const RatingScreen = ({navigation, route}: Props) => {
       ratingImage={ratingImage}
       imageSize={wp('8.53%')}
       fractions={2}
-      startingValue={priceRating}
+      startingValue={defaultPriceRating}
       onFinishRating={completePriceRating}
       setRatingInMove={movingPriceRating}/>
     )
-  }, [priceRating])
+  }, [defaultPriceRating])
 
 
   return (

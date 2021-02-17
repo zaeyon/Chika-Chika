@@ -104,6 +104,10 @@ color: #464646;
 `;
 
 const CallContainer = Styled.View`
+flex-direction: row;
+`;
+
+const CallButtonContainer = Styled.View`
 padding: 8px 16px 16px 16px;
 `;
 
@@ -170,6 +174,7 @@ interface Prop {
   openTime: string;
   closeTime: string;
   moveToDentalDetail: (dentalId: number) => void;
+  clickDentalCallReservation: (phoneNumber: number) => void;
 }
 
 const DentalListItem = ({
@@ -185,6 +190,7 @@ const DentalListItem = ({
   openTime,
   closeTime,
   moveToDentalDetail,
+  clickDentalCallReservation,
 }: Prop) => {
 
   console.log("dentalObj", dentalObj);
@@ -243,8 +249,12 @@ const DentalListItem = ({
         </DentalImageContainer>
         </BodyContainer>
         <CallContainer>
+          <TouchableWithoutFeedback onPress={() => clickDentalCallReservation(dentalObj.telNumber)}>
+          <CallButtonContainer>
           <CallButtonImage
           source={require('~/Assets/Images/Dental/ic_call_list.png')}/>
+          </CallButtonContainer>
+          </TouchableWithoutFeedback>
         </CallContainer>
       </Container>
     </TouchableWithoutFeedback>

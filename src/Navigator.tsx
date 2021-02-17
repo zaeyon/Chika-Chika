@@ -41,7 +41,7 @@ import ReviewListScreen from '~/Components/Container/ReviewListScreen';
 import ReviewDetailScreen from '~/Components/Container/ReviewDetailScreen';
 import FullImagesScreen from '~/Components/Container/FullImagesScreen';
 import CommentListScreen from '~/Components/Container/CommentListScreen';
-import ReplyPostScreen from '~/Components/Container/ReplyPostScreen';
+import AccuseScreen from '~/Components/Container/AccuseScreen';
 
 // Review Upload Stack Screen
 import ReviewUploadScreen from '~/Components/Container/ReviewUploadScreen';
@@ -239,6 +239,9 @@ function ReviewStackScreen() {
         //   }
         // }}
       />
+      <ReviewStack.Screen
+      name="AccuseScreen"
+      component={AccuseScreen}/>
     </ReviewStack.Navigator>
   );
 }
@@ -291,6 +294,10 @@ function HomeStackScreen() {
         }}
       />
       <HomeStack.Screen
+        name="NotificationStackScreen"
+        component={NotificationStackScreen}
+      />
+      <HomeStack.Screen
         name="TotalKeywordSearchStackScreen"
         component={TotalKeywordSearchStackScreen}
         options={() => ({
@@ -339,8 +346,37 @@ function NearDentalMapStackScreen() {
         }}
       />
       <NearDentalMapStack.Screen
-        name="DentalClinicStack"
-        component={DentalClinicStackScreen}
+        name="DentalDetailScreen"
+        component={DentalDetailScreen}
+      />
+      <NearDentalMapStack.Screen
+        name="DentalInfoEditRequestScreen"
+        component={DentalInfoEditRequestScreen}
+      />
+      <NearDentalMapStack.Screen
+        name="ReviewUploadStackScreen"
+        component={ReviewUploadStackScreen}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
+      <NearDentalMapStack.Screen
+        name="DentalLocationMapScreen"
+        component={DentalLocationMapScreen}
+      />
+      <NearDentalMapStack.Screen
+        name="ImageSelectScreen"
+        component={ImageSelectScreen}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
+      <NearDentalMapStack.Screen
+        name="ReviewStackScreen"
+        component={ReviewStackScreen}/>
+      <HomeStack.Screen
+        name="AnotherProfileStackScreen"
+        component={AnotherProfileStackScreen}
       />
     </NearDentalMapStack.Navigator>
   );
@@ -375,6 +411,9 @@ function DentalClinicStackScreen() {
           gestureEnabled: false,
         }}
       />
+      <DentalClinicStack.Screen
+        name="ReviewStackScreen"
+        component={ReviewStackScreen}/>
     </DentalClinicStack.Navigator>
   );
 }
@@ -499,6 +538,9 @@ function ReviewUploadStackScreen() {
           gestureEnabled: false,
         }}
       />
+      <ReviewUploadStack.Screen
+        name="ImageSelectOneStackScreen"
+        component={ImageSelectOneStackScreen}/>
     </ReviewUploadStack.Navigator>
   );
 }
@@ -770,6 +812,9 @@ function CommunityStackScreen() {
         name="HometownSettingScreen"
         component={HometownSettingScreen}
       />
+      <CommunityStack.Screen
+        name="AccuseScreen"
+        component={AccuseScreen}/>
     </CommunityStack.Navigator>
   );
 }
@@ -836,7 +881,6 @@ function BottomTab() {
 
   const getDentalBottomTabBarVisibility = (route: any) => {
     const routeName = route.state ? route.state.routes[route.state.index] : '';
-    const isOpenDentalList = routeName.params?.isOpenDentalList;
 
     const stackRouteName = routeName.state
       ? routeName.state.routes[routeName.state.index].name
@@ -844,8 +888,7 @@ function BottomTab() {
 
     if (
       routeName.name === 'DentalTotalSearchScreen' ||
-      routeName.name === 'DentalClinicStack' ||
-      isOpenDentalList
+      routeName.name === 'DentalDetailScreen' || routeName.name === 'ReviewStackScreen' || routeName.name === 'ReviewUploadStackScreen'
     ) {
       return false;
     }

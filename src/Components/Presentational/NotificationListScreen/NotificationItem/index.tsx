@@ -9,6 +9,7 @@ import {
 } from 'react-native-responsive-screen';
 
 const Container = Styled.View`
+background-color: #FFFFFF;
 padding-top: 22px;
 padding-left: 16px;
 padding-right: 10px;
@@ -99,7 +100,7 @@ interface Props {
     selected: boolean,
     index: number,
     moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
-    moveToNotifiedPost: (postId: number, type: string) => void,
+    moveToNotifiedPost: (notificationObj: any) => void,
 }
 
 const NotificationItem = ({notificationObj, isEditing, selectNotificationItem, selected, index, moveToAnotherProfile, moveToNotifiedPost}: Props) => {
@@ -121,7 +122,7 @@ const NotificationItem = ({notificationObj, isEditing, selectNotificationItem, s
 
 
     return (
-        <TouchableWithoutFeedback onPress={() => moveToNotifiedPost(notificationObj.reviewId, notificationObj.type)}>
+        <TouchableWithoutFeedback onPress={() => moveToNotifiedPost(notificationObj)}>
         <Container>
             <ContentContainer>
             <TouchableWithoutFeedback onPress={() => moveToAnotherProfile(notificationObj.senders.id, notificationObj.senders.nickname, notificationObj.senders.profileImg)}>

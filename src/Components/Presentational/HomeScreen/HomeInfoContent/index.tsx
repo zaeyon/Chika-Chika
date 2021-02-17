@@ -58,7 +58,7 @@ background: #DAECFE;
 
 const LocationIndicationTitleText = Styled.Text`
 font-weight: bold;
-font-size: 24px;
+font-size: 18px;
 line-height: 24px;
 `;
 

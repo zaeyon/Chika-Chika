@@ -22,9 +22,8 @@ height: ${DeviceInfo.hasNotch() ? hp('8.128%') + 34 : hp('11.2')}px;
 border-top-width: 1px;
 border-color: #E2E6ED;
 background-color: #ffffff;
-padding-top: ${hp('1.9%')}px;
-padding-left: ${wp('4.26%')}px;
-padding-right: ${wp('4.26%')}px;
+padding-top: 10px;
+padding-right: 16px;
 justify-content: space-between;
 position: absolute;
 bottom: 0;
@@ -49,14 +48,15 @@ flex-direction: row;
 `;
 
 const SocialItemContainer = Styled.View`
-width: ${wp('12.8%')}px;
-height: ${wp('12.8%')}px;
+`;
+
+const SocialItemInnerContainer = Styled.View`
 align-items: center;
-justify-content: center;
 background-color: #ffffff;
-border-radius: 8px;
-border-width: 1px;
-border-color: #F5F7F9;
+padding-top: 9px;
+padding-left: 16px;
+padding-right: 16px;
+padding-bottom: 9px;
 `;
 
 const LikeContainer = Styled.View`
@@ -100,14 +100,16 @@ width: ${wp('6.4%')}px;
 height: ${wp('6.4%')}px;
 `;
 
+const SeeDentalInfoButtonContainer = Styled.View`
+`;
+
 const SeeDentalInfoButton = Styled.View`
-flex: 1;
-margin-left: ${wp('4.26%')}px;
-height: ${wp('12.79%')}px;
+padding-top: 16px;
+padding-bottom: 16px;
+padding-left: 30px;
+padding-right: 30px;
 background-color: #131F3C;
 border-radius: 8px;
-align-items: center;
-justify-content: center;
 `;
 
 const SeeDentalInfoText = Styled.Text`
@@ -116,8 +118,17 @@ font-size: 16px;
 color: #ffffff;
 `;
 
+const SocialCountText = Styled.Text`
+margin-top: 2px;
+font-weight: 400;
+font-size: 13px;
+line-height: 16px;
+color: #9AA2A9;
+`;
+
 interface Props {
   likeCount: number;
+  commentCount: number;
   clickCommentIcon: (request: string) => void;
   clickReviewLike: () => void;
   clickReviewScrap: () => void;
@@ -128,6 +139,7 @@ interface Props {
 
 const ReviewBottomBar = ({
   likeCount,
+  commentCount,
   clickCommentIcon,
   clickReviewLike,
   clickReviewScrap,
@@ -138,6 +150,7 @@ const ReviewBottomBar = ({
   const [isCommentInput, setIsCommentInput] = useState<boolean>(false);
   const [commentDescrip, setCommentDescrip] = useState<string>('');
   const likeIconScale = useRef(new Animated.Value(1)).current;
+  const scrapIconScale = useRef(new Animated.Value(1)).current;
 
   return (
     <Container>
@@ -156,6 +169,7 @@ const ReviewBottomBar = ({
             }
           }}>
           <SocialItemContainer>
+            <SocialItemInnerContainer>
             <Animated.Image
               style={{
                 width: wp('6.4%'),
@@ -168,32 +182,58 @@ const ReviewBottomBar = ({
                   : require('~/Assets/Images/Indicator/ic_like_unfocus.png')
               }
             />
+            <SocialCountText>{likeCount}</SocialCountText>
+            </SocialItemInnerContainer>
           </SocialItemContainer>
         </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={() => clickReviewScrap()}>
-          <SocialItemContainer style={{marginLeft: 8}}>
-            <ScrapIcon
+        <TouchableWithoutFeedback onPress={() => clickCommentIcon('post')}>
+          <SocialItemContainer>
+            <SocialItemInnerContainer>
+            <CommentIcon
+              source={require('~/Assets/Images/Indicator/ic_comment.png')}
+            />
+            <SocialCountText>{commentCount}</SocialCountText>
+            </SocialItemInnerContainer>
+          </SocialItemContainer>
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={() => {
+          clickReviewScrap();
+          if(!isCurUserScrap) {
+            scrapIconScale.setValue(0.7);
+            Animated.spring(scrapIconScale, {
+              toValue: 1,
+              friction: 6,
+              tension: 400,
+              useNativeDriver: true,
+            }).start();
+          }
+        }}>
+          <SocialItemContainer>
+            <SocialItemInnerContainer>
+            <Animated.Image
+              style={{
+                width: wp('6.4%'),
+                height: wp('6.4%'),
+                transform: [{scale: scrapIconScale}],
+              }}
               source={
                 isCurUserScrap
                   ? require('~/Assets/Images/Indicator/ic_scrap_focus.png')
                   : require('~/Assets/Images/Indicator/ic_scrap_unfocus.png')
               }
             />
-          </SocialItemContainer>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={() => clickCommentIcon('post')}>
-          <SocialItemContainer style={{marginLeft: 8}}>
-            <CommentIcon
-              source={require('~/Assets/Images/Indicator/ic_comment.png')}
-            />
+            <SocialCountText>{""}</SocialCountText>
+            </SocialItemInnerContainer>
           </SocialItemContainer>
         </TouchableWithoutFeedback>
       </SocialInfoListContainer>
+      <SeeDentalInfoButtonContainer>
       <TouchableWithoutFeedback onPress={() => moveToDentalDetail()}>
         <SeeDentalInfoButton>
-          <SeeDentalInfoText>{'병원정보'}</SeeDentalInfoText>
+          <SeeDentalInfoText>{'병원정보 보기'}</SeeDentalInfoText>
         </SeeDentalInfoButton>
       </TouchableWithoutFeedback>
+      </SeeDentalInfoButtonContainer>
     </Container>
   );
 };

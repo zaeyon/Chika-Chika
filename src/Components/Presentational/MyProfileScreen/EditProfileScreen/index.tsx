@@ -323,6 +323,7 @@ const EditProfileScreen = ({
       useNativeDriver: true,
     }).start(() => setIsModalVisible(false));
   }, []);
+
   const setUserBirthdate = useCallback(() => {
     Animated.timing(modalContentY, {
       toValue: hp('50%'),
@@ -394,6 +395,7 @@ const EditProfileScreen = ({
     }
     return result;
   }, []);
+  
   const initializeBirthDate = useCallback(() => {
     setSelectedBirthYear(
       String(parseInt(currentUser.profile.birthdate.split('-')[0])),

@@ -1,6 +1,6 @@
 import React from 'react';
 import Styled from 'styled-components/native';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -124,6 +124,9 @@ font-size: 14px;
 const CallContainer = Styled.View`
 `;
 
+const CallButtonContainer = Styled.View`
+`;
+
 const CallButtonImage = Styled.Image`
 width: ${wp('13.86%')}px;
 height: ${wp('13.86%')}px;
@@ -165,6 +168,7 @@ interface Props {
   lunchTime: string;
   openTime: string;
   closeTime: string;
+  clickDentalCallReservation: (phoneNumber: number) => void,
 }
 
 const DentalCarouselItem = ({
@@ -178,9 +182,11 @@ const DentalCarouselItem = ({
   lunchTime,
   openTime,
   closeTime,
+  clickDentalCallReservation,
 }: Props) => {
 
   const distance = Math.round(dentalObj['distance(km)'] * 1000);
+  console.log("DentalCarouselItem dentalObj", dentalObj);
 
   return (
     <Container
@@ -226,8 +232,12 @@ const DentalCarouselItem = ({
       </FooterContainer>
     </DentalInfoContainer>
     <CallContainer>
+      <TouchableWithoutFeedback onPress={() => clickDentalCallReservation(dentalObj.telNumber)}>
+      <CallButtonContainer>
       <CallButtonImage
       source={require('~/Assets/Images/Dental/ic_call.png')}/>
+      </CallButtonContainer>
+      </TouchableWithoutFeedback>
     </CallContainer>
     </Container>
   );

@@ -62,6 +62,9 @@ height: 1px;
 background: #E2E6ED;
 `;
 
+const HometownItemContainerView = Styled.View`
+`;
+
 interface Props {
   hometown: any;
   selectedHometown: any;
@@ -81,7 +84,8 @@ const LocationSelection = ({
       <ContainerView>
         <HometownSettingFloatView>
           {hometown.map((item: any, index: number) => (
-            <>
+            <HometownItemContainerView
+            key={index}>
               <TouchableWithoutFeedback
                 onPress={() => {
                   setSelectedHometown(item);
@@ -100,7 +104,7 @@ const LocationSelection = ({
                 </HometownSetttingContentView>
               </TouchableWithoutFeedback>
               <VerticalPartition key={'bar' + String(index)} />
-            </>
+            </HometownItemContainerView>
           ))}
           <TouchableWithoutFeedback onPress={() => moveToHomeTownSetting()}>
             <HometownSetttingContentView>

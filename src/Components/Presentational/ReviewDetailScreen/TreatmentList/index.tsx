@@ -110,7 +110,8 @@ const TreatmentList = ({treatmentArray, elapsedTime}: Props) => {
       <TreatmentListContainer>
         {treatmentArray?.map((item, index) => {
           return (
-            <TreatmentItemContainer>
+            <TreatmentItemContainer
+            key={index}>
               <TreatmentText>
                 <HashText>{'# '}</HashText>
                 {item.name}

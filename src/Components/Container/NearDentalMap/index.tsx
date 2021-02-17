@@ -42,6 +42,7 @@ import DentalCarouselList from '~/Components/Presentational/NearDentalMap/Dental
 import TouchBloackIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 import DentalList from '~/Components/Presentational/DentalList';
 import ToastMessage from '~/Components/Presentational/ToastMessage';
+import {callPhoneNumber} from '~/method/callPhoneNumber';
 
 // Route
 import GETAroundDental from '~/Routes/Dental/GETAroundDental';
@@ -311,13 +312,39 @@ color: #000000;
 `;
 
 const ViewDentalListContainer = Styled.View`
+padding-left: 16px;
 padding-right: 16px;
 flex-direction: row;
-justify-content: flex-end;
+justify-content: space-between;
+`;
+
+const ReSearchInCurrentRegionButton = Styled.View`
+position: absolute;
+left: 16px;
+opacity: 0.9;
+border-width: 1px;
+border-color: #9AA2A9;
+flex-direction: row;
+padding: 9px 15px 9px 15px;
+background-color: #ffffff;
+border-radius: 100px;
 `;
 
 const ViewDentalListButton = Styled.View`
+position: absolute;
+right: 16px;
 opacity: 0.9;
+border-width: 1px;
+border-color: #9AA2A9;
+flex-direction: row;
+padding: 9px 15px 9px 15px;
+background-color: #ffffff;
+border-radius: 100px;
+`;
+
+
+const EmptyView = Styled.View`
+opacity: 0;
 border-width: 1px;
 border-color: #9AA2A9;
 flex-direction: row;
@@ -337,15 +364,17 @@ const NaverMapContainer = Styled.View`
 `;
 
 const MapActionButtonContainer = Styled.View`
-flex: 1;
-align-items: flex-end;
+position: absolute;
+right: 0px;
+top: ${hp('50%') - (DeviceInfo.hasNotch() ? hp('31%') : hp('29%'))}px;
 padding-top: 16px;
-padding-right: 9px;
+margin-right: 13px;
+margin-left: auto;
 `;
 
 const MyLocationTrackingButton = Styled.View`
-width: ${wp('10%')}px;
-height: ${wp('10%')}px;
+width: ${wp('10.5%')}px;
+height: ${wp('10.5%')}px;
 border-radius: 3px;
 background-color: #ffffff;
 align-items: center;
@@ -355,6 +384,7 @@ justify-content: center;
 const TargetIcon = Styled.Image`
 width: ${wp('4.266%')}px;
 height: ${wp('4.266%')}px;
+tint-color: #131F3C;
 `;
 
 const DentalListContainer = Styled.View`
@@ -386,8 +416,6 @@ const TEST_COORDINATE = {
   longitude: 126.9781164904998,
 };
 
-let offset = 0;
-let limit = 20;
 let sort = 'distance';
 
 const bottomTabheight = DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%');
@@ -423,6 +451,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
   const [changeDayFilter, setChangeDayFilter] = useState<boolean>(false);
 
   const [selectedDentalIndex, setSelectedDentalIndex] = useState<number>(0);
+
+  const [isVisibleReSearch, setIsVisibleReSearch] = useState<boolean>(false);
 
   const mapRef = useRef<any>(null);
   const dentalCarouselRef = useRef<any>(null);
@@ -470,6 +500,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
   const isNearDentalList = useRef<boolean>(true);
 
+  const limitRef = useRef<number>(20);
+  const offsetRef = useRef<number>(0);
+
   useEffect(() => {
     if(isNearDentalList.current) {
       console.log("사용자 위치 추적")
@@ -502,11 +535,11 @@ const NearDentalMap = ({navigation, route}: Props) => {
         route.params?.limit,
       );
       if (route.params.offset === 0) {
-        offset = 0;
-        limit = 20;
+        offsetRef.current = 0;
+        limitRef.current = 20;
       } else if (route.params.offset > 0) {
-        offset = 0;
-        limit = route.params?.offset;
+        offsetRef.current = 0;
+        limitRef.current = route.params?.offset;
       }
     }
 
@@ -540,6 +573,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
           const lat = position.coords.latitude;
           const long = position.coords.longitude;
 
+          const offset = offsetRef.current;
+          const limit = limitRef.current;
+
           const location = {
             coordinate: {
               latitude: position.coords.latitude,
@@ -552,6 +588,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
           GETAroundDental({
             jwtToken,
+            offset,
+            limit,
             lat,
             long,
             sort,
@@ -564,6 +602,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
               //setLoadingGetDental(false);
               dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
               dispatch(allActions.dentalMapActions.setNearDentalArray(response));
+              setIsVisibleReSearch(false);
             })
             .catch((error) => {
               console.log('GETAroundDental error', error);
@@ -581,12 +620,17 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
           ToastMessage.show("현재 위치를 불러오는데 실패했습니다ㅠㅠ");
 
+          const offset = offsetRef.current;
+          const limit = limitRef.current;
+
           // 서울 시청 좌표
           const lat = 37.566515657875435
           const long = 126.9781164904998
 
           GETAroundDental({
             jwtToken,
+            offset,
+            limit,
             lat,
             long,
             sort,
@@ -633,6 +677,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
           const lat = position.coords.latitude;
           const long = position.coords.longitude;
 
+          const offset = offsetRef.current;
+          const limit = limitRef.current;
+
           const location = {
             coordinate: {
               latitude: position.coords.latitude,
@@ -645,6 +692,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
           GETAroundDental({
             jwtToken,
+            offset,
+            limit,
             lat,
             long,
             sort,
@@ -657,6 +706,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
               console.log('GETAroundDental response.length', response.length);
               dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
               dispatch(allActions.dentalMapActions.setNearDentalArray(response));
+              setIsVisibleReSearch(false);
             })
             .catch((error) => {
               console.log('GETAroundDental error', error);
@@ -673,8 +723,13 @@ const NearDentalMap = ({navigation, route}: Props) => {
           const lat = 37.566515657875435
           const long = 126.9781164904998
 
+          const offset = offsetRef.current;
+          const limit = limitRef.current;
+
           GETAroundDental({
             jwtToken,
+            offset,
+            limit,
             lat,
             long,
             sort,
@@ -703,6 +758,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
   }
 
   const getNearDental = () => {
+    const offset = offsetRef.current;
+    const limit = limitRef.current;
+
     const lat = currentMapLocation.current.latitude;
     const long = currentMapLocation.current.longitude;
     const sort = 'd';
@@ -712,6 +770,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
     GETAroundDental({
       jwtToken,
+      offset,
+      limit,
       lat,
       long,
       sort,
@@ -721,12 +781,14 @@ const NearDentalMap = ({navigation, route}: Props) => {
       parkingFilter,
     })
       .then((response: any) => {
+        setIsVisibleReSearch(false)
         console.log('GETAroundDental response in NearDentalMap', response);
         dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
         dispatch(allActions.dentalMapActions.setNearDentalArray(response));
 
       })
       .catch((error) => {
+        setIsVisibleReSearch(false)
         console.log('GETAroundDental error', error);
         dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
       });
@@ -738,6 +800,10 @@ const NearDentalMap = ({navigation, route}: Props) => {
     tmpParkingFilter: string,
     tmpHolidayFilter: boolean,
   ) => {
+
+    const offset = offsetRef.current;
+    const limit = limitRef.current;
+
     const lat = currentMapLocation.current.latitude;
     const long = currentMapLocation.current.longitude;
     const sort = 'd';
@@ -752,6 +818,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
     GETAroundDental({
       jwtToken,
+      offset,
+      limit,
       lat,
       long,
       sort,
@@ -781,6 +849,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
     dispatch(allActions.dentalMapActions.setLoadingGetDental(true));
     const lat = currentMapLocation.current.latitude;
     const long = currentMapLocation.current.longitude;
+
+    const offset = offsetRef.current;
+    const limit = limitRef.current;
 
     const dayFilter = tmpDayFilter;
     const timeFilter = tmpTimeFilter;
@@ -846,11 +917,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   const moveToDentalDetail = (dentalId: number) => {
-    navigation.navigate('DentalClinicStack', {
-      screen: 'DentalDetailScreen',
-      params: {
-        dentalId: dentalId,
-      },
+    navigation.navigate('DentalDetailScreen', {
+      dentalId: dentalId,
     });
   };
 
@@ -868,6 +936,10 @@ const NearDentalMap = ({navigation, route}: Props) => {
   const clickMyLocationTrackingButton = () => {
     isNearDentalList.current = true;
     mapRef.current.setLocationTrackingMode(2);
+
+    setTimeout(() => {
+      getNearDental();
+    }, 100)
   };
 
   const onSnapToDentalCarouselItem = useCallback((selectedIndex: number) => {
@@ -880,15 +952,14 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const prevMapLocation = {...currentMapLocation.current}
     currentMapLocation.current = event;
 
-    const distance = getDistanceFromLatLonInKm(prevMapLocation.latitude, prevMapLocation.longitude, currentMapLocation.current.latitude, currentMapLocation.current.longitude);
+    // const distance = getDistanceFromLatLonInKm(prevMapLocation.latitude, prevMapLocation.longitude, currentMapLocation.current.latitude, currentMapLocation.current.longitude);
 
-    console.log("onMapCameraChange distance", distance);
-
-    // 이전의 지도 중심 좌표와 거리가 1km이상 차이날때 현재 위치에서 주변의 병원 다시 불러옴.
-    if(distance > 0.2) {
-      getNearDental();
-    }
+    setIsVisibleReSearch(true);
   };
+
+  const clickDentalCallReservation = (phoneNumber: number) => {
+    callPhoneNumber(phoneNumber);
+  }
 
   // 두 좌표 사이의 거리를 구하는 함수
   function getDistanceFromLatLonInKm(lat1: number, lng1: number, lat2: number, lng2: number) {
@@ -1169,6 +1240,10 @@ const NearDentalMap = ({navigation, route}: Props) => {
     }
   };
 
+  const reSearchNearDentalInCurrentLocation = () => {
+    getNearDental();
+  }
+
   const onPressTimeFilterActionSheet = (index: number) => {
     if (index === 1) {
       setVisibleTimeFilterModal(true);
@@ -1242,6 +1317,18 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 );
               })}
             </NaverMapView>
+            <MapActionButtonContainer>
+              <TouchableHighlight
+                style={{borderRadius: 3}}
+                activeOpacity={0.85}
+                onPress={() => clickMyLocationTrackingButton()}>
+                <MyLocationTrackingButton style={styles.mapActionButtonShadow}>
+                  <TargetIcon
+                    source={require('~/Assets/Images/Map/ic_target.png')}
+                  />
+                </MyLocationTrackingButton>
+              </TouchableHighlight>
+            </MapActionButtonContainer>
           </NaverMapContainer>
           <MapHeaderContainer>
           <SearchContainer>
@@ -1351,23 +1438,18 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 </TouchableWithoutFeedback>
               </ScrollView>
             </FilterListContainer>
-            <MapActionButtonContainer>
-              <TouchableHighlight
-                style={{borderRadius: 3}}
-                activeOpacity={0.85}
-                onPress={() => clickMyLocationTrackingButton()}>
-                <MyLocationTrackingButton style={styles.mapActionButtonShadow}>
-                  <TargetIcon
-                    source={require('~/Assets/Images/Map/ic_target.png')}
-                  />
-                </MyLocationTrackingButton>
-              </TouchableHighlight>
-            </MapActionButtonContainer>
           </MapHeaderContainer>
           {nearDentalArray.length > 0 && (
           <DentalListContainer>
           <MapInsetBottomShadow style={styles.insetShadow} />
           <ViewDentalListContainer>
+            {isVisibleReSearch && (
+            <TouchableWithoutFeedback onPress={() => reSearchNearDentalInCurrentLocation()}>
+            <ReSearchInCurrentRegionButton>
+              <ViewDentalListText>{'현재위치에서 검색'}</ViewDentalListText>
+            </ReSearchInCurrentRegionButton>
+            </TouchableWithoutFeedback>
+            )}
           <TouchableWithoutFeedback onPress={() => moveToDentalList()}>
             <ViewDentalListButton>
               <ViewDentalListIcon
@@ -1375,7 +1457,20 @@ const NearDentalMap = ({navigation, route}: Props) => {
               <ViewDentalListText>{'목록보기'}</ViewDentalListText>
             </ViewDentalListButton>
           </TouchableWithoutFeedback>
+          <EmptyView>
+            <ViewDentalListText>{""}</ViewDentalListText>
+          </EmptyView>
           </ViewDentalListContainer>
+          {/* <ViewDentalListContainer
+          style={{justifyContent: 'flex-end'}}>
+          <TouchableWithoutFeedback onPress={() => moveToDentalList()}>
+            <ViewDentalListButton>
+              <ViewDentalListIcon
+              source={require('~/Assets/Images/Map/ic_viewDentalList.png')}/>
+              <ViewDentalListText>{'목록보기'}</ViewDentalListText>
+            </ViewDentalListButton>
+          </TouchableWithoutFeedback>
+          </ViewDentalListContainer> */}
           <DentalCarouselList
             searchedDentalArr={nearDentalArray}
             moveToDentalDetail={moveToDentalDetail}
@@ -1383,8 +1478,17 @@ const NearDentalMap = ({navigation, route}: Props) => {
             todayIndex={todayIndex}
             selectedDentalIndex={selectedDentalIndex}
             dentalCarouselRef={dentalCarouselRef}
+            clickDentalCallReservation={clickDentalCallReservation}
           />
           </DentalListContainer>
+          )}
+          {isVisibleReSearch && nearDentalArray.length === 0 && (
+          <TouchableWithoutFeedback onPress={() => reSearchNearDentalInCurrentLocation()}>
+          <ReSearchInCurrentRegionButton
+          style={{position: "absolute", bottom: 20}}>
+            <ViewDentalListText>{'현재위치에서 검색'}</ViewDentalListText>
+          </ReSearchInCurrentRegionButton>
+          </TouchableWithoutFeedback>
           )}
         {loadingGetDental && (
           <LoadingGetNearDentalContainer>

@@ -10,7 +10,7 @@ interface params {
     formatedTreatmentArray: Array<object>,
     dentalClinicId: number,
     formatedParagraphArray: Array<object>,
-    totalPrice: number,
+    totalPrice?: number,
     treatmentDate: string,
 } 
 

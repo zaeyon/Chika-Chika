@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useLayoutEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback} from 'react-native';
+import {TouchableWithoutFeedback, TouchableHighlight} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -353,6 +353,8 @@ const ReviewItem = ({
   dentalObj,
   moveToDentalDetail,
 }: Props) => {
+  
+  console.log("ReviewItem render", reviewId);
 
   const [formattedDescriptions, setFormattedDescriptions] = useState<string>("");
   const currentUser = useSelector((state: any) => state.currentUser);
@@ -473,24 +475,25 @@ const ReviewItem = ({
 
   return (
     <TouchableWithoutFeedback
-      onPress={() =>
+      onPress={() => {
+        console.log("moveToReviewDetail");
         moveToReviewDetail(
-          reviewId,
-          writer,
-          formatedCreatedAtDate,
-          treatmentArray,
-          ratingObj,
-          formatedTreatmentDate,
-          imageArray,
-          isCurUserLikeProp,
-          likeCountProp,
-          commentCount,
-          isCurUserScrapProp,
-          dentalObj,
-          visibleElapsedTime,
-          elapsedTimeText,
-        )
-      }>
+        reviewId,
+        writer,
+        formatedCreatedAtDate,
+        treatmentArray,
+        ratingObj,
+        formatedTreatmentDate,
+        imageArray,
+        isCurUserLikeProp,
+        likeCountProp,
+        commentCount,
+        isCurUserScrapProp,
+        dentalObj,
+        visibleElapsedTime,
+        elapsedTimeText,
+      )
+      }}>
       <Container>
         <ProfileContainer>
           <TouchableWithoutFeedback
@@ -498,7 +501,7 @@ const ReviewItem = ({
             <ProfileLeftContainer>
               <ProfileImage
                 source={{
-                  uri: writer.profileImage ? writer.profileImage : undefined,
+                  uri: writer.img_thumbNail ? writer.img_thumbNail : undefined,
                 }}
               />
               <NicknameCreatedAtContainer>
@@ -565,7 +568,10 @@ const ReviewItem = ({
             <TouchableWithoutFeedback onPress={() => clickScrap()}>
             <ScrapContainer>
               <ScrapIcon
-                source={require('~/Assets/Images/Indicator/list/ic_scrap_unfocus.png')}
+                source={
+                  isCurUserScrapProp
+                  ? require('~/Assets/Images/Indicator/ic_scrap_focus.png')
+                  : require('~/Assets/Images/Indicator/list/ic_scrap_unfocus.png')}
               />
               <ScrapText>{"저장하기"}</ScrapText>
             </ScrapContainer>
@@ -576,4 +582,10 @@ const ReviewItem = ({
   );
 };
 
-export default ReviewItem;
+const isEqual = (prevItem: any, nextItem: any) => {
+  return prevItem.reviewId === nextItem.reviewId && prevItem.isCurUserLikeProp === nextItem.isCurUserLikeProp && prevItem.isCurUserScrapProp === nextItem.isCurUserScrapProp
+}
+
+const MemoizedReviewItem = React.memo(ReviewItem, isEqual);
+
+export default MemoizedReviewItem;

@@ -26,6 +26,20 @@ interface Props {
   route: any;
 }
 const FullImageScreen = ({navigation, route}: Props) => {
+
+  const moveToRequestScreen = () => {
+    if(route.params?.requestType === 'ContentPostScreen') {
+      navigation.navigate(route.params.requestType, {
+        selectedImage: route.params.image,
+        selectedIndex: route.params.selectedIndex,
+      })
+    } else {
+      navigation.navigate(route.params.requestType, {
+        selectedImage: route.params.image,
+      })
+    }
+  }
+
   return (
     <ContainerView as={SafeAreaView}>
       <SharedElement
@@ -42,11 +56,7 @@ const FullImageScreen = ({navigation, route}: Props) => {
           headerRightProps={{
             type: 'text',
             text: '확인',
-            onPress: () =>
-              navigation.navigate(route.params.requestType, {
-                selectedImage: route.params.image,
-              }),
-          }}
+            onPress: () => moveToRequestScreen()}}
         />
       </SharedElement>
       <FullImage

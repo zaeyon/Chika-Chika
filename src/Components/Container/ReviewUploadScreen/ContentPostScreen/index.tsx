@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, createRef} from 'react';
+import React, {useState, useEffect, useRef, createRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
 import {
@@ -20,8 +20,16 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import {useSelector} from 'react-redux';
 import ActionSheet from 'react-native-actionsheet';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
+import {BlurView} from '@react-native-community/blur';
+import AboveKeyboard from 'react-native-above-keyboard';
 
 import {uploadImageToS3} from '~/method/uploadImageToS3';
+
+// Local Components
+import NavigationHeader from '~/Components/Presentational/NavigationHeader';
+import ParagraphItem from '~/Components/Presentational/ReviewUploadScreen/ParagraphItem';
+import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 
 // route
 import POSTReviewUpload from '~/Routes/Review/POSTReviewUpload';
@@ -29,6 +37,7 @@ import PUTReviewRevise from '~/Routes/Review/PUTReviewRevise';
 
 const Container = Styled.View`
  flex: 1;
+ padding-top: ${getStatusBarHeight()}
  background-color: #FFFFFF;
 `;
 
@@ -112,7 +121,7 @@ align-items: center;
 
 const ContentContainer = Styled.View`
 flex: 1;
-background-color: #fbfbfb;
+background-color: #F5F7F9;
 padding-top: 0px;
 padding-bottom: 0px;
 `;
@@ -189,23 +198,19 @@ justify-content: center;
 `;
 
 const ParaUnitContainer = Styled.View`
-width: ${wp('91.4666%')}px;
 background-color: #ffffff;
 border-width: 1px;
 border-color: #f1f1f1;
 border-radius: 8px;
 padding: 16px;
-align-items: center;
-justify-content: center;
 `;
 
 const EntireParaUnitContainer = Styled.View`
 width: ${wp('100%')}px;
-padding-top: 10px;
-padding-bottom: 10px;
-background-color: #fbfbfb;;
-align-items: center;
-justify-content: center;
+padding-bottom: 16px;
+padding-left: 16px;
+padding-right: 16px;
+background-color: #F5F7F9;
 `;
 
 const AddImageContainer = Styled.View`
@@ -214,30 +219,34 @@ align-items: center;
 `;
 
 const AddImageButton = Styled.View`
-width: ${wp('82.933%')}px;
-height: ${wp('17.06%')}px;
+padding-top: 17px;
+padding-bottom: 17px;
 border-radius: 8px;
 border-width: 1px;
-border-color: #F1F1F1;
+border-color: #E2E6ED;
+border-style: dashed;
 align-items: center;
 justify-content: center;
 `;
 
 const AddImageIcon = Styled.Image`
-width: ${wp('4.8%')}px;
-height: ${wp('4.8%')}px;
+width: ${wp('4.26%')}px;
+height: ${wp('4.26%')}px;
 `;
 
 const AddImageText = Styled.Text`
-margin-left: 6px;
-font-weight: 300;
+margin-left: 3px;
+font-weight: 400;
 font-size: 14px;
-color: #7A7A7A;
+color: #9AA2A9;
 `;
 
-const ParaTextInput = Styled.TextInput`
-margin-top: 13px;
-width: ${wp('82.933%')}px;
+const ParaDescripInputContainer = Styled.View`
+background-color: #ffffff;
+padding-top: 14px;
+`;
+
+const ParaDescripInput = Styled.TextInput`
 font-weight: 300;
 font-size: 14px;
 color: #2B2B2B;
@@ -245,13 +254,16 @@ color: #2B2B2B;
 
 const AddNewParaUnitContainer = Styled.View`
 position: absolute;
+width: ${wp('100%')}px;
+height: ${wp('32.47%')}px;
+align-items: center;
+justify-content: center;
 
-flex: 1;
 `;
 
 const AddNewParaUnitButton = Styled.Image`
-width: ${wp('10.13%')}px;
-height: ${wp('10.13%')}px;
+width: ${wp('9.3%')}px;
+height: ${wp('9.3%')}px;
 `;
 
 const ParaImage = Styled.Image`
@@ -293,6 +305,15 @@ color: #ffffff;
 font-weight: 300;
 `;
 
+const DescripModalContainer = Styled.View`
+border-top-left-radius: 20px;
+border-top-right-radius: 20px;
+width: ${wp('100%')}px;
+min-height: ${hp('13.54%')}px;
+background-color: #ffffff;
+padding: 16px;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -301,166 +322,145 @@ interface Props {
 var selectedParaIndex: number;
 
 const ContentPostScreen = ({navigation, route}: Props) => {
-  const [dentalClinic, setDentalClinic] = useState<object>({});
-  const [treatDate, setTreatDate] = useState<object>({});
-  const [treatPrice, setTreatPrice] = useState<object>({});
-  const [detailPriceList, setDetailPriceList] = useState<Array<object>>([]);
-  const [selectedTreatList, setSelectedTreatList] = useState<Array<object>>([]);
-  const [rating, setRating] = useState<object>({});
-  const [isDetailPrice, setIsDetailPrice] = useState<boolean>(false);
-
-  const [displayTotalPrice, setDisplayTotalPrice] = useState<string>();
-  const [totalPrice, setTotalPrice] = useState<any>();
-
-  const [changeMetaInfo, setChangeMetaInfo] = useState<boolean>(false);
-  const [visibleDatePicker, setVisibleDatePicker] = useState<boolean>(false);
-  const [changeParagraphList, setChangeParagraphList] = useState<boolean>(
-    false,
-  );
+  
   const [certifiedBill, setCertifiedBill] = useState<boolean>(false);
-  const [uploadLoading, setUploadLoading] = useState<boolean>(false);
+  const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
+  const [isActivatedUpload, setIsActivatedUpload] = useState<boolean>(false);
+  const [isVisibleDescripModal, setIsVisibleDescripModal] = useState<boolean>(false);
 
   const totalPriceInputRef = useRef();
   const scrollViewRef = useRef<any>();
   let descripInputRef = useRef<any>();
 
   const [selectedImageList, setSelectedImageList] = useState<Array<any>>([]);
+  const descriptionStr = useRef<string>("");
 
-  const [paragraphList, setParagraphList] = useState<Array<object>>([
-    {
-      index: 1,
-      image: null,
-      description: null,
-    },
-  ]);
+  const [paragraphArray, setParagraphArray] = useState<Array<object>>(route.params?.paragraphArray);
+
+  const [changeParagraph, setChangeParagraph] = useState<boolean>(false); 
 
   const currentUser = useSelector((state: any) => state.currentUser);
   const jwtToken = currentUser.jwtToken;
   let reviewId = route.params?.reviewId;
 
   const insertedImageActionSheetRef = createRef<any>();
+  const paraFlatListRef = useRef<any>();
+
+  useEffect(() => {
+    console.log("ContentPostScreen route", route);
+  }, [route])
 
   useEffect(() => {
     if (route.params.requestType === 'revise') {
-      console.log(
-        '리뷰 수정 요청 route.params.paragraphArray',
-        route.params.paragraphArray,
-      );
-      const tmpParagraphArray = route.params.paragraphArray;
-      setParagraphList(tmpParagraphArray);
-      setTotalPrice(route.params?.totalPrice);
+      // console.log(
+      //   '리뷰 수정 요청 route.params.paragraphArray',
+      //   route.params.paragraphArray,
+      // );
+      // const tmpParagraphArray = route.params.paragraphArray;
+      // setParagraphArray(tmpParagraphArray);
       reviewId = route.params?.reviewId;
     }
   }, []);
 
   useEffect(() => {
-    if (route.params?.dentalClinic) {
-      setDentalClinic(route.params?.dentalClinic);
-    }
-  }, [route.params?.dentalClinic]);
-
-  useEffect(() => {
-    if (route.params?.treatDate) {
-      setTreatDate(route.params?.treatDate);
-    }
-  }, [route.params?.treatDate]);
-
-  useEffect(() => {
-    if (route.params?.treatPrice) {
-      setTreatPrice(route.params?.treatPrice);
-      setDisplayTotalPrice(route.params?.treatPrice.displayTreatPrice);
-      setTotalPrice(route.params?.treatPrice.treatPrice);
-    }
-  }, [route.params?.treatPrice]);
-
-  useEffect(() => {
-    if (route.params?.selectedTreatList) {
-      console.log(
-        'route.params.selectedTreatList',
-        route.params.selectedTreatList,
-      );
-      console.log('route.params.detailPriceList', route.params.detailPriceList);
-      setSelectedTreatList(route.params?.selectedTreatList);
-    }
-  }, [route.params?.selectedTreatList]);
-
-  useEffect(() => {
-    if (route.params?.rating) {
-      console.log('route.params.rating', route.params?.rating);
-      setRating(route.params?.rating);
-    }
-  }, [route.params?.rating]);
-
-  useEffect(() => {
-    if (route.params?.isDetailPrice) {
-      console.log('route.params.isDetailPrice', route.params?.isDetailPrice);
-      setIsDetailPrice(route.params.isDetailPrice);
-    }
-  }, [route.params?.isDetailPrice]);
-
-  useEffect(() => {
-    if (route.params?.detailPriceList) {
-      console.log('route.params.detailPriceList', route.params.detailPriceList);
-      setDetailPriceList(route.params.detailPriceList);
-    }
-  }, [route.params?.detailPriceList]);
-
-  useEffect(() => {
     if (route.params?.selectedImages) {
-      console.log(
-        '리뷰 업로드 route.params.selectedImages',
-        route.params.selectedImages,
-      );
+      console.log("리뷰 사진 선택 route.params?.selectedImages", route.params?.selectedImages)
 
-      route.params.selectedImages.forEach((item: any, index: number) => {
-        console.log('선택된 사진 item', item);
-
-        var tmpParagraphList = paragraphList;
-        var tmpSelectedImageList = selectedImageList;
+      const insertImageToParagraph = async () => {
+        let tmpParagraphArray = paragraphArray.slice();
+        
+        await route.params.selectedImages.forEach((item: any, index: number) => {
         var paraObj: any;
-
         if (index == 0) {
-          paraObj = tmpParagraphList[route.params?.startIndex];
+          paraObj = tmpParagraphArray[route.params?.startIndex];
           paraObj.image = item;
-          (paraObj.order = 'before'),
-            (tmpParagraphList[route.params?.startIndex] = paraObj);
-          setChangeParagraphList(!changeParagraphList);
+          paraObj.order = 'before';
+          tmpParagraphArray[route.params?.startIndex] = paraObj;
         } else {
           paraObj = {
-            index: paragraphList.length + index,
+            index: paragraphArray.length + index,
             image: item,
             description: '',
             order: 'before',
           };
-
-          tmpParagraphList.push(paraObj);
+          tmpParagraphArray.push(paraObj);
         }
+        })
 
-        if (index == route.params.selectedImages.length - 1) {
-          setParagraphList(tmpParagraphList);
-        }
-      });
+        setParagraphArray(tmpParagraphArray);
+      }
+
+      insertImageToParagraph();
+
+
+      // let tmpParagraphArray = paragraphArray.slice();
+
+      // route.params.selectedImages.forEach((item: any, index: number) => {
+
+      //   if (index == 0) {
+      //     let paraObj = tmpParagraphArray[route.params?.startIndex];
+      //     paraObj.image = item;
+      //     paraObj.order = 'before';
+      //     tmpParagraphArray[route.params?.startIndex] = paraObj;
+
+      //     console.log("index", index);
+      //     console.log("paraObj", paraObj);
+      //   } else {
+      //     let paraObj = {
+      //       index: paragraphArray.length + index,
+      //       image: item,
+      //       description: '',
+      //       order: 'before',
+      //     };
+
+      //     console.log("index", index);
+      //     console.log("paraObj", paraObj);
+      //     tmpParagraphArray.push(paraObj);
+      //   }
+      // });
+
+      // setTimeout(() => {
+      //   console.log("tmpParagraphArray", tmpParagraphArray);
+      //   setParagraphArray(tmpParagraphArray);
+      // }, 100)
     }
   }, [route.params?.selectedImages]);
 
   useEffect(() => {
-    if (route.params?.changeExistingImage) {
-      let tmpParagraphList = paragraphList;
+    if (route.params?.selectedImage) {
+      let tmpParagraphArray = paragraphArray.slice();
 
       const paraObj = {
-        index: selectedParaIndex,
+        index: route.params.selectedIndex,
         image: route.params.selectedImage,
-        description: paragraphList[selectedParaIndex].description,
-        order: paragraphList[selectedParaIndex].order,
+        description: paragraphArray[route.params.selectedIndex].description,
+        order: paragraphArray[route.params.selectedIndex].order,
       };
 
-      tmpParagraphList[selectedParaIndex] = paraObj;
+      tmpParagraphArray[route.params.selectedIndex] = paraObj;
 
-      setParagraphList(tmpParagraphList);
-      setChangeParagraphList(!changeParagraphList);
-      route.params.changeExistingImage = false;
+      setParagraphArray(tmpParagraphArray);
     }
-  }, [route.params?.changeExistingImage]);
+  }, [route.params?.selectedImage]);
+
+  useEffect(() => {
+    let descriptions = "";
+    paragraphArray.forEach((item: any, index: number) => {
+      
+      if(item.description !== null) {
+        if(item.description.length > 0) {
+          descriptions = descriptions + item.description
+        }
+      }
+    })
+
+    if(descriptions.length > 0) {
+      setIsActivatedUpload(true)
+    } else {
+      setIsActivatedUpload(false)
+    }
+    
+  }, [paragraphArray])
 
   const openCamera = () => {
     navigation.navigate('Camera');
@@ -468,102 +468,6 @@ const ContentPostScreen = ({navigation, route}: Props) => {
 
   const moveToGallery = () => {
     navigation.navigate('Gallery');
-  };
-
-  const moveToDentalClinicSearch = () => {
-    navigation.push('DentalNameSearchScreen', {
-      requestPage: 'content',
-      requestType: route.params?.requestType,
-    });
-  };
-
-  const onPressTreatDate = () => {
-    setVisibleDatePicker(true);
-  };
-
-  const onChangeDatePicker = (event: any, date: any) => {
-    var tmpTreatDate = treatDate;
-    tmpTreatDate.treatDate = date;
-    setTreatDate(tmpTreatDate);
-  };
-
-  const applyTreatDate = () => {
-    console.log('applyTreatDate date', treatDate);
-    var tmpTreatDate: any = treatDate;
-    tmpTreatDate.dateValue = treatDate.treatDate;
-    tmpTreatDate.displayTreatDate = convertDisplayDate(treatDate.treatDate);
-    tmpTreatDate.treatDate = convertSubmitDate(treatDate.treatDate);
-
-    setTreatDate(tmpTreatDate);
-    setVisibleDatePicker(false);
-  };
-
-  const convertDisplayDate = (date: any) => {
-    var tmpDate = new Date(date),
-      month = '' + (tmpDate.getMonth() + 1),
-      day = '' + tmpDate.getDate(),
-      year = '' + tmpDate.getFullYear();
-
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-
-    return year + '년' + ' ' + month + '월' + ' ' + day + '일';
-  };
-
-  const convertSubmitDate = (date: any) => {
-    console.log('convertDisplayDate date', date);
-
-    var tmpDate = new Date(date),
-      month = '' + (tmpDate.getMonth() + 1),
-      day = '' + tmpDate.getDate(),
-      year = '' + tmpDate.getFullYear();
-
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-
-    return year + '-' + month + '-' + day;
-  };
-
-  const onPressTreatPrice = () => {
-    totalPriceInputRef.current.focus();
-  };
-
-  const onChangePriceInput = (text: string) => {
-    console.log('text', text);
-    console.log('treatPrice', treatPrice);
-
-    if (text.trim() === '') {
-      setTotalPrice('');
-      setDisplayTotalPrice('');
-    } else {
-      setTotalPrice(text);
-      setDisplayTotalPrice(Number(text).toLocaleString() + '원');
-    }
-  };
-
-  const moveToTreatSearch = () => {
-    navigation.push('TreatSearchScreen', {
-      requestPage: 'content',
-      selectedTreatList: selectedTreatList,
-      requestType: route.params?.requestType,
-    });
-  };
-
-  const moveToDetailPrice = () => {
-    navigation.push('DetailPriceScreen', {
-      requestPage: 'content',
-      selectedTreatList: selectedTreatList,
-      treatPrice: treatPrice,
-      requestType: route.params?.requestType,
-    });
-  };
-
-  const moveToRating = () => {
-    navigation.push('RatingScreen', {
-      requestPage: 'content',
-      inputedRating: rating,
-      requestType: route.params?.requestType,
-    });
   };
 
   const onPressBackground = () => {
@@ -579,16 +483,22 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   };
 
   const onPressAddPara = () => {
-    var tmpParagraphList = paragraphList;
-    var paraObj = {
-      index: tmpParagraphList.length,
-      image: null,
-      description: null,
-    };
+    console.log('onPressAddPara paragraphArray', paragraphArray);
+    if(paragraphArray[paragraphArray.length - 1].description.trim().length > 0 || paragraphArray[paragraphArray.length - 1].image?.uri) {
 
-    tmpParagraphList.push(paraObj);
-    setParagraphList(tmpParagraphList);
-    setChangeParagraphList(!changeParagraphList);
+      const tmpParagraphArray = paragraphArray.slice();
+      const paraObj = {
+        index: tmpParagraphArray.length,
+        image: null,
+        description: "",
+      };
+  
+      tmpParagraphArray.push(paraObj);
+      setParagraphArray(tmpParagraphArray);
+
+    } else {
+      Alert.alert('이전 문단에 내용을 입력해주세요!');
+    }
   };
 
   const onSubmitParaDescripInput = (
@@ -599,30 +509,34 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     console.log('submitParaDescrip type', type);
     console.log('inputParaDescrip text', text);
 
-    var tmpParagraphList = paragraphList;
-    tmpParagraphList[index].description = text;
+    var tmpParagraphArray = paragraphArray.slice();
+    tmpParagraphArray[index].description = text;
 
-    setParagraphList(tmpParagraphList);
-    setChangeParagraphList(!changeParagraphList);
+    setParagraphArray(tmpParagraphArray);
   };
 
   const onChangeParaDescripInput = (text: string, index: number) => {
-    var tmpParagraphList = paragraphList;
-    tmpParagraphList[index].description = text;
+    var tmpParagraphArray = paragraphArray.slice();
+    tmpParagraphArray[index].description = text;
+    setParagraphArray(tmpParagraphArray);
 
-    setParagraphList(tmpParagraphList);
-    setChangeParagraphList(!changeParagraphList);
+    descriptionStr.current = descriptionStr.current + text;
   };
 
   const changeImageOrder = (order: string, index: number) => {
     console.log('changeImageOrder index', index);
 
-    var tmpParagraphList = paragraphList;
-    tmpParagraphList[index].order = order;
+    var tmpParagraphArray = paragraphArray.slice();
+    tmpParagraphArray[index].order = order;
 
-    setParagraphList(tmpParagraphList);
-    setChangeParagraphList(!changeParagraphList);
+    setParagraphArray(tmpParagraphArray);
   };
+
+  const onFocusParaDescripInput = (index: number) => {
+    console.log("onFocusParaDescripInput index", index);
+
+    paraFlatListRef.current.scrollToIndex({index: index, animated: true})
+  }
 
   const clickUpload = () => {
     if (route.params.requestType === 'post') {
@@ -633,49 +547,74 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   };
 
   const goBack = () => {
-    if (route.params?.requestType === 'post') {
-      Alert.alert('게시글 작성을 취소하시겠어요?', '', [
-        {
-          text: '확인',
-          onPress: () => {
-            navigation.navigate('HomeScreen');
-          },
-        },
-        {
-          text: '취소',
-          onPress: () => 0,
-          style: 'cancel',
-        },
-      ]);
-    } else if (route.params?.requestType === 'revise') {
-      Keyboard.dismiss();
+    // if (route.params?.requestType === 'post') {
+    //   Alert.alert('게시글 작성을 취소하시겠어요?', '', [
+    //     {
+    //       text: '확인',
+    //       onPress: () => {
+    //         navigation.navigate('HomeScreen');
+    //       },
+    //     },
+    //     {
+    //       text: '취소',
+    //       onPress: () => 0,
+    //       style: 'cancel',
+    //     },
+    //   ]);
+    // } else if (route.params?.requestType === 'revise') {
+    //   Keyboard.dismiss();
 
-      setTimeout(() => {
-        navigation.navigate('ReviewDetailScreen', {
-          isCancelRevise: true,
-        });
-      }, 10);
-    }
+    //   setTimeout(() => {
+    //     navigation.navigate('ReviewDetailScreen', {
+    //       isCancelRevise: true,
+    //     });
+    //   }, 10);
+    // }
+
+    navigation.navigate("ReviewMetaDataScreen", {
+      paragraphArray: paragraphArray,
+    });
   };
 
   const uploadReview = async () => {
     Keyboard.dismiss();
-    setUploadLoading(true);
-    console.log('dentalClinicId', dentalClinic.id);
-    console.log('uploadReview totalPrice', totalPrice);
+    setLoadingUpload(true);
+    console.log('uploadReview route.params?.dentalObj', route.params?.dentalObj);
+    console.log('uploadReview route.params?.treatmentArray', route.params?.treatmentArray);
+    console.log('uploadReview route.params?.ratingObj', route.params?.ratingObj);
+    console.log('uploadReview route.params?.treatmentDate', route.params?.treatmentDate);
+    console.log('uploadReview route.params?.totalPrice', route.params?.totalPrice);
+    console.log('uploadReview route.params?.selectedProofImages', route.params?.selectedProofImages);
+    console.log('uploadReview route.params?.selectedDentalImages', route.params?.selectedDentalImages);
+    console.log('uploadReview route.params?.requestType', route.params?.requestType);
 
-    const tmpParagraphList = paragraphList;
-    const tmpTreatmentArray = selectedTreatList;
+    // 문단 내용 정보
+    const tmpParagraphArray = paragraphArray.slice();
 
-    const starRate_cost = rating.priceRating;
-    const starRate_treatment = rating.treatRating;
-    const starRate_service = rating.serviceRating;
+    // 진료 & 질병 항목 정보
+    const tmpTreatmentArray = route.params?.treatmentArray;
+
+    // 별점 정보
+    const starRate_cost = route.params?.ratingObj.priceRating;
+    const starRate_treatment = route.params?.ratingObj.treatmentRating;
+    const starRate_service = route.params?.ratingObj.serviceRating;
+
+    // 영수증 인증 유무
     const certified_bill = certifiedBill;
-    const dentalClinicId = dentalClinic.id;
-    const treatmentDate = treatDate.treatDate;
 
-    const formatedParagraphArray = await formatParagraph(tmpParagraphList);
+    // 병원 정보
+    const dentalClinicId = route.params?.dentalObj.id;
+
+    // 진료 날짜 정보
+    const treatmentDate = route.params?.treatmentDate;
+
+    // 전체 가격 정보
+    const totalPrice = route.params?.totalPrice;
+
+    const formatedParagraphArray = await formatParagraph(tmpParagraphArray);
     const formatedTreatmentArray = await formatTreatment(tmpTreatmentArray);
+
+
     console.log('uploadReview formatedParagraph', formatedParagraphArray);
     console.log('uploadReview formatedTreatment', formatedTreatmentArray);
 
@@ -692,33 +631,46 @@ const ContentPostScreen = ({navigation, route}: Props) => {
       treatmentDate,
     })
       .then((response) => {
-        setUploadLoading(false);
+        setLoadingUpload(false);
         console.log('POSTReviewUpload response', response);
         navigation.navigate('HomeScreen');
       })
       .catch((error) => {
-        setUploadLoading(false);
+        setLoadingUpload(false);
         console.log('POSTReviewUpload error', error);
       });
   };
 
   const reviseReview = async () => {
     Keyboard.dismiss();
-    console.log('reviewRevise reviewId', reviewId);
+    setLoadingUpload(true);
 
-    setUploadLoading(true);
-    const tmpParagraphList = paragraphList;
-    const tmpTreatmentArray = selectedTreatList;
+    // 문단 내용 정보
+    const tmpParagraphArray = paragraphArray.slice();
 
-    const starRate_cost = rating.priceRating;
-    const starRate_treatment = rating.treatRating;
-    const starRate_service = rating.serviceRating;
+    // 진료 & 질병 항목 정보
+    const tmpTreatmentArray = route.params?.treatmentArray;
+
+    // 별점 정보
+    const starRate_cost = route.params?.ratingObj.priceRating;
+    const starRate_treatment = route.params?.ratingObj.treatmentRating;
+    const starRate_service = route.params?.ratingObj.serviceRating;
+
+    // 영수증 인증 유무
     const certified_bill = certifiedBill;
-    const dentalClinicId = dentalClinic.id;
-    const treatmentDate = String(treatDate.treatDate);
+    
+    // 병원 정보
+    const dentalClinicId = route.params?.dentalObj.id;
+    
+    // 진료 날짜 정보
+    const treatmentDate = route.params?.treatmentDate;
 
-    const formatedParagraphArray = await formatParagraph(tmpParagraphList);
+    // 전체 가격 정보
+    const totalPrice = route.params?.totalPrice;
+
+    const formatedParagraphArray = await formatParagraph(tmpParagraphArray);
     const formatedTreatmentArray = await formatTreatment(tmpTreatmentArray);
+    
     console.log('reviseReview formatedParagraph', formatedParagraphArray);
     console.log('reviseReview formatedTreatment', formatedTreatmentArray);
 
@@ -736,7 +688,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
       treatmentDate,
     })
       .then((response: any) => {
-        setUploadLoading(false);
+        setLoadingUpload(false);
         console.log('PUTReviewRevise response', response);
         console.log(
           'PUTReviswRevise response.updateReview.reviewBody.TreatmentItems',
@@ -768,10 +720,10 @@ const ContentPostScreen = ({navigation, route}: Props) => {
           ).toFixed(1),
           serviceRating: response.updateReview.reviewBody.starRate_service,
           priceRating: response.updateReview.reviewBody.starRate_cost,
-          treatRating: response.updateReview.reviewBody.starRate_treatment,
+          treatmentRating: response.updateReview.reviewBody.starRate_treatment,
         };
 
-        console.log('PUTReviewRevise treatDate', treatDate);
+        //console.log('PUTReviewRevise treatDate', treatDate);
 
         const treatmentDateObj = {
           treatDate: new Date(response.updateReview.reviewBody.treatmentDate),
@@ -789,7 +741,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
         });
       })
       .catch((error) => {
-        setUploadLoading(false);
+        setLoadingUpload(false);
         console.log('PUTReviewRevise error', error);
       });
   };
@@ -878,6 +830,70 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     return tmpTreatmentArray;
   };
 
+
+  const formatProofImages = async (paragraphArray: Array<any>) => {
+    const tmpParagraphArray = await Promise.all(
+      paragraphArray.map(async (item: any, index: number) => {
+        if (item.image) {
+          console.log('formatParagraph item', item);
+
+          if (item.isPreExis) {
+            console.log('기존에 있던 사진 item', item);
+            const paragraphObj = {
+              index: item.index,
+              location: item.image.uri,
+              key: item.id,
+              contentType: item.image.mimeType,
+              originalName: item.image.name,
+              size: item.image.size,
+              description: item.description ? item.description : null,
+              imgBeforeAfter: item.order,
+              width: item.image.width,
+              height: item.image.height,
+            };
+
+            return paragraphObj;
+          } else {
+            const result: any = await uploadImageToS3(item.image, 'reviews');
+
+            const paragraphObj = {
+              index: index,
+              location: result.response.location,
+              key: result.response.key,
+              contentType: result.type,
+              originalName: result.originalName,
+              size: result.size,
+              description: item.description ? item.description : null,
+              imgBeforeAfter: item.order,
+              width: result.width,
+              height: result.height,
+            };
+
+            return paragraphObj;
+          }
+        } else {
+          const paragraphObj = {
+            index: index,
+            description: item.description ? item.description : null,
+            location: null,
+            key: null,
+            mimeType: null,
+            originalName: null,
+            size: null,
+            imgBeforeAfters: null,
+            width: null,
+            height: null,
+          };
+
+          return paragraphObj;
+        }
+      }),
+    );
+
+    return tmpParagraphArray;
+  };
+
+
   const clickInsertedImage = (index: number) => {
     selectedParaIndex = index;
     insertedImageActionSheetRef.current.show();
@@ -887,11 +903,13 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     console.log('onPressInsertedImageActionSheet index', index);
 
     if (index === 1) {
-      navigation.navigate('GallerySelectOne', {
-        requestType: 'reviewImage',
+      navigation.navigate('ImageSelectOneStackScreen', {
+        screen: 'ImageSelectOneScreen',
+        requestType: 'ContentPostScreen',
+        selectedIndex: selectedParaIndex,
       });
     } else if (index === 2) {
-      let tmpParagraphArray = paragraphList;
+      let tmpParagraphArray = paragraphArray.slice();
       console.log(
         'tmpParagraphArray[selectedParaIndex]',
         tmpParagraphArray[selectedParaIndex],
@@ -900,140 +918,59 @@ const ContentPostScreen = ({navigation, route}: Props) => {
       delete tmpParagraphArray[selectedParaIndex].order;
       delete tmpParagraphArray[selectedParaIndex].isPreExis;
 
-      setParagraphList(tmpParagraphArray);
-      setChangeParagraphList(!changeParagraphList);
+      setParagraphArray(tmpParagraphArray);
     }
   };
 
-  const renderParaUnitItem = ({item, index}: any) => {
-    console.log('renderParaUnitItem item', item);
-
-    return (
-      <EntireParaUnitContainer>
-        <ParaUnitContainer style={styles.paragraphShadow}>
-          {item.image && (
-            <ParaImageContainer>
-              <TouchableWithoutFeedback
-                onLongPress={() => clickInsertedImage(index)}
-                delayLongPress={300}>
-                <ParaImage
-                  source={{
-                    uri: item.image.uri,
-                  }}
-                />
-              </TouchableWithoutFeedback>
-              <SelectOrderContainer>
-                <TouchableWithoutFeedback
-                  onPress={() => changeImageOrder('before', index)}>
-                  <SelectOrderButton
-                    style={
-                      item.order === 'before'
-                        ? {backgroundColor: '#D1D1D1'}
-                        : {
-                            backgroundColor: '#ffffff',
-                            borderWidth: 1,
-                            borderColor: '#d1d1d1',
-                          }
-                    }>
-                    <SelectOrderText
-                      style={
-                        item.order === 'before'
-                          ? {color: '#ffffff'}
-                          : {color: '#d1d1d1'}
-                      }>
-                      {'치료전'}
-                    </SelectOrderText>
-                  </SelectOrderButton>
-                </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback
-                  onPress={() => changeImageOrder('after', index)}>
-                  <SelectOrderButton
-                    style={[
-                      {marginLeft: 6},
-                      item.order === 'after'
-                        ? {backgroundColor: '#D1D1D1'}
-                        : {
-                            backgroundColor: '#ffffff',
-                            borderWidth: 1,
-                            borderColor: '#d1d1d1',
-                          },
-                    ]}>
-                    <SelectOrderText
-                      style={
-                        item.order === 'after'
-                          ? {color: '#ffffff'}
-                          : {color: '#d1d1d1'}
-                      }>
-                      {'치료후'}
-                    </SelectOrderText>
-                  </SelectOrderButton>
-                </TouchableWithoutFeedback>
-              </SelectOrderContainer>
-            </ParaImageContainer>
-          )}
-          {!item.image && (
-            <TouchableWithoutFeedback onPress={() => onPressAddImage(index)}>
-              <AddImageButton>
-                <AddImageContainer>
-                  <AddImageIcon
-                    source={require('~/Assets/Images/Upload/ic_addImage.png')}
-                  />
-                  <AddImageText>사진 추가하기(선택)</AddImageText>
-                </AddImageContainer>
-              </AddImageButton>
-            </TouchableWithoutFeedback>
-          )}
-          <ParaTextInput
-            ref={descripInputRef}
-            value={item.description ? item.description : ''}
-            multiline={true}
-            placeholder={'내용을 입력해 주세요 !'}
-            placeholderTextColor={'#BFBFBF'}
-            autoCapitalize={'none'}
-            onSubmitEditing={(response: any) =>
-              onSubmitParaDescripInput(
-                response.nativeEvent.text,
-                index,
-                'submit',
-              )
-            }
-            onEndEditing={(response: any) =>
-              onSubmitParaDescripInput(response.nativeEvent.text, index, 'end')
-            }
-            onChangeText={(text: string) =>
-              onChangeParaDescripInput(text, index)
-            }
-          />
-        </ParaUnitContainer>
-      </EntireParaUnitContainer>
-    );
-  };
-
-  const renderAddParaUnitItem = () => {
+    const renderParaUnitItem = ({item, index}: any) => {
+      return (
+        <ParagraphItem
+        item={item}
+        index={index}
+        clickInsertedImage={clickInsertedImage}
+        changeImageOrder={changeImageOrder}
+        onSubmitParaDescripInput={onSubmitParaDescripInput}
+        onChangeParaDescripInput={onChangeParaDescripInput}
+        onFocusParaDescripInput={onFocusParaDescripInput}
+        onPressAddImage={onPressAddImage}
+        descripInputRef={descripInputRef}
+        />
+      )
+    }
+  
+  const renderAddParaUnitItem = useCallback(() => {
     return (
       <TouchableWithoutFeedback onPress={() => onPressAddPara()}>
         <EntireParaUnitContainer>
           <ParaUnitContainer
             style={[
-              styles.paragraphShadow,
-              {opacity: 0.15, shadowOpacity: 0.6},
+              styles.paragraphUnitShadow,
             ]}>
             <AddImageButton>
               <AddImageContainer>
                 <AddImageIcon
+                style={{borderRadius: 100}}
                   source={require('~/Assets/Images/Upload/ic_addImage.png')}
                 />
                 <AddImageText>사진 추가하기(선택)</AddImageText>
               </AddImageContainer>
             </AddImageButton>
-            <ParaTextInput
-              editable={false}
-              multiline={true}
-              placeholder={'내용을 입력해 주세요 !'}
-              placeholderTextColor={'#BFBFBF'}
-              autoCapitalize={'none'}
-            />
+            <ParaDescripInputContainer>
+              <ParaDescripInput
+                editable={false}
+                multiline={true}
+                placeholder={'내용을 입력해 주세요.'}
+                placeholderTextColor={'#E2E6ED'}
+                autoCapitalize={'none'}
+              />
+            </ParaDescripInputContainer>
           </ParaUnitContainer>
+          <BlurView
+          style={styles.blurView}
+          blurType="light"
+          blurAmount={1.7}
+          reducedTransparencyFallbackColor="white"
+          />
           <AddNewParaUnitContainer>
             <AddNewParaUnitButton
               source={require('~/Assets/Images/Upload/ic_addPara.png')}
@@ -1042,29 +979,101 @@ const ContentPostScreen = ({navigation, route}: Props) => {
         </EntireParaUnitContainer>
       </TouchableWithoutFeedback>
     );
-  };
+  }, [paragraphArray.length]);
+
+  const renderDescripModal = () => {
+    return (
+      <DescripModalContainer>
+      </DescripModalContainer>
+    )
+  }
 
   return (
-    <Container as={SafeAreaView} forceInset={{top: 'always'}}>
-      <HeaderBar>
-        <TouchableWithoutFeedback onPress={() => goBack()}>
-          <HeaderLeftContainer>
-            <HeaderBackIcon
-              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
-            />
-          </HeaderLeftContainer>
-        </TouchableWithoutFeedback>
-        <HeaderTitleText>
-          {route.params?.requestType === 'post' ? '작성' : '수정'}
-        </HeaderTitleText>
-        <TouchableWithoutFeedback onPress={() => clickUpload()}>
-          <HeaderRightContainer>
-            <HeaderEmptyContainer />
-            <HeaderUploadText>올리기</HeaderUploadText>
-          </HeaderRightContainer>
-        </TouchableWithoutFeedback>
-      </HeaderBar>
+    <Container>
+      <NavigationHeader
+      headerLeftProps={{type: 'arrow', onPress: goBack}}
+      headerTitle={"리뷰작성"}
+      headerRightProps={{
+      type: 'text', 
+      text: route.params?.requestType === 'post' ? '업로드' : '업로드',
+      onPress: clickUpload}}
+      headerRightDisabled={!isActivatedUpload}
+      headerRightActiveColor={"#00D1FF"}/>
       <BodyContainer>
+        <ContentContainer>
+          <FlatList
+            ref={paraFlatListRef}
+            contentContainerStyle={{paddingTop: 16, paddingBottom: hp('36.9%')}}
+            scrollEnabled={true}
+            showsVerticalScrollIndicator={false}
+            data={paragraphArray}
+            renderItem={renderParaUnitItem}
+            ListFooterComponent={renderAddParaUnitItem}
+          />
+        </ContentContainer>
+      </BodyContainer>
+      <ActionSheet
+        ref={insertedImageActionSheetRef}
+        options={['취소', '사진 변경', '사진 삭제']}
+        cancelButtonIndex={0}
+        destructiveButtonIndex={2}
+        onPress={(index: any) => onPressInsertedImageActionSheet(index)}
+      />
+      {isVisibleDescripModal && (
+        renderDescripModal()
+      )}
+      <TouchBlockIndicatorCover
+      loading={loadingUpload}/>
+    </Container>
+  );
+};
+
+export default ContentPostScreen;
+
+const styles = StyleSheet.create({
+  paragraphUnitShadow: {
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowRadius: 10,
+    shadowOpacity: 0.09,
+  },
+  addParaBackgroundBlur: {
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowColor: '#ffffff',
+    shadowRadius: 10,
+    shadowOpacity: 1,
+  },
+  blurView: {
+    height: wp('32.47%'),
+    position: "absolute",
+    top: 0,
+    left: 20,
+    bottom: 0,
+    right: 20,
+    opacity: 0.92,
+  }
+});
+
+/*
+<FlatList
+showsHorizontalScrollIndicator={false}
+horizontal={true}
+data={metaInfoList1}
+renderItem={renderFirstMetaInfoItem}/>
+<FlatList
+style={{marginTop: 8}}
+showsHorizontalScrollIndicator={false}
+horizontal={true}
+data={metaInfoList2}
+renderItem={renderSecondMetaInfoItem}/>
+*/
+
+/*
         <MetaInfoContainer>
           <ScrollView
             ref={scrollViewRef}
@@ -1190,77 +1199,153 @@ const ContentPostScreen = ({navigation, route}: Props) => {
             </SecondMetaDataListContainer>
           </ScrollView>
         </MetaInfoContainer>
-        <ContentContainer>
-          <KeyboardAwareFlatList
-            scrollEnabled={true}
-            showsVerticalScrollIndicator={false}
-            data={paragraphList}
-            renderItem={renderParaUnitItem}
-            ListFooterComponent={renderAddParaUnitItem}
-          />
-        </ContentContainer>
-      </BodyContainer>
-      {visibleDatePicker && (
-        <DateModalContainer>
-          <ModalHeaderContainer>
-            <TouchableWithoutFeedback onPress={() => applyTreatDate()}>
-              <ModalFinishContainer>
-                <ModalFinishText>완료</ModalFinishText>
-              </ModalFinishContainer>
-            </TouchableWithoutFeedback>
-          </ModalHeaderContainer>
-          <DateTimePicker
-            locale={'ko_KR.UTF-8'}
-            style={{flex: 1}}
-            testID="datePicker"
-            value={treatDate.treatDate}
-            onChange={(event, date) => onChangeDatePicker(event, date)}
-            mode={'date'}
-            display="spinner"
-            is24Hour={true}
-            maximumDate={new Date()}
-          />
-        </DateModalContainer>
-      )}
-      <ActionSheet
-        ref={insertedImageActionSheetRef}
-        options={['취소', '사진 변경', '사진 삭제']}
-        cancelButtonIndex={0}
-        destructiveButtonIndex={2}
-        onPress={(index: any) => onPressInsertedImageActionSheet(index)}
-      />
-      {uploadLoading && (
-        <IndicatorContainer>
-          <ActivityIndicator color={'#ffffff'} />
-        </IndicatorContainer>
-      )}
-    </Container>
-  );
-};
+*/
 
-export default ContentPostScreen;
+/*  useEffect(() => {
+    if (route.params?.dentalClinic) {
+      setDentalClinic(route.params?.dentalClinic);
+    }
+  }, [route.params?.dentalClinic]);
 
-const styles = StyleSheet.create({
-  paragraphShadow: {
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowRadius: 8,
-    shadowOpacity: 0.09,
-  },
-});
+  useEffect(() => {
+    if (route.params?.treatDate) {
+      setTreatDate(route.params?.treatDate);
+    }
+  }, [route.params?.treatDate]);
+
+  useEffect(() => {
+    if (route.params?.treatPrice) {
+      setTreatPrice(route.params?.treatPrice);
+      setDisplayTotalPrice(route.params?.treatPrice.displayTreatPrice);
+      setTotalPrice(route.params?.treatPrice.treatPrice);
+    }
+  }, [route.params?.treatPrice]);
+
+  useEffect(() => {
+    if (route.params?.selectedTreatList) {
+      console.log(
+        'route.params.selectedTreatList',
+        route.params.selectedTreatList,
+      );
+      console.log('route.params.detailPriceList', route.params.detailPriceList);
+      setSelectedTreatList(route.params?.selectedTreatList);
+    }
+  }, [route.params?.selectedTreatList]);
+
+  useEffect(() => {
+    if (route.params?.rating) {
+      console.log('route.params.rating', route.params?.rating);
+      setRating(route.params?.rating);
+    }
+  }, [route.params?.rating]);
+
+  useEffect(() => {
+    if (route.params?.isDetailPrice) {
+      console.log('route.params.isDetailPrice', route.params?.isDetailPrice);
+      setIsDetailPrice(route.params.isDetailPrice);
+    }
+  }, [route.params?.isDetailPrice]);
+
+  useEffect(() => {
+    if (route.params?.detailPriceList) {
+      console.log('route.params.detailPriceList', route.params.detailPriceList);
+      setDetailPriceList(route.params.detailPriceList);
+    }
+  }, [route.params?.detailPriceList]);
+
+*/
 
 /*
-<FlatList
-showsHorizontalScrollIndicator={false}
-horizontal={true}
-data={metaInfoList1}
-renderItem={renderFirstMetaInfoItem}/>
-<FlatList
-style={{marginTop: 8}}
-showsHorizontalScrollIndicator={false}
-horizontal={true}
-data={metaInfoList2}
-renderItem={renderSecondMetaInfoItem}/>
+
+  const moveToDentalClinicSearch = () => {
+    navigation.push('DentalNameSearchScreen', {
+      requestPage: 'content',
+      requestType: route.params?.requestType,
+    });
+  };
+
+  const onChangeDatePicker = (event: any, date: any) => {
+    var tmpTreatDate = treatDate;
+    tmpTreatDate.treatDate = date;
+    setTreatDate(tmpTreatDate);
+  };
+
+  const applyTreatDate = () => {
+    console.log('applyTreatDate date', treatDate);
+    var tmpTreatDate: any = treatDate;
+    tmpTreatDate.dateValue = treatDate.treatDate;
+    tmpTreatDate.displayTreatDate = convertDisplayDate(treatDate.treatDate);
+    tmpTreatDate.treatDate = convertSubmitDate(treatDate.treatDate);
+
+    setTreatDate(tmpTreatDate);
+    setVisibleDatePicker(false);
+  };
+
+  const convertDisplayDate = (date: any) => {
+    var tmpDate = new Date(date),
+      month = '' + (tmpDate.getMonth() + 1),
+      day = '' + tmpDate.getDate(),
+      year = '' + tmpDate.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return year + '년' + ' ' + month + '월' + ' ' + day + '일';
+  };
+
+  const convertSubmitDate = (date: any) => {
+    console.log('convertDisplayDate date', date);
+
+    var tmpDate = new Date(date),
+      month = '' + (tmpDate.getMonth() + 1),
+      day = '' + tmpDate.getDate(),
+      year = '' + tmpDate.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return year + '-' + month + '-' + day;
+  };
+
+  const onPressTreatPrice = () => {
+    totalPriceInputRef.current.focus();
+  };
+
+  const onChangePriceInput = (text: string) => {
+    console.log('text', text);
+    console.log('treatPrice', treatPrice);
+
+    if (text.trim() === '') {
+      setTotalPrice('');
+      setDisplayTotalPrice('');
+    } else {
+      setTotalPrice(text);
+      setDisplayTotalPrice(Number(text).toLocaleString() + '원');
+    }
+  };
+
+  const moveToTreatSearch = () => {
+    navigation.push('TreatSearchScreen', {
+      requestPage: 'content',
+      selectedTreatList: selectedTreatList,
+      requestType: route.params?.requestType,
+    });
+  };
+
+  const moveToDetailPrice = () => {
+    navigation.push('DetailPriceScreen', {
+      requestPage: 'content',
+      selectedTreatList: selectedTreatList,
+      treatPrice: treatPrice,
+      requestType: route.params?.requestType,
+    });
+  };
+
+  const moveToRating = () => {
+    navigation.push('RatingScreen', {
+      requestPage: 'content',
+      inputedRating: rating,
+      requestType: route.params?.requestType,
+    });
+  };
 */

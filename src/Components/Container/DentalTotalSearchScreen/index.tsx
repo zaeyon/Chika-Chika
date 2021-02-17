@@ -7,13 +7,13 @@ import {
   ScrollView,
   Keyboard,
   StyleSheet,
-  Picker,
   ActivityIndicator,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {Picker} from '@react-native-picker/picker';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
@@ -28,14 +28,16 @@ import {isIphoneX} from 'react-native-iphone-x-helper';
 // Local Component
 import DentalListItem from '~/Components/Presentational/DentalListItem';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
-import AutoCompletedKeywordFlatList from '~/Components/Presentational/AutoCompletedKeywordFlatList';
+import AutoCompletedKeywordFlatList from '~/Components/Presentational/DentalTotalSearchScreen/AutoCompletedKeywordFlatList';
 import DentalSearchResultList from '~/Components/Presentational/DentalTotalSearchScreen/DentalSearchResultList';
+import {callPhoneNumber} from '~/method/callPhoneNumber';
 
 // Route
 import GETDentalTotalSearch from '~/Routes/Search/GETDentalTotalSearch';
 import GETAroundDental from '~/Routes/Dental/GETAroundDental';
 import GETDentalKeywordAutoComplete from '~/Routes/Search/GETDentalKeywordAutoComplete';
 import DELETESearchRecord from '~/Routes/Search/DELETESearchRecord';
+import GETSearchRecord from '~/Routes/Search/GETSearchRecord';
 
 const Container = Styled.View`
 flex: 1;
@@ -446,7 +448,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const searchedDentalArray = dentalMapRedux.searchedDentalArray;
   const autoCompletedKeywordArr = dentalMapRedux.autoCompletedKeywordArr;
 
-  const searchRecordArray = useSelector((state: any) => state.currentUser).searchRecordArray;
+  const dentalSearchRecordArray = useSelector((state: any) => state.currentUser).dentalSearchRecordArray;
 
   const isNearDentalList = useRef<boolean>(route.params?.isNearDentalList);
   const noMoreDentalData = useRef<boolean>(false);
@@ -557,15 +559,49 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         if (response.length > 0) {
           dispatch(allActions.dentalMapActions.setSearchedDentalArray(response));
           isNearDentalList.current = false;
+          if(response.length < 20) {
+            noMoreDentalData.current = true;
+          }
         } else {
           dispatch(allActions.dentalMapActions.setSearchedDentalArray([]));
         }
+
+        setTimeout(() => {
+          getSearchRecord()
+        }, 100)
       })
       .catch((error: any) => {
         setLoadingSearchDental(false);
         console.log('GETDentalTotalSearch error', error);
       });
   };
+
+  const getSearchRecord = () => {
+    GETSearchRecord({jwtToken})
+      .then(async (response: any) => {
+        console.log("GETSearchRecord response", response);
+        dispatch(allActions.userActions.setSearchRecord(response));
+
+        const getDentalSearchRecord = async (searchRecordArray: any) => {
+          let tmpDentalSearchRecordArray = new Array();
+          await searchRecordArray.forEach((item: any, index: number) => {
+            if(item.category === 'clinic' || item.category === 'city') {
+              return tmpDentalSearchRecordArray.push(item);
+            }
+          })
+
+          return tmpDentalSearchRecordArray
+        } 
+
+        const tmpDentalSearchRecordArray = await getDentalSearchRecord(response);
+        console.log("GETSearchRecord tmpDentalSearchRecordArray", tmpDentalSearchRecordArray);
+        dispatch(allActions.userActions.setDentalSearchRecord(tmpDentalSearchRecordArray));
+        
+      })
+      .catch((error) => {
+        console.log('GETSearchRecord error', error);
+      });
+  }
 
   const filterDental = (
     query: string,
@@ -580,7 +616,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     const timeFilter = tmpTimeFilter;
     const parkingFilter = tmpParkingFilter;
     const holidayFilter = tmpHolidayFilter;
-    const category = keywordRef?.current?.rㄱcategory;
+    const category = keywordRef?.current?.category;
 
     GETDentalTotalSearch({
       jwtToken,
@@ -815,6 +851,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
 
   const deleteAllSearchRecord = () => {
     const searchId = 'all';
+    dispatch(allActions.userActions.setDentalSearchRecord([]));
+    dispatch(allActions.userActions.setSearchRecord([]));
 
     DELETESearchRecord({jwtToken, searchId})
       .then((response) => {
@@ -827,6 +865,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
 
   const deleteSingleSearchRecord = (id: number, category: string) => {
     const searchId = id;
+    dispatch(allActions.userActions.deleteDentalSearchRecord(id));
+    dispatch(allActions.userActions.deleteSearchRecord(id));
 
     DELETESearchRecord({jwtToken, searchId})
       .then((response) => {
@@ -937,11 +977,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   const moveToDentalDetail = (dentalId: number) => {
-    navigation.navigate('DentalClinicStack', {
-      screen: 'DentalDetailScreen',
-      params: {
+    navigation.navigate('DentalDetailScreen', {
         dentalId: dentalId,
-      },
     });
   };
 
@@ -1085,6 +1122,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     searchInputRef.current.focus();
   }
 
+  const clickDentalCallReservation = (phoneNumber: number) => {
+    callPhoneNumber(phoneNumber);
+  }
+
   const renderFooterIndicator = () => {
     if (loadingMoreDental) {
       return (
@@ -1141,6 +1182,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         openTime={todayStartTime}
         closeTime={todayEndTime}
         moveToDentalDetail={moveToDentalDetail}
+        clickDentalCallReservation={clickDentalCallReservation}
       />
     );
   };
@@ -1207,7 +1249,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
             onFocus={() => onFocusSearchInput()}
             returnKeyType={'search'}
           />
-          {query.length > 0 && (
+          {query?.length > 0 && (
           <TouchableWithoutFeedback onPress={() => clearTextInput()}>
           <ClearTextButtonContainer>
             <ClearTextIcon
@@ -1309,7 +1351,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
           <DentalListContainer>
             {searchedDentalArray.length > 0 && (
               <FlatList
-              contentContainerStyle={{flex: 1, backgroundColor: "#F5F7F9", paddingBottom: DeviceInfo.hasNotch() ? hp('6.8%') : hp('7.5%')}}
+              contentContainerStyle={{backgroundColor: "#F5F7F9", paddingBottom: DeviceInfo.hasNotch() ? hp('6.8%') : hp('7.5%')}}
                 refreshing={refreshingDentalFlat}
                 onRefresh={onRefreshDentalFlat}
                 showsVerticalScrollIndicator={false}
@@ -1339,7 +1381,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
           <AutoCompletedKeywordFlatList
           deleteAllSearchRecord={deleteAllSearchRecord}
           deleteSingleSearchRecord={deleteSingleSearchRecord}
-          searchRecordArray={searchRecordArray}
+          searchRecordArray={dentalSearchRecordArray}
           searchTotalKeyword={selectAutoCompletedKeyword}
           query={query}
           autoCompletedKeywordArr={autoCompletedKeywordArr}/>

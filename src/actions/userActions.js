@@ -88,6 +88,28 @@ const setSearchRecord = (searchRecordArray) => {
   };
 };
 
+const deleteSearchRecord = (searchRecordId) => {
+  return {
+    type: 'DELETE_SEARCH_RECORD',
+    payload: searchRecordId,
+  }
+}
+
+
+const setDentalSearchRecord = (dentalSearchRecordArray) => {
+  return {
+    type: 'SET_DENTAL_SEARCH_RECORD',
+    payload: dentalSearchRecordArray,
+  }
+}
+
+const deleteDentalSearchRecord = (dentalSearchRecordId) => {
+  return {
+    type: 'DELETE_DENTAL_SEARCH_RECORD',
+    payload: dentalSearchRecordId,
+  }
+}
+
 const setNotification = (notificationConfig) => {
   return {
     type: 'SET_NOTIFICATION',
@@ -109,5 +131,8 @@ export default {
   deleteHometown,
   changeMainHometown,
   setSearchRecord,
+  deleteSearchRecord,
   setNotification,
+  setDentalSearchRecord,
+  deleteDentalSearchRecord,
 };

@@ -131,15 +131,23 @@ const NotificationList = ({navigation, route, isEditing, loadingGetLikeNotify, l
         })
     }
 
-    const moveToNotifiedPost = (postId: number, type: string) => {
-        console.log("moveToNotifiedPost type", type)
-        if(type === "Comment") {
-            navigation.navigate("ReviewStackScreen", {
-                screen: "ReviewDetailScreen",
-                params: {
-                    reviewId: postId
-                }
-            })
+    const moveToNotifiedPost = (notificationObj: any) => {
+        if(notificationObj.type === "Comment") {
+            if(notificationObj.communityId !== null) {
+                navigation.navigate("CommunityStackScreen", {
+                    screen: "CommunityDetailScreen",
+                    params: {
+                        id: notificationObj.communityId,
+                    }
+                })
+            } else if(notificationObj.reviewId !== null) {
+                navigation.navigate("ReviewStackScreen", {
+                    screen: "ReviewDetailScreen",
+                    params: {
+                        reviewId: notificationObj.reviewId,
+                    }
+                })
+            }
         }
     }
     
@@ -209,6 +217,14 @@ const NotificationList = ({navigation, route, isEditing, loadingGetLikeNotify, l
         )
     }
 
+    const renderNotificationFooter = () => {
+        return (
+            <GuideContainer>
+                    <GuideText>{"최근 30일 동안 받은 알림을 모두 확인했습니다."}</GuideText>
+            </GuideContainer>
+        )
+    }
+
     return (
         <ScrollView
         refreshControl={
@@ -248,12 +264,10 @@ const NotificationList = ({navigation, route, isEditing, loadingGetLikeNotify, l
             <NotificationListContainer>
                 <FlatList
                 scrollEnabled={false}
-                contentContainerStyle={[{backgroundColor: "#ffffff", marginTop: 16, borderRadius: 8, marginLeft: 16, marginRight: 16}, styles.notificationListShadow]}
+                contentContainerStyle={[{marginTop: 12}]}
                 data={likeNotificationArray}
-                renderItem={renderLikeNotificationItem}/>
-                <GuideContainer>
-                    <GuideText>{"최근 30일 동안 받은 알림을 모두 확인했습니다."}</GuideText>
-                </GuideContainer>
+                renderItem={renderLikeNotificationItem}
+                ListFooterComponent={renderNotificationFooter}/>
             </NotificationListContainer>
             )}
             {likeNotificationArray.length === 0 && !loadingGetLikeNotify && (
@@ -276,12 +290,10 @@ const NotificationList = ({navigation, route, isEditing, loadingGetLikeNotify, l
             <NotificationListContainer>
                 <FlatList
                 scrollEnabled={false}
-                contentContainerStyle={[{backgroundColor: "#ffffff", marginTop: 16, borderRadius: 8, marginLeft: 16, marginRight: 16}, styles.notificationListShadow]}
+                contentContainerStyle={[{marginTop: 12}]}
                 data={eventNotificationArray}
-                renderItem={renderEventNotificationItem}/>  
-                <GuideContainer>
-                    <GuideText>{"최근 30일 동안 받은 알림을 모두 확인했습니다."}</GuideText>
-                </GuideContainer> 
+                renderItem={renderEventNotificationItem}
+                ListFooterComponent={renderNotificationFooter}/>  
             </NotificationListContainer>
             )}
             {eventNotificationArray.length === 0 && !loadingGetEventNotify && (
@@ -304,12 +316,10 @@ const NotificationList = ({navigation, route, isEditing, loadingGetLikeNotify, l
             <NotificationListContainer>
                 <FlatList
                 scrollEnabled={false}
-                contentContainerStyle={[{marginTop: 16, marginLeft: 16, marginRight: 16, borderRadius: 8, backgroundColor: "#ffffff"}, styles.notificationListShadow]}
+                contentContainerStyle={[{marginTop: 12}]}
                 data={commentNotificationArray}
-                renderItem={renderCommentNotificationItem}/>
-                <GuideContainer>
-                    <GuideText>{"최근 30일 동안 받은 알림을 모두 확인했습니다."}</GuideText>
-                </GuideContainer>
+                renderItem={renderCommentNotificationItem}
+                ListFooterComponent={renderNotificationFooter}/>
             </NotificationListContainer>
             )}
             {commentNotificationArray.length === 0 && !loadingGetCommentNotify && (

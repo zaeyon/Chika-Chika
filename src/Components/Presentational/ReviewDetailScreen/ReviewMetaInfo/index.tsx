@@ -24,7 +24,7 @@ background-color: #ffffff;
 
 const InfoLabelText = Styled.Text`
 font-weight: 800;
-font-size: 12px;
+font-size: 14px;
 line-height: 16px;
 color: #000000;
 `;
@@ -59,8 +59,8 @@ color: #00D1FF;
 
 const TotalPriceText = Styled.Text`
 margin-left: 4px;
-font-weight: 700;
-font-size: 12px;
+font-weight: 400;
+font-size: 14px;
 color: #000000;
 line-height: 16px;
 `;
@@ -130,7 +130,7 @@ padding: 16px 16px 24px 16px;
 const TreatmentDateText = Styled.Text`
 margin-top: 8px;
 font-weight: 400;
-font-size: 12px;
+font-size: 14px;
 color: #000000;
 line-height: 16px;
 `;
@@ -149,7 +149,7 @@ const DentalNameAddressContainer = Styled.View`
 
 const DentalNameText = Styled.Text`
 font-weight: 800;
-font-size: 12px;
+font-size: 14px;
 color: #000000;
 line-height: 16px;
 `;
@@ -163,7 +163,7 @@ align-items: center;
 
 const DentalAddressText = Styled.Text`
 font-weight: 400;
-font-size: 10px;
+font-size: 12px;
 color: #4E525D;
 line-height: 16px;
 `;
@@ -208,7 +208,7 @@ align-items: center;
 
 const DetailRatingTypeText = Styled.Text`
 font-weight: 400;
-font-size: 10px;
+font-size: 12px;
 color: #000000;
 line-height: 16px;
 `;
@@ -216,7 +216,7 @@ line-height: 16px;
 const DetailRatingValueText = Styled.Text`
 margin-left: 4px;
 font-weight: 700;
-font-size: 10px;
+font-size: 12px;
 color: #000000;
 line-height: 16px;
 `;
@@ -229,45 +229,32 @@ height: ${hp('0.738%')}px;
 background-color: #9AA2A9; 
 `;
 
-interface dentalObj {
-  originalName: string;
-  address: string;
-  id: number;
+interface MetaInfoObj {
+  dentalObj: any;
+  ratingObj: any;
+  treatmentDateObj: any;
+  totalPriceObj: any;
 }
 
 interface Props {
-  totalPrice: number;
+  metaInfoObj: MetaInfoObj,
   certifiedReceipt: boolean;
-  ratingObj: object;
-  treatmentDate: string;
-  dentalObj: dentalObj;
   moveToDentalDetail: (dentalId: number) => void;
 }
 
 const ReviewMetaInfo = ({
-  totalPrice,
+  metaInfoObj,
   certifiedReceipt,
-  ratingObj,
-  treatmentDate,
-  dentalObj,
   moveToDentalDetail,
 }: Props) => {
-  console.log('RatingMetaInfo ratingObj', ratingObj);
-  console.log('ReviewMetaInfo dentalObj', dentalObj);
 
-  let splitedTreatmentDate = new Array();
-  let formattedTreatmentDate = '';
-  // if(treatmentDate) {
-
-  //     splitedTreatmentDate = treatmentDate.split("");
-  //     formattedTreatmentDate = splitedTreatmentDate[0] + splitedTreatmentDate[1] + splitedTreatmentDate[2] + splitedTreatmentDate[3] + "." + splitedTreatmentDate[6] + splitedTreatmentDate[7] + "." + splitedTreatmentDate[10] + splitedTreatmentDate[11]
-  // }
+  console.log('ReviewMetaInfo metaInfoObj', metaInfoObj);
 
   let splitedAddress = new Array();
   let formattedAddress = '';
 
-  if (dentalObj?.address) {
-    splitedAddress = dentalObj.address.split(' ');
+  if (metaInfoObj.dentalObj?.address) {
+    splitedAddress = metaInfoObj.dentalObj.address.split(' ');
     formattedAddress =
       splitedAddress[0] +
       ' ' +
@@ -283,10 +270,10 @@ const ReviewMetaInfo = ({
   return (
     <Container>
       <TouchableWithoutFeedback
-        onPress={() => moveToDentalDetail(dentalObj.id)}>
+        onPress={() => moveToDentalDetail(metaInfoObj.dentalObj.id)}>
         <DentalInfoContainer>
           <DentalNameAddressContainer>
-            <DentalNameText>{dentalObj?.originalName}</DentalNameText>
+            <DentalNameText>{metaInfoObj.dentalObj?.originalName}</DentalNameText>
             <DentalAddressContainer>
               <DentalAddressText>{formattedAddress}</DentalAddressText>
             </DentalAddressContainer>
@@ -308,25 +295,25 @@ const ReviewMetaInfo = ({
               ratingBackgroundColor={'#E2E6ED'}
               imageSize={wp('4.26%')}
               ratingCount={5}
-              startingValue={ratingObj?.avgRating}
+              startingValue={metaInfoObj.ratingObj?.avgRating}
               readonly={true}
             />
-            <AvgRatingValueText>{ratingObj?.avgRating}</AvgRatingValueText>
+            <AvgRatingValueText>{metaInfoObj.ratingObj?.avgRating}</AvgRatingValueText>
           </AvgRatingValueContainer>
           <DetailRatingContainer>
             <DetailRatingTypeText>{'시술'}</DetailRatingTypeText>
             <DetailRatingValueText>
-              {ratingObj?.treatRating}
+              {metaInfoObj.ratingObj?.treatmentRating}
             </DetailRatingValueText>
             <DetailRatingDivider />
             <DetailRatingTypeText>{'서비스'}</DetailRatingTypeText>
             <DetailRatingValueText>
-              {ratingObj?.serviceRating}
+              {metaInfoObj.ratingObj?.serviceRating}
             </DetailRatingValueText>
             <DetailRatingDivider />
             <DetailRatingTypeText>{'가격'}</DetailRatingTypeText>
             <DetailRatingValueText>
-              {ratingObj?.priceRating}
+              {metaInfoObj.ratingObj?.priceRating}
             </DetailRatingValueText>
           </DetailRatingContainer>
         </RatingValueContainer>
@@ -343,104 +330,25 @@ const ReviewMetaInfo = ({
               </ReceiptCertificationText>
             </ReceiptCertificationContainer>
             {/* )} */}
-            <TotalPriceText>{totalPrice}</TotalPriceText>
+            <TotalPriceText>{metaInfoObj.totalPriceObj.displayTreatPrice}</TotalPriceText>
           </View>
-          <ViewDetailPriceContainer>
-            <ViewDetailPriceText>{'상세 비용'}</ViewDetailPriceText>
-          </ViewDetailPriceContainer>
         </PriceItemContainer>
       </PriceInfoContainer>
       <SectionDevider />
       <TreatmentDateInfoContainer>
         <InfoLabelText>{'방문 일자'}</InfoLabelText>
-        <TreatmentDateText>{treatmentDate}</TreatmentDateText>
+        <TreatmentDateText>{metaInfoObj.treatmentDateObj.displayTreatmentDate}</TreatmentDateText>
       </TreatmentDateInfoContainer>
     </Container>
   );
 };
 
-export default ReviewMetaInfo;
+const isEqual = (prevItem: any, nextItem: any) => {
+  return (prevItem.metaInfoObj === nextItem.metaInfoObj)
+}
 
-/*
+const MemoizedReviewMetaInfo = React.memo(ReviewMetaInfo, isEqual)
 
-        <Container>
-        <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalObj.id)}>
-        <DentalInfoContainer>
-            <DentalNameAddressContainer>
-                <DentalNameText>{dentalObj.originalName}</DentalNameText>
-                <DentalAddressContainer>
-                    <DentalAddressText>{formattedAddress}</DentalAddressText>
-                </DentalAddressContainer>
-            </DentalNameAddressContainer>
-            <DentalImageContainer>
-                <DentalImage/>
-            </DentalImageContainer>
-        </DentalInfoContainer>
-        </TouchableWithoutFeedback>
-            <RatingInfoContainer>
-                <RatingInfoItemContainer>
-                    <RatingExpressIcon
-                    source={
-                        ratingObj.treatRating.toFixed(1) > 3.5 ? require('~/Assets/Images/Review/ic_good.png') : (
-                        ratingObj.treatRating.toFixed(1) > 1.5 ? require('~/Assets/Images/Review/ic_soso.png') : (
-                        require('~/Assets/Images/Review/ic_bad.png')
-                        )
-                        )
-                    }/>
-                    <RatingTypeText>{"진료"}</RatingTypeText>
-                    <RatingValueText>{ratingObj.treatRating.toFixed(1)}</RatingValueText>
-                </RatingInfoItemContainer>
-                <RatingInfoItemDivider/>
-                <RatingInfoItemContainer>
-                    <RatingExpressIcon
-                    source={
-                        ratingObj.serviceRating.toFixed(1) > 3.5 ? require('~/Assets/Images/Review/ic_good.png') : (
-                        ratingObj.serviceRating.toFixed(1) > 1.5 ? require('~/Assets/Images/Review/ic_soso.png') : (
-                        require('~/Assets/Images/Review/ic_bad.png')
-                        )
-                        )
-                    }/>
-                    <RatingTypeText>{"서비스"}</RatingTypeText>
-                    <RatingValueText>{ratingObj.serviceRating.toFixed(1)}</RatingValueText>
-                </RatingInfoItemContainer>
-                <RatingInfoItemDivider/>
-                <RatingInfoItemContainer>
-                    <RatingExpressIcon
-                    source={
-                        ratingObj.priceRating.toFixed(1) > 3.5 ? require('~/Assets/Images/Review/ic_good.png') : (
-                        ratingObj.priceRating.toFixed(1) > 1.5 ? require('~/Assets/Images/Review/ic_soso.png') : (
-                        require('~/Assets/Images/Review/ic_bad.png')
-                        )
-                        )
-                    }/>
-                    <RatingTypeText>{"가격"}</RatingTypeText>
-                    <RatingValueText>{ratingObj.priceRating.toFixed(1)}</RatingValueText>
-                </RatingInfoItemContainer>
-            </RatingInfoContainer>
-            <SectionDevider/>
-            <TreatmentDateInfoContainer>
-                <TreatmentDateText>{formattedTreatmentDate}<TreatmentDateText style={{fontWeight: "400", fontSize: 16}}>{"  방문"}</TreatmentDateText></TreatmentDateText>
-            </TreatmentDateInfoContainer>
-            <SectionDevider/>
-            <PriceInfoContainer>
-                <PriceItemContainer>
-                    <View style={{flexDirection: "row", alignItems: "center"}}>
-                    {certifiedReceipt && (
-                    <ReceiptCertificationContainer>
-                        <ReceiptCertificationText>
-                            {"영수증인증"}
-                        </ReceiptCertificationText>
-                    </ReceiptCertificationContainer>
-                    )}
-                    <TotalPriceText>
-                        {totalPrice.toLocaleString() + "원 "}
-                    </TotalPriceText>
-                    <Text style={{fontWeight: "400", fontSize: 14, color: "#9AA2A9", lineHeight: 24, fontFamily: "NanumSquare"}}>{"(총계)"}</Text>
-                    </View>
-                    <ViewDetailPriceContainer>
-                    <ViewDetailPriceText>{"상세비용"}</ViewDetailPriceText>
-                    </ViewDetailPriceContainer>
-                </PriceItemContainer>
-            </PriceInfoContainer>
-        </Container>
-*/
+export default MemoizedReviewMetaInfo;
+
+

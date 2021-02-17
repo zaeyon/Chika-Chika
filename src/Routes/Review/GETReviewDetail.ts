@@ -3,6 +3,8 @@ import serverConfig from '../server.config';
 
 
 const GETReviewDetail = (jwtToken: string, reviewId: number) => {
+
+    console.log("GETReviewDetail reviewId", reviewId);
     
     const uri = serverConfig.baseUri + `/api/v1/reviews?reviewId=${reviewId}`
 

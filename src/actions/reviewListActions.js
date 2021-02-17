@@ -60,6 +60,14 @@ const setSearchResultReviews = (reviewList) => {
     payload: reviewList,
   };
 };
+
+const deleteReview = (reviewId) => {
+  return {
+    type: 'DELETE_REVIEW',
+    payload: reviewId,
+  }
+}
+
 export default {
   setMainReviewList,
   setOpponentReviews,
@@ -70,4 +78,5 @@ export default {
   setScrapedReviews,
   setCommentedReviews,
   setSearchResultReviews,
+  deleteReview,
 };

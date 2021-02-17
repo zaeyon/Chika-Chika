@@ -198,32 +198,9 @@ justify-content: space-between;
  }
 
  const PreviewImages = ({sortedImageArray}: Props) => {
-     //const [sortedImageArray, setSortedImageArray] = useState<Array<any>>(imageArray);
-     const [changeImageArray, setChangeImageArray] = useState<boolean>(false);
      const [remainCount, setRemainCount] = useState<number>(sortedImageArray.length-6);
 
-    //console.log("PreviewImages", sortedImageArray);
-
-    // 치료후 사진을 리뷰 이미지 배열의 앞 순서로 정렬하기
-    /*
-    useEffect(() => {
-        imageArray.forEach((item, index) => {
-            if(item.img_before_after === "after") {
-                const tmp = item;
-                imageArray.splice(index, 1);
-                imageArray.unshift(tmp);
-
-                setSortedImageArray(imageArray);
-                setChangeImageArray(!changeImageArray);
-            }
-
-            if(index === imageArray.length -1) {
-            }
-        })
-    }, [])
-    */
-
-
+     console.log("PreviewImages sortedImageArray", sortedImageArray);
 
     return (
         <Container>
@@ -231,7 +208,7 @@ justify-content: space-between;
                 <OneUnitImageContainer>
                     <ImageContainer>
                         <FirstImageInOneUnit
-                        source={{uri: sortedImageArray[0].img_url}}/>
+                        source={{uri: sortedImageArray[0].img_thumbNail}}/>
                         <OrderTypeIndicator1>
                             <OrderTypeText>{sortedImageArray[0].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                         </OrderTypeIndicator1>
@@ -243,14 +220,14 @@ justify-content: space-between;
                     <ImagesRowContainer>
                     <ImageContainer>
                         <FirstImageInTwoUnit
-                        source={{uri: sortedImageArray[0].img_url}}/>
+                        source={{uri: sortedImageArray[0].img_thumbNail}}/>
                         <OrderTypeIndicator1>
                             <OrderTypeText>{sortedImageArray[0].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                         </OrderTypeIndicator1>
                     </ImageContainer>
                     <ImageContainer>
                         <SecondImageInTwoUnit
-                        source={{uri: sortedImageArray[1].img_url}}/>
+                        source={{uri: sortedImageArray[1].img_thumbNail}}/>
                         <OrderTypeIndicator2>
                             <OrderTypeText>{sortedImageArray[1].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                         </OrderTypeIndicator2>
@@ -263,7 +240,7 @@ justify-content: space-between;
                     <ImagesColumnContainer>
                     <ImageContainer>
                         <MainImageInThreeUnit
-                        source={{uri: sortedImageArray[0].img_url}}/>
+                        source={{uri: sortedImageArray[0].img_thumbNail}}/>
                         <OrderTypeIndicator1>
                             <OrderTypeText>{sortedImageArray[0].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                         </OrderTypeIndicator1>
@@ -271,7 +248,7 @@ justify-content: space-between;
                     <ImagesRowContainer>
                         <ImageContainer>
                         <SubImageInThreeUnit
-                        source={{uri: sortedImageArray[1].img_url}}/>
+                        source={{uri: sortedImageArray[1].img_thumbNail}}/>
                         <OrderTypeIndicator2>
                             <OrderTypeText>{sortedImageArray[1].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                         </OrderTypeIndicator2>
@@ -279,7 +256,7 @@ justify-content: space-between;
                         <ImageContainer>
                         <SubImageInThreeUnit
                         style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 8}}
-                        source={{uri: sortedImageArray[2].img_url}}/>
+                        source={{uri: sortedImageArray[2].img_thumbNail}}/>
                         <OrderTypeIndicator2>
                             <OrderTypeText>{sortedImageArray[2].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                         </OrderTypeIndicator2>
@@ -293,7 +270,7 @@ justify-content: space-between;
                     <ImagesColumnContainer>
                         <ImageContainer>
                         <MainImageInFourUnit
-                        source={{uri: sortedImageArray[0].img_url}}/>
+                        source={{uri: sortedImageArray[0].img_thumbNail}}/>
                         <OrderTypeIndicator1>
                             <OrderTypeText>{sortedImageArray[0].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                         </OrderTypeIndicator1>
@@ -302,14 +279,14 @@ justify-content: space-between;
                             <ImageContainer>
                             <SubImageInFourUnit
                             style={{borderBottomLeftRadius: 8}}
-                            source={{uri: sortedImageArray[1].img_url}}/>
+                            source={{uri: sortedImageArray[1].img_thumbNail}}/>
                             <OrderTypeIndicator2>
                                 <OrderTypeText>{sortedImageArray[1].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                             </OrderTypeIndicator2>
                             </ImageContainer>
                             <ImageContainer>
                             <SubImageInFourUnit
-                            source={{uri: sortedImageArray[2].img_url}}/>
+                            source={{uri: sortedImageArray[2].img_thumbNail}}/>
                             <OrderTypeIndicator2>
                                 <OrderTypeText>{sortedImageArray[2].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                             </OrderTypeIndicator2>
@@ -317,7 +294,7 @@ justify-content: space-between;
                             <ImageContainer>
                             <SubImageInFourUnit
                             style={{borderBottomRightRadius: 8}}
-                            source={{uri: sortedImageArray[3].img_url}}/>
+                            source={{uri: sortedImageArray[3].img_thumbNail}}/>
                             <OrderTypeIndicator2>
                                 <OrderTypeText>{sortedImageArray[3].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                             </OrderTypeIndicator2>
@@ -333,7 +310,7 @@ justify-content: space-between;
                             <ImageContainer>
                                 <MainImageInFiveUnit
                                 style={{borderTopLeftRadius: 8}}
-                                source={{uri: sortedImageArray[0].img_url}}/>
+                                source={{uri: sortedImageArray[0].img_thumbNail}}/>
                                 <OrderTypeIndicator1>
                                 <OrderTypeText>{sortedImageArray[0].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                                 </OrderTypeIndicator1>
@@ -341,7 +318,7 @@ justify-content: space-between;
                             <ImageContainer>
                                 <MainImageInFiveUnit
                                 style={{borderTopRightRadius: 8}}
-                                source={{uri: sortedImageArray[1].img_url}}/>
+                                source={{uri: sortedImageArray[1].img_thumbNail}}/>
                                 <OrderTypeIndicator2>
                                     <OrderTypeText>{sortedImageArray[1].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                                 </OrderTypeIndicator2>
@@ -351,14 +328,14 @@ justify-content: space-between;
                             <ImageContainer>
                                 <SubImageInFiveUnit
                                 style={{borderBottomLeftRadius: 8}}
-                                source={{uri: sortedImageArray[2].img_url}}/>
+                                source={{uri: sortedImageArray[2].img_thumbNail}}/>
                                 <OrderTypeIndicator2>
                                     <OrderTypeText>{sortedImageArray[2].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                                 </OrderTypeIndicator2>
                             </ImageContainer>
                             <ImageContainer>
                                 <SubImageInFiveUnit
-                                source={{uri: sortedImageArray[3].img_url}}/>
+                                source={{uri: sortedImageArray[3].img_thumbNail}}/>
                                 <OrderTypeIndicator2>
                                     <OrderTypeText>{sortedImageArray[3].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                                 </OrderTypeIndicator2>
@@ -366,7 +343,7 @@ justify-content: space-between;
                             <ImageContainer>
                                 <SubImageInFiveUnit
                                 style={{borderBottomRightRadius: 8}}
-                                source={{uri: sortedImageArray[4].img_url}}/>
+                                source={{uri: sortedImageArray[4].img_thumbNail}}/>
                                 <OrderTypeIndicator2>
                                     <OrderTypeText>{sortedImageArray[4].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                                 </OrderTypeIndicator2>
@@ -382,7 +359,7 @@ justify-content: space-between;
                         <ImageContainer>
                             <MainImageInSixUnit
                             style={{borderTopLeftRadius: 8}}
-                            source={{uri: sortedImageArray[0].img_url}}/>
+                            source={{uri: sortedImageArray[0].img_thumbNail}}/>
                             <OrderTypeIndicator1>
                                 <OrderTypeText>{sortedImageArray[0].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                             </OrderTypeIndicator1>
@@ -391,14 +368,14 @@ justify-content: space-between;
                             <ImageContainer>
                                 <SubImageInSixUnit
                                 style={{borderTopRightRadius: 8}}
-                                source={{uri: sortedImageArray[1].img_url}}/>
+                                source={{uri: sortedImageArray[1].img_thumbNail}}/>
                                 <OrderTypeIndicator2>
                                     <OrderTypeText>{sortedImageArray[1].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                                 </OrderTypeIndicator2>
                             </ImageContainer>
                             <ImageContainer>
                                 <SubImageInSixUnit
-                                source={{uri: sortedImageArray[2].img_url}}/>
+                                source={{uri: sortedImageArray[2].img_thumbNail}}/>
                                 <OrderTypeIndicator2>
                                     <OrderTypeText>{sortedImageArray[2].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                                 </OrderTypeIndicator2>
@@ -409,14 +386,14 @@ justify-content: space-between;
                             <ImageContainer>
                                 <SubImageInSixUnit
                                 style={{borderBottomLeftRadius: 8}}
-                                source={{uri: sortedImageArray[3].img_url}}/>
+                                source={{uri: sortedImageArray[3].img_thumbNail}}/>
                                 <OrderTypeIndicator2>
                                     <OrderTypeText>{sortedImageArray[3].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                                 </OrderTypeIndicator2>
                             </ImageContainer>
                             <ImageContainer>
                                 <SubImageInSixUnit
-                                source={{uri: sortedImageArray[4].img_url}}/>
+                                source={{uri: sortedImageArray[4].img_thumbNail}}/>
                                 <OrderTypeIndicator2>
                                     <OrderTypeText>{sortedImageArray[4].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                                 </OrderTypeIndicator2>
@@ -424,7 +401,7 @@ justify-content: space-between;
                             <ImageContainer>
                                 <SubImageInSixUnit
                                 style={{borderBottomRightRadius: 8}}
-                                source={{uri: sortedImageArray[5].img_url}}/>
+                                source={{uri: sortedImageArray[5].img_thumbNail}}/>
                                 <OrderTypeIndicator2>
                                     <OrderTypeText>{sortedImageArray[5].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                                 </OrderTypeIndicator2>
@@ -440,7 +417,7 @@ justify-content: space-between;
                         <ImageContainer>
                             <MainImageInSixUnit
                             style={{borderTopLeftRadius: 8}}
-                            source={{uri: sortedImageArray[0].img_url}}/>
+                            source={{uri: sortedImageArray[0].img_thumbNail}}/>
                             <OrderTypeIndicator1>
                                 <OrderTypeText>{sortedImageArray[0].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                             </OrderTypeIndicator1>
@@ -449,14 +426,14 @@ justify-content: space-between;
                             <ImageContainer>
                                 <SubImageInSixUnit
                                 style={{borderTopRightRadius: 8}}
-                                source={{uri: sortedImageArray[1].img_url}}/>
+                                source={{uri: sortedImageArray[1].img_thumbNail}}/>
                                 <OrderTypeIndicator2>
                                     <OrderTypeText>{sortedImageArray[1].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                                 </OrderTypeIndicator2>
                             </ImageContainer>
                             <ImageContainer>
                                 <SubImageInSixUnit
-                                source={{uri: sortedImageArray[2].img_url}}/>
+                                source={{uri: sortedImageArray[2].img_thumbNail}}/>
                                 <OrderTypeIndicator2>
                                     <OrderTypeText>{sortedImageArray[2].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                                 </OrderTypeIndicator2>
@@ -467,14 +444,14 @@ justify-content: space-between;
                             <ImageContainer>
                                 <SubImageInSixUnit
                                 style={{borderBottomLeftRadius: 8}}
-                                source={{uri: sortedImageArray[3].img_url}}/>
+                                source={{uri: sortedImageArray[3].img_thumbNail}}/>
                                 <OrderTypeIndicator2>
                                     <OrderTypeText>{sortedImageArray[3].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                                 </OrderTypeIndicator2>
                             </ImageContainer>
                             <ImageContainer>
                                 <SubImageInSixUnit
-                                source={{uri: sortedImageArray[4].img_url}}/>
+                                source={{uri: sortedImageArray[4].img_thumbNail}}/>
                                 <OrderTypeIndicator2>
                                     <OrderTypeText>{sortedImageArray[4].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                                 </OrderTypeIndicator2>
@@ -482,7 +459,7 @@ justify-content: space-between;
                             <ImageContainer>
                                 <SubImageInSixUnit
                                 style={{borderBottomRightRadius: 8}}
-                                source={{uri: sortedImageArray[5].img_url}}/>
+                                source={{uri: sortedImageArray[5].img_thumbNail}}/>
                                 <OrderTypeIndicator2>
                                     <OrderTypeText>{sortedImageArray[5].img_before_after === "before" ? "전" : "후"}</OrderTypeText>
                                 </OrderTypeIndicator2>

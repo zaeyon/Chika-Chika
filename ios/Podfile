@@ -6,7 +6,11 @@ platform :ios, '10.0'
 target 'chikaApp' do
   config = use_native_modules!
   use_react_native!(:path => config["reactNativePath"])
+  permissions_path = '../node_modules/react-native-permissions/ios'
   
+  pod 'Permission-LocationAlways', :path => "#{permissions_path}/LocationAlways"
+  pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse"
+
   # Explicitly include Yoga if you are using RN >= 0.42.0
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
 

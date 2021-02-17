@@ -24,6 +24,7 @@ const Container = Styled.View`
 `;
 
 const SearchContainer = Styled.View`
+ z-index: 1;
  width: ${wp('100%')}px;
  padding: 12px 16px 12px 16px;
  background-color: #F5F7F9;

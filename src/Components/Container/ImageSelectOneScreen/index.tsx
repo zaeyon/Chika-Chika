@@ -188,10 +188,18 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
   }, []);
 
   const moveToFullImage = useCallback((item) => {
-    navigation.navigate('FullImageScreen', {
-      image: item,
-      requestType: route.params.requestType,
-    });
+    if(route.params?.requestType === 'ContentPostScreen') {
+      navigation.navigate('FullImageScreen', {
+        image: item,
+        requestType: route.params.requestType,
+        selectedIndex: route.params.selectedIndex,
+      })
+    } else {
+      navigation.navigate('FullImageScreen', {
+        image: item,
+        requestType: route.params.requestType,
+      });
+    }
   }, []);
 
   return (

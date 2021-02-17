@@ -18,14 +18,15 @@ import {
 } from 'react-native-responsive-screen';
 import {useSelector} from 'react-redux';
 
-// Local Component
+// Local Components
 import DentalCollapsibleTabView from '~/Components/Presentational/DentalDetailScreen/DentalCollapsibleTabView';
 import DentalBottomBar from '~/Components/Presentational/DentalDetailScreen/DentalBottomBar';
 import ReviewItem from '~/Components/Presentational/ReviewItem';
-import {callPhoneNumber} from '~/method/callPhoneNumber';
 import ToastMessage from '~/Components/Presentational/ToastMessage';
 
-// Route
+import {callPhoneNumber} from '~/method/callPhoneNumber';
+
+// Routes
 import GETDentalDetail from '~/Routes/Dental/GETDentalDetail';
 import POSTDentalScrap from '~/Routes/Dental/POSTDentalScrap';
 import DELETEDentalScrap from '~/Routes/Dental/DELETEDentalScrap';
@@ -63,7 +64,9 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
   console.log("DentalDetailScreen dentalId", route.params?.dentalId);
   const [dentalDetailInfo, setDentalDetailInfo] = useState<any>();
   const [dentalReviewArray, setDentalReviewArray] = useState<Array<any>>([]);
+  const [dentalImageArray, setDentalImageArray] = useState<Array<any>>([]);
   const [loadingGetDentalDetail, setLoadingGetDentalDetail] = useState<boolean>(true);
+  const [isNoDentalImage, setIsNoDentalImage] = useState<boolean>(false);
   const [isCurUserScrap, setIsCurUserScrap] = useState<boolean>(false);
 
   const currentUser = useSelector((state: any) => state.currentUser);
@@ -91,6 +94,21 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
       console.log("GETDentalDetail response", response)
       console.log("GETDentalDetail response.clinicInfoHeader.clinicProfileImg", response.clinicInfoHeader.clinicProfileImg);
       console.log("GETDentalDetail response.clinicInfoHeader.clinicReviewImg", response.clinicInfoHeader.clinicReviewImg);
+      if(response.clinicInfoHeader.clinicProfileImg.length > 0 || response.clinicInfoHeader.clinicReviewImg.length > 0) {
+          const tmpDentalImageArray = response.clinicInfoHeader.clinicProfileImg.concat(response.clinicInfoHeader.clinicReviewImg);
+          setDentalImageArray(tmpDentalImageArray);
+      } else {
+          setIsNoDentalImage(true);
+          const tmpDentalImageArray = [{
+            createdAt: "2021-02-15 13:41:17",
+            img_height: 4032,
+            img_url: "",
+            img_width: 3024,
+            index: 1
+          }]
+
+          setDentalImageArray(tmpDentalImageArray);
+      }
       setDentalDetailInfo(response)
       setLoadingGetDentalDetail(false);
 
@@ -158,17 +176,18 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
   };
 
   const moveToReviewUpload = () => {
-      const dentalClinic = {
+      const dentalObj = {
           address: dentalDetailInfo.clinicInfoHeader.address,
           id: dentalId,
           local: dentalDetailInfo.clinicInfoHeader.address,
           name: dentalDetailInfo.clinicInfoHeader.name,
           originalName: dentalDetailInfo.clinicInfoHeader.originalName,
       }
+
       navigation.navigate("ReviewUploadStackScreen", {
           screen: "ReviewMetaDataScreen",
           params: {
-            dentalClinic: dentalClinic,
+            dentalObj: dentalObj,
           }
       })
   }
@@ -180,6 +199,10 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
             longitude: 126.9781164904998,
           }
       });
+  }
+
+  const clickDentalCallReservation = () => {
+      callPhoneNumber(dentalDetailInfo.clinicInfoHeader.telNumber);
   }
 
 
@@ -236,7 +259,7 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
   
 
   const goBack = () => {
-    navigation.goBack()
+    navigation.goBack();
   }
     
     return (
@@ -244,6 +267,8 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
           {!loadingGetDentalDetail && (
           <DentalTabContainer>
             <DentalCollapsibleTabView
+            navigation={navigation}
+            dentalImageArray={dentalImageArray}
             moveToReviewDetail={moveToReviewDetail}
             moveToAnotherProfile={moveToAnotherProfile}
             moveToDentalLocationMap={moveToDentalLocationMap}
@@ -254,6 +279,7 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
             goBack={goBack}
             />
             <DentalBottomBar
+            clickDentalCallReservation={clickDentalCallReservation}
             isCurUserScrap={isCurUserScrap}
             postDentalScrap={postDentalScrap}
             deleteDentalScrap={deleteDentalScrap}/>

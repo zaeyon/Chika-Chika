@@ -5,13 +5,13 @@ export async function uploadImageToS3(imageFile: any, path = 'garage') {
     const imageId = String(imageFile.uri).replace("ph://", "")
     const imageIdArray = imageId.split("/");
     const filenameArray = imageFile.filename.split(".");
-    const imageType = `image/jpeg`
+    const imageType = `image/${String(filenameArray[1]).toUpperCase()}`
     const imagePath = imageFile.uri.includes('file://') ? imageFile.uri : `assets-library://asset/asset.${'JPG'}?id=${imageId}&ext=${'JPG'}`
     const imageSize = imageFile.fileSize
     const width = imageFile.width;
     const height = imageFile.height;
 
-    const originalName = Date.now() + imageIdArray[0] + ".jpeg"
+    const originalName = Date.now() + imageIdArray[0] + "." + filenameArray[1].toUpperCase();
 
     const file = {
         uri: imagePath,

@@ -132,13 +132,32 @@ const HomeScreen = ({navigation, route}: Props) => {
         default:
       }
     });
+
     GETSearchRecord({jwtToken})
-      .then((response: any) => {
+      .then(async (response: any) => {
+        console.log("GETSearchRecord response", response);
         dispatch(allActions.userActions.setSearchRecord(response));
+
+        const getDentalSearchRecord = async (searchRecordArray: any) => {
+          let tmpDentalSearchRecordArray = new Array();
+          await searchRecordArray.forEach((item: any, index: number) => {
+            if(item.category === 'clinic' || item.category === 'city') {
+              return tmpDentalSearchRecordArray.push(item);
+            }
+          })
+
+          return tmpDentalSearchRecordArray
+        } 
+
+        const tmpDentalSearchRecordArray = await getDentalSearchRecord(response);
+        console.log("GETSearchRecord tmpDentalSearchRecordArray", tmpDentalSearchRecordArray);
+        dispatch(allActions.userActions.setDentalSearchRecord(tmpDentalSearchRecordArray));
+        
       })
       .catch((error) => {
         console.log('GETSearchRecord error', error);
       });
+
   }, []);
 
   const fetchRecentReviews = useCallback(async () => {
@@ -189,9 +208,15 @@ const HomeScreen = ({navigation, route}: Props) => {
     });
   };
 
+  const moveToNotificationList = () => {
+    navigation.navigate('NotificationStackScreen', {
+      screen: 'NotificationListScreen',
+    });
+  };
+
   const moveToReviewUpload = useCallback(() => {
     navigation.navigate('ReviewUploadStackScreen', {
-      screen: 'ReviewMetaDataScreen',
+      screen: 'ReceiptRegisterScreen',
       params: {
         requestType: 'post',
       },
@@ -226,19 +251,13 @@ const HomeScreen = ({navigation, route}: Props) => {
               onPress={() => moveToTotalKeywordSearch()}>
               <Image source={require('~/Assets/Images/TopTab/ic/search.png')} />
             </HeaderIconTouchableOpacity>
-            <HeaderIconTouchableOpacity onPress={() => moveToReviewUpload()}>
+            <HeaderIconTouchableOpacity onPress={() => moveToNotificationList()}>
               <Image
                 source={require('~/Assets/Images/TopTab/ic/alarm/focus.png')}
               />
             </HeaderIconTouchableOpacity>
             <HeaderIconTouchableOpacity
-              onPress={() =>
-                navigation.navigate('CommunityPostUploadStackScreen', {
-                  data: {
-                    id: -1,
-                  },
-                })
-              }>
+              onPress={() => moveToReviewUpload()}>
               <Image
                 source={require('~/Assets/Images/TopTab/ic/write/black.png')}
               />

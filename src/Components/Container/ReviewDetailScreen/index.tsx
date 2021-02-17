@@ -35,8 +35,6 @@ import ReviewInformation from '~/Components/Presentational/ReviewDetailScreen/Re
 import ReviewContent from '~/Components/Presentational/ReviewDetailScreen/ReviewContent';
 import PreviewCommentList from '~/Components/Presentational/PreviewCommentList';
 import ReviewBottomBar from '~/Components/Presentational/ReviewDetailScreen/ReviewBottomBar';
-import DentalInfomation from '~/Components/Presentational/ReviewDetailScreen/DentalInfomation';
-import DetailMetaInfo from '~/Components/Presentational/ReviewDetailScreen/DetailMetaInfo';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import TreatmentList from '~/Components/Presentational/ReviewDetailScreen/TreatmentList';
 import ReviewMetaInfo from '~/Components/Presentational/ReviewDetailScreen/ReviewMetaInfo';
@@ -81,8 +79,6 @@ const ReviewContentContainer = Styled.View`
 
 `;
 
-const DentalInfoContainer = Styled.View`
-`;
 
 const CommentListContainer = Styled.View`
 `;
@@ -175,15 +171,20 @@ interface RatingObj {
   priceRating: number;
 }
 
+
+interface metaInfoObj {
+  dentalObj: DentalObj;
+  ratingObj: RatingObj;
+  treatmentDateObj: any;
+  totalPriceObj: any;
+}
+
 let selectedCommentId: number;
 let startTime: any;
 let endTime: any;
 
 const ReviewDetailScreen = ({navigation, route}: Props) => {
   const [paragraphArray, setParagraphArray] = useState<Array<any>>([]);
-  const [dentalInfo, setDentalInfo] = useState<DentalObj>(
-    route.params?.dentalObj,
-  );
 
   const [isCurUserLike, setIsCurUserLike] = useState<boolean>(
     route.params?.isCurUserLike,
@@ -206,8 +207,15 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     false,
   );
 
+  const [metaInfoObj, setMetaInfoObj] = useState<MetaInfoObj>({
+    dentalObj: route.params?.dentalObj,
+    ratingObj: route.params?.ratingObj,
+    totalPriceObj: {},
+    treatmentDateObj: {},
+  });
+
   const [treatmentDate, setTreatmentDate] = useState<any>({});
-  const [treatmentList, setTreatmentList] = useState<Array<object>>([]);
+  const [treatmentArray, setTreatmentArray] = useState<Array<object>>([]);
   const [rating, setRating] = useState<RatingObj>(route.params?.ratingObj);
   const [totalPrice, setTotalPrice] = useState<object>({});
   const [detailPriceList, setDetailPriceList] = useState<Array<object>>([]);
@@ -300,17 +308,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     if (route.params?.isRevised) {
       route.params.isRevised = !route.params.isRevised;
       reviewScrollViewRef.current.scrollTo({x: 0, y: 0, animated: false});
-      console.log(
-        '리뷰 수정 route.params?.paragraphArray',
-        route.params.paragraphArray,
-      );
-      console.log('리뷰 수정 route.params.dentalObj', route.params.dentalObj);
-      console.log(
-        '리뷰 수정 route.params?.treatmentDateObj',
-        route.params.treatmentDateObj,
-      );
-      console.log('수정전 treatmentDate', treatmentDate);
-
+      
       const tmpTreatmentDate = new Date(
         route.params?.treatmentDateObj.treatDate,
       );
@@ -325,9 +323,9 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         '.' +
         splitedTreatmentDate[2];
 
-      const treatmentObj = {
-        displayTreatDate: tmpDisplayTreatDate,
-        treatDate: tmpTreatmentDate,
+      const tmpTreatmentDateObj = {
+        displayTreatmentDate: tmpDisplayTreatDate,
+        treatmentDate: tmpTreatmentDate,
       };
 
       const tmpTreatPriceObj = {
@@ -344,10 +342,15 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       getRevisedImageArray();
       setParagraphArrayDisplay(route.params.paragraphArray);
       setTreatmentArrayDisplay(route.params.treatmentArray);
-      setTreatmentDate(treatmentObj);
-      setRating(route.params.ratingObj);
-      setDentalInfo(route.params.dentalObj);
-      setTotalPrice(tmpTreatPriceObj);
+
+      const tmpMetaInfoObj = {
+        dentalObj: route.params.dentalObj,
+        ratingObj: route.params.ratingObj,
+        totalPriceObj: tmpTreatPriceObj,
+        treatmentDateObj: tmpTreatmentDateObj,
+      }
+
+      setMetaInfoObj(tmpMetaInfoObj)
     }
   }, [
     route.params?.isRevised,
@@ -443,14 +446,16 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     GETReviewDetail(jwtToken, reviewId)
       .then((response: any) => {
         console.log('GETReviewDetail response', response);
+        setLoadingReviewDetail(false);
+        setRefreshingReviewDetail(false);
 
-      const tmpWriterObj = {
-        nickname: response.reviewBody.user.nickname,
-        profileImage: response.reviewBody.user.profileImg,
-        userId: response.reviewBody.user.userId,
-      }
+        const tmpWriterObj = {
+          nickname: response.reviewBody.user.nickname,
+          profileImage: response.reviewBody.user.profileImg,
+          userId: response.reviewBody.user.userId,
+        }
 
-      setWriterObj(tmpWriterObj);
+        setWriterObj(tmpWriterObj);
       
         let elapsedTimeText = '';
         let visibleElapsedTime = false;
@@ -472,36 +477,10 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           setElapsedTime(formatDate(response.reviewBody.createdAt));
         }
 
-        const tmpTreatPriceObj = {
-          displayTreatPrice:
-            response.reviewBody.totalCost.toLocaleString() + '원',
-          treatPrice: response.reviewBody.totalCost,
-        };
-
-        setTotalPrice(tmpTreatPriceObj);
-        setLoadingReviewDetail(false);
-        setIsCertifiedReceipt(response.reviewBody.certifiedBill);
-        setRefreshingReviewDetail(false);
-
-        const tmpTreatmentDate = new Date(response.reviewBody.treatmentDate);
-        const splitedTreatmentDate = response.reviewBody.treatmentDate.split(
-          '-',
-        );
-        const tmpDisplayTreatDate =
-          splitedTreatmentDate[0] +
-          '.' +
-          splitedTreatmentDate[1] +
-          '.' +
-          splitedTreatmentDate[2];
-
-        const treatmentObj = {
-          displayTreatDate: tmpDisplayTreatDate,
-          treatDate: tmpTreatmentDate,
-        };
-
+      
         // 현재 사용자의 리뷰일때 리뷰 수정용 데이터 변환 작업
         if (isOwnReview) {
-          const tmpTreatmentList = response.reviewBody.TreatmentItems.map(
+          const tmpTreatmentArray = response.reviewBody.TreatmentItems.map(
             (item: any, index: number) => {
               let tmpTreatmentObj;
               if (item.review_treatment_item.cost !== null) {
@@ -536,8 +515,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
           setTimeout(() => {
             setDetailPriceList(tmpDetailPriceList);
-            setTreatmentList(tmpTreatmentList);
-            //setRating(tmpRating);
+            setTreatmentArray(tmpTreatmentArray);
           }, 10);
         }
 
@@ -598,15 +576,50 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         } else {
           setIsCurUserLike(false);
         }
+        
+        const tmpRatingObj = {
+          avgRating: response.reviewBody.AVGStarRate,
+          serviceRating: response.reviewBody.starRate_service,
+          priceRating: response.reviewBody.starRate_cost,
+          treatmentRating: response.reviewBody.starRate_treatment,
+        }
 
-        //setWriterInfo(userObj)
+        const tmpTreatPriceObj = {
+          displayTreatPrice:
+            response.reviewBody.totalCost.toLocaleString() + '원',
+          treatPrice: response.reviewBody.totalCost,
+        };
+
+
+        const tmpTreatmentDate = new Date(response.reviewBody.treatmentDate);
+        const splitedTreatmentDate = response.reviewBody.treatmentDate.split(
+          '-',
+        );
+        const tmpDisplayTreatDate =
+          splitedTreatmentDate[0] +
+          '.' +
+          splitedTreatmentDate[1] +
+          '.' +
+          splitedTreatmentDate[2];
+
+        const treatmentDateObj = {
+          displayTreatmentDate: tmpDisplayTreatDate,
+          treatmentDate: tmpTreatmentDate,
+        };
+        
+        const tmpMetaInfoObj = {
+          dentalObj: dentalObj,
+          ratingObj: tmpRatingObj,
+          totalPriceObj: tmpTreatPriceObj,
+          treatmentDateObj: treatmentDateObj,
+        }
+
         setImageArray(tmpImageArray);
-        setTreatmentDate(treatmentObj);
         setLikeCount(response.reviewLikeNum);
         setViewCount(response.reviewViewerNum);
         setParagraphArray(tmpParagraphArray);
         setParagraphArrayDisplay(response.reviewBody.review_contents);
-        setDentalInfo(dentalObj);
+        setMetaInfoObj(tmpMetaInfoObj);
       })
       .catch((error) => {
         console.log('GETReviewDetail error', error);
@@ -708,7 +721,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     navigation.navigate('DentalClinicStack', {
       screen: 'DentalDetailScreen',
       params: {
-        dentalId: dentalInfo.id,
+        dentalId: metaInfoObj.dentalObj.id,
       },
     });
   };
@@ -747,31 +760,32 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
   const clickReviseReview = () => {
     setIsVisibleOwnMoreViewModal(false);
-    console.log('dentalInfo', dentalInfo);
+
     const submitParagraphArray = paragraphArray;
+    console.log("submitParagraphArray", submitParagraphArray);
 
     navigation.navigate('ReviewUploadStack', {
-      screen: 'ContentPostScreen',
+      screen: 'ReviewMetaDataScreen',
       params: {
         requestType: 'revise',
         paragraphArray: submitParagraphArray,
-        dentalClinic: {
-          name: dentalInfo.name,
-          address: dentalInfo.address,
-          id: dentalInfo.id,
+        dentalObj: {
+          originalName: metaInfoObj.dentalObj.originalName,
+          address: metaInfoObj.dentalObj.address,
+          id: metaInfoObj.dentalObj.id,
         },
-        treatDate: {
-          displayTreatDate: treatmentDate.displayTreatDate,
-          treatDate: treatmentDate.treatDate,
+        treatmentDateObj: {
+          displayTreatmentDate: metaInfoObj.treatmentDateObj.displayTreatmentDate,
+          treatmentDate: metaInfoObj.treatmentDateObj.treatmentDate,
         },
-        selectedTreatList: treatmentList,
-        rating: {
-          avgRating: rating.avgRating,
-          priceRating: rating.priceRating,
-          serviceRating: rating.serviceRating,
-          treatRating: rating.treatRating,
+        selectedTreatmentArray: treatmentArray,
+        ratingObj: {
+          avgRating: metaInfoObj.ratingObj.avgRating,
+          priceRating: metaInfoObj.ratingObj.priceRating,
+          serviceRating: metaInfoObj.ratingObj.serviceRating,
+          treatmentRating: metaInfoObj.ratingObj.treatmentRating,
         },
-        detailPriceList: detailPriceList,
+        totalPriceObj: metaInfoObj.totalPriceObj,
         reviewId: reviewId,
         treatPrice: totalPrice,
       },
@@ -793,6 +807,12 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     ]);
   };
 
+  const clickAccuseReview = () => {
+    navigation.navigate("AccuseScreen", {
+      reviewId,
+    })
+  }
+
   const deleteReview = () => {
     DELETEReview({jwtToken, reviewId})
       .then((response) => {
@@ -809,7 +829,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         console.log('deleteIndex', deleteIndex);
         tmpReviewList.splice(deleteIndex, 1);
 
-        dispatch(allActions.reviewListActions.setMainReviewList(tmpReviewList));
+        dispatch(allActions.reviewListActions.deleteReview(reviewId));
         navigation.goBack();
       })
       .catch((error) => {
@@ -1006,12 +1026,9 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
                   </ReviewContentContainer>
                   <MetaInfoContainer>
                     <ReviewMetaInfo
-                      dentalObj={dentalInfo}
+                      metaInfoObj={metaInfoObj}
                       moveToDentalDetail={moveToDentalDetail}
                       certifiedReceipt={isCertifiedReceipt}
-                      totalPrice={totalPrice.displayTreatPrice}
-                      ratingObj={rating}
-                      treatmentDate={treatmentDate.displayTreatDate}
                     />
                   </MetaInfoContainer>
                   <CommentListContainer>
@@ -1044,6 +1061,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
               clickReviewScrap={clickReviewScrap}
               clickCommentIcon={clickCommentIcon}
               likeCount={likeCount}
+              commentCount={commentCount}
             />
           </BottomBarContainer>
         </KeyboardAvoidingView>
@@ -1064,9 +1082,11 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
                 <MoreViewItemLabelText>{'삭제'}</MoreViewItemLabelText>
               </MoreViewItemContainer>
             </TouchableWithoutFeedback>
-            <MoreViewItemContainer>
-              <MoreViewItemLabelText>{'신고'}</MoreViewItemLabelText>
-            </MoreViewItemContainer>
+            <TouchableWithoutFeedback onPress={() => clickAccuseReview()}>
+              <MoreViewItemContainer>
+                <MoreViewItemLabelText>{'신고'}</MoreViewItemLabelText>
+              </MoreViewItemContainer>
+            </TouchableWithoutFeedback>
             <MoreViewItemContainer style={{borderBottomWidth: 0}}>
               <MoreViewItemLabelText>{'공유'}</MoreViewItemLabelText>
             </MoreViewItemContainer>
@@ -1074,9 +1094,11 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         )}
         {isVisibleOtherMoreViewModal && (
           <MoreViewModalContainer style={styles.moreViewModalShadow}>
+            <TouchableWithoutFeedback onPress={() => clickAccuseReview()}>
             <MoreViewItemContainer>
               <MoreViewItemLabelText>{'신고'}</MoreViewItemLabelText>
             </MoreViewItemContainer>
+            </TouchableWithoutFeedback>
             <MoreViewItemContainer style={{borderBottomWidth: 0}}>
               <MoreViewItemLabelText>{'공유'}</MoreViewItemLabelText>
             </MoreViewItemContainer>

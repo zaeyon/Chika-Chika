@@ -14,6 +14,7 @@ import messaging from '@react-native-firebase/messaging';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {RootSiblingParent, setSiblingWrapper} from 'react-native-root-siblings';
 import SplashScreen from 'react-native-splash-screen';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 // Async Storage
 import {getUserInfo} from '~/storage/currentUser';
@@ -22,7 +23,7 @@ import {getUserInfo} from '~/storage/currentUser';
 const store = createStore(rootReducer)
 setSiblingWrapper((sibling) => <Provider store={store}>{sibling}</Provider>);
 
-async function hasAndroidPermission() {
+async function checkAndroidPermission() {
   const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
 
   const hasPermission = await PermissionsAndroid.check(permission);
@@ -34,14 +35,49 @@ async function hasAndroidPermission() {
   return status === 'granted';
 }
 
+function checkIosPermission() {
+  check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
+  .then((result) => {
+    switch (result) {
+      case RESULTS.UNAVAILABLE:
+        console.log('This feature is not available (on this device / in this context)');
+        break;
+      case RESULTS.DENIED:
+        console.log('The permission has not been requested / is denied but requestable');
+        request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then((result) => {
+
+        });
+        break;
+      case RESULTS.LIMITED:
+        console.log('The permission is limited: some actions are possible');
+        break;
+      case RESULTS.GRANTED:
+        console.log('The permission is granted');
+        break;
+      case RESULTS.BLOCKED:
+        console.log('The permission is denied and not requestable anymore');
+        break;
+    }
+  })
+  .catch((error) => {
+    console.log("checkIosPermission error", error);
+  });
+}
+
+
+
 
 // Waring 경고창 숨기기
 console.disableYellowBox = true;
 
 const App = () => {
-
   useEffect(() => {
-    hasAndroidPermission()
+    if(Platform.OS === 'android') {
+      checkAndroidPermission()
+    } else if(Platform.OS === 'ios') {
+      checkIosPermission()
+    }
+
   }, [])
 
   return (

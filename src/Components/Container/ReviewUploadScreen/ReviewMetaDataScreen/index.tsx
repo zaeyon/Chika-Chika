@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform} from 'react-native';
+import {TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, StyleSheet} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -11,6 +11,8 @@ import {getStatusBarHeight} from 'react-native-status-bar-height';
 import AboveKeyboard from 'react-native-above-keyboard';
 import DeviceInfo from 'react-native-device-info';
 import ActionSheet from 'react-native-actionsheet';
+import {Picker} from '@react-native-picker/picker';
+import Modal from 'react-native-modal';
 
 import {launchCamera} from 'react-native-image-picker';
 
@@ -152,7 +154,6 @@ color: #ffffff;
 
 const DisplayPriceText = Styled.Text`
 font-weight: 400;
-line-height: 24px;
 font-size: 16px;
 color: #131F3C;
 `;
@@ -349,6 +350,104 @@ padding-right: 16px;
 background-color: #FAFAFA;
 `;
 
+const TreatmentDateModal = Styled.Modal`
+`;
+
+const TreatmentDateModalContainer = Styled.View`
+width: ${wp('100%')}px;
+background-color: #ffffff;
+border-top-left-radius: 20px;
+border-top-right-radius: 20px;
+position: absolute;
+bottom: 0;
+`;
+
+const DetailFilterHeaderContainer = Styled.View`
+flex-direction: row;
+padding-top: 16px;
+padding-bottom: 16px;
+padding-left: 16px;
+align-items: center;
+border-bottom-width: 1px;
+border-color: #F5F7F9;
+`;
+
+const DetailFilterTitleText = Styled.Text`
+font-weight: 700;
+font-size: 14px;
+line-height: 19px;
+color: #000000;
+`;
+
+const TimeFilterModalContainer = Styled.View`
+`;
+
+const TimePickerContainer = Styled.View`
+align-items: center;
+padding-left: 25px;
+padding-right: 25px;
+justify-content: space-between;
+flex-direction: row;
+border-bottom-width: 1px;
+border-color: #F5F7F9;
+`;
+
+const FilterDividingText = Styled.Text`
+font-weight: normal;
+font-size: 18px;
+line-height: 24px;
+color: #131F3C;
+`;
+
+
+const DetailFilterFooterContainer = Styled.View`
+padding-top: 16px;
+padding-left: 0px;
+padding-right: 16px;
+padding-bottom: 32px;
+flex-direction: row;
+align-items: center;
+justify-content: space-between;
+`;
+
+const InitializeFilterContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 16px;
+padding-right: 16px;
+`;
+
+const InitializeFilterText = Styled.Text`
+font-weight: 400;
+font-size: 12px;
+line-height: 16px;
+color: #9AA2A9;
+`;
+
+const InitializeFilterIcon = Styled.Image`
+margin-left: 4px;
+width: ${wp('2.66%')}px;
+height: ${wp('2.66%')}px;
+`;
+
+const RegisterFilterButton = Styled.View`
+width: ${wp('55.46%')}px;
+align-items: center;
+border-radius: 4px;
+background-color: #131F3C;
+padding-top: 12px;
+padding-bottom: 12px;
+`;
+
+const RegisterFilterText = Styled.Text`
+font-weight: 700;
+font-size: 14px;
+line-height: 24px;
+color: #ffffff;
+`;
+
 
 interface Props {
   navigation: any;
@@ -368,7 +467,11 @@ type RatingObj = {
 }
 
 const ReviewMetaDataScreen = ({navigation, route}: Props) => {
-  const [treatmentDate, setTreatmentDate] = useState<any>('');
+  const [treatmentDateObj, setTreatmentDateObj] = useState<any>({
+    displayTreatmentDate: '',
+    treatmentDate: ''
+  });
+
   const [totalPrice, setTotalPrice] = useState<string>('');
 
   const [dentalObj, setDentalObj] = useState<object>({});
@@ -379,20 +482,31 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     priceRating: null,
   });
 
-  const [date, setDate] = useState(new Date());
-  const [displayDate, setDisplayDate] = useState<string>('');
   const [displayPrice, setDisplayPrice] = useState<any>();
-
 
   const [isActivatedNext, setIsActivatedNext] = useState<boolean>(false);
   const [isVisibleDatePicker, setIsVisibleDatePicker] = useState<boolean>(false);
   const [isFocusedTotalPriceInput, setIsFocusedTotalPriceInput] = useState<boolean>(false);
 
+  const [selectedTreatmentYear, setSelectedTreatmentYear] = useState<any>(`${new Date().getFullYear()}`);
+  const [selectedTreatmentMonth, setSelectedTreatmentMonth] = useState<any>(`${new Date().getMonth() + 1}`);
+  const [selectedTreatmentDay, setSelectedTreatmentDay] = useState<any>(`${new Date().getDate()}`);
+
   const [selectedProofImages, setSelectedProofImages] = useState<Array<any>>([]);
   const [selectedDentalImages, setSelectedDentalImages] = useState<Array<any>>([]);
 
   const actionSheetItemList = ['취소', '촬영', '앨범'];
-  const actionSheetRef = useRef() as any;
+
+  const scrollY = useRef<number>(0);
+  const scrollViewRef = useRef<any>();
+  const totalPriceViewRef = useRef<any>();
+
+  const actionSheetRefByProof = useRef() as any;
+  const actionSheetRefByDental = useRef() as any;
+
+  useEffect(() => {
+    console.log("ReviewMetaDataScreen route", route)
+  }, [route]);
   
   useEffect(() => {
     if(route.params?.selectedProofImages) {
@@ -429,22 +543,46 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }, [route.params?.ratingObj]);
 
   useEffect(() => {
-    Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
+    if(route.params?.treatmentDateObj) {
+      console.log("route.params?.treatmentDateObj", route.params.treatmentDateObj);
+      setTreatmentDateObj(route.params?.treatmentDateObj)
+    }
+  }, [route.params?.treatmentDateObj])
+
+  useEffect(() => {
+    Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
+    Keyboard.addListener("keyboardWillHide", _keyboardWillHide);
 
     // cleanup function
     return () => {
-      Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
+      Keyboard.removeListener("keyboardWillHide", _keyboardWillHide);
     };
   }, []);
 
-  const _keyboardDidHide = () => {
-    console.log("Keyboard Hidden");
-    if(isFocusedTotalPriceInput) {
-      setIsFocusedTotalPriceInput(false);
+  useEffect(() => {
+    if(dentalObj.originalName && treatmentArray.length > 0 && ratingObj.serviceRating &&  treatmentDateObj.treatmentDate !== '') {
+      setIsActivatedNext(true)
+    } else {
+      setIsActivatedNext(false);
     }
+  }, [dentalObj, treatmentArray, ratingObj, treatmentDateObj])
+
+  useEffect(() => {
+    if(route.params?.totalPriceObj) {
+      console.log("route.params?.totalPriceObj", route.params?.totalPriceObj);
+      setDisplayPrice(route.params?.totalPriceObj.displayTreatPrice);
+      setTotalPrice(route.params?.totalPriceObj.treatPrice);
+    }
+  }, [route.params?.totalPriceObj])
+
+  const _keyboardWillShow = () => {
+};
+
+  const _keyboardWillHide = () => {
+      setIsFocusedTotalPriceInput(false);
   };
 
-  const unSelectImage = useCallback((image) => {
+  const unSelectProofImage = useCallback((image) => {
     setSelectedProofImages((prev) => {
       const targetIndex = prev.findIndex(
         (item) => item.filename === image.filename,
@@ -453,6 +591,21 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
       if (targetIndex >= 0) {
         newSelectedProofImages.splice(targetIndex, 1);
         return newSelectedProofImages;
+      } else {
+        return prev;
+      }
+    });
+  }, []);
+
+  const unSelectDentalImage = useCallback((image) => {
+    setSelectedDentalImages((prev) => {
+      const targetIndex = prev.findIndex(
+        (item) => item.filename === image.filename,
+      );
+      const newSelectedDentalImages = prev.concat();
+      if (targetIndex >= 0) {
+        newSelectedDentalImages.splice(targetIndex, 1);
+        return newSelectedDentalImages;
       } else {
         return prev;
       }
@@ -490,6 +643,24 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
     if (priceInputRef.current.isFocused()) priceInputRef.current.blur();
     else priceInputRef.current.focus();
+
+    if(treatmentArray.length === 0 && !ratingObj.serviceRating) {
+      if(scrollY.current < hp('6%')) {
+        scrollViewRef.current.scrollTo({y: hp('8%')})
+      }
+    } else if(treatmentArray.length > 0 && !ratingObj.serviceRating) {
+      if(scrollY.current < hp('8.5%')) {
+        scrollViewRef.current.scrollTo({y: hp('12%')})
+      }
+    } else if(treatmentArray.length === 0 && ratingObj.serviceRating) {
+      if(scrollY.current < hp('6.5%')) {
+        scrollViewRef.current.scrollTo({y: hp('10%')})
+      }
+    } else if(treatmentArray.length > 0 && ratingObj.serviceRating) {
+      if(scrollY.current < hp('10%')) {
+        scrollViewRef.current.scrollTo({y: hp('13.5%')})
+      }
+    }
   };
 
 
@@ -506,7 +677,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
     console.log('convertDisplayDate day', day);
 
-    return year + '년' + ' ' + month + '월' + ' ' + day + '일';
+    return year + '.' + ' ' + month + '.' + ' ' + day + '.';
   };
 
   const convertSubmitDate = (date: any) => {
@@ -526,15 +697,6 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   const onChangeDatePicker = (event: any, date: any) => {
     setDate(date);
   };
-
-  const registerTreatmentDate = () => {
-    setIsVisibleDatePicker(false);
-
-    console.log('applyTreatDate date', date);
-    setDisplayDate(convertDisplayDate(date));
-    setTreatmentDate(convertSubmitDate(date));
-  };
-
 
   const onPressBackground = () => {
     console.log("onPressBackground")
@@ -559,43 +721,79 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     }
   };
 
-  const onFocusTotalPriceInput = () => {
-    if(!isFocusedTotalPriceInput) {
-      setIsFocusedTotalPriceInput(true);
-    }
+  const finishTotalPriceInput = () => {
+    Keyboard.dismiss();
   }
 
-  const onPressFinishButton = () => {
-    navigation.navigate('TreatSearchScreen', {
-      dentalObj: dentalObj,
-      treatmentDate: {
-        displayTreatDate: displayDate,
-        treatmentDate: treatmentDate,
-      },
-      totalPrice: {
-        displayTreatPrice: displayPrice,
-        totalPrice: totalPrice,
-      },
-      requestPage: 'metadata',
-      requestType: route.params?.requestType,
-    });
-  };
+  const onFocusTotalPriceInput = () => {
+      if(treatmentArray.length === 0 && !ratingObj.serviceRating) {
+        if(scrollY.current < hp('6%')) {
+          scrollViewRef.current.scrollTo({y: hp('8%')})
+        }
+      } else if(treatmentArray.length > 0 && !ratingObj.serviceRating) {
+        if(scrollY.current < hp('8.5%')) {
+          scrollViewRef.current.scrollTo({y: hp('12%')})
+        }
+      } else if(treatmentArray.length === 0 && ratingObj.serviceRating) {
+        if(scrollY.current < hp('6.5%')) {
+          scrollViewRef.current.scrollTo({y: hp('10%')})
+        }
+      } else if(treatmentArray.length > 0 && ratingObj.serviceRating) {
+        if(scrollY.current < hp('10%')) {
+          scrollViewRef.current.scrollTo({y: hp('13.5%')})
+        }
+      }
+  }
 
-  const onPressActionSheet = useCallback(
+  const moveToContentPost = () => {
+    console.log("route.params?.paragraphArray", route.params?.paragraphArray);
+    navigation.navigate('ContentPostScreen', {
+      dentalObj,
+      treatmentArray,
+      ratingObj,
+      treatmentDate: treatmentDateObj.treatmentDate,
+      totalPrice,
+      selectedProofImages,
+      selectedDentalImages,
+      requestType: route.params?.requestType,
+      paragraphArray: route.params?.paragraphArray ? route.params?.paragraphArray : [{
+        index: 1,
+        image: null,
+        description: "",
+      },],
+      reviewId: route.params?.reviewId,
+    })
+  }
+
+  const onPressActionSheetByProof = useCallback(
     (index: number) => {
       switch (actionSheetItemList[index]) {
         case '촬영':
-          navigateToCamera();
+          navigateToCameraByProof();
           break;
         case '앨범':
-          navigateToGallery();
+          navigateToGalleryByProof();
           break;
       }
     },
     [actionSheetItemList],
   );
 
-  const navigateToCamera = useCallback(() => {
+  const onPressActionSheetByDental = useCallback(
+    (index: number) => {
+      switch (actionSheetItemList[index]) {
+        case '촬영':
+          navigateToCameraByDental();
+          break;
+        case '앨범':
+          navigateToGalleryByDental();
+          break;
+      }
+    },
+    [actionSheetItemList],
+  );
+
+  const navigateToCameraByProof = useCallback(() => {
     launchCamera({includeBase64: true, mediaType: 'photo'}, (response: CameraResponse) => {
       if (!response.didCancel) {
         const capturedImage = {
@@ -612,12 +810,41 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     });
   }, []);
 
-  const navigateToGallery = useCallback(() => {
+
+  const navigateToCameraByDental = useCallback(() => {
+    launchCamera({includeBase64: true, mediaType: 'photo'}, (response: CameraResponse) => {
+      if (!response.didCancel) {
+        const capturedImage = {
+          filename: response.fileName,
+          fileSize: response.fileSize,
+          width: response.width,
+          height: response.height,
+          uri: response.uri,
+          base64: response.base64,
+          camera: true,
+        };
+        setSelectedProofImages((prev) => [...prev, capturedImage]);
+      }
+    });
+  }, []);
+
+  const navigateToGalleryByProof = useCallback(() => {
     navigation.navigate('ImageSelectScreen', {
-      requestType: 'DentalInfoEditRequestScreen',
+      requestType: 'proofImage',
       selectedImages: selectedProofImages,
     });
   }, [])
+
+  const navigateToGalleryByDental = useCallback(() => {
+    navigation.navigate('ImageSelectScreen', {
+      requestType: 'dentalImage',
+      selectedImages: selectedDentalImages,
+    });
+  }, [])
+
+  const cancelTreatmentDateModal = useCallback(() => {
+    setIsVisibleDatePicker(false);
+  }, []);
 
 
   const deleteTreatItem = (treat: object) => {
@@ -628,11 +855,27 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     setTreatmentArray(tmpTreatmentArray);
   };
 
-  const renderListHeader = useCallback(
+  const initializeTreatmentDate = () => {
+    setIsVisibleDatePicker(false);
+    setTreatmentDateObj({});
+  }
+
+  const registerTreatmentDate = () => {
+    setIsVisibleDatePicker(false);
+
+    const tmpTreatmentDate = {
+      displayTreatmentDate: selectedTreatmentYear + '.' + selectedTreatmentMonth + '.' + selectedTreatmentDay,
+      treatmentDate: selectedTreatmentYear + '-' + selectedTreatmentMonth + '-' + selectedTreatmentDay
+    }
+
+    setTreatmentDateObj(tmpTreatmentDate);
+  };
+
+  const renderProofImageListHeader = useCallback(
     () => (
       <TouchableWithoutFeedback
         onPress={() => {
-          actionSheetRef.current.show();
+          actionSheetRefByProof.current.show();
         }}>
         <UploadImageButtonImage
           source={require('~Assets/Images/Camera/Master/community/btn/uploadImage.png')}
@@ -642,9 +885,25 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     [],
   );
 
+
+  const renderDentalImageListHeader = useCallback(
+    () => (
+      <TouchableWithoutFeedback
+        onPress={() => {
+          actionSheetRefByDental.current.show();
+        }}>
+        <UploadImageButtonImage
+          source={require('~Assets/Images/Camera/Master/community/btn/uploadImage.png')}
+        />
+      </TouchableWithoutFeedback>
+    ),
+    [],
+  );
+
+
   const renderProofImageItem = useCallback(
     ({item, index}) => (
-      <TouchableWithoutFeedback onPress={() => unSelectImage(item)}>
+      <TouchableWithoutFeedback onPress={() => unSelectProofImage(item)}>
         <ItemContainerView>
           <DeleteButtonView>
             <DeleteButtonImage
@@ -657,8 +916,8 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                 ? {uri: item.img_url} // edit mode s3 image
                 : {
                     uri: item.base64
-                      ? 'data:image/jpeg;base64,' + item.base64
-                      : item.uri,
+                    ? 'data:image/jpeg;base64,' + item.base64
+                    : item.uri,
                   }
             }
           />
@@ -670,7 +929,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
   const renderDentalImageItem = useCallback(
     ({item, index}) => (
-      <TouchableWithoutFeedback onPress={() => unSelectImage(item)}>
+      <TouchableWithoutFeedback onPress={() => unSelectDentalImage(item)}>
         <ItemContainerView>
           <DeleteButtonView>
             <DeleteButtonImage
@@ -685,7 +944,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                     uri: item.base64
                       ? 'data:image/jpeg;base64,' + item.base64
                       : item.uri,
-                  }
+              }
             }
           />
         </ItemContainerView>
@@ -694,20 +953,57 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     [],
   );
 
+  const renderYearPickerItem = useCallback(() => {
+    const startYear = 1900;
+    const currentYear = new Date(Date.now()).getFullYear();
+    const result = [];
+    for (let i = 0; i < (currentYear - startYear) + 1; i++) {
+      result.push(
+        <Picker.Item
+          label={String(startYear + i)}
+          value={String(startYear + i)}
+        />,
+      );
+    }
+    return result;
+  }, []);
 
+  const renderMonthPickerItem = useCallback(() => {
+    const result = [];
+    for (let i = 1; i <= 12; i++) {
+      result.push(<Picker.Item label={String(i)} value={String(i)} />);
+    }
+    return result;
+  }, []);
+
+  const renderDayPickerItem = useCallback(() => {
+    const result = [];
+    for (let i = 1; i <= 31; i++) {
+      result.push(<Picker.Item label={String(i)} value={String(i)} />);
+    }
+    return result;
+  }, []);
 
   return (
       <Container>
         <NavigationHeader
         headerLeftProps={{type: 'arrow', onPress: goBack}}
         headerTitle={"관련정보"}
-        headerRightProps={{type: 'text', text: "다음"}}
-        headerRightDisabled={!isActivatedNext}/>
+        headerRightProps={{type: 'text', text: "다음", onPress: moveToContentPost}}
+        headerRightDisabled={!isActivatedNext}
+        headerRightActiveColor={"#00D1FF"}/>
         <BodyContainer
+        ref={scrollViewRef}
         keyboardDismissMode={'none'}
         bounces={true}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: 100}}>
+        contentContainerStyle={{paddingBottom: 100}}
+        onScroll={(event: any) => {
+          console.log("event.nativeEvent.contentOffset.y", event.nativeEvent.contentOffset.y)
+          scrollY.current = event.nativeEvent.contentOffset.y
+        }}
+        scrollEventThrottle={16}
+        >
           <TouchableWithoutFeedback onPress={() => onPressBackground()}>
           <ScrollViewInnerContainer>
           <MetaDataItemContainer>
@@ -805,16 +1101,20 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
           </MetaDataHeaderContainer>
           <TouchableWithoutFeedback onPress={() => onPressTreatmentDate()}>
             <MetaDataValueContainer>
-            {displayDate === "" && (
+            {treatmentDateObj?.displayTreatmentDate === "" && (
             <MetaDataPlaceholderText>{"방문일을 알려주세요."}</MetaDataPlaceholderText>
             )}
-            {displayDate !== "" && (
-            <MetaDataText>{displayDate}</MetaDataText>
+            {treatmentDateObj?.displayTreatmentDate !== "" && (
+            <MetaDataText>{treatmentDateObj?.displayTreatmentDate}</MetaDataText>
             )}
             </MetaDataValueContainer>
           </TouchableWithoutFeedback>
           </MetaDataItemContainer>
-          <MetaDataItemContainer>
+          <MetaDataItemContainer
+          onLayout={(event) => {
+            console.log("전체치료비용 onLayout event.nativeEvent", event.nativeEvent);
+
+          }}>
           <MetaDataHeaderContainer>
           <MetaDataLabelText>{"전체 치료 비용(선택)"}</MetaDataLabelText>
           </MetaDataHeaderContainer>
@@ -823,7 +1123,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
               <PriceTextInput
                 ref={priceInputRef}
                 value={totalPrice}
-                placeholder={"전체 비용을 알려주세요."}
+                placeholder={totalPrice === "" ? "전체 비용을 알려주세요." : ""}
                 placeholderTextColor={"#9AA2A9"}
                 autoCapitalize={'none'}
                 keyboardType={'numeric'}
@@ -856,22 +1156,21 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
               horizontal
               alwaysBounceHorizontal={false}
               scrollIndicatorInsets={{bottom: -1, left: 13, right: 8}}
-              
               keyExtractor={(item: any) =>
                 'preview' + (item.filename || item.img_filename)
               }
               renderItem={renderProofImageItem}
-              ListHeaderComponent={renderListHeader}
+              ListHeaderComponent={renderProofImageListHeader}
               showsHorizontalScrollIndicator={false}
               />
-        </GalleryContainerView>
+            </GalleryContainerView>
           </SelectImagesContainer>
           </MetaDataItemContainer>
           <MetaDataItemContainer>
           <MetaDataHeaderContainer>
-              <MetaDataLabelContainer>
+            <MetaDataLabelContainer>
               <MetaDataLabelText>{"병원 이미지 첨부하기(선택)"}</MetaDataLabelText>
-              </MetaDataLabelContainer>
+            </MetaDataLabelContainer>
           </MetaDataHeaderContainer>
           <MetaDataGuideText>{"병원 외부 혹은 내부 이미지를 첨부해주세요."}</MetaDataGuideText>
           <SelectImagesContainer>  
@@ -886,58 +1185,118 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                 'preview' + (item.filename || item.img_filename)
               }
               renderItem={renderDentalImageItem}
-              ListHeaderComponent={renderListHeader}
+              ListHeaderComponent={renderDentalImageListHeader}
               showsHorizontalScrollIndicator={false}
               />
-        </GalleryContainerView>
+              </GalleryContainerView>
           </SelectImagesContainer>
           </MetaDataItemContainer>
           </ScrollViewInnerContainer>
           </TouchableWithoutFeedback>
         </BodyContainer>
-        {isVisibleDatePicker && (
-          <DateModalContainer>
-            <ModalHeaderContainer>
-              <TouchableWithoutFeedback onPress={() => registerTreatmentDate()}>
-                <ModalFinishContainer>
-                  <ModalFinishText>완료</ModalFinishText>
-                </ModalFinishContainer>
-              </TouchableWithoutFeedback>
-            </ModalHeaderContainer>
-            <DateTimePicker
-              locale={'ko_KR.UTF-8'}
-              style={{flex: 1}}
-              testID="datePicker"
-              value={date}
-              onChange={(event, date) => onChangeDatePicker(event, date)}
-              mode={'date'}
-              display="spinner"
-              is24Hour={true}
-              maximumDate={new Date()}
-            />
-          </DateModalContainer>
-        )}
-        {isFocusedTotalPriceInput && (
+        <Modal
+        isVisible={isVisibleDatePicker}
+        style={styles.treatmentDateModalView}
+        onBackdropPress={() => cancelTreatmentDateModal()}
+        backdropOpacity={0.25}
+        >
+        <TreatmentDateModalContainer>
+            <DetailFilterHeaderContainer>
+              <DetailFilterTitleText>{'방문일 설정'}</DetailFilterTitleText>
+            </DetailFilterHeaderContainer>
+            <TimeFilterModalContainer>
+            <TimePickerContainer>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                style={{width: wp('20%'), height: '100%'}}
+                onValueChange={(itemValue: any) => setSelectedTreatmentYear(itemValue)}
+                selectedValue={selectedTreatmentYear}>
+                {renderYearPickerItem()}
+              </Picker>
+              <FilterDividingText>{'년'}</FilterDividingText>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                selectedValue={selectedTreatmentMonth}
+                onValueChange={(itemValue: any) => setSelectedTreatmentMonth(itemValue)}
+                style={{width: wp('20%'), height: '100%'}}>
+                {renderMonthPickerItem()}
+              </Picker>
+              <FilterDividingText>{'월'}</FilterDividingText>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                style={{width: wp('20%'), height: '100%'}}
+                onValueChange={(itemValue: any) => setSelectedTreatmentDay(itemValue)}
+                selectedValue={selectedTreatmentDay}>
+                {renderDayPickerItem()}
+              </Picker>
+              <FilterDividingText>{'일'}</FilterDividingText>
+            </TimePickerContainer>
+              <DetailFilterFooterContainer>
+                <TouchableWithoutFeedback onPress={() => initializeTreatmentDate()}>
+                <InitializeFilterContainer>
+                  <InitializeFilterText>{"방문일 초기화"}</InitializeFilterText>
+                  <InitializeFilterIcon
+                  source={require('~/Assets/Images/Map/ic_initialize.png')}/>
+                </InitializeFilterContainer>
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => registerTreatmentDate()}>
+                <RegisterFilterButton>
+                  <RegisterFilterText>{"적용하기"}</RegisterFilterText>
+                </RegisterFilterButton>
+                </TouchableWithoutFeedback>
+              </DetailFilterFooterContainer>
+              </TimeFilterModalContainer>
+          </TreatmentDateModalContainer>
+        </Modal>
+        {/* {isFocusedTotalPriceInput && (
           <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <ModalHeaderContainer>
-              <TouchableWithoutFeedback onPress={() => registerTreatmentDate()}>
+              <TouchableWithoutFeedback onPress={() => finishTotalPriceInput()}>
                 <ModalFinishContainer>
                   <ModalFinishText>완료</ModalFinishText>
                 </ModalFinishContainer>
               </TouchableWithoutFeedback>
             </ModalHeaderContainer>
           </KeyboardAvoidingView>
-        )}
+        )} */}
         <ActionSheet
-          ref={actionSheetRef}
+          ref={actionSheetRefByProof}
           options={actionSheetItemList}
           cancelButtonIndex={0}
-          onPress={(index: any) => onPressActionSheet(index)}
+          onPress={(index: any) => onPressActionSheetByProof(index)}
+        />
+        <ActionSheet
+          ref={actionSheetRefByDental}
+          options={actionSheetItemList}
+          cancelButtonIndex={0}
+          onPress={(index: any) => onPressActionSheetByDental(index)}
         />
       </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  treatmentDateModalView: {
+    justifyContent: 'flex-end',
+    margin: 0,
+  },
+})
 
 export default ReviewMetaDataScreen;
 

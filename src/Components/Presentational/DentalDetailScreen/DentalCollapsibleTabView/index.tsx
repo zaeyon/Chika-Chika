@@ -220,6 +220,13 @@ font-size: 14px;
 color: #282D3C;
 `;
 
+
+const DetailInfoIntroKeywordContainer = Styled.View`
+background-color: #ffffff;
+border-bottom-width: 16px;
+border-color: #F5F7F9; 
+`;
+
 const DetailInfoItemContainer = Styled.View`
 background-color: #ffffff;
 padding: 24px 16px;
@@ -445,7 +452,6 @@ height: ${wp('4.266%')}px;
 `;
 
 const IntroKeywordListContainer = Styled.View`
-padding-top: 12px;
 flex-direction: row
 align-items: center;
 `;
@@ -501,8 +507,10 @@ const SafeStatusBar = Platform.select({
 });
 
 interface Props {
-  goBack: () => void;
-  dentalDetailInfo: any;
+  navigation: any,
+  goBack: () => void,
+  dentalDetailInfo: any,
+  dentalImageArray: Array<any>,
   moveToReviewUpload: () => void,
   moveToDentalLocationMap: () => void,
   moveToDentalInfoEdit: () => void,
@@ -525,7 +533,7 @@ interface Props {
   dentalReviewArray: Array<any>,
 }
 
-const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload, moveToDentalLocationMap, moveToDentalInfoEdit, dentalReviewArray, moveToAnotherProfile, moveToReviewDetail}: Props) => {
+const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalImageArray, moveToReviewUpload, moveToDentalLocationMap, moveToDentalInfoEdit, dentalReviewArray, moveToAnotherProfile, moveToReviewDetail}: Props) => {
   console.log("DentalCollapsibleTabView dentalDetailInfo", dentalDetailInfo);
   console.log("DentalCollapsibleTabView dentalReviewArray", dentalReviewArray);
 
@@ -847,7 +855,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
         <CollapsibleContainer>
             <CoverImageContainer>
                 <CoverImage
-                source={{uri:"https://modo-phinf.pstatic.net/20180627_136/15300801971741t1Kg_JPEG/mosaZn4Vfw.jpeg?type=w720"}}/>
+                source={{uri: dentalImageArray[0].img_url}}/>
             </CoverImageContainer>
             <BasicInfoContainer style={styles.basicInfoShadow}>
                 <DentalNameText>{basicInfo?.originalName}</DentalNameText>
@@ -923,7 +931,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
 
         return (
           <Animated.ScrollView
-            {...tabPanResponder.panHandlers}
+            //{...tabPanResponder.panHandlers}
             ref={(ref) => {
               if (ref) {
                 const found = listRefArr.current.find(
@@ -985,19 +993,22 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
               backgroundColor: '#F5F7F9',
               paddingBottom: hp('17%'),
             }}
+            keyboardShouldPersistTaps={"always"}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             ><DetailInfoTabContainer>
-            <DetailInfoItemContainer>
-              <DetailInfoLabelText>{"병원 소개"}</DetailInfoLabelText>
+            <DetailInfoIntroKeywordContainer>
+              <DetailInfoLabelText
+              style={{paddingTop: 24, paddingLeft: 16, paddingRight: 16}}>{"병원 소개"}</DetailInfoLabelText>
               <IntroKeywordListContainer>
                 <FlatList
+                contentContainerStyle={{paddingTop: 12, paddingLeft: 16, paddingRight: 16, paddingBottom: 24}}
                 data={introKeywordArray}
                 renderItem={renderIntroKeywordArray}
                 keyExtractor={(item: any, index: number) => `${index}`}
                 numColumns={2}/>
               </IntroKeywordListContainer>
-            </DetailInfoItemContainer>
+            </DetailInfoIntroKeywordContainer>
             <DetailInfoItemContainer>
               <DetailInfoLabelText>{"진료 시간"}</DetailInfoLabelText>
               <WeeklyTreatmentTimeInfoContainer>
@@ -1095,7 +1106,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
       case 'review':
         return (
           <Animated.ScrollView
-            {...tabPanResponder.panHandlers}
+            //{...tabPanResponder.panHandlers}
             ref={(ref) => {
               if (ref) {
                 const found = listRefArr.current.find(
@@ -1141,6 +1152,7 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
                   )
                 : null
             }
+            keyboardShouldPersistTaps={"always"}
             onMomentumScrollBegin={onMomentumScrollBegin}
             onScrollEndDrag={onScrollEndDrag}
             onMomentumScrollEnd={onMomentumScrollEnd}
@@ -1192,10 +1204,9 @@ const DentalCollapsibleTabView = ({goBack, dentalDetailInfo, moveToReviewUpload,
                     </RatingReportContainer>
                   )}
                   <ReviewListContainer>
-                  <ReviewList 
-                  reviewList={dentalReviewArray}
-                  moveToAnotherProfile={moveToAnotherProfile}
-                  moveToReviewDetail={moveToReviewDetail}/>
+                  <ReviewList
+                  navigation={navigation}
+                  reviewList={dentalReviewArray}/>
                   </ReviewListContainer>
                   <RequestReviseInfoContainer>
                   <TouchableWithoutFeedback onPress={() => moveToDentalInfoEdit()}>

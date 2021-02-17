@@ -182,6 +182,14 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
         selectedImages,
         startIndex: route.params.startIndex,
       });
+    } else if(route.params.requestType === 'proofImage') {
+      navigation.navigate('ReviewMetaDataScreen', {
+        selectedProofImages: selectedImages,
+      })
+    } else if(route.params.requestType === 'dentalImage') {
+      navigation.navigate('ReviewMetaDataScreen', {
+        selectedDentalImages: selectedImages,
+      })
     } else {
       navigation.navigate(route.params.requestType, {
         selectedImages,

@@ -96,56 +96,67 @@ const RatingStarList = ({ratingValue, reviewCount}: Props) => {
                 if(item == 10) {
                     return (
                         <RatingStarIcon
+                        key={index}
                         source={require('~/Assets/Images/Indicator/rating/ic_ratingStar_10.png')}/>
                     )
                 } else if(item == 9) {
                     return (
                         <RatingStarIcon
+                        key={index}
                         source={require('~/Assets/Images/Indicator/rating/ic_ratingStar_9.png')}/>
                     )
                 } else if(item == 8) {
                     return (
                         <RatingStarIcon
+                        key={index}
                         source={require('~/Assets/Images/Indicator/rating/ic_ratingStar_8.png')}/>
                     )
                 } else if(item == 7) {
                     return (
                         <RatingStarIcon
+                        key={index}
                         source={require('~/Assets/Images/Indicator/rating/ic_ratingStar_7.png')}/>
                     )
                 } else if(item == 6) {
                     return (
                         <RatingStarIcon
+                        key={index}
                         source={require('~/Assets/Images/Indicator/rating/ic_ratingStar_6.png')}/>
                     )
                 } else if(item == 5) {
                     return (
                         <RatingStarIcon
+                        key={index}
                         source={require('~/Assets/Images/Indicator/rating/ic_ratingStar_5.png')}/>
                     )
                 } else if(item == 4) {
                     return (
                         <RatingStarIcon
+                        key={index}
                         source={require('~/Assets/Images/Indicator/rating/ic_ratingStar_4.png')}/>
                     )
                 } else if(item == 3) {
                     return (
                         <RatingStarIcon
+                        key={index}
                         source={require('~/Assets/Images/Indicator/rating/ic_ratingStar_3.png')}/>
                     )
                 } else if(item == 2) {
                     return (
                         <RatingStarIcon
+                        key={index}
                         source={require('~/Assets/Images/Indicator/rating/ic_ratingStar_2.png')}/>
                     )
                 } else if(item == 1) {
                     return (
                         <RatingStarIcon
+                        key={index}
                         source={require('~/Assets/Images/Indicator/rating/ic_ratingStar_1.png')}/>
                     )
                 } else if(item == 0) {
                     return (
                         <RatingStarIcon
+                        key={index}
                         source={require('~/Assets/Images/Indicator/rating/ic_ratingStar_0.png')}/>
                     )
                 }

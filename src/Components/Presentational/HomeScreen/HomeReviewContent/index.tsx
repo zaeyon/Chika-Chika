@@ -129,7 +129,7 @@ const HomeReviewContent = ({
             }}
             imageStyle={{borderRadius: 12}}
             source={{
-              uri: item.review_contents[0].img_url,
+              uri: item.review_contents[0] ? item.review_contents[0].img_url : "",
               cache: 'force-cache',
             }}>
             <LinearGradient

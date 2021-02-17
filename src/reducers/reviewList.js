@@ -16,6 +16,80 @@ const reviewList = (
         ...state,
         mainReviewList: action.payload,
       };
+    case 'DELETE_REVIEW': {
+      const tmpReviewList = state.mainReviewList.concat();
+      const tmpMyReviews = state.MyReviews.concat();
+      const tmpLikedReviews = state.LikedReviews.concat();
+      const tmpScrapedReviews = state.ScrapedReviews.concat();
+      const tmpCommentedReviews = state.CommentedReviews.concat();
+      const tmpSearchResultReviews = state.SearchResultReviews.concat();
+
+      const targetReviewIndex = tmpReviewList.findIndex((item, index) => {
+        return item.id == action.payload;
+      });
+
+      const targetMyReviewIndex = tmpMyReviews.findIndex((item, index) => {
+        return item.id === action.payload;
+      });
+
+      const targetLikedReviewIndex = tmpLikedReviews.findIndex(
+        (item, index) => {
+          return item.id === action.payload;
+        },
+      );
+
+      const targetScrapedReviewIndex = tmpScrapedReviews.findIndex(
+        (item, index) => {
+          return item.id === action.payload;
+        },
+      );
+
+      const targetCommentedReviewIndex = tmpCommentedReviews.findIndex(
+        (item, index) => {
+          return item.id === action.payload;
+        },
+      );
+
+      const targetSearchResultReviewIndex = tmpSearchResultReviews.findIndex(
+        (item, index) => {
+          return item.id === action.payload;
+        }
+      )
+      
+      if(targetReviewIndex !== -1) {
+        tmpReviewList.splice(targetReviewIndex, 1);
+      }
+
+      if(targetMyReviewIndex !== -1) {
+        tmpMyReviews.splice(targetMyReviewIndex, 1);
+      }
+
+      if(targetLikedReviewIndex !== -1) {
+        tmpLikedReviews.splice(targetLikedReviewIndex, 1);
+      }
+
+      if(targetScrapedReviewIndex !== -1) {
+        tmpScrapedReviews.splice(targetScrapedReviewIndex, 1);
+      }
+
+      if(targetCommentedReviewIndex !== -1) {
+        tmpCommentedReviews.splice(targetCommentedReviewIndex, 1);
+      }
+
+      if(targetSearchResultReviewIndex !== -1) {
+        tmpSearchResultReviews.splice(targetSearchResultReviewIndex, 1);
+      }
+      
+      return {
+        ...state,
+        mainReviewList: tmpReviewList,
+        MyReviews: tmpMyReviews,
+        LikedReviews: tmpLikedReviews,
+        ScrapedReviews: tmpScrapedReviews,
+        CommentedReviews: tmpCommentedReviews,
+        SearchResultReviews: tmpSearchResultReviews,
+      }
+    }
     case 'TOGGLE_REVIEW_LIKE': {
       const tmpReviewList = state.mainReviewList.concat();
       const tmpOpponentReviews = state.OpponentReviews.concat();
@@ -23,6 +97,7 @@ const reviewList = (
       const tmpLikedReviews = state.LikedReviews.concat();
       const tmpScrapedReviews = state.ScrapedReviews.concat();
       const tmpCommentedReviews = state.CommentedReviews.concat();
+      const tmpSearchResultReviews = state.SearchResultReviews.concat();
 
       const targetReviewIndex = tmpReviewList.findIndex((item, index) => {
         return item.id == action.payload;
@@ -55,6 +130,12 @@ const reviewList = (
           return item.id === action.payload;
         },
       );
+
+      const targetSearchResultReviewIndex = tmpSearchResultReviews.findIndex(
+        (item, index) => {
+          return item.id === action.payload;
+        }
+      )
 
       if (targetReviewIndex !== -1) {
         const liked =
@@ -129,6 +210,21 @@ const reviewList = (
         });
       }
 
+      if(targetSearchResultReviewIndex >= 0) {
+        tmpSearchResultReviews.splice(targetSearchResultReviewIndex, 1, {
+          ...state.SearchResultReviews[targetSearchResultReviewIndex],
+          viewerLikedReview: !state.SearchResultReviews[targetSearchResultReviewIndex]
+            .viewerLikedReview,
+          reviewLikeNum:
+            state.SearchResultReviews[targetSearchResultReviewIndex].reviewLikeNum +
+            (state.SearchResultReviews[targetSearchResultReviewIndex]
+              .viewerLikedReview
+              ? -1
+              : 1),
+        });
+        
+      }
+
       return {
         ...state,
         mainReviewList: tmpReviewList,
@@ -137,6 +233,7 @@ const reviewList = (
         LikedReviews: tmpLikedReviews,
         ScrapedReviews: tmpScrapedReviews,
         CommentedReviews: tmpCommentedReviews,
+        SearchResultReviews: tmpSearchResultReviews,
       };
     }
     case 'TOGGLE_REVIEW_SCRAP': {
@@ -146,6 +243,7 @@ const reviewList = (
       const tmpLikedReviews = state.LikedReviews.concat();
       const tmpScrapedReviews = state.ScrapedReviews.concat();
       const tmpCommentedReviews = state.CommentedReviews.concat();
+      const tmpSearchResultReviews = state.SearchResultReviews.concat();
 
       const targetIndex = tmpReviewList.findIndex((item, index) => {
         return item.id == action.payload;
@@ -179,6 +277,12 @@ const reviewList = (
         },
       );
 
+      const targetSearchResultReviewIndex = tmpSearchResultReviews.findIndex(
+        (item, index) => {
+          return item.id === action.payload;
+        }
+      )
+
       if (targetIndex !== -1) {
         const scraped =
           tmpReviewList[targetIndex].viewerScrapedReview == 1 ? true : false;
@@ -200,6 +304,7 @@ const reviewList = (
             .viewerScrapedReview,
         });
       }
+
       if (targetLikedReviewIndex >= 0) {
         tmpLikedReviews.splice(targetLikedReviewIndex, 1, {
           ...state.LikedReviews[targetLikedReviewIndex],
@@ -207,6 +312,7 @@ const reviewList = (
             .viewerScrapedReview,
         });
       }
+
       if (targetScrapedReviewIndex >= 0) {
         tmpScrapedReviews.splice(targetScrapedReviewIndex, 1, {
           ...state.ScrapedReviews[targetScrapedReviewIndex],
@@ -214,11 +320,21 @@ const reviewList = (
             .viewerScrapedReview,
         });
       }
+
       if (targetCommentedReviewIndex >= 0) {
         tmpCommentedReviews.splice(targetCommentedReviewIndex, 1, {
           ...state.CommentedReviews[targetCommentedReviewIndex],
           viewerScrapedReview: !state.CommentedReviews[
             targetCommentedReviewIndex
+          ].viewerScrapedReview,
+        });
+      }
+
+      if(targetSearchResultReviewIndex >= 0) {
+        tmpSearchResultReviews.splice(targetSearchResultReviewIndex, 1, {
+          ...state.SearchResultReviews[targetSearchResultReviewIndex],
+          viewerScrapedReview: !state.SearchResultReviews[
+            targetSearchResultReviewIndex
           ].viewerScrapedReview,
         });
       }
@@ -231,6 +347,7 @@ const reviewList = (
         LikedReviews: tmpLikedReviews,
         ScrapedReviews: tmpScrapedReviews,
         CommentedReviews: tmpCommentedReviews,
+        SearchResultReviews: tmpSearchResultReviews
       };
     }
     case 'SET_MY_REVIEWS':

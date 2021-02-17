@@ -32,7 +32,7 @@ padding-top: 8px;
 `;
 
 
-const carouselItem = (({item, index, todayIndex, moveToDentalDetail}: any) => {
+const carouselItem = (({item, index, todayIndex, moveToDentalDetail, clickDentalCallReservation}: any) => {
 
     const isLunchTime = item.lunchTimeNow == 1 ? true : false;
     const isOpen = item.conclustionNow == 1 ? true : false;
@@ -81,7 +81,8 @@ const carouselItem = (({item, index, todayIndex, moveToDentalDetail}: any) => {
             address={deletedAddress}
             lunchTime={item.lunchTime}
             openTime={todayStartTime}
-            closeTime={todayEndTime}/>
+            closeTime={todayEndTime}
+            clickDentalCallReservation={clickDentalCallReservation}/>
         </DentalCarouselItemContainer>
         </TouchableWithoutFeedback>
     )
@@ -94,7 +95,7 @@ function isEqualItem(prevItem: any, nextItem: any) {
 
 const MemoizedCarouselItem = memo(carouselItem, isEqualItem);
 
-const DentalCarouselList = ({searchedDentalArr, onSnapToDentalCarouselItem, selectedDentalIndex, dentalCarouselRef, todayIndex, moveToDentalDetail}: any) => {
+const DentalCarouselList = ({searchedDentalArr, onSnapToDentalCarouselItem, selectedDentalIndex, dentalCarouselRef, todayIndex, moveToDentalDetail, clickDentalCallReservation}: any) => {
 
     const renderCarouselItem = ({item, index}: any) => (
         <MemoizedCarouselItem
@@ -102,6 +103,7 @@ const DentalCarouselList = ({searchedDentalArr, onSnapToDentalCarouselItem, sele
         index={item}
         todayIndex={todayIndex}
         moveToDentalDetail={moveToDentalDetail}
+        clickDentalCallReservation={clickDentalCallReservation}
         />
     )
 

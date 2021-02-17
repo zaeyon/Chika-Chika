@@ -58,12 +58,14 @@ interface Props {
   postDentalScrap: () => void;
   deleteDentalScrap: () => void;
   isCurUserScrap: boolean;
+  clickDentalCallReservation: () => void,
 }
 
 const DentalBottomBar = ({
   postDentalScrap,
   deleteDentalScrap,
   isCurUserScrap,
+  clickDentalCallReservation,
 }: Props) => {
   return (
     <Container>
@@ -85,9 +87,11 @@ const DentalBottomBar = ({
           </ScrapButton>
         </TouchableWithoutFeedback>
       )}
+      <TouchableWithoutFeedback onPress={() => clickDentalCallReservation()}>
       <ReserveButton>
         <ReserveText>{'전화예약'}</ReserveText>
       </ReserveButton>
+      </TouchableWithoutFeedback>
     </Container>
   );
 };
