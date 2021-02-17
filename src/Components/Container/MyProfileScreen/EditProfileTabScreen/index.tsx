@@ -28,7 +28,7 @@ interface Props {
 const EditProfileTabScreen = ({navigation, route}: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const hometown = useSelector((state: any) => state.currentUser.hometown);
+  const hometown = useSelector((state: any) => state.currentUser).hometown;
   const profile = useSelector((state: any) => state.currentUser.profile);
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 

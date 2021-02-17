@@ -115,7 +115,6 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
 
   const dispatch = useDispatch();
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
-  const hometown = useSelector((state: any) => state.currentUser.hometown);
 
   const searchRecordArray = useSelector(
     (state: any) => state.currentUser.searchRecordArray,
@@ -197,7 +196,14 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
 
     DELETESearchRecord({jwtToken, searchId})
       .then((response) => {
-        console.log('DELETESearchRecord response', response);
+        GETSearchRecord({jwtToken})
+          .then((response: any) => {
+            console.log('GETSearchRecord response', response);
+            dispatch(allActions.userActions.setSearchRecord(response));
+          })
+          .catch((error) => {
+            console.log('GETSearchRecord error', error);
+          });
       })
       .catch((error) => {
         console.log('DELETESearchRecord error', error);
@@ -209,7 +215,14 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
 
     DELETESearchRecord({jwtToken, searchId})
       .then((response) => {
-        console.log('DELETESearchRecord response', response);
+        GETSearchRecord({jwtToken})
+          .then((response: any) => {
+            console.log('GETSearchRecord response', response);
+            dispatch(allActions.userActions.setSearchRecord(response));
+          })
+          .catch((error) => {
+            console.log('GETSearchRecord error', error);
+          });
       })
       .catch((error) => {
         console.log('DELETESearchRecord error', error);
@@ -236,6 +249,12 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
         setQuery(keyword);
         setCategory(category);
         setTagId(tagId);
+        dispatch(
+          allActions.userActions.setSearchRecord([
+            {category, id: tagId, query: keyword},
+            ...searchRecordArray,
+          ]),
+        );
         return false;
       });
       // }

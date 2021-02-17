@@ -188,9 +188,7 @@ let isSelectMainHometown = false;
 
 const HometownSettingScreen = ({navigation, route}: Props) => {
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
-  const hometownArray = useSelector(
-    (state: any) => state.currentUser.hometownArray,
-  );
+  const hometownArray = useSelector((state: any) => state.currentUser).hometown;
   const [isVisibleDeleteModal, setIsVisibleDeleteModal] = useState<boolean>(
     false,
   );

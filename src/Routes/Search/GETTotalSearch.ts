@@ -19,6 +19,7 @@ const GETTotalSearch = ({jwtToken, query, category, tagId='-1', pathType, commun
 
     const uri = serverConfig.baseUri + `/search/${pathType}?query=${query}&tagCategory=${category}&tagId=${tagId}&type=${communityType}&limit=${String(limit)}&offset=${String(offset)}&order=${order}&region=${region}&cityId=${cityId}`
 
+    console.log(uri)
     return new Promise((resolve, reject) => {
         axios
         .get(uri, {

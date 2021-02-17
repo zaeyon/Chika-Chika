@@ -12,6 +12,7 @@ const ContainerView = Styled.View`
 width: ${wp('100%')}px;
 padding: 16px;
 background: #FFFFFF;
+margin-bottom: 8px;
 `;
 
 const TitleText = Styled.Text`

@@ -19,12 +19,11 @@ import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 // Local Component
 import CommunityPostList from '~/Components/Presentational/CommunityPostList';
-import LocationInfoHeader from '~/Components/Container/CommunityListScreen/LocationInfoHeader';
+import FilteringHeader from '~/Components/Container/CommunityListScreen/FilteringHeader';
 import TopBanner from '~/Components/Container/CommunityListScreen/TopBanner';
 import AdviceInfoHeader from '~/Components/Container/CommunityListScreen/AdviceInfoHeader';
 import CarouselContent from '~/Components/Container/CommunityListScreen/CarouselContent';
-import PostFilterHeader from '~/Components/Container/CommunityListScreen/PostFilterHeader';
-import LocationSelection from '~/Components/Container/CommunityListScreen/LocationInfoHeader/LocationSelection';
+
 // Routes
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
@@ -45,17 +44,15 @@ interface Props {
 const QuestionTabScreen = ({navigation, route}: Props) => {
   const type = 'Question';
   const limit = 10;
-  const [floatVisible, setFloatVisible] = useState(false);
   const [isDataFinish, setIsDataFinish] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [isFiltering, setIsFiltering] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
   const [region, setRegion] = useState('all');
   const [order, setOrder] = useState('createdAt');
-  const mainHometown = useSelector((state: any) =>
-    state.currentUser.hometown.find((item) => item.UsersCities.now === true),
-  );
-  const [selectedHometown, setSelectedHometown] = useState(mainHometown);
+  const [selectedHometown, setSelectedHometown] = useState({
+    emdName: '전국',
+    id: -1,
+  });
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
   const profile = useSelector((state: any) => state.currentUser.profile);
   const hometown = useSelector((state: any) => state.currentUser.hometown);
@@ -66,45 +63,40 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setSelectedHometown(mainHometown);
-  }, [mainHometown]);
+    setOrder('createdAt');
+    setRegion(selectedHometown.id === -1 ? 'all' : 'residence');
+    const form = {
+      type,
+      limit: 10,
+      offset: 0,
+      order: 'createdAt',
+      region: selectedHometown.id === -1 ? 'all' : 'residence',
+    };
+    GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
+      (response: any) => {
+        const data = {
+          type,
+          posts: response,
+        };
+        if (
+          JSON.stringify(response).replace(
+            /"createdDiff\(second\)\"\:\d*\,/gi,
+            '',
+          ) !==
+          JSON.stringify(postData).replace(
+            /"createdDiff\(second\)\"\:\d*\,/gi,
+            '',
+          )
+        ) {
+          console.log('liked post diff1');
+          LayoutAnimation.configureNext(
+            LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+          );
 
-  useEffect(() => {
-    if (region === 'residence') {
-      setOrder('createdAt');
-      const form = {
-        type,
-        limit: 10,
-        offset: 0,
-        order: 'createdAt',
-        region,
-      };
-      GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
-        (response: any) => {
-          const data = {
-            type,
-            posts: response,
-          };
-          if (
-            JSON.stringify(response).replace(
-              /"createdDiff\(second\)\"\:\d*\,/gi,
-              '',
-            ) !==
-            JSON.stringify(postData).replace(
-              /"createdDiff\(second\)\"\:\d*\,/gi,
-              '',
-            )
-          ) {
-            console.log('liked post diff1');
-            LayoutAnimation.configureNext(
-              LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-            );
-
-            dispatch(allActions.communityActions.setPosts(data));
-          }
-        },
-      );
-    }
+          dispatch(allActions.communityActions.setPosts(data));
+        }
+      },
+    );
   }, [selectedHometown]);
 
   useEffect(() => {
@@ -254,7 +246,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
 
   const onFiltering = useCallback(
     (order: string, callback = () => console.log('filtered')) => {
-      setIsFiltering(true);
+      setOrder(order);
       const form = {
         type,
         limit,
@@ -287,10 +279,6 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
 
             dispatch(allActions.communityActions.setPosts(data));
           }
-          setIsFiltering(() => {
-            setOrder(order);
-            return false;
-          });
           callback();
         },
       );
@@ -373,12 +361,13 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   const renderHeaderComponent = useCallback(() => {
     return (
       <>
-        <LocationInfoHeader
-          type="question"
+        <FilteringHeader
+          onFiltering={onFiltering}
+          hometown={hometown}
+          setSelectedHometown={setSelectedHometown}
           selectedHometown={selectedHometown}
-          region={region}
-          setRegion={onRegionChanged}
-          setFloatVisible={setFloatVisible}
+          order={order}
+          moveToHomeTownSetting={moveToHomeTownSetting}
         />
         <AdviceInfoHeader profile={profile} />
         <TopBanner type="question" />
@@ -388,31 +377,9 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
           moveToCommunityDetail={moveToCommunityDetail}
           moveToAnotherProfile={moveToAnotherProfile}
         />
-        {floatVisible ? (
-          <LocationSelection
-            hometown={hometown}
-            selectedHometown={selectedHometown}
-            setSelectedHometown={setSelectedHometown}
-            setFloatVisible={setFloatVisible}
-            moveToHomeTownSetting={moveToHomeTownSetting}
-            style={{
-              top: 48,
-              right: 16,
-            }}
-          />
-        ) : null}
-        <PostFilterHeader order={order} setOrder={onFiltering} />
       </>
     );
-  }, [
-    profile,
-    postData,
-    order,
-    region,
-    hometown,
-    selectedHometown,
-    floatVisible,
-  ]);
+  }, [profile, postData, order, region, hometown, selectedHometown]);
 
   return (
     <ContainerView>

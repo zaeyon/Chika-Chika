@@ -158,7 +158,7 @@ const EditNicknameScreen = ({navigation, route}: Props) => {
             placeholderTextColor="#E2E6ED"
           />
           <SectionImage
-            source={require('~/Assets/Images/MyPage/common/gan/list/profile_edit_section_arrow.png')}
+            source={require('~/Assets/Images/MyPage/EditProfile/Section/profile_edit_section_arrow.png')}
           />
         </SectionContentView>
       </SharedElement>

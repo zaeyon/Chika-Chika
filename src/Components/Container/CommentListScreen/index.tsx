@@ -106,7 +106,7 @@ const CommentListScreen = ({navigation, route}: Props) => {
   });
 
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
-  const profile = useSelector((state: any) => state.currentUser.profile);
+  const userProfile = useSelector((state: any) => state.currentUser.profile);
   const postId = route.params?.postId;
   const postType = route.params?.postType;
 

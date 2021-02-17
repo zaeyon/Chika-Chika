@@ -2,8 +2,7 @@ import React, {useState, useEffect} from 'react';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
-  TouchableOpacity,
-  View,
+  TouchableHighlight,
   FlatList,
 } from 'react-native';
 import {
@@ -13,152 +12,134 @@ import {
 
 const ContainerView = Styled.View`
 flex: 1;
-background: #F8F8F8;
+background: #F5F7F9;
 `;
 
-const SavedHospitalItemContainerView = Styled.View`
-width: auto;
-margin: 16px;
-padding: 24px;
-border-radius: 8px;
-background: white;
+const ContentContainerView = Styled.View`
+width: ${wp('100%')}px;
+padding: 20px 16px;
+background: #FFFFFF;
 justify-content: space-between;
+margin-top: 8px;
 `;
 
-const SavedHospitalItemContentView = Styled.View`
-width: 100%
-background: white;
-`;
-
-const SavedHospitalItemTitleView = Styled.View`
-width: 100%;
-height: auto;
+const ContentHorizontalView = Styled.View`
 flex-direction: row;
-align-items: center;
-margin-bottom: 8px;
+margin-bottom: 16px;
 `;
 
-const SavedHospitalItemTitleText = Styled.Text`
-font-style: normal;
-font-weight: bold;
+const ContentImage = Styled.Image`
+width: 78px;
+height: 78px;
+background: #F5F7F9;
+border-width: 0.5px;
+border-color: #E2E6ED;
+border-radius: 8px;
+`;
+
+const ContentDescriptionView = Styled.View`
+margin-left: 16px;
+`;
+
+const ContentTitleText = Styled.Text`
+font-weight: 800;
 font-size: 18px;
 line-height: 24px;
+color: #131F3C;
+margin-bottom: 6px;
 `;
 
-const SavedHospitalItemDetailView = Styled.View`
-width: 100%;
-height: auto;
-flex-direction: row;
-align-items: center;
-`;
-
-const SavedHospitalItemLocationText = Styled.Text`
-font-style: normal;
-font-weight: bold;
+const ContentText = Styled.Text`
+font-weight: normal;
 font-size: 14px;
 line-height: 16px;
-margin-bottom: 8px;
+color: #9AA2A9;
+margin-bottom: 12px;
 `;
 
-const SavedHospitalItemDateText = Styled.Text`
-font-style: normal;
-font-weight: normal;
-font-size: 14px;
-line-height: 24px;
-`;
-
-const SavedHospitalItemTimeText = Styled.Text`
-font-style: normal;
-font-weight: normal;
-font-size: 14px;
-line-height: 24px;
-`;
-
-const SavedHospitalButtonContainerView = Styled.View`
-width: 100%;
-height: ${hp('5.882%')}px;
+const ContentHighlightView = Styled.View`
 flex-direction: row;
-`;
-
-const ReservationTouchableOpacity = Styled(
-  TouchableOpacity as new () => TouchableOpacity,
-)`
-width: 100%;
-height: 100%;
-border: 1px #C4C4C4;
-border-radius: 8px;
-background: white;
-justify-content: center;
 align-items: center;
 `;
-const ReservationText = Styled.Text`
-font-size: 16px;
-line-height: 19px;
-color: #595959;
+
+const ContentHighlightText = Styled.Text`
+font-weight: 800;
+font-size: 14px;
+line-height: 16px;
+color: #00D1FF;
 `;
 
-const InfoIconView = Styled.View`
-width: 12px;
-height: 14px;
-margin-left: auto;
-`;
-
-const InfoIconImage = Styled.Image`
+const ContentButtonView = Styled.View`
 width: 100%;
-height: 100%;
+padding: 12px 0px;
+align-items: center;
+border-width: 1px; 
+border-color: #E2E6ED;
+border-radius: 4px;
+background: #FFFFFF
 `;
 
-const Line = Styled.View`
-margin: 24px 0px;
-height: 1px;
-background: #EEEEEE;
+const ContentButtonText = Styled.Text`
+font-weight: 800;
+font-size: 14px;
+line-height: 16px;
+color: #131F3C;
 `;
 
-const DateTimeDivider = Styled.View`
-width: 1px;
-height: 8px;
-background: #C4C4C4;
-margin: 0px 8px;
+const RightArrowImage = Styled.Image`
+margin-left: 2px;
+`;
+
+const DeleteImageView = Styled.View`
+position: absolute;
+top: 11px;
+right: 9px;
+padding: 9px;
+`;
+
+const DeleteImage = Styled.Image`
 `;
 
 interface Props {
-  navigation: any;
-  route: any;
   hospitals: any;
 }
 
-const SavedHospitalScreen = ({navigation, route, hospitals}: Props) => {
+const SavedHospitalScreen = ({hospitals}: Props) => {
   const renderSavedHospitalItemView = ({item, index}: any) => {
     return (
-      <SavedHospitalItemContainerView>
-        <SavedHospitalItemContentView>
-          <SavedHospitalItemTitleView>
-            <SavedHospitalItemTitleText>예쁜이치과</SavedHospitalItemTitleText>
-            <InfoIconView>
-              <InfoIconImage
-                style={{
-                  resizeMode: 'contain',
-                }}
-                source={require('~/Assets/Images/Indicator/ic_vertical_more.png')}
-              />
-            </InfoIconView>
-          </SavedHospitalItemTitleView>
-          <SavedHospitalItemLocationText>
-            {'경기도 수원시 영통구 이의동'}
-          </SavedHospitalItemLocationText>
-          <SavedHospitalItemDetailView>
-            <SavedHospitalItemDateText>20.12.1.화</SavedHospitalItemDateText>
-            <DateTimeDivider />
-            <SavedHospitalItemTimeText>오후 3:00</SavedHospitalItemTimeText>
-          </SavedHospitalItemDetailView>
-        </SavedHospitalItemContentView>
-        <Line />
-        <SavedHospitalButtonContainerView>
-          <ReservationTouchableOpacity>
-            <ReservationText>예약하기</ReservationText>
-          </ReservationTouchableOpacity>
-        </SavedHospitalButtonContainerView>
-      </SavedHospitalItemContainerView>
+      <ContentContainerView>
+        <ContentHorizontalView>
+          <ContentImage />
+          <ContentDescriptionView>
+            <ContentTitleText>광교E편한치과의원</ContentTitleText>
+            <ContentText>경기도 수원시 영통구 이의동</ContentText>
+            <TouchableWithoutFeedback>
+              <ContentHighlightView>
+                <ContentHighlightText>{'병원상세정보'}</ContentHighlightText>
+                <RightArrowImage
+                  source={require('~/Assets/Images/MyPage/move_clinic_detail.png')}
+                />
+              </ContentHighlightView>
+            </TouchableWithoutFeedback>
+          </ContentDescriptionView>
+        </ContentHorizontalView>
+        <TouchableHighlight
+          style={{borderRadius: 4}}
+          activeOpacity={0.9}
+          underlayColor="black"
+          onPress={() => console.log('reservation button pressed')}>
+          <ContentButtonView>
+            <ContentButtonText>{'바로예약'}</ContentButtonText>
+          </ContentButtonView>
+        </TouchableHighlight>
+        <TouchableWithoutFeedback>
+          <DeleteImageView>
+            <DeleteImage
+              source={require('~/Assets/Images/MyPage/delete_reservation.png')}
+            />
+          </DeleteImageView>
+        </TouchableWithoutFeedback>
+      </ContentContainerView>
     );
   };
 

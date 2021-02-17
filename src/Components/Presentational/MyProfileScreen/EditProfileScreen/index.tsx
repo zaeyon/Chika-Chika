@@ -247,7 +247,7 @@ const EditProfileScreen = ({
   const [textInput, setTextInput] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [sectionArrow, setSectionArrow] = useState(
-    require('~/Assets/Images/MyPage/common/gan/list/profile_edit_section_arrow.png'),
+    require('~/Assets/Images/MyPage/EditProfile/Section/profile_edit_section_arrow.png'),
   );
   console.log(profile);
   const [selectedBirthYear, setSelectedBirthYear] = useState(
@@ -411,7 +411,7 @@ const EditProfileScreen = ({
           <ProfileImageContentView>
             <ProfileImageMaskView>
               <ProfileImageMaskImage
-                source={require('~/Assets/Images/MyPage/common/gan/ic/write/white.png')}
+                source={require('~/Assets/Images/MyPage/EditProfile/ProfileImg/ic_edit_profileImg.png')}
               />
             </ProfileImageMaskView>
             <ProfileImage source={{uri: profile.img_thumbNail}} />

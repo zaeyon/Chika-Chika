@@ -12,7 +12,7 @@ import {
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 import CommunityPostList from '~/Components/Presentational/CommunityPostList';
-import LocationSelection from '~/Components/Container/CommunityListScreen/LocationInfoHeader/LocationSelection';
+import LocationSelection from '~/Components/Container/CommunityListScreen/FilteringHeader/LocationSelection';
 
 // Routes
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';

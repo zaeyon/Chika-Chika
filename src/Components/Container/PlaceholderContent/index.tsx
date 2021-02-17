@@ -206,6 +206,7 @@ border-radius: 100px;
 margin-right: 12px;
 `;
 const LocalClinicContentView = Styled.View`
+
 `;
 
 const LocalClinicItemTitleText = Styled.Text`
@@ -285,10 +286,15 @@ const PlaceholderContent = ({navigation, title}: Props) => {
   const [localClinic, setLocalClinic]: any = useState();
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
   const profile = useSelector((state: any) => state.currentUser.profile);
-  const hometown = useSelector((state: any) => state.currentUser.hometown);
+
+  const selectedHometown = useSelector(
+    (state: any) =>
+      state.currentUser.hometown &&
+      state.currentUser.hometown.find((item) => item.UsersCities?.now === true),
+  );
 
   useEffect(() => {
-    GETCommunityPosts(jwtToken, hometown[0].id, {
+    GETCommunityPosts(jwtToken, selectedHometown.id, {
       type: 'FreeTalk',
       limit: 2,
       offset: 0,
@@ -301,7 +307,7 @@ const PlaceholderContent = ({navigation, title}: Props) => {
     GETLocalClinics({jwtToken, limit: 2, offset: 0}).then((response) => {
       setLocalClinic(response);
     });
-  }, [jwtToken, profile]);
+  }, [jwtToken, profile, selectedHometown]);
 
   const formatHashTag = useCallback((text: string, index: number) => {
     return (
@@ -485,7 +491,7 @@ const PlaceholderContent = ({navigation, title}: Props) => {
           <LocalIndicatorImage
             source={require('~/Assets/Images/Map/pick/target_white.png')}
           />
-          <LocalIndicatorText>{hometown[0].emdName}</LocalIndicatorText>
+          <LocalIndicatorText>{selectedHometown.emdName}</LocalIndicatorText>
         </LocalIndicatorView>
       </LocalHospitalInfoView>
       <LocalCommunityInfoView>

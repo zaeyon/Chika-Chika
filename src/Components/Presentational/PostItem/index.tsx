@@ -162,7 +162,7 @@ align-items: center;
 const SocialInfoText = Styled.Text`
 font-style: normal;
 font-weight: 500;
-font-size: 16px;
+font-size: 14px;
 margin-left: 4px;
 color: #131F3C;
 `;

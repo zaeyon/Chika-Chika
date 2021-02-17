@@ -80,7 +80,7 @@ const LocationSelection = ({
   jwtToken,
   hometown,
   selectedHometown,
-  setSelectedHometown,
+  setSelectedHometown = (hometown: any) => console.log(''),
   setFloatVisible,
   moveToHomeTownSetting,
   manageMode = false,
@@ -141,7 +141,11 @@ const LocationSelection = ({
             </>
           ))}
           {manageMode ? (
-            <TouchableWithoutFeedback onPress={() => moveToHomeTownSetting()}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setFloatVisible(false);
+                moveToHomeTownSetting();
+              }}>
               <HometownSetttingContentView>
                 <HometownSettingNavigationText>
                   {'동네설정'}

@@ -1,14 +1,17 @@
 import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
 import Styled from 'styled-components/native';
-import {Image, TouchableOpacity, Animated, LayoutAnimation} from 'react-native';
-
-// Local Component
-import LocationSelection from '~/Components/Container/CommunityListScreen/LocationInfoHeader/LocationSelection';
+import {
+  Image,
+  TouchableOpacity,
+  Animated,
+  TouchableWithoutFeedback,
+} from 'react-native';
 
 const ContainerView = Styled.View`
 flex: 1;
 padding: 0px 16px;
 background: #FFFFFF;
+z-index: 3;
 `;
 
 const TopTitleView = Styled.View`
@@ -18,35 +21,38 @@ margin-bottom: 24px;
 
 const TopTitleText = Styled.Text`
 font-weight: normal;
-font-size: 20px;
+font-size: 24px;
 line-height: 24px;
 margin-bottom: 12px;
 `;
 
 const TopTitleBoldText = Styled.Text`
 font-weight: bold;
-font-size: 20px;
+font-size: 24px;
 line-height: 24px;
 `;
 
-const LocationIndicationView = Styled.View`
+const HeaderContainerView = Styled.View`
+flex-direction: row;
+`;
+const HeaderContentView = Styled.View`
+flex: 1;
 background: #FFFFFF;
-box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
 border-radius: 8px;
 padding: 16px;
 margin-bottom: 16px;
-z-index: 3;
 `;
 
-const LocationIndicationText = Styled.Text`
+const HeaderContentText = Styled.Text`
 font-weight: 500;
 font-size: 14px;
 line-height: 24px;
 color: #9AA2A9;
 `;
 
-const LocationContentView = Styled.View`
-margin-top: 14px;
+const HeaderTitleContainerView = Styled.View`
+margin-top: 4px;
+margin-bottom: 16px;
 flex-direction: row;
 `;
 const LocationHighlightContainerView = Styled.View`
@@ -60,27 +66,30 @@ bottom: 0px;
 background: #DAECFE;
 `;
 
-const LocationIndicationTitleText = Styled.Text`
+const HeaderTitleText = Styled.Text`
 font-weight: bold;
-font-size: 24px;
+font-size: 20px;
 line-height: 24px;
 `;
 
-const LocationSettingView = Styled.View`
-padding: 6px 12px;
-background: #F5F7F9;
+const HeaderContentButtonView = Styled.View`
+margin-left: auto;
+padding: 2px 11px;
+background: #FFFFFF;
 border-radius: 100px;
+
 `;
 
-const LocationSettingText = Styled.Text`
-font-weight: 600;
+const HeaderContentButtonText = Styled.Text`
+font-weight: bold;
 font-size: 13px;
-line-height: 16px;
-color: #4E525D;
+line-height: 24px;
+color: #131F3C;
 `;
 
 const LocalInfoContainerView = Styled.View`
-background: #F5F7F9;
+background: #FFFFFF;
+box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
 border-radius: 8px;
 padding: 16px;
 flex-direction: row;
@@ -92,7 +101,7 @@ flex: 1;
 `;
 
 const LocalInfoPartitionView = Styled.View`
-background: #FFFFFF;
+background: #F5F7F9;
 width: 1px;
 height: 100%;
 margin: 0px 23px;
@@ -153,33 +162,30 @@ background: red;
 `;
 
 interface Props {
-  jwtToken: string;
-  hometown: any;
+  isMainHomeChanged: boolean;
   selectedHometown: any;
-  setSelectedHometown: any;
   localClinicCount: number;
   localReviewCount: number;
   moveToHomeTownSetting: () => void;
 }
 
 const HomeInfoContent = ({
-  jwtToken,
-  hometown,
+  isMainHomeChanged,
   selectedHometown,
-  setSelectedHometown,
   localClinicCount,
   localReviewCount,
   moveToHomeTownSetting,
 }: Props) => {
+  const [initialize, setInitialize] = useState(true);
   const initialY = useRef(new Animated.Value(0)).current;
   const secondY = useRef(new Animated.Value(0)).current;
   const thirdY = useRef(new Animated.Value(0)).current;
 
-  const slotY = useRef(new Animated.Value(0)).current;
+  const reviewSlotY = useRef(new Animated.Value(0)).current;
+  const clinicSlotY = useRef(new Animated.Value(0)).current;
+
   const imageY = useRef(new Animated.Value(0)).current;
   const hometownScale = useRef(new Animated.Value(1)).current;
-
-  const [floatVisible, setFloatVisible] = useState(false);
 
   useEffect(() => {
     Animated.timing(initialY, {
@@ -205,21 +211,30 @@ const HomeInfoContent = ({
           tension: 30,
           useNativeDriver: true,
         }).start();
-        Animated.spring(slotY, {
+        clinicSlotY.setValue(0);
+        Animated.spring(clinicSlotY, {
           toValue: 1,
           friction: 12,
           tension: 68,
           useNativeDriver: true,
-        }).start();
+        }).start(() => setInitialize(false));
+        reviewSlotY.setValue(0);
+        Animated.spring(reviewSlotY, {
+          toValue: 1,
+          friction: 12,
+          tension: 68,
+          useNativeDriver: true,
+        }).start(() => setInitialize(false));
       });
     });
   }, []);
 
   useEffect(() => {
     console.log('selectedHometown changed');
-    if (selectedHometown) {
+    if (!isMainHomeChanged) {
       Animated.spring(hometownScale, {
         toValue: 1.2,
+        delay: 200,
         friction: 17,
         tension: 68,
         useNativeDriver: true,
@@ -232,41 +247,70 @@ const HomeInfoContent = ({
         }).start();
       });
     }
-  }, [selectedHometown]);
+  }, [isMainHomeChanged]);
 
-  const renderSlotNumber = useCallback((number: number) => {
-    console.log('render slot number');
-    return (
-      <SlotContainerView
-        as={Animated.View}
-        style={{
-          opacity: slotY.interpolate({
-            inputRange: [0, 0.1, 0.5, 0.9, 1],
-            outputRange: [1, 0.3, 0.2, 0.3, 1],
-            extrapolate: 'clamp',
-          }),
-          transform: [
-            {
-              translateY: slotY.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, -30 * number],
-              }),
-            },
-          ],
-        }}>
-        {[...Array(number + 1).keys()].map((item) => (
-          <SlotContentText key={String(item)}>{item}</SlotContentText>
-        ))}
-      </SlotContainerView>
-    );
-  }, []);
+  const renderSlotNumber = useCallback(
+    (number: number, type: string) => {
+      if (!initialize) {
+        if (type === 'clinic') {
+          clinicSlotY.setValue(0);
+          Animated.spring(clinicSlotY, {
+            toValue: 1,
+            friction: 12,
+            tension: 68,
+            useNativeDriver: true,
+          }).start();
+        } else if (type === 'review') {
+          reviewSlotY.setValue(0);
+          Animated.spring(reviewSlotY, {
+            toValue: 1,
+            friction: 12,
+            tension: 68,
+            useNativeDriver: true,
+          }).start();
+        }
+      }
+      return (
+        <SlotContainerView
+          as={Animated.View}
+          style={{
+            opacity: (type === 'review'
+              ? reviewSlotY
+              : clinicSlotY
+            ).interpolate({
+              inputRange: [0, 0.5, 1],
+              outputRange: [1, 0.2, 1],
+              extrapolate: 'clamp',
+            }),
+            transform: [
+              {
+                translateY: (type === 'review'
+                  ? reviewSlotY
+                  : clinicSlotY
+                ).interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, -30 * number],
+                }),
+              },
+            ],
+          }}>
+          {[...Array(number + 1).keys()].map((item) => (
+            <SlotContentText key={String(item)}>{item}</SlotContentText>
+          ))}
+        </SlotContainerView>
+      );
+    },
+    [initialize],
+  );
 
-  const memoClinicCount = useMemo(() => renderSlotNumber(localClinicCount), [
-    localClinicCount,
-  ]);
-  const memoReviewCount = useMemo(() => renderSlotNumber(localReviewCount), [
-    localReviewCount,
-  ]);
+  const memoClinicCount = useMemo(
+    () => renderSlotNumber(localClinicCount, 'clinic'),
+    [localClinicCount],
+  );
+  const memoReviewCount = useMemo(
+    () => renderSlotNumber(localReviewCount, 'review'),
+    [localReviewCount],
+  );
 
   return (
     <ContainerView>
@@ -287,75 +331,93 @@ const HomeInfoContent = ({
         <TopTitleText>{'우리동네'}</TopTitleText>
         <TopTitleBoldText>{'치과 정보 확인하세요'}</TopTitleBoldText>
       </TopTitleView>
-      <LocationIndicationView
-        as={Animated.View}
-        style={{
-          opacity: secondY,
-          transform: [
-            {
-              translateY: secondY.interpolate({
-                inputRange: [0, 1],
-                outputRange: [5, 0],
-                extrapolate: 'clamp',
-              }),
-            },
-
-            {
-              scale: secondY.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.98, 1],
-                extrapolate: 'clamp',
-              }),
-            },
-          ],
-        }}>
-        {floatVisible ? (
-          <LocationSelection
-            jwtToken={jwtToken}
-            hometown={hometown}
-            selectedHometown={selectedHometown}
-            setSelectedHometown={setSelectedHometown}
-            setFloatVisible={setFloatVisible}
-            moveToHomeTownSetting={moveToHomeTownSetting}
-            manageMode={true}
-            style={{
-              top: 86,
-              right: 48,
-            }}
-          />
-        ) : null}
-        <LocationIndicationText>{'지금 내 동네'}</LocationIndicationText>
-        <LocationContentView>
-          <LocationHighlightContainerView>
-            <LocationUnderlineView
-              as={Animated.View}
-              style={{
-                opacity: hometownScale.interpolate({
-                  inputRange: [1, 1.2],
-                  outputRange: [1, 0],
+      <HeaderContainerView>
+        <HeaderContentView
+          as={Animated.View}
+          style={{
+            backgroundColor: '#F5F7F9',
+            opacity: secondY,
+            transform: [
+              {
+                translateY: secondY.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [5, 0],
                   extrapolate: 'clamp',
                 }),
-              }}
-            />
-            <LocationIndicationTitleText
-              as={Animated.Text}
-              style={{
-                transform: [{scale: hometownScale}],
-              }}>
-              {selectedHometown?.emdName}
-            </LocationIndicationTitleText>
-          </LocationHighlightContainerView>
-          <TouchableOpacity
-            onPress={() => setFloatVisible((prev) => !prev)}
-            style={{
-              marginLeft: 'auto',
-            }}>
-            <LocationSettingView>
-              <LocationSettingText>{'동네설정'}</LocationSettingText>
-            </LocationSettingView>
-          </TouchableOpacity>
-        </LocationContentView>
-      </LocationIndicationView>
+              },
+
+              {
+                scale: secondY.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.98, 1],
+                  extrapolate: 'clamp',
+                }),
+              },
+            ],
+          }}>
+          <HeaderContentText>{'지금 내 동네'}</HeaderContentText>
+          <HeaderTitleContainerView>
+            <LocationHighlightContainerView>
+              <LocationUnderlineView
+                as={Animated.View}
+                style={{
+                  opacity: hometownScale.interpolate({
+                    inputRange: [1, 1.2],
+                    outputRange: [1, 0],
+                    extrapolate: 'clamp',
+                  }),
+                }}
+              />
+              <HeaderTitleText
+                as={Animated.Text}
+                style={{
+                  transform: [{scale: hometownScale}],
+                }}>
+                {selectedHometown?.emdName}
+              </HeaderTitleText>
+            </LocationHighlightContainerView>
+          </HeaderTitleContainerView>
+          <TouchableWithoutFeedback onPress={() => moveToHomeTownSetting()}>
+            <HeaderContentButtonView>
+              <HeaderContentButtonText>{'동네설정'}</HeaderContentButtonText>
+            </HeaderContentButtonView>
+          </TouchableWithoutFeedback>
+        </HeaderContentView>
+        <HeaderContentView
+          as={Animated.View}
+          style={{
+            marginLeft: 8,
+            backgroundColor: '#EFFAFF',
+            opacity: secondY,
+            transform: [
+              {
+                translateY: secondY.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [5, 0],
+                  extrapolate: 'clamp',
+                }),
+              },
+
+              {
+                scale: secondY.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.98, 1],
+                  extrapolate: 'clamp',
+                }),
+              },
+            ],
+          }}>
+          <HeaderContentText>{'나의 치아 상태'}</HeaderContentText>
+          <HeaderTitleContainerView>
+            <HeaderTitleText>{'체크하러 가기'}</HeaderTitleText>
+          </HeaderTitleContainerView>
+          <HeaderContentButtonView>
+            <HeaderContentButtonText style={{color: '#00D1FF'}}>
+              {'확인하기'}
+            </HeaderContentButtonText>
+          </HeaderContentButtonView>
+        </HeaderContentView>
+      </HeaderContainerView>
       <LocalInfoContainerView
         as={Animated.View}
         style={{

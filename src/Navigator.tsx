@@ -295,6 +295,10 @@ function HomeStackScreen() {
         component={HometownSettingScreen}
       />
       <HomeStack.Screen
+        name="HometownSearchScreen"
+        component={HometownSearchScreen}
+      />
+      <HomeStack.Screen
         name="TotalKeywordSearchStackScreen"
         component={TotalKeywordSearchStackScreen}
         options={() => ({
@@ -317,6 +321,10 @@ function HomeStackScreen() {
             };
           },
         })}
+      />
+      <HomeStack.Screen
+        name="NotificationStackScreen"
+        component={NotificationStackScreen}
       />
     </HomeStack.Navigator>
   );
@@ -509,7 +517,7 @@ function ReviewUploadStackScreen() {
 
 function EditProfileStackScreen() {
   return (
-    <EditProfileStack.Navigator headerMode="none" mode="card">
+    <EditProfileStack.Navigator headerMode="none" mode="modal">
       <EditProfileStack.Screen
         name="EditProfileTabScreen"
         component={EditProfileTabScreen}
@@ -566,6 +574,24 @@ function ImageSelectOneStackScreen({route}) {
         }}
         options={{
           gestureEnabled: false,
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {duration: 200},
+            },
+            close: {
+              animation: 'timing',
+              config: {duration: 200},
+            },
+          },
+          cardStyle: {backgroundColor: 'transparent'},
+          cardStyleInterpolator: ({current: {progress}}) => {
+            return {
+              cardStyle: {
+                opacity: progress,
+              },
+            };
+          },
         }}
       />
     </ImageSelectOneStack.Navigator>
@@ -1076,26 +1102,27 @@ const Navigator = () => {
   //   const fcmToken = await messaging().getToken();
   //   console.log('getFcmToken fcmToken', fcmToken);
   // };
+  useEffect(() => {
+    if (currentUser.hometown) {
+      console.log('hometown', currentUser.hometown);
+      SplashScreen.hide();
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     //getFcmToken();
-
-    const setUserLogined = async (jwtToken: string, profile: object) => {
-      await dispatch(allActions.userActions.setUser({jwtToken, profile}));
-    };
 
     getUserInfo()
       .then((jwtToken) => {
         console.log('getUserInfo response', jwtToken);
         GETUserInfo(jwtToken)
           .then((response: any) => {
-            const profile = response;
-            console.log('profile', profile);
+            console.log('profile', response);
 
+            dispatch(
+              allActions.userActions.setUser({jwtToken, profile: response}),
+            );
             dispatch(allActions.userActions.setHometown(response.Residences));
-
-            setUserLogined(jwtToken, profile);
-            SplashScreen.hide();
           })
           .catch((error: any) => {
             console.log('get user error', error);

@@ -120,9 +120,7 @@ const HomeReviewContent = ({
     const selectedReviewData = reviewData.find(
       (item) => item.name === selectedTagFilterItem,
     );
-    LayoutAnimation.configureNext(
-      LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-    );
+    console.log(selectedReviewData);
     return (
       selectedReviewData &&
       selectedReviewData.data.map((item: any, index: number) => {
@@ -142,8 +140,10 @@ const HomeReviewContent = ({
               imageStyle={{borderRadius: 12}}
               source={{
                 uri:
-                  item.review_contents[0].img_thumbNail &&
-                  item.review_contents[0].img_url,
+                  item.review_contents.length === 0
+                    ? 'https://lh3.googleusercontent.com/proxy/7P6PPJNO4uoHy9I9lQ4nnUuWG1Rcgnjp2OE_MldTbVLMEmVjzfGnpw4QWS8evZRdAEqJHMwDYA8KaMndh-wrEydX6McI3bv8HZdiq-xxfTs7b-1Vr8RgLEvSVTrvd94sf4FlgPPi4ADIPB20oDB6qz00gzl-odna5hyi7p9reOLI_F0tfuqxVXbzUZB_GyHLrfj3t3wwtxelJ_xHCU3eRtnGtOP0-zVrDZ2GFxCTTTk5sp1WNTTd2qgCBCMxwT-HX9xLoTtvOdJCATSFMR1gRIJ5zQMdcVbWgO9pEDH4YxU3piMYLOu2JlZeDf6YueS6ptD4'
+                    : item.review_contents[0].img_thumbNail &&
+                      item.review_contents[0].img_url,
                 cache: 'force-cache',
               }}>
               <LinearGradient
@@ -178,10 +178,10 @@ const HomeReviewContent = ({
       <ContentTitleText>{`👀 최근 올라온 ${selectedHometown} 치과 후기`}</ContentTitleText>
       {memoTagFilter}
       <ReviewThumbnailContainerView>
-        {memoReviewThumbnail}
+        {renderReviewThumbnail()}
       </ReviewThumbnailContainerView>
     </ContainerView>
   );
 };
 
-export default HomeReviewContent;
+export default React.memo(HomeReviewContent);

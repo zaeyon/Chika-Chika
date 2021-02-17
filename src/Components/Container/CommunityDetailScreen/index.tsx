@@ -40,6 +40,7 @@ const ContainerView = Styled.SafeAreaView`
  flex: 1;
  background-color: white;
  align-items: center;
+ justify-content: center;
 `;
 
 const BodyContainerScrollView = Styled.ScrollView`
@@ -144,7 +145,6 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log('fofofo');
     const newPostData = postList?.find(
       (item: any) => item.id === route.params.id,
     );
@@ -158,15 +158,10 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   useEffect(() => {
     GETCommunityPostDetail(jwtToken, String(route.params.id)).then(
       (response: any) => {
-        setPostData((prev) => {
-          if (!prev) {
-            return response;
-          } else {
-            return prev;
-          }
-        });
+        setPostData(response);
       },
     );
+
     fetchPostComments(route.params.id);
     if (route.params?.type === 'Notification') {
       navigation.navigate('CommentListScreen', {
@@ -189,20 +184,31 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
           <FloatingView>
             {postData.userId === profile.id ? (
               <>
-                <TouchableOpacity onPress={() => onPressDeletePost()}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setFloatingVisible(false);
+                    onPressDeletePost();
+                  }}>
                   <FloatingContentView>
                     <FloatingContentText>{'삭제'}</FloatingContentText>
                   </FloatingContentView>
                 </TouchableOpacity>
                 <VerticalPartitionView />
-                <TouchableOpacity onPress={() => onPressEditPost()}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setFloatingVisible(false);
+                    onPressEditPost();
+                  }}>
                   <FloatingContentView>
                     <FloatingContentText>{'수정'}</FloatingContentText>
                   </FloatingContentView>
                 </TouchableOpacity>
               </>
             ) : (
-              <TouchableOpacity onPress={() => console.log('report')}>
+              <TouchableOpacity
+                onPress={() => {
+                  setFloatingVisible(false);
+                }}>
                 <FloatingContentView>
                   <FloatingContentText>{'신고'}</FloatingContentText>
                 </FloatingContentView>
@@ -403,7 +409,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
         dispatch(allActions.communityActions.editPost(form));
       },
     );
-  }, []);
+  }, [postData]);
 
   const formatCategory = useCallback(() => {
     switch (categoryTitle) {
