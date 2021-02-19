@@ -36,21 +36,24 @@ const ScrapedPostsTabScreen = ({navigation, route}: Props) => {
       />
       <Tab.Navigator
         tabBarOptions={{
-          activeTintColor: '#2998FF',
-          inactiveTintColor: '#848484',
-          labelStyle: {
-            fontFamily: 'NanumSquareR',
-            fontWeight: 'bold',
-            fontSize: 14,
-            lineHeight: 16,
+          style: {
+            backgroundColor: '#FFFFFF',
           },
           indicatorStyle: {
-            backgroundColor: '#2998FF',
-            height: 3,
+            height: 2,
+            backgroundColor: '#00D1FF',
+            borderRadius: 100,
           },
-          indicatorContainerStyle: {
-            borderBottomColor: '#C4C4C4',
-            borderBottomWidth: 1,
+          activeTintColor: '#131F3C',
+          inactiveTintColor: '#9AA2A9',
+          tabStyle: {
+            height: 54,
+          },
+          labelStyle: {
+            fontStyle: 'normal',
+            fontWeight: 'bold',
+            fontSize: 16,
+            lineHeight: 24,
           },
         }}>
         <Tab.Screen name="후기글" component={ScrapedReviewScreen} />

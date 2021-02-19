@@ -239,9 +239,7 @@ function ReviewStackScreen() {
         //   }
         // }}
       />
-      <ReviewStack.Screen
-      name="AccuseScreen"
-      component={AccuseScreen}/>
+      <ReviewStack.Screen name="AccuseScreen" component={AccuseScreen} />
     </ReviewStack.Navigator>
   );
 }
@@ -381,7 +379,8 @@ function NearDentalMapStackScreen() {
       />
       <NearDentalMapStack.Screen
         name="ReviewStackScreen"
-        component={ReviewStackScreen}/>
+        component={ReviewStackScreen}
+      />
       <HomeStack.Screen
         name="AnotherProfileStackScreen"
         component={AnotherProfileStackScreen}
@@ -421,7 +420,8 @@ function DentalClinicStackScreen() {
       />
       <DentalClinicStack.Screen
         name="ReviewStackScreen"
-        component={ReviewStackScreen}/>
+        component={ReviewStackScreen}
+      />
     </DentalClinicStack.Navigator>
   );
 }
@@ -548,7 +548,8 @@ function ReviewUploadStackScreen() {
       />
       <ReviewUploadStack.Screen
         name="ImageSelectOneStackScreen"
-        component={ImageSelectOneStackScreen}/>
+        component={ImageSelectOneStackScreen}
+      />
     </ReviewUploadStack.Navigator>
   );
 }
@@ -722,9 +723,7 @@ function CommunityPostUploadStackScreen({route}: any) {
       <CommunityPostUploadStack.Screen
         name="CommunityPostUploadScreen"
         component={CommunityPostUploadScreen}
-        initialParams={{
-          data: route.params && route.params.data,
-        }}
+        initialParams={route.params && route.params.data}
         options={{
           gestureEnabled: false,
         }}
@@ -838,9 +837,7 @@ function CommunityStackScreen() {
         name="HometownSettingScreen"
         component={HometownSettingScreen}
       />
-      <CommunityStack.Screen
-        name="AccuseScreen"
-        component={AccuseScreen}/>
+      <CommunityStack.Screen name="AccuseScreen" component={AccuseScreen} />
     </CommunityStack.Navigator>
   );
 }
@@ -922,7 +919,9 @@ function BottomTab() {
 
     if (
       routeName.name === 'DentalTotalSearchScreen' ||
-      routeName.name === 'DentalDetailScreen' || routeName.name === 'ReviewStackScreen' || routeName.name === 'ReviewUploadStackScreen'
+      routeName.name === 'DentalDetailScreen' ||
+      routeName.name === 'ReviewStackScreen' ||
+      routeName.name === 'ReviewUploadStackScreen'
     ) {
       return false;
     }
@@ -1142,11 +1141,11 @@ const Navigator = () => {
   //   console.log('getFcmToken fcmToken', fcmToken);
   // };
   useEffect(() => {
-    if (currentUser.hometown) {
+    if (isUser) {
       console.log('hometown', currentUser.hometown);
       SplashScreen.hide();
     }
-  }, [currentUser]);
+  }, [isUser]);
 
   useEffect(() => {
     //getFcmToken();
@@ -1162,6 +1161,7 @@ const Navigator = () => {
               allActions.userActions.setUser({jwtToken, profile: response}),
             );
             dispatch(allActions.userActions.setHometown(response.Residences));
+            setIsUser(true);
           })
           .catch((error: any) => {
             console.log('get user error', error);
@@ -1177,7 +1177,7 @@ const Navigator = () => {
   return (
     <NavigationContainer>
       <StatusBar barStyle="dark-content" />
-      {currentUser.loggedIn ? <BottomTab /> : <AuthStackScreen />}
+      {isUser ? <BottomTab /> : <AuthStackScreen />}
     </NavigationContainer>
   );
 };

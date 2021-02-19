@@ -88,53 +88,54 @@ interface CameraResponse {
 const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
-  const profile = useSelector((state: any) => state.currentUser.profile);
   const prevData = useSelector((state: any) => {
-    if (route.params.data.routeType === 'Question') {
+    if (!route.params.routeType) {
+      return false;
+    }
+    if (route.params.routeType === 'Question') {
       console.log('Q');
       return state.communityPostList.QuestionPosts.find(
-        (item: any) => item.id === route.params.data.id,
+        (item: any) => item.id === route.params.id,
       );
-    } else if (route.params.data.routeType === 'FreeTalk') {
+    } else if (route.params.routeType === 'FreeTalk') {
       console.log('F');
       return state.communityPostList.FreeTalkPosts.find(
-        (item: any) => item.id === route.params.data.id,
+        (item: any) => item.id === route.params.id,
       );
-    } else if (route.params.data.routeType === 'MyPosts') {
+    } else if (route.params.routeType === 'MyPosts') {
       console.log('My');
       return state.communityPostList.MyPosts.find(
-        (item: any) => item.id === route.params.data.id,
+        (item: any) => item.id === route.params.id,
       );
-    } else if (route.params.data.routeType === 'Liked') {
+    } else if (route.params.routeType === 'Liked') {
       console.log('Liked');
       return state.communityPostList.LikedCommunityPosts.find(
-        (item: any) => item.id === route.params.data.id,
+        (item: any) => item.id === route.params.id,
       );
-    } else if (route.params.data.routeType === 'Scraped') {
+    } else if (route.params.routeType === 'Scraped') {
       console.log('Scraped');
       return state.communityPostList.ScrapedCommunityPosts.find(
-        (item: any) => item.id === route.params.data.id,
+        (item: any) => item.id === route.params.id,
       );
-    } else if (route.params.data.routeType === 'Commented') {
+    } else if (route.params.routeType === 'Commented') {
       console.log('Commented');
       return state.communityPostList.CommentedCommunityPosts.find(
-        (item: any) => item.id === route.params.data.id,
+        (item: any) => item.id === route.params.id,
       );
     }
   });
-
-  const prevDescription = route.params.data.description;
-  const prevType = route.params.data.type;
   const mode = prevData ? 'edit' : 'create';
   const [searchQuery, setSearchQuery] = useState('');
   const [searchMode, setSearchMode] = useState(false);
   const [suggestionList, setSuggestionList] = useState<Tag[]>([]);
 
-  const [description, setDescription] = useState<string>(prevDescription || '');
+  const [description, setDescription] = useState<string>(
+    route.params.description || '',
+  );
   const [wantDentistHelp, setWantDentistHelp] = useState<boolean>(
     prevData?.wantDentistHelp || false,
   );
-  const [category, setCategory] = useState(prevType || '질문방');
+  const [category, setCategory] = useState(route.params.type || '질문방');
   const [images, setImages] = useState<Image[]>(prevData?.community_imgs || []);
 
   const [categoryList, setCategoryList] = useState<string[]>([

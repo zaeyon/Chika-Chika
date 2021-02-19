@@ -34,14 +34,12 @@ justify-content: center;
 `;
 
 interface Props {
-  isRequestChanged: boolean;
   fetchSearchResult: any;
   navigation: any;
   renderHeaderComponent: any;
 }
 
 const ReviewRoute = ({
-  isRequestChanged,
   fetchSearchResult,
   navigation,
   renderHeaderComponent,
@@ -70,12 +68,6 @@ const ReviewRoute = ({
     emdName: '전국',
     id: -1,
   });
-
-  useEffect(() => {
-    if (!isRequestChanged) {
-      getInitialReviewList();
-    }
-  }, [isRequestChanged]);
 
   useEffect(() => {
     console.log(selectedHometown);
@@ -196,28 +188,23 @@ const ReviewRoute = ({
 
   return (
     <ContainerView>
-      {loadingReviewList ? (
-        <ActivityContainerView>
-          <ActivityIndicator />
-        </ActivityContainerView>
-      ) : (
-        <ReviewList
-          navigation={navigation}
-          loadingMoreReview={loadingMoreReview}
-          refreshingReviewList={refreshingReviewList}
-          onRefreshReviewList={onRefreshReviewList}
-          reviewList={reviewList}
-          onEndReachedReviewList={onEndReachedReviewList}
-          renderHeaderComponent={() =>
-            renderHeaderComponent(
-              order,
-              selectedHometown,
-              onFiltering,
-              setFloatVisible,
-            )
-          }
-        />
-      )}
+      <ReviewList
+        navigation={navigation}
+        loadingMoreReview={loadingMoreReview}
+        refreshingReviewList={refreshingReviewList}
+        onRefreshReviewList={onRefreshReviewList}
+        reviewList={reviewList}
+        onEndReachedReviewList={onEndReachedReviewList}
+        renderHeaderComponent={() =>
+          renderHeaderComponent(
+            order,
+            selectedHometown,
+            onFiltering,
+            setFloatVisible,
+          )
+        }
+      />
+
       {floatVisible ? (
         <LocationSelection
           hometown={[{emdName: '전국', id: -1}, ...hometown]}
@@ -225,6 +212,10 @@ const ReviewRoute = ({
           setSelectedHometown={setSelectedHometown}
           setFloatVisible={setFloatVisible}
           moveToHomeTownSetting={moveToHomeTownSetting}
+          style={{
+            right: 16,
+            top: 54,
+          }}
         />
       ) : null}
     </ContainerView>

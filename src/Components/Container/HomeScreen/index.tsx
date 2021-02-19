@@ -7,6 +7,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import DeviceInfo from 'react-native-device-info';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 // Firebase
@@ -18,6 +19,7 @@ import allActions from '~/actions';
 
 //Local Component
 import HomeInfoContent from '~/Components/Presentational/HomeScreen/HomeInfoContent';
+import HomeClinicContent from '~/Components/Presentational/HomeScreen/HomeClinicContent';
 import HomeReviewContent from '~/Components/Presentational/HomeScreen/HomeReviewContent';
 import HomeCommunityContent from '~/Components/Presentational/HomeScreen/HomeCommunityContent';
 // Routes
@@ -25,6 +27,7 @@ import GETSearchRecord from '~/Routes/Search/GETSearchRecord';
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import GETTotalSearch from '~/Routes/Search/GETTotalSearch';
 import GETLocalClinicAndReviewCount from '~/Routes/Main/GETLocalClinicAndReviewCount';
+import GETLocalClinic from '~/Routes/Main/GETLocalClinic';
 
 const ContainerView = Styled.View`
 flex: 1;
@@ -50,7 +53,7 @@ padding: 20px 16px 15px 16px;
 background: #FFFFFF;
 align-items: center;
 z-index: 2;
-margin-bottom: 24px;
+margin-bottom: 8px;
 `;
 
 const HeaderIconContainerView = Styled.View`
@@ -72,7 +75,7 @@ align-items: center;
 const FloatingButtonView = Styled.View`
 position: absolute;
 align-self: center;
-bottom: 70px;
+bottom: ${24 + (DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'))}px;
 padding: 8px 24px;
 background: #131F3C;
 box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
@@ -110,6 +113,7 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   const [reviewData, setReviewData] = useState([]);
   const [postData, setPostData] = useState<ReviewData[]>();
+  const [clinicData, setClinicData] = useState([]);
 
   const [prevOffsetY, setPrevOffsetY] = useState(0);
   const [scrollDirection, setScrollDirection] = useState('down');
@@ -134,6 +138,7 @@ const HomeScreen = ({navigation, route}: Props) => {
             fetchRecentCommunityPosts(selectedHometown);
             fetchRecentReviews(selectedHometown);
             fetchLocalInfo(selectedHometown);
+            fetchLocalClinics(selectedHometown);
           }
           return false;
         });
@@ -199,29 +204,36 @@ const HomeScreen = ({navigation, route}: Props) => {
 
     GETSearchRecord({jwtToken})
       .then(async (response: any) => {
-        console.log("GETSearchRecord response", response);
+        console.log('GETSearchRecord response', response);
         dispatch(allActions.userActions.setSearchRecord(response));
 
         const getDentalSearchRecord = async (searchRecordArray: any) => {
           let tmpDentalSearchRecordArray = new Array();
           await searchRecordArray.forEach((item: any, index: number) => {
-            if(item.category === 'clinic' || item.category === 'city') {
+            if (item.category === 'clinic' || item.category === 'city') {
               return tmpDentalSearchRecordArray.push(item);
             }
-          })
+          });
 
-          return tmpDentalSearchRecordArray
-        } 
+          return tmpDentalSearchRecordArray;
+        };
 
-        const tmpDentalSearchRecordArray = await getDentalSearchRecord(response);
-        console.log("GETSearchRecord tmpDentalSearchRecordArray", tmpDentalSearchRecordArray);
-        dispatch(allActions.userActions.setDentalSearchRecord(tmpDentalSearchRecordArray));
-        
+        const tmpDentalSearchRecordArray = await getDentalSearchRecord(
+          response,
+        );
+        console.log(
+          'GETSearchRecord tmpDentalSearchRecordArray',
+          tmpDentalSearchRecordArray,
+        );
+        dispatch(
+          allActions.userActions.setDentalSearchRecord(
+            tmpDentalSearchRecordArray,
+          ),
+        );
       })
       .catch((error) => {
         console.log('GETSearchRecord error', error);
       });
-
   }, []);
 
   const fetchLocalInfo = useCallback(
@@ -232,6 +244,20 @@ const HomeScreen = ({navigation, route}: Props) => {
       }).then((response: any) => {
         setLocalClinicCount(response.residenceClinicsNum);
         setLocalReviewCount(response.residenceReviewsNum);
+      });
+    },
+    [jwtToken],
+  );
+
+  const fetchLocalClinics = useCallback(
+    (selectedHometown) => {
+      GETLocalClinic({
+        jwtToken,
+        cityId: String(selectedHometown.id),
+        lat: '37.566515657875435',
+        long: '126.9781164904998',
+      }).then((response: any) => {
+        setClinicData(response);
       });
     },
     [jwtToken],
@@ -252,6 +278,7 @@ const HomeScreen = ({navigation, route}: Props) => {
             order: 'createdAt',
             region: 'residence',
             cityId: String(selectedHometown.id),
+            isUnified: false,
           };
           const data = await GETTotalSearch(form);
           return {
@@ -295,7 +322,7 @@ const HomeScreen = ({navigation, route}: Props) => {
     },
     [],
   );
-  
+
   const moveToAnotherProfile = useCallback(
     (userId: string, nickname: string, profileImageUri: string) => {
       navigation.navigate('AnotherProfileStackScreen', {
@@ -440,8 +467,7 @@ const HomeScreen = ({navigation, route}: Props) => {
                 }
               />
             </HeaderIconTouchableOpacity>
-            <HeaderIconTouchableOpacity
-              onPress={() => moveToReviewUpload()}>
+            <HeaderIconTouchableOpacity onPress={() => moveToReviewUpload()}>
               <Image
                 source={require('~/Assets/Images/TopTab/ic/write/black.png')}
               />
@@ -456,17 +482,22 @@ const HomeScreen = ({navigation, route}: Props) => {
           moveToHomeTownSetting={moveToHomeTownSetting}
         />
         <PartitionView />
-        <HomeReviewContent
-          selectedHometown={selectedHometown?.emdName}
-          tagFilterItems={tagFilterItems}
-          reviewData={reviewData}
-          moveToReviewDetail={moveToReviewDetail}
+        <HomeClinicContent
+          clinics={clinicData}
+          moveToClinicDetail={() => console.log('moveToClinicDetail')}
         />
+
         <HomeCommunityContent
           selectedHometown={selectedHometown?.emdName}
           postData={postData}
           moveToCommunityDetail={moveToCommunityDetail}
           moveToAnotherProfile={moveToAnotherProfile}
+        />
+        <HomeReviewContent
+          selectedHometown={selectedHometown?.emdName}
+          tagFilterItems={tagFilterItems}
+          reviewData={reviewData}
+          moveToReviewDetail={moveToReviewDetail}
         />
       </ContentScrollView>
 
@@ -477,7 +508,10 @@ const HomeScreen = ({navigation, route}: Props) => {
             {
               translateY: floatY.interpolate({
                 inputRange: [0, 1],
-                outputRange: [120, 0],
+                outputRange: [
+                  64 + (DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%')),
+                  0,
+                ],
                 extrapolate: 'clamp',
               }),
             },

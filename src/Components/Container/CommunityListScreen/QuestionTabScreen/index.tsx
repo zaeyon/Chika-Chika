@@ -33,7 +33,50 @@ import DELETESocialScrap from '~/Routes/Community/social/DELETESocialScrap';
 
 const ContainerView = Styled.View`
  flex: 1;
- background-color: #FFFFFF;
+ background-color: #F5F7F9;
+`;
+
+const EmptyIndicatorContainerView = Styled.View`
+width: 100%;
+height: 100%;
+background: #FFFFFF;
+padding-top: 56px;
+`;
+
+const EmptyIndicatorView = Styled.View`
+align-items: center;
+justify-content: center;
+`;
+
+const EmptyIndicatorImage = Styled.Image`
+margin-bottom: 12px;
+`;
+
+const EmptyIndicatorText = Styled.Text`
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+color: #9AA2A9;
+margin-bottom: 16px;
+`;
+
+const EmptyIndicatorButtonView = Styled.View`
+padding: 14px 16px;
+border-width: 1px;
+align-items: center;
+border-color: #E2E6ED;
+border-radius: 100px;
+flex-direction: row;
+`;
+
+const EmptyIndicatorButtonText = Styled.Text`
+font-weight: normal;
+font-size: 16px;
+color: #131F3C;
+`;
+
+const EmptyIndicatorButtonImage = Styled.Image`
+margin-left: 4px;
 `;
 
 interface Props {
@@ -296,6 +339,14 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
     [],
   );
 
+  const moveToCreatePost = useCallback(() => {
+    navigation.navigate('CommunityPostUploadStackScreen', {
+      data: {
+        type: '질문방',
+      },
+    });
+  }, []);
+
   const moveToAnotherProfile = useCallback(
     (userId: string, nickname: string, profileImageUri: string) => {
       navigation.navigate('AnotherProfileStackScreen', {
@@ -371,12 +422,36 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         />
         <AdviceInfoHeader profile={profile} />
         <TopBanner type="question" />
-        <CarouselContent
-          postData={postData}
-          titleText="💬 답변을 기다리는 질문"
-          moveToCommunityDetail={moveToCommunityDetail}
-          moveToAnotherProfile={moveToAnotherProfile}
-        />
+        {postData.length === 0 ? (
+          <EmptyIndicatorContainerView>
+            <EmptyIndicatorView>
+              <EmptyIndicatorImage
+                source={require('~/Assets/Images/ic_noData.png')}
+              />
+              <EmptyIndicatorText>{'게시글이 없습니다.'}</EmptyIndicatorText>
+              <TouchableWithoutFeedback onPress={() => moveToCreatePost()}>
+                <EmptyIndicatorButtonView>
+                  <EmptyIndicatorButtonText>
+                    <EmptyIndicatorButtonText style={{color: '#00D1FF'}}>
+                      {'첫번째 질문글'}
+                    </EmptyIndicatorButtonText>
+                    {' 남기러 가기'}
+                  </EmptyIndicatorButtonText>
+                  <EmptyIndicatorButtonImage
+                    source={require('~/Assets/Images/Arrow/ic_postReviewArrow.png')}
+                  />
+                </EmptyIndicatorButtonView>
+              </TouchableWithoutFeedback>
+            </EmptyIndicatorView>
+          </EmptyIndicatorContainerView>
+        ) : (
+          <CarouselContent
+            postData={postData}
+            titleText="💬 답변을 기다리는 질문"
+            moveToCommunityDetail={moveToCommunityDetail}
+            moveToAnotherProfile={moveToAnotherProfile}
+          />
+        )}
       </>
     );
   }, [profile, postData, order, region, hometown, selectedHometown]);
@@ -395,18 +470,6 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         toggleSocialScrap={toggleSocialScrap}
         renderHeaderComponent={renderHeaderComponent}
       />
-      {/* <TouchableWithoutFeedback
-        onPress={() =>
-          navigation.navigate('CommunityPostUploadStackScreen', {
-            data: {
-              id: -1,
-            },
-          })
-        }>
-        <CreatePostView>
-          <CreatePostText>{'글 작성하기'}</CreatePostText>
-        </CreatePostView>
-      </TouchableWithoutFeedback> */}
     </ContainerView>
   );
 };

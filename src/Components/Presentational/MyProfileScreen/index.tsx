@@ -223,6 +223,8 @@ interface User {
   Residences: Array<Residence>;
   gender: string;
   birthdate: string;
+  scrapClinicsNum: number;
+  appointmentsNum: number;
 }
 
 interface Residence {
@@ -594,7 +596,6 @@ export default class MyProfile extends React.PureComponent<Props, State> {
             height: 54,
           }}
           labelStyle={{
-            fontFamily: 'NanumSquare',
             fontStyle: 'normal',
             fontWeight: 'bold',
             fontSize: 16,
@@ -653,7 +654,9 @@ export default class MyProfile extends React.PureComponent<Props, State> {
               </ProfileImageView>
               <ProfileReservationTouchableOpacity
                 onPress={() => this.props.moveToReservationTabScreen()}>
-                <ProfileReservationText>{'1'}</ProfileReservationText>
+                <ProfileReservationText>
+                  {this.props.currentUser.appointmentsNum}
+                </ProfileReservationText>
                 <ProfileReservationTitleText>
                   {'예약피드'}
                 </ProfileReservationTitleText>
@@ -661,7 +664,9 @@ export default class MyProfile extends React.PureComponent<Props, State> {
               <VerticalPartitionView />
               <ProfileReservationTouchableOpacity
                 onPress={() => this.props.moveToSavedHospitalTabScreen()}>
-                <ProfileReservationText>{'3'}</ProfileReservationText>
+                <ProfileReservationText>
+                  {this.props.currentUser.scrapClinicsNum}
+                </ProfileReservationText>
                 <ProfileReservationTitleText>
                   {'찜한병원'}
                 </ProfileReservationTitleText>

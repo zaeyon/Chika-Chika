@@ -249,12 +249,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
         setQuery(keyword);
         setCategory(category);
         setTagId(tagId);
-        dispatch(
-          allActions.userActions.setSearchRecord([
-            {category, id: tagId, query: keyword},
-            ...searchRecordArray,
-          ]),
-        );
+
         return false;
       });
       // }
@@ -333,7 +328,6 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
           />
         ) : (
           <TotalSearchResultTabView
-            isRequestChanged={isVisibleAutoCompletedKeyword}
             searchResult={searchResult}
             reviewSearchResult={reviewSearchResult}
             communitySearchResult={communitySearchResult}
