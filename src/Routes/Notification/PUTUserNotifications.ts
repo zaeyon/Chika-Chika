@@ -13,24 +13,18 @@ export interface Config {
 const PUTUserNotifications = (jwtToken: string, config: Config) => {
 
     const uri = baseUri + "/notificationConfig";
-    let formData = new FormData();
-    
-    for (let key in config) {
-        formData.append(key, JSON.stringify(config[key]))
-    }
-
+    console.log(config)
     return new Promise(function(resolve, reject) {
 
-        axios.put(uri, formData, {
+        axios.put(uri, config, {
             headers: {
-                'Content-Type': 'multipart/form-data', 
               'Authorization': jwtToken,
               Accept: "*/*"
             },
 
         })
         .then(function(response) {
-        
+            console.log(response)
             resolve(response.data);
             
         })

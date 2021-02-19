@@ -26,8 +26,7 @@ const Container = Styled.View`
  width: ${wp('100')}px;
  background-color: #FFFFFF;
  flex-direction: column;
- border-bottom-width: 1px;
- border-color: #E5E5E5;
+  margin-bottom: 8px;
  align-items: center;
 `;
 
@@ -357,10 +356,9 @@ const ReviewItem = ({
   dentalObj,
   moveToDentalDetail,
 }: Props) => {
-  
-  console.log("ReviewItem render", reviewId);
-
-  const [formattedDescriptions, setFormattedDescriptions] = useState<string>("");
+  const [formattedDescriptions, setFormattedDescriptions] = useState<string>(
+    '',
+  );
   const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
@@ -484,23 +482,23 @@ const ReviewItem = ({
   return (
     <TouchableWithoutFeedback
       onPress={() => {
-        console.log("moveToReviewDetail");
+        console.log('moveToReviewDetail');
         moveToReviewDetail(
-        reviewId,
-        writer,
-        formatedCreatedAtDate,
-        treatmentArray,
-        ratingObj,
-        formatedTreatmentDate,
-        imageArray,
-        isCurUserLikeProp,
-        likeCountProp,
-        commentCount,
-        isCurUserScrapProp,
-        dentalObj,
-        visibleElapsedTime,
-        elapsedTimeText,
-      )
+          reviewId,
+          writer,
+          formatedCreatedAtDate,
+          treatmentArray,
+          ratingObj,
+          formatedTreatmentDate,
+          imageArray,
+          isCurUserLikeProp,
+          likeCountProp,
+          commentCount,
+          isCurUserScrapProp,
+          dentalObj,
+          visibleElapsedTime,
+          elapsedTimeText,
+        );
       }}>
       <Container>
         <ProfileContainer>
@@ -583,8 +581,9 @@ const ReviewItem = ({
               <ScrapIcon
                 source={
                   isCurUserScrapProp
-                  ? require('~/Assets/Images/Indicator/ic_scrap_focus.png')
-                  : require('~/Assets/Images/Indicator/list/ic_scrap_unfocus.png')}
+                    ? require('~/Assets/Images/Indicator/ic_scrap_focus.png')
+                    : require('~/Assets/Images/Indicator/list/ic_scrap_unfocus.png')
+                }
               />
               <ScrapText>{'저장하기'}</ScrapText>
             </ScrapContainer>
@@ -596,8 +595,12 @@ const ReviewItem = ({
 };
 
 const isEqual = (prevItem: any, nextItem: any) => {
-  return prevItem.reviewId === nextItem.reviewId && prevItem.isCurUserLikeProp === nextItem.isCurUserLikeProp && prevItem.isCurUserScrapProp === nextItem.isCurUserScrapProp
-}
+  return (
+    prevItem.reviewId === nextItem.reviewId &&
+    prevItem.isCurUserLikeProp === nextItem.isCurUserLikeProp &&
+    prevItem.isCurUserScrapProp === nextItem.isCurUserScrapProp
+  );
+};
 
 const MemoizedReviewItem = React.memo(ReviewItem, isEqual);
 

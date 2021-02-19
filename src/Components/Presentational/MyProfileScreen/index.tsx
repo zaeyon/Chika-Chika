@@ -310,6 +310,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
       nickname: item.user.nickname,
       profileImage: item.user.profileImg,
       userId: item.userId,
+      img_thumbNail: item.user.img_thumbNail,
     };
 
     let elapsedTimeText = '';

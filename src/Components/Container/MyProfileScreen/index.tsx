@@ -123,7 +123,12 @@ const MyProfileScreen = ({navigation, route}: Props) => {
           if (response.length === 0) {
             setIsReviewDataFinish(true);
           }
-          dispatch(allActions.reviewListActions.setMyReviews(response));
+          dispatch(
+            allActions.reviewListActions.setMyReviews([
+              ...reviewData,
+              ...response,
+            ]),
+          );
           setIsReviewEndReached(false);
         });
       }

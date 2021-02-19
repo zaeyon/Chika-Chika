@@ -5,7 +5,6 @@ import CarouselContent from '~/Components/Container/CommunityListScreen/Carousel
 const ContainerView = Styled.View`
 width: 100%;
 height: auto;
-margin-bottom: 16px;
 `;
 
 const ContentTitleText = Styled.Text`

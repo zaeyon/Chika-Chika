@@ -141,9 +141,9 @@ const GeneralSettingScreen = ({changeNotificationSetting, profile}: Props) => {
       isEventAlertEnabled,
     );
     changeNotificationSetting({
-      like: isLikesAlertEnabled,
-      comment: isCommentsAlertEnabled,
-      event: isEventAlertEnabled,
+      like: String(isLikesAlertEnabled),
+      comment: String(isCommentsAlertEnabled),
+      event: String(isEventAlertEnabled),
     });
   }, [isLikesAlertEnabled, isCommentsAlertEnabled, isEventAlertEnabled]);
 

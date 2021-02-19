@@ -327,10 +327,97 @@ const HomeInfoContent = ({
             },
           ],
         }}>
-        <TopTitleText>{'영통동'}</TopTitleText>
+        <TopTitleText>{'우리동네'}</TopTitleText>
         <TopTitleBoldText>{'치과 정보 확인하세요'}</TopTitleBoldText>
       </TopTitleView>
+      <HeaderContainerView>
+        <HeaderContentView
+          as={Animated.View}
+          style={{
+            backgroundColor: '#F5F7F9',
+            opacity: secondY,
+            transform: [
+              {
+                translateY: secondY.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [5, 0],
+                  extrapolate: 'clamp',
+                }),
+              },
 
+              {
+                scale: secondY.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.98, 1],
+                  extrapolate: 'clamp',
+                }),
+              },
+            ],
+          }}>
+          <HeaderContentText>{'지금 내 동네'}</HeaderContentText>
+          <HeaderTitleContainerView>
+            <LocationHighlightContainerView>
+              <LocationUnderlineView
+                as={Animated.View}
+                style={{
+                  opacity: hometownScale.interpolate({
+                    inputRange: [1, 1.2],
+                    outputRange: [1, 0],
+                    extrapolate: 'clamp',
+                  }),
+                }}
+              />
+              <HeaderTitleText
+                as={Animated.Text}
+                style={{
+                  transform: [{scale: hometownScale}],
+                }}>
+                {selectedHometown?.emdName}
+              </HeaderTitleText>
+            </LocationHighlightContainerView>
+          </HeaderTitleContainerView>
+          <TouchableWithoutFeedback onPress={() => moveToHomeTownSetting()}>
+            <HeaderContentButtonView>
+              <HeaderContentButtonText>{'동네설정'}</HeaderContentButtonText>
+            </HeaderContentButtonView>
+          </TouchableWithoutFeedback>
+        </HeaderContentView>
+
+        <HeaderContentView
+          as={Animated.View}
+          style={{
+            marginLeft: 8,
+            backgroundColor: '#EFFAFF',
+            opacity: secondY,
+            transform: [
+              {
+                translateY: secondY.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [5, 0],
+                  extrapolate: 'clamp',
+                }),
+              },
+
+              {
+                scale: secondY.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.98, 1],
+                  extrapolate: 'clamp',
+                }),
+              },
+            ],
+          }}>
+          <HeaderContentText>{'나의 치아 상태'}</HeaderContentText>
+          <HeaderTitleContainerView>
+            <HeaderTitleText>{'체크하러 가기'}</HeaderTitleText>
+          </HeaderTitleContainerView>
+          <HeaderContentButtonView>
+            <HeaderContentButtonText style={{color: '#00D1FF'}}>
+              {'확인하기'}
+            </HeaderContentButtonText>
+          </HeaderContentButtonView>
+        </HeaderContentView>
+      </HeaderContainerView>
       <LocalInfoContainerView
         as={Animated.View}
         style={{
@@ -379,7 +466,7 @@ const HomeInfoContent = ({
           </LocalInfoDescriptionView>
         </LocalInfoContentView>
       </LocalInfoContainerView>
-      <BannerImage
+      {/* <BannerImage
         as={Animated.Image}
         onLoadEnd={() => {}}
         style={{
@@ -396,7 +483,7 @@ const HomeInfoContent = ({
           resizeMode: 'contain',
         }}
         source={require('~/Assets/Images/Home/banner_1.png')}
-      />
+      /> */}
     </ContainerView>
   );
 };

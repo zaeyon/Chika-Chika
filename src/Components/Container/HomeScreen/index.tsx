@@ -88,6 +88,13 @@ font-size: 16px;
 line-height: 24px;
 color: #FFFFFF;
 `;
+
+const BannerImage = Styled.Image`
+
+margin-bottom: 16px;
+margin: 0px 16px;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -487,18 +494,19 @@ const HomeScreen = ({navigation, route}: Props) => {
           moveToClinicDetail={() => console.log('moveToClinicDetail')}
         />
 
-        <HomeCommunityContent
-          selectedHometown={selectedHometown?.emdName}
-          postData={postData}
-          moveToCommunityDetail={moveToCommunityDetail}
-          moveToAnotherProfile={moveToAnotherProfile}
-        />
         <HomeReviewContent
           selectedHometown={selectedHometown?.emdName}
           tagFilterItems={tagFilterItems}
           reviewData={reviewData}
           moveToReviewDetail={moveToReviewDetail}
         />
+        <HomeCommunityContent
+          selectedHometown={selectedHometown?.emdName}
+          postData={postData}
+          moveToCommunityDetail={moveToCommunityDetail}
+          moveToAnotherProfile={moveToAnotherProfile}
+        />
+        <BannerImage source={require('~/Assets/Images/Home/banner_1.png')} />
       </ContentScrollView>
 
       <FloatingButtonView
