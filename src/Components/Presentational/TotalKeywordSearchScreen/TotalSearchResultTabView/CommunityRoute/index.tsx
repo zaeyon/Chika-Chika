@@ -27,14 +27,12 @@ background-color: #F5F7F9;
 `;
 
 interface Props {
-  isRequestChanged: boolean;
   fetchSearchResult: any;
   navigation: any;
   renderHeaderComponent: any;
 }
 
 const CommunityRoute = ({
-  isRequestChanged,
   fetchSearchResult,
   navigation,
   renderHeaderComponent,
@@ -62,44 +60,7 @@ const CommunityRoute = ({
   );
 
   useEffect(() => {
-    if (!isRequestChanged) {
-      setOrder('createdAt');
-      const form = {
-        pathType: 'community',
-        communityType: 'All',
-        region,
-        cityId: String(selectedHometown.id),
-        order: 'createdAt',
-        offset: 0,
-        limit: 10,
-      };
-      fetchSearchResult(form, (response: any) => {
-        const data = {
-          type,
-          posts: response,
-        };
-        if (
-          JSON.stringify(response).replace(
-            /"createdDiff\(second\)\"\:\d*\,/gi,
-            '',
-          ) !==
-          JSON.stringify(postData).replace(
-            /"createdDiff\(second\)\"\:\d*\,/gi,
-            '',
-          )
-        ) {
-          console.log('liked post diff1');
-          LayoutAnimation.configureNext(
-            LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-          );
-
-          dispatch(allActions.communityActions.setPosts(data));
-        }
-      });
-    }
-  }, [isRequestChanged]);
-
-  useEffect(() => {
+    console.log('selected hometown changed');
     setOrder('createdAt');
     setRegion(selectedHometown.id === -1 ? 'all' : 'residence');
     const form = {
@@ -418,8 +379,8 @@ const CommunityRoute = ({
           setFloatVisible={setFloatVisible}
           moveToHomeTownSetting={moveToHomeTownSetting}
           style={{
-            top: 55,
             right: 16,
+            top: 54,
           }}
         />
       ) : null}

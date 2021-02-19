@@ -1,38 +1,25 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
+import {ActivityIndicator, LayoutAnimation} from 'react-native';
 
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import SavedHospitalScreen from '~/Components/Presentational/MyProfileScreen/SavedHospitalScreen';
+
+// Redux
+import {useSelector} from 'react-redux';
+// Routes
+import GETUserSavedHospitals from '~/Routes/User/GETUserSavedHospitals';
+import DELETEDentalScrap from '~/Routes/Dental/DELETEDentalScrap';
 
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
  background-color: #F5F7F9;
 `;
 
-const EmptyIndicatorView = Styled.View`
-position: absolute;
-width: 100%;
-height: 100%;
+const ActivityIndicatorContainerView = Styled.View`
+flex: 1;
 justify-content: center;
 align-items: center;
-background: #F5F7F9;
-z-index: -1;
-`;
-
-const EmptyIndicatorImage = Styled.Image`
-margin-bottom: 12px;
-`;
-
-const EmptyIndicatorText = Styled.Text`
-font-weight: normal;
-font-size: 16px;
-line-height: 24px;
-color: #9AA2A9;
-`;
-
-const BannerImage = Styled.Image`
-width: 100%;
-margin: 8px 0px;
 `;
 
 interface Props {
@@ -41,34 +28,46 @@ interface Props {
 }
 
 const SavedHospitalTabScreen = ({navigation, route}: Props) => {
-  const [hospitals, setHospitals] = useState([{id: 1}]);
-  const headerLeftAction = () => {
-    navigation.goBack();
-  };
+  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const [hospitals, setHospitals] = useState(null);
 
+  useEffect(() => {
+    GETUserSavedHospitals({jwtToken}).then((response: any) => {
+      setHospitals(response);
+    });
+  }, []);
+
+  const deleteSavedHospital = useCallback(
+    (dentalId) => {
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+      );
+      DELETEDentalScrap({jwtToken, dentalId}).then((response) => {
+        GETUserSavedHospitals({jwtToken}).then((response: any) => {
+          setHospitals(response);
+        });
+      });
+    },
+    [jwtToken],
+  );
   return (
     <ContainerView>
       <NavigationHeader
         headerLeftProps={{
-          onPress: headerLeftAction,
+          onPress: () => navigation.goBack(),
           type: 'arrow',
         }}
         headerTitle="찜한 병원"
       />
-      {hospitals.length === 0 ? (
-        <>
-          <BannerImage
-            source={require('~/Assets/Images/Banner/banner_review_starbucks.png')}
-          />
-          <EmptyIndicatorView>
-            <EmptyIndicatorImage
-              source={require('~/Assets/Images/ic_noData.png')}
-            />
-            <EmptyIndicatorText>{'찜한 내역이 없습니다.'}</EmptyIndicatorText>
-          </EmptyIndicatorView>
-        </>
+      {hospitals === null ? (
+        <ActivityIndicatorContainerView>
+          <ActivityIndicator />
+        </ActivityIndicatorContainerView>
       ) : (
-        <SavedHospitalScreen hospitals={hospitals} />
+        <SavedHospitalScreen
+          hospitals={hospitals}
+          deleteSavedHospital={deleteSavedHospital}
+        />
       )}
     </ContainerView>
   );

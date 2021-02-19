@@ -171,7 +171,7 @@ const ReservationScreen = ({navigation, route, reservations}: Props) => {
         </TouchableWithoutFeedback>
         <ReservationItemTitleView>
           <ReservationItemTitleText>
-            {'2020.11.12(화)'}
+            {`${item.date.replace(/-/gi, '.')} (${item.day})`}
           </ReservationItemTitleText>
         </ReservationItemTitleView>
         <TouchableWithoutFeedback>
@@ -179,10 +179,10 @@ const ReservationScreen = ({navigation, route, reservations}: Props) => {
             <ReservationItemImage />
             <ReservationItemDetailView>
               <ReservationItemDateText>
-                {'오후 3:00 전화'}
+                {`${item.time.slice(0, -3)} 전화`}
               </ReservationItemDateText>
               <ReservationItemClinicText>
-                {'광교E편한치과의원'}
+                {item.originalName}
               </ReservationItemClinicText>
               <ReservationItemNavigationView>
                 <ReservationItemNavigationText>
@@ -197,10 +197,10 @@ const ReservationScreen = ({navigation, route, reservations}: Props) => {
         </TouchableWithoutFeedback>
         <ReservationButtonContainerView>
           <CreateReviewTouchableOpacity>
-            <CreateReviewText>{'리뷰작성'}</CreateReviewText>
+            <CreateReviewText>{'리뷰남기기'}</CreateReviewText>
           </CreateReviewTouchableOpacity>
           <ReReservationTouchableOpacity>
-            <ReReservationText>{'다시예약'}</ReReservationText>
+            <ReReservationText>{'재예약'}</ReReservationText>
           </ReReservationTouchableOpacity>
         </ReservationButtonContainerView>
       </ReservationItemContainerView>

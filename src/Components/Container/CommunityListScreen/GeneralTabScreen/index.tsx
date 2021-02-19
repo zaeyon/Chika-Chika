@@ -30,12 +30,50 @@ import DELETESocialScrap from '~/Routes/Community/social/DELETESocialScrap';
 
 const ContainerView = Styled.View`
  flex: 1;
- background-color: #FFFFFF;
+ background-color: #F5F7F9;
 `;
-const ActivityIndicatorContainerView = Styled.View`
-width: ${wp('100%')}px;
-height: auto;
-padding-bottom: 18px;
+
+const EmptyIndicatorContainerView = Styled.View`
+width: 100%;
+height: 100%;
+background: #FFFFFF;
+padding-top: 56px;
+`;
+const EmptyIndicatorView = Styled.View`
+align-items: center;
+justify-content: center;
+`;
+
+const EmptyIndicatorImage = Styled.Image`
+margin-bottom: 12px;
+`;
+
+const EmptyIndicatorText = Styled.Text`
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+color: #9AA2A9;
+margin-bottom: 16px;
+`;
+
+const EmptyIndicatorButtonView = Styled.View`
+padding: 14px 16px;
+flex-direction: row;
+align-items: center;
+border-width: 1px;
+border-color: #E2E6ED;
+border-radius: 100px;
+`;
+
+const EmptyIndicatorButtonText = Styled.Text`
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+color: #131F3C;
+`;
+
+const EmptyIndicatorButtonImage = Styled.Image`
+margin-left: 4px;
 `;
 
 interface Props {
@@ -300,6 +338,14 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
     [],
   );
 
+  const moveToCreatePost = useCallback(() => {
+    navigation.navigate('CommunityPostUploadStackScreen', {
+      data: {
+        type: '수다방',
+      },
+    });
+  }, []);
+
   const moveToAnotherProfile = useCallback(
     (userId: string, nickname: string, profileImageUri: string) => {
       navigation.navigate('AnotherProfileStackScreen', {
@@ -375,12 +421,36 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
           moveToHomeTownSetting={moveToHomeTownSetting}
         />
         <TopBanner type="freetalk" />
-        <CarouselContent
-          postData={postData}
-          titleText="🔥 지금 뜨는 인기 글"
-          moveToCommunityDetail={moveToCommunityDetail}
-          moveToAnotherProfile={moveToAnotherProfile}
-        />
+        {postData.length === 0 ? (
+          <EmptyIndicatorContainerView>
+            <EmptyIndicatorView>
+              <EmptyIndicatorImage
+                source={require('~/Assets/Images/ic_noData.png')}
+              />
+              <EmptyIndicatorText>{'게시글이 없습니다.'}</EmptyIndicatorText>
+              <TouchableWithoutFeedback onPress={() => moveToCreatePost()}>
+                <EmptyIndicatorButtonView>
+                  <EmptyIndicatorButtonText>
+                    <EmptyIndicatorButtonText style={{color: '#00D1FF'}}>
+                      {'첫번째 수다글'}
+                    </EmptyIndicatorButtonText>
+                    {' 남기러 가기'}
+                  </EmptyIndicatorButtonText>
+                  <EmptyIndicatorButtonImage
+                    source={require('~/Assets/Images/Arrow/ic_postReviewArrow.png')}
+                  />
+                </EmptyIndicatorButtonView>
+              </TouchableWithoutFeedback>
+            </EmptyIndicatorView>
+          </EmptyIndicatorContainerView>
+        ) : (
+          <CarouselContent
+            postData={postData}
+            titleText="🔥 지금 뜨는 인기 글"
+            moveToCommunityDetail={moveToCommunityDetail}
+            moveToAnotherProfile={moveToAnotherProfile}
+          />
+        )}
       </>
     );
   }, [

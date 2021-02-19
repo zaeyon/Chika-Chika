@@ -29,7 +29,6 @@ margin-bottom: 12px;
 const TopTitleBoldText = Styled.Text`
 font-weight: bold;
 font-size: 24px;
-line-height: 24px;
 `;
 
 const HeaderContainerView = Styled.View`
@@ -383,6 +382,7 @@ const HomeInfoContent = ({
             </HeaderContentButtonView>
           </TouchableWithoutFeedback>
         </HeaderContentView>
+
         <HeaderContentView
           as={Animated.View}
           style={{
@@ -466,7 +466,7 @@ const HomeInfoContent = ({
           </LocalInfoDescriptionView>
         </LocalInfoContentView>
       </LocalInfoContainerView>
-      <BannerImage
+      {/* <BannerImage
         as={Animated.Image}
         onLoadEnd={() => {}}
         style={{
@@ -483,7 +483,7 @@ const HomeInfoContent = ({
           resizeMode: 'contain',
         }}
         source={require('~/Assets/Images/Home/banner_1.png')}
-      />
+      /> */}
     </ContainerView>
   );
 };

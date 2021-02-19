@@ -100,19 +100,50 @@ padding: 9px;
 const DeleteImage = Styled.Image`
 `;
 
+const EmptyIndicatorView = Styled.View`
+position: absolute;
+width: 100%;
+height: 100%;
+justify-content: center;
+align-items: center;
+background: #F5F7F9;
+z-index: -1;
+`;
+
+const EmptyIndicatorImage = Styled.Image`
+margin-bottom: 12px;
+`;
+
+const EmptyIndicatorText = Styled.Text`
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+color: #9AA2A9;
+`;
+
+const BannerImage = Styled.Image`
+width: 100%;
+margin: 8px 0px;
+`;
+
 interface Props {
+  deleteSavedHospital: (dentalId: string) => void;
   hospitals: any;
 }
 
-const SavedHospitalScreen = ({hospitals}: Props) => {
+const SavedHospitalScreen = ({deleteSavedHospital, hospitals}: Props) => {
   const renderSavedHospitalItemView = ({item, index}: any) => {
     return (
       <ContentContainerView>
         <ContentHorizontalView>
-          <ContentImage />
+          <ContentImage
+            source={{
+              uri: item.dentalClinicProfileImgs[0],
+            }}
+          />
           <ContentDescriptionView>
-            <ContentTitleText>광교E편한치과의원</ContentTitleText>
-            <ContentText>경기도 수원시 영통구 이의동</ContentText>
+            <ContentTitleText>{item.originalName}</ContentTitleText>
+            <ContentText>{item.local}</ContentText>
             <TouchableWithoutFeedback>
               <ContentHighlightView>
                 <ContentHighlightText>{'병원상세정보'}</ContentHighlightText>
@@ -132,7 +163,7 @@ const SavedHospitalScreen = ({hospitals}: Props) => {
             <ContentButtonText>{'바로예약'}</ContentButtonText>
           </ContentButtonView>
         </TouchableHighlight>
-        <TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={() => deleteSavedHospital(item.id)}>
           <DeleteImageView>
             <DeleteImage
               source={require('~/Assets/Images/MyPage/delete_reservation.png')}
@@ -145,12 +176,26 @@ const SavedHospitalScreen = ({hospitals}: Props) => {
 
   return (
     <ContainerView>
-      <FlatList
-        data={hospitals}
-        keyExtractor={(item) => item.id}
-        alwaysBounceVertical={false}
-        renderItem={renderSavedHospitalItemView}
-      />
+      {hospitals.length === 0 ? (
+        <>
+          <BannerImage
+            source={require('~/Assets/Images/Banner/banner_review_starbucks.png')}
+          />
+          <EmptyIndicatorView>
+            <EmptyIndicatorImage
+              source={require('~/Assets/Images/ic_noData.png')}
+            />
+            <EmptyIndicatorText>{'찜한 내역이 없습니다.'}</EmptyIndicatorText>
+          </EmptyIndicatorView>
+        </>
+      ) : (
+        <FlatList
+          data={hospitals}
+          keyExtractor={(item) => item.id}
+          alwaysBounceVertical={false}
+          renderItem={renderSavedHospitalItemView}
+        />
+      )}
     </ContainerView>
   );
 };

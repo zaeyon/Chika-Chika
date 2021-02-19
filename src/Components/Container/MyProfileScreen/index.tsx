@@ -15,6 +15,7 @@ import MyProfile from '~/Components/Presentational/MyProfileScreen';
 import BottomSheet from '~/Components/Presentational/BottomSheet';
 import SlideUpPanel from '~/Components/Presentational/MyProfileScreen/SlideUpPanel';
 //Routes
+import GETUserInfoById from '~/Routes/User/GETUserInfoById';
 import GETUserReviewPosts from '~/Routes/Community/showPosts/GETUserReviewPosts';
 import GETUserCommunityPosts from '~/Routes/Community/showPosts/GETUserCommunityPost';
 import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
@@ -65,6 +66,23 @@ const MyProfileScreen = ({navigation, route}: Props) => {
   const profile = useSelector((state: any) => state.currentUser.profile);
   const userId = profile.id;
 
+  const updateUserInfo = useCallback(
+    (callback?: any) => {
+      GETUserInfoById(jwtToken, userId).then((response: any) => {
+        dispatch(
+          allActions.userActions.setUser({
+            profile: {
+              ...profile,
+              ...response,
+            },
+          }),
+        );
+        callback();
+      });
+    },
+    [jwtToken, userId, profile],
+  );
+
   const onReviewRefresh = useCallback(() => {
     const form = {
       type: type,
@@ -76,9 +94,11 @@ const MyProfileScreen = ({navigation, route}: Props) => {
     fetchReviewData(form, (response: any) => {
       setIsReviewDataFinish(false);
       dispatch(allActions.reviewListActions.setMyReviews(response));
-      setIsReviewRefreshing(false);
+      updateUserInfo(() => {
+        setIsReviewRefreshing(false);
+      });
     });
-  }, [jwtToken, order]);
+  }, [jwtToken, order, updateUserInfo]);
 
   const onReviewEndReached = useCallback(
     (info: any) => {
@@ -103,7 +123,12 @@ const MyProfileScreen = ({navigation, route}: Props) => {
           if (response.length === 0) {
             setIsReviewDataFinish(true);
           }
-          dispatch(allActions.reviewListActions.setMyReviews(response));
+          dispatch(
+            allActions.reviewListActions.setMyReviews([
+              ...reviewData,
+              ...response,
+            ]),
+          );
           setIsReviewEndReached(false);
         });
       }
@@ -127,9 +152,11 @@ const MyProfileScreen = ({navigation, route}: Props) => {
         posts: response,
       };
       dispatch(allActions.communityActions.setPosts(form));
-      setIsCommunityRefreshing(false);
+      updateUserInfo(() => {
+        setIsCommunityRefreshing(false);
+      });
     });
-  }, [jwtToken, order]);
+  }, [jwtToken, order, updateUserInfo]);
 
   const onCommunityEndReached = useCallback(
     (info: any) => {

@@ -126,7 +126,6 @@ interface FetchProps {
   limit: number;
 }
 interface Props {
-  isRequestChanged: boolean;
   searchResult: any;
   reviewSearchResult: any;
   communitySearchResult: any;
@@ -149,7 +148,6 @@ interface Props {
 }
 
 const TotalSearchResultTabView = ({
-  isRequestChanged,
   searchResult,
   communitySearchResult,
   reviewSearchResult,
@@ -231,7 +229,6 @@ const TotalSearchResultTabView = ({
       case 'total':
         return (
           <TotalRoute
-            isRequestChanged={isRequestChanged}
             result={searchResult}
             fetchSearchResult={fetchSearchResult}
             navigation={navigation}
@@ -240,7 +237,6 @@ const TotalSearchResultTabView = ({
       case 'community':
         return (
           <CommunityRoute
-            isRequestChanged={isRequestChanged}
             fetchSearchResult={fetchSearchResult}
             navigation={navigation}
             renderHeaderComponent={renderHeaderComponent}
@@ -249,7 +245,6 @@ const TotalSearchResultTabView = ({
       case 'review':
         return (
           <ReviewRoute
-            isRequestChanged={isRequestChanged}
             fetchSearchResult={fetchSearchResult}
             navigation={navigation}
             renderHeaderComponent={renderHeaderComponent}
@@ -258,7 +253,6 @@ const TotalSearchResultTabView = ({
       case 'dental':
         return (
           <ClinicRoute
-            isRequestChanged={isRequestChanged}
             result={clinicSearchResult}
             fetchSearchResult={fetchSearchResult}
             navigation={navigation}
@@ -267,7 +261,6 @@ const TotalSearchResultTabView = ({
       case 'event':
         return (
           <EventRoute
-            isRequestChanged={isRequestChanged}
             result={eventSearchResult}
             fetchSearchResult={fetchSearchResult}
             navigation={navigation}

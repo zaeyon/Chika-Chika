@@ -97,17 +97,25 @@ const CommunityListScreen = ({navigation, route}: Props) => {
   const hometown = currentUser.hometown;
   const jwtToken = currentUser.jwtToken;
 
-  const moveToTotalKeywordSearch = () => {
+  const moveToTotalKeywordSearch = useCallback(() => {
     navigation.navigate('TotalKeywordSearchStackScreen', {
       screen: 'TotalKeywordSearchScreen',
     });
-  };
+  }, []);
 
-  const moveToNotificationList = () => {
+  const moveToNotificationList = useCallback(() => {
     navigation.navigate('NotificationStackScreen', {
       screen: 'NotificationListScreen',
     });
-  };
+  }, []);
+
+  const moveToCreatePost = useCallback(() => {
+    navigation.navigate('CommunityPostUploadStackScreen', {
+      data: {
+        id: -1,
+      },
+    });
+  }, []);
 
   useEffect(() => {
     console.log('question initialize');
@@ -162,14 +170,7 @@ const CommunityListScreen = ({navigation, route}: Props) => {
               source={require('~/Assets/Images/TopTab/ic/alarm/focus.png')}
             />
           </HeaderIconTouchableOpacity>
-          <HeaderIconTouchableOpacity
-            onPress={() =>
-              navigation.navigate('CommunityPostUploadStackScreen', {
-                data: {
-                  id: -1,
-                },
-              })
-            }>
+          <HeaderIconTouchableOpacity onPress={() => moveToCreatePost()}>
             <Image
               source={require('~/Assets/Images/TopTab/ic/write/black.png')}
             />
