@@ -17,6 +17,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {useSelector} from 'react-redux';
+import CallDetectorManager from 'react-native-call-detection';
 
 // Local Components
 import DentalCollapsibleTabView from '~/Components/Presentational/DentalDetailScreen/DentalCollapsibleTabView';
@@ -24,7 +25,7 @@ import DentalBottomBar from '~/Components/Presentational/DentalDetailScreen/Dent
 import ReviewItem from '~/Components/Presentational/ReviewItem';
 import ToastMessage from '~/Components/Presentational/ToastMessage';
 
-import {callPhoneNumber} from '~/method/callPhoneNumber';
+import {callDentalPhoneNumber} from '~/method/callDentalPhoneNumber';
 
 // Routes
 import GETDentalDetail from '~/Routes/Dental/GETDentalDetail';
@@ -199,9 +200,8 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
   }
 
   const clickDentalCallReservation = () => {
-      callPhoneNumber(dentalDetailInfo.clinicInfoHeader.telNumber);
+      callDentalPhoneNumber(dentalDetailInfo.clinicInfoHeader.telNumber, jwtToken, dentalId);
   }
-
 
   const moveToReviewDetail = (
     reviewId: number,
@@ -265,6 +265,7 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
           {!loadingGetDentalDetail && (
           <DentalTabContainer>
             <DentalCollapsibleTabView
+            isNoDentalImage={isNoDentalImage}
             navigation={navigation}
             dentalImageArray={dentalImageArray}
             moveToReviewDetail={moveToReviewDetail}

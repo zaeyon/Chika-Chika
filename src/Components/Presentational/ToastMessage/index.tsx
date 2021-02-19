@@ -36,6 +36,7 @@ interface Props {
 }
 
 class ToastMessage extends Component {
+  
   static show = (message: string) => {
     const positionY = new Animated.Value(0);
     Animated.spring(positionY, {

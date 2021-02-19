@@ -50,13 +50,14 @@ import ContentPostScreen from '~/Components/Container/ReviewUploadScreen/Content
 import TeethCamera from '~/Components/Container/TeethCamera';
 import Gallery from '~/Components/Container/Gallery';
 import GallerySelectOne from '~/Components/Container/GallerySelectOne';
-import ReceiptRegisterScreen from '~/Components/Container/ReviewUploadScreen/ReceiptRegisterScreen';
+import ReviewGuideScreen from '~/Components/Container/ReviewUploadScreen/ReviewGuideScreen';
 import ReceiptCamera from '~/Components/Container/ReceiptCamera';
 import TakenPictureScreen from '~/Components/Container/ReviewUploadScreen/TakenPictureScreen';
 import DentalNameSearchScreen from '~/Components/Container/ReviewUploadScreen/DentalNameSearchScreen';
 import TreatSearchScreen from '~/Components/Container/ReviewUploadScreen/TreatSearchScreen';
 import DetailPriceScreen from '~/Components/Container/ReviewUploadScreen/DetailPriceScreen';
 import RatingScreen from '~/Components/Container/ReviewUploadScreen/RatingScreen';
+import SelectProofImageScreen from '~/Components/Container/ReviewUploadScreen/SelectProofImageScreen';
 
 // My Profile Stack Screen
 import MyProfileScreen from '~/Components/Container/MyProfileScreen';
@@ -347,9 +348,16 @@ function NearDentalMapStackScreen() {
         name="DentalTotalSearchScreen"
         component={DentalTotalSearchScreen}
         options={{
+          gestureEnabled: false,
           transitionSpec: {
-            open: staticConfig,
-            close: staticConfig,
+            open: {
+              animation: 'timing',
+              config: {duration: 0},
+            },
+            close: {
+              animation: 'timing',
+              config: {duration: 0},
+            },
           },
         }}
       />
@@ -467,8 +475,8 @@ function ReviewUploadStackScreen() {
   return (
     <ReviewUploadStack.Navigator headerMode="none">
       <ReviewUploadStack.Screen
-        name="ReceiptRegisterScreen"
-        component={ReceiptRegisterScreen}
+        name="ReviewGuideScreen"
+        component={ReviewGuideScreen}
         options={{
           gestureEnabled: false,
         }}
@@ -549,6 +557,9 @@ function ReviewUploadStackScreen() {
       <ReviewUploadStack.Screen
         name="ImageSelectOneStackScreen"
         component={ImageSelectOneStackScreen}/>
+      <ReviewUploadStack.Screen
+        name="SelectProofImageScreen"
+        component={SelectProofImageScreen}/>
     </ReviewUploadStack.Navigator>
   );
 }

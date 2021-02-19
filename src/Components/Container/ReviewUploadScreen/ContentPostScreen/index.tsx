@@ -30,6 +30,7 @@ import {uploadImageToS3} from '~/method/uploadImageToS3';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import ParagraphItem from '~/Components/Presentational/ReviewUploadScreen/ParagraphItem';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
+import ToastMessage from '~/Components/Presentational/ToastMessage';
 
 // route
 import POSTReviewUpload from '~/Routes/Review/POSTReviewUpload';
@@ -496,7 +497,8 @@ const ContentPostScreen = ({navigation, route}: Props) => {
       setParagraphArray(tmpParagraphArray);
 
     } else {
-      Alert.alert('이전 문단에 내용을 입력해주세요!');
+      ToastMessage.show("더이상 문단을 만들 수 없습니다.")
+
     }
   };
 
@@ -546,30 +548,6 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   };
 
   const goBack = () => {
-    // if (route.params?.requestType === 'post') {
-    //   Alert.alert('게시글 작성을 취소하시겠어요?', '', [
-    //     {
-    //       text: '확인',
-    //       onPress: () => {
-    //         navigation.navigate('HomeScreen');
-    //       },
-    //     },
-    //     {
-    //       text: '취소',
-    //       onPress: () => 0,
-    //       style: 'cancel',
-    //     },
-    //   ]);
-    // } else if (route.params?.requestType === 'revise') {
-    //   Keyboard.dismiss();
-
-    //   setTimeout(() => {
-    //     navigation.navigate('ReviewDetailScreen', {
-    //       isCancelRevise: true,
-    //     });
-    //   }, 10);
-    // }
-
     navigation.navigate("ReviewMetaDataScreen", {
       paragraphArray: paragraphArray,
     });
@@ -583,7 +561,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     console.log('uploadReview route.params?.ratingObj', route.params?.ratingObj);
     console.log('uploadReview route.params?.treatmentDate', route.params?.treatmentDate);
     console.log('uploadReview route.params?.totalPrice', route.params?.totalPrice);
-    console.log('uploadReview route.params?.selectedProofImages', route.params?.selectedProofImages);
+    console.log('uploadReview route.params?.selectedProofImage', route.params?.selectedProofImage);
     console.log('uploadReview route.params?.selectedDentalImages', route.params?.selectedDentalImages);
     console.log('uploadReview route.params?.requestType', route.params?.requestType);
 
@@ -592,14 +570,13 @@ const ContentPostScreen = ({navigation, route}: Props) => {
 
     // 진료 & 질병 항목 정보
     const tmpTreatmentArray = route.params?.treatmentArray;
+    const tmpSelectedProofImage = route.params?.selectedProofImage;
 
     // 별점 정보
     const starRate_cost = route.params?.ratingObj.priceRating;
     const starRate_treatment = route.params?.ratingObj.treatmentRating;
     const starRate_service = route.params?.ratingObj.serviceRating;
 
-    // 영수증 인증 유무
-    const certified_bill = certifiedBill;
 
     // 병원 정보
     const dentalClinicId = route.params?.dentalObj.id;
@@ -610,9 +587,13 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     // 전체 가격 정보
     const totalPrice = route.params?.totalPrice;
 
+
     const formatedParagraphArray = await formatParagraph(tmpParagraphArray);
     const formatedTreatmentArray = await formatTreatment(tmpTreatmentArray);
-
+    let formattedProofImage = {}
+    if(tmpSelectedProofImage.uri) {
+    formattedProofImage = await formatProofImage(tmpSelectedProofImage)
+    }
 
     console.log('uploadReview formatedParagraph', formatedParagraphArray);
     console.log('uploadReview formatedTreatment', formatedTreatmentArray);
@@ -622,10 +603,10 @@ const ContentPostScreen = ({navigation, route}: Props) => {
       starRate_cost,
       starRate_treatment,
       starRate_service,
-      certified_bill,
       formatedTreatmentArray,
       dentalClinicId,
       formatedParagraphArray,
+      formattedProofImage,
       totalPrice,
       treatmentDate,
     })
@@ -655,8 +636,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     const starRate_treatment = route.params?.ratingObj.treatmentRating;
     const starRate_service = route.params?.ratingObj.serviceRating;
 
-    // 영수증 인증 유무
-    const certified_bill = certifiedBill;
+    const tmpSelectedProofImage = route.params?.selectedProofImage;
     
     // 병원 정보
     const dentalClinicId = route.params?.dentalObj.id;
@@ -669,7 +649,10 @@ const ContentPostScreen = ({navigation, route}: Props) => {
 
     const formatedParagraphArray = await formatParagraph(tmpParagraphArray);
     const formatedTreatmentArray = await formatTreatment(tmpTreatmentArray);
-    
+    let formattedProofImage = {}
+    if(tmpSelectedProofImage.uri) {
+    formattedProofImage = await formatProofImage(tmpSelectedProofImage)
+    }
     console.log('reviseReview formatedParagraph', formatedParagraphArray);
     console.log('reviseReview formatedTreatment', formatedTreatmentArray);
 
@@ -679,10 +662,10 @@ const ContentPostScreen = ({navigation, route}: Props) => {
       starRate_cost,
       starRate_treatment,
       starRate_service,
-      certified_bill,
       formatedTreatmentArray,
       dentalClinicId,
       formatedParagraphArray,
+      formattedProofImage,
       totalPrice,
       treatmentDate,
     })
@@ -830,66 +813,18 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   };
 
 
-  const formatProofImages = async (paragraphArray: Array<any>) => {
-    const tmpParagraphArray = await Promise.all(
-      paragraphArray.map(async (item: any, index: number) => {
-        if (item.image) {
-          console.log('formatParagraph item', item);
+  const formatProofImage = async (selectedProofImage: any) => {
 
-          if (item.isPreExis) {
-            console.log('기존에 있던 사진 item', item);
-            const paragraphObj = {
-              index: item.index,
-              location: item.image.uri,
-              key: item.id,
-              contentType: item.image.mimeType,
-              originalName: item.image.name,
-              size: item.image.size,
-              description: item.description ? item.description : null,
-              imgBeforeAfter: item.order,
-              width: item.image.width,
-              height: item.image.height,
-            };
+    const result: any = await uploadImageToS3(selectedProofImage, 'reviewBills');
 
-            return paragraphObj;
-          } else {
-            const result: any = await uploadImageToS3(item.image, 'reviews');
-
-            const paragraphObj = {
-              index: index,
-              location: result.response.location,
-              key: result.response.key,
-              contentType: result.type,
-              originalName: result.originalName,
-              size: result.size,
-              description: item.description ? item.description : null,
-              imgBeforeAfter: item.order,
-              width: result.width,
-              height: result.height,
-            };
-
-            return paragraphObj;
-          }
-        } else {
-          const paragraphObj = {
-            index: index,
-            description: item.description ? item.description : null,
-            location: null,
-            key: null,
-            mimeType: null,
-            originalName: null,
-            size: null,
-            imgBeforeAfters: null,
-            width: null,
-            height: null,
-          };
-
-          return paragraphObj;
-        }
-      }),
-    );
-
-    return tmpParagraphArray;
+    const tmpProofImage = {
+      location: result.response.location,
+      originalname: result.originalName,
+      mimetype: result.type,
+      size: result.size,
+    }
+    
+    return tmpProofImage;
   };
 
 

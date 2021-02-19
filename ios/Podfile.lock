@@ -200,6 +200,8 @@ PODS:
   - Permission-LocationWhenInUse (3.0.0):
     - RNPermissions
   - PromisesObjC (1.2.11)
+  - RCTCallDetection (1.9.0):
+    - React
   - RCTRequired (0.63.3)
   - RCTTypeSafety (0.63.3):
     - FBLazyVector (= 0.63.3)
@@ -537,6 +539,7 @@ DEPENDENCIES:
   - "kakao-login (from `../node_modules/@react-native-seoul/kakao-login`)"
   - Permission-LocationAlways (from `../node_modules/react-native-permissions/ios/LocationAlways`)
   - Permission-LocationWhenInUse (from `../node_modules/react-native-permissions/ios/LocationWhenInUse`)
+  - RCTCallDetection (from `../node_modules/react-native-call-detection`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
   - React (from `../node_modules/react-native/`)
@@ -644,6 +647,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-permissions/ios/LocationAlways"
   Permission-LocationWhenInUse:
     :path: "../node_modules/react-native-permissions/ios/LocationWhenInUse"
+  RCTCallDetection:
+    :path: "../node_modules/react-native-call-detection"
   RCTRequired:
     :path: "../node_modules/react-native/Libraries/RCTRequired"
   RCTTypeSafety:
@@ -783,6 +788,7 @@ SPEC CHECKSUMS:
   Permission-LocationAlways: 20c287ae79fbc5659a9cc95b32a725810f5529df
   Permission-LocationWhenInUse: e09ae67e8db2b1eeefb35f18ca59848d0785de5b
   PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
+  RCTCallDetection: 07da027560ada435ff38087f1f5c4de67ad48318
   RCTRequired: 48884c74035a0b5b76dbb7a998bd93bcfc5f2047
   RCTTypeSafety: edf4b618033c2f1c5b7bc3d90d8e085ed95ba2ab
   React: f36e90f3ceb976546e97df3403e37d226f79d0e3

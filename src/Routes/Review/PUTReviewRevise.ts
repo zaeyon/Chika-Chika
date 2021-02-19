@@ -7,15 +7,15 @@ interface params {
     starRate_cost: number,
     starRate_treatment: number,
     starRate_service: number,
-    certified_bill: boolean,
     formatedTreatmentArray: Array<object>,
     dentalClinicId: number,
     formatedParagraphArray: Array<object>,
+    formattedProofImage: any,
     totalPrice: number,
     treatmentDate: Date,
 }
 
-const PUTReviewRevise = ({jwtToken, reviewId, starRate_cost, starRate_treatment, starRate_service, certified_bill, formatedParagraphArray, dentalClinicId, formatedTreatmentArray, totalPrice, treatmentDate}: params) => {
+const PUTReviewRevise = ({jwtToken, reviewId, starRate_cost, starRate_treatment, starRate_service, formatedParagraphArray, dentalClinicId, formatedTreatmentArray, formattedProofImage, totalPrice, treatmentDate}: params) => {
 
     const uri = serverConfig.baseUri + `/api/v1/reviews?reviewId=${reviewId}`
 
@@ -33,7 +33,6 @@ const PUTReviewRevise = ({jwtToken, reviewId, starRate_cost, starRate_treatment,
         "starRate_cost":${starRate_cost},
         "starRate_treatment":${starRate_treatment},
         "starRate_service":${starRate_service},
-        "certified_bill":${certified_bill},
         "treatments":${JSON.stringify(formatedTreatmentArray)},
         "dentalClinicId":${dentalClinicId},
         "totalCost":${totalPrice},
@@ -41,11 +40,13 @@ const PUTReviewRevise = ({jwtToken, reviewId, starRate_cost, starRate_treatment,
     }`
 
     const stringfiedPara = JSON.stringify(formatedParagraphArray); 
+    const stringfiedProofImage = JSON.stringify(formattedProofImage);
 
     console.log("body", body);
 
     var formData = new FormData();
     formData.append("body", body);
+    formData.append("bills", stringfiedProofImage);
     formData.append("paragraphs", stringfiedPara);
 
     return new Promise((resolve, reject) => {

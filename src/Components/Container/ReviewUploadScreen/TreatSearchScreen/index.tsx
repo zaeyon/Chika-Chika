@@ -180,10 +180,10 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
   const [isActivatedFinish, setIsActivatedFinish] = useState<boolean>(false);
 
   useEffect(() => {
-    if (route.params?.selectedTreatList) {
-      setSelectedTreatmentArray(route.params?.selectedTreatList);
+    if (route.params?.selectedTreatmentArray) {
+      setSelectedTreatmentArray(route.params?.selectedTreatmentArray);
     }
-  }, [route.params?.selectedTreatList]);
+  }, [route.params?.selectedTreatmentArray]);
 
   useEffect(() => {
     if(selectedTreatmentArray.length > 0 && !isActivatedFinish) {
@@ -212,21 +212,6 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
   };
 
   const onPressFinishButton = () => {
-    // if (route.params?.requestPage === 'metadata') {
-    //   navigation.navigate('DetailPriceScreen', {
-    //     selectedTreatmentArray: selectedTreatmentArray,
-    //     keyboardSetting: true,
-    //     requestPage: 'treat',
-    //     requestType: route.params?.requestType,
-    //   });
-    // } else if (route.params?.requestPage === 'content') {
-    //   console.log('리뷰 내용 작성 화면');
-    //   navigation.navigate('ContentPostScreen', {
-    //     selectedTreatmentArray: selectedTreatmentArray,
-    //     requestType: route.params?.requestType,
-    //   });
-    // }
-
     navigation.navigate("ReviewMetaDataScreen", {
       selectedTreatmentArray: selectedTreatmentArray
     })

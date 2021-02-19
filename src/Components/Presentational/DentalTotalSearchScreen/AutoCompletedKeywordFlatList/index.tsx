@@ -31,10 +31,12 @@ const SearchResultFlatList = Styled(FlatList as new () => FlatList)`
 `;
 
 const RecentKeywordContainer = Styled.View`
-background-color: #ffffff;
+flex: 1;
+background-color: #F5F7F9;
 `;
 
 const RecentKeywoardHeaderContainer = Styled.View`
+background-color: #ffffff;
 flex-direction: row;
 align-items: center;
 justify-content: space-between;
@@ -342,7 +344,6 @@ const AutoCompletedKeywordFlatList = ({
           )}
           {searchRecordArray?.length > 0 && (
             <FlatList
-            contentContainerStyle={{paddingBottom: 150}}
             keyboardShouldPersistTaps={"always"}
             bounces={true}
             alwaysBounceVertical={true}

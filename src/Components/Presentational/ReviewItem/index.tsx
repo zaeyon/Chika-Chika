@@ -359,6 +359,7 @@ const ReviewItem = ({
 }: Props) => {
   
   console.log("ReviewItem render", reviewId);
+  console.log("ReviewItem writer", writer);
 
   const [formattedDescriptions, setFormattedDescriptions] = useState<string>("");
   const currentUser = useSelector((state: any) => state.currentUser);

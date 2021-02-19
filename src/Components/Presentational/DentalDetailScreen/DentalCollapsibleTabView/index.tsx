@@ -531,9 +531,10 @@ interface Props {
     elapsedTime: string,
   ) => void;
   dentalReviewArray: Array<any>,
+  isNoDentalImage: boolean,
 }
 
-const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalImageArray, moveToReviewUpload, moveToDentalLocationMap, moveToDentalInfoEdit, dentalReviewArray, moveToAnotherProfile, moveToReviewDetail}: Props) => {
+const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalImageArray, moveToReviewUpload, moveToDentalLocationMap, moveToDentalInfoEdit, dentalReviewArray, moveToAnotherProfile, moveToReviewDetail, isNoDentalImage}: Props) => {
   console.log("DentalCollapsibleTabView dentalDetailInfo", dentalDetailInfo);
   console.log("DentalCollapsibleTabView dentalReviewArray", dentalReviewArray);
 
@@ -854,8 +855,12 @@ const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalI
         style={[styles.collapsibleView, {transform: [{translateY: y}]}]}>
         <CollapsibleContainer>
             <CoverImageContainer>
+
                 <CoverImage
-                source={{uri: dentalImageArray[0].img_url}}/>
+                source={
+                  isNoDentalImage
+                  ? require('~/Assets/Images/Dental/noDentalImage.png')
+                  : {uri: dentalImageArray[0].img_url}}/>
             </CoverImageContainer>
             <BasicInfoContainer style={styles.basicInfoShadow}>
                 <DentalNameText>{basicInfo?.originalName}</DentalNameText>

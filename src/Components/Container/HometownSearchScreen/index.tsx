@@ -209,6 +209,22 @@ width: ${wp('5.3%')}px;
 height: ${wp('5.3%')}px;
 `;
 
+const NoDataContainer = Styled.ScrollView`
+height: ${hp('60%')};
+`;
+
+const NoDataImage = Styled.Image`
+width: ${wp('21.6%')}px;
+height: ${wp('21.6%')}px;
+`;
+
+const NoDataText = Styled.Text`
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+color: #9AA2A9;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -651,7 +667,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
             <ActivityIndicator />
           </LoadingCitiesContainer>
         )}
-        {!loadingFindAroundCites && (
+        {!loadingFindAroundCites && cityArray.length > 0 && (
           <HometownListContainer>
             <FlatList
               keyboardShouldPersistTaps={'always'}
@@ -662,6 +678,15 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
               renderItem={renderHometownItem}
             />
           </HometownListContainer>
+        )}
+        {!loadingFindAroundCites && cityArray.length === 0 && (
+          <NoDataContainer
+          keyboardDismissMode={"on-drag"}
+          contentContainerStyle={{backgroundColor: "#ffffff", alignItems: 'center', justifyContent: 'center', height: hp('50%')}}>
+            <NoDataImage
+            source={require('~/Assets/Images/ic_noData.png')}/>
+            <NoDataText>{"검색결과가 없습니다."}</NoDataText>
+          </NoDataContainer>
         )}
       </BodyContainer>
       <AnimatedModal

@@ -32,11 +32,18 @@ interface Props {
 }
 const FullImageScreen = ({navigation, route}: Props) => {
 
+
   const moveToRequestScreen = () => {
+    console.log("route.params.requestType", route.params?.requestType);
     if(route.params?.requestType === 'ContentPostScreen') {
       navigation.navigate(route.params.requestType, {
         selectedImage: route.params.image,
         selectedIndex: route.params.selectedIndex,
+      })
+    } else if(route.params?.requestType === 'SelectProofImageScreen') {
+      console.log("route.params?.requestType === SelectProofImageScreen")
+      navigation.navigate(route.params.requestType, {
+        selectedProofImage: route.params.image,
       })
     } else {
       navigation.navigate(route.params.requestType, {

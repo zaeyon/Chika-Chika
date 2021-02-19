@@ -37,6 +37,7 @@
     "react-native": "0.63.3",
     "react-native-above-keyboard": "^1.3.0",
     "react-native-actionsheet": "^2.4.2",
+    "react-native-call-detection": "^1.9.0",
     "react-native-camera": "git+https://git@github.com/react-native-community/react-native-camera.git",
     "react-native-convert-ph-asset": "^1.0.3",
     "react-native-dash": "0.0.11",

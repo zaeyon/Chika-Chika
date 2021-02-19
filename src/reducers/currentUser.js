@@ -1,6 +1,6 @@
 const currentUser = (
   state = {
-    currentLocation: {
+    currentUserLocation: {
       latitude: 37.566515657875435,
       longitude: 126.9781164904998,
     },
@@ -23,10 +23,10 @@ const currentUser = (
         profile: {},
         loggedIn: false,
       };
-    case 'SET_CURRENT_LOCATION':
+    case 'SET_CURRENT_USER_LOCATION':
       return {
         ...state,
-        currentLocation: action.payload,
+        currentUserLocation: action.payload,
       };
     case 'SET_HOMETOWN':
       return {
