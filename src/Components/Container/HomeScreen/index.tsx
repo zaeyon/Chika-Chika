@@ -489,10 +489,6 @@ const HomeScreen = ({navigation, route}: Props) => {
           moveToHomeTownSetting={moveToHomeTownSetting}
         />
         <PartitionView />
-        <HomeClinicContent
-          clinics={clinicData}
-          moveToClinicDetail={() => console.log('moveToClinicDetail')}
-        />
 
         <HomeReviewContent
           selectedHometown={selectedHometown?.emdName}

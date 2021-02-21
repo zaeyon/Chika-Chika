@@ -240,7 +240,7 @@ const ClinicItem = ({clinic}: Props) => {
         <ReviewInfoHeaderView>
           <ReviewInfoProfileImage
             source={
-              item.user.img_thumbNail
+              item.user
                 ? {
                     uri: item.user.img_thumbNail,
                     cache: 'force-cache',
