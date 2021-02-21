@@ -450,6 +450,9 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         setLoadingReviewDetail(false);
         setRefreshingReviewDetail(false);
 
+        console.log("GETReviewDetail response.reviewBody.certifiedBill", response.reviewBody.certifiedBill);
+        setIsCertifiedReceipt(response.reviewBody.certifiedBill);
+
         const tmpWriterObj = {
           nickname: response.reviewBody.user.nickname,
           profileImage: response.reviewBody.user.profileImg,
@@ -1021,7 +1024,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
                     <ReviewMetaInfo
                       metaInfoObj={metaInfoObj}
                       moveToDentalDetail={moveToDentalDetail}
-                      certifiedReceipt={isCertifiedReceipt}
+                      isCertifiedReceipt={isCertifiedReceipt}
                     />
                   </MetaInfoContainer>
                   <CommentListContainer>

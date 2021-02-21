@@ -448,6 +448,31 @@ line-height: 24px;
 color: #ffffff;
 `;
 
+const SelectedProofImageContainer = Styled.View`
+width: ${wp('91%')}px;
+height: ${wp('91%')}px;
+`;
+
+
+const SelectProofImageContainer = Styled.View`
+border-width: 1.3px;
+border-color: #E2E6ED;
+background-color: #F5F7F9;
+border-style: dashed;
+border-radius: 4px;
+padding-top: 30px;
+padding-bottom: 30px;
+align-items: center;
+`;
+
+const SelectedProofImage = Styled.Image`
+width: ${wp('91%')}px;
+height: ${wp('91%')}px;
+`;
+
+const SelectProofImageText = Styled.Text`
+color: #9AA2A9;
+`;
 
 interface Props {
   navigation: any;
@@ -492,7 +517,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   const [selectedTreatmentMonth, setSelectedTreatmentMonth] = useState<any>(`${new Date().getMonth() + 1}`);
   const [selectedTreatmentDay, setSelectedTreatmentDay] = useState<any>(`${new Date().getDate()}`);
 
-  const [selectedProofImages, setSelectedProofImages] = useState<Array<any>>([]);
+  const [selectedProofImage, setSelectedProofImage] = useState<Object>({});
   const [selectedDentalImages, setSelectedDentalImages] = useState<Array<any>>([]);
 
   const actionSheetItemList = ['취소', '촬영', '앨범'];
@@ -509,10 +534,10 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }, [route]);
   
   useEffect(() => {
-    if(route.params?.selectedProofImages) {
-      setSelectedProofImages(route.params.selectedProofImages)
+    if(route.params?.selectedProofImage) {
+      setSelectedProofImage(route.params.selectedProofImage)
     }
-  }, [route.params?.selectedProofImages]);
+  }, [route.params?.selectedProofImage]);
 
   useEffect(() => {
     if(route.params?.selectedDentalImages) {
@@ -625,7 +650,9 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   };
 
   const moveToTreatmentSearch = () => {
-    navigation.navigate('TreatSearchScreen');
+    navigation.navigate('TreatSearchScreen', {
+      selectedTreatmentArray: treatmentArray
+    });
   }
 
   const moveToRatingScreen = () => {
@@ -753,7 +780,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
       ratingObj,
       treatmentDate: treatmentDateObj.treatmentDate,
       totalPrice,
-      selectedProofImages,
+      selectedProofImage,
       selectedDentalImages,
       requestType: route.params?.requestType,
       paragraphArray: route.params?.paragraphArray ? route.params?.paragraphArray : [{
@@ -793,23 +820,6 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     [actionSheetItemList],
   );
 
-  const navigateToCameraByProof = useCallback(() => {
-    launchCamera({includeBase64: true, mediaType: 'photo'}, (response: CameraResponse) => {
-      if (!response.didCancel) {
-        const capturedImage = {
-          filename: response.fileName,
-          fileSize: response.fileSize,
-          width: response.width,
-          height: response.height,
-          uri: response.uri,
-          base64: response.base64,
-          camera: true,
-        };
-        setSelectedProofImages((prev) => [...prev, capturedImage]);
-      }
-    });
-  }, []);
-
 
   const navigateToCameraByDental = useCallback(() => {
     launchCamera({includeBase64: true, mediaType: 'photo'}, (response: CameraResponse) => {
@@ -823,17 +833,10 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
           base64: response.base64,
           camera: true,
         };
-        setSelectedProofImages((prev) => [...prev, capturedImage]);
+        setSelectedDentalImages((prev) => [...prev, capturedImage]);
       }
     });
   }, []);
-
-  const navigateToGalleryByProof = useCallback(() => {
-    navigation.navigate('ImageSelectScreen', {
-      requestType: 'proofImage',
-      selectedImages: selectedProofImages,
-    });
-  }, [])
 
   const navigateToGalleryByDental = useCallback(() => {
     navigation.navigate('ImageSelectScreen', {
@@ -870,6 +873,16 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
     setTreatmentDateObj(tmpTreatmentDate);
   };
+
+  const moveToSelectProofImage = () => {
+    if(selectedProofImage.uri) {
+      navigation.navigate("SelectProofImageScreen", {
+        selectedProofImage: selectedProofImage,
+      })
+    } else {
+      navigation.navigate("SelectProofImageScreen");
+    }
+  }
 
   const renderProofImageListHeader = useCallback(
     () => (
@@ -1008,6 +1021,36 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
           <ScrollViewInnerContainer>
           <MetaDataItemContainer>
           <MetaDataHeaderContainer>
+              <MetaDataLabelContainer>
+              <HighlightLabelBackgroundContainer>
+              <HighlightLabelBackground/>
+              </HighlightLabelBackgroundContainer>
+              <MetaDataLabelText>{"증빙자료 첨부하기(선택)"}</MetaDataLabelText>
+              <CoverHighlight/>
+              </MetaDataLabelContainer>
+          </MetaDataHeaderContainer>
+          <MetaDataGuideText>{"진료 영수증, 카드 결제내역 등 내원 및 진료를 확증할만한 이미지를 첨부해주세요."}</MetaDataGuideText>
+          {!selectedProofImage?.uri && (
+          <TouchableWithoutFeedback onPress={() => moveToSelectProofImage()}>
+          <SelectProofImageContainer
+          style={{marginRight: 16, marginTop: 16}}>
+            <MetaDataPlaceholderText>{"증빙사진을 선택해주세요."}</MetaDataPlaceholderText>
+          </SelectProofImageContainer>
+          </TouchableWithoutFeedback>
+          )}
+          {selectedProofImage.uri && (
+          <TouchableWithoutFeedback onPress={() => moveToSelectProofImage()}>
+          <SelectedProofImageContainer
+          style={{marginTop: 16}}>
+            <SelectedProofImage
+            source={{uri: selectedProofImage.uri}}/>
+          </SelectedProofImageContainer>
+          </TouchableWithoutFeedback>
+          )}
+          </MetaDataItemContainer>
+          <MetaDataItemContainer
+          style={{marginTop: 8}}>
+          <MetaDataHeaderContainer>
           <MetaDataLabelText>{"병원명"}</MetaDataLabelText>
           <AsteriskText>{"*"}</AsteriskText>
           </MetaDataHeaderContainer>
@@ -1139,34 +1182,6 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
           </MetaDataItemContainer>
           <MetaDataItemContainer
           style={{marginTop: 8}}>
-          <MetaDataHeaderContainer>
-              <MetaDataLabelContainer>
-              <HighlightLabelBackgroundContainer>
-              <HighlightLabelBackground/>
-              </HighlightLabelBackgroundContainer>
-              <MetaDataLabelText>{"증빙자료 첨부하기(선택)"}</MetaDataLabelText>
-              <CoverHighlight/>
-              </MetaDataLabelContainer>
-          </MetaDataHeaderContainer>
-          <MetaDataGuideText>{"진료 영수증, 카드 결제내역 등 내원 및 진료를 확증할만한 이미지를 첨부해주세요."}</MetaDataGuideText>
-          <SelectImagesContainer>  
-            <GalleryContainerView>
-              <GalleryFlatList
-              data={selectedProofImages}
-              horizontal
-              alwaysBounceHorizontal={false}
-              scrollIndicatorInsets={{bottom: -1, left: 13, right: 8}}
-              keyExtractor={(item: any) =>
-                'preview' + (item.filename || item.img_filename)
-              }
-              renderItem={renderProofImageItem}
-              ListHeaderComponent={renderProofImageListHeader}
-              showsHorizontalScrollIndicator={false}
-              />
-            </GalleryContainerView>
-          </SelectImagesContainer>
-          </MetaDataItemContainer>
-          <MetaDataItemContainer>
           <MetaDataHeaderContainer>
             <MetaDataLabelContainer>
               <MetaDataLabelText>{"병원 이미지 첨부하기(선택)"}</MetaDataLabelText>

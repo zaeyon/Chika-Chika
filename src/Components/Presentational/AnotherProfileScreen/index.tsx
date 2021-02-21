@@ -19,7 +19,7 @@ import DeviceInfo from 'react-native-device-info';
 //Local Component
 import PostItem from '~/Components/Presentational/PostItem';
 import ReviewItem from '~/Components/Presentational/ReviewItem';
-import {callPhoneNumber} from '~/method/callPhoneNumber';
+import {callDentalPhoneNumber} from '~/method/callDentalPhoneNumber';
 
 const HEADERHEIGHT = 53 + getStatusBarHeight();
 const PROFILEHEIGHT = 102;

@@ -207,7 +207,7 @@ const ReviewList = ({
     return (
       <ReviewItem
         reviewId={item.id}
-        writer={writer}
+        writer={item.user}
         createdAt={item.createdAt}
         elapsedTimeText={elapsedTimeText}
         visibleElapsedTime={visibleElapsedTime}

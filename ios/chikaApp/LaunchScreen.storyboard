@@ -22,11 +22,14 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="Image" translatesAutoresizingMaskIntoConstraints="NO" id="6sr-ei-WMp">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="Image" translatesAutoresizingMaskIntoConstraints="NO" id="5XU-wD-pwr">
                                 <rect key="frame" x="114" y="363" width="200" height="200"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="200" id="1sd-ZE-5Qk"/>
-                                    <constraint firstAttribute="width" constant="200" id="wjs-dW-Kj3"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="150" id="G0D-Da-ZbN"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="OLF-bO-3Py"/>
+                                    <constraint firstAttribute="width" constant="200" id="d3n-of-PFl"/>
+                                    <constraint firstAttribute="height" constant="200" id="shM-aj-6mx"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="150" id="v90-qV-cc5"/>
                                 </constraints>
                             </imageView>
                         </subviews>
@@ -37,10 +40,10 @@
                         </accessibility>
                         <constraints>
                             <constraint firstItem="Bcu-3y-fUS" firstAttribute="centerX" secondItem="obG-Y5-kRd" secondAttribute="centerX" id="5cz-MP-9tL"/>
+                            <constraint firstItem="5XU-wD-pwr" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="FzY-7z-djx"/>
                             <constraint firstItem="obG-Y5-kRd" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" symbolic="YES" id="SfN-ll-jLj"/>
-                            <constraint firstItem="6sr-ei-WMp" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="Vat-c0-Hsc"/>
                             <constraint firstAttribute="bottom" secondItem="obG-Y5-kRd" secondAttribute="bottom" constant="20" id="Y44-ml-fuU"/>
-                            <constraint firstItem="6sr-ei-WMp" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="bjZ-Ba-S6c"/>
+                            <constraint firstItem="5XU-wD-pwr" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="mrd-a1-IA9"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -50,6 +53,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Image" width="100" height="100"/>
+        <image name="Image" width="51.666667938232422" height="51.666667938232422"/>
     </resources>
 </document>

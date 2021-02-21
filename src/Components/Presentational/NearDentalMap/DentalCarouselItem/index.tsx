@@ -168,7 +168,7 @@ interface Props {
   lunchTime: string;
   openTime: string;
   closeTime: string;
-  clickDentalCallReservation: (phoneNumber: number) => void,
+  clickDentalCallReservation: (phoneNumber: number, dentalId: number) => void,
 }
 
 const DentalCarouselItem = ({
@@ -185,8 +185,12 @@ const DentalCarouselItem = ({
   clickDentalCallReservation,
 }: Props) => {
 
-  const distance = Math.round(dentalObj['distance(km)'] * 1000);
-  console.log("DentalCarouselItem dentalObj", dentalObj);
+  let displayDistance: string;
+  if(dentalObj['distance(km)'] >= 1) {
+    displayDistance = dentalObj['distance(km)'] + 'km';
+  } else {
+    displayDistance = Math.round(dentalObj['distance(km)'] * 1000) + 'm';
+  } 
 
   return (
     <Container
@@ -227,12 +231,12 @@ const DentalCarouselItem = ({
       <FooterContainer>
       <DentalAddressText>{address}</DentalAddressText>
       <VerticalDivider/>
-      <DistanceText>{distance + "m"}</DistanceText>
+      <DistanceText>{displayDistance}</DistanceText>
 
       </FooterContainer>
     </DentalInfoContainer>
     <CallContainer>
-      <TouchableWithoutFeedback onPress={() => clickDentalCallReservation(dentalObj.telNumber)}>
+      <TouchableWithoutFeedback onPress={() => clickDentalCallReservation(dentalObj.telNumber, dentalObj.id)}>
       <CallButtonContainer>
       <CallButtonImage
       source={require('~/Assets/Images/Dental/ic_call.png')}/>

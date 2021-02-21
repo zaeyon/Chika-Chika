@@ -36,6 +36,7 @@ const DentalImageContainer = Styled.View`
 `;
 
 const DentalNameText = Styled.Text`
+max-width: ${wp('50%')};
 font-weight: 600;
 color: #131F3C;
 font-size: 18px;
@@ -174,7 +175,7 @@ interface Prop {
   openTime: string;
   closeTime: string;
   moveToDentalDetail: (dentalId: number) => void;
-  clickDentalCallReservation: (phoneNumber: number) => void;
+  clickDentalCallReservation: (phoneNumber: number, dentalId: number) => void;
 }
 
 const DentalListItem = ({
@@ -199,7 +200,12 @@ const DentalListItem = ({
   
   const deletedAddress = splitedAddressArray[0] + " " + splitedAddressArray[1] + " " + splitedAddressArray[2];
 
-  const distance = Math.round(dentalObj['distance(km)'] * 1000);
+  let displayDistance: string;
+  if(dentalObj['distance(km)'] >= 1) {
+    displayDistance = dentalObj['distance(km)'] + 'km';
+  } else {
+    displayDistance = Math.round(dentalObj['distance(km)'] * 1000) + 'm';
+  } 
 
   return (
     <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalId)}>
@@ -241,7 +247,7 @@ const DentalListItem = ({
       <FooterContainer>
       <DentalAddressText>{deletedAddress}</DentalAddressText>
       <VerticalDivider/>
-      <DistanceText>{distance + "m"}</DistanceText>
+      <DistanceText>{displayDistance}</DistanceText>
       </FooterContainer>
         </DentalInfoContainer>
         <DentalImageContainer>
@@ -249,7 +255,7 @@ const DentalListItem = ({
         </DentalImageContainer>
         </BodyContainer>
         <CallContainer>
-          <TouchableWithoutFeedback onPress={() => clickDentalCallReservation(dentalObj.telNumber)}>
+          <TouchableWithoutFeedback onPress={() => clickDentalCallReservation(dentalObj.telNumber, dentalId)}>
           <CallButtonContainer>
           <CallButtonImage
           source={require('~/Assets/Images/Dental/ic_call_list.png')}/>

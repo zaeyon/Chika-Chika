@@ -46,10 +46,10 @@ const putProfileBirthdate = (birthdate) => {
   };
 };
 
-const setCurrentLocation = (currentLocation) => {
+const setCurrentUserLocation = (currentUserLocation) => {
   return {
-    type: 'SET_CURRENT_LOCATION',
-    payload: currentLocation,
+    type: 'SET_CURRENT_USER_LOCATION',
+    payload: currentUserLocation,
   };
 };
 
@@ -125,7 +125,7 @@ export default {
   putProfileNickname,
   putProfileGender,
   putProfileBirthdate,
-  setCurrentLocation,
+  setCurrentUserLocation,
   setHometown,
   addHometown,
   deleteHometown,

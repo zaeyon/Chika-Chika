@@ -30,7 +30,7 @@ import DentalListItem from '~/Components/Presentational/DentalListItem';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 import AutoCompletedKeywordFlatList from '~/Components/Presentational/DentalTotalSearchScreen/AutoCompletedKeywordFlatList';
 import DentalSearchResultList from '~/Components/Presentational/DentalTotalSearchScreen/DentalSearchResultList';
-import {callPhoneNumber} from '~/method/callPhoneNumber';
+import {callDentalPhoneNumber} from '~/method/callDentalPhoneNumber';
 
 // Route
 import GETDentalTotalSearch from '~/Routes/Search/GETDentalTotalSearch';
@@ -47,12 +47,17 @@ padding-top: ${getStatusBarHeight()}px;
 
 const HeaderBar = Styled.View`
 width: ${wp('100%')}px;
-height: ${hp('7%')}px;
-align-items: center;
-flex-direction: row;
-background-color: #ffffff;
-border-bottom-width: 0.5px;
-border-color: #00D1FF;
+ height: ${wp('14.1%') + getStatusBarHeight()}px;
+ margin-top: ${-getStatusBarHeight()}px;
+ padding-top: ${getStatusBarHeight()}px;
+ flex-direction: row;
+ justify-content: space-between;
+ border-bottom-width: 0.5px;
+ border-color: #E2E6ED;
+ background-color: #ffffff;
+ border-bottom-width: 1px;
+  border-color: #00D1FF;
+ z-index: 3;
 `;
 
 const BodyContainer = Styled.View`
@@ -86,7 +91,6 @@ const SearchTextInput = Styled.TextInput`
 flex: 1;
 font-weight: 700;
 font-size: 21px;
-line-height: 24px;
 color: #131F3C;
 `;
 
@@ -96,8 +100,9 @@ const BackIconTouchableWithoutFeedback = Styled(
 `;
 
 const BackIconView = Styled.View`
-padding: 17px 10px 0px 16px;
-height: ${hp('7%')}px;
+padding: 0px 10px 0px 16px;
+align-items: center;
+justify-content: center;
 `;
 
 const BackIconImage = Styled.Image`
@@ -226,10 +231,8 @@ justify-content: center;
 const NoSearchedDentalContainer = Styled.View`
 width: ${wp('100%')}px;
 height: ${hp('70%')}px;
-flex-direction: row;
 align-items: center;
 justify-content: center;
-background-color: #ffffff;
 `;
 
 const NoSearchedDentalText = Styled.Text`
@@ -343,6 +346,19 @@ justify-content: center;
 
 const DentalListContainer = Styled.View`
 flex: 1;
+`;
+
+const NoDataImage = Styled.Image`
+width: ${wp('21.6%')}px;
+height: ${wp('21.6%')}px;
+`;
+
+const NoDataText = Styled.Text`
+margin-top: 12px;
+font-weight: 400;
+font-size: 16px;
+line-height: 24px;
+color: #9AA2A9;
 `;
 
 const TEST_DENTAL_LIST = [
@@ -1144,8 +1160,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     searchInputRef.current.focus();
   };
 
-  const clickDentalCallReservation = (phoneNumber: number) => {
-    callPhoneNumber(phoneNumber);
+  const clickDentalCallReservation = (phoneNumber: number, dentalId: number) => {
+    callDentalPhoneNumber(phoneNumber, jwtToken, dentalId);
   }
 
   const renderFooterIndicator = () => {
@@ -1413,9 +1429,11 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
             )}
             {searchedDentalArray.length === 0 && !loadingSearchDental && (
               <NoSearchedDentalContainer>
-                <NoSearchedDentalText>
-                  {'검색된 병원이 없습니다 ㅠㅠ'}
-                </NoSearchedDentalText>
+                <NoDataImage
+                source={require('~/Assets/Images/ic_noData.png')}/>
+                <NoDataText>
+                  {'검색결과가 없습니다.'}
+                </NoDataText>
               </NoSearchedDentalContainer>
             )}
             {loadingSearchDental && (

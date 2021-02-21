@@ -238,17 +238,19 @@ interface MetaInfoObj {
 
 interface Props {
   metaInfoObj: MetaInfoObj,
-  certifiedReceipt: boolean;
+  isCertifiedReceipt: boolean;
   moveToDentalDetail: (dentalId: number) => void;
 }
 
 const ReviewMetaInfo = ({
   metaInfoObj,
-  certifiedReceipt,
+  isCertifiedReceipt,
   moveToDentalDetail,
 }: Props) => {
 
   console.log('ReviewMetaInfo metaInfoObj', metaInfoObj);
+
+  console.log("ReviewMetaInfo isCertifiedReceipt", isCertifiedReceipt);
 
   let splitedAddress = new Array();
   let formattedAddress = '';
@@ -323,14 +325,15 @@ const ReviewMetaInfo = ({
         <InfoLabelText>{'전체 시술 비용'}</InfoLabelText>
         <PriceItemContainer>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            {/* {certifiedReceipt && ( */}
+            {isCertifiedReceipt && (
             <ReceiptCertificationContainer>
               <ReceiptCertificationText>
                 {'영수증인증'}
               </ReceiptCertificationText>
             </ReceiptCertificationContainer>
-            {/* )} */}
-            <TotalPriceText>{metaInfoObj.totalPriceObj.displayTreatPrice}</TotalPriceText>
+            )}
+            <TotalPriceText
+            style={!isCertifiedReceipt && {marginLeft: 0}}>{metaInfoObj.totalPriceObj.displayTreatPrice}</TotalPriceText>
           </View>
         </PriceItemContainer>
       </PriceInfoContainer>

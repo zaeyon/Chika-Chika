@@ -358,7 +358,7 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   const moveToReviewUpload = useCallback(() => {
     navigation.navigate('ReviewUploadStackScreen', {
-      screen: 'ReceiptRegisterScreen',
+      screen: 'ReviewGuideScreen',
       params: {
         requestType: 'post',
       },

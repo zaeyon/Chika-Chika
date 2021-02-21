@@ -31,8 +31,8 @@ background: white;
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
  height: ${wp('14.1%') + getStatusBarHeight()}px;
-  margin-top: ${-getStatusBarHeight()}px;
-  padding-top: ${getStatusBarHeight()}px;
+ margin-top: ${-getStatusBarHeight()}px;
+ padding-top: ${getStatusBarHeight()}px;
  flex-direction: row;
  justify-content: space-between;
  border-bottom-width: 0.5px;

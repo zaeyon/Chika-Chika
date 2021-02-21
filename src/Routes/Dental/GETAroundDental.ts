@@ -12,9 +12,11 @@ interface params {
     dayFilter?: any,
     holidayFilter: boolean,
     parkingFilter: string,
+    mapLat: number,
+    mapLong: number,
 }
 
-const GETAroundDental = ({jwtToken, limit, offset, lat, long, sort, timeFilter, dayFilter, holidayFilter, parkingFilter}: params) => {
+const GETAroundDental = ({jwtToken, limit, offset, lat, long, sort, timeFilter, dayFilter, holidayFilter, parkingFilter, mapLat, mapLong}: params) => {
 
     console.log("GETAroundDental lat", lat);
     console.log("GETAroundDental long", long);
@@ -26,11 +28,10 @@ const GETAroundDental = ({jwtToken, limit, offset, lat, long, sort, timeFilter, 
     console.log("GETAroundDental limit", limit);
     console.log("GETAroundDental offset", offset);
 
-    // TEST 서울 시청 위도, 경도
-    //lat = 37.566515657875435
-    //long = 126.9781164904998
+    console.log("GETAroundDental maplat", mapLat);
+    console.log("GETAroundDental maplong", mapLong);
 
-    const uri = serverConfig.baseUri + `/around/clinics?lat=${lat}&long=${long}&wantParking=${parkingFilter}&sort=${sort}&days=${dayFilter}&time=${timeFilter}&holiday=${holidayFilter}&limit=${limit}&offset=${offset}`;
+    const uri = serverConfig.baseUri + `/around/clinics?lat=${lat}&long=${long}&wantParking=${parkingFilter}&sort=${sort}&days=${dayFilter}&time=${timeFilter}&holiday=${holidayFilter}&limit=${limit}&offset=${offset}&maplat=${mapLat}&maplong=${mapLong}`;
 
     console.log("GETAroundDental uri", uri);
 

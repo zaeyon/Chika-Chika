@@ -42,9 +42,10 @@ align-items: center;
 
 const NoCommentContainer = Styled.View`
 width: ${wp('100%')}px;
-align-items: center;
 padding-top: 50px;
-padding-bottom: 50px;
+padding-bottom: 90px;
+background-color: #ffffff;
+align-items: center;
 `;
 
 const NoCommentText = Styled.Text`
