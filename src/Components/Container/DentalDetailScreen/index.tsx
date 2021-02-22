@@ -35,6 +35,7 @@ import DELETEDentalScrap from '~/Routes/Dental/DELETEDentalScrap';
 import GETCurUserScrap from '~/Routes/Dental/GETCurUserScrap';
 import GETDentalReview from '~/Routes/Dental/GETDentalReview';
 import GETUserSavedHospitals from '~/Routes/User/GETUserSavedHospitals';
+import GETUserReservations from '~/Routes/User/GETUserReservations';
 
 const Container = Styled.View`
  flex: 1;
@@ -225,6 +226,11 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
       dentalDetailInfo.clinicInfoHeader.telNumber,
       jwtToken,
       dentalId,
+      () => {
+        GETUserReservations({jwtToken}).then((response: any) => {
+          dispatch(allActions.userActions.setReservations(response));
+        });
+      },
     );
   };
 

@@ -116,6 +116,20 @@ const setNotification = (notificationConfig) => {
   };
 };
 
+const setReservations = (reservations) => {
+  return {
+    type: 'SET_RESERVATIONS',
+    payload: reservations,
+  };
+};
+
+const deleteReservation = (id) => {
+  return {
+    type: 'DELETE_RESERVATION',
+    payload: id,
+  };
+};
+
 const setSavedHospitals = (hospitals) => {
   return {
     type: 'SET_SAVED_HOSPITALS',
@@ -147,6 +161,8 @@ export default {
   setNotification,
   setDentalSearchRecord,
   deleteDentalSearchRecord,
+  setReservations,
+  deleteReservation,
   setSavedHospitals,
   deleteSavedHospital,
 };

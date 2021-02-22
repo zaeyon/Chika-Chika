@@ -142,6 +142,27 @@ const currentUser = (
         },
       };
     }
+
+    case 'SET_RESERVATIONS': {
+      return {
+        ...state,
+        reservations: action.payload,
+      };
+    }
+    case 'DELETE_RESERVATION': {
+      const newReservations = state.reservations.concat();
+      const targetIndex = newReservations.findIndex(
+        (item) => item.id == action.payload,
+      );
+      console.log('delete saved target', action.payload, targetIndex);
+      if (targetIndex >= 0) {
+        newReservations.splice(targetIndex, 1);
+      }
+      return {
+        ...state,
+        reservations: newReservations,
+      };
+    }
     case 'SET_SAVED_HOSPITALS': {
       return {
         ...state,

@@ -45,6 +45,16 @@ const SavedHospitalTabScreen = ({navigation, route}: Props) => {
     },
     [jwtToken],
   );
+
+  const moveToDentalDetail = useCallback((dentalId) => {
+    navigation.navigate('DentalClinicStackScreen', {
+      screen: 'DentalDetailScreen',
+      params: {
+        dentalId,
+      },
+    });
+  }, []);
+
   return (
     <ContainerView>
       <NavigationHeader
@@ -62,6 +72,7 @@ const SavedHospitalTabScreen = ({navigation, route}: Props) => {
         <SavedHospitalScreen
           hospitals={hospitals}
           deleteSavedHospital={deleteSavedHospital}
+          moveToDentalDetail={moveToDentalDetail}
         />
       )}
     </ContainerView>

@@ -21,6 +21,7 @@ import messaging from '@react-native-firebase/messaging';
 // Routes
 import GETUserInfo from '~/Routes/Auth/GETUserInfo';
 import GETUserSavedHospitals from '~/Routes/User/GETUserSavedHospitals';
+import GETUserReservations from '~/Routes/User/GETUserReservations';
 // Async Storage
 import {getUserInfo} from '~/storage/currentUser';
 
@@ -1050,6 +1051,10 @@ function BottomTab() {
       return false;
     }
 
+    if (routeName.name === 'DentalClinicStackScreen') {
+      return false;
+    }
+
     return true;
   };
   return (
@@ -1177,6 +1182,9 @@ const Navigator = () => {
               allActions.userActions.setUser({jwtToken, profile: response}),
             );
             dispatch(allActions.userActions.setHometown(response.Residences));
+            GETUserReservations({jwtToken}).then((response: any) => {
+              dispatch(allActions.userActions.setReservations(response));
+            });
             GETUserSavedHospitals({jwtToken}).then((response: any) => {
               dispatch(allActions.userActions.setSavedHospitals(response));
             });
