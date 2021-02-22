@@ -110,7 +110,7 @@ margin: 6px 2px;
 
 const ContentText = Styled.Text`
 font-style: normal;
-font-weight: 500;
+font-weight: normal;
 font-size: 14px;
 line-height: 24px;
 `;

@@ -47,7 +47,6 @@ justify-content: center;
 
 const BodyContainer = Styled.View`
 padding-top: 3px;
-padding-right: 85px;
 `;
 
 const FooterContainer = Styled.View`
@@ -70,14 +69,14 @@ line-height: 16px;
 `;
 
 const CommentDescripText = Styled.Text`
-font-weight: 400;
+font-weight: normal;
 font-size: 14px;
 line-height: 24px;
 color: #131F3C;
 `;
 
 const CreateAtText = Styled.Text`
-font-weight: 400;
+font-weight: normal;
 font-size: 12px;
 line-height: 16px;
  color: #9AA2A9;

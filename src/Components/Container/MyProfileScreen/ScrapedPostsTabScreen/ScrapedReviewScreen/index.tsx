@@ -12,10 +12,27 @@ import GETUserScrapedPosts from '~/Routes/User/GETUserScrapedPosts';
 
 const ContainerView = Styled.View`
   flex: 1;
-  background-color: #FFFFFF;
+  background-color: #F5F7F9;
   justify-content: center;
   align-items: center;
 `;
+
+const EmptyContainerView = Styled.View`
+height: 300%;
+padding-top: 118px;
+align-items: center;
+background: #FFFFFF;
+`;
+
+const EmptyContentImage = Styled.Image``;
+
+const EmptyContentText = Styled.Text`
+margin-top: 12px;
+font-weight: normal;
+font-size: 16px;
+color: #9AA2A9;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -174,12 +191,26 @@ const ScrapedReviewScreen = ({navigation, route}: Props) => {
     };
   }, []);
 
+  const renderHeaderComponent = useCallback(
+    () =>
+      postData.length === 0 ? (
+        <EmptyContainerView>
+          <EmptyContentImage
+            source={require('~/Assets/Images/Comment/ic_noComment.png')}
+          />
+          <EmptyContentText>{'스크랩한 후기가 없습니다.'}</EmptyContentText>
+        </EmptyContainerView>
+      ) : null,
+    [postData],
+  );
+
   return (
     <ContainerView>
       {isInitializing ? (
         <ActivityIndicator />
       ) : (
         <ReviewList
+          renderHeaderComponent={renderHeaderComponent}
           reviewList={postData}
           loadingMoreReview={isEndReached}
           onEndReachedReviewList={onEndReached}

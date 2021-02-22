@@ -11,6 +11,7 @@ import allActions from '~/actions';
 import PUTUserNotifications, {
   Config,
 } from '~/Routes/Notification/PUTUserNotifications';
+import DELETEUserAccount from '~/Routes/User/DELETEUserAccount';
 
 const ContainerView = Styled.View`
  flex: 1;
@@ -38,6 +39,12 @@ const GeneralSettingTabScreen = ({navigation, route}: Props) => {
     [jwtToken],
   );
 
+  const signout = useCallback(() => {
+    DELETEUserAccount({jwtToken}).then((response: any) => {
+      console.log(response);
+    });
+  }, [jwtToken]);
+
   return (
     <ContainerView as={SafeAreaView}>
       <NavigationHeader
@@ -49,6 +56,7 @@ const GeneralSettingTabScreen = ({navigation, route}: Props) => {
       />
       <GeneralSettingScreen
         changeNotificationSetting={changeNotificationSetting}
+        signout={signout}
         profile={profile}
       />
     </ContainerView>

@@ -202,6 +202,8 @@ const HomeScreen = ({navigation, route}: Props) => {
             params: {
               id: remoteMessage.data.targetId,
               type: 'Notification',
+              category: remoteMessage.data.type,
+              commentId: remoteMessage.data.commentId,
             },
           });
           return;

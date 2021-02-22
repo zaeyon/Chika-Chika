@@ -28,6 +28,7 @@ const CommentedPostsTabScreen = ({navigation, route}: Props) => {
   return (
     <ContainerView>
       <NavigationHeader
+        borderDisable={true}
         headerLeftProps={{
           onPress: headerLeftAction,
           type: 'arrow',
@@ -38,11 +39,21 @@ const CommentedPostsTabScreen = ({navigation, route}: Props) => {
         tabBarOptions={{
           style: {
             backgroundColor: '#FFFFFF',
+            shadowOffset: {
+              width: 0,
+              height: 4,
+            },
+            shadowRadius: 4,
+            shadowOpacity: 0.05,
           },
           indicatorStyle: {
-            height: 2,
             backgroundColor: '#00D1FF',
+            height: 3,
             borderRadius: 100,
+          },
+          indicatorContainerStyle: {
+            borderBottomColor: '#E2E6ED',
+            borderBottomWidth: 1,
           },
           activeTintColor: '#131F3C',
           inactiveTintColor: '#9AA2A9',

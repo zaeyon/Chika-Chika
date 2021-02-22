@@ -156,8 +156,8 @@ margin: 0px 8px;
 `;
 
 const EmptyContainerView = Styled.View`
-flex: 1;
-justify-content: center;
+height: 100%;
+padding-top: 118px;
 align-items: center;
 background: #FFFFFF;
 `;
@@ -365,15 +365,20 @@ export default class MyProfile extends React.PureComponent<Props, State> {
       <InitializingView>
         <ActivityIndicator />
       </InitializingView>
-    ) : this.props.communityPostData.length === 0 ? (
-      <EmptyContainerView>
-        <EmptyContentImage
-          source={require('~/Assets/Images/Comment/ic_noComment.png')}
-        />
-        <EmptyContentText>{'내가 쓴 수다글이 없습니다.'}</EmptyContentText>
-      </EmptyContainerView>
     ) : (
       <AnimatedFlatList
+        ListHeaderComponent={() =>
+          this.props.communityPostData.length === 0 ? (
+            <EmptyContainerView>
+              <EmptyContentImage
+                source={require('~/Assets/Images/Comment/ic_noComment.png')}
+              />
+              <EmptyContentText>
+                {'내가 쓴 수다글이 없습니다.'}
+              </EmptyContentText>
+            </EmptyContainerView>
+          ) : null
+        }
         style={{
           flex: 1,
           marginBottom: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'),
@@ -447,15 +452,18 @@ export default class MyProfile extends React.PureComponent<Props, State> {
       <InitializingView>
         <ActivityIndicator />
       </InitializingView>
-    ) : this.props.reviewData.length === 0 ? (
-      <EmptyContainerView>
-        <EmptyContentImage
-          source={require('~/Assets/Images/Comment/ic_noComment.png')}
-        />
-        <EmptyContentText>{'내가 쓴 후기가 없습니다.'}</EmptyContentText>
-      </EmptyContainerView>
     ) : (
       <AnimatedFlatList
+        ListHeaderComponent={() =>
+          this.props.reviewData.length === 0 ? (
+            <EmptyContainerView>
+              <EmptyContentImage
+                source={require('~/Assets/Images/Comment/ic_noComment.png')}
+              />
+              <EmptyContentText>{'내가 쓴 후기가 없습니다.'}</EmptyContentText>
+            </EmptyContainerView>
+          ) : null
+        }
         style={{
           flex: 1,
           marginBottom: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'),
