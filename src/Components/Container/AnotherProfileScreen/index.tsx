@@ -345,6 +345,13 @@ const AnotherProfileScreen = ({navigation, route}: Props) => {
     });
   };
 
+  const onPressAccuse = useCallback(() => {
+    navigation.navigate('AccuseScreen', {
+      targetType: 'user',
+      targetId: route.params.targetUser.userId,
+    });
+  }, [route]);
+
   const moveToReviewDetail = (
     reviewId: number,
     writer: object,
@@ -393,6 +400,7 @@ const AnotherProfileScreen = ({navigation, route}: Props) => {
             : {
                 type: 'text',
                 text: '신고하기',
+                onPress: () => onPressAccuse(),
               }
         }
         headerTitle={route.params.targetUser.nickname}

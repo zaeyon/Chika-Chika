@@ -181,6 +181,13 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     };
   }, []);
 
+  const onPressAccuse = useCallback(() => {
+    navigation.navigate('AccuseScreen', {
+      targetType: 'community',
+      targetId: route.params.id,
+    });
+  }, [route]);
+
   const renderFloatingView = useCallback(
     () => (
       <TouchableWithoutFeedback onPress={() => setFloatingVisible(false)}>
@@ -212,6 +219,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
               <TouchableOpacity
                 onPress={() => {
                   setFloatingVisible(false);
+                  onPressAccuse();
                 }}>
                 <FloatingContentView>
                   <FloatingContentText>{'신고'}</FloatingContentText>
