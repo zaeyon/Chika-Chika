@@ -986,6 +986,10 @@ function BottomTab() {
       return false;
     }
 
+    if (routeName.name === 'AccuseScreen') {
+      return false;
+    }
+
     return true;
   };
 
@@ -1052,6 +1056,9 @@ function BottomTab() {
     }
 
     if (routeName.name === 'DentalClinicStackScreen') {
+      return false;
+    }
+    if (routeName.name === 'AccuseScreen') {
       return false;
     }
 
