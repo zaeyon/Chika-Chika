@@ -163,11 +163,15 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     );
 
     fetchPostComments(route.params.id);
-    if (route.params?.type === 'Notification') {
+    if (
+      route.params?.type === 'Notification' &&
+      route.params?.category === 'comment'
+    ) {
       navigation.navigate('CommentListScreen', {
         postId: route.params.id,
         postType: 'community',
         commentActionType: 'comment',
+        commentId: route.params?.commentId,
         isLoading,
       });
     }
@@ -320,9 +324,18 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     }
   }, []);
 
-  const moveToAnotherProfile = useCallback(() => {
-    navigation.navigate('AnotherProfileScreen');
-  }, []);
+  const moveToAnotherProfile = useCallback(
+    (userId: string, nickname: string, profileImageUri: string) => {
+      navigation.navigate('AnotherProfileStackScreen', {
+        targetUser: {
+          userId,
+          nickname,
+          profileImageUri,
+        },
+      });
+    },
+    [],
+  );
 
   const moveToImageDetail = useCallback((mediaFiles: any, imageUri: string) => {
     console.log(mediaFiles, imageUri);
@@ -480,6 +493,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
           moveToCommentList={moveToCommentList}
           toggleSocialLike={toggleSocialLike}
           toggleSocialScrap={toggleSocialScrap}
+          commentCount={commentCount}
           data={postData}
         />
       </ContainerView>

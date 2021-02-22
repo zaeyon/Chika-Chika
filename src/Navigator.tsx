@@ -556,10 +556,12 @@ function ReviewUploadStackScreen() {
       />
       <ReviewUploadStack.Screen
         name="ImageSelectOneStackScreen"
-        component={ImageSelectOneStackScreen}/>
+        component={ImageSelectOneStackScreen}
+      />
       <ReviewUploadStack.Screen
         name="SelectProofImageScreen"
-        component={SelectProofImageScreen}/>
+        component={SelectProofImageScreen}
+      />
     </ReviewUploadStack.Navigator>
   );
 }
@@ -714,6 +716,10 @@ function MyProfileStackScreen() {
       <MyProfileStack.Screen
         name="HometownSettingScreen"
         component={HometownSettingScreen}
+      />
+      <MyProfileStack.Screen
+        name="AnotherProfileStackScreen"
+        component={AnotherProfileStackScreen}
       />
     </MyProfileStack.Navigator>
   );
@@ -1151,11 +1157,11 @@ const Navigator = () => {
   //   console.log('getFcmToken fcmToken', fcmToken);
   // };
   useEffect(() => {
-    if (isUser) {
+    if (currentUser.loggedIn) {
       console.log('hometown', currentUser.hometown);
       SplashScreen.hide();
     }
-  }, [isUser]);
+  }, [currentUser]);
 
   useEffect(() => {
     //getFcmToken();
@@ -1187,7 +1193,7 @@ const Navigator = () => {
   return (
     <NavigationContainer>
       <StatusBar barStyle="dark-content" />
-      {isUser ? <BottomTab /> : <AuthStackScreen />}
+      {currentUser.loggedIn ? <BottomTab /> : <AuthStackScreen />}
     </NavigationContainer>
   );
 };

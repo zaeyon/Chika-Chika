@@ -20,8 +20,9 @@ import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 //Local Component
 import PostItem from '~/Components/Presentational/PostItem';
 
-const BodyContainerFlatList = Styled(FlatList as new () => FlatList)`
+const BodyContainerFlatList = Styled.FlatList`
 flex: 1;
+width: ${wp('100%')}px;
 background: #F5F7F9;
 `;
 

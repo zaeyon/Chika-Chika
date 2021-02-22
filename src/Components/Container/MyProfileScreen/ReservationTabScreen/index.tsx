@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import Styled from 'styled-components/native';
 import {ActivityIndicator} from 'react-native';
 
@@ -9,7 +9,7 @@ import ReservationScreen from '~/Components/Presentational/MyProfileScreen/Reser
 import {useSelector} from 'react-redux';
 // Routes
 import GETUserReservations from '~/Routes/User/GETUserReservations';
-
+import DELETEDentalCallReserve from '~/Routes/Reserve/DELETEDentalCallReserve';
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
  background-color: #FFFFFF;
@@ -29,11 +29,26 @@ interface Props {
 const ReservationTabScreen = ({navigation, route}: Props) => {
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
   const [reservations, setReservations] = useState(null);
+
   useEffect(() => {
     GETUserReservations({jwtToken}).then((response: any) => {
       setReservations(response);
     });
   }, []);
+
+  const deleteReservation = useCallback(
+    (clinicId: string) => {
+      DELETEDentalCallReserve({jwtToken, clinicId}).then((response: any) => {
+        console.log(
+          'delete reservation id: ',
+          clinicId,
+          'response: ',
+          response,
+        );
+      });
+    },
+    [jwtToken],
+  );
 
   return (
     <ContainerView>
@@ -53,6 +68,7 @@ const ReservationTabScreen = ({navigation, route}: Props) => {
           navigation={navigation}
           route={route}
           reservations={reservations}
+          deleteReservation={deleteReservation}
         />
       )}
     </ContainerView>

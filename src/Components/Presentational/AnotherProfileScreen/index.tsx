@@ -154,6 +154,23 @@ height: 40px;
 background: #E5E9F1;
 margin: 0px 8px;
 `;
+
+const EmptyContainerView = Styled.View`
+height: 100%;
+padding-top: 118px;
+align-items: center;
+background: #FFFFFF;
+`;
+
+const EmptyContentImage = Styled.Image``;
+
+const EmptyContentText = Styled.Text`
+margin-top: 12px;
+font-weight: normal;
+font-size: 16px;
+color: #9AA2A9;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -287,6 +304,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
       nickname: item.user.nickname,
       profileImage: item.user.profileImg,
       userId: item.userId,
+      img_thumbNail: item.user.img_thumbNail,
     };
 
     let elapsedTimeText = '';
@@ -343,6 +361,16 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
       </InitializingView>
     ) : (
       <AnimatedFlatList
+        ListHeaderComponent={() =>
+          this.props.communityPostData.length === 0 ? (
+            <EmptyContainerView>
+              <EmptyContentImage
+                source={require('~/Assets/Images/Comment/ic_noComment.png')}
+              />
+              <EmptyContentText>{'작성한 수다글이 없습니다.'}</EmptyContentText>
+            </EmptyContainerView>
+          ) : null
+        }
         style={{
           flex: 1,
           marginBottom: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'),
@@ -419,6 +447,16 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
       </InitializingView>
     ) : (
       <AnimatedFlatList
+        ListHeaderComponent={() =>
+          this.props.reviewData.length === 0 ? (
+            <EmptyContainerView>
+              <EmptyContentImage
+                source={require('~/Assets/Images/Comment/ic_noComment.png')}
+              />
+              <EmptyContentText>{'작성한 후기가 없습니다.'}</EmptyContentText>
+            </EmptyContainerView>
+          ) : null
+        }
         style={{
           flex: 1,
           marginBottom: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'),

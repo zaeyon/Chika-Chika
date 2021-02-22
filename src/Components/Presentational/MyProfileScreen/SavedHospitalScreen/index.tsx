@@ -4,6 +4,7 @@ import {
   TouchableWithoutFeedback,
   TouchableHighlight,
   FlatList,
+  Alert,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -163,7 +164,18 @@ const SavedHospitalScreen = ({deleteSavedHospital, hospitals}: Props) => {
             <ContentButtonText>{'바로예약'}</ContentButtonText>
           </ContentButtonView>
         </TouchableHighlight>
-        <TouchableWithoutFeedback onPress={() => deleteSavedHospital(item.id)}>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            Alert.alert('찜한 병원을 삭제하시겠어요?', undefined, [
+              {
+                text: '아니요',
+              },
+              {
+                text: '예',
+                onPress: () => deleteSavedHospital(item.id),
+              },
+            ]);
+          }}>
           <DeleteImageView>
             <DeleteImage
               source={require('~/Assets/Images/MyPage/delete_reservation.png')}

@@ -82,13 +82,18 @@ color: #131F3C;
 
 interface Props {
   changeNotificationSetting: any;
+  signout: any;
   profile: any;
 }
 interface Props {
   navigation: any;
   route: any;
 }
-const GeneralSettingScreen = ({changeNotificationSetting, profile}: Props) => {
+const GeneralSettingScreen = ({
+  changeNotificationSetting,
+  signout,
+  profile,
+}: Props) => {
   const dispatch = useDispatch();
 
   const [sectionArrow, setSectionArrow] = useState(
@@ -115,10 +120,7 @@ const GeneralSettingScreen = ({changeNotificationSetting, profile}: Props) => {
   const [signoutModalVisible, setSignoutModalVisible] = useState(false);
 
   useEffect(() => {
-    return cleanup;
-  }, []);
-
-  useEffect(() => {
+    cleanup();
     dispatch(
       allActions.userActions.setNotification({
         ALOTrue: isAlertEnabled ? 1 : 0,
@@ -152,10 +154,6 @@ const GeneralSettingScreen = ({changeNotificationSetting, profile}: Props) => {
     dispatch(allActions.userActions.logOut());
   }, []);
 
-  const signout = useCallback(() => {
-    console.log('sign out');
-  }, []);
-
   return (
     <ContainerView
       keyboardShouldPersistTaps={'always'}
@@ -183,7 +181,10 @@ const GeneralSettingScreen = ({changeNotificationSetting, profile}: Props) => {
           },
           {
             title: '예',
-            onPress: () => signout(),
+            onPress: () => {
+              signout();
+              logout();
+            },
           },
         ]}>
         <ModalText>{'탈퇴하시겠어요?'}</ModalText>

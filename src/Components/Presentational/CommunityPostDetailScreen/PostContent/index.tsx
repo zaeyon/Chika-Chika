@@ -94,7 +94,8 @@ color: #131F3C;
 
 const ProfileDescriptionText = Styled.Text`
 font-style: normal;
-font-weight: 500;
+font-weight: normal;
+
 font-size: 13px;
 color: #9AA2A9;
 `;
@@ -167,11 +168,11 @@ const PostContent = ({
   moveToAnotherProfile,
 }: Props) => {
   const {
-    id,
+    userId,
+    user,
     createdAt,
     updatedAt,
     description,
-    user,
     Clinics,
     community_imgs,
   } = data;
@@ -313,7 +314,7 @@ const PostContent = ({
       <BodyContainerView>
         <TouchableWithoutFeedback
           onPress={() => {
-            moveToAnotherProfile();
+            moveToAnotherProfile(userId, user.nickname, user.img_thumbNail);
           }}>
           <ProfileContainerView>
             <ProfileImage

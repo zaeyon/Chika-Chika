@@ -45,12 +45,14 @@ interface Props {
   toggleSocialLike: any;
   toggleSocialScrap: any;
   data: any;
+  commentCount: number;
 }
 const PostBottomBar = ({
   moveToCommentList,
   toggleSocialLike,
   toggleSocialScrap,
   data,
+  commentCount,
 }: Props) => {
   const {
     id,
@@ -109,7 +111,7 @@ const PostBottomBar = ({
             <Image
               source={require('~/Assets/Images/Community/bottomBar/comment.png')}
             />
-            <SocialInfoText>{postCommentsNum}</SocialInfoText>
+            <SocialInfoText>{commentCount || postCommentsNum}</SocialInfoText>
           </SocialInfoView>
         </TouchableWithoutFeedback>
       </SocialInfoContentView>

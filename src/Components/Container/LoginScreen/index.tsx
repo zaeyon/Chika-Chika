@@ -377,6 +377,7 @@ const LoginScreen = ({navigation, route}: Props) => {
     Keyboard.dismiss();
     setLoadingVerify(true);
     console.log('isUser', isUser);
+    const fcmToken = route.params?.fcmToken;
 
     if (isUser) {
       const phoneNumber = String(number);

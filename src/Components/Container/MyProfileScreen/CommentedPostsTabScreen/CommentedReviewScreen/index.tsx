@@ -15,6 +15,22 @@ const ContainerView = Styled.View`
   justify-content: center;
   align-items: center;
 `;
+
+const EmptyContainerView = Styled.View`
+height: 100%;
+padding-top: 118px;
+align-items: center;
+background: #FFFFFF;
+`;
+
+const EmptyContentImage = Styled.Image``;
+
+const EmptyContentText = Styled.Text`
+margin-top: 12px;
+font-weight: normal;
+font-size: 16px;
+color: #9AA2A9;
+`;
 interface Props {
   navigation: any;
   route: any;
@@ -159,24 +175,8 @@ const CommentedReviewScreen = ({navigation, route}: Props) => {
       offset: 0,
     };
     fetchCommentedPosts(form, (response: any) => {
-      if (
-        postData &&
-        JSON.stringify(response).replace(
-          /"createdDiff\(second\)\"\:\d*\,/gi,
-          '',
-        ) !==
-          JSON.stringify(postData).replace(
-            /"createdDiff\(second\)\"\:\d*\,/gi,
-            '',
-          )
-      ) {
-        console.log('commented post diff');
-        LayoutAnimation.configureNext(
-          LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-        );
-        setIsInitializing(false);
-        dispatch(allActions.reviewListActions.setCommentedReviews(response));
-      }
+      setIsInitializing(false);
+      dispatch(allActions.reviewListActions.setCommentedReviews(response));
     });
 
     return function cleanup() {
@@ -191,12 +191,26 @@ const CommentedReviewScreen = ({navigation, route}: Props) => {
     };
   }, []);
 
+  const renderHeaderComponent = useCallback(
+    () =>
+      postData.length === 0 ? (
+        <EmptyContainerView>
+          <EmptyContentImage
+            source={require('~/Assets/Images/Comment/ic_noComment.png')}
+          />
+          <EmptyContentText>{'댓글 단 후기가 없습니다.'}</EmptyContentText>
+        </EmptyContainerView>
+      ) : null,
+    [postData],
+  );
+
   return (
     <ContainerView>
       {isInitializing ? (
         <ActivityIndicator />
       ) : (
         <ReviewList
+          renderHeaderComponent={renderHeaderComponent}
           reviewList={postData}
           loadingMoreReview={isEndReached}
           onEndReachedReviewList={onEndReached}
