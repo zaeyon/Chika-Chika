@@ -6,9 +6,9 @@ import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import SavedHospitalScreen from '~/Components/Presentational/MyProfileScreen/SavedHospitalScreen';
 
 // Redux
-import {useSelector} from 'react-redux';
+import allActions from '~/actions';
+import {useSelector, useDispatch} from 'react-redux';
 // Routes
-import GETUserSavedHospitals from '~/Routes/User/GETUserSavedHospitals';
 import DELETEDentalScrap from '~/Routes/Dental/DELETEDentalScrap';
 
 const ContainerView = Styled.SafeAreaView`
@@ -29,24 +29,19 @@ interface Props {
 
 const SavedHospitalTabScreen = ({navigation, route}: Props) => {
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
-  const [hospitals, setHospitals] = useState(null);
+  const hospitals = useSelector(
+    (state: any) => state.currentUser.savedHospitals,
+  );
 
-  useEffect(() => {
-    GETUserSavedHospitals({jwtToken}).then((response: any) => {
-      setHospitals(response);
-    });
-  }, []);
+  const dispatch = useDispatch();
 
   const deleteSavedHospital = useCallback(
     (dentalId) => {
       LayoutAnimation.configureNext(
         LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
       );
-      DELETEDentalScrap({jwtToken, dentalId}).then((response) => {
-        GETUserSavedHospitals({jwtToken}).then((response: any) => {
-          setHospitals(response);
-        });
-      });
+      dispatch(allActions.userActions.deleteSavedHospital(dentalId));
+      DELETEDentalScrap({jwtToken, dentalId}).then((response) => {});
     },
     [jwtToken],
   );

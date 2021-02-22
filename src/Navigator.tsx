@@ -20,6 +20,7 @@ import allActions from '~/actions';
 import messaging from '@react-native-firebase/messaging';
 // Routes
 import GETUserInfo from '~/Routes/Auth/GETUserInfo';
+import GETUserSavedHospitals from '~/Routes/User/GETUserSavedHospitals';
 // Async Storage
 import {getUserInfo} from '~/storage/currentUser';
 
@@ -1149,7 +1150,6 @@ function BottomTab() {
 }
 
 const Navigator = () => {
-  const [isUser, setIsUser] = useState(false);
   const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
   // const getFcmToken = async () => {
@@ -1177,7 +1177,9 @@ const Navigator = () => {
               allActions.userActions.setUser({jwtToken, profile: response}),
             );
             dispatch(allActions.userActions.setHometown(response.Residences));
-            setIsUser(true);
+            GETUserSavedHospitals({jwtToken}).then((response: any) => {
+              dispatch(allActions.userActions.setSavedHospitals(response));
+            });
           })
           .catch((error: any) => {
             console.log('get user error', error);

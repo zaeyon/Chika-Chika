@@ -197,6 +197,7 @@ interface Props {
   moveToReviewDetail: any;
   moveToWriterProfile: any;
   moveToDentalDetail: any;
+  savedHospitalsNum: number;
 }
 
 interface State {
@@ -674,7 +675,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
               <ProfileReservationTouchableOpacity
                 onPress={() => this.props.moveToSavedHospitalTabScreen()}>
                 <ProfileReservationText>
-                  {this.props.currentUser.scrapClinicsNum}
+                  {this.props.savedHospitalsNum}
                 </ProfileReservationText>
                 <ProfileReservationTitleText>
                   {'찜한병원'}

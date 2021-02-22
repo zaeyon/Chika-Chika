@@ -6,6 +6,8 @@ const currentUser = (
     },
     searchRecordArray: [],
     dentalSearchRecordArray: [],
+    savedHospitals: [],
+    reservations: [],
   },
   action,
 ) => {
@@ -86,41 +88,49 @@ const currentUser = (
 
     case 'DELETE_SEARCH_RECORD': {
       let tmpSearchRecordArray = state.searchRecordArray.slice();
-      console.log("DELETE_SEARCH_RECORD tmpSearchRecordArray", tmpSearchRecordArray);
-      console.log("DELETE_SEARCH_RECORD action.payload", action.payload);
+      console.log(
+        'DELETE_SEARCH_RECORD tmpSearchRecordArray',
+        tmpSearchRecordArray,
+      );
+      console.log('DELETE_SEARCH_RECORD action.payload', action.payload);
       const deleteIndex = tmpSearchRecordArray.findIndex((item, index) => {
-        return item.id === action.payload
-      })
+        return item.id === action.payload;
+      });
 
       tmpSearchRecordArray.splice(deleteIndex, 1);
 
       return {
         ...state,
         searchRecordArray: tmpSearchRecordArray,
-      }
+      };
     }
 
     case 'SET_DENTAL_SEARCH_RECORD': {
       return {
         ...state,
         dentalSearchRecordArray: action.payload,
-      }
+      };
     }
 
     case 'DELETE_DENTAL_SEARCH_RECORD': {
       let tmpDentalSearchRecordArray = state.dentalSearchRecordArray.slice();
-      console.log("DELETE_DENTAL_SEARCH_RECORD tmpDentalSearchRecordArray", tmpDentalSearchRecordArray);
-      console.log("DELETE_DENTAL_SEARCH_RECORD action.payload", action.payload);
-      const deleteIndex = tmpDentalSearchRecordArray.findIndex((item, index) => {
-        return item.id === action.payload
-      })
+      console.log(
+        'DELETE_DENTAL_SEARCH_RECORD tmpDentalSearchRecordArray',
+        tmpDentalSearchRecordArray,
+      );
+      console.log('DELETE_DENTAL_SEARCH_RECORD action.payload', action.payload);
+      const deleteIndex = tmpDentalSearchRecordArray.findIndex(
+        (item, index) => {
+          return item.id === action.payload;
+        },
+      );
 
       tmpDentalSearchRecordArray.splice(deleteIndex, 1);
 
       return {
         ...state,
         dentalSearchRecordArray: tmpDentalSearchRecordArray,
-      }
+      };
     }
 
     case 'SET_NOTIFICATION': {
@@ -130,6 +140,27 @@ const currentUser = (
           ...state.profile,
           notificationConfig: action.payload,
         },
+      };
+    }
+    case 'SET_SAVED_HOSPITALS': {
+      return {
+        ...state,
+        savedHospitals: action.payload,
+      };
+    }
+
+    case 'DELETE_SAVED_HOSPITAL': {
+      const newSavedHospitals = state.savedHospitals.concat();
+      const targetIndex = newSavedHospitals.findIndex(
+        (item) => item.id == action.payload,
+      );
+      console.log('delete saved target', action.payload, targetIndex);
+      if (targetIndex >= 0) {
+        newSavedHospitals.splice(targetIndex, 1);
+      }
+      return {
+        ...state,
+        savedHospitals: newSavedHospitals,
       };
     }
     default:
