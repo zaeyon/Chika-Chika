@@ -130,9 +130,14 @@ margin: 8px 0px;
 interface Props {
   deleteSavedHospital: (dentalId: string) => void;
   hospitals: any;
+  moveToDentalDetail: (dentalId: any) => void;
 }
 
-const SavedHospitalScreen = ({deleteSavedHospital, hospitals}: Props) => {
+const SavedHospitalScreen = ({
+  deleteSavedHospital,
+  hospitals,
+  moveToDentalDetail,
+}: Props) => {
   const renderSavedHospitalItemView = ({item, index}: any) => {
     return (
       <ContentContainerView>
@@ -145,7 +150,8 @@ const SavedHospitalScreen = ({deleteSavedHospital, hospitals}: Props) => {
           <ContentDescriptionView>
             <ContentTitleText>{item.originalName}</ContentTitleText>
             <ContentText>{item.local}</ContentText>
-            <TouchableWithoutFeedback>
+            <TouchableWithoutFeedback
+              onPress={() => moveToDentalDetail(item.id)}>
               <ContentHighlightView>
                 <ContentHighlightText>{'병원상세정보'}</ContentHighlightText>
                 <RightArrowImage

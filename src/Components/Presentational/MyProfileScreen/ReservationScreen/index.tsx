@@ -156,16 +156,16 @@ margin: 8px 0px;
 
 interface Props {
   navigation: any;
-  route: any;
   reservations: any;
   deleteReservation: any;
+  moveToDentalDetail: (dentalId: any) => void;
 }
 
 const ReservationScreen = ({
   navigation,
-  route,
   reservations,
   deleteReservation,
+  moveToDentalDetail,
 }: Props) => {
   const renderReservationItemView = useCallback(({item, index}: any) => {
     return (
@@ -203,14 +203,17 @@ const ReservationScreen = ({
               <ReservationItemClinicText>
                 {item.originalName}
               </ReservationItemClinicText>
-              <ReservationItemNavigationView>
-                <ReservationItemNavigationText>
-                  {'병원상세정보'}
-                </ReservationItemNavigationText>
-                <ArrowIconImage
-                  source={require('~/Assets/Images/MyPage/move_clinic_detail.png')}
-                />
-              </ReservationItemNavigationView>
+              <TouchableWithoutFeedback
+                onPress={() => moveToDentalDetail(item.id)}>
+                <ReservationItemNavigationView>
+                  <ReservationItemNavigationText>
+                    {'병원상세정보'}
+                  </ReservationItemNavigationText>
+                  <ArrowIconImage
+                    source={require('~/Assets/Images/MyPage/move_clinic_detail.png')}
+                  />
+                </ReservationItemNavigationView>
+              </TouchableWithoutFeedback>
             </ReservationItemDetailView>
           </ReservationItemContentView>
         </TouchableWithoutFeedback>
