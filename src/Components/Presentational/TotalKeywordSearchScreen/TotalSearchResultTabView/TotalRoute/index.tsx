@@ -27,14 +27,12 @@ background-color: #F5F7F9;
 `;
 
 interface Props {
-  isRequestChanged: boolean;
   fetchSearchResult: any;
   navigation: any;
   renderHeaderComponent: any;
 }
 
 const TotalRoute = ({
-  isRequestChanged,
   fetchSearchResult,
   navigation,
   renderHeaderComponent,
@@ -57,6 +55,28 @@ const TotalRoute = ({
     emdName: '전국',
     id: -1,
   });
+
+  useEffect(() => {
+    setOrder('createdAt');
+    setRegion(selectedHometown.id === -1 ? 'all' : 'residence');
+    const form = {
+      pathType: 'all',
+      region: selectedHometown.id === -1 ? 'all' : 'residence',
+      cityId: String(selectedHometown.id),
+      order: 'createdAt',
+      offset: 0,
+      limit: 10,
+    };
+    fetchSearchResult(form, (response: any) => {
+      const data = {
+        type,
+        posts: response,
+      };
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+      );
+    });
+  }, []);
 
   return (
     <ContainerView>

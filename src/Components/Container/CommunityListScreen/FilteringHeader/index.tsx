@@ -18,20 +18,9 @@ justify-content: space-between;
 `;
 
 const OrderFilterContainer = Styled.View`
-padding-top: 10px;
-padding-bottom: 10px;
-padding-left: 16px;
-padding-right: 16px;
+padding: 10px 16px;
 flex-direction: row;
 align-items: center;
-`;
-
-const LocationFilterContainer = Styled.View`
-flex-direction: row;
-padding-top: 16px;
-padding-bottom: 16px;
-padding-left: 16px;
-padding-right: 16px;
 `;
 
 const OrderFilterItemContainer = Styled.View`
@@ -47,6 +36,13 @@ font-weight: 400;
 font-size: 14px;
 line-height: 23px;
 color: #131F3C;
+`;
+const LocationFilterContainer = Styled.View`
+flex-direction: row;
+padding-top: 16px;
+padding-bottom: 16px;
+padding-left: 16px;
+padding-right: 16px;
 `;
 
 const LocationFilterText = Styled.Text`
@@ -85,7 +81,11 @@ const FilteringHeader = ({
     <>
       <FilterContainer>
         <OrderFilterContainer>
-          <TouchableWithoutFeedback onPress={() => onFiltering('popular')}>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              ReactNativeHapticFeedback.trigger('impactLight');
+              onFiltering('popular');
+            }}>
             <OrderFilterItemContainer
               style={order === 'popular' && {borderColor: '#00D1FF'}}>
               <OrderFilterText
@@ -94,7 +94,11 @@ const FilteringHeader = ({
               </OrderFilterText>
             </OrderFilterItemContainer>
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => onFiltering('createdAt')}>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              ReactNativeHapticFeedback.trigger('impactLight');
+              onFiltering('createdAt');
+            }}>
             <OrderFilterItemContainer
               style={[
                 {marginLeft: 6},

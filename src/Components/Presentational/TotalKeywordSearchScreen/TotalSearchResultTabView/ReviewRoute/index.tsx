@@ -201,6 +201,7 @@ const ReviewRoute = ({
             selectedHometown,
             onFiltering,
             setFloatVisible,
+            reviewList.length === 0,
           )
         }
       />

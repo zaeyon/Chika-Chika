@@ -34,10 +34,10 @@ align-items: center;
 const SocialInfoText = Styled.Text`
 font-style: normal;
 font-weight: normal;
-font-size: 14px;
+font-size: 13px;
 line-height: 16px;
 margin-left: 4px;
-color: #9AA2A9;
+color: #000000;
 `;
 
 interface Props {

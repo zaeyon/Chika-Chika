@@ -925,6 +925,10 @@ function BottomTab() {
       return false;
     }
 
+    if (routeName.name === 'TotalKeywordSearchStackScreen') {
+      return false;
+    }
+
     return true;
   };
 

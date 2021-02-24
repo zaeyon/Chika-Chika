@@ -161,7 +161,17 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
 
   const fetchSearchResult = useCallback(
     (
-      {pathType, communityType, region, cityId, order, offset, limit},
+      {
+        lat,
+        long,
+        pathType,
+        communityType,
+        region,
+        cityId,
+        order,
+        offset,
+        limit,
+      },
       callback = () => console.log('callback'),
     ) => {
       console.log('query:', query);
@@ -170,6 +180,8 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
         return;
       } else {
         GETTotalSearch({
+          lat,
+          long,
           jwtToken,
           query,
           category,
@@ -185,7 +197,9 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
           .then((response: any) => {
             callback(response);
           })
-          .catch((e) => {});
+          .catch((e) => {
+            console.log('fetch search result error', e);
+          });
       }
     },
     [jwtToken, query, category, tagId],
@@ -212,18 +226,9 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
 
   const deleteSingleSearchRecord = (id: number, category: string) => {
     const searchId = id;
-
+    dispatch(allActions.userActions.deleteSearchRecord(searchId));
     DELETESearchRecord({jwtToken, searchId})
-      .then((response) => {
-        GETSearchRecord({jwtToken})
-          .then((response: any) => {
-            console.log('GETSearchRecord response', response);
-            dispatch(allActions.userActions.setSearchRecord(response));
-          })
-          .catch((error) => {
-            console.log('GETSearchRecord error', error);
-          });
-      })
+      .then((response) => {})
       .catch((error) => {
         console.log('DELETESearchRecord error', error);
       });

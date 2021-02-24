@@ -368,6 +368,7 @@ const CommunityRoute = ({
             selectedHometown,
             onFiltering,
             setFloatVisible,
+            postData.length === 0,
           )
         }
       />

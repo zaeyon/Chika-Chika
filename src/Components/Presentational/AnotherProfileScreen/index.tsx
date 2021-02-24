@@ -632,19 +632,21 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
                   }}
                 />
               </ProfileImageView>
-              <ProfileReservationTouchableOpacity
-                onPress={() => this.props.moveToReservationTabScreen()}>
-                <ProfileReservationText>{'1'}</ProfileReservationText>
+              <ProfileReservationTouchableOpacity>
+                <ProfileReservationText>
+                  {this.props.reviewData.length}
+                </ProfileReservationText>
                 <ProfileReservationTitleText>
-                  {'예약피드'}
+                  {'리뷰 수'}
                 </ProfileReservationTitleText>
               </ProfileReservationTouchableOpacity>
               <VerticalPartitionView />
-              <ProfileReservationTouchableOpacity
-                onPress={() => this.props.moveToSavedHospitalTabScreen()}>
-                <ProfileReservationText>{'3'}</ProfileReservationText>
+              <ProfileReservationTouchableOpacity>
+                <ProfileReservationText>
+                  {this.props.communityPostData.length}
+                </ProfileReservationText>
                 <ProfileReservationTitleText>
-                  {'찜한병원'}
+                  {'수다글 수'}
                 </ProfileReservationTitleText>
               </ProfileReservationTouchableOpacity>
             </ProfileContentView>

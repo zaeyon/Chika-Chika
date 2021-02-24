@@ -17,12 +17,12 @@ z-index: 3;
 const TopTitleView = Styled.View`
 padding: 0px 8px;
 margin-bottom: 24px;
+margin-top: 24px;
 `;
 
 const TopTitleText = Styled.Text`
 font-weight: normal;
 font-size: 24px;
-line-height: 24px;
 margin-bottom: 12px;
 `;
 
