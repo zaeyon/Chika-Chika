@@ -319,7 +319,7 @@ const PostContent = ({
           <ProfileContainerView>
             <ProfileImage
               source={{
-                url: user.profileImg,
+                url: user.img_thumbNail,
                 cache: 'force-cache',
               }}
             />

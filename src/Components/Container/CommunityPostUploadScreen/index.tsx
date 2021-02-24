@@ -15,13 +15,11 @@ import CommunityCreatePostScreen from '~/Components/Presentational/CommunityCrea
 import AnimatedModal from '~/Components/Presentational/AnimatedModal';
 // Routes
 import GETAllTagSearch from '~/Routes/Search/GETAllTagSearch';
-import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import POSTCreateCommunityPost from '~/Routes/Community/createPost/POSTCreateCommunityPost';
 import PUTCommunityPost from '~/Routes/Community/editPost/PUTCommunityPost';
 // redux
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
-import Animated from 'react-native-reanimated';
 
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
