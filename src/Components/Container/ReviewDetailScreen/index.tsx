@@ -39,7 +39,6 @@ import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import TreatmentList from '~/Components/Presentational/ReviewDetailScreen/TreatmentList';
 import ReviewMetaInfo from '~/Components/Presentational/ReviewDetailScreen/ReviewMetaInfo';
 import WriterInfo from '~/Components/Presentational/ReviewDetailScreen/WriterInfo';
-import AnimatedModal from '~/Components/Presentational/AnimatedModal';
 
 // Route
 import GETReviewDetail from '~/Routes/Review/GETReviewDetail';
@@ -80,6 +79,7 @@ const ReviewContentContainer = Styled.View`
 `;
 
 const CommentListContainer = Styled.View`
+padding-bottom: 35px;
 `;
 
 const MetaInfoContainer = Styled.View`
@@ -242,10 +242,6 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     isVisibleOtherMoreViewModal,
     setIsVisibleOtherMoreViewModal,
   ] = useState<boolean>(false);
-  const [
-    isVisibleCommentDeleteModal,
-    setIsVisibleCommentDeleteModal,
-  ] = useState<boolean>(false);
 
   const [isCertifiedReceipt, setIsCertifiedReceipt] = useState<boolean>(false);
   const [changeCommentArray, setChangeCommentArray] = useState<boolean>(false);
@@ -294,6 +290,12 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     getReviewDetail();
     getReviewCommentList();
   }, []);
+
+  useEffect(() => {
+    if(route.params?.requestType === "notification") {
+      moveToCommentList();
+    }
+  }, [route.params?.requesType])
 
   useEffect(() => {
     console.log('리뷰수정 취소', route.params?.isCancelRevise);
@@ -937,7 +939,18 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
   const onPressOwnCommentActionSheet = (index: number) => {
     if (index === 1) {
-      setIsVisibleCommentDeleteModal(true);
+      Alert.alert('삭제되면 복구가 불가능합니다.\n정말 삭제하시겠습니까?', "", [
+        {
+          text: '취소',
+          style: 'cancel',
+          onPress: () => 0,
+        },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: () => deleteReviewComment(),
+        }
+      ])
     }
   };
 
@@ -1113,25 +1126,6 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           cancelButtonIndex={0}
           onPress={(index: any) => onPressOtherCommentActionSheet(index)}
         />
-        <AnimatedModal
-          visible={isVisibleCommentDeleteModal}
-          buttons={[
-            {
-              title: '취소',
-              onPress: () => setIsVisibleCommentDeleteModal(false),
-            },
-            {
-              title: '삭제',
-              onPress: () => {
-                setIsVisibleCommentDeleteModal(false);
-                deleteReviewComment();
-              },
-            },
-          ]}>
-          <ModalContentText>
-            {'삭제되면 복구가 불가능합니다.\n정말 삭제하시겠습니까?'}
-          </ModalContentText>
-        </AnimatedModal>
       </Container>
     </TouchableWithoutFeedback>
   );

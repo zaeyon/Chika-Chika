@@ -122,25 +122,23 @@ const NotificationItem = ({notificationObj, isEditing, selectNotificationItem, s
 
 
     return (
-        <TouchableWithoutFeedback onPress={() => moveToNotifiedPost(notificationObj)}>
+        <TouchableWithoutFeedback onPress={() => !isEditing ? moveToNotifiedPost(notificationObj) : selectNotificationItem(notificationObj.id, notificationObj.type, index)}>
         <Container>
             <ContentContainer>
-            <TouchableWithoutFeedback onPress={() => moveToAnotherProfile(notificationObj.senders.id, notificationObj.senders.nickname, notificationObj.senders.profileImg)}>
+            <TouchableWithoutFeedback onPress={() => moveToAnotherProfile(notificationObj.sender.id, notificationObj.sender.nickname, notificationObj.sender.profileImg)}>
             <ProfileImageContainer>
                 <ProfileImage
-                source={{uri: notificationObj.senders.profileImg ? notificationObj.senders.profileImg : "https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/436/8142f53e51d2ec31bc0fa4bec241a919_crop.jpeg"}}/>
+                source={{uri: notificationObj.sender.profileImg ? notificationObj.sender.profileImg : "https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/436/8142f53e51d2ec31bc0fa4bec241a919_crop.jpeg"}}/>
             </ProfileImageContainer>
             </TouchableWithoutFeedback>
             <BodyContainer>
                 <NicknameContainer>
-                    <NicknameText>{notificationObj.senders.nickname}</NicknameText>
+                    <NicknameText>{notificationObj.sender.nickname}</NicknameText>
                     <DateText>{formatDate(notificationObj.createdAt)}</DateText>
                 </NicknameContainer>
                 <NotifyDescripText>{notificationObj.message}</NotifyDescripText>
             </BodyContainer>
             {isEditing && (
-                <TouchableWithoutFeedback onPress={() => selectNotificationItem(notificationObj.id, notificationObj.type, index)
-                }>
                 <SelectButtonContainer>
                     <SelectButtonIcon
                     source={
@@ -149,7 +147,6 @@ const NotificationItem = ({notificationObj, isEditing, selectNotificationItem, s
                     : require('~/Assets/Images/Notification/ic_unselected.png')
                     }/>
                 </SelectButtonContainer>
-                </TouchableWithoutFeedback>
             )}
             </ContentContainer>
             <BottomDivier/>

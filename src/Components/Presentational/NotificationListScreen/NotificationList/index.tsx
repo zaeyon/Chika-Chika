@@ -11,6 +11,7 @@ import {
     ScrollView,
     ActivityIndicator,
     RefreshControl,
+    View
 } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
@@ -95,24 +96,17 @@ color: #4E524D;
 
 
 interface Props {
+    navigation: any,
+    route: any,
     isEditing: boolean,
     refreshingNotification: boolean,
     onRefreshNotificationArray: () => void,
-    loadingGetLikeNotify: boolean,
-    loadingGetEventNotify: boolean,
-    loadingGetCommentNotify: boolean,
-    likeNotifyIdArray: Array<any>,
-    eventNotifyIdArray: Array<any>,
-    commentNotifyIdArray: Array<any>,
+    notificationArray: any,
+    selectedNotificationIdArray: Array<any>,
     selectNotificationItem: (notificationId: number, type: string, index: number) => void,
-    likeNotificationArray: Array<any>,
-    eventNotificationArray: Array<any>,
-    commentNotificationArray: Array<any>,
-    navigation: any,
-    route: any,
 }
 
-const NotificationList = ({navigation, route, isEditing, loadingGetLikeNotify, loadingGetEventNotify, loadingGetCommentNotify, selectNotificationItem, likeNotificationArray, eventNotificationArray, commentNotificationArray, likeNotifyIdArray, eventNotifyIdArray, commentNotifyIdArray, refreshingNotification, onRefreshNotificationArray}: Props) => {
+const NotificationList = ({navigation, route, isEditing,  selectNotificationItem, refreshingNotification, onRefreshNotificationArray, notificationArray, selectedNotificationIdArray}: Props) => {
     const [selectedType, setSelectedType] = useState<string>("like");
 
     const selectNotificationType = (type: string) => {
@@ -132,6 +126,7 @@ const NotificationList = ({navigation, route, isEditing, loadingGetLikeNotify, l
     }
 
     const moveToNotifiedPost = (notificationObj: any) => {
+        console.log("moveToNotifiedPost notificationObj", notificationObj);
         if(notificationObj.type === "Comment") {
             if(notificationObj.communityId !== null) {
                 navigation.navigate("CommunityStackScreen", {
@@ -145,22 +140,44 @@ const NotificationList = ({navigation, route, isEditing, loadingGetLikeNotify, l
                     screen: "ReviewDetailScreen",
                     params: {
                         reviewId: notificationObj.reviewId,
+                        postId: notificationObj.reviewId,
+                        postType: 'review',
+                        requestType: 'notification',
+                    }
+                })
+            }
+        } else if(notificationObj.type === "Like") {
+            if(notificationObj.reviewId !== null) {
+                navigation.navigate("ReviewStackScreen", {
+                    screen: "ReviewDetailScreen",
+                    params: {
+                        reviewId: notificationObj.reviewId,
+                    }
+                })
+            } else if(notificationObj.communityId !== null) {
+                navigation.navigate("CommunityStackScreen", {
+                    screen: "CommunityDetailScreen",
+                    params: {
+                        id: notificationObj.communityId,
                     }
                 })
             }
         }
     }
+
+    const renderNotificationItem = ({item, index}: any) => {
+
+        console.log("renderNotificationItem item", item);
     
-    const renderCommentNotificationItem = ({item, index}: any) => {
-
         let selectedIndex;
 
-         selectedIndex = commentNotifyIdArray.findIndex((selectedItem, index) => {
-            if(selectedItem.id === item.id) {
-                return index
-            }
+        selectedIndex = selectedNotificationIdArray.findIndex((selectedItem, index) => {
+         if(selectedItem.id === item.id) {
+             return index
+         }
         })
 
+        
         return (
             <NotificationItem
             index={index}
@@ -172,50 +189,7 @@ const NotificationList = ({navigation, route, isEditing, loadingGetLikeNotify, l
             moveToNotifiedPost={moveToNotifiedPost}/>
         )
     }
-
-    const renderLikeNotificationItem = ({item, index}: any) => {
-
-        let selectedIndex;
-
-         selectedIndex = likeNotifyIdArray.findIndex((selectedItem, index) => {
-            if(selectedItem.id === item.id) {
-                return index
-            }
-        })
-
-        return (
-            <NotificationItem
-            index={index}
-            selected={selectedIndex === -1 ? false : true}
-            isEditing={isEditing}
-            notificationObj={item}
-            selectNotificationItem={selectNotificationItem}
-            moveToAnotherProfile={moveToAnotherProfile}
-            moveToNotifiedPost={moveToNotifiedPost}/>
-        )
-    }
-
-    const renderEventNotificationItem = ({item, index}: any) => {
-
-        let selectedIndex;
-
-         selectedIndex = eventNotifyIdArray.findIndex((selectedItem, index) => {
-            if(selectedItem.id === item.id) {
-                return index
-            }
-        })
-
-        return (
-            <NotificationItem
-            index={index}
-            selected={selectedIndex === -1 ? false : true}
-            isEditing={isEditing}
-            notificationObj={item}
-            selectNotificationItem={selectNotificationItem}
-            moveToAnotherProfile={moveToAnotherProfile}
-            moveToNotifiedPost={moveToNotifiedPost}/>
-        )
-    }
+    
 
     const renderNotificationFooter = () => {
         return (
@@ -226,118 +200,34 @@ const NotificationList = ({navigation, route, isEditing, loadingGetLikeNotify, l
     }
 
     return (
-        <ScrollView
-        refreshControl={
-            <RefreshControl
-            refreshing={refreshingNotification}
-            onRefresh={onRefreshNotificationArray}/>
-        }
-        contentContainerStyle={{paddingTop: 16, paddingBottom: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%')}}
-        showsVerticalScrollIndicator={false}>
         <Container>
-            <NotificationTypeListContainer>
-                <TouchableWithoutFeedback onPress={() => selectNotificationType("like")}>
-                <NotificationTypeItemContainer
-                style={selectedType === "like" && {backgroundColor: "#131F3C"}}>
-                    <NotificationTypeText
-                    style={selectedType === "like" && {color: "#ffffff", fontWeight: "800"}}>{"좋아요"}</NotificationTypeText>
-                </NotificationTypeItemContainer>
-                </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => selectNotificationType("event")}>
-                <NotificationTypeItemContainer
-                style={[selectedType === "event" && {backgroundColor: "#131F3C"}, {marginLeft: 8}]}>
-                    <NotificationTypeText
-                    style={selectedType === "event" && {color: "#ffffff", fontWeight: "800"}}>{"이벤트"}</NotificationTypeText>
-                </NotificationTypeItemContainer>
-                </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => selectNotificationType("comment")}>
-                <NotificationTypeItemContainer
-                style={[selectedType === "comment" && {backgroundColor: "#131F3C"}, {marginLeft: 8}]}>
-                    <NotificationTypeText
-                    style={selectedType === "comment" && {color: "#ffffff", fontWeight: "800"}}>{"댓글"}</NotificationTypeText>
-                </NotificationTypeItemContainer>
-                </TouchableWithoutFeedback>
-            </NotificationTypeListContainer>
-            {selectedType === "like" && (   
-            <NotificationContainer>
-            {likeNotificationArray.length > 0 && !loadingGetLikeNotify && (
+            {notificationArray?.length > 0 && (
             <NotificationListContainer>
                 <FlatList
-                scrollEnabled={false}
-                contentContainerStyle={[{marginTop: 12}]}
-                data={likeNotificationArray}
-                renderItem={renderLikeNotificationItem}
-                ListFooterComponent={renderNotificationFooter}/>
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{paddingBottom: 40}}
+                refreshing={refreshingNotification}
+                onRefresh={onRefreshNotificationArray}
+                renderItem={renderNotificationItem}
+                data={notificationArray}
+                listFooterComponent={renderNotificationFooter}/>
             </NotificationListContainer>
             )}
-            {likeNotificationArray.length === 0 && !loadingGetLikeNotify && (
+            {notificationArray?.length === 0 && (
+            <ScrollView
+            refreshControl={
+                <RefreshControl
+                refreshing={refreshingNotification}
+                onRefresh={onRefreshNotificationArray}/>
+            }>
             <NoNotificationListContainer>
                 <NoDataImage
                 source={require('~/Assets/Images/ic_noData.png')}/>
-                <NoDataText>{"좋아요 알림이 없습니다."}</NoDataText>
+                <NoDataText>{"알림이 없습니다."}</NoDataText>
             </NoNotificationListContainer>
-            )}
-            {loadingGetLikeNotify && (
-            <LoadingContainer>
-                <ActivityIndicator/>
-            </LoadingContainer>
-            )}
-            </NotificationContainer>
-            )}
-            {selectedType === "event" && (
-            <NotificationContainer>
-            {eventNotificationArray.length > 0 && !loadingGetEventNotify && (
-            <NotificationListContainer>
-                <FlatList
-                scrollEnabled={false}
-                contentContainerStyle={[{marginTop: 12}]}
-                data={eventNotificationArray}
-                renderItem={renderEventNotificationItem}
-                ListFooterComponent={renderNotificationFooter}/>  
-            </NotificationListContainer>
-            )}
-            {eventNotificationArray.length === 0 && !loadingGetEventNotify && (
-            <NoNotificationListContainer>
-                <NoDataImage
-                source={require('~/Assets/Images/ic_noData.png')}/>
-                <NoDataText>{"이벤트 알림이 없습니다."}</NoDataText>
-            </NoNotificationListContainer>
-            )}
-            {loadingGetEventNotify && (
-            <LoadingContainer>
-                <ActivityIndicator/>
-            </LoadingContainer>
-            )}
-            </NotificationContainer>
-            )}
-            {selectedType === "comment" && (
-            <NotificationContainer>
-            {commentNotificationArray.length > 0 && !loadingGetCommentNotify && (
-            <NotificationListContainer>
-                <FlatList
-                scrollEnabled={false}
-                contentContainerStyle={[{marginTop: 12}]}
-                data={commentNotificationArray}
-                renderItem={renderCommentNotificationItem}
-                ListFooterComponent={renderNotificationFooter}/>
-            </NotificationListContainer>
-            )}
-            {commentNotificationArray.length === 0 && !loadingGetCommentNotify && (
-            <NoNotificationListContainer>
-                <NoDataImage
-                source={require('~/Assets/Images/ic_noData.png')}/>
-                <NoDataText>{"댓글 알림이 없습니다."}</NoDataText>
-            </NoNotificationListContainer>
-            )}
-            {loadingGetCommentNotify && (
-            <LoadingContainer>
-                <ActivityIndicator/>
-            </LoadingContainer>
-            )}
-            </NotificationContainer>
+            </ScrollView>
             )}
         </Container>
-        </ScrollView>
     )
 }
 
@@ -353,3 +243,185 @@ const styles = StyleSheet.create({
         shadowRadius: 12,
     }
 })
+
+
+
+{/* <ScrollView
+refreshControl={
+    <RefreshControl
+    refreshing={refreshingNotification}
+    onRefresh={onRefreshNotificationArray}/>
+}
+contentContainerStyle={{paddingTop: 16, paddingBottom: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%')}}
+showsVerticalScrollIndicator={false}>
+<Container>
+    <NotificationTypeListContainer>
+        <TouchableWithoutFeedback onPress={() => selectNotificationType("like")}>
+        <NotificationTypeItemContainer
+        style={selectedType === "like" && {backgroundColor: "#131F3C"}}>
+            <NotificationTypeText
+            style={selectedType === "like" && {color: "#ffffff", fontWeight: "800"}}>{"좋아요"}</NotificationTypeText>
+        </NotificationTypeItemContainer>
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={() => selectNotificationType("event")}>
+        <NotificationTypeItemContainer
+        style={[selectedType === "event" && {backgroundColor: "#131F3C"}, {marginLeft: 8}]}>
+            <NotificationTypeText
+            style={selectedType === "event" && {color: "#ffffff", fontWeight: "800"}}>{"이벤트"}</NotificationTypeText>
+        </NotificationTypeItemContainer>
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={() => selectNotificationType("comment")}>
+        <NotificationTypeItemContainer
+        style={[selectedType === "comment" && {backgroundColor: "#131F3C"}, {marginLeft: 8}]}>
+            <NotificationTypeText
+            style={selectedType === "comment" && {color: "#ffffff", fontWeight: "800"}}>{"댓글"}</NotificationTypeText>
+        </NotificationTypeItemContainer>
+        </TouchableWithoutFeedback>
+    </NotificationTypeListContainer>
+    {selectedType === "like" && (   
+    <NotificationContainer>
+    {likeNotificationArray.length > 0 && !loadingGetLikeNotify && (
+    <NotificationListContainer>
+        <FlatList
+        scrollEnabled={false}
+        contentContainerStyle={[{marginTop: 12}]}
+        data={likeNotificationArray}
+        renderItem={renderLikeNotificationItem}
+        ListFooterComponent={renderNotificationFooter}/>
+    </NotificationListContainer>
+    )}
+    {likeNotificationArray.length === 0 && !loadingGetLikeNotify && (
+    <NoNotificationListContainer>
+        <NoDataImage
+        source={require('~/Assets/Images/ic_noData.png')}/>
+        <NoDataText>{"좋아요 알림이 없습니다."}</NoDataText>
+    </NoNotificationListContainer>
+    )}
+    {loadingGetLikeNotify && (
+    <LoadingContainer>
+        <ActivityIndicator/>
+    </LoadingContainer>
+    )}
+    </NotificationContainer>
+    )}
+    {selectedType === "event" && (
+    <NotificationContainer>
+    {eventNotificationArray.length > 0 && !loadingGetEventNotify && (
+    <NotificationListContainer>
+        <FlatList
+        scrollEnabled={false}
+        contentContainerStyle={[{marginTop: 12}]}
+        data={eventNotificationArray}
+        renderItem={renderEventNotificationItem}
+        ListFooterComponent={renderNotificationFooter}/>  
+    </NotificationListContainer>
+    )}
+    {eventNotificationArray.length === 0 && !loadingGetEventNotify && (
+    <NoNotificationListContainer>
+        <NoDataImage
+        source={require('~/Assets/Images/ic_noData.png')}/>
+        <NoDataText>{"이벤트 알림이 없습니다."}</NoDataText>
+    </NoNotificationListContainer>
+    )}
+    {loadingGetEventNotify && (
+    <LoadingContainer>
+        <ActivityIndicator/>
+    </LoadingContainer>
+    )}
+    </NotificationContainer>
+    )}
+    {selectedType === "comment" && (
+    <NotificationContainer>
+    {commentNotificationArray.length > 0 && !loadingGetCommentNotify && (
+    <NotificationListContainer>
+        <FlatList
+        scrollEnabled={false}
+        contentContainerStyle={[{marginTop: 12}]}
+        data={commentNotificationArray}
+        renderItem={renderCommentNotificationItem}
+        ListFooterComponent={renderNotificationFooter}/>
+    </NotificationListContainer>
+    )}
+    {commentNotificationArray.length === 0 && !loadingGetCommentNotify && (
+    <NoNotificationListContainer>
+        <NoDataImage
+        source={require('~/Assets/Images/ic_noData.png')}/>
+        <NoDataText>{"댓글 알림이 없습니다."}</NoDataText>
+    </NoNotificationListContainer>
+    )}
+    {loadingGetCommentNotify && (
+    <LoadingContainer>
+        <ActivityIndicator/>
+    </LoadingContainer>
+    )}
+    </NotificationContainer>
+    )}
+</Container>
+</ScrollView> */}
+
+
+// const renderCommentNotificationItem = ({item, index}: any) => {
+
+//     let selectedIndex;
+
+//      selectedIndex = commentNotifyIdArray.findIndex((selectedItem, index) => {
+//         if(selectedItem.id === item.id) {
+//             return index
+//         }
+//     })
+
+//     return (
+//         <NotificationItem
+//         index={index}
+//         selected={selectedIndex === -1 ? false : true}
+//         isEditing={isEditing}
+//         notificationObj={item}
+//         selectNotificationItem={selectNotificationItem}
+//         moveToAnotherProfile={moveToAnotherProfile}
+//         moveToNotifiedPost={moveToNotifiedPost}/>
+//     )
+// }
+
+// const renderLikeNotificationItem = ({item, index}: any) => {
+
+//     let selectedIndex;
+
+//      selectedIndex = likeNotifyIdArray.findIndex((selectedItem, index) => {
+//         if(selectedItem.id === item.id) {
+//             return index
+//         }
+//     })
+
+//     return (
+//         <NotificationItem
+//         index={index}
+//         selected={selectedIndex === -1 ? false : true}
+//         isEditing={isEditing}
+//         notificationObj={item}
+//         selectNotificationItem={selectNotificationItem}
+//         moveToAnotherProfile={moveToAnotherProfile}
+//         moveToNotifiedPost={moveToNotifiedPost}/>
+//     )
+// }
+
+// const renderEventNotificationItem = ({item, index}: any) => {
+
+//     let selectedIndex;
+
+//      selectedIndex = eventNotifyIdArray.findIndex((selectedItem, index) => {
+//         if(selectedItem.id === item.id) {
+//             return index
+//         }
+//     })
+
+//     return (
+//         <NotificationItem
+//         index={index}
+//         selected={selectedIndex === -1 ? false : true}
+//         isEditing={isEditing}
+//         notificationObj={item}
+//         selectNotificationItem={selectNotificationItem}
+//         moveToAnotherProfile={moveToAnotherProfile}
+//         moveToNotifiedPost={moveToNotifiedPost}/>
+//     )
+// }

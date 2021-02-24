@@ -26,6 +26,7 @@ import {storeUserInfo} from '~/storage/currentUser';
 
 // Local Components
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
+import createRandomNickname from '~/method/createRandomNickname';
 
 // Route
 import POSTSendTokenToPhone from '~/Routes/Auth/POSTSendTokenToPhone';
@@ -333,8 +334,12 @@ const LoginScreen = ({navigation, route}: Props) => {
   };
 
   const startTimeout = () => {
+
+    limitTime = 300;
     timeout = setInterval(function () {
-      //console.log("시간제한 시작", limitTime)
+
+      limitTime = limitTime - 1;
+
       setLimitMin(parseInt(String(limitTime / 60)));
       if (String(limitTime % 60).length == 1) {
         setLimitSec('0' + String(limitTime % 60));
@@ -342,7 +347,6 @@ const LoginScreen = ({navigation, route}: Props) => {
         setLimitSec(String(limitTime % 60));
       }
 
-      limitTime = limitTime - 1;
 
       if (limitTime < 0) {
         clearInterval(timeout);
@@ -396,7 +400,7 @@ const LoginScreen = ({navigation, route}: Props) => {
             provider: 'local',
             fcmToken: fcmToken,
             userPhoneNumber: String(number),
-            nickname: 'TEST' + String(Date.now()),
+            nickname: createRandomNickname(),
             isUser: isUser,
           });
         })
@@ -411,7 +415,7 @@ const LoginScreen = ({navigation, route}: Props) => {
     if (formattedNumber.split('').length === 17) {
       setInvalidPhoneNumber(false);
       clearInterval(timeout);
-      limitTime = 300;
+      startTimeout();
 
       var tmpNumber = formattedNumber.split(' - ');
       var phoneNumber = tmpNumber.join('');
@@ -421,7 +425,6 @@ const LoginScreen = ({navigation, route}: Props) => {
       setInvalidAuthCode(false);
       setTimeOver(false);
       setVisibleAuthCodeInput(true);
-      startTimeout();
 
       POSTSendTokenToPhone(String(phoneNumber))
         .then(function (response: any) {
@@ -446,6 +449,8 @@ const LoginScreen = ({navigation, route}: Props) => {
     POSTLogin({phoneNumber, authCode, fcmToken})
       .then(function (response: any) {
         console.log('POSTLogin response', response);
+        console.log("POSTLogin fcmToken", fcmToken);
+        console.log('POSTLogin response.user.userResidences', response.user.userResidences)
         if (response.statusText === 'Accepted') {
           setLoadingVerify(false);
           clearInterval(timeout);
@@ -455,6 +460,7 @@ const LoginScreen = ({navigation, route}: Props) => {
             id: response.user.userId,
             nickname: response.user.userNickname,
             profileImg: response.user.userProfileImg,
+            img_thumbNail: response.user.img_thumbNail,
             gender: response.user.userGender,
             birthdate: response.user.userBirthdate,
             provider: response.user.userProvider,
@@ -537,7 +543,8 @@ const LoginScreen = ({navigation, route}: Props) => {
               style={
                 visibleAuthCodeInput ? {paddingLeft: 10} : {paddingLeft: 20}
               }>
-              <VerifyText>
+              <VerifyText
+              style={formattedNumber.length > 0 && {color: '#00D1FF'}}>
                 {visibleAuthCodeInput ? '재전송' : '인증'}
               </VerifyText>
             </VerifyTextContainer>
@@ -598,15 +605,15 @@ const LoginScreen = ({navigation, route}: Props) => {
                 !invalidPhoneNumber && (
                   <TouchableWithoutFeedback onPress={() => clickLoginButton()}>
                     <AbledLoginButton>
-                      <AbledLoginText>로그인</AbledLoginText>
+                      <AbledLoginText>{"로그인 / 회원가입"}</AbledLoginText>
                     </AbledLoginButton>
                   </TouchableWithoutFeedback>
                 )}
-              {((visibleAuthCodeInput && authCode == '') ||
+              {((authCode == '') ||
                 timeOver ||
                 invalidPhoneNumber) && (
                 <DisabledLoginButton>
-                  <DisabledLoginText>로그인</DisabledLoginText>
+                  <DisabledLoginText>{"로그인 / 회원가입"}</DisabledLoginText>
                 </DisabledLoginButton>
               )}
             </LoginButtonContainer>

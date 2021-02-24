@@ -6,6 +6,7 @@ const currentUser = (
     },
     searchRecordArray: [],
     dentalSearchRecordArray: [],
+    notificationArray: TEST_NOTIFICATION_ARRAY_DATA,
     savedHospitals: [],
     reservations: [],
   },
@@ -143,6 +144,12 @@ const currentUser = (
       };
     }
 
+    case 'SET_NOTIFICATION_ARRAY': {
+      return {
+        ...state,
+        notificationArray: action.payload,
+      }
+    }
     case 'SET_RESERVATIONS': {
       return {
         ...state,
@@ -190,3 +197,25 @@ const currentUser = (
 };
 
 export default currentUser;
+
+const TEST_NOTIFICATION_ARRAY_DATA = [
+    {
+        "id": 325,
+        "type": "Comment",
+        "message": "리뷰글에 작성한 댓글에 새로운 답글이 달렸습니다.",
+        "createdAt": "2021-01-26 19:49:34",
+        "updatedAt": "2021-01-26 19:49:34",
+        "deletedAt": null,
+        "notificatedUserId": "4a547c10-5a01-11eb-81c9-db493a825d51",
+        "senderId": "85a04d20-5179-11eb-8d8b-b5b574d0e39e",
+        "reviewId": 94,
+        "communityId": null,
+        "reviewCommentId": 277,
+        "communityCommentId": null,
+        "senders": {
+            "id": "85a04d20-5179-11eb-8d8b-b5b574d0e39e",
+            "nickname": "jiwon1121",
+            "profileImg": ""
+        }
+    },
+]

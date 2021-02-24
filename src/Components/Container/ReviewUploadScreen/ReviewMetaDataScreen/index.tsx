@@ -46,11 +46,12 @@ padding-right: 0px;
 const MetaDataHeaderContainer = Styled.View`
 flex-direction: row;
 align-items: center;
+justify-content: space-between;
 `;
 
 const MetaDataLabelContainer = Styled.View`
 flex-direction: row;
-flex: 1;
+align-items: center;
 `;
 
 const MetaDataLabelText = Styled.Text`
@@ -69,6 +70,11 @@ font-size: 15px;
 line-height: 24px;
 color: #FF001F;
 `;
+
+const RightArrowIconContainer = Styled.View`
+padding-right: 16px;
+`;
+
 
 const MetaDataValueContainer = Styled.View`
 flex-direction: row;
@@ -455,14 +461,17 @@ height: ${wp('91%')}px;
 
 
 const SelectProofImageContainer = Styled.View`
-border-width: 1.3px;
-border-color: #E2E6ED;
-background-color: #F5F7F9;
-border-style: dashed;
-border-radius: 4px;
-padding-top: 30px;
-padding-bottom: 30px;
+background-color: #FAFCFF;
+border-radius: 8px;
 align-items: center;
+`;
+
+const ProofImageEventBannerImage = Styled.Image`
+border-top-left-radius: 8px;
+border-top-right-radius: 8px;
+width: ${wp('91.466%')}px;
+height: ${wp('25.599%')}px;
+background-color: #c3c3c3;
 `;
 
 const SelectedProofImage = Styled.Image`
@@ -471,7 +480,62 @@ height: ${wp('91%')}px;
 `;
 
 const SelectProofImageText = Styled.Text`
-color: #9AA2A9;
+margin-left: 8px;
+font-weight: 700;
+font-size: 16px;
+line-height: 24px;
+color: #131F3C;
+`;
+
+const ProofImageItemContainer = Styled.View`
+padding: 16px;
+background-color: #F5F7F9;
+`;
+
+const SelectProofImageButtonContainer = Styled.View`
+width: ${wp('91.466%')}px;
+height: ${wp('23.46%')}px;
+align-items: center;
+justify-content: center;
+`;
+
+const SelectProofImageButton = Styled.View`
+width: ${wp('82.933%')}px;
+height: ${wp('14.933%')}px;
+flex-direction: row;
+border-radius: 8px;
+background-color: #FFFFFF;
+align-items: center;
+justify-content: space-between;
+padding-left: 15px;
+padding-right: 15px;
+`;
+
+const EventTextContainer = Styled.View`
+border-radius: 100px;
+padding: 6px 10px 6px 10px;
+border-width: 1px;
+border-color: #00D1FF;
+`;
+
+const EventText = Styled.Text`
+font-size: 12px;
+color: #00D1FF;
+`;
+
+const RightArrowIcon = Styled.Image`
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
+`;
+
+const IsExistProofImageIcon = Styled.Image`
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
+`;
+
+const SelectProofImageTextContainer = Styled.View`
+flex-direction: row;
+align-items: center;
 `;
 
 interface Props {
@@ -876,11 +940,11 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
   const moveToSelectProofImage = () => {
     if(selectedProofImage.uri) {
-      navigation.navigate("SelectProofImageScreen", {
+      navigation.navigate("ProofImageGuideScreen", {
         selectedProofImage: selectedProofImage,
       })
     } else {
-      navigation.navigate("SelectProofImageScreen");
+      navigation.navigate("ProofImageGuideScreen");
     }
   }
 
@@ -1003,7 +1067,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
         headerLeftProps={{type: 'arrow', onPress: goBack}}
         headerTitle={"관련정보"}
         headerRightProps={{type: 'text', text: "다음", onPress: moveToContentPost}}
-        headerRightDisabled={!isActivatedNext}
+        headerRightDisabled={false}
         headerRightActiveColor={"#00D1FF"}/>
         <BodyContainer
         ref={scrollViewRef}
@@ -1019,42 +1083,48 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
         >
           <TouchableWithoutFeedback onPress={() => onPressBackground()}>
           <ScrollViewInnerContainer>
-          <MetaDataItemContainer>
-          <MetaDataHeaderContainer>
-              <MetaDataLabelContainer>
-              <HighlightLabelBackgroundContainer>
-              <HighlightLabelBackground/>
-              </HighlightLabelBackgroundContainer>
-              <MetaDataLabelText>{"증빙자료 첨부하기(선택)"}</MetaDataLabelText>
-              <CoverHighlight/>
-              </MetaDataLabelContainer>
-          </MetaDataHeaderContainer>
-          <MetaDataGuideText>{"진료 영수증, 카드 결제내역 등 내원 및 진료를 확증할만한 이미지를 첨부해주세요."}</MetaDataGuideText>
-          {!selectedProofImage?.uri && (
-          <TouchableWithoutFeedback onPress={() => moveToSelectProofImage()}>
+          <ProofImageItemContainer>
           <SelectProofImageContainer
-          style={{marginRight: 16, marginTop: 16}}>
-            <MetaDataPlaceholderText>{"증빙사진을 선택해주세요."}</MetaDataPlaceholderText>
+          style={styles.proofImageContainerShadow}>
+            <ProofImageEventBannerImage
+            source={{uri: ""}}
+            />
+            <SelectProofImageButtonContainer>
+            <TouchableWithoutFeedback onPress={() => moveToSelectProofImage()}>
+            <SelectProofImageButton
+            style={styles.proofImageContainerShadow}>
+              <SelectProofImageTextContainer>
+              <EventTextContainer>
+                <EventText>{"EVENT"}</EventText>
+              </EventTextContainer>
+              <SelectProofImageText>{"진료 인증자료 올리기"}</SelectProofImageText>
+              </SelectProofImageTextContainer>
+              {!selectedProofImage?.img_url && (
+              <RightArrowIcon
+              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
+              )}
+              {selectedProofImage?.img_url && (
+              <IsExistProofImageIcon
+              source={require('~/Assets/Images/Upload/ic_isExistProofImage.png')}/>
+              )}
+            </SelectProofImageButton>
+            </TouchableWithoutFeedback>
+            </SelectProofImageButtonContainer>
           </SelectProofImageContainer>
-          </TouchableWithoutFeedback>
-          )}
-          {selectedProofImage.uri && (
-          <TouchableWithoutFeedback onPress={() => moveToSelectProofImage()}>
-          <SelectedProofImageContainer
-          style={{marginTop: 16}}>
-            <SelectedProofImage
-            source={{uri: selectedProofImage.uri}}/>
-          </SelectedProofImageContainer>
-          </TouchableWithoutFeedback>
-          )}
-          </MetaDataItemContainer>
+          </ProofImageItemContainer>
+          <TouchableWithoutFeedback onPress={() => moveToDentalSearch()}>
           <MetaDataItemContainer
           style={{marginTop: 8}}>
           <MetaDataHeaderContainer>
-          <MetaDataLabelText>{"병원명"}</MetaDataLabelText>
-          <AsteriskText>{"*"}</AsteriskText>
+            <MetaDataLabelContainer>
+              <MetaDataLabelText>{"병원명"}</MetaDataLabelText>
+              <AsteriskText>{"*"}</AsteriskText>
+            </MetaDataLabelContainer>
+            <RightArrowIconContainer>
+              <RightArrowIcon
+              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
+            </RightArrowIconContainer>
           </MetaDataHeaderContainer>
-          <TouchableWithoutFeedback onPress={() => moveToDentalSearch()}>
             <MetaDataValueContainer>
             {!dentalObj.originalName && (
               <MetaDataPlaceholderText>{"방문한 병원의 이름을 선택하세요."}</MetaDataPlaceholderText>
@@ -1065,14 +1135,20 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
               </SelectedDentalItemContainer>
             )}
             </MetaDataValueContainer>
-          </TouchableWithoutFeedback>
           </MetaDataItemContainer>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => moveToTreatmentSearch()}>
           <MetaDataItemContainer>
           <MetaDataHeaderContainer>
-          <MetaDataLabelText>{"질병 및 치료 항목"}</MetaDataLabelText>
-          <AsteriskText>{"*"}</AsteriskText>
+            <MetaDataLabelContainer>
+              <MetaDataLabelText>{"질병 및 치료 항목"}</MetaDataLabelText>
+              <AsteriskText>{"*"}</AsteriskText>
+            </MetaDataLabelContainer>
+            <RightArrowIconContainer>
+              <RightArrowIcon
+              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
+            </RightArrowIconContainer>
           </MetaDataHeaderContainer>
-          <TouchableWithoutFeedback onPress={() => moveToTreatmentSearch()}>
             <MetaDataValueContainer>
             {treatmentArray.length === 0 && (
               <MetaDataPlaceholderText>{"질병 및 치료 항목을 선택하세요."}</MetaDataPlaceholderText>
@@ -1097,17 +1173,23 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                 </SelectedTreatItemBackground>
               );
           })}
-        </SelectedTreatContainer>
+          </SelectedTreatContainer>
             )}
             </MetaDataValueContainer>
-          </TouchableWithoutFeedback>
           </MetaDataItemContainer>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => moveToRatingScreen()}>
           <MetaDataItemContainer>
           <MetaDataHeaderContainer>
+          <MetaDataLabelContainer>
           <MetaDataLabelText>{"병원 만족도"}</MetaDataLabelText>
           <AsteriskText>{"*"}</AsteriskText>
+          </MetaDataLabelContainer>
+          <RightArrowIconContainer>
+            <RightArrowIcon
+            source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
+          </RightArrowIconContainer>
           </MetaDataHeaderContainer>
-          <TouchableWithoutFeedback onPress={() => moveToRatingScreen()}>
             <MetaDataValueContainer>
             {!ratingObj.serviceRating && (
               <MetaDataPlaceholderText>{"병원 만족도를 알려주세요."}</MetaDataPlaceholderText>
@@ -1135,12 +1217,14 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
               </RatingContainer>
             )}
             </MetaDataValueContainer>
-          </TouchableWithoutFeedback>
           </MetaDataItemContainer>
+          </TouchableWithoutFeedback>
           <MetaDataItemContainer>
           <MetaDataHeaderContainer>
-          <MetaDataLabelText>{"방문 일자"}</MetaDataLabelText>
-          <AsteriskText>{"*"}</AsteriskText>
+          <MetaDataLabelContainer>
+            <MetaDataLabelText>{"방문 일자"}</MetaDataLabelText>
+            <AsteriskText>{"*"}</AsteriskText>
+          </MetaDataLabelContainer>
           </MetaDataHeaderContainer>
           <TouchableWithoutFeedback onPress={() => onPressTreatmentDate()}>
             <MetaDataValueContainer>
@@ -1310,6 +1394,14 @@ const styles = StyleSheet.create({
   treatmentDateModalView: {
     justifyContent: 'flex-end',
     margin: 0,
+  },
+  proofImageContainerShadow: {
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowRadius: 5,
+    shadowOpacity: 0.1,
   },
 })
 

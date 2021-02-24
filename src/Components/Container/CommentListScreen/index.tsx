@@ -12,6 +12,7 @@ import {
   UIManager,
   Animated,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import ActionSheet from 'react-native-actionsheet';
@@ -23,7 +24,6 @@ import CommentPostBottomBar from '~/Components/Presentational/CommentListScreen/
 import CommentItem from '~/Components/Presentational/CommentItem';
 import ReplyItem from '~/Components/Presentational/ReplyItem';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
-import AnimatedModal from '~/Components/Presentational/AnimatedModal';
 
 // route
 import POSTComment from '~/Routes/Comment/POSTComment';
@@ -90,10 +90,7 @@ const CommentListScreen = ({navigation, route}: Props) => {
   const [initialScroll, setInitialScroll] = useState(true);
   const [loadingCommentPost, setLoadingCommentPost] = useState<boolean>(false);
   //const [commentArray, setCommentArray] = useState<Array<any>>(route.params?.commentArray);
-  const [
-    isVisibleCommentDeleteModal,
-    setIsVisibleCommentDeleteModal,
-  ] = useState<boolean>(false);
+  
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [commentActionType, setCommentActionType] = useState<string>(
     route.params?.commentActionType || 'comment',
@@ -270,7 +267,19 @@ const CommentListScreen = ({navigation, route}: Props) => {
 
   const onPressOwnCommentActionSheet = useCallback((index: number) => {
     if (index === 1) {
-      setIsVisibleCommentDeleteModal(true);
+      Alert.alert("선택한 댓글을 삭제하시겠습니까?", "", [
+        {
+          text: "취소",
+          onPress: () => 0,
+          style: "cancel"
+        },
+        {
+          text: "삭제",
+          onPress: () => {
+            deleteReviewComment();
+          },
+        }
+      ])
     }
   }, []);
 
@@ -458,25 +467,6 @@ const CommentListScreen = ({navigation, route}: Props) => {
         cancelButtonIndex={0}
         onPress={(index: any) => onPressOtherCommentActionSheet(index)}
       />
-      <AnimatedModal
-        visible={isVisibleCommentDeleteModal}
-        buttons={[
-          {
-            title: '취소',
-            onPress: () => setIsVisibleCommentDeleteModal(false),
-          },
-          {
-            title: '삭제',
-            onPress: () => {
-              setIsVisibleCommentDeleteModal(false);
-              deleteReviewComment();
-            },
-          },
-        ]}>
-        <ModalContentText>
-          {'삭제되면 복구가 불가능합니다.\n정말 삭제하시겠습니까?'}
-        </ModalContentText>
-      </AnimatedModal>
     </Container>
   );
 };

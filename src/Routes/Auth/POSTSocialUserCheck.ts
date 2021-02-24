@@ -1,7 +1,7 @@
 import axios from 'axios';
 import serverConfig from '../server.config';
 
-const POSTSocialUserCheck = (provider: string, email: string, fcmToken: string) => {
+const POSTSocialUserCheck = (provider: string, email: string, fcmToken: string, socialId?: string) => {
 
     const uri = serverConfig.baseUri + "/socialUserCheck";
 
@@ -10,6 +10,7 @@ const POSTSocialUserCheck = (provider: string, email: string, fcmToken: string) 
 
     const bodyParam = `{
         "provider": "${provider}",
+        "socialId": "${socialId}",
         "email": "${email}",
         "fcmToken": "${fcmToken}"
     }`

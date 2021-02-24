@@ -21,7 +21,6 @@ import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 
 // Local Component
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
-import AnimatedModal from '~/Components/Presentational/AnimatedModal';
 import ToastMessage from '~/Components/Presentational/ToastMessage';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 
@@ -256,7 +255,6 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
   const [loadingSignUp, setLoadingSignUp] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>('');
   const [isAroundCities, setIsAroundCities] = useState<boolean>(true);
-  const [isVisibleModal, setIsVisibleModal] = useState<boolean>(false);
   const [modalDescripText, setModalDescripText] = useState<string>(
     '현재 위치를 불러 올 수 없습니다.',
   );
@@ -382,6 +380,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
           id: response.user.userId,
           nickname: response.user.userNickname,
           profileImg: response.user.userProfileImg,
+          img_thumbNail: response.user?.img_thumbNail,
           phoneNumber,
           birthdate: response.user.userBirthdate,
           gender: response.user.userGender,
@@ -436,11 +435,13 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
       .then((response: any) => {
         setLoadingSignUp(false);
         console.log('POSTSocialRegister response', response);
+        console.log("POSTSocialRegister response.")
 
         const profile = {
           id: response.user.userId,
           nickname: response.user.userNickname,
           profileImg: response.user.userProfileImg,
+          img_thumbNail: response.user?.img_thumbNail,
           phoneNumber,
           birthdate,
           gender: '',
@@ -512,8 +513,8 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
         console.log('POSTUserHometown error', error);
 
         if (error.data.message === '이미 설정한 거주지입니다.') {
-          setIsVisibleModal(true);
-          setModalDescripText('이미 설정된 동네입니다.');
+          
+          Alert.alert("이미 설정한 동네입니다.");
         }
       });
   };
@@ -550,9 +551,6 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
       });
   };
 
-  const cancelModal = () => {
-    setIsVisibleModal(false);
-  };
 
   const getAuthCompletedCityList = (
     keyword: string,
@@ -676,6 +674,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
               showsVerticalScrollIndicator={false}
               data={cityArray}
               renderItem={renderHometownItem}
+              keyExtractor={(index) => `${index}`}
             />
           </HometownListContainer>
         )}
@@ -689,17 +688,6 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
           </NoDataContainer>
         )}
       </BodyContainer>
-      <AnimatedModal
-        visible={isVisibleModal}
-        buttons={[
-          {
-            title: '확인',
-            style: {fontWeight: '400'},
-            onPress: cancelModal,
-          },
-        ]}>
-        <ModalTitleText>{modalDescripText}</ModalTitleText>
-      </AnimatedModal>
       {(loadingSignUp || loadingAddCity) && (
         <IndicatorContainer>
           <ActivityIndicator color={'#ffffff'} />

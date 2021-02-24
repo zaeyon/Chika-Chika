@@ -12,7 +12,6 @@ import allActions from '~/actions';
 
 // local component
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
-import AnimatedModal from '~/Components/Presentational/AnimatedModal';
 
 // route
 import DELETEUserHometown from '~/Routes/User/DELETEUserHometown';
@@ -207,9 +206,31 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
     isSelectMainHometown = isMainHometown;
 
     if (hometownArray.length === 1) {
-      setIsVisibleChangeModal(true);
+      Alert.alert('선택한 지역을 삭제하시겠습니까?', "", [
+        {
+          text: '취소',
+          style: 'cancel',
+          onPress: () => 0,
+        },
+        {
+          text: '변경',
+          style: 'default',
+          onPress: () => deleteHometown(),
+        }
+      ])
     } else if (hometownArray.length === 2) {
-      setIsVisibleDeleteModal(true);
+      Alert.alert(`동네는 한 곳 이상 등록되어야 합니다.${'\n'}해당 동네를 변경하시겠어요?`, "", [
+        {
+          text: '취소',
+          style: 'cancel',
+          onPress: () => 0,
+        },
+        {
+          text: '변경',
+          style: 'default',
+          onPress: () => changeMainHometown(),
+        }
+      ])
     }
   };
 
@@ -222,6 +243,7 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
   const cancelModal = () => {
     if (isVisibleDeleteModal) {
       setIsVisibleDeleteModal(false);
+      
     } else if (isVisibleChangeModal) {
       setIsVisibleChangeModal(false);
     }
@@ -380,38 +402,6 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
           </MyHometownListContainer>
         </MyHometownContainer>
       </BodyContainer>
-      <AnimatedModal
-        visible={isVisibleDeleteModal}
-        buttons={[
-          {
-            title: '취소',
-            style: {fontWeight: '400'},
-            onPress: cancelModal,
-          },
-          {
-            title: '확인',
-            style: {fontWeight: '700'},
-            onPress: deleteHometown,
-          },
-        ]}>
-        <ModalTitleText>{'선택한 지역을 삭제하시겠습니까?'}</ModalTitleText>
-      </AnimatedModal>
-      <AnimatedModal
-        visible={isVisibleChangeModal}
-        buttons={[
-          {
-            title: '취소',
-            style: {fontWeight: '400'},
-            onPress: cancelModal,
-          },
-          {
-            title: '변경',
-            style: {fontWeight: '700'},
-            onPress: changeMainHometown,
-          },
-        ]}>
-        <ModalTitleText>{`동네는 한 곳 이상 등록되어야 합니다.${'\n'}해당 동네를 변경하시겠어요?`}</ModalTitleText>
-      </AnimatedModal>
     </Container>
   );
 };

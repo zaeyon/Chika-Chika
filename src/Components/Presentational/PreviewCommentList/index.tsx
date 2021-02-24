@@ -28,7 +28,6 @@ font-weight: bold;
 const CommentListContainer = Styled.View`
 padding-top: 5px;
 padding-bottom: 8px;
-border-bottom-width: 8px;
 border-color: #F5F7F9;
 `;
 

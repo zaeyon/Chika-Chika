@@ -40,8 +40,8 @@ const FullImageScreen = ({navigation, route}: Props) => {
         selectedImage: route.params.image,
         selectedIndex: route.params.selectedIndex,
       })
-    } else if(route.params?.requestType === 'SelectProofImageScreen') {
-      console.log("route.params?.requestType === SelectProofImageScreen")
+    } else if(route.params?.requestType === 'ProofImageGuideScreen') {
+      console.log("route.params?.requestType === ProofImageGuideScreen")
       navigation.navigate(route.params.requestType, {
         selectedProofImage: route.params.image,
       })
