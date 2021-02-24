@@ -16,7 +16,6 @@ border-bottom-width: 8px;
 border-color: #F5F7F9;
 `;
 
-
 const BodyContainer = Styled.View`
 flex-direction: row;
 justify-content: space-between;
@@ -140,7 +139,6 @@ width: ${wp('8.533%')}px;
 height: ${wp('8.533%')}px;
 `;
 
-
 const FooterContainer = Styled.View`
 margin-top: 9px;
 flex-direction: row;
@@ -163,7 +161,7 @@ line-height: 18px;
 `;
 
 interface Prop {
-  dentalObj: any,
+  dentalObj: any;
   dentalId: number;
   isOpen: boolean;
   isLunchTime: boolean;
@@ -193,73 +191,82 @@ const DentalListItem = ({
   moveToDentalDetail,
   clickDentalCallReservation,
 }: Prop) => {
+  console.log('dentalObj', dentalObj);
 
-  console.log("dentalObj", dentalObj);
+  const splitedAddressArray = address?.split(' ');
 
-  const splitedAddressArray = address?.split(" ");
-  
-  const deletedAddress = splitedAddressArray[0] + " " + splitedAddressArray[1] + " " + splitedAddressArray[2];
+  const deletedAddress =
+    splitedAddressArray[0] +
+    ' ' +
+    splitedAddressArray[1] +
+    ' ' +
+    splitedAddressArray[2] +
+    ' ' +
+    splitedAddressArray[3];
 
   let displayDistance: string;
-  if(dentalObj['distance(km)'] >= 1) {
+  if (dentalObj['distance(km)'] >= 1) {
     displayDistance = dentalObj['distance(km)'] + 'km';
   } else {
     displayDistance = Math.round(dentalObj['distance(km)'] * 1000) + 'm';
-  } 
+  }
 
   return (
     <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalId)}>
       <Container>
         <BodyContainer>
-        <DentalInfoContainer>
-        <HeaderContainer>
-          <DentalNameText>{name}</DentalNameText>
-            <CurrentStatusContainer>
-          {(dentalObj.confidentTOL === 1) && isLunchTime && (
-          <OpenStatusContainer
-            style={{borderColor: '#00D1FF'}}>
-            <CurrentStatusText
-              style={{color: '#00D1FF'}}>
-              {'점심시간'}
-            </CurrentStatusText>
-          </OpenStatusContainer>
-          )}
-          {(dentalObj.confidentConsulationTime === 1) && !isLunchTime && (
-          <OpenStatusContainer
-            style={
-              isOpen
-                ? {borderColor: '#00D1FF'}
-                : {borderColor: '#9AA2A9'}
-            }>
-            <CurrentStatusText
-              style={isOpen ? {color: '#00D1FF'} : {color: '#9AA2A9'}}>
-              {'진료중'}
-            </CurrentStatusText>
-          </OpenStatusContainer>
-          )}
-        </CurrentStatusContainer>
-      </HeaderContainer>
-        <ReviewRatingContainer>
-          <RatingStarList
-          ratingValue={reviewCount > 0 ? (rating.toFixed(1)) : (0)}
-          reviewCount={reviewCount}/>
-        </ReviewRatingContainer>
-      <FooterContainer>
-      <DentalAddressText>{deletedAddress}</DentalAddressText>
-      <VerticalDivider/>
-      <DistanceText>{displayDistance}</DistanceText>
-      </FooterContainer>
-        </DentalInfoContainer>
-        <DentalImageContainer>
-          <DentalImage/>
-        </DentalImageContainer>
+          <DentalInfoContainer>
+            <HeaderContainer>
+              <DentalNameText>{name}</DentalNameText>
+              <CurrentStatusContainer>
+                {dentalObj.confidentTOL === 1 && isLunchTime && (
+                  <OpenStatusContainer style={{borderColor: '#00D1FF'}}>
+                    <CurrentStatusText style={{color: '#00D1FF'}}>
+                      {'점심시간'}
+                    </CurrentStatusText>
+                  </OpenStatusContainer>
+                )}
+                {dentalObj.confidentConsulationTime === 1 && !isLunchTime && (
+                  <OpenStatusContainer
+                    style={
+                      isOpen
+                        ? {borderColor: '#00D1FF'}
+                        : {borderColor: '#9AA2A9'}
+                    }>
+                    <CurrentStatusText
+                      style={isOpen ? {color: '#00D1FF'} : {color: '#9AA2A9'}}>
+                      {'진료중'}
+                    </CurrentStatusText>
+                  </OpenStatusContainer>
+                )}
+              </CurrentStatusContainer>
+            </HeaderContainer>
+            <ReviewRatingContainer>
+              <RatingStarList
+                ratingValue={reviewCount > 0 ? rating.toFixed(1) : 0}
+                reviewCount={reviewCount}
+              />
+            </ReviewRatingContainer>
+            <FooterContainer>
+              <DentalAddressText>{address}</DentalAddressText>
+              <VerticalDivider />
+              <DistanceText>{displayDistance}</DistanceText>
+            </FooterContainer>
+          </DentalInfoContainer>
+          <DentalImageContainer>
+            <DentalImage />
+          </DentalImageContainer>
         </BodyContainer>
         <CallContainer>
-          <TouchableWithoutFeedback onPress={() => clickDentalCallReservation(dentalObj.telNumber, dentalId)}>
-          <CallButtonContainer>
-          <CallButtonImage
-          source={require('~/Assets/Images/Dental/ic_call_list.png')}/>
-          </CallButtonContainer>
+          <TouchableWithoutFeedback
+            onPress={() =>
+              clickDentalCallReservation(dentalObj.telNumber, dentalId)
+            }>
+            <CallButtonContainer>
+              <CallButtonImage
+                source={require('~/Assets/Images/Dental/ic_call_list.png')}
+              />
+            </CallButtonContainer>
           </TouchableWithoutFeedback>
         </CallContainer>
       </Container>
@@ -268,9 +275,9 @@ const DentalListItem = ({
 };
 
 function isEqualItem(prevItem: any, nextItem: any) {
-  return prevItem.dentalId === prevItem.dentalId
+  return prevItem.dentalId === prevItem.dentalId;
 }
 
-const MemoizedDentalListItem = React.memo(DentalListItem, isEqualItem)
+const MemoizedDentalListItem = React.memo(DentalListItem, isEqualItem);
 
 export default MemoizedDentalListItem;

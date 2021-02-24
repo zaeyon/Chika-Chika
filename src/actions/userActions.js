@@ -92,23 +92,22 @@ const deleteSearchRecord = (searchRecordId) => {
   return {
     type: 'DELETE_SEARCH_RECORD',
     payload: searchRecordId,
-  }
-}
-
+  };
+};
 
 const setDentalSearchRecord = (dentalSearchRecordArray) => {
   return {
     type: 'SET_DENTAL_SEARCH_RECORD',
     payload: dentalSearchRecordArray,
-  }
-}
+  };
+};
 
 const deleteDentalSearchRecord = (dentalSearchRecordId) => {
   return {
     type: 'DELETE_DENTAL_SEARCH_RECORD',
     payload: dentalSearchRecordId,
-  }
-}
+  };
+};
 
 const setNotification = (notificationConfig) => {
   return {
@@ -125,6 +124,33 @@ const setNotificationArray = (notificationArray) => {
 }
 
 
+const setReservations = (reservations) => {
+  return {
+    type: 'SET_RESERVATIONS',
+    payload: reservations,
+  };
+};
+
+const deleteReservation = (id) => {
+  return {
+    type: 'DELETE_RESERVATION',
+    payload: id,
+  };
+};
+
+const setSavedHospitals = (hospitals) => {
+  return {
+    type: 'SET_SAVED_HOSPITALS',
+    payload: hospitals,
+  };
+};
+
+const deleteSavedHospital = (id) => {
+  return {
+    type: 'DELETE_SAVED_HOSPITAL',
+    payload: id,
+  };
+};
 export default {
   setUser,
   logOut,
@@ -144,4 +170,8 @@ export default {
   setDentalSearchRecord,
   deleteDentalSearchRecord,
   setNotificationArray,
+  setReservations,
+  deleteReservation,
+  setSavedHospitals,
+  deleteSavedHospital,
 };

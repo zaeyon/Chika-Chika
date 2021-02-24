@@ -110,7 +110,7 @@ margin: 6px 2px;
 
 const ContentText = Styled.Text`
 font-style: normal;
-font-weight: 500;
+font-weight: normal;
 font-size: 14px;
 line-height: 24px;
 `;
@@ -146,25 +146,25 @@ flex-direction: row;
 margin-top: 6px;
 padding: 6px 16px;
 `;
-
 const SocialInfoContentView = Styled.View`
-min-width: 62px;
+min-width: 60px;
 `;
 
 const SocialInfoView = Styled.View`
 width: auto;
 height: 44px;
 margin-right: auto;
-padding-left: 4px;
+padding: 0px 4px;
 flex-direction: row;
 align-items: center;
 `;
 const SocialInfoText = Styled.Text`
 font-style: normal;
-font-weight: 500;
-font-size: 14px;
+font-weight: normal;
+font-size: 13px;
+line-height: 16px;
 margin-left: 4px;
-color: #131F3C;
+color: #000000;
 `;
 const HashTagHighlightText = Styled.Text`
   color: #00D1FF;
@@ -444,8 +444,8 @@ const PostItem = ({
                   }}
                   source={
                     isLiked
-                      ? require('~/Assets/Images/Social/ic/like/focus.png')
-                      : require('~/Assets/Images/Social/ic/like/unfocus.png')
+                      ? require('~/Assets/Images/Community/bottomBar/like/focus.png')
+                      : require('~/Assets/Images/Community/bottomBar/like/unfocus.png')
                   }
                 />
                 <SocialInfoText>{postLikeNum}</SocialInfoText>
@@ -460,7 +460,7 @@ const PostItem = ({
                     width: 24,
                     height: 24,
                   }}
-                  source={require('~/Assets/Images/Social/ic/comment/unfocus.png')}
+                  source={require('~/Assets/Images/Community/bottomBar/comment.png')}
                 />
                 <SocialInfoText>{postCommentsNum}</SocialInfoText>
               </SocialInfoView>
@@ -491,8 +491,8 @@ const PostItem = ({
                 }}
                 source={
                   isScraped
-                    ? require('~/Assets/Images/Social/ic/bookmark/focus.png')
-                    : require('~/Assets/Images/Social/ic/bookmark/unfocus.png')
+                    ? require('~/Assets/Images/Community/bottomBar/scrap/focus.png')
+                    : require('~/Assets/Images/Community/bottomBar/scrap/unfocus.png')
                 }
               />
               <SocialInfoText>{'저장하기'}</SocialInfoText>

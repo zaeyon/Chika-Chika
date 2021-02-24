@@ -7,14 +7,14 @@ import {
 } from 'react-native-responsive-screen';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 
-const HeaderBar = Styled.View`
+const HeaderBar = Styled.View<{borderDisable: boolean}>`
  width: ${wp('100%')}px;
  height: ${wp('14.1%') + getStatusBarHeight()}px;
   margin-top: ${-getStatusBarHeight()}px;
   padding-top: ${getStatusBarHeight()}px;
  flex-direction: row;
  justify-content: space-between;
- border-bottom-width: 0.5px;
+ border-bottom-width: ${(props) => (props.borderDisable ? 0 : 0.5)}px;
  border-color: #E2E6ED;
  background-color: #ffffff;
  z-index: 3;
@@ -113,6 +113,7 @@ interface HeaderProps {
 }
 
 interface Props {
+  borderDisable?: boolean;
   headerLeftProps?: HeaderProps;
   headerRightProps?: HeaderProps;
   headerCenterProps?: HeaderProps;
@@ -123,6 +124,7 @@ interface Props {
   headerTitle?: string;
 }
 const NavigationHeader = ({
+  borderDisable = false,
   headerLeftProps,
   headerRightProps,
   headerCenterProps,
@@ -173,7 +175,7 @@ const NavigationHeader = ({
     }
   }, [headerRightProps, headerRightDisabled, headerRightActiveColor]);
   return (
-    <HeaderBar>
+    <HeaderBar borderDisable={borderDisable}>
       <TouchableWithoutFeedback
         disabled={headerLeftDisabled}
         onPress={() => {

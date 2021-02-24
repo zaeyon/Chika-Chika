@@ -49,6 +49,7 @@ import {callDentalPhoneNumber} from '~/method/callDentalPhoneNumber';
 // Route
 import GETAroundDental from '~/Routes/Dental/GETAroundDental';
 import GETDentalTotalSearch from '~/Routes/Search/GETDentalTotalSearch';
+import GETUserReservations from '~/Routes/User/GETUserReservations';
 
 const Container = Styled.View`
 flex: 1;
@@ -466,7 +467,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
   const currentUser = useSelector((state: any) => state.currentUser);
 
-  const currentUserLocation = useSelector((state: any) => state.currentUser.currentUserLocation);
+  const currentUserLocation = useSelector(
+    (state: any) => state.currentUser.currentUserLocation,
+  );
 
   // 방문일 설정 redux state
   const dayList = useSelector((state: any) => state.dentalFilter).dayList;
@@ -592,7 +595,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
           const userLocation = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-          }
+          };
 
           dispatch(allActions.dentalMapActions.setMapLocation(location));
           dispatch(allActions.userActions.setCurrentUserLocation(userLocation));
@@ -716,10 +719,12 @@ const NearDentalMap = ({navigation, route}: Props) => {
           const currentUserLocation = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-          }
+          };
 
           dispatch(allActions.dentalMapActions.setMapLocation(location));
-          dispatch(allActions.userActions.setCurrentUserLocation(currentUserLocation));
+          dispatch(
+            allActions.userActions.setCurrentUserLocation(currentUserLocation),
+          );
 
           GETAroundDental({
             jwtToken,
@@ -798,10 +803,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
   }
 
   const getNearDental = () => {
-
     const offset = offsetRef.current;
     const limit = limitRef.current;
-
 
     const lat = currentUserLocation.latitude;
     const long = currentUserLocation.longitude;
@@ -987,7 +990,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   const clickMyLocationTrackingButton = () => {
-    dispatch(allActions.dentalMapActions.setSearchedKeyword(""))
+    dispatch(allActions.dentalMapActions.setSearchedKeyword(''));
     isNearDentalList.current = true;
     mapRef.current.setLocationTrackingMode(2);
 
@@ -1011,9 +1014,16 @@ const NearDentalMap = ({navigation, route}: Props) => {
     setIsVisibleReSearch(true);
   };
 
-  const clickDentalCallReservation = (phoneNumber: number, dentalId: number) => {
-    callDentalPhoneNumber(phoneNumber, jwtToken, dentalId);
-  }
+  const clickDentalCallReservation = (
+    phoneNumber: number,
+    dentalId: number,
+  ) => {
+    callDentalPhoneNumber(phoneNumber, jwtToken, dentalId, () => {
+      GETUserReservations({jwtToken}).then((response: any) => {
+        dispatch(allActions.userActions.setReservations(response));
+      });
+    });
+  };
 
   // 두 좌표 사이의 거리를 구하는 함수
   function getDistanceFromLatLonInKm(
@@ -1521,30 +1531,34 @@ const NearDentalMap = ({navigation, route}: Props) => {
         </MapHeaderContainer>
         {nearDentalArray.length > 0 && (
           <DentalListContainer>
-          <MapInsetBottomShadow style={styles.insetShadow} />
-          <ViewDentalListContainer>
-            {isVisibleReSearch && (
-            <TouchableWithoutFeedback onPress={() => reSearchNearDentalInCurrentLocation()}>
-            <ReSearchInCurrentRegionButton>
-              <ReSearchIcon
-              source={require('~/Assets/Images/Map/ic_reload.png')}/>
-              <ViewDentalListText
-              style={{marginLeft: 7}}>{'현재위치에서 검색'}</ViewDentalListText>
-            </ReSearchInCurrentRegionButton>
-            </TouchableWithoutFeedback>
-            )}
-          <TouchableWithoutFeedback onPress={() => moveToDentalList()}>
-            <ViewDentalListButton>
-              <ViewDentalListIcon
-              source={require('~/Assets/Images/Map/ic_viewDentalList.png')}/>
-              <ViewDentalListText>{'목록보기'}</ViewDentalListText>
-            </ViewDentalListButton>
-          </TouchableWithoutFeedback>
-          <EmptyView>
-            <ViewDentalListText>{""}</ViewDentalListText>
-          </EmptyView>
-          </ViewDentalListContainer>
-          {/* <ViewDentalListContainer
+            <MapInsetBottomShadow style={styles.insetShadow} />
+            <ViewDentalListContainer>
+              {isVisibleReSearch && (
+                <TouchableWithoutFeedback
+                  onPress={() => reSearchNearDentalInCurrentLocation()}>
+                  <ReSearchInCurrentRegionButton>
+                    <ReSearchIcon
+                      source={require('~/Assets/Images/Map/ic_reload.png')}
+                    />
+                    <ViewDentalListText style={{marginLeft: 7}}>
+                      {'현재위치에서 검색'}
+                    </ViewDentalListText>
+                  </ReSearchInCurrentRegionButton>
+                </TouchableWithoutFeedback>
+              )}
+              <TouchableWithoutFeedback onPress={() => moveToDentalList()}>
+                <ViewDentalListButton>
+                  <ViewDentalListIcon
+                    source={require('~/Assets/Images/Map/ic_viewDentalList.png')}
+                  />
+                  <ViewDentalListText>{'목록보기'}</ViewDentalListText>
+                </ViewDentalListButton>
+              </TouchableWithoutFeedback>
+              <EmptyView>
+                <ViewDentalListText>{''}</ViewDentalListText>
+              </EmptyView>
+            </ViewDentalListContainer>
+            {/* <ViewDentalListContainer
           style={{justifyContent: 'flex-end'}}>
           <TouchableWithoutFeedback onPress={() => moveToDentalList()}>
             <ViewDentalListButton>
@@ -1564,16 +1578,19 @@ const NearDentalMap = ({navigation, route}: Props) => {
               clickDentalCallReservation={clickDentalCallReservation}
             />
           </DentalListContainer>
-          )}
-          {isVisibleReSearch && nearDentalArray.length === 0 && (
-          <TouchableWithoutFeedback onPress={() => reSearchNearDentalInCurrentLocation()}>
-          <ReSearchInCurrentRegionButton
-          style={{position: "absolute", bottom: 20}}>
+        )}
+        {isVisibleReSearch && nearDentalArray.length === 0 && (
+          <TouchableWithoutFeedback
+            onPress={() => reSearchNearDentalInCurrentLocation()}>
+            <ReSearchInCurrentRegionButton
+              style={{position: 'absolute', bottom: 20}}>
               <ReSearchIcon
-              source={require('~/Assets/Images/Map/ic_reload.png')}/>
-              <ViewDentalListText
-              style={{marginLeft: 7}}>{'현재위치에서 검색'}</ViewDentalListText>
-          </ReSearchInCurrentRegionButton>
+                source={require('~/Assets/Images/Map/ic_reload.png')}
+              />
+              <ViewDentalListText style={{marginLeft: 7}}>
+                {'현재위치에서 검색'}
+              </ViewDentalListText>
+            </ReSearchInCurrentRegionButton>
           </TouchableWithoutFeedback>
         )}
         {loadingGetDental && (

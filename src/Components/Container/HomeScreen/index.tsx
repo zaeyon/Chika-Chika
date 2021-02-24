@@ -215,6 +215,8 @@ const HomeScreen = ({navigation, route}: Props) => {
             params: {
               id: remoteMessage.data.targetId,
               type: 'Notification',
+              category: remoteMessage.data.type,
+              commentId: remoteMessage.data.commentId,
             },
           });
           return;
@@ -502,10 +504,6 @@ const HomeScreen = ({navigation, route}: Props) => {
           moveToHomeTownSetting={moveToHomeTownSetting}
         />
         <PartitionView />
-        <HomeClinicContent
-          clinics={clinicData}
-          moveToClinicDetail={() => console.log('moveToClinicDetail')}
-        />
 
         <HomeReviewContent
           selectedHometown={selectedHometown?.emdName}

@@ -3,7 +3,7 @@ import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
-  View,
+  Alert,
   FlatList,
 } from 'react-native';
 import {
@@ -55,7 +55,8 @@ const ReservationItemImage = Styled.Image`
 width: 78px;
 height: 78px;
 background: #F5F7F9;
-border: 0.5px #E2E6ED;
+border-width: 0.5px;
+border-color: #E2E6ED;
 border-radius: 8px;
 margin-right: 16px;
 `;
@@ -146,6 +147,7 @@ position: absolute;
 top: 12px;
 right: 8px;
 padding: 8px;
+z-index: 3;
 `;
 
 const DeleteIconImage = Styled.Image`
@@ -158,7 +160,6 @@ margin: 8px 0px;
 
 interface Props {
   navigation: any;
-  route: any;
   reservations: any;
   jwtToken: string;
 }
@@ -200,7 +201,18 @@ const ReservationScreen = ({navigation, jwtToken, route, reservations}: Props) =
 
     return (
       <ReservationItemContainerView>
-        <TouchableWithoutFeedback>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            Alert.alert('예약 내역을 삭제하시겠어요?', undefined, [
+              {
+                text: '아니요',
+              },
+              {
+                text: '예',
+                onPress: () => deleteReservation(item.id),
+              },
+            ]);
+          }}>
           <DeleteIconView>
             <DeleteIconImage
               source={require('~/Assets/Images/MyPage/delete_reservation.png')}

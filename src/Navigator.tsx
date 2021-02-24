@@ -20,6 +20,8 @@ import allActions from '~/actions';
 import messaging from '@react-native-firebase/messaging';
 // Routes
 import GETUserInfo from '~/Routes/Auth/GETUserInfo';
+import GETUserSavedHospitals from '~/Routes/User/GETUserSavedHospitals';
+import GETUserReservations from '~/Routes/User/GETUserReservations';
 // Async Storage
 import {getUserInfo} from '~/storage/currentUser';
 
@@ -557,7 +559,8 @@ function ReviewUploadStackScreen() {
       />
       <ReviewUploadStack.Screen
         name="ImageSelectOneStackScreen"
-        component={ImageSelectOneStackScreen}/>
+        component={ImageSelectOneStackScreen}
+      />
       <ReviewUploadStack.Screen
         name="ProofImageGuideScreen"
         component={ProofImageGuideScreen}/>
@@ -725,6 +728,10 @@ function MyProfileStackScreen() {
         options={{
           gestureEnabled: false,
         }}
+      />
+      <MyProfileStack.Screen
+        name="AnotherProfileStackScreen"
+        component={AnotherProfileStackScreen}
       />
     </MyProfileStack.Navigator>
   );
@@ -932,6 +939,10 @@ function BottomTab() {
       return false;
     }
 
+    if (routeName.name === 'TotalKeywordSearchStackScreen') {
+      return false;
+    }
+
     return true;
   };
 
@@ -990,6 +1001,10 @@ function BottomTab() {
       stackRouteName === 'CommunityStackScreen' ||
       routeName.name === 'TotalKeywordSearchStackScreen'
     ) {
+      return false;
+    }
+
+    if (routeName.name === 'AccuseScreen') {
       return false;
     }
 
@@ -1057,6 +1072,13 @@ function BottomTab() {
     }
 
     if (routeName.name === 'ReviewStackScreen') {
+      return false;
+    }
+
+    if (routeName.name === 'DentalClinicStackScreen') {
+      return false;
+    }
+    if (routeName.name === 'AccuseScreen') {
       return false;
     }
 
@@ -1160,7 +1182,6 @@ function BottomTab() {
 }
 
 const Navigator = () => {
-  const [isUser, setIsUser] = useState(false);
   const currentUser = useSelector((state: any) => state.currentUser);
   const dispatch = useDispatch();
   // const getFcmToken = async () => {
@@ -1168,11 +1189,11 @@ const Navigator = () => {
   //   console.log('getFcmToken fcmToken', fcmToken);
   // };
   useEffect(() => {
-    if (isUser) {
+    if (currentUser.loggedIn) {
       console.log('hometown', currentUser.hometown);
       SplashScreen.hide();
     }
-  }, [isUser]);
+  }, [currentUser]);
 
   useEffect(() => {
     //getFcmToken();
@@ -1188,7 +1209,12 @@ const Navigator = () => {
               allActions.userActions.setUser({jwtToken, profile: response}),
             );
             dispatch(allActions.userActions.setHometown(response.Residences));
-            setIsUser(true);
+            GETUserReservations({jwtToken}).then((response: any) => {
+              dispatch(allActions.userActions.setReservations(response));
+            });
+            GETUserSavedHospitals({jwtToken}).then((response: any) => {
+              dispatch(allActions.userActions.setSavedHospitals(response));
+            });
           })
           .catch((error: any) => {
             console.log('get user error', error);

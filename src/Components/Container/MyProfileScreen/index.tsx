@@ -64,7 +64,15 @@ const MyProfileScreen = ({navigation, route}: Props) => {
 
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
   const profile = useSelector((state: any) => state.currentUser.profile);
-  const userId = profile?.id;
+
+  const reservations = useSelector(
+    (state: any) => state.currentUser.reservations,
+  );
+  const savedHospitals = useSelector(
+    (state: any) => state.currentUser.savedHospitals,
+  );
+
+  const userId = profile.id;
 
   const updateUserInfo = useCallback(
     (callback?: any) => {
@@ -409,6 +417,8 @@ const MyProfileScreen = ({navigation, route}: Props) => {
         moveToReviewDetail={moveToReviewDetail}
         moveToWriterProfile={moveToWriterProfile}
         moveToDentalDetail={moveToDentalDetail}
+        reservationsNum={reservations.length}
+        savedHospitalsNum={savedHospitals.length}
       />
       <BottomSheet
         ref={bottomSheetRef}

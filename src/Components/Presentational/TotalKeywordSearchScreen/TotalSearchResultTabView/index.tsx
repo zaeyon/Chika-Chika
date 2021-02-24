@@ -90,9 +90,27 @@ width: ${wp('4.26%')}px;
 height: ${wp('4.26%')}px;
 `;
 
-const ReviewListContainer = Styled.View`
-flex: 1;
-margin-top: 8px;
+const EmptyIndicatorContainerView = Styled.View`
+width: 100%;
+height: 100%;
+padding-top: 56px;
+`;
+
+const EmptyIndicatorView = Styled.View`
+align-items: center;
+justify-content: center;
+`;
+
+const EmptyIndicatorImage = Styled.Image`
+margin-bottom: 12px;
+`;
+
+const EmptyIndicatorText = Styled.Text`
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+color: #9AA2A9;
+margin-bottom: 16px;
 `;
 
 interface RouteProps {
@@ -158,11 +176,11 @@ const TotalSearchResultTabView = ({
 }: Props) => {
   const [tabIndex, setTabIndex] = useState<number>(0);
   const [routes] = useState([
-    {key: 'total', title: '통합검색'},
+    // {key: 'total', title: '통합검색'},
     {key: 'community', title: '커뮤니티'},
     {key: 'review', title: '리뷰'},
     {key: 'dental', title: '병원'},
-    {key: 'event', title: '이벤트'},
+    // {key: 'event', title: '이벤트'},
   ]);
 
   const renderTabBar = (props: any) => {
@@ -186,54 +204,68 @@ const TotalSearchResultTabView = ({
   );
 
   const renderHeaderComponent = useCallback(
-    (order, selectedHometown, onFiltering, setFloatVisible) => (
-      <FilterContainer>
-        <OrderFilterContainer>
-          <TouchableWithoutFeedback onPress={() => onFiltering('popular')}>
-            <OrderFilterItemContainer
-              style={order === 'popular' && {borderColor: '#00D1FF'}}>
-              <OrderFilterText
-                style={order === 'popular' && {color: '#00D1FF'}}>
-                {'인기순'}
-              </OrderFilterText>
-            </OrderFilterItemContainer>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => onFiltering('createdAt')}>
-            <OrderFilterItemContainer
-              style={[
-                {marginLeft: 6},
-                order === 'createdAt' && {borderColor: '#00D1FF'},
-              ]}>
-              <OrderFilterText
-                style={order === 'createdAt' && {color: '#00D1FF'}}>
-                {'최신순'}
-              </OrderFilterText>
-            </OrderFilterItemContainer>
-          </TouchableWithoutFeedback>
-        </OrderFilterContainer>
-        <TouchableOpacity onPress={() => setFloatVisible(true)}>
-          <LocationFilterContainer>
-            <LocationFilterText>{selectedHometown.emdName}</LocationFilterText>
-            <LocationFilterDropdownIcon
-              source={require('~/Assets/Images/Arrow/ic_dropdown.png')}
-            />
-          </LocationFilterContainer>
-        </TouchableOpacity>
-      </FilterContainer>
+    (order, selectedHometown, onFiltering, setFloatVisible, isEmpty) => (
+      <>
+        <FilterContainer>
+          <OrderFilterContainer>
+            <TouchableWithoutFeedback onPress={() => onFiltering('popular')}>
+              <OrderFilterItemContainer
+                style={order === 'popular' && {borderColor: '#00D1FF'}}>
+                <OrderFilterText
+                  style={order === 'popular' && {color: '#00D1FF'}}>
+                  {'인기순'}
+                </OrderFilterText>
+              </OrderFilterItemContainer>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => onFiltering('createdAt')}>
+              <OrderFilterItemContainer
+                style={[
+                  {marginLeft: 6},
+                  order === 'createdAt' && {borderColor: '#00D1FF'},
+                ]}>
+                <OrderFilterText
+                  style={order === 'createdAt' && {color: '#00D1FF'}}>
+                  {'최신순'}
+                </OrderFilterText>
+              </OrderFilterItemContainer>
+            </TouchableWithoutFeedback>
+          </OrderFilterContainer>
+          <TouchableOpacity onPress={() => setFloatVisible(true)}>
+            <LocationFilterContainer>
+              <LocationFilterText>
+                {selectedHometown.emdName}
+              </LocationFilterText>
+              <LocationFilterDropdownIcon
+                source={require('~/Assets/Images/Arrow/ic_dropdown.png')}
+              />
+            </LocationFilterContainer>
+          </TouchableOpacity>
+        </FilterContainer>
+        {isEmpty ? (
+          <EmptyIndicatorContainerView>
+            <EmptyIndicatorView>
+              <EmptyIndicatorImage
+                source={require('~/Assets/Images/ic_noData.png')}
+              />
+              <EmptyIndicatorText>{'검색결과가 없습니다.'}</EmptyIndicatorText>
+            </EmptyIndicatorView>
+          </EmptyIndicatorContainerView>
+        ) : null}
+      </>
     ),
     [],
   );
 
   const renderScene = ({route}: any) => {
     switch (route.key) {
-      case 'total':
-        return (
-          <TotalRoute
-            result={searchResult}
-            fetchSearchResult={fetchSearchResult}
-            navigation={navigation}
-          />
-        );
+      // case 'total':
+      //   return (
+      //     <TotalRoute
+      //       result={searchResult}
+      //       fetchSearchResult={fetchSearchResult}
+      //       navigation={navigation}
+      //     />
+      //   );
       case 'community':
         return (
           <CommunityRoute
@@ -253,19 +285,18 @@ const TotalSearchResultTabView = ({
       case 'dental':
         return (
           <ClinicRoute
-            result={clinicSearchResult}
             fetchSearchResult={fetchSearchResult}
             navigation={navigation}
           />
         );
-      case 'event':
-        return (
-          <EventRoute
-            result={eventSearchResult}
-            fetchSearchResult={fetchSearchResult}
-            navigation={navigation}
-          />
-        );
+      // case 'event':
+      //   return (
+      //     <EventRoute
+      //       result={eventSearchResult}
+      //       fetchSearchResult={fetchSearchResult}
+      //       navigation={navigation}
+      //     />
+      //   );
     }
   };
   return (

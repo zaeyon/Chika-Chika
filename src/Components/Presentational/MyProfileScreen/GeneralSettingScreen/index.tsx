@@ -86,6 +86,7 @@ color: #131F3C;
 
 interface Props {
   changeNotificationSetting: any;
+  signout: any;
   profile: any;
 }
 interface Props {
@@ -120,10 +121,7 @@ const GeneralSettingScreen = ({jwtToken, changeNotificationSetting, profile}: Pr
   const [signoutModalVisible, setSignoutModalVisible] = useState(false);
 
   useEffect(() => {
-    return cleanup;
-  }, []);
-
-  useEffect(() => {
+    cleanup();
     dispatch(
       allActions.userActions.setNotification({
         ALOTrue: isAlertEnabled ? 1 : 0,
@@ -200,7 +198,10 @@ const GeneralSettingScreen = ({jwtToken, changeNotificationSetting, profile}: Pr
           },
           {
             title: '예',
-            onPress: () => signout(),
+            onPress: () => {
+              signout();
+              logout();
+            },
           },
         ]}>
         <ModalText>{'탈퇴하시겠어요?'}</ModalText>

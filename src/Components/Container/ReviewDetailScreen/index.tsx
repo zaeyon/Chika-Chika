@@ -78,7 +78,6 @@ const ReviewContentContainer = Styled.View`
 
 `;
 
-
 const CommentListContainer = Styled.View`
 padding-bottom: 35px;
 `;
@@ -170,7 +169,6 @@ interface RatingObj {
   treatRating: number;
   priceRating: number;
 }
-
 
 interface metaInfoObj {
   dentalObj: DentalObj;
@@ -311,7 +309,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     if (route.params?.isRevised) {
       route.params.isRevised = !route.params.isRevised;
       reviewScrollViewRef.current.scrollTo({x: 0, y: 0, animated: false});
-      
+
       const tmpTreatmentDate = new Date(
         route.params?.treatmentDateObj.treatDate,
       );
@@ -351,9 +349,9 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         ratingObj: route.params.ratingObj,
         totalPriceObj: tmpTreatPriceObj,
         treatmentDateObj: tmpTreatmentDateObj,
-      }
+      };
 
-      setMetaInfoObj(tmpMetaInfoObj)
+      setMetaInfoObj(tmpMetaInfoObj);
     }
   }, [
     route.params?.isRevised,
@@ -452,17 +450,20 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         setLoadingReviewDetail(false);
         setRefreshingReviewDetail(false);
 
-        console.log("GETReviewDetail response.reviewBody.certifiedBill", response.reviewBody.certifiedBill);
+        console.log(
+          'GETReviewDetail response.reviewBody.certifiedBill',
+          response.reviewBody.certifiedBill,
+        );
         setIsCertifiedReceipt(response.reviewBody.certifiedBill);
 
         const tmpWriterObj = {
           nickname: response.reviewBody.user.nickname,
           profileImage: response.reviewBody.user.profileImg,
           userId: response.reviewBody.user.userId,
-        }
+        };
 
         setWriterObj(tmpWriterObj);
-      
+
         let elapsedTimeText = '';
         let visibleElapsedTime = false;
 
@@ -483,7 +484,6 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           setElapsedTime(formatDate(response.reviewBody.createdAt));
         }
 
-      
         // 현재 사용자의 리뷰일때 리뷰 수정용 데이터 변환 작업
         if (isOwnReview) {
           const tmpTreatmentArray = response.reviewBody.TreatmentItems.map(
@@ -582,20 +582,19 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         } else {
           setIsCurUserLike(false);
         }
-        
+
         const tmpRatingObj = {
           avgRating: response.reviewBody.AVGStarRate,
           serviceRating: response.reviewBody.starRate_service,
           priceRating: response.reviewBody.starRate_cost,
           treatmentRating: response.reviewBody.starRate_treatment,
-        }
+        };
 
         const tmpTreatPriceObj = {
           displayTreatPrice:
             response.reviewBody.totalCost.toLocaleString() + '원',
           treatPrice: response.reviewBody.totalCost,
         };
-
 
         const tmpTreatmentDate = new Date(response.reviewBody.treatmentDate);
         const splitedTreatmentDate = response.reviewBody.treatmentDate.split(
@@ -612,13 +611,13 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           displayTreatmentDate: tmpDisplayTreatDate,
           treatmentDate: tmpTreatmentDate,
         };
-        
+
         const tmpMetaInfoObj = {
           dentalObj: dentalObj,
           ratingObj: tmpRatingObj,
           totalPriceObj: tmpTreatPriceObj,
           treatmentDateObj: treatmentDateObj,
-        }
+        };
 
         setImageArray(tmpImageArray);
         setLikeCount(response.reviewLikeNum);
@@ -764,7 +763,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     setIsVisibleOwnMoreViewModal(false);
 
     const submitParagraphArray = paragraphArray;
-    console.log("submitParagraphArray", submitParagraphArray);
+    console.log('submitParagraphArray', submitParagraphArray);
 
     navigation.navigate('ReviewUploadStack', {
       screen: 'ReviewMetaDataScreen',
@@ -777,7 +776,8 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           id: metaInfoObj.dentalObj.id,
         },
         treatmentDateObj: {
-          displayTreatmentDate: metaInfoObj.treatmentDateObj.displayTreatmentDate,
+          displayTreatmentDate:
+            metaInfoObj.treatmentDateObj.displayTreatmentDate,
           treatmentDate: metaInfoObj.treatmentDateObj.treatmentDate,
         },
         selectedTreatmentArray: treatmentArray,
@@ -810,10 +810,11 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   };
 
   const clickAccuseReview = () => {
-    navigation.navigate("AccuseScreen", {
-      reviewId,
-    })
-  }
+    navigation.navigate('AccuseScreen', {
+      targetType: 'review',
+      targetId: reviewId,
+    });
+  };
 
   const deleteReview = () => {
     DELETEReview({jwtToken, reviewId})
@@ -1104,9 +1105,9 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         {isVisibleOtherMoreViewModal && (
           <MoreViewModalContainer style={styles.moreViewModalShadow}>
             <TouchableWithoutFeedback onPress={() => clickAccuseReview()}>
-            <MoreViewItemContainer>
-              <MoreViewItemLabelText>{'신고'}</MoreViewItemLabelText>
-            </MoreViewItemContainer>
+              <MoreViewItemContainer>
+                <MoreViewItemLabelText>{'신고'}</MoreViewItemLabelText>
+              </MoreViewItemContainer>
             </TouchableWithoutFeedback>
             <MoreViewItemContainer style={{borderBottomWidth: 0}}>
               <MoreViewItemLabelText>{'공유'}</MoreViewItemLabelText>

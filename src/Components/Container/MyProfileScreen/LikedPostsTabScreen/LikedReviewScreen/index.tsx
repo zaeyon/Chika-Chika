@@ -12,9 +12,25 @@ import GETUserLikedPosts from '~/Routes/User/GETUserLikedPosts';
 
 const ContainerView = Styled.View`
   flex: 1;
-  background-color: #FFFFFF;
+  background-color: #F5F7F9;
   justify-content: center;
   align-items: center;
+`;
+
+const EmptyContainerView = Styled.View`
+height: 300%;
+padding-top: 118px;
+align-items: center;
+background: #FFFFFF;
+`;
+
+const EmptyContentImage = Styled.Image``;
+
+const EmptyContentText = Styled.Text`
+margin-top: 12px;
+font-weight: normal;
+font-size: 16px;
+color: #9AA2A9;
 `;
 
 interface Props {
@@ -159,24 +175,12 @@ const LikedReviewScreen = ({navigation, route}: Props) => {
       offset: 0,
     };
     fetchLikedPosts(form, (response: any) => {
-      if (
-        postData &&
-        JSON.stringify(response).replace(
-          /"createdDiff\(second\)\"\:\d*\,/gi,
-          '',
-        ) !==
-          JSON.stringify(postData).replace(
-            /"createdDiff\(second\)\"\:\d*\,/gi,
-            '',
-          )
-      ) {
-        console.log('liked post diff');
-        LayoutAnimation.configureNext(
-          LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-        );
-        setIsInitializing(false);
-        dispatch(allActions.reviewListActions.setLikedReviews(response));
-      }
+      console.log('liked post diff');
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+      );
+      setIsInitializing(false);
+      dispatch(allActions.reviewListActions.setLikedReviews(response));
     });
 
     return function cleanup() {
@@ -191,12 +195,26 @@ const LikedReviewScreen = ({navigation, route}: Props) => {
     };
   }, []);
 
+  const renderHeaderComponent = useCallback(
+    () =>
+      postData.length === 0 ? (
+        <EmptyContainerView>
+          <EmptyContentImage
+            source={require('~/Assets/Images/Comment/ic_noComment.png')}
+          />
+          <EmptyContentText>{'좋아요한 후기가 없습니다.'}</EmptyContentText>
+        </EmptyContainerView>
+      ) : null,
+    [postData],
+  );
+
   return (
     <ContainerView>
       {isInitializing ? (
         <ActivityIndicator />
       ) : (
         <ReviewList
+          renderHeaderComponent={renderHeaderComponent}
           reviewList={postData}
           loadingMoreReview={isEndReached}
           onEndReachedReviewList={onEndReached}

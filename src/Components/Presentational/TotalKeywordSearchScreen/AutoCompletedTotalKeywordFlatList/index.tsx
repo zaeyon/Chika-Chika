@@ -184,7 +184,6 @@ const AutoCompletedTotalKeywordFlatList = ({
   searchTotalKeyword,
   searchRecordArray,
 }: Props) => {
-  
   const renderSearchRecordItem = ({item, index}: any) => {
     const renderIcon = (category: string) => {
       switch (category) {
@@ -236,9 +235,9 @@ const AutoCompletedTotalKeywordFlatList = ({
   const renderResultItem = useCallback(
     ({item, index}: any) => {
       if (item.category === 'clinic') {
-        const splitedItemName = item.name.split('');
+        const splitedItemName = item.originalName.split('');
         const splitedQuery = query.split('');
-        const startIndex = item.name.indexOf(query);
+        const startIndex = item.originalName.indexOf(query);
         const endIndex = startIndex + (query.length - 1);
 
         return (
@@ -265,16 +264,25 @@ const AutoCompletedTotalKeywordFlatList = ({
                   startIndex !== -1
                 ) {
                   return (
-                    <AutoCompletedKeywordText style={{color: '#00D1FF'}}>
+                    <AutoCompletedKeywordText
+                      style={{color: '#00D1FF'}}
+                      key={item + String(index)}>
                       {item}
                     </AutoCompletedKeywordText>
                   );
                 } else {
                   return (
-                    <AutoCompletedKeywordText>{item}</AutoCompletedKeywordText>
+                    <AutoCompletedKeywordText key={item + String(index)}>
+                      {item}
+                    </AutoCompletedKeywordText>
                   );
                 }
               })}
+              <AutoCompletedKeywordDescriptionView>
+                <AutoCompletedKeywordDescriptionText numberOfLines={1}>
+                  {item.local}
+                </AutoCompletedKeywordDescriptionText>
+              </AutoCompletedKeywordDescriptionView>
             </AutoCompletedKeywordItemContainer>
           </TouchableHighlight>
         );
@@ -313,13 +321,17 @@ const AutoCompletedTotalKeywordFlatList = ({
                   startIndex !== -1
                 ) {
                   return (
-                    <AutoCompletedKeywordText style={{color: '#00D1FF'}}>
+                    <AutoCompletedKeywordText
+                      style={{color: '#00D1FF'}}
+                      key={item + String(index)}>
                       {item}
                     </AutoCompletedKeywordText>
                   );
                 } else {
                   return (
-                    <AutoCompletedKeywordText>{item}</AutoCompletedKeywordText>
+                    <AutoCompletedKeywordText key={item + String(index)}>
+                      {item}
+                    </AutoCompletedKeywordText>
                   );
                 }
               })}
@@ -333,13 +345,15 @@ const AutoCompletedTotalKeywordFlatList = ({
                       ) {
                         return (
                           <AutoCompletedKeywordDescriptionText
-                            style={{color: '#00D1FF'}}>
+                            style={{color: '#00D1FF'}}
+                            key={item + String(index)}>
                             {item}
                           </AutoCompletedKeywordDescriptionText>
                         );
                       } else {
                         return (
-                          <AutoCompletedKeywordDescriptionText>
+                          <AutoCompletedKeywordDescriptionText
+                            key={item + String(index)}>
                             {item}
                           </AutoCompletedKeywordDescriptionText>
                         );
@@ -379,13 +393,17 @@ const AutoCompletedTotalKeywordFlatList = ({
                   startIndex !== -1
                 ) {
                   return (
-                    <AutoCompletedKeywordText style={{color: '#00D1FF'}}>
+                    <AutoCompletedKeywordText
+                      style={{color: '#00D1FF'}}
+                      key={item + String(index)}>
                       {item}
                     </AutoCompletedKeywordText>
                   );
                 } else {
                   return (
-                    <AutoCompletedKeywordText>{item}</AutoCompletedKeywordText>
+                    <AutoCompletedKeywordText key={item + String(index)}>
+                      {item}
+                    </AutoCompletedKeywordText>
                   );
                 }
               })}
@@ -421,13 +439,17 @@ const AutoCompletedTotalKeywordFlatList = ({
                   startIndex !== -1
                 ) {
                   return (
-                    <AutoCompletedKeywordText style={{color: '#00D1FF'}}>
+                    <AutoCompletedKeywordText
+                      style={{color: '#00D1FF'}}
+                      key={item + String(index)}>
                       {item}
                     </AutoCompletedKeywordText>
                   );
                 } else {
                   return (
-                    <AutoCompletedKeywordText>{item}</AutoCompletedKeywordText>
+                    <AutoCompletedKeywordText key={item + String(index)}>
+                      {item}
+                    </AutoCompletedKeywordText>
                   );
                 }
               })}
@@ -463,13 +485,17 @@ const AutoCompletedTotalKeywordFlatList = ({
                   startIndex !== -1
                 ) {
                   return (
-                    <AutoCompletedKeywordText style={{color: '#00D1FF'}}>
+                    <AutoCompletedKeywordText
+                      style={{color: '#00D1FF'}}
+                      key={item + String(index)}>
                       {item}
                     </AutoCompletedKeywordText>
                   );
                 } else {
                   return (
-                    <AutoCompletedKeywordText>{item}</AutoCompletedKeywordText>
+                    <AutoCompletedKeywordText key={item + String(index)}>
+                      {item}
+                    </AutoCompletedKeywordText>
                   );
                 }
               })}
@@ -534,6 +560,7 @@ const AutoCompletedTotalKeywordFlatList = ({
             keyboardDismissMode="on-drag"
             data={searchRecordArray}
             renderItem={renderSearchRecordItem}
+            keyExtractor={(item) => String(item.id)}
           />
         )}
       </RecentKeywordContainer>
@@ -543,7 +570,7 @@ const AutoCompletedTotalKeywordFlatList = ({
           keyboardShouldPersistTaps="always"
           keyboardDismissMode="on-drag"
           data={autoCompletedKeywordArr}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)}
           renderItem={renderResultItem}
         />
       )}

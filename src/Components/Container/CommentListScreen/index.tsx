@@ -1,4 +1,4 @@
-import React, {useState, useRef, createRef, useCallback} from 'react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -118,6 +118,23 @@ const CommentListScreen = ({navigation, route}: Props) => {
 
   const noCommentYAnim = useRef(new Animated.Value(0)).current;
 
+  useEffect(() => {
+    if (route.params.commentId && commentArray.length > 0) {
+      const targetIndex = commentArray.findIndex(
+        (item) => item.id == route.params.commentId,
+      );
+      console.log('target', commentArray, targetIndex, route.params.commentId);
+      if (targetIndex > 0) {
+        navigation.setParams({commentId: null});
+        setTimeout(() => {
+          commentFlatListRef.current.scrollToIndex({
+            index: targetIndex,
+          });
+        }, 1000);
+      }
+    }
+  }, [commentArray]);
+
   const clickReply = useCallback(
     (commentObj: any, nickname: string, index: number, relativeY: number) => {
       setCommentActionType('reply');
@@ -203,10 +220,6 @@ const CommentListScreen = ({navigation, route}: Props) => {
             allActions.commentListActions.setCommentCount(response.commentsNum),
           );
           //setChangeCommentArray(!changeCommentArray);
-
-          setTimeout(() => {
-            commentFlatListRef.current.scrollToOffset({offset: 0});
-          }, 10);
         })
         .catch((error) => {
           console.log('POSTReviewComment error', error);
@@ -292,9 +305,7 @@ const CommentListScreen = ({navigation, route}: Props) => {
           allActions.commentListActions.setCommentList(response.comments),
         );
         dispatch(
-          allActions.commentListActions.setCommentCount(
-            response.commentsNum.commentsNum,
-          ),
+          allActions.commentListActions.setCommentCount(response.commentsNum),
         );
       })
       .catch((error) => {

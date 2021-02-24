@@ -16,7 +16,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {useSelector} from 'react-redux';
+import allActions from '~/actions';
+import {useSelector, useDispatch} from 'react-redux';
 import CallDetectorManager from 'react-native-call-detection';
 
 // Local Components
@@ -33,6 +34,8 @@ import POSTDentalScrap from '~/Routes/Dental/POSTDentalScrap';
 import DELETEDentalScrap from '~/Routes/Dental/DELETEDentalScrap';
 import GETCurUserScrap from '~/Routes/Dental/GETCurUserScrap';
 import GETDentalReview from '~/Routes/Dental/GETDentalReview';
+import GETUserSavedHospitals from '~/Routes/User/GETUserSavedHospitals';
+import GETUserReservations from '~/Routes/User/GETUserReservations';
 
 const Container = Styled.View`
  flex: 1;
@@ -64,12 +67,16 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
   const [dentalDetailInfo, setDentalDetailInfo] = useState<any>();
   const [dentalReviewArray, setDentalReviewArray] = useState<Array<any>>([]);
   const [dentalImageArray, setDentalImageArray] = useState<Array<any>>([]);
-  const [loadingGetDentalDetail, setLoadingGetDentalDetail] = useState<boolean>(true);
+  const [loadingGetDentalDetail, setLoadingGetDentalDetail] = useState<boolean>(
+    true,
+  );
   const [isNoDentalImage, setIsNoDentalImage] = useState<boolean>(false);
   const [isCurUserScrap, setIsCurUserScrap] = useState<boolean>(false);
 
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
   const dentalId = route.params?.dentalId;
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (route.params?.dentalId) {
@@ -88,29 +95,42 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
 
   const getDentalDetail = () => {
     GETDentalDetail({jwtToken, dentalId})
-    .then((response: any) => {
-      console.log("GETDentalDetail response", response)
-      console.log("GETDentalDetail response.clinicInfoHeader.clinicProfileImg", response.clinicInfoHeader.clinicProfileImg);
-      console.log("GETDentalDetail response.clinicInfoHeader.clinicReviewImg", response.clinicInfoHeader.clinicReviewImg);
-      if(response.clinicInfoHeader.clinicProfileImg.length > 0 || response.clinicInfoHeader.clinicReviewImg.length > 0) {
-          const tmpDentalImageArray = response.clinicInfoHeader.clinicProfileImg.concat(response.clinicInfoHeader.clinicReviewImg);
+      .then((response: any) => {
+        console.log('GETDentalDetail response', response);
+        console.log(
+          'GETDentalDetail response.clinicInfoHeader.clinicProfileImg',
+          response.clinicInfoHeader.clinicProfileImg,
+        );
+        console.log(
+          'GETDentalDetail response.clinicInfoHeader.clinicReviewImg',
+          response.clinicInfoHeader.clinicReviewImg,
+        );
+        if (
+          response.clinicInfoHeader.clinicProfileImg.length > 0 ||
+          response.clinicInfoHeader.clinicReviewImg.length > 0
+        ) {
+          const tmpDentalImageArray = response.clinicInfoHeader.clinicProfileImg.concat(
+            response.clinicInfoHeader.clinicReviewImg,
+          );
           setDentalImageArray(tmpDentalImageArray);
-      } else {
+        } else {
           setIsNoDentalImage(true);
-          const tmpDentalImageArray = [{
-            createdAt: "2021-02-15 13:41:17",
-            img_height: 4032,
-            img_url: "",
-            img_width: 3024,
-            index: 1
-          }]
+          const tmpDentalImageArray = [
+            {
+              createdAt: '2021-02-15 13:41:17',
+              img_height: 4032,
+              img_url: '',
+              img_width: 3024,
+              index: 1,
+            },
+          ];
 
           setDentalImageArray(tmpDentalImageArray);
-      }
-      setDentalDetailInfo(response)
-      setLoadingGetDentalDetail(false);
+        }
+        setDentalDetailInfo(response);
+        setLoadingGetDentalDetail(false);
 
-      dentalObj = {
+        dentalObj = {
           id: route.params?.dentalId,
           name: response.clinicInfoHeader.name,
           originalName: response.clinicInfoHeader.originalName,
@@ -149,7 +169,9 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
     setIsCurUserScrap(true);
     POSTDentalScrap({jwtToken, dentalId})
       .then((response) => {
-        console.log('POSTDentalScrap response', response);
+        GETUserSavedHospitals({jwtToken}).then((response: any) => {
+          dispatch(allActions.userActions.setSavedHospitals(response));
+        });
       })
       .catch((error) => {
         console.log('POSTDentalScrap error', error);
@@ -174,34 +196,43 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
   };
 
   const moveToReviewUpload = () => {
-      const dentalObj = {
-          address: dentalDetailInfo.clinicInfoHeader.address,
-          id: dentalId,
-          local: dentalDetailInfo.clinicInfoHeader.address,
-          name: dentalDetailInfo.clinicInfoHeader.name,
-          originalName: dentalDetailInfo.clinicInfoHeader.originalName,
-      }
+    const dentalObj = {
+      address: dentalDetailInfo.clinicInfoHeader.address,
+      id: dentalId,
+      local: dentalDetailInfo.clinicInfoHeader.address,
+      name: dentalDetailInfo.clinicInfoHeader.name,
+      originalName: dentalDetailInfo.clinicInfoHeader.originalName,
+    };
 
-      navigation.navigate("ReviewUploadStackScreen", {
-          screen: "ReviewMetaDataScreen",
-          params: {
-            dentalObj: dentalObj,
-          }
-      })
-  }
+    navigation.navigate('ReviewUploadStackScreen', {
+      screen: 'ReviewMetaDataScreen',
+      params: {
+        dentalObj: dentalObj,
+      },
+    });
+  };
 
   const moveToDentalLocationMap = () => {
-      navigation.navigate("DentalLocationMapScreen", {
-          coordinate: {
-            latitude: 37.566515657875435,
-            longitude: 126.9781164904998,
-          }
-      });
-  }
+    navigation.navigate('DentalLocationMapScreen', {
+      coordinate: {
+        latitude: 37.566515657875435,
+        longitude: 126.9781164904998,
+      },
+    });
+  };
 
   const clickDentalCallReservation = () => {
-      callDentalPhoneNumber(dentalDetailInfo.clinicInfoHeader.telNumber, jwtToken, dentalId);
-  }
+    callDentalPhoneNumber(
+      dentalDetailInfo.clinicInfoHeader.telNumber,
+      jwtToken,
+      dentalId,
+      () => {
+        GETUserReservations({jwtToken}).then((response: any) => {
+          dispatch(allActions.userActions.setReservations(response));
+        });
+      },
+    );
+  };
 
   const moveToReviewDetail = (
     reviewId: number,
@@ -258,13 +289,13 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
 
   const goBack = () => {
     navigation.goBack();
-  }
-    
-    return (
-        <Container>
-          {!loadingGetDentalDetail && (
-          <DentalTabContainer>
-            <DentalCollapsibleTabView
+  };
+
+  return (
+    <Container>
+      {!loadingGetDentalDetail && (
+        <DentalTabContainer>
+          <DentalCollapsibleTabView
             isNoDentalImage={isNoDentalImage}
             navigation={navigation}
             dentalImageArray={dentalImageArray}
@@ -276,8 +307,8 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
             dentalDetailInfo={dentalDetailInfo}
             dentalReviewArray={dentalReviewArray}
             goBack={goBack}
-            />
-            <DentalBottomBar
+          />
+          <DentalBottomBar
             clickDentalCallReservation={clickDentalCallReservation}
             isCurUserScrap={isCurUserScrap}
             postDentalScrap={postDentalScrap}

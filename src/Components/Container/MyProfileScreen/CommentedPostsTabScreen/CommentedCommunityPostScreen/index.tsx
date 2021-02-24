@@ -22,6 +22,22 @@ const ContainerView = Styled.View`
   align-items: center;
 `;
 
+const EmptyContainerView = Styled.View`
+height: 300%;
+padding-top: 118px;
+align-items: center;
+background: #FFFFFF;
+`;
+
+const EmptyContentImage = Styled.Image``;
+
+const EmptyContentText = Styled.Text`
+margin-top: 12px;
+font-weight: normal;
+font-size: 16px;
+color: #9AA2A9;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -65,22 +81,22 @@ const CommentedCommunityPostScreen = ({navigation, route}: Props) => {
         type: 'Commented',
         posts: response,
       };
-      if (
-        JSON.stringify(response).replace(
-          /"createdDiff\(second\)\"\:\d*\,/gi,
-          '',
-        ) !==
-        JSON.stringify(postData).replace(
-          /"createdDiff\(second\)\"\:\d*\,/gi,
-          '',
-        )
-      ) {
-        console.log('liked post diff');
-        LayoutAnimation.configureNext(
-          LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-        );
-        dispatch(allActions.communityActions.setPosts(form));
-      }
+      // if (
+      //   JSON.stringify(response).replace(
+      //     /"createdDiff\(second\)\"\:\d*\,/gi,
+      //     '',
+      //   ) !==
+      //   JSON.stringify(postData).replace(
+      //     /"createdDiff\(second\)\"\:\d*\,/gi,
+      //     '',
+      //   )
+      // ) {
+      console.log('liked post diff');
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+      );
+      dispatch(allActions.communityActions.setPosts(form));
+      // }
       setIsRefreshing(false);
     });
   }, []);
@@ -188,24 +204,12 @@ const CommentedCommunityPostScreen = ({navigation, route}: Props) => {
         type: 'Commented',
         posts: response,
       };
-      if (
-        postData &&
-        JSON.stringify(response).replace(
-          /"createdDiff\(second\)\"\:\d*\,/gi,
-          '',
-        ) !==
-          JSON.stringify(postData).replace(
-            /"createdDiff\(second\)\"\:\d*\,/gi,
-            '',
-          )
-      ) {
-        console.log('liked post diff');
-        LayoutAnimation.configureNext(
-          LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-        );
-        setIsInitializing(false);
-        dispatch(allActions.communityActions.setPosts(form));
-      }
+      console.log('liked post diff');
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+      );
+      setIsInitializing(false);
+      dispatch(allActions.communityActions.setPosts(form));
     });
 
     return function cleanup() {
@@ -224,6 +228,19 @@ const CommentedCommunityPostScreen = ({navigation, route}: Props) => {
     };
   }, []);
 
+  const renderHeaderComponent = useCallback(
+    () =>
+      postData.length === 0 ? (
+        <EmptyContainerView>
+          <EmptyContentImage
+            source={require('~/Assets/Images/Comment/ic_noComment.png')}
+          />
+          <EmptyContentText>{'댓글 단 수다글이 없습니다.'}</EmptyContentText>
+        </EmptyContainerView>
+      ) : null,
+    [postData],
+  );
+
   return (
     <ContainerView>
       {isInitializing ? (
@@ -239,6 +256,7 @@ const CommentedCommunityPostScreen = ({navigation, route}: Props) => {
           moveToCommunityDetail={moveToCommunityDetail}
           toggleSocialLike={toggleSocialLike}
           toggleSocialScrap={toggleSocialScrap}
+          renderHeaderComponent={renderHeaderComponent}
         />
       )}
     </ContainerView>

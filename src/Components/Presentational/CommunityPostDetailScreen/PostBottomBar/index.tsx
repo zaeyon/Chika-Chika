@@ -34,10 +34,10 @@ align-items: center;
 const SocialInfoText = Styled.Text`
 font-style: normal;
 font-weight: normal;
-font-size: 14px;
+font-size: 13px;
 line-height: 16px;
 margin-left: 4px;
-color: #9AA2A9;
+color: #000000;
 `;
 
 interface Props {
@@ -45,12 +45,14 @@ interface Props {
   toggleSocialLike: any;
   toggleSocialScrap: any;
   data: any;
+  commentCount: number;
 }
 const PostBottomBar = ({
   moveToCommentList,
   toggleSocialLike,
   toggleSocialScrap,
   data,
+  commentCount,
 }: Props) => {
   const {
     id,
@@ -109,7 +111,7 @@ const PostBottomBar = ({
             <Image
               source={require('~/Assets/Images/Community/bottomBar/comment.png')}
             />
-            <SocialInfoText>{postCommentsNum}</SocialInfoText>
+            <SocialInfoText>{commentCount || postCommentsNum}</SocialInfoText>
           </SocialInfoView>
         </TouchableWithoutFeedback>
       </SocialInfoContentView>

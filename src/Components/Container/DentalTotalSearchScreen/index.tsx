@@ -464,7 +464,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const searchedDentalArray = dentalMapRedux.searchedDentalArray;
   const autoCompletedKeywordArr = dentalMapRedux.autoCompletedKeywordArr;
 
-  const dentalSearchRecordArray = useSelector((state: any) => state.currentUser).dentalSearchRecordArray;
+  const dentalSearchRecordArray = useSelector((state: any) => state.currentUser)
+    .dentalSearchRecordArray;
 
   const isNearDentalList = useRef<boolean>(route.params?.isNearDentalList);
   const noMoreDentalData = useRef<boolean>(false);
@@ -577,7 +578,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
             allActions.dentalMapActions.setSearchedDentalArray(response),
           );
           isNearDentalList.current = false;
-          if(response.length < 20) {
+          if (response.length < 20) {
             noMoreDentalData.current = true;
           }
         } else {
@@ -585,8 +586,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         }
 
         setTimeout(() => {
-          getSearchRecord()
-        }, 100)
+          getSearchRecord();
+        }, 100);
       })
       .catch((error: any) => {
         setLoadingSearchDental(false);
@@ -597,29 +598,37 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const getSearchRecord = () => {
     GETSearchRecord({jwtToken})
       .then(async (response: any) => {
-        console.log("GETSearchRecord response", response);
+        console.log('GETSearchRecord response', response);
         dispatch(allActions.userActions.setSearchRecord(response));
 
         const getDentalSearchRecord = async (searchRecordArray: any) => {
           let tmpDentalSearchRecordArray = new Array();
           await searchRecordArray.forEach((item: any, index: number) => {
-            if(item.category === 'clinic' || item.category === 'city') {
+            if (item.category === 'clinic' || item.category === 'city') {
               return tmpDentalSearchRecordArray.push(item);
             }
-          })
+          });
 
-          return tmpDentalSearchRecordArray
-        } 
+          return tmpDentalSearchRecordArray;
+        };
 
-        const tmpDentalSearchRecordArray = await getDentalSearchRecord(response);
-        console.log("GETSearchRecord tmpDentalSearchRecordArray", tmpDentalSearchRecordArray);
-        dispatch(allActions.userActions.setDentalSearchRecord(tmpDentalSearchRecordArray));
-        
+        const tmpDentalSearchRecordArray = await getDentalSearchRecord(
+          response,
+        );
+        console.log(
+          'GETSearchRecord tmpDentalSearchRecordArray',
+          tmpDentalSearchRecordArray,
+        );
+        dispatch(
+          allActions.userActions.setDentalSearchRecord(
+            tmpDentalSearchRecordArray,
+          ),
+        );
       })
       .catch((error) => {
         console.log('GETSearchRecord error', error);
       });
-  }
+  };
 
   const filterDental = (
     query: string,
@@ -1011,7 +1020,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
 
   const moveToDentalDetail = (dentalId: number) => {
     navigation.navigate('DentalDetailScreen', {
-        dentalId: dentalId,
+      dentalId: dentalId,
     });
   };
 
@@ -1160,9 +1169,12 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     searchInputRef.current.focus();
   };
 
-  const clickDentalCallReservation = (phoneNumber: number, dentalId: number) => {
+  const clickDentalCallReservation = (
+    phoneNumber: number,
+    dentalId: number,
+  ) => {
     callDentalPhoneNumber(phoneNumber, jwtToken, dentalId);
-  }
+  };
 
   const renderFooterIndicator = () => {
     if (loadingMoreDental) {
@@ -1217,7 +1229,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         isOpen={isOpen}
         isLunchTime={isLunchTime}
         name={item.originalName}
-        address={item.address}
+        address={item.modifiedAddress}
         rating={rating}
         reviewCount={item.reviewNum}
         lunchTime={item.lunchTime}
@@ -1291,12 +1303,13 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
             returnKeyType={'search'}
           />
           {query?.length > 0 && (
-          <TouchableWithoutFeedback onPress={() => clearTextInput()}>
-          <ClearTextButtonContainer>
-            <ClearTextIcon
-            source={require('~/Assets/Images/Search/ic_clearText.png')}/>
-          </ClearTextButtonContainer>
-          </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => clearTextInput()}>
+              <ClearTextButtonContainer>
+                <ClearTextIcon
+                  source={require('~/Assets/Images/Search/ic_clearText.png')}
+                />
+              </ClearTextButtonContainer>
+            </TouchableWithoutFeedback>
           )}
         </SearchInputContainer>
       </HeaderBar>
@@ -1416,7 +1429,12 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
           <DentalListContainer>
             {searchedDentalArray.length > 0 && (
               <FlatList
-              contentContainerStyle={{backgroundColor: "#F5F7F9", paddingBottom: DeviceInfo.hasNotch() ? hp('6.8%') : hp('7.5%')}}
+                contentContainerStyle={{
+                  backgroundColor: '#F5F7F9',
+                  paddingBottom: DeviceInfo.hasNotch()
+                    ? hp('6.8%')
+                    : hp('7.5%'),
+                }}
                 refreshing={refreshingDentalFlat}
                 onRefresh={onRefreshDentalFlat}
                 showsVerticalScrollIndicator={false}
@@ -1430,10 +1448,9 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
             {searchedDentalArray.length === 0 && !loadingSearchDental && (
               <NoSearchedDentalContainer>
                 <NoDataImage
-                source={require('~/Assets/Images/ic_noData.png')}/>
-                <NoDataText>
-                  {'검색결과가 없습니다.'}
-                </NoDataText>
+                  source={require('~/Assets/Images/ic_noData.png')}
+                />
+                <NoDataText>{'검색결과가 없습니다.'}</NoDataText>
               </NoSearchedDentalContainer>
             )}
             {loadingSearchDental && (
@@ -1446,12 +1463,13 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         <AutoCompletedKeywordContainer
           style={isFocusedSearchInput ? {zIndex: 1} : {zIndex: 0, opacity: 0}}>
           <AutoCompletedKeywordFlatList
-          deleteAllSearchRecord={deleteAllSearchRecord}
-          deleteSingleSearchRecord={deleteSingleSearchRecord}
-          searchRecordArray={dentalSearchRecordArray}
-          searchTotalKeyword={selectAutoCompletedKeyword}
-          query={query}
-          autoCompletedKeywordArr={autoCompletedKeywordArr}/>
+            deleteAllSearchRecord={deleteAllSearchRecord}
+            deleteSingleSearchRecord={deleteSingleSearchRecord}
+            searchRecordArray={dentalSearchRecordArray}
+            searchTotalKeyword={selectAutoCompletedKeyword}
+            query={query}
+            autoCompletedKeywordArr={autoCompletedKeywordArr}
+          />
         </AutoCompletedKeywordContainer>
       </BodyContainer>
       <Modal

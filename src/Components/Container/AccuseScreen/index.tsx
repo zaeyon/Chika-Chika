@@ -26,9 +26,10 @@ import {getStatusBarHeight} from 'react-native-status-bar-height';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import {uploadImageToS3} from '~/method/uploadImageToS3';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
+import ToastMessage from '~/Components/Presentational/ToastMessage';
 
 // Route
-import POSTDentalInfoEdit from '~/Routes/Dental/POSTDentalInfoEdit';
+import POSTReport from '~/Routes/Report/POSTReport';
 
 const Container = Styled.View`
 background-color: #F5F7F9;
@@ -166,7 +167,7 @@ interface Props {
   route: any;
 }
 
-const SELECT_ACCUSE_TYPE_DATA = [
+const clinicAccuseTypes = [
   {
     index: 0,
     id: 1,
@@ -210,6 +211,20 @@ const SELECT_ACCUSE_TYPE_DATA = [
     selected: false,
   },
 ];
+
+const postAccuseTypes = [
+  '영리목적/홍보성',
+  '음란성/선정성',
+  '욕설/인신공격',
+  '개인정보노출',
+  '같은내용 반복게시',
+  '기타',
+].map((item, index) => ({
+  index,
+  id: index + 1,
+  value: item,
+  selected: false,
+}));
 
 const SelectInfoTypeItem = ({item, index, selectInfoType, selected}: any) => {
   console.log('SelectInfoTypeItem', item);
@@ -262,9 +277,8 @@ const SelectInfoTypeList = ({
 };
 
 const AccuseScreen = ({navigation, route}: Props) => {
-
   const [accuseTypeArray, setAccuseTypeArray] = useState<Array<any>>(
-    SELECT_ACCUSE_TYPE_DATA,
+    route.params.targetType === 'clinic' ? clinicAccuseTypes : postAccuseTypes,
   );
   const [selectedType, setSelectedType] = useState<any>([]);
   const [changeSelected, setChangeSelected] = useState<boolean>(false);
@@ -306,7 +320,9 @@ const AccuseScreen = ({navigation, route}: Props) => {
     let tmpAccuseTypeArray = accuseTypeArray.slice();
 
     setSelectedType((selectedType: any) => {
-      const isSelectedIndex = selectedType.indexOf(tmpAccuseTypeArray[index].value);
+      const isSelectedIndex = selectedType.indexOf(
+        tmpAccuseTypeArray[index].value,
+      );
       const prevSelectedType = selectedType.slice();
 
       if (isSelectedIndex === -1) {
@@ -320,10 +336,21 @@ const AccuseScreen = ({navigation, route}: Props) => {
   };
 
   const accusePost = () => {
+    Keyboard.dismiss();
+    setLoading(true);
+    POSTReport({
+      jwtToken,
+      targetType: route.params.targetType,
+      targetId: route.params.targetId,
+      reason: formatReason(selectedType),
+      message: accuseDescrip,
+    }).then((response: any) => {
+      ToastMessage.show('신고 요청이 완료되었습니다. 감사합니다.');
+      navigation.goBack();
+    });
+  };
 
-  }
-
-  const formatReason = async (selectedType: Array<string>) => {
+  const formatReason = (selectedType: Array<string>) => {
     const tmpReason = selectedType.map((item: any, index: number) => {
       return "'" + item + "'";
     });
@@ -336,22 +363,18 @@ const AccuseScreen = ({navigation, route}: Props) => {
       <NavigationHeader
         headerLeftProps={{type: 'arrow', onPress: goBack}}
         headerRightProps={{type: 'text', text: '완료', onPress: accusePost}}
-        headerRightDisabled={
-          selectedType.length === 0 ? true : false
-        }
+        headerRightDisabled={selectedType.length === 0 ? true : false}
         headerTitle={'신고하기'}
-        headerRightActiveColor={"#00D1FF"}
+        headerRightActiveColor={'#00D1FF'}
       />
       <KeyboardAwareScrollView
-      contentContainerStyle={{backgroundColor: '#F5F7F9', flex: 1}}
+        contentContainerStyle={{backgroundColor: '#F5F7F9', flex: 1}}
         showsVerticalScrollIndicator={false}
         ref={scrollViewRef}>
         <BodyContainer>
           <InfoContainer>
             <LabelContainer>
-              <InfoLabelText>
-                {'신고 사유를 선택해주세요(필수)'}
-              </InfoLabelText>
+              <InfoLabelText>{'신고 사유를 선택해주세요(필수)'}</InfoLabelText>
               <RequiredMark />
             </LabelContainer>
             <HorizontalDividerContainer>
