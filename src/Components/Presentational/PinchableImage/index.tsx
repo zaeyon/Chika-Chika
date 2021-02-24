@@ -65,6 +65,8 @@ const PinchableImage = ({
   const pinchRef = useRef();
   const panRef = useRef();
 
+  console.log("PinchableImage image", image)
+
   useEffect(() => {
     if (currentIndex !== index) {
       baseScale.setValue(1);

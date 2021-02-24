@@ -115,7 +115,7 @@ padding: 8px 12px 8px 12px;
 border-radius: 100px;
 background-color: #F5F7F9;
 flex-direction: row;
-border-width: 0.5px;
+border-width: 1px;
 border-color: #E2E6ED;
 `;
 
@@ -1426,25 +1426,24 @@ const NearDentalMap = ({navigation, route}: Props) => {
                       {
                         marginLeft: 16,
                         backgroundColor: '#ffffff',
-                        borderColor: '#9AA2A9',
+                        borderColor: '#131F3C',
                       },
                       styles.filterItemShadow,
                     ]}>
-                    <FilterItemText style={{color: '#4E525D'}}>
+                    <FilterItemText style={{color: '#131F3C'}}>
                       {selectedDayList[0].day + '요일'}
                     </FilterItemText>
                   </FilterItemContainer>
                 </TouchableWithoutFeedback>
               )}
-              {selectedDayList.length > 1 &&
-                selectedDayList.indexOf('전체') === -1 && (
+              {selectedDayList.length > 1 && (
                   <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
                     <FilterItemContainer
                       style={[
                         {
                           marginLeft: 16,
                           backgroundColor: '#ffffff',
-                          borderColor: '#9AA2A9',
+                          borderColor: '#131F3C',
                         },
                         styles.filterItemShadow,
                       ]}>
@@ -1453,7 +1452,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
                           return (
                             <FilterItemText
                               key={index}
-                              style={{color: '#4E525D'}}>
+                              style={{color: '#131F3C'}}>
                               {item.day + '요일'}
                             </FilterItemText>
                           );
@@ -1461,7 +1460,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
                           return (
                             <FilterItemText
                               key={index}
-                              style={{color: '#4E525D'}}>
+                              style={{color: '#131F3C'}}>
                               {', ' + item.day + '요일'}
                             </FilterItemText>
                           );
@@ -1476,12 +1475,12 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     {marginLeft: 8},
                     timeFilter !== '' && {
                       backgroundColor: '#ffffff',
-                      borderColor: '#9AA2A9',
+                      borderColor: '#131F3C',
                     },
                     styles.filterItemShadow,
                   ]}>
                   <FilterItemText
-                    style={timeFilter !== '' && {color: '#4E525D'}}>
+                    style={timeFilter !== '' && {color: '#131F3C'}}>
                     {timeFilter ? timeFilter.slice(0, 5) : '방문시간'}
                   </FilterItemText>
                 </FilterItemContainer>
@@ -1492,11 +1491,11 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     {marginLeft: 8},
                     holidayFilter && {
                       backgroundColor: '#ffffff',
-                      borderColor: '#9AA2A9',
+                      borderColor: '#131F3C',
                     },
                     styles.filterItemShadow,
                   ]}>
-                  <FilterItemText style={holidayFilter && {color: '#4E525D'}}>
+                  <FilterItemText style={holidayFilter && {color: '#131F3C'}}>
                     {'일요일･공휴일 진료'}
                   </FilterItemText>
                 </FilterItemContainer>
@@ -1507,12 +1506,12 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     {marginLeft: 8, marginRight: 16},
                     parkingFilter === 'y' && {
                       backgroundColor: '#ffffff',
-                      borderColor: '#9AA2A9',
+                      borderColor: '#131F3C',
                     },
                     styles.filterItemShadow,
                   ]}>
                   <FilterItemText
-                    style={parkingFilter === 'y' && {color: '#4E525D'}}>
+                    style={parkingFilter === 'y' && {color: '#131F3C'}}>
                     {'주차가능'}
                   </FilterItemText>
                 </FilterItemContainer>

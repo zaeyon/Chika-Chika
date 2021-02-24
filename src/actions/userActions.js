@@ -117,6 +117,14 @@ const setNotification = (notificationConfig) => {
   };
 };
 
+const setNotificationArray = (notificationArray) => {
+  return {
+    type: 'SET_NOTIFICATION_ARRAY',
+    payload: notificationArray,
+  }
+}
+
+
 export default {
   setUser,
   logOut,
@@ -135,4 +143,5 @@ export default {
   setNotification,
   setDentalSearchRecord,
   deleteDentalSearchRecord,
+  setNotificationArray,
 };

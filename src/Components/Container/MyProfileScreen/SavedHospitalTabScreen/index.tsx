@@ -65,6 +65,9 @@ const SavedHospitalTabScreen = ({navigation, route}: Props) => {
         </ActivityIndicatorContainerView>
       ) : (
         <SavedHospitalScreen
+          jwtToken={jwtToken}
+          navigation={navigation}
+          route={route}
           hospitals={hospitals}
           deleteSavedHospital={deleteSavedHospital}
         />

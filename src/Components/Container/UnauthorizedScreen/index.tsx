@@ -12,13 +12,15 @@ import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
 import allActions from '~/actions';
 
 import {appleAuth} from '@invertase/react-native-apple-authentication';
-
+import createRandomNickname from '~/method/createRandomNickname';
 // route
 import POSTRegister from '~/Routes/Auth/POSTRegister';
 import POSTSocialUserCheck from '~/Routes/Auth/POSTSocialUserCheck';
 
 //Async Storage
 import {storeUserInfo} from '~/storage/currentUser';
+
+
 const Container = Styled.View`
   width: ${wp('100%')}px;
   height: ${hp('100%')}px;
@@ -225,7 +227,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
                   ? profile.profile_image_url
                   : '',
                 //nickname: profile.nickname ? profile.nickname : "TEST" + Date.now(),
-                nickname: 'TEST' + Date.now(),
+                nickname: createRandomNickname(),
                 socialId: profile.id,
               };
 
@@ -264,7 +266,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
           birthdate: '',
           profileImg: userInfo.user.photo ? userInfo.user.photo : '',
           //nickname: userInfo.user.name ? userInfo.user.name : "",
-          nickname: 'TEST' + Date.now(),
+          nickname: createRandomNickname(),
           socialId: userInfo.user.id,
         };
 
@@ -316,14 +318,13 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
           console.log('Apple Login Success credentialState', credentialState);
           console.log('appleAuthRequestResponse', appleAuthRequestResponse);
         
-          Alert.alert('로그인성공');
-
           const userProfile = {
             birthdate: '',
             profileImg: '',
+            img_thumbNail: '',            
             //nickname: appleAuthRequestResponse.fullName?.givenName ? (appleAuthRequestResponse.fullName.familyName ? (appleAuthRequestResponse.fullName.familyName + appleAuthRequestResponse.fullName.givenName) : appleAuthRequestResponse.fullName.givenName) : ("TEST" + Date.now()),
-            nickname: 'TEST' + Date.now(),
-            socialId: appleAuthRequestResponse.identityToken,
+            nickname: createRandomNickname(),
+            socialId: appleAuthRequestResponse.user,
           };
 
           const email = appleAuthRequestResponse.email
@@ -348,9 +349,10 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
     phoneNumber: string,
     userProfile: any,
   ) => {
-    POSTSocialUserCheck(provider, email, fcmToken)
+    POSTSocialUserCheck(provider, email, fcmToken, userProfile.socialId)
       .then((response: any) => {
         console.log('POSTSocialUserCheck response', response);
+        console.log('POSTSocialUserCheck response.user.userResidences', response.user.userResidences);
         setLoadingSocial(false);
         if (response.statusText === 'Accepted') {
           console.log('등록된 소셜 계정 존재');
@@ -360,6 +362,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
             id: response.user.userId,
             nickname: response.user.userNickname,
             profileImg: response.user.userProfileImg,
+            img_thumbNail: response.user?.img_thumbNail,
             gender: response.user.userGender,
             birthdate: response.user.userBirthdate,
             provider: response.user.userProvider,
@@ -387,6 +390,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
             certifiedPhoneNumber: phoneNumber ? true : false,
             birthdate: userProfile.birthdate,
             profileImg: userProfile.profileImg,
+            img_thumbNail: response.user?.img_thumbNail,
             nickname: userProfile.nickname,
             phoneNumber: phoneNumber,
             fcmToken: fcmToken,
@@ -403,9 +407,10 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
     email: string,
     userProfile: any,
   ) => {
-    POSTSocialUserCheck(provider, userProfile.socialId, fcmToken)
+    POSTSocialUserCheck(provider, email, fcmToken, userProfile.socialId)
       .then((response: any) => {
         console.log('POSTSocialUserCheck response', response);
+        console.log('POSTSocialUserCheck response.user.userResidences', response.user.userResidences);
         setLoadingSocial(false);
         if (response.statusText === 'Accepted') {
           console.log('등록된 애플 계정 존재');
@@ -415,6 +420,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
             id: response.user.userId,
             nickname: response.user.userNickname,
             profileImg: response.user.userProfileImg,
+            img_thumbNail: response.user?.img_thumbNail,
             gender: response.user.userGender,
             birthdate: response.user.userBirthdate,
             provider: response.user.userProvider,
@@ -442,6 +448,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
             certifiedPhoneNumber: false,
             birthdate: userProfile.birthdate,
             profileImg: userProfile.profileImg,
+            img_thumbNail: userProfile.img_thumbNail,
             nickname: userProfile.nickname,
             phoneNumber: '',
             fcmToken: fcmToken,
@@ -466,29 +473,28 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
           <KakaoLoginButton>
             <SocialIcon
             source={require('~/Assets/Images/Social/ic_kakao.png')}/>
-            <KakaoLoginText>카카오로 로그인</KakaoLoginText>
+            <KakaoLoginText>카카오 로그인</KakaoLoginText>
           </KakaoLoginButton>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={() => loginWithGoogle()}>
           <GoogleLoginButton>
             <SocialIcon
             source={require('~/Assets/Images/Social/ic_google.png')}/>
-            <GoogleLoginText>구글로 로그인</GoogleLoginText>
+            <GoogleLoginText>구글 로그인</GoogleLoginText>
           </GoogleLoginButton>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={() => loginWithApple()}>
           <AppleLoginButton>
             <SocialIcon
             source={require('~/Assets/Images/Social/ic_apple.png')}/>
-            <AppleLoginText>Apple로 로그인</AppleLoginText>
+            <AppleLoginText>Apple 로그인</AppleLoginText>
           </AppleLoginButton>
         </TouchableWithoutFeedback>
       </SocialContainer>
       <LocalContainer>
         <TouchableWithoutFeedback onPress={() => moveToLocalLogin()}>
           <LocalLoginContainer>
-            <LocalLoginText>전화번호로 <LocalLoginText
-            style={{textDecorationLine: 'underline', textDecorationColor: '#131F3C' }}>{"로그인 및 회원가입"}</LocalLoginText></LocalLoginText>
+            <LocalLoginText>{"로그인 / 회원가입"}</LocalLoginText>
           </LocalLoginContainer>
         </TouchableWithoutFeedback>
       </LocalContainer>

@@ -18,6 +18,10 @@ import allActions from '~/actions';
 import {storeUserInfo} from '~/storage/currentUser';
 // Local Component
 import AnimatedModal from '~/Components/Presentational/AnimatedModal';
+
+// Routes
+import DELETEWithdrawal from '~/Routes/Auth/DELETEWithdrawal';
+
 const ContainerView = Styled.ScrollView`
 flex: 1;
 background: #F5F7F9;
@@ -85,10 +89,11 @@ interface Props {
   profile: any;
 }
 interface Props {
+  jwtToken: string;
   navigation: any;
   route: any;
 }
-const GeneralSettingScreen = ({changeNotificationSetting, profile}: Props) => {
+const GeneralSettingScreen = ({jwtToken, changeNotificationSetting, profile}: Props) => {
   const dispatch = useDispatch();
 
   const [sectionArrow, setSectionArrow] = useState(
@@ -154,6 +159,18 @@ const GeneralSettingScreen = ({changeNotificationSetting, profile}: Props) => {
 
   const signout = useCallback(() => {
     console.log('sign out');
+
+    setSignoutModalVisible(false);
+    storeUserInfo(null);
+    dispatch(allActions.userActions.logOut());
+
+    DELETEWithdrawal({jwtToken})
+    .then((response) => {
+      console.log("DELETEWithdrawal response", response);
+    })
+    .catch((error) => {
+      console.log("DELETEWithdrawal error", error);
+    })
   }, []);
 
   return (

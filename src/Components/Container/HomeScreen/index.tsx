@@ -28,6 +28,7 @@ import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import GETTotalSearch from '~/Routes/Search/GETTotalSearch';
 import GETLocalClinicAndReviewCount from '~/Routes/Main/GETLocalClinicAndReviewCount';
 import GETLocalClinic from '~/Routes/Main/GETLocalClinic';
+import GETUserNotifications from '~/Routes/Notification/GETUserNotifications';
 
 const ContainerView = Styled.View`
 flex: 1;
@@ -90,7 +91,8 @@ color: #FFFFFF;
 `;
 
 const BannerImage = Styled.Image`
-
+border-radius: 8px;
+width: ${wp('91.46%')}px;
 margin-bottom: 16px;
 margin: 0px 16px;
 `;
@@ -164,6 +166,17 @@ const HomeScreen = ({navigation, route}: Props) => {
     });
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    GETUserNotifications({jwtToken})
+    .then((response) => {
+      console.log("GETUserNotifications response", response);
+      dispatch(allActions.userActions.setNotificationArray(response));
+    })
+    .catch((error) => {
+      console.log("GETUserNotifications error", error);
+    })
+  }, [])
 
   useEffect(() => {
     setIsMainHomeChanged(true);

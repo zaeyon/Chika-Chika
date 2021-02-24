@@ -64,7 +64,7 @@ const MyProfileScreen = ({navigation, route}: Props) => {
 
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
   const profile = useSelector((state: any) => state.currentUser.profile);
-  const userId = profile.id;
+  const userId = profile?.id;
 
   const updateUserInfo = useCallback(
     (callback?: any) => {

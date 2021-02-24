@@ -57,7 +57,8 @@ import DentalNameSearchScreen from '~/Components/Container/ReviewUploadScreen/De
 import TreatSearchScreen from '~/Components/Container/ReviewUploadScreen/TreatSearchScreen';
 import DetailPriceScreen from '~/Components/Container/ReviewUploadScreen/DetailPriceScreen';
 import RatingScreen from '~/Components/Container/ReviewUploadScreen/RatingScreen';
-import SelectProofImageScreen from '~/Components/Container/ReviewUploadScreen/SelectProofImageScreen';
+import ProofImageGuideScreen from '~/Components/Container/ReviewUploadScreen/ProofImageGuideScreen';
+import FullProofImageScreen from '~/Components/Container/ReviewUploadScreen/ProofImageGuideScreen/FullProofImageScreen';
 
 // My Profile Stack Screen
 import MyProfileScreen from '~/Components/Container/MyProfileScreen';
@@ -558,8 +559,11 @@ function ReviewUploadStackScreen() {
         name="ImageSelectOneStackScreen"
         component={ImageSelectOneStackScreen}/>
       <ReviewUploadStack.Screen
-        name="SelectProofImageScreen"
-        component={SelectProofImageScreen}/>
+        name="ProofImageGuideScreen"
+        component={ProofImageGuideScreen}/>
+      <ReviewUploadStack.Screen
+        name="FullProofImageScreen"
+        component={FullProofImageScreen}/>
     </ReviewUploadStack.Navigator>
   );
 }
@@ -714,6 +718,13 @@ function MyProfileStackScreen() {
       <MyProfileStack.Screen
         name="HometownSettingScreen"
         component={HometownSettingScreen}
+      />
+      <ReviewStack.Screen
+        name="ReviewUploadStackScreen"
+        component={ReviewUploadStackScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
     </MyProfileStack.Navigator>
   );
@@ -882,6 +893,10 @@ function NotificationStackScreen() {
         name="ReviewStackScreen"
         component={ReviewStackScreen}
       />
+      <NotificationStack.Screen
+        name="CommunityStackScreen"
+        component={CommunityStackScreen}
+      />
     </NotificationStack.Navigator>
   );
 }
@@ -1010,7 +1025,9 @@ function BottomTab() {
     if (
       routeName.name === 'EditProfileStackScreen' ||
       routeName.name === 'HometownSettingScreen' ||
-      routeName.name === 'HometownSearchScreen'
+      routeName.name === 'HometownSearchScreen' ||
+      routeName.name === 'DentalClinicStackScreen' ||
+      routeName.name === 'ReviewUploadStackScreen'
     ) {
       return false;
     }
@@ -1187,7 +1204,7 @@ const Navigator = () => {
   return (
     <NavigationContainer>
       <StatusBar barStyle="dark-content" />
-      {isUser ? <BottomTab /> : <AuthStackScreen />}
+      {currentUser.loggedIn ? <BottomTab /> : <AuthStackScreen />}
     </NavigationContainer>
   );
 };

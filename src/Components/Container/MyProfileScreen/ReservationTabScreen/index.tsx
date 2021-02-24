@@ -50,6 +50,7 @@ const ReservationTabScreen = ({navigation, route}: Props) => {
         </ActivityIndicatorContainerView>
       ) : (
         <ReservationScreen
+          jwtToken={jwtToken}
           navigation={navigation}
           route={route}
           reservations={reservations}

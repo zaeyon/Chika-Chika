@@ -13,6 +13,7 @@ import {
 
 //Local Components
 import PlaceholderContent from '~/Components/Container/PlaceholderContent';
+import callDentalPhoneNumber from '~/method/callDentalPhoneNumber';
 
 const ContainerView = Styled.View`
 flex: 1;
@@ -47,7 +48,7 @@ const ReservationItemContentView = Styled.View`
 width: 100%
 flex-direction: row;
 padding: 0px 16px;
-margin-bottom: 24px;
+margin-bottom: 12px;
 `;
 
 const ReservationItemImage = Styled.Image`
@@ -58,6 +59,7 @@ border: 0.5px #E2E6ED;
 border-radius: 8px;
 margin-right: 16px;
 `;
+
 const ReservationItemDetailView = Styled.View`
 width: auto
 height: auto;
@@ -78,12 +80,14 @@ font-weight: 800;
 font-size: 18px;
 line-height: 24px;
 color: #131F3C;
-margin-bottom: 12px;
+margin-bottom: 0px;
 `;
 
 const ReservationItemNavigationView = Styled.View`
 flex-direction: row;
 align-items: center;
+padding-bottom: 12px;
+padding-top: 12px;
 `;
 const ReservationItemNavigationText = Styled.Text`
 font-style: normal;
@@ -156,10 +160,44 @@ interface Props {
   navigation: any;
   route: any;
   reservations: any;
+  jwtToken: string;
 }
 
-const ReservationScreen = ({navigation, route, reservations}: Props) => {
+const ReservationScreen = ({navigation, jwtToken, route, reservations}: Props) => {
+
+  const moveToDentalDetail = (dentalId: number) => {
+    navigation.navigate("DentalClinicStackScreen", {
+      screen: "DentalDetailScreen",
+      params: {
+        dentalId: dentalId,
+      }
+    })
+  }
+
+  const moveToReviewUpload = (dentalId: number, dentalName: string) => {
+
+    const dentalObj = {
+        id: dentalId,
+        originalName: dentalName
+    }
+
+    navigation.navigate("ReviewUploadStackScreen", {
+        screen: "ReviewMetaDataScreen",
+        params: {
+          dentalObj: dentalObj,
+        }
+      })
+  }
+
+  const clickDentalCallReservation = (dentalId: number, phoneNumber: number) => {
+
+    callDentalPhoneNumber(phoneNumber, jwtToken, dentalId)
+  }
+
   const renderReservationItemView = useCallback(({item, index}: any) => {
+
+    console.log("renderReservationItemView item", item);
+
     return (
       <ReservationItemContainerView>
         <TouchableWithoutFeedback>
@@ -176,7 +214,7 @@ const ReservationScreen = ({navigation, route, reservations}: Props) => {
         </ReservationItemTitleView>
         <TouchableWithoutFeedback>
           <ReservationItemContentView>
-            <ReservationItemImage />
+            <ReservationItemImage/>
             <ReservationItemDetailView>
               <ReservationItemDateText>
                 {`${item.time.slice(0, -3)} 전화`}
@@ -184,7 +222,9 @@ const ReservationScreen = ({navigation, route, reservations}: Props) => {
               <ReservationItemClinicText>
                 {item.originalName}
               </ReservationItemClinicText>
-              <ReservationItemNavigationView>
+              <TouchableWithoutFeedback onPress={() => moveToDentalDetail(item.id)}>
+              <ReservationItemNavigationView
+              style={{backgroundColor: "#ffffff"}}>
                 <ReservationItemNavigationText>
                   {'병원상세정보'}
                 </ReservationItemNavigationText>
@@ -192,14 +232,17 @@ const ReservationScreen = ({navigation, route, reservations}: Props) => {
                   source={require('~/Assets/Images/MyPage/move_clinic_detail.png')}
                 />
               </ReservationItemNavigationView>
+              </TouchableWithoutFeedback>
             </ReservationItemDetailView>
           </ReservationItemContentView>
         </TouchableWithoutFeedback>
         <ReservationButtonContainerView>
-          <CreateReviewTouchableOpacity>
+          <CreateReviewTouchableOpacity
+          onPress={() => moveToReviewUpload(item.id, item.originalName)}>
             <CreateReviewText>{'리뷰남기기'}</CreateReviewText>
           </CreateReviewTouchableOpacity>
-          <ReReservationTouchableOpacity>
+          <ReReservationTouchableOpacity
+          onPress={() => clickDentalCallReservation(item.id, item.telNumber)}>
             <ReReservationText>{'재예약'}</ReReservationText>
           </ReReservationTouchableOpacity>
         </ReservationButtonContainerView>

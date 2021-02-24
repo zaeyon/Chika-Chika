@@ -3,23 +3,23 @@ import serverConfig from '../server.config';
 
 interface Params {
     jwtToken: string,
-    type?: string,
 }
 
-const GETUserNotifications = ({jwtToken, type}: Params) => {
+const DELETEWithdrawal = ({jwtToken}: Params) => {
 
-    const uri = serverConfig.baseUri + `/notifications`;
+    console.log("DELETEWithdrawal jwtToken", jwtToken);
+    
+    const uri = serverConfig.baseUri + '/withdrawal';
 
     return new Promise((resolve, reject) => {
-
         axios
-        .get(uri, {
+        .delete(uri, {
             headers: {
                 Authorization: jwtToken,
             }
         })
         .then((response) => {
-            resolve(response.data);
+            resolve(response.data)
         })
         .catch((error) => {
             reject(error.response)
@@ -27,8 +27,4 @@ const GETUserNotifications = ({jwtToken, type}: Params) => {
     })
 }
 
-export default GETUserNotifications;
-
-
-
-
+export default DELETEWithdrawal;
