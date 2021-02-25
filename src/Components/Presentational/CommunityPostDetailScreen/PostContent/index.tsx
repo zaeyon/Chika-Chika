@@ -41,34 +41,6 @@ align-items: center;
 margin-bottom: 8px;
 `;
 
-const HashTagContainerView = Styled.View`
-width: 100%;
-height: auto;
-padding: 0px 16px;
-flex-direction: row;
-flex-wrap: wrap;
-margin: 4px 0px;
-`;
-
-const HashTagIconView = Styled(TouchableOpacity as new () => TouchableOpacity)`
-width: auto;
-height: auto;
-flex-direction: row;
-align-items: center;
-margin: 4px 8px 4px 0px;
-padding: 8px;
-border: 1px  #C4C4C4;
-border-radius: 4px;
-background-color: #C4C4C4;
-color: '#rgb(0, 0, 0)'
-`;
-const HashTagIconText = Styled.Text`
-font-style: normal;
-font-weight: normal;
-font-size: 14px;
-line-height: 16px;
-`;
-
 const ProfileImage = Styled.Image<{source: any}>`
 width: 40px;
 height: 40px;
@@ -131,6 +103,14 @@ width: 4px;
 height: 100%;
 `;
 
+const ImageView = Styled.Image<{source: any}>`
+width: 124px;
+height: 124px;
+background-color: #F5F7F9;
+border-radius: 8px;
+border-color: #F5F7F9;
+border-width: 1px;
+`;
 const SocialInfoContainerView = Styled.View`
 width: ${wp('100%')}px;
 height: 56px;
@@ -289,20 +269,12 @@ const PostContent = ({
               cache: 'force-cache',
             }}
           /> */}
-        <FastImage
+        <ImageView
           key={'image' + index}
-          style={{
-            width: 124,
-            height: 124,
-            backgroundColor: '#F5F7F9',
-            borderRadius: 8,
-          }}
           source={{
-            uri: item.img_url,
-            priority: FastImage.priority.normal,
-            cache: FastImage.cacheControl.immutable,
+            url: item.img_thumbNail,
+            cache: 'force-cache',
           }}
-          resizeMode={FastImage.resizeMode.cover}
         />
       </TouchableWithoutFeedback>
     ),
@@ -319,7 +291,7 @@ const PostContent = ({
           <ProfileContainerView>
             <ProfileImage
               source={{
-                url: user.profileImg,
+                url: user.img_thumbNail,
                 cache: 'force-cache',
               }}
             />

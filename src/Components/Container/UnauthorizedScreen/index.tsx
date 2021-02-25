@@ -14,12 +14,13 @@ import allActions from '~/actions';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 import createRandomNickname from '~/method/createRandomNickname';
 // route
-import POSTRegister from '~/Routes/Auth/POSTRegister';
+import GETUserInfo from '~/Routes/Auth/GETUserInfo';
+import GETUserReservations from '~/Routes/User/GETUserReservations';
+import GETUserSavedHospitals from '~/Routes/User/GETUserSavedHospitals';
 import POSTSocialUserCheck from '~/Routes/Auth/POSTSocialUserCheck';
 
 //Async Storage
 import {storeUserInfo} from '~/storage/currentUser';
-
 
 const Container = Styled.View`
   width: ${wp('100%')}px;
@@ -45,7 +46,6 @@ margin-top: 6px;
 width: ${wp('44.53%')}px;
 height: ${wp('10.399%')}px;
 `;
-
 
 const SocialContainer = Styled.View`
  flex: 1.5;
@@ -317,11 +317,11 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
         if (credentialState === appleAuth.State.AUTHORIZED) {
           console.log('Apple Login Success credentialState', credentialState);
           console.log('appleAuthRequestResponse', appleAuthRequestResponse);
-        
+
           const userProfile = {
             birthdate: '',
             profileImg: '',
-            img_thumbNail: '',            
+            img_thumbNail: '',
             //nickname: appleAuthRequestResponse.fullName?.givenName ? (appleAuthRequestResponse.fullName.familyName ? (appleAuthRequestResponse.fullName.familyName + appleAuthRequestResponse.fullName.givenName) : appleAuthRequestResponse.fullName.givenName) : ("TEST" + Date.now()),
             nickname: createRandomNickname(),
             socialId: appleAuthRequestResponse.user,
@@ -332,11 +332,10 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
             : '';
 
           progressAppleLogin('apple', email, userProfile);
-        } 
+        }
       } catch {
-        console.log("Apple Login Fail appleAuth.State", appleAuth.State)
+        console.log('Apple Login Fail appleAuth.State', appleAuth.State);
         setLoadingSocial(false);
-
       }
     } else {
       Alert.alert('애플로그인을 지원하지 않는 디바이스입니다.');
@@ -349,35 +348,44 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
     phoneNumber: string,
     userProfile: any,
   ) => {
-    POSTSocialUserCheck(provider, email, fcmToken, userProfile.socialId)
+    POSTSocialUserCheck(provider, email, fcmToken)
       .then((response: any) => {
         console.log('POSTSocialUserCheck response', response);
-        console.log('POSTSocialUserCheck response.user.userResidences', response.user.userResidences);
-        setLoadingSocial(false);
+        console.log(
+          'POSTSocialUserCheck response.user.userResidences',
+          response.user.userResidences,
+        );
         if (response.statusText === 'Accepted') {
           console.log('등록된 소셜 계정 존재');
 
-          const profile = {
-            phoneNumber: phoneNumber,
-            id: response.user.userId,
-            nickname: response.user.userNickname,
-            profileImg: response.user.userProfileImg,
-            img_thumbNail: response.user?.img_thumbNail,
-            gender: response.user.userGender,
-            birthdate: response.user.userBirthdate,
-            provider: response.user.userProvider,
-            Residences: response.user.userResidences,
-          };
+          GETUserInfo(response.token)
+            .then((profile: any) => {
+              console.log('profile', profile);
+              setLoadingSocial(false);
 
-          const userInfo = {
-            jwtToken: response.token,
-            profile,
-          };
+              dispatch(
+                allActions.userActions.setUser({
+                  jwtToken: response.token,
+                  profile,
+                }),
+              );
+              dispatch(allActions.userActions.setHometown(profile.Residences));
+              GETUserReservations({jwtToken: response.token}).then(
+                (profile: any) => {
+                  dispatch(allActions.userActions.setReservations(profile));
+                },
+              );
+              GETUserSavedHospitals({jwtToken: response.token}).then(
+                (profile: any) => {
+                  dispatch(allActions.userActions.setSavedHospitals(profile));
+                },
+              );
+            })
+            .catch((error: any) => {
+              console.log('get user error', error);
+            });
+
           storeUserInfo(response.token);
-          dispatch(allActions.userActions.setUser(userInfo));
-          dispatch(
-            allActions.userActions.setHometown(response.user.userResidences),
-          );
         }
       })
       .catch((error) => {
@@ -410,7 +418,10 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
     POSTSocialUserCheck(provider, email, fcmToken, userProfile.socialId)
       .then((response: any) => {
         console.log('POSTSocialUserCheck response', response);
-        console.log('POSTSocialUserCheck response.user.userResidences', response.user.userResidences);
+        console.log(
+          'POSTSocialUserCheck response.user.userResidences',
+          response.user.userResidences,
+        );
         setLoadingSocial(false);
         if (response.statusText === 'Accepted') {
           console.log('등록된 애플 계정 존재');
@@ -463,30 +474,31 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
   return (
     <Container>
       <LogoContainer>
-        <Icon
-        source={require('~/Assets/Images/Logo/ic_icon.png')}/>
-        <LogoImage
-        source={require('~/Assets/Images/Logo/ic_logo.png')}/>
+        <Icon source={require('~/Assets/Images/Logo/ic_icon.png')} />
+        <LogoImage source={require('~/Assets/Images/Logo/ic_logo.png')} />
       </LogoContainer>
       <SocialContainer>
         <TouchableWithoutFeedback onPress={() => loginWithKakao()}>
           <KakaoLoginButton>
             <SocialIcon
-            source={require('~/Assets/Images/Social/ic_kakao.png')}/>
+              source={require('~/Assets/Images/Social/ic_kakao.png')}
+            />
             <KakaoLoginText>카카오 로그인</KakaoLoginText>
           </KakaoLoginButton>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={() => loginWithGoogle()}>
           <GoogleLoginButton>
             <SocialIcon
-            source={require('~/Assets/Images/Social/ic_google.png')}/>
+              source={require('~/Assets/Images/Social/ic_google.png')}
+            />
             <GoogleLoginText>구글 로그인</GoogleLoginText>
           </GoogleLoginButton>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={() => loginWithApple()}>
           <AppleLoginButton>
             <SocialIcon
-            source={require('~/Assets/Images/Social/ic_apple.png')}/>
+              source={require('~/Assets/Images/Social/ic_apple.png')}
+            />
             <AppleLoginText>Apple 로그인</AppleLoginText>
           </AppleLoginButton>
         </TouchableWithoutFeedback>
@@ -494,7 +506,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
       <LocalContainer>
         <TouchableWithoutFeedback onPress={() => moveToLocalLogin()}>
           <LocalLoginContainer>
-            <LocalLoginText>{"로그인 / 회원가입"}</LocalLoginText>
+            <LocalLoginText>{'로그인 / 회원가입'}</LocalLoginText>
           </LocalLoginContainer>
         </TouchableWithoutFeedback>
       </LocalContainer>

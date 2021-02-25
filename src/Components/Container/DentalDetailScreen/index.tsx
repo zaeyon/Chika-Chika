@@ -26,7 +26,7 @@ import DentalBottomBar from '~/Components/Presentational/DentalDetailScreen/Dent
 import ReviewItem from '~/Components/Presentational/ReviewItem';
 import ToastMessage from '~/Components/Presentational/ToastMessage';
 
-import {callDentalPhoneNumber} from '~/method/callDentalPhoneNumber';
+import callDentalPhoneNumber from '~/method/callDentalPhoneNumber';
 
 // Routes
 import GETDentalDetail from '~/Routes/Dental/GETDentalDetail';

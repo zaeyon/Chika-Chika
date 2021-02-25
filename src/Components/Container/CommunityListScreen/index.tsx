@@ -1,27 +1,18 @@
-import React, {useRef, useEffect, useCallback} from 'react';
+import React, {useRef, useEffect, useCallback, useState} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-} from 'react-native';
+import {Animated, Image} from 'react-native';
+
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {
-  isIphoneX,
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
+import messaging from '@react-native-firebase/messaging';
 
 // Routes
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 // Local Component
-import HomeTabScreen from './HomeTabScreen';
 import QuestionTabScreen from './QuestionTabScreen';
 import GeneralTabScreen from './GeneralTabScreen';
 // Redux
@@ -93,9 +84,12 @@ const CommunityListScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
 
   const currentUser = useSelector((state: any) => state.currentUser);
-  const profile = currentUser.profile;
+
   const hometown = currentUser.hometown;
   const jwtToken = currentUser.jwtToken;
+
+  const [onMessage, setOnMessage] = useState(false);
+  const alertScale = useRef(new Animated.Value(0)).current;
 
   const moveToTotalKeywordSearch = useCallback(() => {
     navigation.navigate('TotalKeywordSearchStackScreen', {
@@ -115,6 +109,13 @@ const CommunityListScreen = ({navigation, route}: Props) => {
         id: -1,
       },
     });
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      setOnMessage(true);
+    });
+    return unsubscribe;
   }, []);
 
   useEffect(() => {
@@ -166,8 +167,30 @@ const CommunityListScreen = ({navigation, route}: Props) => {
             <Image source={require('~/Assets/Images/TopTab/ic/search.png')} />
           </HeaderIconTouchableOpacity>
           <HeaderIconTouchableOpacity onPress={() => moveToNotificationList()}>
-            <Image
-              source={require('~/Assets/Images/TopTab/ic/alarm/focus.png')}
+            <Animated.Image
+              style={{
+                transform: [
+                  {
+                    rotate: alertScale.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0deg', '15deg'],
+                      extrapolate: 'clamp',
+                    }),
+                  },
+                  {
+                    scale: alertScale.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [1, 1.15],
+                      extrapolate: 'clamp',
+                    }),
+                  },
+                ],
+              }}
+              source={
+                onMessage
+                  ? require('~/Assets/Images/TopTab/ic/alarm/focus.png')
+                  : require('~/Assets/Images/TopTab/ic/alarm/unfocus.png')
+              }
             />
           </HeaderIconTouchableOpacity>
           <HeaderIconTouchableOpacity onPress={() => moveToCreatePost()}>

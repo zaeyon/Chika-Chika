@@ -226,7 +226,7 @@ const PostItem = ({
   }, [viewerLikeCommunityPost, viewerScrapCommunityPost]);
 
   const formatElapsedDate = useCallback(
-    (elapsedTime: number) => {
+    (elapsedTime: number, createdAt: string) => {
       if (elapsedTime / (24 * 3600 * 1000) > 1) {
         return formatDate(createdAt);
       }
@@ -248,7 +248,7 @@ const PostItem = ({
         return `${second}초 전`;
       }
     },
-    [updatedAt],
+    [],
   );
 
   const formatDate = useCallback((createdAt: string) => {
@@ -373,24 +373,26 @@ const PostItem = ({
         <BodyContainerView>
           <TouchableWithoutFeedback
             onPress={() => {
-              moveToAnotherProfile(userId, user.nickname, user.img_thumbNail);
+              moveToAnotherProfile(userId, user?.nickname, user?.img_thumbNail);
             }}>
             <ProfileContainerView>
               <ProfileImage
                 source={
-                  user.img_thumbNail
+                  user?.img_thumbNail
                     ? {
-                        uri: user.img_thumbNail,
+                        uri: user?.img_thumbNail,
                         cache: 'force-cache',
                       }
                     : require('~/Assets/Images/appIcon_chika.png')
                 }
               />
               <ProfileContentView>
-                <ProfileNameText>{user.nickname}</ProfileNameText>
+                <ProfileNameText>{user?.nickname}</ProfileNameText>
                 <ProfileDescriptionText>
-                  {formatElapsedDate(data['createdDiff(second)'] * 1000) +
-                    (updatedAt !== createdAt ? ' ･ 수정됨' : '')}
+                  {formatElapsedDate(
+                    data['createdDiff(second)'] * 1000,
+                    createdAt,
+                  ) + (updatedAt !== createdAt ? ' ･ 수정됨' : '')}
                 </ProfileDescriptionText>
               </ProfileContentView>
             </ProfileContainerView>

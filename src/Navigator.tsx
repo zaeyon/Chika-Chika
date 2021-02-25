@@ -566,7 +566,8 @@ function ReviewUploadStackScreen() {
       />
       <ReviewUploadStack.Screen
         name="ProofImageGuideScreen"
-        component={ProofImageGuideScreen}/>
+        component={ProofImageGuideScreen}
+      />
       <ReviewUploadStack.Screen
         name="FullProofImageScreen"
         component={FullProofImageScreen}
@@ -901,6 +902,10 @@ function TotalKeywordSearchStackScreen() {
         name="ReviewStackScreen"
         component={ReviewStackScreen}
       />
+      <TotalKeywordSearchStack.Screen
+        name="DentalDetailScreen"
+        component={DentalDetailScreen}
+      />
     </TotalKeywordSearchStack.Navigator>
   );
 }
@@ -1111,6 +1116,7 @@ function BottomTab() {
   };
   return (
     <Tab.Navigator
+      initialRouteName="홈"
       tabBarOptions={{
         showLabel: false,
         style: styles.tabBar,

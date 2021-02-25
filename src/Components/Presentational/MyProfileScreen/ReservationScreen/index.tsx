@@ -13,7 +13,6 @@ import {
 
 //Local Components
 import PlaceholderContent from '~/Components/Container/PlaceholderContent';
-import callDentalPhoneNumber from '~/method/callDentalPhoneNumber';
 
 const ContainerView = Styled.View`
 flex: 1;
@@ -161,43 +160,22 @@ margin: 8px 0px;
 interface Props {
   navigation: any;
   reservations: any;
-  jwtToken: string;
+  deleteReservation: (clinicId: string) => void;
+  moveToDentalDetail: (dentalId: number) => void;
+  moveToReviewUpload: (dentalId: number, dentalName: string) => void;
+  onPressReservation: (phonenumber: number, dentalId: number) => void;
 }
 
-const ReservationScreen = ({navigation, jwtToken, route, reservations}: Props) => {
-
-  const moveToDentalDetail = (dentalId: number) => {
-    navigation.navigate("DentalClinicStackScreen", {
-      screen: "DentalDetailScreen",
-      params: {
-        dentalId: dentalId,
-      }
-    })
-  }
-
-  const moveToReviewUpload = (dentalId: number, dentalName: string) => {
-
-    const dentalObj = {
-        id: dentalId,
-        originalName: dentalName
-    }
-
-    navigation.navigate("ReviewUploadStackScreen", {
-        screen: "ReviewMetaDataScreen",
-        params: {
-          dentalObj: dentalObj,
-        }
-      })
-  }
-
-  const clickDentalCallReservation = (dentalId: number, phoneNumber: number) => {
-
-    callDentalPhoneNumber(phoneNumber, jwtToken, dentalId)
-  }
-
+const ReservationScreen = ({
+  navigation,
+  reservations,
+  deleteReservation,
+  moveToDentalDetail,
+  moveToReviewUpload,
+  onPressReservation,
+}: Props) => {
   const renderReservationItemView = useCallback(({item, index}: any) => {
-
-    console.log("renderReservationItemView item", item);
+    console.log('renderReservationItemView item', item);
 
     return (
       <ReservationItemContainerView>
@@ -226,7 +204,7 @@ const ReservationScreen = ({navigation, jwtToken, route, reservations}: Props) =
         </ReservationItemTitleView>
         <TouchableWithoutFeedback>
           <ReservationItemContentView>
-            <ReservationItemImage/>
+            <ReservationItemImage />
             <ReservationItemDetailView>
               <ReservationItemDateText>
                 {`${item.time.slice(0, -3)} 전화`}
@@ -234,27 +212,28 @@ const ReservationScreen = ({navigation, jwtToken, route, reservations}: Props) =
               <ReservationItemClinicText>
                 {item.originalName}
               </ReservationItemClinicText>
-              <TouchableWithoutFeedback onPress={() => moveToDentalDetail(item.id)}>
-              <ReservationItemNavigationView
-              style={{backgroundColor: "#ffffff"}}>
-                <ReservationItemNavigationText>
-                  {'병원상세정보'}
-                </ReservationItemNavigationText>
-                <ArrowIconImage
-                  source={require('~/Assets/Images/MyPage/move_clinic_detail.png')}
-                />
-              </ReservationItemNavigationView>
+              <TouchableWithoutFeedback
+                onPress={() => moveToDentalDetail(item.id)}>
+                <ReservationItemNavigationView
+                  style={{backgroundColor: '#ffffff'}}>
+                  <ReservationItemNavigationText>
+                    {'병원상세정보'}
+                  </ReservationItemNavigationText>
+                  <ArrowIconImage
+                    source={require('~/Assets/Images/MyPage/move_clinic_detail.png')}
+                  />
+                </ReservationItemNavigationView>
               </TouchableWithoutFeedback>
             </ReservationItemDetailView>
           </ReservationItemContentView>
         </TouchableWithoutFeedback>
         <ReservationButtonContainerView>
           <CreateReviewTouchableOpacity
-          onPress={() => moveToReviewUpload(item.id, item.originalName)}>
+            onPress={() => moveToReviewUpload(item.id, item.originalName)}>
             <CreateReviewText>{'리뷰남기기'}</CreateReviewText>
           </CreateReviewTouchableOpacity>
           <ReReservationTouchableOpacity
-          onPress={() => clickDentalCallReservation(item.id, item.telNumber)}>
+            onPress={() => onPressReservation(item.telNumber, item.id)}>
             <ReReservationText>{'재예약'}</ReReservationText>
           </ReReservationTouchableOpacity>
         </ReservationButtonContainerView>

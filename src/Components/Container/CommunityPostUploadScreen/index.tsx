@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
-import {LayoutAnimation} from 'react-native';
+import {Alert, LayoutAnimation} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -15,13 +15,11 @@ import CommunityCreatePostScreen from '~/Components/Presentational/CommunityCrea
 import AnimatedModal from '~/Components/Presentational/AnimatedModal';
 // Routes
 import GETAllTagSearch from '~/Routes/Search/GETAllTagSearch';
-import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import POSTCreateCommunityPost from '~/Routes/Community/createPost/POSTCreateCommunityPost';
 import PUTCommunityPost from '~/Routes/Community/editPost/PUTCommunityPost';
 // redux
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
-import Animated from 'react-native-reanimated';
 
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
@@ -290,15 +288,20 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         type: formattedCategory,
         images: formattedImages,
       };
-      POSTCreateCommunityPost(jwtToken, postData).then((response: any) => {
-        navigation.navigate('CommunityListScreen', {
-          screen: formattedCategory === 'Question' ? '질문방' : '수다방',
-          params: {
-            isPostCreated: true,
-          },
+      POSTCreateCommunityPost(jwtToken, postData)
+        .then((response: any) => {
+          navigation.navigate('CommunityListScreen', {
+            screen: formattedCategory === 'Question' ? '질문방' : '수다방',
+            params: {
+              isPostCreated: true,
+            },
+          });
+          console.log('call layout animation');
+        })
+        .catch((e) => {
+          Alert.alert('글 작성을 실패하였습니다.');
+          navigation.goBack();
         });
-        console.log('call layout animation');
-      });
     }
   }, [
     description,

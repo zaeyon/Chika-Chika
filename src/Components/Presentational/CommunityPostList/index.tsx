@@ -11,6 +11,7 @@ import {
   Animated,
   LayoutAnimation,
 } from 'react-native';
+import {useScrollToTop} from '@react-navigation/native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -82,6 +83,8 @@ const CommunityPostList = ({
   toggleSocialScrap,
   renderHeaderComponent,
 }: Props) => {
+  const listRef: any = useRef();
+  useScrollToTop(listRef);
   const renderPosts = useCallback(({item, index}: any) => {
     return (
       <PostItem
@@ -98,6 +101,7 @@ const CommunityPostList = ({
 
   return (
     <BodyContainerFlatList
+      ref={listRef}
       data={postData}
       refreshControl={
         <RefreshControl

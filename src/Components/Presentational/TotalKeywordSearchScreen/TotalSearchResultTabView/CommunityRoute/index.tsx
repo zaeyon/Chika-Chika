@@ -232,7 +232,6 @@ const CommunityRoute = ({
 
   const onFiltering = useCallback(
     (searchOrder: string, callback = () => console.log('filtered')) => {
-      setRefreshing(true);
       setOrder(searchOrder);
       const form = {
         pathType: 'community',
@@ -268,9 +267,6 @@ const CommunityRoute = ({
 
           dispatch(allActions.communityActions.setPosts(data));
         }
-        setRefreshing(() => {
-          return false;
-        });
         callback();
       });
     },

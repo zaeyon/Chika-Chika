@@ -4,12 +4,12 @@ import serverConfig from '../server.config';
 interface Params {
     jwtToken: string,
     searchId?: any,
-    category?: string,
+    unified?: any,
 }
 
-const DELETESearchRecord = ({jwtToken, searchId}: Params) => {
+const DELETESearchRecord = ({jwtToken, searchId, unified=false}: Params) => {
     
-    const uri = serverConfig.baseUri + `/search/recent?searchId=${searchId}`
+    const uri = serverConfig.baseUri + `/search/recent?searchId=${searchId}&unifiedSearch=${unified}`
 
     console.log(uri)
     return new Promise((resolve, reject) => {

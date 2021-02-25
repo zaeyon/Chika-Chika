@@ -13,7 +13,10 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-import {KeyboardAwareFlatList, KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {
+  KeyboardAwareFlatList,
+  KeyboardAwareScrollView,
+} from 'react-native-keyboard-aware-scroll-view';
 
 const ContinaerView = Styled.View`
 background-color: #ffffff;
@@ -25,7 +28,6 @@ const BodyContainer = Styled.View`
 flex: 1;
 background-color: #F5F7F9;
 `;
-
 
 const SearchResultFlatList = Styled(FlatList as new () => FlatList)`
 `;
@@ -152,7 +154,6 @@ const AutoCompletedKeywordFlatList = ({
   searchTotalKeyword,
   searchRecordArray,
 }: Props) => {
-
   const renderSearchRecordItem = ({item, index}: any) => {
     const renderIcon = (category: string) => {
       switch (category) {
@@ -165,8 +166,7 @@ const AutoCompletedKeywordFlatList = ({
       }
     };
 
-    if(item.category === 'clinic' || item.category === 'city') {
-    
+    if (item.category === 'clinic' || item.category === 'city') {
       return (
         <TouchableHighlight
           underlayColor="#F5F7F9"
@@ -195,13 +195,10 @@ const AutoCompletedKeywordFlatList = ({
 
   const renderResultItem = useCallback(
     ({item, index}: any) => {
-      
+      console.log('자동완성 키워드 렌더링');
 
-      console.log("자동완성 키워드 렌더링");
-
-      if(item.category === "clinic") {
-
-        const splitedItemName = item.name.split("");
+      if (item.category === 'clinic') {
+        const splitedItemName = item.name.split('');
 
         const startIndex = item.name.indexOf(query);
         const endIndex = startIndex + (query?.length - 1);
@@ -233,9 +230,8 @@ const AutoCompletedKeywordFlatList = ({
             </AutoCompletedKeywordDescriptionView>
           </AutoCompletedKeywordItemContainer>
           </TouchableWithoutFeedback>
-        )
-      } else if(item.category === "city") {
-
+        );
+      } else if (item.category === 'city') {
         let splitedItemName = new Array([]);
         let startIndex: number;
         let endIndex: number;
@@ -244,18 +240,20 @@ const AutoCompletedKeywordFlatList = ({
         let addressStartIndex: number;
         let addressEndIndex: number;
 
-        if(!item.isEMD) {
-          splitedItemName = item.fullAddress?.split("");
+        if (!item.isEMD) {
+          splitedItemName = item.fullAddress?.split('');
           startIndex = item.fullAddress?.indexOf(query);
           endIndex = startIndex + (query?.length - 1);
         } else {
           splitedItemName = item.emdName?.split('');
           startIndex = item.emdName?.indexOf(query);
           endIndex = startIndex + (query?.length - 1);
-  
+
           splitedAddress = item.fullAddress && item.fullAddress.split('');
-          addressStartIndex = item.fullAddress && item.fullAddress.indexOf(query);
-          addressEndIndex = addressStartIndex && addressStartIndex + (query?.length - 1);
+          addressStartIndex =
+            item.fullAddress && item.fullAddress.indexOf(query);
+          addressEndIndex =
+            addressStartIndex && addressStartIndex + (query?.length - 1);
         }
 
         //const splitedItemName  = item.fullName?.split("");
@@ -277,13 +275,20 @@ const AutoCompletedKeywordFlatList = ({
               } else {
                 return (
                     <AutoCompletedKeywordText
-                    key={index}
-                    >{item}</AutoCompletedKeywordText>
-                )
-              }
-            }
-            )}
-            <AutoCompletedKeywordDescriptionView>
+                      key={index}
+                      style={{color: '#00D1FF'}}>
+                      {item}
+                    </AutoCompletedKeywordText>
+                  );
+                } else {
+                  return (
+                    <AutoCompletedKeywordText key={index}>
+                      {item}
+                    </AutoCompletedKeywordText>
+                  );
+                }
+              })}
+              <AutoCompletedKeywordDescriptionView>
                 {item.isEMD
                   ? splitedAddress.map((item: any, index: number) => {
                       if (
@@ -307,20 +312,22 @@ const AutoCompletedKeywordFlatList = ({
                     })
                   : null}
               </AutoCompletedKeywordDescriptionView>
-          </AutoCompletedKeywordItemContainer>
+            </AutoCompletedKeywordItemContainer>
           </TouchableWithoutFeedback>
-        )
+        );
       } else {
-
         return (
           <View
-          style={{
-            width:0,
-            height:0,
-          }}/>
-        )
+            style={{
+              width: 0,
+              height: 0,
+            }}
+          />
+        );
       }
-  }, [query]);
+    },
+    [query],
+  );
 
   // const renderFrequentTerms = useCallback(() => (
 
@@ -329,58 +336,61 @@ const AutoCompletedKeywordFlatList = ({
   return (
     <ContinaerView>
       <BodyContainer>
-        {query === "" && (
-        <RecentKeywordContainer>
-          <RecentKeywoardHeaderContainer>
-            <RecentKeywordLabelContainer>
-              <RecentKeywordLabelText>{"최근 검색어"}</RecentKeywordLabelText>
-            </RecentKeywordLabelContainer>
-            <TouchableWithoutFeedback onPress={() => deleteAllSearchRecord()}>
-            <RecentKeywordLabelContainer>
-              <RecentKeywordLabelText
-              style={{color: "#9AA2A9"}}>{"전체삭제"}</RecentKeywordLabelText>
-            </RecentKeywordLabelContainer>
-            </TouchableWithoutFeedback>
-          </RecentKeywoardHeaderContainer>
-          {searchRecordArray?.length === 0 && (
-          <NoRecentKeywordContainer>
-            <NoRecentKeywordText>{"💡최근 검색 내역이 없습니다."}</NoRecentKeywordText>
-          </NoRecentKeywordContainer>
-          )}
-          {searchRecordArray?.length > 0 && (
-            <FlatList
-            keyboardShouldPersistTaps={"always"}
+        {query === '' && (
+          <RecentKeywordContainer>
+            <RecentKeywoardHeaderContainer>
+              <RecentKeywordLabelContainer>
+                <RecentKeywordLabelText>{'최근 검색어'}</RecentKeywordLabelText>
+              </RecentKeywordLabelContainer>
+              <TouchableWithoutFeedback onPress={() => deleteAllSearchRecord()}>
+                <RecentKeywordLabelContainer>
+                  <RecentKeywordLabelText style={{color: '#9AA2A9'}}>
+                    {'전체삭제'}
+                  </RecentKeywordLabelText>
+                </RecentKeywordLabelContainer>
+              </TouchableWithoutFeedback>
+            </RecentKeywoardHeaderContainer>
+            {searchRecordArray?.length === 0 && (
+              <NoRecentKeywordContainer>
+                <NoRecentKeywordText>
+                  {'💡최근 검색 내역이 없습니다.'}
+                </NoRecentKeywordText>
+              </NoRecentKeywordContainer>
+            )}
+            {searchRecordArray?.length > 0 && (
+              <FlatList
+                keyboardShouldPersistTaps={'always'}
+                bounces={true}
+                alwaysBounceVertical={true}
+                keyboardDismissMode="on-drag"
+                showsVerticalScrollIndicator={false}
+                data={searchRecordArray}
+                renderItem={renderSearchRecordItem}
+                keyExtractor={(item: any, index: number) => `${index}`}
+              />
+            )}
+          </RecentKeywordContainer>
+        )}
+        {query !== '' && (
+          <SearchResultFlatList
+            keyboardShouldPersistTaps={'handled'}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{paddingBottom: 150}}
             bounces={true}
             alwaysBounceVertical={true}
             keyboardDismissMode="on-drag"
-            showsVerticalScrollIndicator={false}
-            data={searchRecordArray}
-            renderItem={renderSearchRecordItem}
-            keyExtractor={(item: any, index: number) => `${index}`}/>
-          )}
-        </RecentKeywordContainer>
+            scrollEnabled={true}
+            data={autoCompletedKeywordArr}
+            keyExtractor={(item: any, index: number) => `${index}`}
+            renderItem={renderResultItem}
+          />
         )}
-        {query !== "" && (
-        <SearchResultFlatList
-          keyboardShouldPersistTaps={"handled"}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{paddingBottom: 150}}
-          bounces={true}
-          alwaysBounceVertical={true}
-          keyboardDismissMode='on-drag'
-          scrollEnabled={true}
-          data={autoCompletedKeywordArr}
-          keyExtractor={(item: any, index: number) => `${index}`}
-          renderItem={renderResultItem}
-        />
-        )}
-        </BodyContainer>
+      </BodyContainer>
     </ContinaerView>
   );
 };
 
 export default React.memo(AutoCompletedKeywordFlatList);
-
 
 /*
       <BodyContentView>

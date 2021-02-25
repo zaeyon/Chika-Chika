@@ -1,22 +1,24 @@
-import React, {useMemo, useState, useCallback} from 'react';
-import {TouchableOpacity, ImageBackground, LayoutAnimation} from 'react-native';
+import React, {useRef, useState, useCallback, useEffect} from 'react';
+import {TouchableWithoutFeedback, LayoutAnimation} from 'react-native';
 import Styled from 'styled-components/native';
-import LinearGradient from 'react-native-linear-gradient';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+import ReviewThumbnail from '~/Components/Presentational/HomeScreen/HomeReviewContent/ReviewThumbnail';
 
 const ContainerView = Styled.View`
 width: 100%;
-padding: 16px 16px 8px 16px;
+padding: 16px 0px 8px 0px;
 margin-bottom: 16px;
 `;
 
 const ContentTitleText = Styled.Text`
+margin: 0px 16px;
 font-weight: bold;
-font-size: 14px;
+font-size: 17px;
 line-height: 24px;
 color: #131F3C;
 margin-bottom: 16px;
@@ -24,7 +26,7 @@ margin-bottom: 16px;
 
 const TagFilterContainerView = Styled.View`
 flex-direction: row;
-margin-bottom: 16px;
+margin: 0px 16px 16px 16px;
 `;
 
 const TagFilterSelectedContentView = Styled.View`
@@ -58,22 +60,11 @@ line-height: 24px;
 color: #4E525D;
 `;
 
-const ReviewThumbnailContainerView = Styled.View`
+const ReviewThumbnailFlatlist = Styled.FlatList`
 width: 100%;
 height: auto;
 flex-direction: row;
-flex-wrap: wrap;
-`;
-
-const ReviewThumbnailText = Styled.Text`
-font-weight: 500;
-font-size: 14px;
-line-height: 24px;
-color: #FFFFFF;
-position: absolute;
-left: 12px;
-bottom: 12px;
-max-width: 80%;
+overflow: visible;
 `;
 
 interface Props {
@@ -90,96 +81,77 @@ const HomeReviewContent = ({
   moveToReviewDetail,
 }: Props) => {
   const [selectedTagFilterItem, setSelectedTagFilterItem] = useState('충치');
+  const flatlistRef: any = useRef();
 
-  const renderTagFilter = useCallback(
-    () => (
+  const renderTagFilter = useCallback(() => {
+    LayoutAnimation.configureNext(
+      LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+    );
+    return (
       <TagFilterContainerView>
-        {tagFilterItems.map((item) => (
-          <TouchableOpacity
+        {tagFilterItems.map((item: any) => (
+          <TouchableWithoutFeedback
             key={item.name}
-            onPress={() => setSelectedTagFilterItem(item.name)}>
+            onPress={() => {
+              ReactNativeHapticFeedback.trigger('impactLight');
+              setSelectedTagFilterItem(item.name);
+              flatlistRef.current.scrollToOffset({
+                offset: 0,
+                animated: false,
+              });
+            }}>
             {selectedTagFilterItem === item.name ? (
               <TagFilterSelectedContentView>
                 <TagFilterSelectedContentText>
-                  {`#${item.name}`}
+                  {`${item.name}`}
                 </TagFilterSelectedContentText>
               </TagFilterSelectedContentView>
             ) : (
               <TagFilterContentView>
-                <TagFilterContentText>{`#${item.name}`}</TagFilterContentText>
+                <TagFilterContentText>{`${item.name}`}</TagFilterContentText>
               </TagFilterContentView>
             )}
-          </TouchableOpacity>
+          </TouchableWithoutFeedback>
         ))}
       </TagFilterContainerView>
+    );
+  }, [tagFilterItems, selectedTagFilterItem]);
+
+  const renderReviewThumbnail = useCallback(
+    ({item}: any) => (
+      <ReviewThumbnail review={item} moveToReviewDetail={moveToReviewDetail} />
     ),
-    [tagFilterItems, selectedTagFilterItem],
+    [],
   );
-
-  const renderReviewThumbnail = useCallback(() => {
-    const selectedReviewData = reviewData.find(
-      (item) => item.name === selectedTagFilterItem,
-    );
-    console.log(selectedReviewData);
-    return (
-      selectedReviewData &&
-      selectedReviewData.data.map((item: any, index: number) => {
-        return (
-          <TouchableWithoutFeedback
-            key={String(item.id)}
-            onPress={() => moveToReviewDetail()}>
-            <ImageBackground
-              style={{
-                width:
-                  ((wp('100%') - 40) / 3) *
-                  (index === 0 || index === 3 ? 2 : 1),
-                height: (wp('100%') - 40) / 3,
-                marginBottom: 8,
-                marginRight: index === 0 || index === 2 ? 8 : 0,
-              }}
-              imageStyle={{borderRadius: 12}}
-              source={{
-                uri:
-                  item.review_contents.length === 0
-                    ? 'https://lh3.googleusercontent.com/proxy/7P6PPJNO4uoHy9I9lQ4nnUuWG1Rcgnjp2OE_MldTbVLMEmVjzfGnpw4QWS8evZRdAEqJHMwDYA8KaMndh-wrEydX6McI3bv8HZdiq-xxfTs7b-1Vr8RgLEvSVTrvd94sf4FlgPPi4ADIPB20oDB6qz00gzl-odna5hyi7p9reOLI_F0tfuqxVXbzUZB_GyHLrfj3t3wwtxelJ_xHCU3eRtnGtOP0-zVrDZ2GFxCTTTk5sp1WNTTd2qgCBCMxwT-HX9xLoTtvOdJCATSFMR1gRIJ5zQMdcVbWgO9pEDH4YxU3piMYLOu2JlZeDf6YueS6ptD4'
-                    : item.review_contents[0].img_thumbNail &&
-                      item.review_contents[0].img_url,
-                cache: 'force-cache',
-              }}>
-              <LinearGradient
-                colors={['#FFFFFF00', '#FFFFFF00', '#00000050', '#000000']}
-                style={{
-                  flex: 1,
-
-                  borderRadius: 12,
-                }}
-              />
-              <ReviewThumbnailText numberOfLines={1}>
-                {item.reviewDescriptions}
-              </ReviewThumbnailText>
-            </ImageBackground>
-          </TouchableWithoutFeedback>
-        );
-      })
-    );
-  }, [reviewData, selectedTagFilterItem]);
-
-  const memoTagFilter = useMemo(renderTagFilter, [
-    tagFilterItems,
-    selectedTagFilterItem,
-  ]);
-  const memoReviewThumbnail = useMemo(renderReviewThumbnail, [
-    reviewData,
-    selectedTagFilterItem,
-  ]);
 
   return (
     <ContainerView>
-      <ContentTitleText>{`👀 최근 올라온 ${selectedHometown} 치과 후기`}</ContentTitleText>
-      {memoTagFilter}
-      <ReviewThumbnailContainerView>
-        {renderReviewThumbnail()}
-      </ReviewThumbnailContainerView>
+      <ContentTitleText>{`최근 올라온 ${selectedHometown} 치과 후기`}</ContentTitleText>
+      {renderTagFilter()}
+      <ReviewThumbnailFlatlist
+        ref={flatlistRef}
+        initialNumToRender={2}
+        contentContainerStyle={{
+          paddingLeft: 16,
+        }}
+        data={
+          reviewData &&
+          reviewData.find((data: any) => data.name === selectedTagFilterItem)
+            ?.data
+        }
+        renderItem={renderReviewThumbnail}
+        keyExtractor={(item: any) => String(item.id)}
+        horizontal
+        snapToAlignment="start"
+        snapToInterval={350 + 16}
+        decelerationRate="fast"
+        showsHorizontalScrollIndicator={false}
+        getItemLayout={(data, index) => ({
+          length: 350,
+          offset: 350 * index,
+          index,
+        })}
+      />
     </ContainerView>
   );
 };

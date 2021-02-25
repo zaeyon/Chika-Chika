@@ -3,10 +3,9 @@ import serverConfig from '../server.config';
 
 interface Params {
     jwtToken: string,
-    type?: string,
 }
 
-const GETUserNotifications = ({jwtToken, type}: Params) => {
+const GETUserNotifications = ({jwtToken}: Params) => {
 
     const uri = serverConfig.baseUri + `/notifications`;
 

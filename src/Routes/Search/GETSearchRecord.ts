@@ -3,12 +3,12 @@ import serverConfig from '../server.config';
 
 interface Params {
     jwtToken: string,
-    isUnifiedSearch: boolean,
+    isUnified?: boolean,
 }
 
-const GETSearchRecord = (jwtToken: string, isUnifiedSearch: boolean) => {
+const GETSearchRecord = ({jwtToken, isUnified=false}: Params) => {
 
-    const uri = serverConfig.baseUri + `/search/recent?unifiedSearch=${isUnifiedSearch}`;
+    const uri = serverConfig.baseUri + `/search/recent?unifiedSearch=${isUnified}`
 
     return new Promise((resolve, reject) => {
 
