@@ -154,30 +154,26 @@ font-weight: 600;
 `;
 
 interface Props {
-  navigation: any;
-  route: any;
-  query: string;
-  setQuery: any;
+  inputQuery: string;
   autoCompletedKeywordArr: any;
   deleteAllSearchRecord: () => void;
   deleteSingleSearchRecord: (id: number, category: string) => void;
   searchTotalKeyword: ({
     keyword,
+    searchQuery,
     category,
     tagId,
   }: {
     keyword: string;
     category: string;
+    searchQuery?: string;
     tagId: string;
   }) => void;
   searchRecordArray: Array<any>;
 }
 
 const AutoCompletedTotalKeywordFlatList = ({
-  navigation,
-  route,
-  query,
-  setQuery,
+  inputQuery,
   autoCompletedKeywordArr,
   deleteAllSearchRecord,
   deleteSingleSearchRecord,
@@ -210,6 +206,7 @@ const AutoCompletedTotalKeywordFlatList = ({
         onPress={() =>
           searchTotalKeyword({
             keyword: item.query,
+            searchQuery: item.category === 'city' ? item.fullAddress : '',
             category: item.category,
             tagId: item.id,
           })
@@ -236,9 +233,9 @@ const AutoCompletedTotalKeywordFlatList = ({
     ({item, index}: any) => {
       if (item.category === 'clinic') {
         const splitedItemName = item.originalName.split('');
-        const splitedQuery = query.split('');
-        const startIndex = item.originalName.indexOf(query);
-        const endIndex = startIndex + (query.length - 1);
+        const splitedQuery = inputQuery.split('');
+        const startIndex = item.originalName.indexOf(inputQuery);
+        const endIndex = startIndex + (inputQuery.length - 1);
 
         return (
           <TouchableHighlight
@@ -248,7 +245,7 @@ const AutoCompletedTotalKeywordFlatList = ({
             }}
             onPress={() =>
               searchTotalKeyword({
-                keyword: item.name,
+                keyword: item.originalName,
                 category: item.category,
                 tagId: item.id,
               })
@@ -288,14 +285,12 @@ const AutoCompletedTotalKeywordFlatList = ({
         );
       } else if (item.category === 'city') {
         const splitedItemName = item.name.split('');
-        const startIndex = item.name.indexOf(query);
-        const endIndex = startIndex + (query.length - 1);
+        const startIndex = item.name.indexOf(inputQuery);
+        const endIndex = startIndex + (inputQuery.length - 1);
 
-        const splitedAddress = item.fullAddress && item.fullAddress.split('');
-        const addressStartIndex =
-          item.fullAddress && item.fullAddress.indexOf(query);
-        const addressEndIndex =
-          addressStartIndex && addressStartIndex + (query.length - 1);
+        const splitedAddress = item.fullAddress.split('');
+        const addressStartIndex = item.fullAddress.indexOf(inputQuery);
+        const addressEndIndex = addressStartIndex + (inputQuery.length - 1);
 
         return (
           <TouchableHighlight
@@ -306,8 +301,9 @@ const AutoCompletedTotalKeywordFlatList = ({
             onPress={() =>
               searchTotalKeyword({
                 keyword: item.name,
+                searchQuery: item.fullAddress,
                 category: item.category,
-                tagId: item.id,
+                tagId: -1,
               })
             }>
             <AutoCompletedKeywordItemContainer>
@@ -336,38 +332,37 @@ const AutoCompletedTotalKeywordFlatList = ({
                 }
               })}
               <AutoCompletedKeywordDescriptionView>
-                {item.isEMD
-                  ? splitedAddress.map((item: any, index: number) => {
-                      if (
-                        addressStartIndex <= index &&
-                        index <= addressEndIndex &&
-                        addressStartIndex !== -1
-                      ) {
-                        return (
-                          <AutoCompletedKeywordDescriptionText
-                            style={{color: '#00D1FF'}}
-                            key={item + String(index)}>
-                            {item}
-                          </AutoCompletedKeywordDescriptionText>
-                        );
-                      } else {
-                        return (
-                          <AutoCompletedKeywordDescriptionText
-                            key={item + String(index)}>
-                            {item}
-                          </AutoCompletedKeywordDescriptionText>
-                        );
-                      }
-                    })
-                  : null}
+                {splitedAddress.map((item: any, index: number) => {
+                  console.log(addressStartIndex, addressEndIndex);
+                  if (
+                    addressStartIndex <= index &&
+                    index <= addressEndIndex &&
+                    addressStartIndex !== -1
+                  ) {
+                    return (
+                      <AutoCompletedKeywordDescriptionText
+                        style={{color: '#00D1FF'}}
+                        key={item + String(index)}>
+                        {item}
+                      </AutoCompletedKeywordDescriptionText>
+                    );
+                  } else {
+                    return (
+                      <AutoCompletedKeywordDescriptionText
+                        key={item + String(index)}>
+                        {item}
+                      </AutoCompletedKeywordDescriptionText>
+                    );
+                  }
+                })}
               </AutoCompletedKeywordDescriptionView>
             </AutoCompletedKeywordItemContainer>
           </TouchableHighlight>
         );
       } else if (item.category === 'treatment') {
         const splitedItemName = item.name.split('');
-        const startIndex = item.name.indexOf(query);
-        const endIndex = startIndex + (query.length - 1);
+        const startIndex = item.name.indexOf(inputQuery);
+        const endIndex = startIndex + (inputQuery.length - 1);
 
         return (
           <TouchableHighlight
@@ -412,8 +407,8 @@ const AutoCompletedTotalKeywordFlatList = ({
         );
       } else if (item.category === 'symptom') {
         const splitedItemName = item.name.split('');
-        const startIndex = item.name.indexOf(query);
-        const endIndex = startIndex + (query.length - 1);
+        const startIndex = item.name.indexOf(inputQuery);
+        const endIndex = startIndex + (inputQuery.length - 1);
 
         return (
           <TouchableHighlight
@@ -458,8 +453,8 @@ const AutoCompletedTotalKeywordFlatList = ({
         );
       } else if (item.category === 'general') {
         const splitedItemName = item.name.split('');
-        const startIndex = item.name.indexOf(query);
-        const endIndex = startIndex + (query.length - 1);
+        const startIndex = item.name.indexOf(inputQuery);
+        const endIndex = startIndex + (inputQuery.length - 1);
 
         return (
           <TouchableHighlight
@@ -513,7 +508,7 @@ const AutoCompletedTotalKeywordFlatList = ({
         );
       }
     },
-    [query],
+    [inputQuery],
   );
 
   // const renderFrequentTerms = useCallback(() => (
@@ -564,7 +559,7 @@ const AutoCompletedTotalKeywordFlatList = ({
           />
         )}
       </RecentKeywordContainer>
-      {query !== '' && (
+      {inputQuery !== '' && (
         <SearchResultFlatList
           ListHeaderComponent={renderListHeader()}
           keyboardShouldPersistTaps="always"

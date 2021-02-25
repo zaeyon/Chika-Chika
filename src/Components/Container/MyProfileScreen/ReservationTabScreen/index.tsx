@@ -1,6 +1,7 @@
 import React, {useState, useCallback, useEffect} from 'react';
 import Styled from 'styled-components/native';
 import {ActivityIndicator} from 'react-native';
+import callDentalPhoneNumber from '~/method/callDentalPhoneNumber';
 
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import ReservationScreen from '~/Components/Presentational/MyProfileScreen/ReservationScreen';
@@ -48,7 +49,7 @@ const ReservationTabScreen = ({navigation, route}: Props) => {
     },
     [jwtToken],
   );
-  const moveToDentalDetail = useCallback((dentalId) => {
+  const moveToDentalDetail = useCallback((dentalId: number) => {
     navigation.navigate('DentalClinicStackScreen', {
       screen: 'DentalDetailScreen',
       params: {
@@ -56,6 +57,30 @@ const ReservationTabScreen = ({navigation, route}: Props) => {
       },
     });
   }, []);
+
+  const moveToReviewUpload = useCallback(
+    (dentalId: number, dentalName: string) => {
+      const dentalObj = {
+        id: dentalId,
+        originalName: dentalName,
+      };
+
+      navigation.navigate('ReviewUploadStackScreen', {
+        screen: 'ReviewMetaDataScreen',
+        params: {
+          dentalObj: dentalObj,
+        },
+      });
+    },
+    [],
+  );
+
+  const onPressReservation = useCallback(
+    (phoneNumber: number, dentalId: number) => {
+      callDentalPhoneNumber(phoneNumber, jwtToken, dentalId);
+    },
+    [jwtToken],
+  );
 
   return (
     <ContainerView>
@@ -72,11 +97,12 @@ const ReservationTabScreen = ({navigation, route}: Props) => {
         </ActivityIndicatorContainerView>
       ) : (
         <ReservationScreen
-          jwtToken={jwtToken}
           navigation={navigation}
           reservations={reservations}
           deleteReservation={deleteReservation}
           moveToDentalDetail={moveToDentalDetail}
+          moveToReviewUpload={moveToReviewUpload}
+          onPressReservation={onPressReservation}
         />
       )}
     </ContainerView>

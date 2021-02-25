@@ -7,15 +7,15 @@ import {
 } from 'react-native-responsive-screen';
 
 const ContainerView = Styled.View`
-width: ${wp('76%')}px;
+width: ${350}px;
 height: 152px;
 margin-right: 16px;
 padding: 16px;
 background: #FFFFFF;
-border: 0.5px #E2E6ED;
-box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
+box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
 border-radius: 8px;
 `;
+// border: 0.5px #E2E6ED;
 
 const ProfileContainerView = Styled.View`
 width: 100%;

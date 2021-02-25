@@ -116,7 +116,8 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   const [tagFilterItems, setTagFilterItems] = useState([
     {name: '충치', category: 'treatment', id: '1386'},
-    {name: '교정', category: 'treatment'},
+    {name: '복합레진', category: 'treatment'},
+    {name: '발치', category: 'treatment'},
     {name: '임플란트', category: 'treatment'},
   ]);
 
@@ -141,13 +142,13 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   useFocusEffect(
     useCallback(() => {
+      console.log('home focused');
       if (selectedHometown) {
         setIsMainHomeChanged((prev) => {
           if (prev) {
-            fetchRecentCommunityPosts(selectedHometown);
-            fetchRecentReviews(selectedHometown);
             fetchLocalInfo(selectedHometown);
-            fetchLocalClinics(selectedHometown);
+            fetchRecentReviews(selectedHometown);
+            fetchRecentCommunityPosts(selectedHometown);
           }
           return false;
         });
@@ -156,11 +157,6 @@ const HomeScreen = ({navigation, route}: Props) => {
   );
 
   useEffect(() => {
-    if (selectedHometown) {
-      fetchRecentCommunityPosts(selectedHometown);
-      fetchRecentReviews(selectedHometown);
-      fetchLocalInfo(selectedHometown);
-    }
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       setOnMessage(true);
     });
@@ -169,14 +165,14 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     GETUserNotifications({jwtToken})
-    .then((response) => {
-      console.log("GETUserNotifications response", response);
-      dispatch(allActions.userActions.setNotificationArray(response));
-    })
-    .catch((error) => {
-      console.log("GETUserNotifications error", error);
-    })
-  }, [])
+      .then((response) => {
+        console.log('GETUserNotifications response', response);
+        dispatch(allActions.userActions.setNotificationArray(response));
+      })
+      .catch((error) => {
+        console.log('GETUserNotifications error', error);
+      });
+  }, []);
 
   useEffect(() => {
     setIsMainHomeChanged(true);
@@ -271,20 +267,6 @@ const HomeScreen = ({navigation, route}: Props) => {
     [jwtToken],
   );
 
-  const fetchLocalClinics = useCallback(
-    (selectedHometown) => {
-      GETLocalClinic({
-        jwtToken,
-        cityId: String(selectedHometown.id),
-        lat: '37.566515657875435',
-        long: '126.9781164904998',
-      }).then((response: any) => {
-        setClinicData(response);
-      });
-    },
-    [jwtToken],
-  );
-
   const fetchRecentReviews = useCallback(
     async (selectedHometown: any) => {
       const result = await Promise.all(
@@ -295,7 +277,7 @@ const HomeScreen = ({navigation, route}: Props) => {
             category: tagItem.category,
             pathType: 'review',
             tagId: tagItem.id,
-            limit: '4',
+            limit: '10',
             offset: '0',
             order: 'createdAt',
             region: 'residence',
@@ -401,6 +383,9 @@ const HomeScreen = ({navigation, route}: Props) => {
 
       navigation.navigate('ReviewStackScreen', {
         screen: 'ReviewDetailScreen',
+        params: {
+          reviewId: reviewId,
+        },
       });
     },
     [],
@@ -517,7 +502,6 @@ const HomeScreen = ({navigation, route}: Props) => {
           moveToCommunityDetail={moveToCommunityDetail}
           moveToAnotherProfile={moveToAnotherProfile}
         />
-        <BannerImage source={require('~/Assets/Images/Home/banner_1.png')} />
       </ContentScrollView>
 
       <FloatingButtonView

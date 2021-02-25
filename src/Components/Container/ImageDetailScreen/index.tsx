@@ -40,7 +40,7 @@ margin-right: 16px;
 
 const HeaderIndicatorText = Styled.Text`
 font-style: normal;
-font-weight: bold;
+font-weight: 500;
 font-size: 18px;
 line-height: 20px;
 color: #FFFFFF;
@@ -116,8 +116,6 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const dragY = useRef(new Animated.Value(0)).current;
 
-  console.log('ImageDetailScreen', route.params?.imageArray);
-
   const scrollRef: any = useRef();
 
   dragY.addListener(({value}) => {
@@ -173,13 +171,13 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
             </HeaderCancelView>
           </TouchableWithoutFeedback>
           <HeaderIndicatorView>
-            <HeaderIndicatorText>{`${index + 1}/${
+            <HeaderIndicatorText>{`${index + 1} / ${
               route.params.imageArray.length
             }`}</HeaderIndicatorText>
           </HeaderIndicatorView>
         </HeaderConatinerView>
       ) : null}
-      <NativeViewGestureHandler onGestureEvent={() => console.log('of')}>
+      <NativeViewGestureHandler>
         <ContentFlatList
           ref={scrollRef}
           horizontal

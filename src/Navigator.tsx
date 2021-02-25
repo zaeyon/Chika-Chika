@@ -270,11 +270,7 @@ function AnotherProfileStackScreen({route}) {
 
 function HomeStackScreen() {
   return (
-    <HomeStack.Navigator
-      headerMode="none"
-      screenOptions={{
-        gestureEnabled: true,
-      }}>
+    <HomeStack.Navigator headerMode="none">
       <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
       <HomeStack.Screen
         name="CommunityStackScreen"
@@ -563,10 +559,12 @@ function ReviewUploadStackScreen() {
       />
       <ReviewUploadStack.Screen
         name="ProofImageGuideScreen"
-        component={ProofImageGuideScreen}/>
+        component={ProofImageGuideScreen}
+      />
       <ReviewUploadStack.Screen
         name="FullProofImageScreen"
-        component={FullProofImageScreen}/>
+        component={FullProofImageScreen}
+      />
     </ReviewUploadStack.Navigator>
   );
 }
@@ -885,6 +883,10 @@ function TotalKeywordSearchStackScreen() {
         name="ReviewStackScreen"
         component={ReviewStackScreen}
       />
+      <TotalKeywordSearchStack.Screen
+        name="DentalDetailScreen"
+        component={DentalDetailScreen}
+      />
     </TotalKeywordSearchStack.Navigator>
   );
 }
@@ -1086,6 +1088,7 @@ function BottomTab() {
   };
   return (
     <Tab.Navigator
+      initialRouteName="홈"
       tabBarOptions={{
         showLabel: false,
         style: styles.tabBar,

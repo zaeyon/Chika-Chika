@@ -177,8 +177,8 @@ const TotalSearchResultTabView = ({
   const [tabIndex, setTabIndex] = useState<number>(0);
   const [routes] = useState([
     // {key: 'total', title: '통합검색'},
-    {key: 'community', title: '커뮤니티'},
     {key: 'review', title: '리뷰'},
+    {key: 'community', title: '커뮤니티'},
     {key: 'dental', title: '병원'},
     // {key: 'event', title: '이벤트'},
   ]);

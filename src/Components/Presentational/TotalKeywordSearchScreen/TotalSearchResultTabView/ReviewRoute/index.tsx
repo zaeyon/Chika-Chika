@@ -19,7 +19,7 @@ import LocationSelection from '~/Components/Container/CommunityListScreen/Filter
 import ReviewList from '~/Components/Presentational/ReviewList';
 
 // Routes
-import GETReviewList from '~/Routes/Review/GETReviewList';
+import GETSearchRecord from '~/Routes/Search/GETSearchRecord';
 
 const ContainerView = Styled.View`
 flex: 1;
@@ -72,7 +72,7 @@ const ReviewRoute = ({
   useEffect(() => {
     console.log(selectedHometown);
     setOrder('createdAt');
-    setRefreshingReviewList(true);
+
     setRegion(selectedHometown.id === -1 ? 'all' : 'residence');
     const form = {
       pathType: 'review',
@@ -85,7 +85,10 @@ const ReviewRoute = ({
 
     fetchSearchResult(form, (response: any) => {
       console.log(response);
-      setRefreshingReviewList(false);
+      GETSearchRecord({jwtToken}).then((response: any) => {
+        console.log('fetch record', response);
+        dispatch(allActions.userActions.setSearchRecord(response));
+      });
       dispatch(allActions.reviewListActions.setSearchResultReviews(response));
     });
   }, [selectedHometown]);
@@ -125,7 +128,7 @@ const ReviewRoute = ({
     fetchSearchResult(form, (response: any) => {
       console.log('GETReviewList response', response);
       console.log('offset', offset);
-      setLoadingMoreReview(false);
+
       if (response.length > 0) {
         setNoMoreReviewData(false);
         /*
@@ -144,13 +147,11 @@ const ReviewRoute = ({
         setNoMoreReviewData(true);
       }
       setLoadingReviewList(false);
-      setRefreshingReviewList(false);
     });
   }, [reviewList, region, selectedHometown, order, limit, fetchSearchResult]);
 
   const onFiltering = useCallback(
     (searchOrder: string, callback = () => console.log('filtered')) => {
-      setRefreshingReviewList(true);
       setOrder(searchOrder);
       const form = {
         pathType: 'review',
@@ -163,7 +164,7 @@ const ReviewRoute = ({
 
       fetchSearchResult(form, (response: any) => {
         setNoMoreReviewData(false);
-        setRefreshingReviewList(false);
+
         dispatch(allActions.reviewListActions.setSearchResultReviews(response));
         callback();
       });

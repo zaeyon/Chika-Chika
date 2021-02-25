@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback} from 'react-native';
 import {
@@ -193,23 +193,15 @@ const DentalListItem = ({
 }: Prop) => {
   console.log('dentalObj', dentalObj);
 
-  const splitedAddressArray = address?.split(' ');
-
-  const deletedAddress =
-    splitedAddressArray[0] +
-    ' ' +
-    splitedAddressArray[1] +
-    ' ' +
-    splitedAddressArray[2] +
-    ' ' +
-    splitedAddressArray[3];
-
-  let displayDistance: string;
-  if (dentalObj['distance(km)'] >= 1) {
-    displayDistance = dentalObj['distance(km)'] + 'km';
-  } else {
-    displayDistance = Math.round(dentalObj['distance(km)'] * 1000) + 'm';
-  }
+  const formatDistance = useCallback((distance: number) => {
+    if (distance >= 1) {
+      return `${distance}km`;
+    } else if (distance >= 0) {
+      return `${distance * 1000}m`;
+    } else {
+      return `알수없음`;
+    }
+  }, []);
 
   return (
     <TouchableWithoutFeedback onPress={() => moveToDentalDetail(dentalId)}>
@@ -250,7 +242,9 @@ const DentalListItem = ({
             <FooterContainer>
               <DentalAddressText>{address}</DentalAddressText>
               <VerticalDivider />
-              <DistanceText>{displayDistance}</DistanceText>
+              <DistanceText>
+                {formatDistance(dentalObj['distance(km)'])}
+              </DistanceText>
             </FooterContainer>
           </DentalInfoContainer>
           <DentalImageContainer>

@@ -44,7 +44,7 @@ import DentalCarouselList from '~/Components/Presentational/NearDentalMap/Dental
 import TouchBloackIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 import DentalList from '~/Components/Presentational/DentalList';
 import ToastMessage from '~/Components/Presentational/ToastMessage';
-import {callDentalPhoneNumber} from '~/method/callDentalPhoneNumber';
+import callDentalPhoneNumber from '~/method/callDentalPhoneNumber';
 
 // Route
 import GETAroundDental from '~/Routes/Dental/GETAroundDental';
@@ -1447,38 +1447,38 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 </TouchableWithoutFeedback>
               )}
               {selectedDayList.length > 1 && (
-                  <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
-                    <FilterItemContainer
-                      style={[
-                        {
-                          marginLeft: 16,
-                          backgroundColor: '#ffffff',
-                          borderColor: '#131F3C',
-                        },
-                        styles.filterItemShadow,
-                      ]}>
-                      {selectedDayList.map((item: any, index: number) => {
-                        if (index === 0) {
-                          return (
-                            <FilterItemText
-                              key={index}
-                              style={{color: '#131F3C'}}>
-                              {item.day + '요일'}
-                            </FilterItemText>
-                          );
-                        } else {
-                          return (
-                            <FilterItemText
-                              key={index}
-                              style={{color: '#131F3C'}}>
-                              {', ' + item.day + '요일'}
-                            </FilterItemText>
-                          );
-                        }
-                      })}
-                    </FilterItemContainer>
-                  </TouchableWithoutFeedback>
-                )}
+                <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
+                  <FilterItemContainer
+                    style={[
+                      {
+                        marginLeft: 16,
+                        backgroundColor: '#ffffff',
+                        borderColor: '#131F3C',
+                      },
+                      styles.filterItemShadow,
+                    ]}>
+                    {selectedDayList.map((item: any, index: number) => {
+                      if (index === 0) {
+                        return (
+                          <FilterItemText
+                            key={index}
+                            style={{color: '#131F3C'}}>
+                            {item.day + '요일'}
+                          </FilterItemText>
+                        );
+                      } else {
+                        return (
+                          <FilterItemText
+                            key={index}
+                            style={{color: '#131F3C'}}>
+                            {', ' + item.day + '요일'}
+                          </FilterItemText>
+                        );
+                      }
+                    })}
+                  </FilterItemContainer>
+                </TouchableWithoutFeedback>
+              )}
               <TouchableWithoutFeedback onPress={() => clickTimeFilter()}>
                 <FilterItemContainer
                   style={[

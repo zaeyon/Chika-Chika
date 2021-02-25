@@ -32,6 +32,7 @@ background: #FFFFFF;
 
 interface Props {
   postData: any;
+  titleFontSize?: number;
   titleText: string;
   moveToCommunityDetail: any;
   moveToAnotherProfile: any;
@@ -39,6 +40,7 @@ interface Props {
 
 const CarouselContent = ({
   postData,
+  titleFontSize = 14,
   titleText,
   moveToCommunityDetail,
   moveToAnotherProfile,
@@ -56,7 +58,12 @@ const CarouselContent = ({
 
   return (
     <ContainerView>
-      <TitleText>{titleText}</TitleText>
+      <TitleText
+        style={{
+          fontSize: titleFontSize,
+        }}>
+        {titleText}
+      </TitleText>
       <ContentFlatList
         horizontal
         contentContainerStyle={{
@@ -64,7 +71,7 @@ const CarouselContent = ({
         }}
         keyExtractor={(item: any) => String(item.id)}
         showsHorizontalScrollIndicator={false}
-        snapToInterval={wp('76%') + 16}
+        snapToInterval={350 + 16}
         decelerationRate="fast"
         data={postData}
         renderItem={renderPostCardItem}

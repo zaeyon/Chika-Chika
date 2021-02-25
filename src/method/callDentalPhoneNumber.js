@@ -4,7 +4,7 @@ import CallDetectorManager from 'react-native-call-detection';
 // Routes
 import POSTDentalCallReserve from '~/Routes/Reserve/POSTDentalCallReserve';
 
-export const callDentalPhoneNumber = (
+const callDentalPhoneNumber = (
   phone,
   jwtToken,
   dentalId,
@@ -80,3 +80,5 @@ export const callDentalPhoneNumber = (
     );
   };
 };
+
+export default callDentalPhoneNumber;

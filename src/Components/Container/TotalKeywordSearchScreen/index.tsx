@@ -64,7 +64,6 @@ const BackIconImage = Styled.Image`
 const SearchInputConatinerView = Styled.View`
 flex: 1;
 background: #ffffff;
-padding-right: 16px;
 flex-direction: row;
 align-items: center;
 `;
@@ -76,11 +75,9 @@ color: #131F3C;
 `;
 
 const ClearTextButtonContainer = Styled.View`
-position: absolute;
-right: 0px;
 justify-content: center;
 height: ${hp('7%')}px;
-padding-left: 16px;
+margin-left: 16px;
 padding-right: 16px;
 `;
 
@@ -95,7 +92,8 @@ interface Props {
 }
 
 const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
-  const [query, setQuery] = useState('');
+  const [inputQuery, setInputQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [category, setCategory] = useState('');
   const [tagId, setTagId] = useState('');
   const [autoCompletedKeywordArr, setAutoCompletedKeywordArr] = useState([]);
@@ -104,9 +102,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
     setIsVisibleAutoCompletedKeyword,
   ] = useState<boolean>(true);
   const [searchResult, setSearchResult] = useState<Array<any>>([]);
-  const [reviewSearchResult, setReviewSearchResult] = useState<Array<any>>(
-    TEST_REVIEW_DATA,
-  );
+  const [reviewSearchResult, setReviewSearchResult] = useState<Array<any>>([]);
   const communitySearchResult = useSelector(
     (state: any) => state.communityPostList.SearchResultPosts,
   );
@@ -135,15 +131,15 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   useEffect(() => {
     async function fetchData() {
       const incompleteKorean = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
-      if (!incompleteKorean.test(query)) {
-        if (query !== '') {
+      if (!incompleteKorean.test(inputQuery)) {
+        if (inputQuery !== '') {
           const response: any = await GETAllTagSearch(
             jwtToken,
-            query,
+            inputQuery,
             'keywordSearch',
           );
-          setQuery((prev) => {
-            if (prev !== query) {
+          setInputQuery((prev) => {
+            if (prev !== inputQuery) {
               console.log('diff');
             } else {
               console.log('GETAllTagSearch response', response);
@@ -157,7 +153,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
       }
     }
     fetchData();
-  }, [query]);
+  }, [inputQuery]);
 
   const fetchSearchResult = useCallback(
     (
@@ -174,50 +170,41 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
       },
       callback = () => console.log('callback'),
     ) => {
-      console.log('query:', query);
-      if (query === '') {
-        console.log('query is empty!', query);
-        return;
-      } else {
-        GETTotalSearch({
-          lat,
-          long,
-          jwtToken,
-          query,
-          category,
-          tagId,
-          pathType,
-          communityType,
-          limit: String(limit),
-          offset: String(offset),
-          order,
-          region,
-          cityId: String(cityId),
+      console.log('searchQuery:', searchQuery);
+
+      GETTotalSearch({
+        lat,
+        long,
+        jwtToken,
+        searchQuery,
+        inputQuery,
+        category,
+        tagId,
+        pathType,
+        communityType,
+        limit: String(limit),
+        offset: String(offset),
+        order,
+        region,
+        cityId: String(cityId),
+        isUnified: true,
+      })
+        .then((response: any) => {
+          callback(response);
         })
-          .then((response: any) => {
-            callback(response);
-          })
-          .catch((e) => {
-            console.log('fetch search result error', e);
-          });
-      }
+        .catch((e) => {
+          console.log('fetch search result error', e);
+        });
     },
-    [jwtToken, query, category, tagId],
+    [jwtToken, searchQuery, inputQuery, category, tagId],
   );
 
   const deleteAllSearchRecord = () => {
     const searchId = 'all';
 
-    DELETESearchRecord({jwtToken, searchId})
+    DELETESearchRecord({jwtToken, searchId, unified: true})
       .then((response) => {
-        GETSearchRecord({jwtToken})
-          .then((response: any) => {
-            console.log('GETSearchRecord response', response);
-            dispatch(allActions.userActions.setSearchRecord(response));
-          })
-          .catch((error) => {
-            console.log('GETSearchRecord error', error);
-          });
+        dispatch(allActions.userActions.setSearchRecord([]));
       })
       .catch((error) => {
         console.log('DELETESearchRecord error', error);
@@ -237,21 +224,25 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   const searchTotalKeyword = useCallback(
     ({
       keyword,
+      searchQuery = '',
       category,
       tagId,
     }: {
       keyword: string;
+      searchQuery?: string;
       category: string;
       tagId: string;
     }) => {
-      // if (query.trim() === '') {
+      console.log('keyword', keyword, 'category', category, 'tagId', tagId);
+      // if (inputQuery.trim() === '') {
       // } else {
       LayoutAnimation.configureNext(
         LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
       );
       searchInputRef.current.blur();
       setIsVisibleAutoCompletedKeyword((prev) => {
-        setQuery(keyword);
+        setInputQuery(keyword);
+        setSearchQuery(searchQuery);
         setCategory(category);
         setTagId(tagId);
 
@@ -272,7 +263,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   };
 
   const clearTextInput = useCallback(() => {
-    setQuery('');
+    setInputQuery('');
     searchInputRef.current.clear();
     searchInputRef.current.focus();
   }, []);
@@ -298,16 +289,16 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
             placeholder="검색어를 입력해주세요."
             placeholderTextColor="#E2E6ED"
             selectionColor="#131F3C"
-            value={query}
+            value={inputQuery}
             onChangeText={(text) => {
-              setQuery(text);
+              setInputQuery(text);
             }}
             autoCorrect={false}
             autoFocus={true}
             onSubmitEditing={() => searchInputRef.current.blur()}
             onFocus={() => onFocusSearchKeywordInput()}
           />
-          {query.length > 0 && (
+          {inputQuery.length > 0 && (
             <TouchableWithoutFeedback onPress={() => clearTextInput()}>
               <ClearTextButtonContainer>
                 <ClearTextIcon
@@ -322,10 +313,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
         {isVisibleAutoCompletedKeyword ? (
           <AutoCompletedTotalKeywordFlatList
             searchRecordArray={searchRecordArray}
-            navigation={navigation}
-            route={route}
-            query={query}
-            setQuery={setQuery}
+            inputQuery={inputQuery}
             autoCompletedKeywordArr={autoCompletedKeywordArr}
             deleteAllSearchRecord={deleteAllSearchRecord}
             deleteSingleSearchRecord={deleteSingleSearchRecord}
@@ -346,70 +334,3 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
 };
 
 export default TotalKeywordSearchScreen;
-
-const TEST_REVIEW_DATA = [
-  {
-    id: 2,
-    starRate_cost: 5,
-    starRate_treatment: 4,
-    starRate_service: 4,
-    certifiedBill: true,
-    hits: 0,
-    treatmentDate: '2020-12-07',
-    totalCost: null,
-    createdAt: '2020-12-07T03:21:08.000Z',
-    updatedAt: '2020-12-07T03:21:08.000Z',
-    deletedAt: null,
-    userId: 'fb0617b0-33c0-11eb-92de-e3fb3b4e0264',
-    dentalClinicId: 43,
-    'createdDiff(second)': 352,
-    reviewCommentsNum: 0,
-    reviewLikeNum: 0,
-    viewerLikedReview: 0,
-    viewerScrapedReview: 0,
-    reviewViewNum: 1,
-    reviewDescriptions: '1 2',
-    user: {
-      nickname: 'jiwon11',
-      profileImg: '',
-    },
-    review_contents: [
-      {
-        id: 2,
-        img_url:
-          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/1607311267788DBAEB47D-A6A0-45E1-B09D-8B97190FC36E.heic',
-        index: 1,
-        img_before_after: 'before',
-        img_width: null,
-        img_height: null,
-      },
-      {
-        id: 1,
-        img_url:
-          'https://chikachika-review-images.s3.ap-northeast-2.amazonaws.com/original/16073112678366055861E-DB4B-4018-95AA-B9F585C2687B.png',
-        index: 2,
-        img_before_after: 'after',
-        img_width: 4288,
-        img_height: 2848,
-      },
-    ],
-    dental_clinic: {
-      id: 43,
-      name: '시그마치과병원',
-    },
-    TreatmentItems: [
-      {
-        name: '복합레진',
-        review_treatment_item: {
-          cost: 30000,
-        },
-      },
-      {
-        name: '임플란트',
-        review_treatment_item: {
-          cost: 20000,
-        },
-      },
-    ],
-  },
-];

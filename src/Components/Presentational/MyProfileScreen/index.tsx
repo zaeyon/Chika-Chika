@@ -19,7 +19,7 @@ import DeviceInfo from 'react-native-device-info';
 //Local Component
 import PostItem from '~/Components/Presentational/PostItem';
 import ReviewItem from '~/Components/Presentational/ReviewItem';
-import {callDentalPhoneNumber} from '~/method/callDentalPhoneNumber';
+import callDentalPhoneNumber from '~/method/callDentalPhoneNumber';
 
 const HEADERHEIGHT = 69 + getStatusBarHeight();
 const PROFILEHEIGHT = 102;
@@ -562,14 +562,25 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         <TabBar
           {...props}
           onTabPress={({route, preventDefault}) => {
+            if (this.state.scrolling) {
+              preventDefault();
+              return;
+            }
+            if (route.key === this.state.routes[this.state.index].key) {
+              if (route.key === 'first') {
+                this.reviewRef.getNode().scrollToOffset({
+                  offset: 0,
+                });
+              } else {
+                this.communityRef.getNode().scrollToOffset({
+                  offset: 0,
+                });
+              }
+            }
             if (
               this.state.prevScrollY ===
               Math.min(PROFILEHEIGHT, this.state.lastScrollY)
             ) {
-              return;
-            }
-            if (this.state.scrolling) {
-              preventDefault();
               return;
             }
             if (route.key === 'first') {

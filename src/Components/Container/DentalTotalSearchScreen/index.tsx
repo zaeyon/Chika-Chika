@@ -30,7 +30,7 @@ import DentalListItem from '~/Components/Presentational/DentalListItem';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 import AutoCompletedKeywordFlatList from '~/Components/Presentational/DentalTotalSearchScreen/AutoCompletedKeywordFlatList';
 import DentalSearchResultList from '~/Components/Presentational/DentalTotalSearchScreen/DentalSearchResultList';
-import {callDentalPhoneNumber} from '~/method/callDentalPhoneNumber';
+import callDentalPhoneNumber from '~/method/callDentalPhoneNumber';
 
 // Route
 import GETDentalTotalSearch from '~/Routes/Search/GETDentalTotalSearch';

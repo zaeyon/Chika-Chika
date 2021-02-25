@@ -466,7 +466,7 @@ const HomeInfoContent = ({
           </LocalInfoDescriptionView>
         </LocalInfoContentView>
       </LocalInfoContainerView>
-      {/* <BannerImage
+      <BannerImage
         as={Animated.Image}
         onLoadEnd={() => {}}
         style={{
@@ -483,7 +483,7 @@ const HomeInfoContent = ({
           resizeMode: 'contain',
         }}
         source={require('~/Assets/Images/Home/banner_1.png')}
-      /> */}
+      />
     </ContainerView>
   );
 };

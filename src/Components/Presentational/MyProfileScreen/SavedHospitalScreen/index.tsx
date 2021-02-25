@@ -10,7 +10,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {callDentalPhoneNumber} from '~/method/callDentalPhoneNumber';
+import callDentalPhoneNumber from '~/method/callDentalPhoneNumber';
 
 const ContainerView = Styled.View`
 flex: 1;
@@ -132,26 +132,35 @@ margin: 8px 0px;
 interface Props {
   navigation: any;
   route: any;
-  jwtToken: string,
+  jwtToken: string;
   deleteSavedHospital: (dentalId: string) => void;
   hospitals: any;
   moveToDentalDetail: (dentalId: any) => void;
 }
 
-const SavedHospitalScreen = ({jwtToken, deleteSavedHospital, hospitals, navigation, route}: Props) => {
-
+const SavedHospitalScreen = ({
+  jwtToken,
+  deleteSavedHospital,
+  hospitals,
+  navigation,
+  route,
+}: Props) => {
   const moveToDentalDetail = (dentalId: number) => {
-    navigation.navigate("DentalClinicStackScreen", {
-      screen: "DentalDetailScreen",
+    navigation.navigate('DentalClinicStackScreen', {
+      screen: 'DentalDetailScreen',
       params: {
         dentalId: dentalId,
-      }
-    })
-  }
+      },
+    });
+  };
 
-  const clickDentalCallReservation = (dentalPhoneNumber: number, jwtToken: string, dentalId: number) => {
+  const clickDentalCallReservation = (
+    dentalPhoneNumber: number,
+    jwtToken: string,
+    dentalId: number,
+  ) => {
     callDentalPhoneNumber(dentalPhoneNumber, jwtToken, dentalId);
-}
+  };
 
   const renderSavedHospitalItemView = ({item, index}: any) => {
     console.log('renderSavedHospitalItemView item', item);
@@ -167,13 +176,14 @@ const SavedHospitalScreen = ({jwtToken, deleteSavedHospital, hospitals, navigati
             <ContentTitleText>{item.originalName}</ContentTitleText>
             <ContentText>{item.local}</ContentText>
             <TouchableWithoutFeedback>
-              <TouchableWithoutFeedback onPress={() => moveToDentalDetail(item.id)}>
-              <ContentHighlightView>
-                <ContentHighlightText>{'병원상세정보'}</ContentHighlightText>
-                <RightArrowImage
-                  source={require('~/Assets/Images/MyPage/move_clinic_detail.png')}
-                />
-              </ContentHighlightView>
+              <TouchableWithoutFeedback
+                onPress={() => moveToDentalDetail(item.id)}>
+                <ContentHighlightView>
+                  <ContentHighlightText>{'병원상세정보'}</ContentHighlightText>
+                  <RightArrowImage
+                    source={require('~/Assets/Images/MyPage/move_clinic_detail.png')}
+                  />
+                </ContentHighlightView>
               </TouchableWithoutFeedback>
             </TouchableWithoutFeedback>
           </ContentDescriptionView>
@@ -182,7 +192,9 @@ const SavedHospitalScreen = ({jwtToken, deleteSavedHospital, hospitals, navigati
           style={{borderRadius: 4}}
           activeOpacity={0.9}
           underlayColor="black"
-          onPress={() => clickDentalCallReservation(item.telNumber, jwtToken, item.id)}>
+          onPress={() =>
+            clickDentalCallReservation(item.telNumber, jwtToken, item.id)
+          }>
           <ContentButtonView>
             <ContentButtonText>{'바로예약'}</ContentButtonText>
           </ContentButtonView>

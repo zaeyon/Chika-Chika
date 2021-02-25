@@ -65,8 +65,6 @@ const PinchableImage = ({
   const pinchRef = useRef();
   const panRef = useRef();
 
-  console.log("PinchableImage image", image)
-
   useEffect(() => {
     if (currentIndex !== index) {
       baseScale.setValue(1);
@@ -120,16 +118,16 @@ const PinchableImage = ({
 
   const onHorizontalPanHandlerStateChange = useCallback(
     ({nativeEvent}) => {
-      console.log('hori');
       if (nativeEvent.oldState === State.ACTIVE) {
         setLastX((prev) => {
           const newX = prev + nativeEvent.translationX;
           const range = ((lastScale - 1) * (wp('100%') / 2)) / lastScale;
-          console.log(newX);
+
           if (newX > range) {
             if (
               currentIndex !== 0 &&
-              (Math.abs(nativeEvent.velocityX) > 900 ||
+              ((Math.abs(nativeEvent.velocityX) > 1200 &&
+                Math.abs(newX > range ? newX - range : newX + range) > 50) ||
                 Math.abs(newX > range ? newX - range : newX + range) >
                   wp('100%') / 9)
             ) {
@@ -150,7 +148,8 @@ const PinchableImage = ({
           } else if (newX < -range) {
             if (
               currentIndex !== lastIndex &&
-              (Math.abs(nativeEvent.velocityX) > 900 ||
+              ((Math.abs(nativeEvent.velocityX) > 1200 &&
+                Math.abs(newX > range ? newX - range : newX + range) > 50) ||
                 Math.abs(newX > range ? newX - range : newX + range) >
                   wp('100%') / 9)
             ) {
@@ -187,7 +186,6 @@ const PinchableImage = ({
             lastScale;
 
           if (newY > range || newY < -range) {
-            console.log('out!!');
             baseY.setValue(newY > range ? range : -range);
             moveY.setValue(0);
             return newY > range ? range : -range;
@@ -198,7 +196,6 @@ const PinchableImage = ({
           }
         });
       } else if (nativeEvent.oldState === State.BEGAN) {
-        console.log(nativeEvent);
       }
     },
     [baseX, moveX, baseY, moveY, lastScale, image, currentIndex, lastIndex],
@@ -248,9 +245,7 @@ const PinchableImage = ({
       ],
       {
         useNativeDriver: true,
-        listener: (e: any) => {
-          console.log(`x : ${e.nativeEvent.focalX} y: ${e.nativeEvent.focalY}`);
-        },
+        listener: (e: any) => {},
       },
     ),
     [pinchScale],
@@ -336,7 +331,7 @@ const PinchableImage = ({
             //           2 +
             //         prevFocaled.y,
             //     }));
-            //     console.log({
+            //
             //       x: (prevFocalValue.x * nativeEvent.scale) / 3,
             //       y: (prevFocalValue.y * nativeEvent.scale) / 3,
             //     });
@@ -359,6 +354,60 @@ const PinchableImage = ({
     [pinchScale, baseScale],
   );
 
+  const onTapGestureEvent = useCallback(({nativeEvent}) => {}, []);
+  const onTapHandlerStateChange = useCallback(({nativeEvent}) => {
+    if (nativeEvent.oldState === State.ACTIVE) {
+      setLastScale((prev) => {
+        if (prev === 1) {
+          Animated.timing(pinchScale, {
+            toValue: 4,
+            duration: 200,
+            easing: Easing.ease,
+            useNativeDriver: true,
+          }).start(() => {
+            pinchScale.setValue(1);
+            baseScale.setValue(4);
+            setTravelEnabled(true);
+            setSwipeDownEnabled(false);
+          });
+          return 4;
+        } else {
+          Animated.timing(baseScale, {
+            toValue: 1,
+            duration: 200,
+            easing: Easing.ease,
+            useNativeDriver: true,
+          }).start(() => {
+            pinchScale.setValue(1);
+            baseScale.setValue(1);
+            setTravelEnabled(false);
+            setSwipeDownEnabled(true);
+          });
+          Animated.timing(baseX, {
+            toValue: 0,
+            duration: 200,
+            easing: Easing.ease,
+            useNativeDriver: true,
+          }).start(() => {
+            setLastX(0);
+            baseX.setValue(0);
+            moveX.setValue(0);
+          });
+          Animated.timing(baseY, {
+            toValue: 0,
+            duration: 200,
+            easing: Easing.ease,
+            useNativeDriver: true,
+          }).start(() => {
+            setLastY(0);
+            baseY.setValue(0);
+            moveY.setValue(0);
+          });
+          return 1;
+        }
+      });
+    }
+  }, []);
   return (
     <PanGestureHandler
       activeOffsetY={[-30, 30]}
@@ -527,25 +576,32 @@ const PinchableImage = ({
                         },
                   ],
                 }}>
-                <FastImage
-                  key={'image' + currentIndex}
-                  style={{
-                    width: wp('100%'),
-                    height: image.img_height
-                      ? (image.img_height * wp('100%')) / image.img_width
-                      : '100%',
-                    maxHeight: hp('100%') - getStatusBarHeight() * 2 - 112,
-                  }}
-                  source={{
-                    uri: image.img_url,
-                    priority:
-                      index === currentIndex
-                        ? FastImage.priority.high
-                        : FastImage.priority.normal,
-                    cache: FastImage.cacheControl.immutable,
-                  }}
-                  resizeMode={FastImage.resizeMode.contain}
-                />
+                <TapGestureHandler
+                  onGestureEvent={onTapGestureEvent}
+                  onHandlerStateChange={onTapHandlerStateChange}
+                  numberOfTaps={2}>
+                  <ContentView as={Animated.View}>
+                    <FastImage
+                      key={'image' + currentIndex}
+                      style={{
+                        width: wp('100%'),
+                        height: image.img_height
+                          ? (image.img_height * wp('100%')) / image.img_width
+                          : '100%',
+                        maxHeight: hp('100%') - getStatusBarHeight() * 2 - 112,
+                      }}
+                      source={{
+                        uri: image.img_url,
+                        priority:
+                          index === currentIndex
+                            ? FastImage.priority.high
+                            : FastImage.priority.normal,
+                        cache: FastImage.cacheControl.immutable,
+                      }}
+                      resizeMode={FastImage.resizeMode.contain}
+                    />
+                  </ContentView>
+                </TapGestureHandler>
               </ContentView>
             </PanGestureHandler>
           </ContentView>

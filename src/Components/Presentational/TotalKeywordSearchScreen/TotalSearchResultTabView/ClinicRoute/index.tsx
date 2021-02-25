@@ -13,7 +13,7 @@ import {
 } from 'react-native-responsive-screen';
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
-import {callDentalPhoneNumber} from '~/method/callDentalPhoneNumber';
+import callDentalPhoneNumber from '~/method/callDentalPhoneNumber';
 import Geolocation from 'react-native-geolocation-service';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
@@ -183,7 +183,6 @@ const ClinicRoute = ({
       todayStartTime = item.Sat_Consulation_start_time?.slice(0, 5);
       todayEndTime = item.Sat_Consulation_end_time?.slice(0, 5);
     }
-    console.log(item);
     return (
       <DentalListItem
         dentalObj={item}
