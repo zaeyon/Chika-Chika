@@ -405,8 +405,9 @@ const EditProfileScreen = ({
   }, [profile]);
 
   const registerTimeFilter = useCallback(() => {}, []);
+
   return (
-    <ContainerView as={SafeAreaView} forceInset={{top: 'always'}}>
+    <ContainerView>
       <ProfileImageContainerView>
         <TouchableWithoutFeedback
           onPress={() => imageActionSheetRef.current.show()}>

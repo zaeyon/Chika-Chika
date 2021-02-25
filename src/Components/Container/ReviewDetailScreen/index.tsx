@@ -292,10 +292,17 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   }, []);
 
   useEffect(() => {
-    if(route.params?.requestType === "notification") {
-      moveToCommentList();
+    console.log("route.params?.type", route.params?.type);
+    console.log("route.params?.category", route.params?.category);
+    if(route.params?.type === "Notification" && route.params?.category === "comment") {
+      navigation.navigate("CommentListScreen", {
+        postId: route.params.reviewId,
+        postType: 'review',
+        commentActionType: 'comment',
+        commentId: route.params?.commentId,
+      })
     }
-  }, [route.params?.requesType])
+  }, [route.params?.type])
 
   useEffect(() => {
     console.log('리뷰수정 취소', route.params?.isCancelRevise);
@@ -810,6 +817,8 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   };
 
   const clickAccuseReview = () => {
+    setIsVisibleOtherMoreViewModal(false);
+    setIsVisibleOwnMoreViewModal(false);
     navigation.navigate('AccuseScreen', {
       targetType: 'review',
       targetId: reviewId,

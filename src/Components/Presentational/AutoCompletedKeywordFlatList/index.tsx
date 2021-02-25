@@ -13,21 +13,31 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-import {KeyboardAwareFlatList, KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-
 const ContinaerView = Styled.View`
-background-color: #ffffff;
-min-height: ${hp('100%')}px;
-flex: 1;
-`;
-
-const BodyContainer = Styled.View`
-flex: 1;
+width: ${wp('100%')}px;
+height: 100%;
+position: absolute;
 background-color: #F5F7F9;
+z-index: 1;
 `;
 
+const SearchResultFlatList = Styled.FlatList`
+width: ${wp('100%')}px;
+height: 100%;
+position: absolute;
+background: #F5F7F9;
+`;
 
-const SearchResultFlatList = Styled(FlatList as new () => FlatList)`
+const SearchResultItemView = Styled.View`
+width: 100%;
+height: 80px;
+flex-direction: row;
+align-items: center;
+padding: 16px;
+`;
+
+const SearchResultItemTitleText = Styled.Text`
+font-size: 20px;
 `;
 
 const RecentKeywordContainer = Styled.View`
@@ -90,6 +100,18 @@ line-height: 24px;
 color: #131F3C;
 `;
 
+const AutoCompletedKeywordDescriptionView = Styled.View`
+margin-left: 8px;
+flex-direction: row;
+`;
+
+const AutoCompletedKeywordDescriptionText = Styled.Text`
+font-weight: normal;
+font-size: 12px;
+line-height: 16px;
+color: #9AA2A9;
+`;
+
 const SearchRecordListContainer = Styled.View`
 `;
 
@@ -109,10 +131,7 @@ justify-content: space-between;
 `;
 
 const DeleteSearchRecordContainer = Styled.View`
-padding-top: 16px;
-padding-bottom: 16px;
-padding-left: 12px;
-padding-right: 12px;
+padding: 16px;
 `;
 
 const DeleteSearchRecordIcon = Styled.Image`
@@ -120,26 +139,54 @@ width: ${wp('4.26%')}px;
 height: ${wp('4.26%')}px;
 `;
 
+const ListHeaderContainerView = Styled.View`
+width: ${wp('100%')}px;
+height: 150px;
+
+margin-top:-150px;
+align-items: center;
+justify-content: center;
+`;
+
+const ListHeaderContentText = Styled.Text`
+font-size: 30px;
+font-weight: 600;
+`;
+
 interface Props {
+  navigation: any;
+  route: any;
   query: string;
+  setQuery: any;
   autoCompletedKeywordArr: any;
   deleteAllSearchRecord: () => void;
   deleteSingleSearchRecord: (id: number, category: string) => void;
-  searchTotalKeyword: (keyword: string, category: string) => void;
+  searchTotalKeyword: ({
+    searchQuery,
+    inputQuery,
+    category,
+    tagId,
+  }: {
+    searchQuery: string;
+    inputQuery: string;
+    category: string;
+    tagId: string;
+  }) => void;
   searchRecordArray: Array<any>;
 }
 
-const AutoCompletedKeywordFlatList = ({
+const AutoCompletedTotalKeywordFlatList = ({
+  navigation,
+  route,
   query,
+  setQuery,
   autoCompletedKeywordArr,
   deleteAllSearchRecord,
   deleteSingleSearchRecord,
   searchTotalKeyword,
   searchRecordArray,
 }: Props) => {
-
   const renderSearchRecordItem = ({item, index}: any) => {
-
     const renderIcon = (category: string) => {
       switch (category) {
         case 'clinic':
@@ -156,243 +203,385 @@ const AutoCompletedKeywordFlatList = ({
           return require('~/Assets/Images/Search/ic/ic_search2.png');
       }
     };
-
-    if(item.category === 'clinic' || item.category === 'city') {
-      return (
-        <TouchableHighlight
-          underlayColor="#F5F7F9"
-          style={{
-            backgroundColor: '#FFFFFF',
-          }}
-          onPress={() => searchTotalKeyword(item.query, item.category)}>
-          <SearchRecordItemContainer>
-            <SearchRecordContentView>
-              <RepresentIcon source={renderIcon(item.category)} />
-              <AutoCompletedKeywordText>{item.query}</AutoCompletedKeywordText>
-            </SearchRecordContentView>
-            <TouchableWithoutFeedback
-              onPress={() => deleteSingleSearchRecord(item.id, item.category)}>
-              <DeleteSearchRecordContainer>
-                <DeleteSearchRecordIcon
-                  source={require('~/Assets/Images/Search/ic_deleteRecord.png')}
-                />
-              </DeleteSearchRecordContainer>
-            </TouchableWithoutFeedback>
-          </SearchRecordItemContainer>
-        </TouchableHighlight>
-      );
-    }
+    return (
+      <TouchableHighlight
+        underlayColor="#F5F7F9"
+        style={{
+          backgroundColor: '#FFFFFF',
+        }}
+        onPress={() =>
+          searchTotalKeyword({
+            keyword: item.query,
+            category: item.category,
+            tagId: item.id,
+          })
+        }>
+        <SearchRecordItemContainer>
+          <SearchRecordContentView>
+            <RepresentIcon source={renderIcon(item.category)} />
+            <AutoCompletedKeywordText>{item.query}</AutoCompletedKeywordText>
+          </SearchRecordContentView>
+          <TouchableWithoutFeedback
+            onPress={() => deleteSingleSearchRecord(item.id, item.category)}>
+            <DeleteSearchRecordContainer>
+              <DeleteSearchRecordIcon
+                source={require('~/Assets/Images/Search/ic_deleteRecord.png')}
+              />
+            </DeleteSearchRecordContainer>
+          </TouchableWithoutFeedback>
+        </SearchRecordItemContainer>
+      </TouchableHighlight>
+    );
   };
 
   const renderResultItem = useCallback(
     ({item, index}: any) => {
-      
+      if (item.category === 'clinic') {
+        console.log("item.category === 'clinic", item);
+        const splitedItemName = item.originalName.split('');
+        const splitedQuery = query.split('');
+        const startIndex = item.originalName.indexOf(query);
+        const endIndex = startIndex + (query.length - 1);
 
-      console.log("자동완성 키워드 렌더링");
+        return (
+          <TouchableHighlight
+            underlayColor="#F5F7F9"
+            style={{
+              backgroundColor: '#FFFFFF',
+            }}
+            onPress={() =>
+              searchTotalKeyword({
+                searchQuery: item.originalName,
+                inputQuery: item.originalName,
+                category: item.category,
+                tagId: item.id,
+              })
+            }>
+            <AutoCompletedKeywordItemContainer>
+              <RepresentIcon
+                source={require('~/Assets/Images/Search/ic_dentalKeyword.png')}
+              />
+              {splitedItemName.map((item: any, index: number) => {
+                if (
+                  startIndex <= index &&
+                  index <= endIndex &&
+                  startIndex !== -1
+                ) {
+                  return (
+                    <AutoCompletedKeywordText
+                      style={{color: '#00D1FF'}}
+                      key={item + String(index)}>
+                      {item}
+                    </AutoCompletedKeywordText>
+                  );
+                } else {
+                  return (
+                    <AutoCompletedKeywordText key={item + String(index)}>
+                      {item}
+                    </AutoCompletedKeywordText>
+                  );
+                }
+              })}
+              <AutoCompletedKeywordDescriptionView>
+                <AutoCompletedKeywordDescriptionText numberOfLines={1}>
+                  {item.local}
+                </AutoCompletedKeywordDescriptionText>
+              </AutoCompletedKeywordDescriptionView>
+            </AutoCompletedKeywordItemContainer>
+          </TouchableHighlight>
+        );
+      } else if (item.category === 'city') {
+        const splitedItemName = item.name.split('');
+        const startIndex = item.name.indexOf(query);
+        const endIndex = startIndex + (query.length - 1);
 
-      if(item.category === "clinic") {
+        const splitedAddress = item.fullAddress && item.fullAddress.split('');
+        const addressStartIndex =
+          item.fullAddress && item.fullAddress.indexOf(query);
+        const addressEndIndex =
+          addressStartIndex && addressStartIndex + (query.length - 1);
 
-        const splitedItemName = item.name.split("");
-        const splitedQuery = query.split("");
+        return (
+          <TouchableHighlight
+            underlayColor="#F5F7F9"
+            style={{
+              backgroundColor: '#FFFFFF',
+            }}
+            onPress={() =>
+              searchTotalKeyword({
+                searchQuery: item.fullAddress,
+                inputQuery: item.name,
+                category: item.category,
+                tagId: item.id,
+              })
+            }>
+            <AutoCompletedKeywordItemContainer>
+              <RepresentIcon
+                source={require('~/Assets/Images/Search/ic_locationKeyword.png')}
+              />
+              {splitedItemName.map((item: any, index: number) => {
+                if (
+                  startIndex <= index &&
+                  index <= endIndex &&
+                  startIndex !== -1
+                ) {
+                  return (
+                    <AutoCompletedKeywordText
+                      style={{color: '#00D1FF'}}
+                      key={item + String(index)}>
+                      {item}
+                    </AutoCompletedKeywordText>
+                  );
+                } else {
+                  return (
+                    <AutoCompletedKeywordText key={item + String(index)}>
+                      {item}
+                    </AutoCompletedKeywordText>
+                  );
+                }
+              })}
+              <AutoCompletedKeywordDescriptionView>
+                {splitedAddress.map((item: any, index: number) => {
+                      if (
+                        addressStartIndex <= index &&
+                        index <= addressEndIndex &&
+                        addressStartIndex !== -1
+                      ) {
+                        return (
+                          <AutoCompletedKeywordDescriptionText
+                            style={{color: '#00D1FF'}}
+                            key={item + String(index)}>
+                            {item}
+                          </AutoCompletedKeywordDescriptionText>
+                        );
+                      } else {
+                        return (
+                          <AutoCompletedKeywordDescriptionText
+                            key={item + String(index)}>
+                            {item}
+                          </AutoCompletedKeywordDescriptionText>
+                        );
+                      }
+                    })
+                  }
+              </AutoCompletedKeywordDescriptionView>
+            </AutoCompletedKeywordItemContainer>
+          </TouchableHighlight>
+        );
+      } else if (item.category === 'treatment') {
+        const splitedItemName = item.name.split('');
         const startIndex = item.name.indexOf(query);
         const endIndex = startIndex + (query.length - 1);
 
         return (
-          <TouchableWithoutFeedback onPress={() => searchTotalKeyword(item.name, item.category)}>
-          <AutoCompletedKeywordItemContainer>
-            <RepresentIcon
-            source={require('~/Assets/Images/Search/ic_dentalKeyword.png')}/>
-            {splitedItemName.map((item: any, index: number) => {
-              if(startIndex <= index && index <= endIndex && (startIndex !== -1)) {
-                return (
+          <TouchableHighlight
+            underlayColor="#F5F7F9"
+            style={{
+              backgroundColor: '#FFFFFF',
+            }}
+            onPress={() =>
+              searchTotalKeyword({
+                keyword: item.name,
+                category: item.category,
+                tagId: item.id,
+              })
+            }>
+            <AutoCompletedKeywordItemContainer>
+              <RepresentIcon
+                source={require('~/Assets/Images/Search/ic_treatmentKeyword.png')}
+              />
+              {splitedItemName.map((item: any, index: number) => {
+                if (
+                  startIndex <= index &&
+                  index <= endIndex &&
+                  startIndex !== -1
+                ) {
+                  return (
                     <AutoCompletedKeywordText
-                    style={{color: "#00D1FF"}}>{item}</AutoCompletedKeywordText>
-                )
-              } else {
-                return (
-                    <AutoCompletedKeywordText>{item}</AutoCompletedKeywordText>
-                )
-              }
-            }
-            )}
-          </AutoCompletedKeywordItemContainer>
-          </TouchableWithoutFeedback>
-        )
-      } else if(item.category === "city") {
-
-        const splitedItemName  = item.fullName?.split("");
-        const startIndex = item.fullName?.indexOf(query);
-        const endIndex = startIndex + (query.length - 1);
-
-        return (
-          <TouchableWithoutFeedback onPress={() => searchTotalKeyword(item.fullName, item.category)}>
-          <AutoCompletedKeywordItemContainer>
-            <RepresentIcon
-            source={require('~/Assets/Images/Search/ic_locationKeyword.png')}/>
-            {splitedItemName.map((item: any, index: number) => {
-              if(startIndex <= index && index <= endIndex && (startIndex !== -1)) {
-                return (
-                    <AutoCompletedKeywordText
-                    style={{color: "#00D1FF"}}>{item}</AutoCompletedKeywordText>
-                )
-              } else {
-                return (
-                    <AutoCompletedKeywordText>{item}</AutoCompletedKeywordText>
-                )
-              }
-            }
-            )}
-          </AutoCompletedKeywordItemContainer>
-          </TouchableWithoutFeedback>
-        )
-      } else if(item.category === "treatment") {
-
-        const splitedItemName = item.name.split("");
+                      style={{color: '#00D1FF'}}
+                      key={item + String(index)}>
+                      {item}
+                    </AutoCompletedKeywordText>
+                  );
+                } else {
+                  return (
+                    <AutoCompletedKeywordText key={item + String(index)}>
+                      {item}
+                    </AutoCompletedKeywordText>
+                  );
+                }
+              })}
+            </AutoCompletedKeywordItemContainer>
+          </TouchableHighlight>
+        );
+      } else if (item.category === 'symptom') {
+        const splitedItemName = item.name.split('');
         const startIndex = item.name.indexOf(query);
         const endIndex = startIndex + (query.length - 1);
 
         return (
-          <TouchableWithoutFeedback onPress={() => searchTotalKeyword(item.name, item.category)}>
-          <AutoCompletedKeywordItemContainer>
-            <RepresentIcon
-            source={require('~/Assets/Images/Search/ic_symptomKeyword.png')}/>
-            {splitedItemName.map((item: any, index: number) => {
-              if(startIndex <= index && index <= endIndex && (startIndex !== -1)) {
-                return (
+          <TouchableHighlight
+            underlayColor="#F5F7F9"
+            style={{
+              backgroundColor: '#FFFFFF',
+            }}
+            onPress={() =>
+              searchTotalKeyword({
+                keyword: item.name,
+                category: item.category,
+                tagId: item.id,
+              })
+            }>
+            <AutoCompletedKeywordItemContainer>
+              <RepresentIcon
+                source={require('~/Assets/Images/Search/ic_symptomKeyword.png')}
+              />
+              {splitedItemName.map((item: any, index: number) => {
+                if (
+                  startIndex <= index &&
+                  index <= endIndex &&
+                  startIndex !== -1
+                ) {
+                  return (
                     <AutoCompletedKeywordText
-                    style={{color: "#00D1FF"}}>{item}</AutoCompletedKeywordText>
-                )
-              } else {
-                return (
-                    <AutoCompletedKeywordText>{item}</AutoCompletedKeywordText>
-                )
-              }
-            }
-            )}
-          </AutoCompletedKeywordItemContainer>
-          </TouchableWithoutFeedback>
-        )
+                      style={{color: '#00D1FF'}}
+                      key={item + String(index)}>
+                      {item}
+                    </AutoCompletedKeywordText>
+                  );
+                } else {
+                  return (
+                    <AutoCompletedKeywordText key={item + String(index)}>
+                      {item}
+                    </AutoCompletedKeywordText>
+                  );
+                }
+              })}
+            </AutoCompletedKeywordItemContainer>
+          </TouchableHighlight>
+        );
+      } else if (item.category === 'general') {
+        const splitedItemName = item.name.split('');
+        const startIndex = item.name.indexOf(query);
+        const endIndex = startIndex + (query.length - 1);
+
+        return (
+          <TouchableHighlight
+            underlayColor="#F5F7F9"
+            style={{
+              backgroundColor: '#FFFFFF',
+            }}
+            onPress={() =>
+              searchTotalKeyword({
+                keyword: item.name,
+                category: item.category,
+                tagId: item.id,
+              })
+            }>
+            <AutoCompletedKeywordItemContainer>
+              <RepresentIcon
+                source={require('~/Assets/Images/Search/ic_generalKeyword.png')}
+              />
+              {splitedItemName.map((item: any, index: number) => {
+                if (
+                  startIndex <= index &&
+                  index <= endIndex &&
+                  startIndex !== -1
+                ) {
+                  return (
+                    <AutoCompletedKeywordText
+                      style={{color: '#00D1FF'}}
+                      key={item + String(index)}>
+                      {item}
+                    </AutoCompletedKeywordText>
+                  );
+                } else {
+                  return (
+                    <AutoCompletedKeywordText key={item + String(index)}>
+                      {item}
+                    </AutoCompletedKeywordText>
+                  );
+                }
+              })}
+            </AutoCompletedKeywordItemContainer>
+          </TouchableHighlight>
+        );
       } else {
-
         return (
           <View
-          style={{
-            width:0,
-            height:0,
-          }}/>
-        )
+            style={{
+              width: 0,
+              height: 0,
+            }}
+          />
+        );
       }
-  }, [query]);
+    },
+    [query],
+  );
 
   // const renderFrequentTerms = useCallback(() => (
 
   // ), [])
 
+  const renderListHeader = useCallback(
+    () => (
+      <ListHeaderContainerView>
+        <ListHeaderContentText>{'뭘 봐 👽'}</ListHeaderContentText>
+      </ListHeaderContainerView>
+    ),
+    [],
+  );
+
   return (
     <ContinaerView>
-      <BodyContainer>
-        {query === "" && (
-        <RecentKeywordContainer>
-          <RecentKeywoardHeaderContainer>
+      <RecentKeywordContainer>
+        <RecentKeywoardHeaderContainer>
+          <RecentKeywordLabelContainer>
+            <RecentKeywordLabelText>{'최근 검색어'}</RecentKeywordLabelText>
+          </RecentKeywordLabelContainer>
+          <TouchableWithoutFeedback onPress={() => deleteAllSearchRecord()}>
             <RecentKeywordLabelContainer>
-              <RecentKeywordLabelText>{"최근 검색어"}</RecentKeywordLabelText>
+              <RecentKeywordLabelText style={{color: '#9AA2A9'}}>
+                {'전체삭제'}
+              </RecentKeywordLabelText>
             </RecentKeywordLabelContainer>
-            <TouchableWithoutFeedback onPress={() => deleteAllSearchRecord()}>
-            <RecentKeywordLabelContainer>
-              <RecentKeywordLabelText
-              style={{color: "#9AA2A9"}}>{"전체삭제"}</RecentKeywordLabelText>
-            </RecentKeywordLabelContainer>
-            </TouchableWithoutFeedback>
-          </RecentKeywoardHeaderContainer>
-          {searchRecordArray?.length === 0 && (
+          </TouchableWithoutFeedback>
+        </RecentKeywoardHeaderContainer>
+        {searchRecordArray.length === 0 ? (
           <NoRecentKeywordContainer>
-            <NoRecentKeywordText>{"💡최근 검색 내역이 없습니다."}</NoRecentKeywordText>
+            <NoRecentKeywordText>
+              {'💡최근 검색 내역이 없습니다.'}
+            </NoRecentKeywordText>
           </NoRecentKeywordContainer>
-          )}
-          {searchRecordArray?.length > 0 && (
-          <SearchRecordListContainer>
-            <FlatList
-            contentContainerStyle={{paddingBottom: hp('28%')}}
-            keyboardShouldPersistTaps={"always"}
+        ) : (
+          <FlatList
+            style={{
+              backgroundColor: '#F5F7F9',
+              height: '100%',
+            }}
+            keyboardShouldPersistTaps="always"
             keyboardDismissMode="on-drag"
-            showsVerticalScrollIndicator={false}
-            bounces={false}
-            alwaysBounceVertical={false}
             data={searchRecordArray}
             renderItem={renderSearchRecordItem}
-            keyExtractor={(item: any, index: number) => `${index}`}/>
-          </SearchRecordListContainer>
-          )}
-        </RecentKeywordContainer>
+            keyExtractor={(item) => String(item.id)}
+            showsVerticalScrollIndicator={false}
+          />
         )}
-        {query !== "" && (
+      </RecentKeywordContainer>
+      {query !== '' && (
         <SearchResultFlatList
-          keyboardShouldPersistTaps={"handled"}
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-          contentContainerStyle={{backgroundColor: "#ffffff"}}
-          alwaysBounceVertical={false}
+          ListHeaderComponent={renderListHeader()}
+          keyboardShouldPersistTaps="always"
           keyboardDismissMode="on-drag"
-          scrollEnabled={true}
           data={autoCompletedKeywordArr}
-          keyExtractor={(item: any, index: number) => `${index}`}
+          keyExtractor={(item) => String(item.id)}
           renderItem={renderResultItem}
+          showsVerticalScrollIndicator={false}
         />
-        )}
-        </BodyContainer>
+      )}
     </ContinaerView>
   );
 };
 
-export default React.memo(AutoCompletedKeywordFlatList);
-
-
-/*
-      <BodyContentView>
-        {query === "" && (
-        <RecentKeywordContainer>
-          <RecentKeywoardHeaderContainer>
-            <RecentKeywordLabelContainer>
-              <RecentKeywordLabelText>{"최근 검색어"}</RecentKeywordLabelText>
-            </RecentKeywordLabelContainer>
-            <TouchableWithoutFeedback onPress={() => deleteAllSearchRecord()}>
-            <RecentKeywordLabelContainer>
-              <RecentKeywordLabelText
-              style={{color: "#9AA2A9"}}>{"전체삭제"}</RecentKeywordLabelText>
-            </RecentKeywordLabelContainer>
-            </TouchableWithoutFeedback>
-          </RecentKeywoardHeaderContainer>
-          {searchRecordArray?.length === 0 && (
-          <NoRecentKeywordContainer>
-            <NoRecentKeywordText>{"💡최근 검색 내역이 없습니다."}</NoRecentKeywordText>
-          </NoRecentKeywordContainer>
-          )}
-          {searchRecordArray?.length > 0 && (
-          <SearchRecordListContainer>
-            <FlatList
-            keyboardShouldPersistTaps={"always"}
-            showsVerticalScrollIndicator={false}
-            bounces={false}
-            alwaysBounceVertical={false}
-            data={searchRecordArray}
-            renderItem={renderSearchRecordItem}/>
-          </SearchRecordListContainer>
-          )}
-        </RecentKeywordContainer>
-        )}
-        {query !== "" && (
-        <SearchResultFlatList
-          keyboardShouldPersistTaps={"never"}
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-          contentContainerStyle={{backgroundColor: "#ffffff"}}
-          alwaysBounceVertical={false}
-          keyboardDismissMode="on-drag"
-          scrollEnabled={true}
-          data={autoCompletedKeywordArr}
-          keyExtractor={(item: any, index: number) => item.name + index}
-          renderItem={renderResultItem}
-        />
-        )}
-      </BodyContentView>
-*/
+export default React.memo(AutoCompletedTotalKeywordFlatList);

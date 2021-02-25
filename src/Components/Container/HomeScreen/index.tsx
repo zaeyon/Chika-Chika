@@ -22,6 +22,8 @@ import HomeInfoContent from '~/Components/Presentational/HomeScreen/HomeInfoCont
 import HomeClinicContent from '~/Components/Presentational/HomeScreen/HomeClinicContent';
 import HomeReviewContent from '~/Components/Presentational/HomeScreen/HomeReviewContent';
 import HomeCommunityContent from '~/Components/Presentational/HomeScreen/HomeCommunityContent';
+import ToastMessage from '~/Components/Presentational/ToastMessage';
+
 // Routes
 import GETSearchRecord from '~/Routes/Search/GETSearchRecord';
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
@@ -139,6 +141,12 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if(route.params?.isUploadReview) {
+      ToastMessage.show("리뷰작성이 완료되었습니다!")
+    }
+  }, [route.params?.isUploadReview])
+
   useFocusEffect(
     useCallback(() => {
       if (selectedHometown) {
@@ -220,42 +228,39 @@ const HomeScreen = ({navigation, route}: Props) => {
             },
           });
           return;
+          case 'review':
+            navigation.navigate('ReviewStackScreen', {
+              screen: 'ReviewDetailScreen',
+              params: {
+                reviewId: remoteMessage.data.targetId,
+                type: 'Notification',
+                category: remoteMessage.data.type,
+                commentId: remoteMessage.data.commentId,
+              }
+            })
         default:
       }
     });
 
-    GETSearchRecord({jwtToken})
-      .then(async (response: any) => {
-        console.log('GETSearchRecord response', response);
-        dispatch(allActions.userActions.setSearchRecord(response));
+    
 
-        const getDentalSearchRecord = async (searchRecordArray: any) => {
-          let tmpDentalSearchRecordArray = new Array();
-          await searchRecordArray.forEach((item: any, index: number) => {
-            if (item.category === 'clinic' || item.category === 'city') {
-              return tmpDentalSearchRecordArray.push(item);
-            }
-          });
+    GETSearchRecord(jwtToken, true)
+    .then((response: any) => {
+      console.log('통합검색 검색기록 response', response);
+      dispatch(allActions.userActions.setSearchRecord(response));
+    })
+    .catch((error) => {
+      console.log('통합검색 검색기록 error', error);
+    })
 
-          return tmpDentalSearchRecordArray;
-        };
-
-        const tmpDentalSearchRecordArray = await getDentalSearchRecord(
-          response,
-        );
-        console.log(
-          'GETSearchRecord tmpDentalSearchRecordArray',
-          tmpDentalSearchRecordArray,
-        );
-        dispatch(
-          allActions.userActions.setDentalSearchRecord(
-            tmpDentalSearchRecordArray,
-          ),
-        );
+      GETSearchRecord(jwtToken, false)
+      .then((response: any) => {
+        console.log("병원지도검색 검색기록 response", response);
+        dispatch(allActions.userActions.setDentalSearchRecord(response));
       })
       .catch((error) => {
-        console.log('GETSearchRecord error', error);
-      });
+        console.log("병원지도검색 검색기록 error", error);
+      })
   }, []);
 
   const fetchLocalInfo = useCallback(

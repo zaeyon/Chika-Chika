@@ -106,7 +106,6 @@ interface Props {
 const NotificationItem = ({notificationObj, isEditing, selectNotificationItem, selected, index, moveToAnotherProfile, moveToNotifiedPost}: Props) => {
 
     console.log("NotificationItem notificationObj", notificationObj);
-
     const formatDate = useCallback((createdAt: string) => {
     const currentYear = new Date(Date.now()).getFullYear();
 
@@ -117,26 +116,55 @@ const NotificationItem = ({notificationObj, isEditing, selectNotificationItem, s
       return parseInt(month) + '월 ' + parseInt(day) + '일';
     } else {
       return year + '년 ' + parseInt(month) + '월 ' + parseInt(day) + '일';
-    }
-  }, [notificationObj]);
+        }
+    }, [notificationObj]);
 
+    const currentDate  = new Date();
+    const createdAtDate = new Date(notificationObj.createdAt);
+    
+    const getElapsedTime = useCallback((elapsedSec: number) => {
+    console.log("elapsedSec", elapsedSec)
+    let elapsedTimeText = '';
+
+    const elapsedMin = elapsedSec / 60;
+    const elapsedHour = elapsedSec / 3600;
+    const elapsedDay = elapsedSec / 86400;
+
+    if (elapsedMin < 1) {
+      elapsedTimeText = '방금 전';
+      return elapsedTimeText;
+    } else if (1 <= elapsedMin && elapsedHour < 1) {
+      elapsedTimeText = `${Math.floor(elapsedMin)}분 전`;
+      return elapsedTimeText;
+    } else if (1 <= elapsedHour && elapsedDay < 1) {
+      elapsedTimeText = `${Math.floor(elapsedHour)}시간 전`;
+      return elapsedTimeText;
+    } else if (elapsedDay >= 1) {
+      elapsedTimeText = formatDate(notificationObj.createdAt);
+      return elapsedTimeText;
+    }
+  }, []);
+
+    
+    
+        
 
     return (
-        <TouchableWithoutFeedback onPress={() => !isEditing ? moveToNotifiedPost(notificationObj) : selectNotificationItem(notificationObj.id, notificationObj.type, index)}>
+        <TouchableWithoutFeedback onPress={() => !isEditing ? moveToNotifiedPost(notificationObj) : selectNotificationItem(notificationObj?.id, notificationObj?.type, index)}>
         <Container>
             <ContentContainer>
-            <TouchableWithoutFeedback onPress={() => moveToAnotherProfile(notificationObj.sender.id, notificationObj.sender.nickname, notificationObj.sender.profileImg)}>
+            <TouchableWithoutFeedback onPress={() => moveToAnotherProfile(notificationObj?.sender.id, notificationObj?.sender.nickname, notificationObj?.sender.profileImg)}>
             <ProfileImageContainer>
                 <ProfileImage
-                source={{uri: notificationObj.sender.profileImg ? notificationObj.sender.profileImg : "https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/436/8142f53e51d2ec31bc0fa4bec241a919_crop.jpeg"}}/>
+                source={{uri: notificationObj?.sender.profileImg ? notificationObj?.sender.profileImg : "https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/436/8142f53e51d2ec31bc0fa4bec241a919_crop.jpeg"}}/>
             </ProfileImageContainer>
             </TouchableWithoutFeedback>
             <BodyContainer>
                 <NicknameContainer>
-                    <NicknameText>{notificationObj.sender.nickname}</NicknameText>
-                    <DateText>{formatDate(notificationObj.createdAt)}</DateText>
+                    <NicknameText>{notificationObj?.sender.nickname}</NicknameText>
+                    <DateText>{getElapsedTime(notificationObj['createdDiff(second)'])}</DateText>
                 </NicknameContainer>
-                <NotifyDescripText>{notificationObj.message}</NotifyDescripText>
+                <NotifyDescripText>{notificationObj?.message}</NotifyDescripText>
             </BodyContainer>
             {isEditing && (
                 <SelectButtonContainer>

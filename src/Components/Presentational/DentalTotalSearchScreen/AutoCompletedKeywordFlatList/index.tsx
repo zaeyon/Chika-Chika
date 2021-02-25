@@ -140,7 +140,7 @@ interface Props {
   autoCompletedKeywordArr: any;
   deleteAllSearchRecord: () => void;
   deleteSingleSearchRecord: (id: number, category: string) => void;
-  searchTotalKeyword: (keyword: string, category: string) => void;
+  searchTotalKeyword: (keyword: string, category: string, keywordItem: any) => void;
   searchRecordArray: Array<any>;
 }
 
@@ -207,7 +207,7 @@ const AutoCompletedKeywordFlatList = ({
         const endIndex = startIndex + (query?.length - 1);
 
         return (
-          <TouchableWithoutFeedback onPress={() => searchTotalKeyword(item.name, item.category)}>
+          <TouchableWithoutFeedback onPress={() => searchTotalKeyword(item.name, item.category, item)}>
           <AutoCompletedKeywordItemContainer>
             <RepresentIcon
             source={require('~/Assets/Images/Search/ic_dentalKeyword.png')}/>
@@ -226,6 +226,11 @@ const AutoCompletedKeywordFlatList = ({
               }
             }
             )}
+            <AutoCompletedKeywordDescriptionView>
+              <AutoCompletedKeywordDescriptionText>
+                {item.local}
+              </AutoCompletedKeywordDescriptionText>
+            </AutoCompletedKeywordDescriptionView>
           </AutoCompletedKeywordItemContainer>
           </TouchableWithoutFeedback>
         )
@@ -258,7 +263,7 @@ const AutoCompletedKeywordFlatList = ({
         //const endIndex = startIndex + (query.length - 1);
 
         return (
-          <TouchableWithoutFeedback onPress={() => searchTotalKeyword(item.fullAddress, item.category)}>
+          <TouchableWithoutFeedback onPress={() => searchTotalKeyword(item.fullAddress, item.category, item)}>
           <AutoCompletedKeywordItemContainer>
             <RepresentIcon
             source={require('~/Assets/Images/Search/ic_locationKeyword.png')}/>

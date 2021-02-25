@@ -9,7 +9,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 //Local components
-import AutoCompletedTotalKeywordFlatList from '~/Components/Presentational/TotalKeywordSearchScreen/AutoCompletedTotalKeywordFlatList';
+import AutoCompletedTotalKeywordFlatList from '~/Components/Presentational/AutoCompletedKeywordFlatList';
 import TotalSearchResultTabView from '~/Components/Presentational/TotalKeywordSearchScreen/TotalSearchResultTabView';
 
 // Routes
@@ -195,6 +195,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
           cityId: String(cityId),
         })
           .then((response: any) => {
+            console.log("GETTotalSearch response", response);
             callback(response);
           })
           .catch((e) => {
@@ -246,9 +247,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
     }) => {
       // if (query.trim() === '') {
       // } else {
-      LayoutAnimation.configureNext(
-        LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
-      );
+      
       searchInputRef.current.blur();
       setIsVisibleAutoCompletedKeyword((prev) => {
         setQuery(keyword);
@@ -264,9 +263,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
 
   const onFocusSearchKeywordInput = () => {
     if (!isVisibleAutoCompletedKeyword) {
-      LayoutAnimation.configureNext(
-        LayoutAnimation.create(150, 'easeInEaseOut', 'opacity'),
-      );
+      
       setIsVisibleAutoCompletedKeyword(true);
     }
   };

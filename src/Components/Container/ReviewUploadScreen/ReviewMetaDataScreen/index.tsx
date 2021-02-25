@@ -948,21 +948,6 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     }
   }
 
-  const renderProofImageListHeader = useCallback(
-    () => (
-      <TouchableWithoutFeedback
-        onPress={() => {
-          actionSheetRefByProof.current.show();
-        }}>
-        <UploadImageButtonImage
-          source={require('~Assets/Images/Camera/Master/community/btn/uploadImage.png')}
-        />
-      </TouchableWithoutFeedback>
-    ),
-    [],
-  );
-
-
   const renderDentalImageListHeader = useCallback(
     () => (
       <TouchableWithoutFeedback
@@ -978,31 +963,6 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   );
 
 
-  const renderProofImageItem = useCallback(
-    ({item, index}) => (
-      <TouchableWithoutFeedback onPress={() => unSelectProofImage(item)}>
-        <ItemContainerView>
-          <DeleteButtonView>
-            <DeleteButtonImage
-              source={require('~/Assets/Images/Picture/ic_delete.png')}
-            />
-          </DeleteButtonView>
-          <ItemImage
-            source={
-              item.img_url
-                ? {uri: item.img_url} // edit mode s3 image
-                : {
-                    uri: item.base64
-                    ? 'data:image/jpeg;base64,' + item.base64
-                    : item.uri,
-                  }
-            }
-          />
-        </ItemContainerView>
-      </TouchableWithoutFeedback>
-    ),
-    [],
-  );
 
   const renderDentalImageItem = useCallback(
     ({item, index}) => (
@@ -1067,7 +1027,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
         headerLeftProps={{type: 'arrow', onPress: goBack}}
         headerTitle={"관련정보"}
         headerRightProps={{type: 'text', text: "다음", onPress: moveToContentPost}}
-        headerRightDisabled={false}
+        headerRightDisabled={!isActivatedNext}
         headerRightActiveColor={"#00D1FF"}/>
         <BodyContainer
         ref={scrollViewRef}
@@ -1099,11 +1059,11 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
               </EventTextContainer>
               <SelectProofImageText>{"진료 인증자료 올리기"}</SelectProofImageText>
               </SelectProofImageTextContainer>
-              {!selectedProofImage?.img_url && (
+              {!selectedProofImage?.uri && (
               <RightArrowIcon
               source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
               )}
-              {selectedProofImage?.img_url && (
+              {selectedProofImage?.uri && (
               <IsExistProofImageIcon
               source={require('~/Assets/Images/Upload/ic_isExistProofImage.png')}/>
               )}

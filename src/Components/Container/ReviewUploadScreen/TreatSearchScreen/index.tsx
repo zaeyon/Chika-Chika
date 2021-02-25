@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
 import {TouchableWithoutFeedback, FlatList, Keyboard, StyleSheet} from 'react-native';
@@ -179,6 +179,8 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
   >([]);
   const [isActivatedFinish, setIsActivatedFinish] = useState<boolean>(false);
 
+  const treatmentSearchInputRef = useRef<any>();
+
   useEffect(() => {
     if (route.params?.selectedTreatmentArray) {
       setSelectedTreatmentArray(route.params?.selectedTreatmentArray);
@@ -194,6 +196,9 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
   }, [selectedTreatmentArray])
 
   const selectTreatItem = (treat: object, index: number) => {
+    
+    treatmentSearchInputRef.current.clear();
+
     var tmpSelectedTreatmentArray = selectedTreatmentArray.slice();
     tmpSelectedTreatmentArray.push(treat);
     setSelectedTreatmentArray(tmpSelectedTreatmentArray);
@@ -280,6 +285,7 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
             source={require('~/Assets/Images/Search/ic_search.png')}
           />
           <SearchTextInput
+            ref={treatmentSearchInputRef}
             selectionColor={"#00D1FF"}
             autoCapitalize={'none'}
             autoFocus={true}

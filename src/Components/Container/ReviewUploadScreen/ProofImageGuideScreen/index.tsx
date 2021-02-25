@@ -221,29 +221,18 @@ const ProofImageGuideScreen = ({navigation, route}: Props) => {
     });
 
     useEffect(() => {
-        if(selectedProofImage.uri) {
-            setIsActivatedFinish(true)
-        } else {
-            setIsActivatedFinish(false)
-        }
-
-    }, [selectedProofImage])
-
-    useEffect(() => {
         if(route.params?.selectedProofImage) {
             console.log("route.params?.selectedProofImage", route.params?.selectedProofImage);
-
-            const tmpSelectedProofImage = {
-                img_url: route.params.selectedProofImage.uri,
-                img_name: route.params.selectedProofImage.filename,
-                img_height: route.params.selectedProofImage.height,
-                img_width: route.params.selectedProofImage.width,
-                img_size: route.params.selectedProofImage.fileSize,
-            }
-
-            setSelectedProofImage(tmpSelectedProofImage); 
+            setSelectedProofImage(route.params?.selectedProofImage);
         }
     }, [route.params?.selectedProofImage])
+
+    useEffect(() => {
+        if(route.params?.isDeletedProofImage) {
+            navigation.setParams({isDeletedProofImage: false})
+            setSelectedProofImage({});
+        }
+    }, [route.params?.isDeletedProofImage])
 
     const goBack = () => {
         navigation.navigate("ReviewMetaDataScreen");
@@ -294,25 +283,10 @@ const ProofImageGuideScreen = ({navigation, route}: Props) => {
     }
 
     const clickSelectedImage = () => {
-        // navigation.navigate("FullProofImageScreen", {
-        //     imageArray: [{
-        //         "createdAt": "2021-02-21 17:20:09",
-        //         "deletedAt": null,
-        //         "description": "어아아아",
-        //         "id": 545,
-        //         "img_before_after": "after",
-        //         "img_height": 2208,
-        //         "img_name": "reviews/16138956088650185DB0C-A555-431E-BE07-D58F681FBDEE.PNG",
-        //         "img_size": 4973335,
-        //         "img_url": "ph://DE38AE43-8348-4AA1-8450-24DF10B391FD/L0/001",
-        //         "img_width": 1242,
-        //         "index": 1,
-        //         "mime_type": null,
-        //         "reviewId": 151,
-        //         "updatedAt": "2021-02-21 17:20:09"
-        //       }],
-        //     imageIndex: 0,
-        // })
+        console.log("clickSelectedImage selectedProofImage", selectedProofImage); 
+        navigation.navigate("FullProofImageScreen", {
+            selectedProofImage: selectedProofImage,
+        })
     }
 
     const clickNoSelectedImage = () => {
@@ -347,8 +321,8 @@ const ProofImageGuideScreen = ({navigation, route}: Props) => {
             <NavigationHeader
             headerLeftProps={{type: 'arrow', onPress: goBack}}
             headerTitle={'증빙자료 첨부'}
-            //headerRightProps={{type: 'text', text: '완료', onPress: moveToReviewMetaData}}
-            headerRightDisabled={!isActivatedFinish}
+            headerRightProps={{type: 'text', text: '완료', onPress: moveToReviewMetaData}}
+            headerRightDisabled={false}
             headerRightActiveColor={"#00D1FF"}/>
             <ScrollView
             contentContainerStyle={{backgroundColor: "#F5F7F9"}}
@@ -414,26 +388,21 @@ const ProofImageGuideScreen = ({navigation, route}: Props) => {
                     </ProofTypeListContainer>
                 </GuideContainer>
                 <SelectProofImageContainer>
-                    {selectedProofImage?.img_url && (
+                    {selectedProofImage?.uri && (
                         <TouchableWithoutFeedback onPress={() => clickSelectedImage()}>
                         <SelectedProofImageContainer>
                         <SelectedProofImage
-                        source={{uri: selectedProofImage.img_url}}/>
+                        source={{uri: selectedProofImage.uri}}/>
                         </SelectedProofImageContainer>
                         </TouchableWithoutFeedback>
                     )}
-                    {!selectedProofImage?.img_url && (
+                    {!selectedProofImage?.uri && (
                         <TouchableWithoutFeedback onPress={() => clickNoSelectedImage()}>
                         <SelectedProofImageContainer>
                             <SelectProofImageText>{"인증자료 가져오기"}</SelectProofImageText>
                         </SelectedProofImageContainer>
                         </TouchableWithoutFeedback>
                     )}
-                    <TouchableWithoutFeedback onPress={() => moveToReviewMetaData()}>
-                    <SaveProofImageButton>
-                        <SaveProofImageText>{"저장하기"}</SaveProofImageText>
-                    </SaveProofImageButton>
-                    </TouchableWithoutFeedback>
                 </SelectProofImageContainer>
             </BodyContainer>
             </ScrollView>

@@ -613,7 +613,9 @@ const ContentPostScreen = ({navigation, route}: Props) => {
       .then((response) => {
         setLoadingUpload(false);
         console.log('POSTReviewUpload response', response);
-        navigation.navigate('HomeScreen');
+        navigation.navigate('HomeScreen', {
+          isUploadReview: true,
+        });
       })
       .catch((error) => {
         setLoadingUpload(false);

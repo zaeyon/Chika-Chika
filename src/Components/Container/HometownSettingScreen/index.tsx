@@ -205,7 +205,7 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
     selectedCityId = cityId;
     isSelectMainHometown = isMainHometown;
 
-    if (hometownArray.length === 1) {
+    if (hometownArray.length === 2) {
       Alert.alert('선택한 지역을 삭제하시겠습니까?', "", [
         {
           text: '취소',
@@ -213,12 +213,12 @@ const HometownSettingScreen = ({navigation, route}: Props) => {
           onPress: () => 0,
         },
         {
-          text: '변경',
+          text: '삭제',
           style: 'default',
           onPress: () => deleteHometown(),
         }
       ])
-    } else if (hometownArray.length === 2) {
+    } else if (hometownArray.length === 1) {
       Alert.alert(`동네는 한 곳 이상 등록되어야 합니다.${'\n'}해당 동네를 변경하시겠어요?`, "", [
         {
           text: '취소',

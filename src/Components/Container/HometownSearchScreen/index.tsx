@@ -310,6 +310,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
 
   const selectHometownItem = (item: any) => {
+    Keyboard.dismiss();
     if (route.params?.requestType === 'signUp') {
       if (provider === 'local') {
         signUp(item);

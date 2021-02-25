@@ -405,6 +405,14 @@ const LoadingGetNearDentalContainer = Styled.View`
 position: absolute;
 `;
 
+const BottomTabCoverContainer = Styled.View`
+background-color: #FFFFFF;
+position: absolute;
+bottom: 0px;
+width: ${wp('100%')}px;
+height: ${DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%')}px;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -508,7 +516,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
   const isNearDentalList = useRef<boolean>(true);
 
-  const limitRef = useRef<number>(20);
+  const limitRef = useRef<number>(15);
   const offsetRef = useRef<number>(0);
 
   useEffect(() => {
@@ -908,6 +916,11 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const offset = offsetRef.current;
     const limit = limitRef.current;
 
+    const iq = '';
+    const sq = query;
+
+    const category = route.params?.category;
+
     const dayFilter = tmpDayFilter;
     const timeFilter = tmpTimeFilter;
     const parkingFilter = tmpParkingFilter;
@@ -915,16 +928,18 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
     GETDentalTotalSearch({
       jwtToken,
+      iq,
+      sq,
       offset,
       limit,
       lat,
       long,
-      query,
       sort,
       dayFilter,
       timeFilter,
       holidayFilter,
       parkingFilter,
+      category,
     })
       .then((response: any) => {
         dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
@@ -986,11 +1001,15 @@ const NearDentalMap = ({navigation, route}: Props) => {
       isNearDentalList: isNearDentalList.current,
       currentMapLongitude: currentMapLocation.current.longitude,
       currentMapLatitude: currentMapLocation.current.latitude,
+      offset: offsetRef.current,
+      limit: limitRef.current,
     });
   };
 
   const clickMyLocationTrackingButton = () => {
     dispatch(allActions.dentalMapActions.setSearchedKeyword(''));
+    limitRef.current = 15;
+    offsetRef.current = 0;
     isNearDentalList.current = true;
     mapRef.current.setLocationTrackingMode(2);
 
@@ -1311,6 +1330,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   const reSearchNearDentalInCurrentLocation = () => {
+    limitRef.current = 15;
+    offsetRef.current = 0;
     getNearDental();
   };
 
@@ -1378,8 +1399,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
                   onClick={() => clickDentalMarker(index)}
                   image={
                     index == selectedDentalIndex
-                      ? require('~/Assets/Images/Map/ic_dentalMarker_selected.png')
-                      : require('~/Assets/Images/Map/ic_dentalMarker_unselected.png')
+                      ? require('~/Assets/Images/Map/ic_marker_focus.png')
+                      : require('~/Assets/Images/Map/ic_marker_unfocus.png')
                   }
                 />
               );
@@ -1579,7 +1600,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
             />
           </DentalListContainer>
         )}
-        {isVisibleReSearch && nearDentalArray.length === 0 && (
+        {isVisibleReSearch && nearDentalArray.length === 0 && !loadingGetDental && (
           <TouchableWithoutFeedback
             onPress={() => reSearchNearDentalInCurrentLocation()}>
             <ReSearchInCurrentRegionButton
@@ -1741,6 +1762,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
         destructiveButtonIndex={2}
         onPress={(index: any) => onPressTimeFilterActionSheet(index)}
       />
+      <BottomTabCoverContainer/>
     </Container>
   );
 };

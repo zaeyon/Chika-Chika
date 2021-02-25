@@ -1,20 +1,20 @@
-import React, {useCallback, useState, useRef} from 'react';
+import React from 'react';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
-import {TouchableWithoutFeedback, Animated} from 'react-native';
-import {getStatusBarHeight} from 'react-native-iphone-x-helper';
-import {NativeViewGestureHandler} from 'react-native-gesture-handler';
-// Local Component
-import PinchableImage from '~/Components/Presentational/PinchableImage';
+} from 'react-native-responsive-screen'; 
+import {View, TouchableWithoutFeedback, Image} from 'react-native';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 
-const ContainerView = Styled.View`
+const Container = Styled.View`
+background-color: #000000;
+padding-top: ${getStatusBarHeight()}
 flex: 1;
 `;
 
-const HeaderConatinerView = Styled.View`
+const HeaderContainerView = Styled.View`
 width: ${wp('100%')}px;
 height: auto;
 position: absolute;
@@ -22,219 +22,103 @@ top: ${getStatusBarHeight()}
 z-index: 1;
 flex-direction: row;
 align-items: center;
-background: #000000;
+background-color: #00000030;
 `;
 
 const HeaderCancelView = Styled.View`
-padding: 16px;
+padding: 0px 16px 16px 16px;
 `;
 const HeaderCancelImage = Styled.Image`
 width: 24px;
 height: 24px;
 `;
 
-const HeaderIndicatorView = Styled.View`
-margin-left: auto;
-margin-right: 16px;
-`;
-
-const HeaderIndicatorText = Styled.Text`
-font-style: normal;
-font-weight: bold;
-font-size: 18px;
-line-height: 20px;
-color: #FFFFFF;
-`;
-
-const ContentFlatList = Styled.FlatList`
-flex: 1;
-`;
-
-const ContentView = Styled.View`
+const FooterContainer = Styled.View`
 width: ${wp('100%')}px;
-height: ${hp('100%')}px;
-justify-content: center;
-overflow: hidden;
-`;
-const ContentImage = Styled.Image`
-width: ${wp('100%')}px;
-height: 100%;
-`;
-
-const TopMaskView = Styled.View`
-width: ${wp('100%')}px;
-height: ${getStatusBarHeight() + 53}px;
-position: absolute;
-top: 0px;
-background: #000000;
-z-index: 0;
-`;
-
-const BottomMaskView = Styled.View`
-width: ${wp('100%')}px;
-height: ${getStatusBarHeight() + 53}px;
 position: absolute;
 bottom: 0px;
-background: #000000;
+background-color: #00000030;
+z-index: 1;
+align-items: center;
 `;
 
-const BackgroundView = Styled.View`
-width: ${wp('100%')}px;
-height: ${hp('100%')}px;
-background: #000000;
-position: absolute;
-bottom: 0px;
-z-index: -1;
+const DeleteContainer = Styled.View`
+padding-top: 25px;
+padding-bottom: 25px;
+padding-left: 20px;
+padding-right: 20px;
 `;
 
-interface Params {
-  imageArray: Image[];
-  imageIndex: number;
-}
-
-interface Image {
-  id?: number;
-  img_filename?: string;
-  img_index?: number;
-  img_mimetype?: string;
-  img_originalname?: string;
-  img_size?: number;
-  img_url: string;
-  width: number;
-  height: number;
-}
+const DeleteText = Styled.Text`
+font-weight: 300;
+font-size: 20px;
+color: #FF001F;
+`;
 
 interface Props {
-  navigation: any;
-  route: Params;
+  navigation: any,
+  route: any,
 }
 
+
 const FullProofImageScreen = ({navigation, route}: Props) => {
-  const [index, setIndex] = useState(route.params.imageIndex);
-  const [headerVisible, setHeaderVisible] = useState(true);
-  const [back, setBack] = useState(true);
-  const [scrollEnabled, setScrollEnabled] = useState(true);
-  const dragY = useRef(new Animated.Value(0)).current;
 
-  console.log('ImageDetailScreen', route.params?.imageArray);
 
-  const scrollRef: any = useRef();
+const images = [
+  {
+    url: route.params?.selectedProofImage.uri
+  }
+]
 
-  dragY.addListener(({value}) => {
-    if (value > hp('80%')) {
-      setBack((prev) => {
-        if (prev) {
-          navigation.goBack();
-        }
-        return false;
-      });
-    }
-  });
+  const goBack = () => {
+    navigation.goBack();
+  }
 
-  const renderImageItem = useCallback(
-    ({item, itemIndex}) => (
-      <PinchableImage
-        currentIndex={index}
-        index={itemIndex}
-        lastIndex={route.params.imageArray.length - 1}
-        setScrollEnabled={setScrollEnabled}
-        dragY={dragY}
-        setHeaderVisible={setHeaderVisible}
-        image={item}
-        scrollRef={scrollRef}
+  const renderEmptyContainer = () => {
+    return (
+      <View/>
+    )
+  }
+
+  const renderImage = (props) => {
+    return (
+      <Image
+      style={{maxHeight: hp('10%')}}
+      {...props}
       />
-    ),
-    [index, dragY],
-  );
+    )
+  }
 
-  const onScroll = useCallback((e) => {
-    setIndex(
-      Math.max(Math.round(e.nativeEvent.contentOffset.x / wp('100%')), 0),
-    );
-  }, []);
+  const deleteSelectedImage = () => {
+    navigation.navigate("ProofImageGuideScreen", {
+      isDeletedProofImage: true
+    })
+  }
 
   return (
-    <ContainerView>
-      {headerVisible ? (
-        <HeaderConatinerView
-          as={Animated.View}
-          style={{
-            opacity: dragY.interpolate({
-              inputRange: [-hp('100%'), 0, 1, hp('100%')],
-              outputRange: [1, 1, 0, 0],
-              extrapolate: 'clamp',
-            }),
-          }}>
-          <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
-            <HeaderCancelView>
-              <HeaderCancelImage
-                source={require('~/Assets/Images/TopTab/ic/white.png')}
-              />
-            </HeaderCancelView>
-          </TouchableWithoutFeedback>
-          <HeaderIndicatorView>
-            <HeaderIndicatorText>{`${index + 1}/${
-              route.params.imageArray.length
-            }`}</HeaderIndicatorText>
-          </HeaderIndicatorView>
-        </HeaderConatinerView>
-      ) : null}
-      <NativeViewGestureHandler onGestureEvent={() => console.log('of')}>
-        <ContentFlatList
-          ref={scrollRef}
-          horizontal
-          disableScrollViewPanResponder={true}
-          scrollEnabled={scrollEnabled}
-          initialScrollIndex={route.params.imageIndex}
-          getItemLayout={(data, index) => ({
-            length: wp('100%'),
-            offset: wp('100%') * index,
-            index,
-          })}
-          onScrollBeginDrag={() => console.log('startss')}
-          data={route.params.imageArray}
-          onScroll={onScroll}
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(_, index) => 'image-detail-' + String(index)}
-          pagingEnabled={true}
-          renderItem={renderImageItem}
-          contentContainerStyle={{
-            justifyContent: 'center',
-          }}
-        />
-      </NativeViewGestureHandler>
-      <BackgroundView
-        as={Animated.View}
-        style={{
-          opacity: dragY.interpolate({
-            inputRange: [-hp('100%'), 0, hp('100%')],
-            outputRange: [1, 1, 0],
-            extrapolate: 'clamp',
-          }),
-        }}
-      />
-      <TopMaskView
-        as={Animated.View}
-        style={{
-          opacity: dragY.interpolate({
-            inputRange: [-hp('100%'), 0, 1, hp('100%')],
-            outputRange: [1, 1, 0, 0],
-            extrapolate: 'clamp',
-          }),
-        }}
-      />
-      <BottomMaskView
-        as={Animated.View}
-        style={{
-          opacity: dragY.interpolate({
-            inputRange: [-hp('100%'), 0, 1, hp('100%')],
-            outputRange: [1, 1, 0, 0],
-            extrapolate: 'clamp',
-          }),
-        }}
-      />
-    </ContainerView>
-  );
-};
+    <Container>
+      <HeaderContainerView>
+        <TouchableWithoutFeedback onPress={() => goBack()}>
+        <HeaderCancelView>
+          <HeaderCancelImage
+          source={require('~/Assets/Images/TopTab/ic/white.png')}
+          />
+        </HeaderCancelView>
+        </TouchableWithoutFeedback>
+      </HeaderContainerView>
+      <ImageViewer
+      imageUrls={images}
+      renderImage={renderImage}
+      renderIndicator={renderEmptyContainer}/>
+      <FooterContainer>
+        <TouchableWithoutFeedback onPress={() => deleteSelectedImage()}>
+        <DeleteContainer>
+        <DeleteText>{"삭제"}</DeleteText>
+        </DeleteContainer>
+        </TouchableWithoutFeedback>
+      </FooterContainer>
+    </Container>
+  )
+}
 
-export default React.memo(FullProofImageScreen);
+export default FullProofImageScreen;

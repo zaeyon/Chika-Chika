@@ -253,9 +253,12 @@ const DentalListItem = ({
               <DistanceText>{displayDistance}</DistanceText>
             </FooterContainer>
           </DentalInfoContainer>
+          {dentalObj.dentalClinicProfileImgs[0] && (
           <DentalImageContainer>
-            <DentalImage />
+            <DentalImage
+            source={{uri: dentalObj.dentalClinicProfileImgs[0]}}/>
           </DentalImageContainer>
+          )}
         </BodyContainer>
         <CallContainer>
           <TouchableWithoutFeedback

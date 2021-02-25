@@ -133,6 +133,10 @@ const NotificationList = ({navigation, route, isEditing,  selectNotificationItem
                     screen: "CommunityDetailScreen",
                     params: {
                         id: notificationObj.communityId,
+                        type: 'Notification',
+                        category: 'comment',
+                        commentId: notificationObj.communityCommentId,
+                        isLoading: true,
                     }
                 })
             } else if(notificationObj.reviewId !== null) {
@@ -142,7 +146,10 @@ const NotificationList = ({navigation, route, isEditing,  selectNotificationItem
                         reviewId: notificationObj.reviewId,
                         postId: notificationObj.reviewId,
                         postType: 'review',
-                        requestType: 'notification',
+                        type: 'Notification',
+                        category: 'comment',
+                        commentId: notificationObj.reviewCommentId,
+                        isLoading: true,
                     }
                 })
             }

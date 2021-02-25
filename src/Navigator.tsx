@@ -275,7 +275,10 @@ function HomeStackScreen() {
       screenOptions={{
         gestureEnabled: true,
       }}>
-      <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
+      <HomeStack.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+      />
       <HomeStack.Screen
         name="CommunityStackScreen"
         component={CommunityStackScreen}
@@ -566,7 +569,20 @@ function ReviewUploadStackScreen() {
         component={ProofImageGuideScreen}/>
       <ReviewUploadStack.Screen
         name="FullProofImageScreen"
-        component={FullProofImageScreen}/>
+        component={FullProofImageScreen}
+        options={{
+          gestureEnabled: false,
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {duration: 0},
+            },
+            close: {
+              animation: 'timing',
+              config: {duration: 0},
+            },
+          },
+        }}/>
     </ReviewUploadStack.Navigator>
   );
 }
@@ -917,6 +933,10 @@ function BottomTab() {
       ? routeName.state.routes[routeName.state.index].name
       : '';
 
+
+    console.log("getHomeBottomTabBarVisibility routeName", routeName);
+    console.log("getHomeBottomTabBarVisibility stackRouteName", stackRouteName);
+
     if (
       routeName.name === 'ReviewStackScreen' ||
       routeName.name === 'ReviewUploadStackScreen'
@@ -935,11 +955,15 @@ function BottomTab() {
       return false;
     }
 
-    if (routeName.name === 'HometownSettingScreen') {
+    if (routeName.name === 'HometownSettingScreen' || routeName.name === 'HometownSearchScreen') {
       return false;
     }
 
     if (routeName.name === 'TotalKeywordSearchStackScreen') {
+      return false;
+    }
+
+    if (stackRouteName === 'CommunityStackScreen' || stackRouteName === 'ReviewStackScreen') {
       return false;
     }
 
@@ -957,7 +981,8 @@ function BottomTab() {
       routeName.name === 'DentalTotalSearchScreen' ||
       routeName.name === 'DentalDetailScreen' ||
       routeName.name === 'ReviewStackScreen' ||
-      routeName.name === 'ReviewUploadStackScreen'
+      routeName.name === 'ReviewUploadStackScreen' ||
+      routeName.name === 'DentalInfoEditRequestScreen'
     ) {
       return false;
     }
@@ -1190,7 +1215,6 @@ const Navigator = () => {
   // };
   useEffect(() => {
     if (currentUser.loggedIn) {
-      console.log('hometown', currentUser.hometown);
       SplashScreen.hide();
     }
   }, [currentUser]);

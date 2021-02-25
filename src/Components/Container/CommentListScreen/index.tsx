@@ -127,7 +127,7 @@ const CommentListScreen = ({navigation, route}: Props) => {
       if (targetIndex > 0) {
         navigation.setParams({commentId: null});
         setTimeout(() => {
-          commentFlatListRef.current.scrollToIndex({
+          commentFlatListRef?.current?.scrollToIndex({
             index: targetIndex,
           });
         }, 1000);
@@ -144,7 +144,7 @@ const CommentListScreen = ({navigation, route}: Props) => {
       });
       commentInputRef.current.focus();
       setTimeout(() => {
-        commentFlatListRef.current.scrollToIndex({
+        commentFlatListRef?.current.scrollToIndex({
           index: index,
           viewOffset: -relativeY,
         });
@@ -381,7 +381,7 @@ const CommentListScreen = ({navigation, route}: Props) => {
         </LoadingContainerView>
       ) : (
         <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
-          {commentArray.length === 0 ? (
+          {(commentArray.length === 0 && !route.params?.commentId) ? (
             <TouchableWithoutFeedback onPress={() => clickBackground()}>
               <NoCommentListContainer>
                 <Animated.View
@@ -421,7 +421,7 @@ const CommentListScreen = ({navigation, route}: Props) => {
                   });
                   commentInputRef.current.focus();
                   setTimeout(() => {
-                    commentFlatListRef.current.scrollToOffset({
+                    commentFlatListRef?.current.scrollToOffset({
                       offset: route.params?.positionY,
                     });
                   }, 100);

@@ -29,7 +29,7 @@ const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 const ContainerView = Styled.View`
 flex: 1;
- background-color: #FFFFFF;
+ background-color: #ffffff;
 `;
 
 const HeaderContainerView = Styled.View`
@@ -86,15 +86,16 @@ const ProfileImageView = Styled.View`
 width: 77px;
 height: 77px;
 background: grey;
-border-width: 0.5px;
-border-color: #A6A8AC;
 border-radius: 100px;
 margin-right: 16px;
+
 `;
 
 const ProfileImage = Styled.Image`
 width: 100%;
 height: 100%;
+border-width: 0.5px;
+border-color: #A6A8AC;
 border-radius: 100px;
 `;
 const ProfileReservationTouchableOpacity = Styled(
@@ -383,7 +384,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         }
         style={{
           flex: 1,
-          marginBottom: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'),
+          marginBottom: DeviceInfo.hasNotch() ? hp('6.5') : hp('7.2%'),
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
         contentContainerStyle={{
@@ -391,7 +392,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           minHeight:
             hp('100%') -
             HEADERHEIGHT -
-            (DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%')) +
+            (DeviceInfo.hasNotch() ? hp('6.5%') : hp('7.2%')) +
             PROFILEHEIGHT,
           paddingTop: PROFILEHEIGHT + TABBARHEIGHT,
         }}
@@ -468,7 +469,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         }
         style={{
           flex: 1,
-          marginBottom: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'),
+          marginBottom: DeviceInfo.hasNotch() ? hp('6.5%') : hp('7.2%'),
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
         contentContainerStyle={{
@@ -476,7 +477,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           minHeight:
             hp('100%') -
             HEADERHEIGHT -
-            (DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%')) +
+            (DeviceInfo.hasNotch() ? hp('6.5%') : hp('7.2%')) +
             PROFILEHEIGHT,
           paddingTop: PROFILEHEIGHT + TABBARHEIGHT,
         }}

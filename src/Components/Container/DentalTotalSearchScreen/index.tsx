@@ -28,7 +28,7 @@ import {isIphoneX} from 'react-native-iphone-x-helper';
 // Local Component
 import DentalListItem from '~/Components/Presentational/DentalListItem';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
-import AutoCompletedKeywordFlatList from '~/Components/Presentational/DentalTotalSearchScreen/AutoCompletedKeywordFlatList';
+import AutoCompletedKeywordFlatList from '~/Components/Presentational/AutoCompletedKeywordFlatList';
 import DentalSearchResultList from '~/Components/Presentational/DentalTotalSearchScreen/DentalSearchResultList';
 import {callDentalPhoneNumber} from '~/method/callDentalPhoneNumber';
 
@@ -223,7 +223,6 @@ color: #000000;
 
 const FooterIndicatorContainer = Styled.View`
 height: ${hp('9%')}px;
-background-color: #ffffff;
 align-items: center;
 justify-content: center;
 `;
@@ -393,8 +392,8 @@ interface Props {
   route: any;
 }
 
-let offset = 0;
-let limit = 20;
+//let offset = 0;
+//let limit = 20;
 let sort = 'accuracy';
 
 let inputedKeyword = '';
@@ -428,18 +427,30 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
 
   const [query, setQuery] = useState<string>('');
 
+  const searchQueryRef = useRef<string>('');
+
   const timeFilterActionSheet = createRef<any>();
   const searchInputRef = createRef<any>();
 
-  const currentLocation = useSelector((state: any) => state.currentUser)
-    .currentLocation;
+  const currentUserLocation = useSelector((state: any) => state.currentUser.currentUserLocation);
+  const currentMapLocation = {
+    latitude: route.params?.currentMapLatitude,
+    longitude: route.params?.currentMapLongitude,
+  }
+
   const dispatch = useDispatch();
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 
   const todayIndex = new Date().getDay();
 
-  const long = route.params?.currentMapLongitude;
-  const lat = route.params?.currentMapLatitude;
+  const lat = currentUserLocation.latitude;
+  const long = currentUserLocation.longitude;
+
+  const mapLat = currentMapLocation.latitude;
+  const mapLong = currentMapLocation.longitude;
+
+  const limitRef = useRef<number>(15);
+  const offsetRef = useRef<number>(0);
 
   // 방문일 설정 redux state
   const dayList = useSelector((state: any) => state.dentalFilter).dayList;
@@ -503,9 +514,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
 
     navigation.navigate('NearDentalMap', {
       isNearDentalList: isNearDentalList.current,
-      offset: offset,
-      limit: limit,
+      offset: offsetRef.current,
+      limit: limitRef.current,
       searchedDentalLocation: searchedDentalLocation,
+      category: keywordRef?.current?.category,
     });
 
     setTimeout(() => {
@@ -553,16 +565,24 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       });
   };
 
-  const searchDental = (query: string, category: string) => {
+  const searchDental = (searchQuery: string, inputQuery: string, category: string) => {
     setLoadingSearchDental(true);
+
+    const offset = offsetRef.current;
+    const limit = limitRef.current;
+
+    const iq = inputQuery;
+    const sq = searchQuery;
+
     GETDentalTotalSearch({
       jwtToken,
+      iq,
+      sq,
       offset,
       limit,
       lat,
       long,
       category,
-      query,
       sort,
       dayFilter,
       timeFilter,
@@ -578,7 +598,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
             allActions.dentalMapActions.setSearchedDentalArray(response),
           );
           isNearDentalList.current = false;
-          if (response.length < 20) {
+          if (response.length < 15) {
             noMoreDentalData.current = true;
           }
         } else {
@@ -596,34 +616,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   const getSearchRecord = () => {
-    GETSearchRecord({jwtToken})
+    GETSearchRecord(jwtToken, false)
       .then(async (response: any) => {
         console.log('GETSearchRecord response', response);
-        dispatch(allActions.userActions.setSearchRecord(response));
-
-        const getDentalSearchRecord = async (searchRecordArray: any) => {
-          let tmpDentalSearchRecordArray = new Array();
-          await searchRecordArray.forEach((item: any, index: number) => {
-            if (item.category === 'clinic' || item.category === 'city') {
-              return tmpDentalSearchRecordArray.push(item);
-            }
-          });
-
-          return tmpDentalSearchRecordArray;
-        };
-
-        const tmpDentalSearchRecordArray = await getDentalSearchRecord(
-          response,
-        );
-        console.log(
-          'GETSearchRecord tmpDentalSearchRecordArray',
-          tmpDentalSearchRecordArray,
-        );
-        dispatch(
-          allActions.userActions.setDentalSearchRecord(
-            tmpDentalSearchRecordArray,
-          ),
-        );
+        dispatch(allActions.userActions.setDentalSearchRecord(response));
       })
       .catch((error) => {
         console.log('GETSearchRecord error', error);
@@ -639,20 +635,27 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   ) => {
     setLoadingSearchDental(true);
 
+    const iq = "";
+    const sq = searchQueryRef.current;
+
     const dayFilter = tmpDayFilter;
     const timeFilter = tmpTimeFilter;
     const parkingFilter = tmpParkingFilter;
     const holidayFilter = tmpHolidayFilter;
     const category = keywordRef?.current?.category;
 
+    const offset = offsetRef.current;
+    const limit = limitRef.current;
+
     GETDentalTotalSearch({
       jwtToken,
+      iq,
+      sq,
       offset,
       limit,
       lat,
       long,
       category,
-      query,
       sort,
       dayFilter,
       timeFilter,
@@ -680,32 +683,6 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       });
   };
 
-  const getNearDental = () => {
-    const sort = 'd';
-    GETAroundDental({
-      jwtToken,
-      lat,
-      long,
-      sort,
-      timeFilter,
-      dayFilter,
-      holidayFilter,
-      parkingFilter,
-    })
-      .then((response: any) => {
-        console.log(
-          'GETAroundDental response in DentalTotalSearchScreen',
-          response,
-        );
-        setRefreshingDentalFlat(false);
-        dispatch(allActions.dentalMapActions.setSearchedDentalArray(response));
-      })
-      .catch((error) => {
-        console.log('GETAroundDental error', error);
-        setRefreshingDentalFlat(false);
-      });
-  };
-
   const filterNearDental = (
     tmpDayFilter: any,
     tmpTimeFilter: string,
@@ -720,6 +697,9 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     const parkingFilter = tmpParkingFilter;
     const holidayFilter = tmpHolidayFilter;
 
+    const offset = offsetRef.current;
+    const limit = limitRef.current;
+
     GETAroundDental({
       jwtToken,
       lat,
@@ -729,6 +709,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       dayFilter,
       holidayFilter,
       parkingFilter,
+      mapLat,
+      mapLong,
+      offset,
+      limit,
     })
       .then((response) => {
         console.log(
@@ -757,6 +741,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   const changeHolidayFilter = () => {
+    offsetRef.current = 0;
     dispatch(allActions.dentalFilterActions.setHolidayFilter(!holidayFilter));
 
     if (isNearDentalList.current) {
@@ -767,6 +752,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   const changeParkingFilter = () => {
+    offsetRef.current = 0;
     if (parkingFilter === 'y') {
       dispatch(allActions.dentalFilterActions.setParkingFilter('n'));
 
@@ -854,7 +840,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       dispatch(
         allActions.dentalFilterActions.setSelectedDayList(tmpSelectedDayList),
       );
-      offset = 0;
+
+      offsetRef.current = 0;
 
       if (isNearDentalList.current) {
         filterNearDental(
@@ -971,6 +958,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         formattedHourPickerValue + ':' + minutePickerValue + ':00';
 
       if (timeFilter !== formattedTime) {
+        offsetRef.current = 0;
         dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
 
         if (isNearDentalList.current) {
@@ -996,6 +984,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
 
       if (timeFilter !== formattedTime) {
+        offsetRef.current = 0;
         dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
 
         if (isNearDentalList.current) {
@@ -1025,14 +1014,18 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   const onEndReachedDentalFlat = () => {
-    if (
-      !noMoreDentalData.current &&
-      !loadingMoreDental &&
-      !isNearDentalList.current
-    ) {
+    console.log("onEndReachedDentalFlat noMoreDentalData.current", noMoreDentalData.current);
+    console.log("onEndReachedDentalFlat loadingMoreDental", loadingMoreDental);
+    if (!noMoreDentalData.current && !loadingMoreDental) {
+
       setLoadingMoreDental(true);
-      offset = offset + 20;
-      getMoreDentalList();
+      offsetRef.current = offsetRef.current + 15;
+
+      if(!isNearDentalList.current) {
+        getMoreDentalList();
+      } else {
+        getMoreNearDentalList();
+      }
     }
   };
 
@@ -1041,14 +1034,21 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
 
     const category = keywordRef?.current?.category;
 
+    const offset = offsetRef.current;
+    const limit = limitRef.current;
+    
+    const iq = "";
+    const sq = searchQueryRef.current;
+
     GETDentalTotalSearch({
       jwtToken,
+      iq,
+      sq,
       offset,
       limit,
       lat,
       long,
       category,
-      query,
       sort,
       dayFilter,
       timeFilter,
@@ -1056,7 +1056,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       parkingFilter,
     })
       .then((response: any) => {
-        console.log('병원 더불러오기 GETDentalTotalSearch response', response);
+        console.log('주변병원 더불러오기 GETDentalTotalSearch response', response);
         setLoadingMoreDental(false);
 
         if (response.length > 0) {
@@ -1076,15 +1076,66 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       });
   };
 
+  const getMoreNearDentalList = () => {
+    console.log("getMoreNearDentalList offsetRef.current", offsetRef.current);
+
+    const offset = offsetRef.current;
+    const limit = limitRef.current;
+
+    GETAroundDental({
+      jwtToken,
+      offset,
+      limit,
+      lat,
+      long,
+      sort,
+      dayFilter,
+      timeFilter,
+      holidayFilter,
+      parkingFilter,
+      mapLat,
+      mapLong,
+    })
+      .then((response: any) => {
+        console.log('주변 병원 더불러오기 GETAroundDental response', response);
+        console.log("주변 병원 더불러오기 GETAroundDental offset", offset);
+        setLoadingMoreDental(false);
+
+        if (response.length > 0) {
+          noMoreDentalData.current = false;
+          dispatch(
+            allActions.dentalMapActions.addSearchedDentalArray(response),
+          );
+        } else if (response.length === 0) {
+          noMoreDentalData.current = true;
+        }
+      })
+      .catch((error: any) => {
+        setLoadingMoreDental(false);
+        console.log('GETDentalTotalSearch error', error);
+      });
+  };
+
   const onRefreshDentalFlat = () => {
     setRefreshingDentalFlat(true);
-    offset = 0;
+    offsetRef.current = 0;
+    noMoreDentalData.current = false;
+
+    const offset = offsetRef.current;
+    const limit = limitRef.current;
+    const mapLat = route.params?.currentMapLatitude;
+    const mapLong = route.params?.currentMapLongitude;
     const category = keywordRef?.current?.category;
+
+    const iq = query;
+    const sq = searchQueryRef.current;
 
     if (isNearDentalList.current) {
       const sort = 'd';
       GETAroundDental({
         jwtToken,
+        offset,
+        limit,
         lat,
         long,
         sort,
@@ -1092,6 +1143,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         dayFilter,
         holidayFilter,
         parkingFilter,
+        mapLat,
+        mapLong,
       })
         .then((response: any) => {
           console.log('GETAroundDental response in NearDentalMap', response);
@@ -1107,12 +1160,13 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     } else {
       GETDentalTotalSearch({
         jwtToken,
+        iq,
+        sq,
         offset,
         limit,
         lat,
         long,
         category,
-        query,
         sort,
         dayFilter,
         timeFilter,
@@ -1147,18 +1201,27 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     Keyboard.dismiss();
   };
 
-  const selectAutoCompletedKeyword = (keyword: string, category: string) => {
-    console.log('selectAutoCompletedKeyword keyword', keyword);
+  const searchTotalKeyword = ({searchQuery, inputQuery, category}: {searchQuery: string; inputQuery: string; category: string;}) => {
+
+    console.log('selectAutoCompletedKeyword searchQuery', searchQuery);
+    console.log('selectAutoCompletedKeyword inputQuery', inputQuery);
     console.log('selectAutoCompletedKeyword category', category);
 
     Keyboard.dismiss();
-
     setIsFocusedSearchInput(false);
-    setQuery(keyword);
-    searchDental(keyword, category);
+
+    if(category === 'city') {
+      setQuery(inputQuery);
+      searchQueryRef.current = searchQuery
+      searchDental(searchQuery, inputQuery, category);
+
+    } else if(category === 'clinic') {
+      setQuery(inputQuery);
+      searchDental(searchQuery, inputQuery, category);
+    }
 
     keywordRef.current = {
-      name: keyword,
+      name: searchQuery,
       category: category,
     };
   };
@@ -1443,6 +1506,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                 onEndReached={onEndReachedDentalFlat}
                 onEndReachedThreshold={0.5}
                 ListFooterComponent={renderFooterIndicator}
+                keyExtractor={(item, index) => `${index}`}
               />
             )}
             {searchedDentalArray.length === 0 && !loadingSearchDental && (
@@ -1466,7 +1530,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
             deleteAllSearchRecord={deleteAllSearchRecord}
             deleteSingleSearchRecord={deleteSingleSearchRecord}
             searchRecordArray={dentalSearchRecordArray}
-            searchTotalKeyword={selectAutoCompletedKeyword}
+            searchTotalKeyword={searchTotalKeyword}
             query={query}
             autoCompletedKeywordArr={autoCompletedKeywordArr}
           />
