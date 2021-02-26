@@ -39,6 +39,11 @@ const CommunityRoute = ({
 }: Props) => {
   const type = 'SearchResult';
   const limit = 10;
+  const orderList = [
+    {name: '최신순', data: 'createdAt'},
+    {name: '인기순', data: 'popular'},
+  ];
+  const [initialize, setInitialize] = useState(true);
   const [floatVisible, setFloatVisible] = useState(false);
   const [isDataFinish, setIsDataFinish] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -61,6 +66,7 @@ const CommunityRoute = ({
 
   useEffect(() => {
     console.log('selected hometown changed');
+    dispatch(allActions.communityActions.setPosts([]));
     setOrder('createdAt');
     setRegion(selectedHometown.id === -1 ? 'all' : 'residence');
     const form = {
@@ -78,23 +84,12 @@ const CommunityRoute = ({
         type,
         posts: response,
       };
-      if (
-        JSON.stringify(response).replace(
-          /"createdDiff\(second\)\"\:\d*\,/gi,
-          '',
-        ) !==
-        JSON.stringify(postData).replace(
-          /"createdDiff\(second\)\"\:\d*\,/gi,
-          '',
-        )
-      ) {
-        console.log('liked post diff1');
-        LayoutAnimation.configureNext(
-          LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-        );
 
-        dispatch(allActions.communityActions.setPosts(data));
-      }
+      setInitialize(false);
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(100, 'easeInEaseOut', 'opacity'),
+      );
+      dispatch(allActions.communityActions.setPosts(data));
     });
   }, [selectedHometown]);
 
@@ -359,13 +354,16 @@ const CommunityRoute = ({
         toggleSocialScrap={toggleSocialScrap}
         renderHeaderComponent={() =>
           renderHeaderComponent &&
-          renderHeaderComponent(
+          renderHeaderComponent({
             order,
+            orderList,
             selectedHometown,
+            floatAvailable: true,
             onFiltering,
             setFloatVisible,
-            postData.length === 0,
-          )
+            isEmpty: postData.length === 0,
+            initialize,
+          })
         }
       />
       {floatVisible ? (
