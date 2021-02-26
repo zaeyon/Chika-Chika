@@ -2,7 +2,7 @@ import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {Image, Animated, TouchableOpacity} from 'react-native';
+import {Image, Animated, TouchableOpacity, RefreshControl} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -125,10 +125,11 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   const [reviewData, setReviewData] = useState([]);
   const [postData, setPostData] = useState<ReviewData[]>();
-  const [clinicData, setClinicData] = useState([]);
+
+  const [refreshing, setRefreshing] = useState(false);
 
   const [prevOffsetY, setPrevOffsetY] = useState(0);
-  const [scrollDirection, setScrollDirection] = useState('down');
+  const [scrollDirection, setScrollDirection] = useState('up');
   const floatY = useRef(new Animated.Value(0)).current;
 
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
@@ -172,6 +173,11 @@ const HomeScreen = ({navigation, route}: Props) => {
   }, []);
 
   useEffect(() => {
+    Animated.timing(floatY, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
     GETUserNotifications({jwtToken})
       .then((response) => {
         console.log('GETUserNotifications response', response);
@@ -238,7 +244,7 @@ const HomeScreen = ({navigation, route}: Props) => {
       }
     });
 
-    GETSearchRecord(jwtToken, true)
+    GETSearchRecord({jwtToken, true})
       .then((response: any) => {
         console.log('통합검색 검색기록 response', response);
         dispatch(allActions.userActions.setSearchRecord(response));
@@ -247,7 +253,7 @@ const HomeScreen = ({navigation, route}: Props) => {
         console.log('통합검색 검색기록 error', error);
       });
 
-    GETSearchRecord(jwtToken, false)
+    GETSearchRecord({jwtToken, false})
       .then((response: any) => {
         console.log('병원지도검색 검색기록 response', response);
         dispatch(allActions.userActions.setDentalSearchRecord(response));
@@ -257,14 +263,17 @@ const HomeScreen = ({navigation, route}: Props) => {
       });
   }, []);
 
+  
+
   const fetchLocalInfo = useCallback(
-    (selectedHometown) => {
+    (selectedHometown, callback=() => console.log('fetchLocalInfo')) => {
       GETLocalClinicAndReviewCount({
         jwtToken,
         cityId: String(selectedHometown.id),
       }).then((response: any) => {
         setLocalClinicCount(response.residenceClinicsNum);
         setLocalReviewCount(response.residenceReviewsNum);
+        callback()
       });
     },
     [jwtToken],
@@ -317,6 +326,13 @@ const HomeScreen = ({navigation, route}: Props) => {
     },
     [jwtToken],
   );
+  const onRefresh = useCallback(() => {
+    setRefreshing(true)
+    fetchLocalInfo(selectedHometown, () => setRefreshing(false));
+    fetchRecentReviews(selectedHometown);
+    fetchRecentCommunityPosts(selectedHometown);
+  
+  }, [selectedHometown, fetchLocalInfo, fetchRecentReviews, fetchRecentCommunityPosts])
 
   const moveToCommunityDetail = useCallback(
     (postId: number, postType: string) => {
@@ -366,34 +382,16 @@ const HomeScreen = ({navigation, route}: Props) => {
     });
   }, []);
 
-  const moveToReviewDetail = useCallback(
-    (
-      reviewId: number,
-      writer: object,
-      createdAt: string,
-      treatmentArray: Array<object>,
-      ratingObj: object,
-      treatmentDate: string,
-      imageArray: Array<object>,
-      isCurUserLike: boolean,
-      likeCount: number,
-      commentCount: number,
-      isCurUserScrap: boolean,
-      dentalObj: object,
-      visibleElapsedTime: boolean,
-      elapsedTime: string,
-    ) => {
-      console.log('moveToReviewDetail reviewId', reviewId);
+  const moveToReviewDetail = useCallback((reviewId: number) => {
+    console.log('moveToReviewDetail reviewId', reviewId);
 
-      navigation.navigate('ReviewStackScreen', {
-        screen: 'ReviewDetailScreen',
-        params: {
-          reviewId: reviewId,
-        },
-      });
-    },
-    [],
-  );
+    navigation.navigate('ReviewStackScreen', {
+      screen: 'ReviewDetailScreen',
+      params: {
+        reviewId: reviewId,
+      },
+    });
+  }, []);
 
   const moveToHomeTownSetting = useCallback(() => {
     navigation.navigate('HometownSettingScreen');
@@ -402,6 +400,13 @@ const HomeScreen = ({navigation, route}: Props) => {
   return (
     <ContainerView as={SafeAreaView}>
       <ContentScrollView
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          enabled={refreshing}
+        />
+      }
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: hp('9.1%'),
