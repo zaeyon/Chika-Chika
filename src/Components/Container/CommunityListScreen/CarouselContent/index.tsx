@@ -71,7 +71,7 @@ const CarouselContent = ({
         }}
         keyExtractor={(item: any) => String(item.id)}
         showsHorizontalScrollIndicator={false}
-        snapToInterval={350 + 16}
+        snapToInterval={wp('79%') + 16}
         decelerationRate="fast"
         data={postData}
         renderItem={renderPostCardItem}

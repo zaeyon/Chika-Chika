@@ -7,7 +7,7 @@ import {
 } from 'react-native-responsive-screen';
 
 const ContainerView = Styled.View`
-width: ${350}px;
+width: ${wp('79%')}px;
 height: 152px;
 margin-right: 16px;
 padding: 16px;

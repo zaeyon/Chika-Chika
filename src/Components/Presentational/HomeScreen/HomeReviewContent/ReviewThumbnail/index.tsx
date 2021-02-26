@@ -16,7 +16,7 @@ import FastImage from 'react-native-fast-image';
 import {Rating} from 'react-native-ratings';
 
 const ReviewThumbnailContainerView = Styled.View`
-width: ${350}px;
+width: ${wp('79%')}px;
 height: auto;
 border-radius: 8px;
 margin-right: 16px;
