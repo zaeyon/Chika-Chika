@@ -33,7 +33,7 @@ margin-right: 8px;
 `;
 const ReviewThumbnailHeaderText = Styled.Text`
 font-size: 13.5px;
-line-height: 13.5px;
+line-height: 16px;
 font-weight: 500;
 color: #FFFFFF;
 box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.9);
@@ -42,20 +42,20 @@ box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.9);
 const ReviewThumbnailHeaderTimeText = Styled.Text`
 font-style: normal;
 font-weight: 400;
-font-size: 13px;
-line-height: 14px;
+font-size: 13.5px;
+line-height: 16px;
 color: #FFFFFF;
 margin-left: auto;
 box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.9);
 `;
 const ReviewThumbnailContentView = Styled.View`
-padding: 4px 8px 16px 8px;
+padding: 0px 8px 16px 8px;
 `;
 
 const HashTagContainerView = Styled.View`
 width: 100%;
 height: auto;
-padding: 8px 4px;
+padding: 12px 4px;
 flex-direction: row;
 
 `;
@@ -96,7 +96,6 @@ const RatingValueContainer = Styled.View`
 
 flex-direction: row;
 align-items: center;
-
 padding: 0px 4px;
 `;
 

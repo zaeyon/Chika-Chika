@@ -44,6 +44,7 @@ const ReviewRoute = ({
   navigation,
   renderHeaderComponent,
 }: Props) => {
+  const [initialize, setInitialize] = useState(true);
   const [loadingReviewList, setLoadingReviewList] = useState<boolean>(true);
   const [loadingMoreReview, setLoadingMoreReview] = useState<boolean>(false);
   const [noMoreReviewData, setNoMoreReviewData] = useState(false);
@@ -51,6 +52,10 @@ const ReviewRoute = ({
   const [order, setOrder] = useState<string>('createdAt');
   const [region, setRegion] = useState('all');
   const limit = 10;
+  const orderList = [
+    {name: '최신순', data: 'createdAt'},
+    {name: '인기순', data: 'popular'},
+  ];
   const [floatVisible, setFloatVisible] = useState(false);
 
   const [refreshingReviewList, setRefreshingReviewList] = useState<boolean>(
@@ -70,6 +75,7 @@ const ReviewRoute = ({
   });
 
   useEffect(() => {
+    setInitialize(true);
     console.log(selectedHometown);
     setOrder('createdAt');
 
@@ -84,6 +90,9 @@ const ReviewRoute = ({
     };
 
     fetchSearchResult(form, (response: any) => {
+      setInitialize(false);
+      setNoMoreReviewData(response.length === 0);
+      setLoadingMoreReview(false);
       console.log(response);
       GETSearchRecord({jwtToken}).then((response: any) => {
         console.log('fetch record', response);
@@ -106,7 +115,7 @@ const ReviewRoute = ({
     fetchSearchResult(form, (response: any) => {
       console.log('GETReviewList response', response);
       //console.log("offset", offset);
-
+      setNoMoreReviewData(response.length === 0);
       setLoadingReviewList(false);
       setRefreshingReviewList(false);
       //setReviewList(response);
@@ -129,14 +138,8 @@ const ReviewRoute = ({
       console.log('GETReviewList response', response);
       console.log('offset', offset);
 
-      if (response.length > 0) {
-        setNoMoreReviewData(false);
-        /*
-              setReviewList((prevState) => {
-                return [...prevState, ...response]
-              });
-              */
-
+      if (response.length < limit) {
+        setNoMoreReviewData(true);
         dispatch(
           allActions.reviewListActions.setSearchResultReviews([
             ...reviewList,
@@ -144,9 +147,16 @@ const ReviewRoute = ({
           ]),
         );
       } else {
-        setNoMoreReviewData(true);
+        setNoMoreReviewData(false);
+
+        dispatch(
+          allActions.reviewListActions.setSearchResultReviews([
+            ...reviewList,
+            ...response,
+          ]),
+        );
       }
-      setLoadingReviewList(false);
+      setLoadingMoreReview(false);
     });
   }, [reviewList, region, selectedHometown, order, limit, fetchSearchResult]);
 
@@ -164,7 +174,7 @@ const ReviewRoute = ({
 
       fetchSearchResult(form, (response: any) => {
         setNoMoreReviewData(false);
-
+        setLoadingMoreReview(false);
         dispatch(allActions.reviewListActions.setSearchResultReviews(response));
         callback();
       });
@@ -197,13 +207,16 @@ const ReviewRoute = ({
         reviewList={reviewList}
         onEndReachedReviewList={onEndReachedReviewList}
         renderHeaderComponent={() =>
-          renderHeaderComponent(
+          renderHeaderComponent({
             order,
+            orderList,
             selectedHometown,
             onFiltering,
             setFloatVisible,
-            reviewList.length === 0,
-          )
+            floatAvailable: true,
+            isEmpty: noMoreReviewData,
+            initialize,
+          })
         }
       />
 

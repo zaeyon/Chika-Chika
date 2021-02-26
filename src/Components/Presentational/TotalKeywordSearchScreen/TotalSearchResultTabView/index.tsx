@@ -5,6 +5,7 @@ import {
   Dimensions,
   StyleSheet,
   TouchableWithoutFeedback,
+  ActivityIndicator,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -113,6 +114,13 @@ color: #9AA2A9;
 margin-bottom: 16px;
 `;
 
+const ActivityIndicatorContianerView = Styled.View`
+width: ${wp('100%')}px;
+height: ${hp('70%')}px; 
+justify-content: center;
+align-items: center;
+`;
+
 interface RouteProps {
   result: any;
   fetchSearchResult: (
@@ -144,11 +152,6 @@ interface FetchProps {
   limit: number;
 }
 interface Props {
-  searchResult: any;
-  reviewSearchResult: any;
-  communitySearchResult: any;
-  clinicSearchResult: any;
-  eventSearchResult: any;
   fetchSearchResult: (
     {
       mode,
@@ -165,15 +168,7 @@ interface Props {
   navigation: any;
 }
 
-const TotalSearchResultTabView = ({
-  searchResult,
-  communitySearchResult,
-  reviewSearchResult,
-  clinicSearchResult,
-  eventSearchResult,
-  fetchSearchResult,
-  navigation,
-}: Props) => {
+const TotalSearchResultTabView = ({fetchSearchResult, navigation}: Props) => {
   const [tabIndex, setTabIndex] = useState<number>(0);
   const [routes] = useState([
     // {key: 'total', title: '통합검색'},
@@ -204,44 +199,61 @@ const TotalSearchResultTabView = ({
   );
 
   const renderHeaderComponent = useCallback(
-    (order, selectedHometown, onFiltering, setFloatVisible, isEmpty) => (
+    ({
+      order,
+      orderList,
+      selectedHometown,
+      onFiltering,
+      floatAvailable = false,
+      setFloatVisible,
+      isEmpty,
+      initialize,
+    }) => (
       <>
         <FilterContainer>
           <OrderFilterContainer>
-            <TouchableWithoutFeedback onPress={() => onFiltering('popular')}>
+            <TouchableWithoutFeedback
+              onPress={() => onFiltering(orderList[0].data)}>
               <OrderFilterItemContainer
-                style={order === 'popular' && {borderColor: '#00D1FF'}}>
+                style={order === orderList[0].data && {borderColor: '#00D1FF'}}>
                 <OrderFilterText
-                  style={order === 'popular' && {color: '#00D1FF'}}>
-                  {'인기순'}
+                  style={order === orderList[0].data && {color: '#00D1FF'}}>
+                  {orderList[0].name}
                 </OrderFilterText>
               </OrderFilterItemContainer>
             </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => onFiltering('createdAt')}>
+            <TouchableWithoutFeedback
+              onPress={() => onFiltering(orderList[1].data)}>
               <OrderFilterItemContainer
                 style={[
                   {marginLeft: 6},
-                  order === 'createdAt' && {borderColor: '#00D1FF'},
+                  order === orderList[1].data && {borderColor: '#00D1FF'},
                 ]}>
                 <OrderFilterText
-                  style={order === 'createdAt' && {color: '#00D1FF'}}>
-                  {'최신순'}
+                  style={order === orderList[1].data && {color: '#00D1FF'}}>
+                  {orderList[1].name}
                 </OrderFilterText>
               </OrderFilterItemContainer>
             </TouchableWithoutFeedback>
           </OrderFilterContainer>
-          <TouchableOpacity onPress={() => setFloatVisible(true)}>
-            <LocationFilterContainer>
-              <LocationFilterText>
-                {selectedHometown.emdName}
-              </LocationFilterText>
-              <LocationFilterDropdownIcon
-                source={require('~/Assets/Images/Arrow/ic_dropdown.png')}
-              />
-            </LocationFilterContainer>
-          </TouchableOpacity>
+          {floatAvailable ? (
+            <TouchableWithoutFeedback onPress={() => setFloatVisible(true)}>
+              <LocationFilterContainer>
+                <LocationFilterText>
+                  {selectedHometown.emdName}
+                </LocationFilterText>
+                <LocationFilterDropdownIcon
+                  source={require('~/Assets/Images/Arrow/ic_dropdown.png')}
+                />
+              </LocationFilterContainer>
+            </TouchableWithoutFeedback>
+          ) : null}
         </FilterContainer>
-        {isEmpty ? (
+        {initialize ? (
+          <ActivityIndicatorContianerView>
+            <ActivityIndicator />
+          </ActivityIndicatorContianerView>
+        ) : isEmpty ? (
           <EmptyIndicatorContainerView>
             <EmptyIndicatorView>
               <EmptyIndicatorImage
@@ -287,6 +299,7 @@ const TotalSearchResultTabView = ({
           <ClinicRoute
             fetchSearchResult={fetchSearchResult}
             navigation={navigation}
+            renderHeaderComponent={renderHeaderComponent}
           />
         );
       // case 'event':

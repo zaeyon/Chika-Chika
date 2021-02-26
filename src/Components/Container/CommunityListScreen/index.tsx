@@ -119,6 +119,24 @@ const CommunityListScreen = ({navigation, route}: Props) => {
   }, []);
 
   useEffect(() => {
+    if (onMessage) {
+      Animated.timing(alertScale, {
+        toValue: 1,
+        duration: 100,
+
+        useNativeDriver: true,
+      }).start(() => {
+        Animated.timing(alertScale, {
+          toValue: 0,
+          duration: 100,
+
+          useNativeDriver: true,
+        }).start();
+      });
+    }
+  }, [onMessage]);
+
+  useEffect(() => {
     console.log('question initialize');
     const questionform = {
       type: 'Question',
@@ -166,7 +184,11 @@ const CommunityListScreen = ({navigation, route}: Props) => {
           <HeaderIconTouchableOpacity onPress={moveToTotalKeywordSearch}>
             <Image source={require('~/Assets/Images/TopTab/ic/search.png')} />
           </HeaderIconTouchableOpacity>
-          <HeaderIconTouchableOpacity onPress={() => moveToNotificationList()}>
+          <HeaderIconTouchableOpacity
+            onPress={() => {
+              setOnMessage(false);
+              moveToNotificationList();
+            }}>
             <Animated.Image
               style={{
                 transform: [

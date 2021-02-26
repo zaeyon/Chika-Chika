@@ -624,6 +624,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
             fontSize: 16,
             lineHeight: 24,
           }}
+          pressOpacity={1}
         />
       </TabBarView>
     );
@@ -676,6 +677,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
                 />
               </ProfileImageView>
               <ProfileReservationTouchableOpacity
+                activeOpacity={0.5}
                 onPress={() => this.props.moveToReservationTabScreen()}>
                 <ProfileReservationText>
                   {this.props.reservationsNum}
@@ -686,6 +688,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
               </ProfileReservationTouchableOpacity>
               <VerticalPartitionView />
               <ProfileReservationTouchableOpacity
+                activeOpacity={0.5}
                 onPress={() => this.props.moveToSavedHospitalTabScreen()}>
                 <ProfileReservationText>
                   {this.props.savedHospitalsNum}

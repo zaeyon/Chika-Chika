@@ -246,6 +246,7 @@ const AutoCompletedTotalKeywordFlatList = ({
             onPress={() =>
               searchTotalKeyword({
                 keyword: item.originalName,
+                searchQuery: item.originalName,
                 category: item.category,
                 tagId: item.id,
               })

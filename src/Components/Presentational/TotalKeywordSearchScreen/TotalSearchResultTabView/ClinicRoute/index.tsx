@@ -6,6 +6,8 @@ import {
   LayoutAnimation,
   PermissionsAndroid,
   Platform,
+  RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -21,6 +23,13 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import DentalListItem from '~/Components/Presentational/DentalListItem';
 
 // Routes
+
+const ActivityIndicatorContianerView = Styled.View`
+width: ${wp('100%')}px;
+height: auto;
+align-items: center;
+padding: 10px 0px;
+`;
 
 const ContainerView = Styled.View`
 flex: 1;
@@ -70,13 +79,18 @@ const ClinicRoute = ({
 }: Props) => {
   const type = 'SearchResult';
   const limit = 10;
+  const orderList = [
+    {name: '거리순', data: 'distance'},
+    {name: '정확도순', data: 'accuracy'},
+  ];
+  const [initialize, setInitialize] = useState(true);
   const [floatVisible, setFloatVisible] = useState(false);
   const [isDataFinish, setIsDataFinish] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isFiltering, setIsFiltering] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
   const [region, setRegion] = useState('all');
-  const [order, setOrder] = useState('createdAt');
+  const [order, setOrder] = useState('distance');
 
   const [clinics, setClinics] = useState([]);
 
@@ -91,17 +105,41 @@ const ClinicRoute = ({
 
   useEffect(() => {
     console.log('clinic request');
-    setOrder('createdAt');
     setRegion(selectedHometown.id === -1 ? 'all' : 'residence');
 
-    getUserCurrentLocation(({lat, long}) => {
+    getUserCurrentLocation(({lat, long}: any) => {
       const form = {
         lat,
         long,
         pathType: 'clinic',
         region: selectedHometown.id === -1 ? 'all' : 'residence',
         cityId: String(selectedHometown.id),
-        order: 'createdAt',
+        order: 'distance',
+        offset: 0,
+        limit: 10,
+      };
+      fetchSearchResult(form, (response: any) => {
+        setInitialize(false);
+        console.log('clinics', response);
+        LayoutAnimation.configureNext(
+          LayoutAnimation.create(100, 'easeInEaseOut', 'opacity'),
+        );
+        setClinics(response);
+      });
+    });
+  }, []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setIsDataFinish(false);
+    getUserCurrentLocation(({lat, long}: any) => {
+      const form = {
+        lat,
+        long,
+        pathType: 'clinic',
+        region: selectedHometown.id === -1 ? 'all' : 'residence',
+        cityId: String(selectedHometown.id),
+        order,
         offset: 0,
         limit: 10,
       };
@@ -111,9 +149,53 @@ const ClinicRoute = ({
           LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
         );
         setClinics(response);
+        setRefreshing(false);
       });
     });
-  }, []);
+  }, [order, selectedHometown]);
+
+  const onEndReached = useCallback(
+    (info: any) => {
+      if (isDataFinish || !clinics.length || clinics.length % limit !== 0) {
+        return;
+      }
+      if (!isEndReached) {
+        setIsEndReached(true);
+        const pageIndex = Math.floor(clinics.length / 10);
+
+        getUserCurrentLocation(({lat, long}: any) => {
+          const form = {
+            lat,
+            long,
+            pathType: 'clinic',
+            region: selectedHometown.id === -1 ? 'all' : 'residence',
+            cityId: String(selectedHometown.id),
+            order,
+            offset: pageIndex * limit,
+            limit,
+          };
+
+          fetchSearchResult(form, (response: any) => {
+            if (response.length === 0) {
+              setIsDataFinish(true);
+            }
+            setClinics((prev) => [...prev, ...response]);
+            setIsEndReached(false);
+          });
+        });
+      }
+    },
+    [
+      isEndReached,
+      clinics,
+      order,
+      limit,
+      jwtToken,
+      region,
+      selectedHometown,
+      fetchSearchResult,
+    ],
+  );
 
   const getUserCurrentLocation = useCallback(async (callback: any) => {
     if (Platform.OS == 'android') {
@@ -202,45 +284,29 @@ const ClinicRoute = ({
     );
   }, []);
 
-  const onFiltering = useCallback((order: string) => {}, []);
+  const onFiltering = useCallback(
+    (order: string) => {
+      setOrder(order);
+      getUserCurrentLocation(({lat, long}: any) => {
+        const form = {
+          lat,
+          long,
+          pathType: 'clinic',
+          region: selectedHometown.id === -1 ? 'all' : 'residence',
+          cityId: String(selectedHometown.id),
+          order,
+          offset: 0,
+          limit: 10,
+        };
+        fetchSearchResult(form, (response: any) => {
+          setIsDataFinish(false);
+          console.log('clinics', response);
 
-  const renderClinicHeader = useCallback(
-    () => (
-      <FilterContainer>
-        <OrderFilterContainer>
-          <TouchableWithoutFeedback
-            onPress={() => {
-              ReactNativeHapticFeedback.trigger('impactLight');
-              onFiltering('distance');
-            }}>
-            <OrderFilterItemContainer
-              style={order === 'distance' && {borderColor: '#00D1FF'}}>
-              <OrderFilterText
-                style={order === 'distance' && {color: '#00D1FF'}}>
-                {'거리순'}
-              </OrderFilterText>
-            </OrderFilterItemContainer>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback
-            onPress={() => {
-              ReactNativeHapticFeedback.trigger('impactLight');
-              onFiltering('accuracy');
-            }}>
-            <OrderFilterItemContainer
-              style={[
-                {marginLeft: 6},
-                order === 'accuracy' && {borderColor: '#00D1FF'},
-              ]}>
-              <OrderFilterText
-                style={order === 'accuracy' && {color: '#00D1FF'}}>
-                {'정확도순'}
-              </OrderFilterText>
-            </OrderFilterItemContainer>
-          </TouchableWithoutFeedback>
-        </OrderFilterContainer>
-      </FilterContainer>
-    ),
-    [],
+          setClinics(response);
+        });
+      });
+    },
+    [selectedHometown, getUserCurrentLocation, fetchSearchResult],
   );
 
   return (
@@ -249,7 +315,36 @@ const ClinicRoute = ({
         data={clinics}
         renderItem={renderClinicItem}
         keyExtractor={(item: any) => String(item.id)}
-        ListHeaderComponent={renderClinicHeader}
+        ListHeaderComponent={
+          renderHeaderComponent &&
+          renderHeaderComponent({
+            order,
+            orderList,
+            selectedHometown,
+            floatAvailable: false,
+            onFiltering,
+            setFloatVisible,
+            isEmpty: clinics.length === 0,
+            initialize,
+          })
+        }
+        ListFooterComponent={
+          isEndReached ? (
+            <ActivityIndicatorContianerView>
+              <ActivityIndicator />
+            </ActivityIndicatorContianerView>
+          ) : null
+        }
+        scrollEventThrottle={16}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={2}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            enabled={refreshing}
+          />
+        }
       />
     </ContainerView>
   );

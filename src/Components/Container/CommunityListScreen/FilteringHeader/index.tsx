@@ -111,14 +111,14 @@ const FilteringHeader = ({
             </OrderFilterItemContainer>
           </TouchableWithoutFeedback>
         </OrderFilterContainer>
-        <TouchableOpacity onPress={() => setFloatVisible(true)}>
+        <TouchableWithoutFeedback onPress={() => setFloatVisible(true)}>
           <LocationFilterContainer>
             <LocationFilterText>{selectedHometown.emdName}</LocationFilterText>
             <LocationFilterDropdownIcon
               source={require('~/Assets/Images/Arrow/ic_dropdown.png')}
             />
           </LocationFilterContainer>
-        </TouchableOpacity>
+        </TouchableWithoutFeedback>
       </FilterContainer>
       {floatVisible ? (
         <LocationSelection
