@@ -66,6 +66,7 @@ const LikedPostsTabScreen = ({navigation, route}: Props) => {
             fontSize: 16,
             lineHeight: 24,
           },
+          pressOpacity: 1,
         }}>
         <Tab.Screen name="후기글" component={LikedReviewScreen} />
         <Tab.Screen name="수다글" component={LikedCommunityPostScreen} />

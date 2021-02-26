@@ -601,6 +601,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
           fontSize: 16,
           lineHeight: 24,
         }}
+        pressOpacity={1}
       />
     </TabBarView>
   );
