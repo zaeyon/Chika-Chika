@@ -1,10 +1,5 @@
 import React, {useState, useCallback, useMemo, useEffect} from 'react';
-import {
-  ActivityIndicator,
-  Image,
-  TouchableWithoutFeedback,
-  LayoutAnimation,
-} from 'react-native';
+import {ActivityIndicator, Image, TouchableWithoutFeedback} from 'react-native';
 import Styled from 'styled-components/native';
 import ImageResizer from 'react-native-image-resizer';
 import {

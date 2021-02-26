@@ -1,6 +1,11 @@
 import React, {useEffect, useCallback, useState} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, LayoutAnimation} from 'react-native';
+import {
+  TouchableWithoutFeedback,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {
   widthPercentageToDP as wp,
@@ -275,6 +280,13 @@ const BannerImage = Styled.Image`
 width: 100%;
 border-radius: 8px;
 `;
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 interface Props {
   navigation: any;

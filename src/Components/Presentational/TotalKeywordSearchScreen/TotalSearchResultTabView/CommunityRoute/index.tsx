@@ -4,6 +4,8 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   LayoutAnimation,
+  Platform,
+  UIManager,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -25,6 +27,13 @@ const ContainerView = Styled.View`
 flex: 1;
 background-color: #F5F7F9;
 `;
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 interface Props {
   fetchSearchResult: any;
@@ -51,6 +60,7 @@ const CommunityRoute = ({
   const [isEndReached, setIsEndReached] = useState(false);
   const [region, setRegion] = useState('all');
   const [order, setOrder] = useState('createdAt');
+  const [pageIndex, setPageIndex] = useState(1);
 
   const dispatch = useDispatch();
 
@@ -66,6 +76,7 @@ const CommunityRoute = ({
 
   useEffect(() => {
     console.log('selected hometown changed');
+    setPageIndex(1);
     dispatch(allActions.communityActions.setPosts([]));
     setOrder('createdAt');
     setRegion(selectedHometown.id === -1 ? 'all' : 'residence');
@@ -95,6 +106,7 @@ const CommunityRoute = ({
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+    setPageIndex(1);
     const form = {
       pathType: 'community',
       communityType: 'All',
@@ -147,7 +159,6 @@ const CommunityRoute = ({
       }
       if (!isEndReached) {
         setIsEndReached(true);
-        const pageIndex = Math.floor(postData.length / 10);
 
         const form = {
           pathType: 'community',
@@ -174,6 +185,7 @@ const CommunityRoute = ({
     },
     [
       isEndReached,
+      pageIndex,
       postData,
       order,
       limit,
@@ -228,6 +240,7 @@ const CommunityRoute = ({
   const onFiltering = useCallback(
     (searchOrder: string, callback = () => console.log('filtered')) => {
       setOrder(searchOrder);
+      setPageIndex(1);
       const form = {
         pathType: 'community',
         communityType: 'All',

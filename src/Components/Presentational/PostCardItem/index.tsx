@@ -149,11 +149,7 @@ const PostCardItem = ({
   }, []);
 
   const formatHashTag = useCallback((text: string, index: number) => {
-    return (
-      <TouchableWithoutFeedback key={text + index}>
-        <HashTagText>{'#' + text}</HashTagText>
-      </TouchableWithoutFeedback>
-    );
+    return <HashTagText key={text + index}>{'#' + text}</HashTagText>;
   }, []);
 
   const formatDescription = useCallback((oldDescription: string) => {

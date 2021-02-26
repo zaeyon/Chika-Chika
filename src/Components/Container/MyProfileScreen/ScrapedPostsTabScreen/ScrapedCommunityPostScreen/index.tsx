@@ -1,6 +1,11 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
-import {LayoutAnimation, ActivityIndicator} from 'react-native';
+import {
+  LayoutAnimation,
+  ActivityIndicator,
+  Platform,
+  UIManager,
+} from 'react-native';
 //Local Component
 
 // Redux
@@ -37,6 +42,13 @@ font-weight: normal;
 font-size: 16px;
 color: #9AA2A9;
 `;
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 interface Props {
   navigation: any;
@@ -91,9 +103,7 @@ const ScrapedCommunityPostScreen = ({navigation, route}: Props) => {
       //   )
       // ) {
       console.log('Scraped post diff');
-      LayoutAnimation.configureNext(
-        LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-      );
+
       dispatch(allActions.communityActions.setPosts(form));
       // }
       setIsRefreshing(false);

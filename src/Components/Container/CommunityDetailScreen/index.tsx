@@ -3,8 +3,8 @@ import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  View,
+  Platform,
+  UIManager,
   Animated,
   LayoutAnimation,
   RefreshControl,
@@ -93,6 +93,13 @@ height: 1px;
 background: #E2E6ED;
 `;
 
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 interface Props {
   navigation: any;
   route: any;
@@ -140,7 +147,6 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   const [postData, setPostData] = useState(
     postList?.find((item: any) => item.id === route.params.id),
   );
-  const [categoryTitle, setCategoryTitle] = useState(postData?.type);
 
   const dispatch = useDispatch();
 
@@ -151,7 +157,6 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
     if (newPostData) {
       console.log('hi');
       setPostData(newPostData);
-      setCategoryTitle(newPostData.type);
     }
   }, [postList]);
 
@@ -433,13 +438,13 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   }, [postData]);
 
   const formatCategory = useCallback(() => {
-    switch (categoryTitle) {
+    switch (postData?.type) {
       case 'Question':
         return '질문방';
       case 'FreeTalk':
         return '수다방';
     }
-  }, [categoryTitle]);
+  }, [postData]);
 
   if (postData) {
     return (

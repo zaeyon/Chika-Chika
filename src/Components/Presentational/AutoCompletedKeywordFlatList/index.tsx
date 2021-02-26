@@ -232,10 +232,11 @@ const AutoCompletedTotalKeywordFlatList = ({
   const renderResultItem = useCallback(
     ({item, index}: any) => {
       if (item.category === 'clinic') {
-        const splitedItemName = item.originalName.split('');
-        const splitedQuery = inputQuery.split('');
         const startIndex = item.originalName.indexOf(inputQuery);
         const endIndex = startIndex + (inputQuery.length - 1);
+
+        const addressStartIndex = item.local.indexOf(inputQuery);
+        const addressEndIndex = addressStartIndex + (inputQuery.length - 1);
 
         return (
           <TouchableHighlight
@@ -255,41 +256,57 @@ const AutoCompletedTotalKeywordFlatList = ({
               <RepresentIcon
                 source={require('~/Assets/Images/Search/ic_dentalKeyword.png')}
               />
-              {splitedItemName.map((item: any, index: number) => {
-                if (
-                  startIndex <= index &&
-                  index <= endIndex &&
-                  startIndex !== -1
-                ) {
-                  return (
-                    <AutoCompletedKeywordText
-                      style={{color: '#00D1FF'}}
-                      key={item + String(index)}>
-                      {item}
-                    </AutoCompletedKeywordText>
-                  );
-                } else {
-                  return (
-                    <AutoCompletedKeywordText key={item + String(index)}>
-                      {item}
-                    </AutoCompletedKeywordText>
-                  );
-                }
-              })}
+              {startIndex !== -1 ? (
+                <>
+                  <AutoCompletedKeywordText key={item.originalName + String(1)}>
+                    {item.originalName.slice(0, startIndex)}
+                  </AutoCompletedKeywordText>
+                  <AutoCompletedKeywordText
+                    key={item.originalName + String(2)}
+                    style={{color: '#00D1FF'}}>
+                    {item.originalName.slice(startIndex, endIndex + 1)}
+                  </AutoCompletedKeywordText>
+                  <AutoCompletedKeywordText key={item.originalName + String(3)}>
+                    {item.originalName.slice(endIndex + 1)}
+                  </AutoCompletedKeywordText>
+                </>
+              ) : (
+                <AutoCompletedKeywordText key={item.originalName + String(1)}>
+                  {item.originalName}
+                </AutoCompletedKeywordText>
+              )}
+
               <AutoCompletedKeywordDescriptionView>
-                <AutoCompletedKeywordDescriptionText numberOfLines={1}>
-                  {item.local}
-                </AutoCompletedKeywordDescriptionText>
+                {addressStartIndex !== -1 ? (
+                  <>
+                    <AutoCompletedKeywordDescriptionText
+                      key={item.local + String(1)}>
+                      {item.local.slice(0, addressStartIndex)}
+                    </AutoCompletedKeywordDescriptionText>
+                    <AutoCompletedKeywordDescriptionText
+                      key={item.local + String(2)}
+                      style={{color: '#00D1FF'}}>
+                      {item.local.slice(addressStartIndex, addressEndIndex + 1)}
+                    </AutoCompletedKeywordDescriptionText>
+                    <AutoCompletedKeywordDescriptionText
+                      key={item.local + String(3)}>
+                      {item.local.slice(addressEndIndex + 1)}
+                    </AutoCompletedKeywordDescriptionText>
+                  </>
+                ) : (
+                  <AutoCompletedKeywordDescriptionText
+                    key={item.local + String(1)}>
+                    {item.local}
+                  </AutoCompletedKeywordDescriptionText>
+                )}
               </AutoCompletedKeywordDescriptionView>
             </AutoCompletedKeywordItemContainer>
           </TouchableHighlight>
         );
       } else if (item.category === 'city') {
-        const splitedItemName = item.name.split('');
         const startIndex = item.name.indexOf(inputQuery);
         const endIndex = startIndex + (inputQuery.length - 1);
 
-        const splitedAddress = item.fullAddress.split('');
         const addressStartIndex = item.fullAddress.indexOf(inputQuery);
         const addressEndIndex = addressStartIndex + (inputQuery.length - 1);
 
@@ -311,56 +328,56 @@ const AutoCompletedTotalKeywordFlatList = ({
               <RepresentIcon
                 source={require('~/Assets/Images/Search/ic_locationKeyword.png')}
               />
-              {splitedItemName.map((item: any, index: number) => {
-                if (
-                  startIndex <= index &&
-                  index <= endIndex &&
-                  startIndex !== -1
-                ) {
-                  return (
-                    <AutoCompletedKeywordText
-                      style={{color: '#00D1FF'}}
-                      key={item + String(index)}>
-                      {item}
-                    </AutoCompletedKeywordText>
-                  );
-                } else {
-                  return (
-                    <AutoCompletedKeywordText key={item + String(index)}>
-                      {item}
-                    </AutoCompletedKeywordText>
-                  );
-                }
-              })}
+              {startIndex !== -1 ? (
+                <>
+                  <AutoCompletedKeywordText key={item.name + String(1)}>
+                    {item.name.slice(0, startIndex)}
+                  </AutoCompletedKeywordText>
+                  <AutoCompletedKeywordText
+                    key={item.name + String(2)}
+                    style={{color: '#00D1FF'}}>
+                    {item.name.slice(startIndex, endIndex + 1)}
+                  </AutoCompletedKeywordText>
+                  <AutoCompletedKeywordText key={item.name + String(3)}>
+                    {item.name.slice(endIndex + 1)}
+                  </AutoCompletedKeywordText>
+                </>
+              ) : (
+                <AutoCompletedKeywordText key={item.name + String(1)}>
+                  {item.name}
+                </AutoCompletedKeywordText>
+              )}
               <AutoCompletedKeywordDescriptionView>
-                {splitedAddress.map((item: any, index: number) => {
-                  if (
-                    addressStartIndex <= index &&
-                    index <= addressEndIndex &&
-                    addressStartIndex !== -1
-                  ) {
-                    return (
-                      <AutoCompletedKeywordDescriptionText
-                        style={{color: '#00D1FF'}}
-                        key={item + String(index)}>
-                        {item}
-                      </AutoCompletedKeywordDescriptionText>
-                    );
-                  } else {
-                    return (
-                      <AutoCompletedKeywordDescriptionText
-                        key={item + String(index)}>
-                        {item}
-                      </AutoCompletedKeywordDescriptionText>
-                    );
-                  }
-                })}
+                {addressStartIndex !== -1 ? (
+                  <>
+                    <AutoCompletedKeywordDescriptionText
+                      key={item.fullAddress + String(1)}>
+                      {item.fullAddress.slice(0, addressStartIndex)}
+                    </AutoCompletedKeywordDescriptionText>
+                    <AutoCompletedKeywordDescriptionText
+                      key={item.fullAddress + String(2)}
+                      style={{color: '#00D1FF'}}>
+                      {item.fullAddress.slice(
+                        addressStartIndex,
+                        addressEndIndex + 1,
+                      )}
+                    </AutoCompletedKeywordDescriptionText>
+                    <AutoCompletedKeywordDescriptionText
+                      key={item.fullAddress + String(3)}>
+                      {item.fullAddress.slice(addressEndIndex + 1)}
+                    </AutoCompletedKeywordDescriptionText>
+                  </>
+                ) : (
+                  <AutoCompletedKeywordDescriptionText
+                    key={item.fullAddress + String(1)}>
+                    {item.fullAddress}
+                  </AutoCompletedKeywordDescriptionText>
+                )}
               </AutoCompletedKeywordDescriptionView>
             </AutoCompletedKeywordItemContainer>
           </TouchableHighlight>
         );
       } else if (item.category === 'treatment') {
-        const splitedItemName = item.name.split('');
         const startIndex = item.name.indexOf(inputQuery);
         const endIndex = startIndex + (inputQuery.length - 1);
 
@@ -381,32 +398,29 @@ const AutoCompletedTotalKeywordFlatList = ({
               <RepresentIcon
                 source={require('~/Assets/Images/Search/ic_treatmentKeyword.png')}
               />
-              {splitedItemName.map((item: any, index: number) => {
-                if (
-                  startIndex <= index &&
-                  index <= endIndex &&
-                  startIndex !== -1
-                ) {
-                  return (
-                    <AutoCompletedKeywordText
-                      style={{color: '#00D1FF'}}
-                      key={item + String(index)}>
-                      {item}
-                    </AutoCompletedKeywordText>
-                  );
-                } else {
-                  return (
-                    <AutoCompletedKeywordText key={item + String(index)}>
-                      {item}
-                    </AutoCompletedKeywordText>
-                  );
-                }
-              })}
+              {startIndex !== -1 ? (
+                <>
+                  <AutoCompletedKeywordText key={item.name + String(1)}>
+                    {item.name.slice(0, startIndex)}
+                  </AutoCompletedKeywordText>
+                  <AutoCompletedKeywordText
+                    key={item.name + String(2)}
+                    style={{color: '#00D1FF'}}>
+                    {item.name.slice(startIndex, endIndex + 1)}
+                  </AutoCompletedKeywordText>
+                  <AutoCompletedKeywordText key={item.name + String(3)}>
+                    {item.name.slice(endIndex + 1)}
+                  </AutoCompletedKeywordText>
+                </>
+              ) : (
+                <AutoCompletedKeywordText key={item.name + String(1)}>
+                  {item.name}
+                </AutoCompletedKeywordText>
+              )}
             </AutoCompletedKeywordItemContainer>
           </TouchableHighlight>
         );
       } else if (item.category === 'symptom') {
-        const splitedItemName = item.name.split('');
         const startIndex = item.name.indexOf(inputQuery);
         const endIndex = startIndex + (inputQuery.length - 1);
 
@@ -427,32 +441,29 @@ const AutoCompletedTotalKeywordFlatList = ({
               <RepresentIcon
                 source={require('~/Assets/Images/Search/ic_symptomKeyword.png')}
               />
-              {splitedItemName.map((item: any, index: number) => {
-                if (
-                  startIndex <= index &&
-                  index <= endIndex &&
-                  startIndex !== -1
-                ) {
-                  return (
-                    <AutoCompletedKeywordText
-                      style={{color: '#00D1FF'}}
-                      key={item + String(index)}>
-                      {item}
-                    </AutoCompletedKeywordText>
-                  );
-                } else {
-                  return (
-                    <AutoCompletedKeywordText key={item + String(index)}>
-                      {item}
-                    </AutoCompletedKeywordText>
-                  );
-                }
-              })}
+              {startIndex !== -1 ? (
+                <>
+                  <AutoCompletedKeywordText key={item.name + String(1)}>
+                    {item.name.slice(0, startIndex)}
+                  </AutoCompletedKeywordText>
+                  <AutoCompletedKeywordText
+                    key={item.name + String(2)}
+                    style={{color: '#00D1FF'}}>
+                    {item.name.slice(startIndex, endIndex + 1)}
+                  </AutoCompletedKeywordText>
+                  <AutoCompletedKeywordText key={item.name + String(3)}>
+                    {item.name.slice(endIndex + 1)}
+                  </AutoCompletedKeywordText>
+                </>
+              ) : (
+                <AutoCompletedKeywordText key={item.name + String(1)}>
+                  {item.name}
+                </AutoCompletedKeywordText>
+              )}
             </AutoCompletedKeywordItemContainer>
           </TouchableHighlight>
         );
       } else if (item.category === 'general') {
-        const splitedItemName = item.name.split('');
         const startIndex = item.name.indexOf(inputQuery);
         const endIndex = startIndex + (inputQuery.length - 1);
 
@@ -473,27 +484,25 @@ const AutoCompletedTotalKeywordFlatList = ({
               <RepresentIcon
                 source={require('~/Assets/Images/Search/ic_generalKeyword.png')}
               />
-              {splitedItemName.map((item: any, index: number) => {
-                if (
-                  startIndex <= index &&
-                  index <= endIndex &&
-                  startIndex !== -1
-                ) {
-                  return (
-                    <AutoCompletedKeywordText
-                      style={{color: '#00D1FF'}}
-                      key={item + String(index)}>
-                      {item}
-                    </AutoCompletedKeywordText>
-                  );
-                } else {
-                  return (
-                    <AutoCompletedKeywordText key={item + String(index)}>
-                      {item}
-                    </AutoCompletedKeywordText>
-                  );
-                }
-              })}
+              {startIndex !== -1 ? (
+                <>
+                  <AutoCompletedKeywordText key={item.name + String(1)}>
+                    {item.name.slice(0, startIndex)}
+                  </AutoCompletedKeywordText>
+                  <AutoCompletedKeywordText
+                    key={item.name + String(2)}
+                    style={{color: '#00D1FF'}}>
+                    {item.name.slice(startIndex, endIndex + 1)}
+                  </AutoCompletedKeywordText>
+                  <AutoCompletedKeywordText key={item.name + String(3)}>
+                    {item.name.slice(endIndex + 1)}
+                  </AutoCompletedKeywordText>
+                </>
+              ) : (
+                <AutoCompletedKeywordText key={item.name + String(1)}>
+                  {item.name}
+                </AutoCompletedKeywordText>
+              )}
             </AutoCompletedKeywordItemContainer>
           </TouchableHighlight>
         );
@@ -554,7 +563,6 @@ const AutoCompletedTotalKeywordFlatList = ({
       </RecentKeywordContainer>
       {inputQuery !== '' && (
         <SearchResultFlatList
-          ListHeaderComponent={renderListHeader()}
           keyboardShouldPersistTaps="always"
           keyboardDismissMode="on-drag"
           data={autoCompletedKeywordArr}

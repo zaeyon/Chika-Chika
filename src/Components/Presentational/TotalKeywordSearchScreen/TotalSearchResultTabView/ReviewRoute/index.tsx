@@ -45,6 +45,7 @@ const ReviewRoute = ({
   renderHeaderComponent,
 }: Props) => {
   const [initialize, setInitialize] = useState(true);
+  const [pageIndex, setPageIndex] = useState(1);
   const [loadingReviewList, setLoadingReviewList] = useState<boolean>(true);
   const [loadingMoreReview, setLoadingMoreReview] = useState<boolean>(false);
   const [noMoreReviewData, setNoMoreReviewData] = useState(false);
@@ -75,6 +76,8 @@ const ReviewRoute = ({
   });
 
   useEffect(() => {
+    dispatch(allActions.reviewListActions.setSearchResultReviews([]));
+    setPageIndex(1);
     setInitialize(true);
     console.log(selectedHometown);
     setOrder('createdAt');
@@ -111,7 +114,7 @@ const ReviewRoute = ({
       offset: 0,
       limit,
     };
-
+    setPageIndex(1);
     fetchSearchResult(form, (response: any) => {
       console.log('GETReviewList response', response);
       //console.log("offset", offset);
@@ -124,19 +127,18 @@ const ReviewRoute = ({
   }, [limit, region, order, selectedHometown, fetchSearchResult]);
 
   const getMoreReviewList = useCallback(() => {
-    const offset = reviewList.length;
     const form = {
       pathType: 'review',
       region,
       cityId: String(selectedHometown.id),
       order,
-      offset,
+      offset: pageIndex * 10,
       limit,
     };
 
     fetchSearchResult(form, (response: any) => {
-      console.log('GETReviewList response', response);
-      console.log('offset', offset);
+      setPageIndex((prev) => prev + 1);
+      console.log('GETReviewList response', response.length);
 
       if (response.length < limit) {
         setNoMoreReviewData(true);
@@ -158,11 +160,20 @@ const ReviewRoute = ({
       }
       setLoadingMoreReview(false);
     });
-  }, [reviewList, region, selectedHometown, order, limit, fetchSearchResult]);
+  }, [
+    reviewList,
+    region,
+    selectedHometown,
+    order,
+    limit,
+    fetchSearchResult,
+    pageIndex,
+  ]);
 
   const onFiltering = useCallback(
     (searchOrder: string, callback = () => console.log('filtered')) => {
       setOrder(searchOrder);
+      setPageIndex(1);
       const form = {
         pathType: 'review',
         region,
@@ -214,7 +225,7 @@ const ReviewRoute = ({
             onFiltering,
             setFloatVisible,
             floatAvailable: true,
-            isEmpty: noMoreReviewData,
+            isEmpty: reviewList.length === 0,
             initialize,
           })
         }

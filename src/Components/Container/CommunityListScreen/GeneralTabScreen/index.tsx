@@ -3,10 +3,8 @@ import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
   LayoutAnimation,
-  TouchableOpacity,
-  Text,
-  ActivityIndicator,
-  Animated,
+  Platform,
+  UIManager,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -76,6 +74,13 @@ const EmptyIndicatorButtonImage = Styled.Image`
 margin-left: 4px;
 `;
 
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 interface Props {
   navigation: any;
   route: any;
@@ -120,23 +125,12 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
           type,
           posts: response,
         };
-        if (
-          JSON.stringify(response).replace(
-            /"createdDiff\(second\)\"\:\d*\,/gi,
-            '',
-          ) !==
-          JSON.stringify(postData).replace(
-            /"createdDiff\(second\)\"\:\d*\,/gi,
-            '',
-          )
-        ) {
-          console.log('liked post diff1');
-          LayoutAnimation.configureNext(
-            LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-          );
 
-          dispatch(allActions.communityActions.setPosts(data));
-        }
+        LayoutAnimation.configureNext(
+          LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+        );
+
+        dispatch(allActions.communityActions.setPosts(data));
       },
     );
   }, [selectedHometown]);
