@@ -194,11 +194,10 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
 
   const deleteAllSearchRecord = () => {
     const searchId = 'all';
+    dispatch(allActions.userActions.setSearchRecord([]));
 
     DELETESearchRecord({jwtToken, searchId, unified: true})
-      .then((response) => {
-        dispatch(allActions.userActions.setSearchRecord([]));
-      })
+      .then((response) => {})
       .catch((error) => {
         console.log('DELETESearchRecord error', error);
       });
