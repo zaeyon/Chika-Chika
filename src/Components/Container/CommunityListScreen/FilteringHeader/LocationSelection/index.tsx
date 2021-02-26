@@ -116,15 +116,14 @@ const LocationSelection = ({
       <ContainerView>
         <HometownSettingFloatView style={style}>
           {hometown.map((item: any, index: number) => (
-            <HometownItemContainerView
-            key={index}>
+            <HometownItemContainerView key={index}>
               <TouchableWithoutFeedback
                 key={String(item.id)}
                 onPress={() => {
                   if (manageMode) {
                     clickHometownItem(index);
                   }
-                  ReactNativeHapticFeedback.trigger('impactLight');
+                  ReactNativeHapticFeedback.trigger('selection');
                   setSelectedHometown(item);
 
                   setFloatVisible(false);

@@ -93,7 +93,7 @@ const HomeReviewContent = ({
           <TouchableWithoutFeedback
             key={item.name}
             onPress={() => {
-              ReactNativeHapticFeedback.trigger('impactLight');
+              ReactNativeHapticFeedback.trigger('selection');
               setSelectedTagFilterItem(item.name);
               flatlistRef.current.scrollToOffset({
                 offset: 0,

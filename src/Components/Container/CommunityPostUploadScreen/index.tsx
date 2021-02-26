@@ -428,7 +428,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
       <NavigationHeader
         headerLeftProps={{
           onPress: () => {
-            ReactNativeHapticFeedback.trigger('impactHeavy');
+            ReactNativeHapticFeedback.trigger('notificationWarning');
             setIsModalVisible(true);
           },
           type: 'arrow',
