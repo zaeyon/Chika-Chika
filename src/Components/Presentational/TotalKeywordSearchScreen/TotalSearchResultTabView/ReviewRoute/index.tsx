@@ -97,7 +97,7 @@ const ReviewRoute = ({
       setNoMoreReviewData(response.length === 0);
       setLoadingMoreReview(false);
       console.log(response);
-      GETSearchRecord({jwtToken}).then((response: any) => {
+      GETSearchRecord({jwtToken, isUnified: true}).then((response: any) => {
         console.log('fetch record', response);
         dispatch(allActions.userActions.setSearchRecord(response));
       });

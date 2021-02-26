@@ -112,7 +112,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   const searchInputRef = useRef<any>();
 
   useEffect(() => {
-    GETSearchRecord({jwtToken})
+    GETSearchRecord({jwtToken, isUnified: true})
       .then((response: any) => {
         console.log('GETSearchRecord response', response);
         dispatch(allActions.userActions.setSearchRecord(response));

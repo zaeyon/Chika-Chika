@@ -9,7 +9,7 @@ interface Params {
 
 const DELETESearchRecord = ({jwtToken, searchId, unified=false}: Params) => {
     
-    const uri = serverConfig.baseUri + `/search/recent?searchId=${searchId}&unifiedSearch=${unified}`
+    const uri = serverConfig.baseUri + `/search/recent?searchId=${searchId}&unifiedSearch=${String(unified)}`
 
     console.log(uri)
     return new Promise((resolve, reject) => {
