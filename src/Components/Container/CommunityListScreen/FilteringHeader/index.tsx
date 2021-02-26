@@ -83,7 +83,23 @@ const FilteringHeader = ({
         <OrderFilterContainer>
           <TouchableWithoutFeedback
             onPress={() => {
-              ReactNativeHapticFeedback.trigger('impactLight');
+              ReactNativeHapticFeedback.trigger('selection');
+              onFiltering('createdAt');
+            }}>
+            <OrderFilterItemContainer
+              style={[
+                {marginRight: 6},
+                order === 'createdAt' && {borderColor: '#00D1FF'},
+              ]}>
+              <OrderFilterText
+                style={order === 'createdAt' && {color: '#00D1FF'}}>
+                {'최신순'}
+              </OrderFilterText>
+            </OrderFilterItemContainer>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              ReactNativeHapticFeedback.trigger('selection');
               onFiltering('popular');
             }}>
             <OrderFilterItemContainer
@@ -91,22 +107,6 @@ const FilteringHeader = ({
               <OrderFilterText
                 style={order === 'popular' && {color: '#00D1FF'}}>
                 {'인기순'}
-              </OrderFilterText>
-            </OrderFilterItemContainer>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback
-            onPress={() => {
-              ReactNativeHapticFeedback.trigger('impactLight');
-              onFiltering('createdAt');
-            }}>
-            <OrderFilterItemContainer
-              style={[
-                {marginLeft: 6},
-                order === 'createdAt' && {borderColor: '#00D1FF'},
-              ]}>
-              <OrderFilterText
-                style={order === 'createdAt' && {color: '#00D1FF'}}>
-                {'최신순'}
               </OrderFilterText>
             </OrderFilterItemContainer>
           </TouchableWithoutFeedback>

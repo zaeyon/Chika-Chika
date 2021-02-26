@@ -35,12 +35,19 @@ interface Props {
 const NotificationListScreen = ({navigation, route}: Props) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
-  const [refreshingNotification, setRefreshingNotification] = useState<boolean>(false);
-  const [selectedNotificationIdArray, setSelectedNotificationIdArray] = useState<Array<any>>([""]);
+  const [refreshingNotification, setRefreshingNotification] = useState<boolean>(
+    false,
+  );
+  const [
+    selectedNotificationIdArray,
+    setSelectedNotificationIdArray,
+  ] = useState<Array<any>>([]);
 
   const dispatch = useDispatch();
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
-  const notificationArray = useSelector((state: any) => state.currentUser.notificationArray);
+  const notificationArray = useSelector(
+    (state: any) => state.currentUser.notificationArray,
+  );
 
   const goBack = () => {
     navigation.goBack();
@@ -51,9 +58,9 @@ const NotificationListScreen = ({navigation, route}: Props) => {
   };
 
   const onRefreshNotificationArray = () => {
-      setRefreshingNotification(true);
+    setRefreshingNotification(true);
 
-      GETUserNotifications({jwtToken})
+    GETUserNotifications({jwtToken})
       .then((response: any) => {
         console.log('GETUserNotifications response ', response);
         setRefreshingNotification(false);
@@ -67,25 +74,22 @@ const NotificationListScreen = ({navigation, route}: Props) => {
 
   const deleteNotification = async () => {
     setIsEditing(false);
-    console.log("selectedNotificationIdArray", selectedNotificationIdArray);
-
+    console.log('selectedNotificationIdArray', selectedNotificationIdArray);
 
     const tmpNotificationArray = [...notificationArray];
     const formattedIdArray = new Array();
+    selectedNotificationIdArray;
 
-    function deleteNotificationArray() {
-      for (let i = selectedNotificationIdArray.length - 1; i >= 1; i--) {
-        tmpNotificationArray.splice(selectedNotificationIdArray[i].index, 1);
-        formattedIdArray.push(selectedNotificationIdArray[i].id);
-      }
+    for (let i = selectedNotificationIdArray.length - 1; i >= 0; i--) {
+      tmpNotificationArray.splice(selectedNotificationIdArray[i].index, 1);
+      formattedIdArray.push(selectedNotificationIdArray[i].id);
     }
 
-    await deleteNotificationArray();
     dispatch(allActions.userActions.setNotificationArray(tmpNotificationArray));
     DELETEUserNotifications({jwtToken, formattedIdArray})
       .then((response) => {
         console.log('DELETEUserNotifications response', response);
-        setSelectedNotificationIdArray([""]);
+        setSelectedNotificationIdArray([]);
       })
       .catch((error) => {
         console.log('DELETEUserNotifications error', error);
@@ -99,24 +103,21 @@ const NotificationListScreen = ({navigation, route}: Props) => {
     };
 
     setSelectedNotificationIdArray((prevState) => {
-      const selectedIndex = prevState.findIndex((item, index) => {
-        if(id === item.id) {
-          return index;
-        }
-      });
+      const selectedIndex = prevState.findIndex((item) => item.id === id);
+      console.log(selectedIndex);
 
-      if(selectedIndex === -1) {
+      if (selectedIndex === -1) {
         const tmpPrevState = [...prevState];
         tmpPrevState.push(notificationObj);
-        console.log("tmpPrevState.push", tmpPrevState);
+        console.log('tmpPrevState.push', tmpPrevState);
         return tmpPrevState;
       } else {
         const tmpPrevState = [...prevState];
         tmpPrevState.splice(selectedIndex, 1);
-        console.log("tmpPrevState.splice", tmpPrevState);
+        console.log('tmpPrevState.splice', tmpPrevState);
         return tmpPrevState;
       }
-    })
+    });
   };
 
   return (
@@ -124,21 +125,28 @@ const NotificationListScreen = ({navigation, route}: Props) => {
       <NavigationHeader
         headerLeftProps={{type: 'arrow', onPress: goBack}}
         headerRightProps={
-          notificationArray.length > 0 ? (
-          !isEditing
-            ? {
-                type: 'text',
-                text: '편집',
-                fontColor: '#4E525D',
-                onPress: clickEdit,
-              }
-            : {
-                type: 'text',
-                text: '삭제',
-                fontColor: '#00D1FF',
-                onPress: deleteNotification,
-              }
-          ) : null
+          notificationArray.length > 0
+            ? !isEditing
+              ? {
+                  type: 'text',
+                  text: '편집',
+                  fontColor: '#4E525D',
+                  onPress: clickEdit,
+                }
+              : selectedNotificationIdArray.length === 0
+              ? {
+                  type: 'text',
+                  text: '취소',
+                  fontColor: '#00D1FF',
+                  onPress: () => setIsEditing(false),
+                }
+              : {
+                  type: 'text',
+                  text: '삭제',
+                  fontColor: '#00D1FF',
+                  onPress: deleteNotification,
+                }
+            : undefined
         }
         headerTitle={'활동 알림'}
       />
@@ -159,4 +167,3 @@ const NotificationListScreen = ({navigation, route}: Props) => {
 };
 
 export default NotificationListScreen;
-

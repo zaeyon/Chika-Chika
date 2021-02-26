@@ -1,11 +1,9 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import Styled from 'styled-components/native';
+import {TouchableWithoutFeedback} from 'react-native';
 import {
-    TouchableWithoutFeedback
-} from 'react-native';
-import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 const Container = Styled.View`
@@ -91,39 +89,54 @@ width: ${wp('6.4%')}px;
 height: ${wp('6.4%')}px;
 `;
 
-
-
 interface Props {
-    notificationObj: any,
-    isEditing: boolean,
-    selectNotificationItem: (notificationId: number, type: string, index: number) => void,
-    selected: boolean,
+  notificationObj: any;
+  isEditing: boolean;
+  selectNotificationItem: (
+    notificationId: number,
+    type: string,
     index: number,
-    moveToAnotherProfile: (userId: string, nickname: string, profileImageUri: string) => void,
-    moveToNotifiedPost: (notificationObj: any) => void,
+  ) => void;
+  selected: boolean;
+  index: number;
+  moveToAnotherProfile: (
+    userId: string,
+    nickname: string,
+    profileImageUri: string,
+  ) => void;
+  moveToNotifiedPost: (notificationObj: any) => void;
 }
 
-const NotificationItem = ({notificationObj, isEditing, selectNotificationItem, selected, index, moveToAnotherProfile, moveToNotifiedPost}: Props) => {
+const NotificationItem = ({
+  notificationObj,
+  isEditing,
+  selectNotificationItem,
+  selected,
+  index,
+  moveToAnotherProfile,
+  moveToNotifiedPost,
+}: Props) => {
+  const formatDate = useCallback(
+    (createdAt: string) => {
+      const currentYear = new Date(Date.now()).getFullYear();
 
-    console.log("NotificationItem notificationObj", notificationObj);
-    const formatDate = useCallback((createdAt: string) => {
-    const currentYear = new Date(Date.now()).getFullYear();
+      const [date, time] = createdAt.split(' ');
+      const [year, month, day] = date.split('-');
 
-    const [date, time] = createdAt.split(' ');
-    const [year, month, day] = date.split('-');
+      if (String(currentYear) === year) {
+        return parseInt(month) + '월 ' + parseInt(day) + '일';
+      } else {
+        return year + '년 ' + parseInt(month) + '월 ' + parseInt(day) + '일';
+      }
+    },
+    [notificationObj],
+  );
 
-    if (String(currentYear) === year) {
-      return parseInt(month) + '월 ' + parseInt(day) + '일';
-    } else {
-      return year + '년 ' + parseInt(month) + '월 ' + parseInt(day) + '일';
-        }
-    }, [notificationObj]);
+  const currentDate = new Date();
+  const createdAtDate = new Date(notificationObj.createdAt);
 
-    const currentDate  = new Date();
-    const createdAtDate = new Date(notificationObj.createdAt);
-    
-    const getElapsedTime = useCallback((elapsedSec: number) => {
-    console.log("elapsedSec", elapsedSec)
+  const getElapsedTime = useCallback((elapsedSec: number) => {
+    console.log('elapsedSec', elapsedSec);
     let elapsedTimeText = '';
 
     const elapsedMin = elapsedSec / 60;
@@ -145,46 +158,70 @@ const NotificationItem = ({notificationObj, isEditing, selectNotificationItem, s
     }
   }, []);
 
-    
-    
-        
-
-    return (
-        <TouchableWithoutFeedback onPress={() => !isEditing ? moveToNotifiedPost(notificationObj) : selectNotificationItem(notificationObj?.id, notificationObj?.type, index)}>
-        <Container>
-            <ContentContainer>
-            <TouchableWithoutFeedback onPress={() => moveToAnotherProfile(notificationObj?.sender.id, notificationObj?.sender.nickname, notificationObj?.sender.profileImg)}>
+  return (
+    <TouchableWithoutFeedback
+      onPress={() =>
+        !isEditing
+          ? moveToNotifiedPost(notificationObj)
+          : selectNotificationItem(
+              notificationObj?.id,
+              notificationObj?.type,
+              index,
+            )
+      }>
+      <Container>
+        <ContentContainer>
+          <TouchableWithoutFeedback
+            onPress={() =>
+              moveToAnotherProfile(
+                notificationObj?.sender.id,
+                notificationObj?.sender.nickname,
+                notificationObj?.sender.profileImg,
+              )
+            }>
             <ProfileImageContainer>
-                <ProfileImage
-                source={{uri: notificationObj?.sender.profileImg ? notificationObj?.sender.profileImg : "https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/436/8142f53e51d2ec31bc0fa4bec241a919_crop.jpeg"}}/>
+              <ProfileImage
+                source={{
+                  uri: notificationObj?.sender.profileImg
+                    ? notificationObj?.sender.profileImg
+                    : 'https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/436/8142f53e51d2ec31bc0fa4bec241a919_crop.jpeg',
+                }}
+              />
             </ProfileImageContainer>
-            </TouchableWithoutFeedback>
-            <BodyContainer>
-                <NicknameContainer>
-                    <NicknameText>{notificationObj?.sender.nickname}</NicknameText>
-                    <DateText>{getElapsedTime(notificationObj['createdDiff(second)'])}</DateText>
-                </NicknameContainer>
-                <NotifyDescripText>{notificationObj?.message}</NotifyDescripText>
-            </BodyContainer>
-            {isEditing && (
-                <SelectButtonContainer>
-                    <SelectButtonIcon
-                    source={
-                    selected
+          </TouchableWithoutFeedback>
+          <BodyContainer>
+            <NicknameContainer>
+              <NicknameText>{notificationObj?.sender.nickname}</NicknameText>
+              <DateText>
+                {getElapsedTime(notificationObj['createdDiff(second)'])}
+              </DateText>
+            </NicknameContainer>
+            <NotifyDescripText>{notificationObj?.message}</NotifyDescripText>
+          </BodyContainer>
+          {isEditing && (
+            <SelectButtonContainer>
+              <SelectButtonIcon
+                source={
+                  selected
                     ? require('~/Assets/Images/Notification/ic_selected.png')
                     : require('~/Assets/Images/Notification/ic_unselected.png')
-                    }/>
-                </SelectButtonContainer>
-            )}
-            </ContentContainer>
-            <BottomDivier/>
-        </Container>
-        </TouchableWithoutFeedback>
-    )
-}
+                }
+              />
+            </SelectButtonContainer>
+          )}
+        </ContentContainer>
+        <BottomDivier />
+      </Container>
+    </TouchableWithoutFeedback>
+  );
+};
 
 function isEqual(prevItem: any, nextItem: any) {
-    return (prevItem.notificationObj.id === nextItem.notificationObj.id) && (prevItem.selected === nextItem.selected) && (prevItem.isEditing === nextItem.isEditing)
+  return (
+    prevItem.notificationObj.id === nextItem.notificationObj.id &&
+    prevItem.selected === nextItem.selected &&
+    prevItem.isEditing === nextItem.isEditing
+  );
 }
 
 export default React.memo(NotificationItem, isEqual);

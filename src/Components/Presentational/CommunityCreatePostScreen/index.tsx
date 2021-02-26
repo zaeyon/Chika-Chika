@@ -15,6 +15,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import DeviceInfo from 'react-native-device-info';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {
@@ -283,13 +284,8 @@ const CommunityCreatePostScreen = ({
             key={'category' + index}
             onPress={() => {
               Keyboard.dismiss();
-              LayoutAnimation.configureNext(
-                LayoutAnimation.create(
-                  100,
-                  'easeInEaseOut',
-                  LayoutAnimation.Properties.scaleXY,
-                ),
-              );
+              ReactNativeHapticFeedback.trigger('selection');
+
               setCategory(categoryList[index]);
             }}>
             {category === categoryList[index] ? (
