@@ -101,13 +101,6 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
     isVisibleAutoCompletedKeyword,
     setIsVisibleAutoCompletedKeyword,
   ] = useState<boolean>(true);
-  const [searchResult, setSearchResult] = useState<Array<any>>([]);
-  const [reviewSearchResult, setReviewSearchResult] = useState<Array<any>>([]);
-  const communitySearchResult = useSelector(
-    (state: any) => state.communityPostList.SearchResultPosts,
-  );
-  const [clinicSearchResult, setClinicSearchResult] = useState([]);
-  const [eventSearchResult, setEventSearchResult] = useState([]);
 
   const dispatch = useDispatch();
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
@@ -237,16 +230,14 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
       console.log('keyword', keyword, 'category', category, 'tagId', tagId);
       // if (inputQuery.trim() === '') {
       // } else {
-      
-      searchInputRef.current.blur();
-      setIsVisibleAutoCompletedKeyword((prev) => {
-        setInputQuery(keyword);
-        setSearchQuery(searchQuery);
-        setCategory(category);
-        setTagId(tagId);
 
-        return false;
-      });
+      searchInputRef.current.blur();
+      setIsVisibleAutoCompletedKeyword(false);
+      setInputQuery(keyword);
+      setSearchQuery(searchQuery);
+      setCategory(category);
+      setTagId(tagId);
+
       // }
     },
     [],
@@ -254,7 +245,6 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
 
   const onFocusSearchKeywordInput = () => {
     if (!isVisibleAutoCompletedKeyword) {
-      
       setIsVisibleAutoCompletedKeyword(true);
     }
   };
@@ -318,9 +308,6 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
           />
         ) : (
           <TotalSearchResultTabView
-            searchResult={searchResult}
-            reviewSearchResult={reviewSearchResult}
-            communitySearchResult={communitySearchResult}
             fetchSearchResult={fetchSearchResult}
             navigation={navigation}
           />

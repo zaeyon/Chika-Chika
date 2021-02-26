@@ -83,7 +83,23 @@ const FilteringHeader = ({
         <OrderFilterContainer>
           <TouchableWithoutFeedback
             onPress={() => {
-              ReactNativeHapticFeedback.trigger('impactLight');
+              ReactNativeHapticFeedback.trigger('selection');
+              onFiltering('createdAt');
+            }}>
+            <OrderFilterItemContainer
+              style={[
+                {marginRight: 6},
+                order === 'createdAt' && {borderColor: '#00D1FF'},
+              ]}>
+              <OrderFilterText
+                style={order === 'createdAt' && {color: '#00D1FF'}}>
+                {'최신순'}
+              </OrderFilterText>
+            </OrderFilterItemContainer>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              ReactNativeHapticFeedback.trigger('selection');
               onFiltering('popular');
             }}>
             <OrderFilterItemContainer
@@ -94,31 +110,15 @@ const FilteringHeader = ({
               </OrderFilterText>
             </OrderFilterItemContainer>
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback
-            onPress={() => {
-              ReactNativeHapticFeedback.trigger('impactLight');
-              onFiltering('createdAt');
-            }}>
-            <OrderFilterItemContainer
-              style={[
-                {marginLeft: 6},
-                order === 'createdAt' && {borderColor: '#00D1FF'},
-              ]}>
-              <OrderFilterText
-                style={order === 'createdAt' && {color: '#00D1FF'}}>
-                {'최신순'}
-              </OrderFilterText>
-            </OrderFilterItemContainer>
-          </TouchableWithoutFeedback>
         </OrderFilterContainer>
-        <TouchableOpacity onPress={() => setFloatVisible(true)}>
+        <TouchableWithoutFeedback onPress={() => setFloatVisible(true)}>
           <LocationFilterContainer>
             <LocationFilterText>{selectedHometown.emdName}</LocationFilterText>
             <LocationFilterDropdownIcon
               source={require('~/Assets/Images/Arrow/ic_dropdown.png')}
             />
           </LocationFilterContainer>
-        </TouchableOpacity>
+        </TouchableWithoutFeedback>
       </FilterContainer>
       {floatVisible ? (
         <LocationSelection

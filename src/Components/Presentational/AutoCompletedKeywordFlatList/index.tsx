@@ -180,6 +180,7 @@ const AutoCompletedTotalKeywordFlatList = ({
   searchTotalKeyword,
   searchRecordArray,
 }: Props) => {
+  console.log("AutoCompletedTotalKeywordFlatList autoCompletedKeywordArr", autoCompletedKeywordArr);
   const renderSearchRecordItem = ({item, index}: any) => {
     console.log("renderSearchRecordItem item", item);
     const renderIcon = (category: string) => {

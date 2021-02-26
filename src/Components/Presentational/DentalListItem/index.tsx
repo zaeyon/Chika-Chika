@@ -35,7 +35,7 @@ const DentalImageContainer = Styled.View`
 `;
 
 const DentalNameText = Styled.Text`
-max-width: ${wp('50%')};
+max-width: ${wp('50%')}px;
 font-weight: 600;
 color: #131F3C;
 font-size: 18px;
@@ -191,7 +191,6 @@ const DentalListItem = ({
   moveToDentalDetail,
   clickDentalCallReservation,
 }: Prop) => {
-  console.log('dentalObj', dentalObj);
 
   const formatDistance = useCallback((distance: number) => {
     if (distance >= 1) {

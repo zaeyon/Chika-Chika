@@ -118,7 +118,7 @@ const CommunityPostList = ({
       renderItem={renderPosts}
       scrollEventThrottle={16}
       onEndReached={onEndReached}
-      onEndReachedThreshold={5}
+      onEndReachedThreshold={2}
       ListHeaderComponent={renderHeaderComponent && renderHeaderComponent()}
       ListFooterComponent={
         isEndReached ? (

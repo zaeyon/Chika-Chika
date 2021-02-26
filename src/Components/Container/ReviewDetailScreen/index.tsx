@@ -54,7 +54,6 @@ import GETCommentList from '~/Routes/Comment/GETCommentList';
 const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
- padding-top: ${getStatusBarHeight()}px;
 `;
 
 const BodyContainer = Styled.View`
@@ -1014,7 +1013,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
   return (
     <TouchableWithoutFeedback onPress={() => pressBackground()}>
-      <Container>
+      <Container as={SafeAreaView} forceInset={{top: 'always'}}>
         <NavigationHeader
           headerLeftProps={{type: 'arrow', onPress: goBack, text: '리얼리뷰'}}
           headerRightProps={{type: 'viewMore', onPress: clickMoreView}}

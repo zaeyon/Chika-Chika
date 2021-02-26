@@ -49,6 +49,7 @@ const GETDentalTotalSearch = ({jwtToken,iq, sq, offset, limit, lat, long, catego
             }
         })
         .then((response) => {
+            console.log("GETDentalTotalSearch 요청보냄")
             resolve(response.data);
         })
         .catch((error) => {

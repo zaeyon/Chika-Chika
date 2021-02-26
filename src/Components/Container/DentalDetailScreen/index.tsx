@@ -105,13 +105,8 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
           'GETDentalDetail response.clinicInfoHeader.clinicReviewImg',
           response.clinicInfoHeader.clinicReviewImg,
         );
-        if (
-          response.clinicInfoHeader.clinicProfileImg.length > 0 ||
-          response.clinicInfoHeader.clinicReviewImg.length > 0
-        ) {
-          const tmpDentalImageArray = response.clinicInfoHeader.clinicProfileImg.concat(
-            response.clinicInfoHeader.clinicReviewImg,
-          );
+        if (response.clinicInfoHeader.clinicProfileImg.length > 0) {
+          const tmpDentalImageArray = response.clinicInfoHeader.clinicProfileImg;
           setDentalImageArray(tmpDentalImageArray);
         } else {
           setIsNoDentalImage(true);

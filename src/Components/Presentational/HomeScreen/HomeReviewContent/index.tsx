@@ -93,7 +93,7 @@ const HomeReviewContent = ({
           <TouchableWithoutFeedback
             key={item.name}
             onPress={() => {
-              ReactNativeHapticFeedback.trigger('impactLight');
+              ReactNativeHapticFeedback.trigger('selection');
               setSelectedTagFilterItem(item.name);
               flatlistRef.current.scrollToOffset({
                 offset: 0,
@@ -143,12 +143,12 @@ const HomeReviewContent = ({
         keyExtractor={(item: any) => String(item.id)}
         horizontal
         snapToAlignment="start"
-        snapToInterval={350 + 16}
+        snapToInterval={wp('79%') + 16}
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
         getItemLayout={(data, index) => ({
-          length: 350,
-          offset: 350 * index,
+          length: wp('79%'),
+          offset: wp('79%') * index,
           index,
         })}
       />

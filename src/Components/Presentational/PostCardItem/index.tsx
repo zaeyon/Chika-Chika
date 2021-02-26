@@ -1,5 +1,5 @@
-import React, {useCallback} from 'react';
-import {TouchableWithoutFeedback, FlatList} from 'react-native';
+import React, {useCallback, useRef} from 'react';
+import {TouchableWithoutFeedback, Animated} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -7,7 +7,7 @@ import {
 } from 'react-native-responsive-screen';
 
 const ContainerView = Styled.View`
-width: ${350}px;
+width: ${wp('79%')}px;
 height: 152px;
 margin-right: 16px;
 padding: 16px;
@@ -105,6 +105,7 @@ const PostCardItem = ({
     postLikeNum,
     postCommentsNum,
   } = postData;
+  const viewScale = useRef(new Animated.Value(1)).current;
 
   const formatElapsedDate = useCallback((elapsedTime: number) => {
     if (elapsedTime / (24 * 3600 * 1000) > 1) {
@@ -197,8 +198,33 @@ const PostCardItem = ({
   }, []);
 
   return (
-    <TouchableWithoutFeedback onPress={() => moveToCommunityDetail(id, type)}>
-      <ContainerView>
+    <TouchableWithoutFeedback
+      onPressIn={() => {
+        Animated.spring(viewScale, {
+          toValue: 0.95,
+          friction: 9,
+          tension: 78,
+          useNativeDriver: true,
+        }).start();
+      }}
+      onPressOut={() => {
+        Animated.spring(viewScale, {
+          toValue: 1,
+          friction: 9,
+          tension: 78,
+          useNativeDriver: true,
+        }).start();
+      }}
+      onPress={() => moveToCommunityDetail(id, type)}>
+      <ContainerView
+        as={Animated.View}
+        style={{
+          transform: [
+            {
+              scale: viewScale,
+            },
+          ],
+        }}>
         <ProfileContainerView>
           <ProfileImage
             source={
