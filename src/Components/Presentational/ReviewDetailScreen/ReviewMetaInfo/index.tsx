@@ -281,7 +281,8 @@ const ReviewMetaInfo = ({
             </DentalAddressContainer>
           </DentalNameAddressContainer>
           <DentalImageContainer>
-            <DentalImage />
+            <DentalImage
+            source={{uri: metaInfoObj.dentalObj.profileImages[0]}}/>
           </DentalImageContainer>
         </DentalInfoContainer>
       </TouchableWithoutFeedback>

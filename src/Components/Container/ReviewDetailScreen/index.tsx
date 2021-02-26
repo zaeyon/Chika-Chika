@@ -582,6 +582,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           originalName: response.reviewBody.dental_clinic.originalName,
           address: response.reviewBody.dental_clinic.address,
           id: response.reviewBody.dentalClinicId,
+          profileImages: response.reviewBody.dental_clinic.dentalClinicProfileImgs,
         };
 
         if (response.viewerLikeReview) {

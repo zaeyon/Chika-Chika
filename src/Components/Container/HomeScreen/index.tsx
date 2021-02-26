@@ -240,7 +240,7 @@ const HomeScreen = ({navigation, route}: Props) => {
 
     
 
-    GETSearchRecord(jwtToken, true)
+    GETSearchRecord({jwtToken})
     .then((response: any) => {
       console.log('통합검색 검색기록 response', response);
       dispatch(allActions.userActions.setSearchRecord(response));
@@ -249,7 +249,7 @@ const HomeScreen = ({navigation, route}: Props) => {
       console.log('통합검색 검색기록 error', error);
     })
 
-      GETSearchRecord(jwtToken, false)
+      GETSearchRecord({jwtToken})
       .then((response: any) => {
         console.log("병원지도검색 검색기록 response", response);
         dispatch(allActions.userActions.setDentalSearchRecord(response));

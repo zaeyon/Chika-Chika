@@ -616,7 +616,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   const getSearchRecord = () => {
-    GETSearchRecord(jwtToken, false)
+    GETSearchRecord({jwtToken})
       .then(async (response: any) => {
         console.log('GETSearchRecord response', response);
         dispatch(allActions.userActions.setDentalSearchRecord(response));
