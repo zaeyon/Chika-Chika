@@ -1,5 +1,11 @@
 import React, {useState, useCallback, useMemo, useEffect} from 'react';
-import {ActivityIndicator, Alert, LayoutAnimation} from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -40,6 +46,14 @@ line-height: 20px;
 color: #131F3C;
 text-align: center;
 `;
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 interface Props {
   navigation: any;
   route: any;
@@ -182,14 +196,14 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
         selectedImages,
         startIndex: route.params.startIndex,
       });
-    } else if(route.params.requestType === 'proofImage') {
+    } else if (route.params.requestType === 'proofImage') {
       navigation.navigate('ReviewMetaDataScreen', {
         selectedProofImages: selectedImages,
-      })
-    } else if(route.params.requestType === 'dentalImage') {
+      });
+    } else if (route.params.requestType === 'dentalImage') {
       navigation.navigate('ReviewMetaDataScreen', {
         selectedDentalImages: selectedImages,
-      })
+      });
     } else {
       navigation.navigate(route.params.requestType, {
         selectedImages,

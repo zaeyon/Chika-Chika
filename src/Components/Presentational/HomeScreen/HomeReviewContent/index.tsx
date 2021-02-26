@@ -1,5 +1,10 @@
 import React, {useRef, useState, useCallback, useEffect} from 'react';
-import {TouchableWithoutFeedback, LayoutAnimation} from 'react-native';
+import {
+  TouchableWithoutFeedback,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -66,6 +71,13 @@ height: auto;
 flex-direction: row;
 overflow: visible;
 `;
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 interface Props {
   selectedHometown: string;

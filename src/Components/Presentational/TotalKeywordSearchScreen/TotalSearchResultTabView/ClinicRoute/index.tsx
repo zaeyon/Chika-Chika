@@ -6,6 +6,7 @@ import {
   LayoutAnimation,
   PermissionsAndroid,
   Platform,
+  UIManager,
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
@@ -65,6 +66,13 @@ font-size: 14px;
 line-height: 23px;
 color: #131F3C;
 `;
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 interface Props {
   fetchSearchResult: any;

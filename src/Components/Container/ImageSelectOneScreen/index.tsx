@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useMemo, useEffect} from 'react';
-import {ActivityIndicator, Alert, LayoutAnimation} from 'react-native';
+import {ActivityIndicator, Alert} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -188,12 +188,12 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
   }, []);
 
   const moveToFullImage = useCallback((item) => {
-    if(route.params?.requestType === 'ContentPostScreen') {
+    if (route.params?.requestType === 'ContentPostScreen') {
       navigation.navigate('FullImageScreen', {
         image: item,
         requestType: route.params.requestType,
         selectedIndex: route.params.selectedIndex,
-      })
+      });
     } else {
       navigation.navigate('FullImageScreen', {
         image: item,

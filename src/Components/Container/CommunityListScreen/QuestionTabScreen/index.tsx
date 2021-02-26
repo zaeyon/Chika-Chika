@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Text,
   LayoutAnimation,
+  Platform,
+  UIManager,
   Animated,
   ActivityIndicator,
 } from 'react-native';
@@ -79,6 +81,13 @@ color: #131F3C;
 const EmptyIndicatorButtonImage = Styled.Image`
 margin-left: 4px;
 `;
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 interface Props {
   navigation: any;

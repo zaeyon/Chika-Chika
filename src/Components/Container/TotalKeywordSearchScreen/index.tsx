@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef, useCallback} from 'react';
-import {TouchableWithoutFeedback, LayoutAnimation} from 'react-native';
+import {TouchableWithoutFeedback} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -195,11 +195,10 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
 
   const deleteAllSearchRecord = () => {
     const searchId = 'all';
+    dispatch(allActions.userActions.setSearchRecord([]));
 
     DELETESearchRecord({jwtToken, searchId, unified: true})
-      .then((response) => {
-        dispatch(allActions.userActions.setSearchRecord([]));
-      })
+      .then((response) => {})
       .catch((error) => {
         console.log('DELETESearchRecord error', error);
       });

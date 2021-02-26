@@ -1,6 +1,11 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
-import {ActivityIndicator, LayoutAnimation} from 'react-native';
+import {
+  ActivityIndicator,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from 'react-native';
 
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import SavedHospitalScreen from '~/Components/Presentational/MyProfileScreen/SavedHospitalScreen';
@@ -21,6 +26,13 @@ flex: 1;
 justify-content: center;
 align-items: center;
 `;
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 interface Props {
   navigation: any;

@@ -9,7 +9,6 @@ import {
   RefreshControl,
   ActivityIndicator,
   Animated,
-  LayoutAnimation,
 } from 'react-native';
 import {useScrollToTop} from '@react-navigation/native';
 import {

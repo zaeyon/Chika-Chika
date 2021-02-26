@@ -1,6 +1,11 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
-import {ActivityIndicator, LayoutAnimation} from 'react-native';
+import {
+  ActivityIndicator,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from 'react-native';
 //Local Component
 
 // Redux
@@ -37,6 +42,13 @@ font-weight: normal;
 font-size: 16px;
 color: #9AA2A9;
 `;
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 interface Props {
   navigation: any;
@@ -92,9 +104,7 @@ const CommentedCommunityPostScreen = ({navigation, route}: Props) => {
       //   )
       // ) {
       console.log('liked post diff');
-      LayoutAnimation.configureNext(
-        LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-      );
+
       dispatch(allActions.communityActions.setPosts(form));
       // }
       setIsRefreshing(false);

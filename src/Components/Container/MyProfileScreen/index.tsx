@@ -15,7 +15,7 @@ import MyProfile from '~/Components/Presentational/MyProfileScreen';
 import BottomSheet from '~/Components/Presentational/BottomSheet';
 import SlideUpPanel from '~/Components/Presentational/MyProfileScreen/SlideUpPanel';
 //Routes
-import GETUserInfoById from '~/Routes/User/GETUserInfoById';
+import GETUserInfo from '~/Routes/Auth/GETUserInfo';
 import GETUserReviewPosts from '~/Routes/Community/showPosts/GETUserReviewPosts';
 import GETUserCommunityPosts from '~/Routes/Community/showPosts/GETUserCommunityPost';
 import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
@@ -76,7 +76,7 @@ const MyProfileScreen = ({navigation, route}: Props) => {
 
   const updateUserInfo = useCallback(
     (callback?: any) => {
-      GETUserInfoById(jwtToken, userId).then((response: any) => {
+      GETUserInfo(jwtToken).then((response: any) => {
         dispatch(
           allActions.userActions.setUser({
             profile: {

@@ -117,12 +117,14 @@ const NavigationHeader = ({
           }}>
           <HeaderTitleContentView>
             <HeaderTitleText>{selectedAlbum}</HeaderTitleText>
-            <Image
-              style={{
-                transform: [{rotate: visible ? '180deg' : '0deg'}],
-              }}
-              source={require('~/Assets/Images/HeaderBar/dropdownVector.png')}
-            />
+            {selectedAlbum ? (
+              <Image
+                style={{
+                  transform: [{rotate: visible ? '180deg' : '0deg'}],
+                }}
+                source={require('~/Assets/Images/HeaderBar/dropdownVector.png')}
+              />
+            ) : null}
           </HeaderTitleContentView>
         </TouchableWithoutFeedback>
       </HeaderTitleContainer>

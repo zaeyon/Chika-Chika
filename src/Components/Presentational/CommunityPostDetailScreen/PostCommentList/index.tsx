@@ -1,6 +1,5 @@
 import React, {useCallback} from 'react';
 import Styled from 'styled-components/native';
-import {LayoutAnimation} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,

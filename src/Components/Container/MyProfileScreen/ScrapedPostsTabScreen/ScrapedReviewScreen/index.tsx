@@ -1,6 +1,11 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
-import {ActivityIndicator, LayoutAnimation} from 'react-native';
+import {
+  ActivityIndicator,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from 'react-native';
 //Local Component
 import ReviewList from '~/Components/Presentational/ReviewList';
 // Redux
@@ -32,6 +37,13 @@ font-weight: normal;
 font-size: 16px;
 color: #9AA2A9;
 `;
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 interface Props {
   navigation: any;
@@ -80,9 +92,7 @@ const ScrapedReviewScreen = ({navigation, route}: Props) => {
         )
       ) {
         console.log('commented post diff');
-        LayoutAnimation.configureNext(
-          LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-        );
+
         dispatch(allActions.reviewListActions.setScrapedReviews(response));
       }
 
@@ -186,6 +196,9 @@ const ScrapedReviewScreen = ({navigation, route}: Props) => {
         offset: 0,
       };
       fetchScrapedPosts(form, (response: any) => {
+        LayoutAnimation.configureNext(
+          LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+        );
         dispatch(allActions.reviewListActions.setScrapedReviews(response));
       });
     };

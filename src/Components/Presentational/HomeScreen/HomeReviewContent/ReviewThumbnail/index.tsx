@@ -248,8 +248,6 @@ const ReviewThumbnail = ({review, moveToReviewDetail}: Props) => {
           }}
           source={{
             uri: review.review_contents[0].img_thumbNail,
-            priority: FastImage.priority.normal,
-            cache: FastImage.cacheControl.immutable,
           }}
           resizeMode={FastImage.resizeMode.cover}
         />

@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   Switch,
   LayoutAnimation,
+  Platform,
+  UIManager,
   TouchableHighlight,
 } from 'react-native';
 import {
@@ -84,6 +86,13 @@ line-height: 20px;
 color: #131F3C;
 `;
 
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 interface Props {
   changeNotificationSetting: any;
   signout: any;
@@ -94,7 +103,11 @@ interface Props {
   navigation: any;
   route: any;
 }
-const GeneralSettingScreen = ({jwtToken, changeNotificationSetting, profile}: Props) => {
+const GeneralSettingScreen = ({
+  jwtToken,
+  changeNotificationSetting,
+  profile,
+}: Props) => {
   const dispatch = useDispatch();
 
   const [sectionArrow, setSectionArrow] = useState(
@@ -163,12 +176,12 @@ const GeneralSettingScreen = ({jwtToken, changeNotificationSetting, profile}: Pr
     dispatch(allActions.userActions.logOut());
 
     DELETEWithdrawal({jwtToken})
-    .then((response) => {
-      console.log("DELETEWithdrawal response", response);
-    })
-    .catch((error) => {
-      console.log("DELETEWithdrawal error", error);
-    })
+      .then((response) => {
+        console.log('DELETEWithdrawal response', response);
+      })
+      .catch((error) => {
+        console.log('DELETEWithdrawal error', error);
+      });
   }, []);
 
   return (
