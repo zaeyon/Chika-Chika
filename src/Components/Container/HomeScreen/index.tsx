@@ -143,10 +143,10 @@ const HomeScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if(route.params?.isUploadReview) {
-      ToastMessage.show("리뷰작성이 완료되었습니다!")
+    if (route.params?.isUploadReview) {
+      ToastMessage.show('리뷰작성이 완료되었습니다!');
     }
-  }, [route.params?.isUploadReview])
+  }, [route.params?.isUploadReview]);
 
   useFocusEffect(
     useCallback(() => {
@@ -224,39 +224,40 @@ const HomeScreen = ({navigation, route}: Props) => {
             },
           });
           return;
-          case 'review':
-            navigation.navigate('ReviewStackScreen', {
-              screen: 'ReviewDetailScreen',
-              params: {
-                reviewId: remoteMessage.data.targetId,
-                type: 'Notification',
-                category: remoteMessage.data.type,
-                commentId: remoteMessage.data.commentId,
-              }
-            })
+        case 'review':
+          navigation.navigate('ReviewStackScreen', {
+            screen: 'ReviewDetailScreen',
+            params: {
+              reviewId: remoteMessage.data.targetId,
+              type: 'Notification',
+              category: remoteMessage.data.type,
+              commentId: remoteMessage.data.commentId,
+            },
+          });
         default:
       }
     });
 
     
 
-    GETSearchRecord({jwtToken})
-    .then((response: any) => {
-      console.log('통합검색 검색기록 response', response);
-      dispatch(allActions.userActions.setSearchRecord(response));
-    })
-    .catch((error) => {
-      console.log('통합검색 검색기록 error', error);
-    })
+      GETSearchRecord({jwtToken, isUnified:true})
+      .then((response: any) => {
+        console.log('통합검색 검색기록 response', response);
+        dispatch(allActions.userActions.setSearchRecord(response));
+      })
+      .catch((error) => {
+        console.log('통합검색 검색기록 error', error);
+      })
 
       GETSearchRecord({jwtToken})
       .then((response: any) => {
-        console.log("병원지도검색 검색기록 response", response);
+        console.log('병원검색 검색기록 response', response);
         dispatch(allActions.userActions.setDentalSearchRecord(response));
       })
       .catch((error) => {
-        console.log("병원지도검색 검색기록 error", error);
-      })
+        console.log('병원검색 검색기록 error', error);
+      });
+
   }, []);
 
   const fetchLocalInfo = useCallback(
@@ -278,7 +279,8 @@ const HomeScreen = ({navigation, route}: Props) => {
         tagFilterItems.map(async (tagItem) => {
           const form = {
             jwtToken,
-            query: tagItem.name,
+            searchQuery: tagItem.name,
+            inputQuery: tagItem.name,
             category: tagItem.category,
             pathType: 'review',
             tagId: tagItem.id,

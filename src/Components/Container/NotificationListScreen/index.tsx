@@ -42,6 +42,17 @@ const NotificationListScreen = ({navigation, route}: Props) => {
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
   const notificationArray = useSelector((state: any) => state.currentUser.notificationArray);
 
+  useEffect(() => {
+    GETUserNotifications({jwtToken})
+      .then((response) => {
+        console.log('GETUserNotifications response', response);
+        dispatch(allActions.userActions.setNotificationArray(response));
+      })
+      .catch((error) => {
+        console.log('GETUserNotifications error', error);
+      });
+  }, [])
+
   const goBack = () => {
     navigation.goBack();
   };

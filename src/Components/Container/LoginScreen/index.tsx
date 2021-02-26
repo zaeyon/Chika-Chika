@@ -20,6 +20,7 @@ import messaging from '@react-native-firebase/messaging';
 import AboveKeyboard from 'react-native-above-keyboard';
 //import {getStatusBarHeight} from 'react-native-status-bar-height'
 import {getStatusBarHeight} from 'react-native-status-bar-height';
+import DeviceInfo from 'react-native-device-info';
 
 // Async Storage
 import {storeUserInfo} from '~/storage/currentUser';
@@ -134,7 +135,7 @@ justify-content: center;
 
 const DisabledLoginButton = Styled.View`
 width: ${wp('100%')}px;
-height: ${hp('6.89%')}px;
+height: ${DeviceInfo.hasNotch() ? hp('6.89%') : hp('8.3%')}px;
 background-color: #E2E6ED;
 justify-content: center;
 align-items: center;
@@ -148,7 +149,7 @@ color: #ffffff;
 
 const AbledLoginButton = Styled.View`
 width: ${wp('100%')}px;
-height: ${hp('6.89%')}px;
+height: ${DeviceInfo.hasNotch() ? hp('6.89%') : hp('8.3%')}px;
 background-color: #00D1FF;
 justify-content: center;
 align-items: center;
@@ -273,24 +274,6 @@ const LoginScreen = ({navigation, route}: Props) => {
       setValidNumber(true);
     }
   }
-
-  const onChangeNumberInput = (text: string) => {
-    /*
-    setNumberInputState("inputing");
-    setNumber(text);
-    var numberArray = text.split("");
-    console.log("numberArray", numberArray);
-
-    // inputing number
-    if(numberArray.length === 4) {
-      numberArray.splice(3, 0, " ", "-", " ");
-      console.log("하이픈 추가", numberArray)
-      setFormattedNumber(numberArray.join(''))
-    } else {
-      setFormattedNumber(text)
-    }
-    */
-  };
 
   const onKeyPressNumberInput = (event: any) => {
     var numberArray = formattedNumber.split('');
@@ -526,7 +509,6 @@ const LoginScreen = ({navigation, route}: Props) => {
                 }),
             ]}
             selectionColor={'#00D1FF'}
-            onChangeText={(text: string) => onChangeNumberInput(text)}
             autoCapitalize={'none'}
             onSubmitEditing={(text) =>
               onUnfocusNumberInput(text.nativeEvent.text)

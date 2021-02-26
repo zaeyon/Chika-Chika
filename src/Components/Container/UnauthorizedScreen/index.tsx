@@ -10,6 +10,7 @@ import messaging from '@react-native-firebase/messaging';
 import KakaoLogins, {KAKAO_AUTH_TYPES} from '@react-native-seoul/kakao-login';
 import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
 import allActions from '~/actions';
+import DeviceInfo from 'react-native-device-info';
 
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 import createRandomNickname from '~/method/createRandomNickname';
@@ -58,7 +59,7 @@ const LocalContainer = Styled.View`
  align-items: center;
  padding-left: 20px;
  padding-right: 20px;
- padding-top: 16px;
+ padding-top: ${DeviceInfo.hasNotch() ? hp('2%') : hp('5.5%')};
 `;
 
 const LocalLoginContainer = Styled.View`

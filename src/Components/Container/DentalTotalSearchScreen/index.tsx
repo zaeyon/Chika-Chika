@@ -424,6 +424,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const [isFocusedSearchInput, setIsFocusedSearchInput] = useState<boolean>(
     route.params?.requestType === 'search' ? true : false,
   );
+  const [autoCompletedKeywordArray, setAutoCompletedKeywordArray] = useState<Array<any>>([]);
 
   const [query, setQuery] = useState<string>('');
 
@@ -473,7 +474,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const dentalMapRedux = useSelector((state: any) => state.dentalMap);
   const searchedKeyword = dentalMapRedux.searchedKeyword;
   const searchedDentalArray = dentalMapRedux.searchedDentalArray;
-  const autoCompletedKeywordArr = dentalMapRedux.autoCompletedKeywordArr;
+
 
   const dentalSearchRecordArray = useSelector((state: any) => state.currentUser)
     .dentalSearchRecordArray;
@@ -484,10 +485,27 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const keywordRef = useRef<any>();
 
   useEffect(() => {
-    return () => {
-      dispatch(allActions.dentalMapActions.setAutoCompletedKeywordArr([]));
-    };
-  }, []);
+    async function fetchData() {
+      const incompleteKorean = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
+      if (!incompleteKorean.test(query)) {
+        if (query !== '') {
+          const response: any = await GETDentalKeywordAutoComplete({jwtToken, query});
+          setQuery((prev) => {
+            if (prev !== inputingText) {
+              console.log('diff');
+            } else {
+              console.log('GETAllTagSearch response', response);
+              setAutoCompletedKeywordArray(response);
+            }
+            return prev;
+          });
+        } else {
+          setAutoCompletedKeywordArray([]);
+        }
+      }
+    }
+    fetchData();
+  }, [query])
 
   const goBack = () => {
     navigation.goBack();
@@ -532,11 +550,11 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     inputingText = text;
     setQuery(text);
 
-    if (text.trim() === '') {
-      dispatch(allActions.dentalMapActions.setAutoCompletedKeywordArr([]));
-    } else {
-      autoCompleteKeyword(text);
-    }
+    // if (text.trim() === '') {
+    //   dispatch(allActions.dentalMapActions.setAutoCompletedKeywordArr([]));
+    // } else {
+    //   getAutoCompleteKeyword(text);
+    // }
   };
 
   const onSubmitSearchInput = (keyword: string) => {
@@ -548,7 +566,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     }
   };
 
-  const autoCompleteKeyword = (query: string) => {
+  const getAutoCompleteKeyword = (query: string) => {
     GETDentalKeywordAutoComplete({jwtToken, query})
       .then((response: any) => {
         console.log('GETDentalKeywordAutoComplete response', response);
@@ -1195,29 +1213,33 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
 
   const onFocusSearchInput = () => {
     setIsFocusedSearchInput(true);
+    getAutoCompleteKeyword(query);
   };
 
   const pressBackground = () => {
     Keyboard.dismiss();
   };
 
-  const searchTotalKeyword = ({searchQuery, inputQuery, category}: {searchQuery: string; inputQuery: string; category: string;}) => {
+  const searchTotalKeyword = ({keyword, searchQuery = '', category, tagId}: {keyword: string; searchQuery?: string; category: string; tagId: string;}) => {
 
-    console.log('selectAutoCompletedKeyword searchQuery', searchQuery);
-    console.log('selectAutoCompletedKeyword inputQuery', inputQuery);
-    console.log('selectAutoCompletedKeyword category', category);
+    console.log('searchTotalKeyword keyword', keyword);
+    console.log('searchTotalKeyword searchQuery', searchQuery);
+    console.log('searchTotalKeyword category', category);
+    console.log('searchTotalKeyword tagId', tagId);
 
+    offsetRef.current = 0;
     Keyboard.dismiss();
     setIsFocusedSearchInput(false);
+    getAutoCompleteKeyword(keyword);
 
     if(category === 'city') {
-      setQuery(inputQuery);
+      setQuery(keyword);
       searchQueryRef.current = searchQuery
-      searchDental(searchQuery, inputQuery, category);
+      searchDental(searchQuery, keyword, category);
 
     } else if(category === 'clinic') {
-      setQuery(inputQuery);
-      searchDental(searchQuery, inputQuery, category);
+      setQuery(keyword);
+      searchDental(searchQuery, keyword, category);
     }
 
     keywordRef.current = {
@@ -1377,8 +1399,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         </SearchInputContainer>
       </HeaderBar>
       <BodyContainer>
-        <SearchResultContainer
-          style={!isFocusedSearchInput ? {zIndex: 1} : {zIndex: 0, opacity: 0}}>
+        {!isFocusedSearchInput && (
+        <SearchResultContainer>
           <FilterListContainer
             style={[
               {backgroundColor: '#ffffff'},
@@ -1524,17 +1546,20 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
             )}
           </DentalListContainer>
         </SearchResultContainer>
-        <AutoCompletedKeywordContainer
-          style={isFocusedSearchInput ? {zIndex: 1} : {zIndex: 0, opacity: 0}}>
+
+        )}
+        {isFocusedSearchInput && (
+        <AutoCompletedKeywordContainer>
           <AutoCompletedKeywordFlatList
+            inputQuery={query}
             deleteAllSearchRecord={deleteAllSearchRecord}
             deleteSingleSearchRecord={deleteSingleSearchRecord}
             searchRecordArray={dentalSearchRecordArray}
             searchTotalKeyword={searchTotalKeyword}
-            query={query}
             autoCompletedKeywordArr={autoCompletedKeywordArr}
           />
         </AutoCompletedKeywordContainer>
+        )}
       </BodyContainer>
       <Modal
         isVisible={visibleDayFilterModal}

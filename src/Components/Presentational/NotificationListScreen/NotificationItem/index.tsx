@@ -104,8 +104,7 @@ interface Props {
 }
 
 const NotificationItem = ({notificationObj, isEditing, selectNotificationItem, selected, index, moveToAnotherProfile, moveToNotifiedPost}: Props) => {
-
-    console.log("NotificationItem notificationObj", notificationObj);
+  
     const formatDate = useCallback((createdAt: string) => {
     const currentYear = new Date(Date.now()).getFullYear();
 

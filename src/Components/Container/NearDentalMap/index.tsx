@@ -323,9 +323,6 @@ tint-color: #00D1FF;
 `;
 
 const ReSearchInCurrentRegionButton = Styled.View`
-position: absolute;
-left: 16px;
-opacity: 0.9;
 border-width: 1px;
 border-color: #9AA2A9;
 flex-direction: row;
@@ -336,9 +333,6 @@ align-items: center;
 `;
 
 const ViewDentalListButton = Styled.View`
-position: absolute;
-right: 16px;
-opacity: 0.9;
 border-width: 1px;
 border-color: #9AA2A9;
 flex-direction: row;
@@ -1007,12 +1001,14 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   const clickMyLocationTrackingButton = () => {
-    dispatch(allActions.dentalMapActions.setSearchedKeyword(''));
     limitRef.current = 15;
     offsetRef.current = 0;
-    isNearDentalList.current = true;
-    mapRef.current.setLocationTrackingMode(2);
 
+    dispatch(allActions.dentalMapActions.setSearchedKeyword(''));
+    isNearDentalList.current = true;
+
+    mapRef.current.setLocationTrackingMode(2);
+    
     setTimeout(() => {
       getNearDental();
     }, 100);
@@ -1024,7 +1020,6 @@ const NearDentalMap = ({navigation, route}: Props) => {
   }, []);
 
   const onMapCameraChange = (event: any) => {
-    console.log('onMapCameraChange event', event);
     const prevMapLocation = {...currentMapLocation.current};
     currentMapLocation.current = event;
 
@@ -1555,7 +1550,10 @@ const NearDentalMap = ({navigation, route}: Props) => {
             <MapInsetBottomShadow style={styles.insetShadow} />
             <ViewDentalListContainer>
               {isVisibleReSearch && (
-                <TouchableWithoutFeedback
+                <TouchableHighlight
+                style={{position: 'absolute', left: 16, borderRadius: 100}}
+                activeOpacity={0.95}
+
                   onPress={() => reSearchNearDentalInCurrentLocation()}>
                   <ReSearchInCurrentRegionButton>
                     <ReSearchIcon
@@ -1565,16 +1563,19 @@ const NearDentalMap = ({navigation, route}: Props) => {
                       {'현재위치에서 검색'}
                     </ViewDentalListText>
                   </ReSearchInCurrentRegionButton>
-                </TouchableWithoutFeedback>
+                </TouchableHighlight>
               )}
-              <TouchableWithoutFeedback onPress={() => moveToDentalList()}>
+              <TouchableHighlight
+              style={{position: 'absolute', right: 16, borderRadius: 100}}
+              activeOpacity={0.95}
+              onPress={() => moveToDentalList()}>
                 <ViewDentalListButton>
                   <ViewDentalListIcon
                     source={require('~/Assets/Images/Map/ic_viewDentalList.png')}
                   />
                   <ViewDentalListText>{'목록보기'}</ViewDentalListText>
                 </ViewDentalListButton>
-              </TouchableWithoutFeedback>
+              </TouchableHighlight>
               <EmptyView>
                 <ViewDentalListText>{''}</ViewDentalListText>
               </EmptyView>
@@ -1601,10 +1602,11 @@ const NearDentalMap = ({navigation, route}: Props) => {
           </DentalListContainer>
         )}
         {isVisibleReSearch && nearDentalArray.length === 0 && !loadingGetDental && (
-          <TouchableWithoutFeedback
+          <TouchableHighlight
+            style={{borderRadius: 100, bottom: hp('7.3%')}}
+            activeOpacity={0.95}
             onPress={() => reSearchNearDentalInCurrentLocation()}>
-            <ReSearchInCurrentRegionButton
-              style={{position: 'absolute', bottom: 20}}>
+            <ReSearchInCurrentRegionButton>
               <ReSearchIcon
                 source={require('~/Assets/Images/Map/ic_reload.png')}
               />
@@ -1612,7 +1614,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 {'현재위치에서 검색'}
               </ViewDentalListText>
             </ReSearchInCurrentRegionButton>
-          </TouchableWithoutFeedback>
+          </TouchableHighlight>
         )}
         {loadingGetDental && (
           <LoadingGetNearDentalContainer>

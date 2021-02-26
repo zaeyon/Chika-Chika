@@ -206,7 +206,13 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   );
 
   const [metaInfoObj, setMetaInfoObj] = useState<MetaInfoObj>({
-    dentalObj: route.params?.dentalObj,
+    dentalObj: {
+      address: "", 
+      id: 0,
+      name: "",
+      originalName: "",
+      profileImages: []
+    },
     ratingObj: route.params?.ratingObj,
     totalPriceObj: {},
     treatmentDateObj: {},
