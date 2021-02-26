@@ -54,7 +54,6 @@ import GETCommentList from '~/Routes/Comment/GETCommentList';
 const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
- padding-top: ${getStatusBarHeight()}px;
 `;
 
 const BodyContainer = Styled.View`
@@ -206,7 +205,13 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   );
 
   const [metaInfoObj, setMetaInfoObj] = useState<MetaInfoObj>({
-    dentalObj: route.params?.dentalObj,
+    dentalObj: {
+      address: "", 
+      id: 0,
+      name: "",
+      originalName: "",
+      profileImages: []
+    },
     ratingObj: route.params?.ratingObj,
     totalPriceObj: {},
     treatmentDateObj: {},
@@ -582,6 +587,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           originalName: response.reviewBody.dental_clinic.originalName,
           address: response.reviewBody.dental_clinic.address,
           id: response.reviewBody.dentalClinicId,
+          profileImages: response.reviewBody.dental_clinic.dentalClinicProfileImgs,
         };
 
         if (response.viewerLikeReview) {
@@ -1007,7 +1013,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
   return (
     <TouchableWithoutFeedback onPress={() => pressBackground()}>
-      <Container>
+      <Container as={SafeAreaView} forceInset={{top: 'always'}}>
         <NavigationHeader
           headerLeftProps={{type: 'arrow', onPress: goBack, text: '리얼리뷰'}}
           headerRightProps={{type: 'viewMore', onPress: clickMoreView}}

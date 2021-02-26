@@ -49,6 +49,17 @@ const NotificationListScreen = ({navigation, route}: Props) => {
     (state: any) => state.currentUser.notificationArray,
   );
 
+  useEffect(() => {
+    GETUserNotifications({jwtToken})
+      .then((response) => {
+        console.log('GETUserNotifications response', response);
+        dispatch(allActions.userActions.setNotificationArray(response));
+      })
+      .catch((error) => {
+        console.log('GETUserNotifications error', error);
+      });
+  }, [])
+
   const goBack = () => {
     navigation.goBack();
   };
@@ -75,14 +86,20 @@ const NotificationListScreen = ({navigation, route}: Props) => {
   const deleteNotification = async () => {
     setIsEditing(false);
     console.log('selectedNotificationIdArray', selectedNotificationIdArray);
+    const sortedIdArray = [...selectedNotificationIdArray];
+    sortedIdArray.sort((a, b) => {
+      return a.index - b.index
+    })
+
+    console.log("sortedIdArray", sortedIdArray);
+
 
     const tmpNotificationArray = [...notificationArray];
     const formattedIdArray = new Array();
-    selectedNotificationIdArray;
-
-    for (let i = selectedNotificationIdArray.length - 1; i >= 0; i--) {
-      tmpNotificationArray.splice(selectedNotificationIdArray[i].index, 1);
-      formattedIdArray.push(selectedNotificationIdArray[i].id);
+  
+    for (let i = sortedIdArray.length - 1; i >= 0; i--) {
+      tmpNotificationArray.splice(sortedIdArray[i].index, 1);
+      formattedIdArray.push(sortedIdArray[i].id);
     }
 
     dispatch(allActions.userActions.setNotificationArray(tmpNotificationArray));

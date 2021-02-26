@@ -41,15 +41,17 @@ const POSTReviewUpload = ({jwtToken, starRate_cost, starRate_treatment, starRate
         "totalCost":${totalPrice},
         "treatmentDate":"${treatmentDate}"
     }`
+    var formData = new FormData();
 
     const stringfiedPara = JSON.stringify(formatedParagraphArray); 
-    const stringfiedProofImage = JSON.stringify(formattedProofImage);
+
+    if(formattedProofImage.location) {
+        const stringfiedProofImage = JSON.stringify(formattedProofImage);
+        formData.append("bills", stringfiedProofImage);
+    }
 
     console.log("body", body);
-
-    var formData = new FormData();
     formData.append("body", body);
-    formData.append("bills", stringfiedProofImage);
     formData.append("paragraphs", stringfiedPara);
 
     return new Promise(function(resolve, reject) {

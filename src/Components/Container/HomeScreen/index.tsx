@@ -253,13 +253,13 @@ const HomeScreen = ({navigation, route}: Props) => {
         console.log('통합검색 검색기록 error', error);
       });
 
-    GETSearchRecord({jwtToken, isUnified: false})
+    GETSearchRecord({jwtToken})
       .then((response: any) => {
-        console.log('병원지도검색 검색기록 response', response);
+        console.log('병원검색 검색기록 response', response);
         dispatch(allActions.userActions.setDentalSearchRecord(response));
       })
       .catch((error) => {
-        console.log('병원지도검색 검색기록 error', error);
+        console.log('병원검색 검색기록 error', error);
       });
   }, []);
 

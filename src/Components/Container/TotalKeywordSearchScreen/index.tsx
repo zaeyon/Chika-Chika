@@ -121,6 +121,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
         console.log('GETSearchRecord error', error);
       });
   }, []);
+  
   useEffect(() => {
     async function fetchData() {
       const incompleteKorean = /[ㄱ-ㅎ|ㅏ-ㅣ]/;

@@ -107,36 +107,26 @@ interface Props {
   moveToNotifiedPost: (notificationObj: any) => void;
 }
 
-const NotificationItem = ({
-  notificationObj,
-  isEditing,
-  selectNotificationItem,
-  selected,
-  index,
-  moveToAnotherProfile,
-  moveToNotifiedPost,
-}: Props) => {
-  const formatDate = useCallback(
-    (createdAt: string) => {
-      const currentYear = new Date(Date.now()).getFullYear();
+const NotificationItem = ({notificationObj, isEditing, selectNotificationItem, selected, index, moveToAnotherProfile, moveToNotifiedPost}: Props) => {
+  
+    const formatDate = useCallback((createdAt: string) => {
+    const currentYear = new Date(Date.now()).getFullYear();
 
-      const [date, time] = createdAt.split(' ');
-      const [year, month, day] = date.split('-');
+    const [date, time] = createdAt.split(' ');
+    const [year, month, day] = date.split('-');
 
-      if (String(currentYear) === year) {
-        return parseInt(month) + '월 ' + parseInt(day) + '일';
-      } else {
-        return year + '년 ' + parseInt(month) + '월 ' + parseInt(day) + '일';
-      }
-    },
-    [notificationObj],
-  );
+    if (String(currentYear) === year) {
+      return parseInt(month) + '월 ' + parseInt(day) + '일';
+    } else {
+      return year + '년 ' + parseInt(month) + '월 ' + parseInt(day) + '일';
+        }
+    }, [notificationObj]);
 
-  const currentDate = new Date();
-  const createdAtDate = new Date(notificationObj.createdAt);
-
-  const getElapsedTime = useCallback((elapsedSec: number) => {
-    console.log('elapsedSec', elapsedSec);
+    const currentDate  = new Date();
+    const createdAtDate = new Date(notificationObj.createdAt);
+    
+    const getElapsedTime = useCallback((elapsedSec: number) => {
+    console.log("elapsedSec", elapsedSec)
     let elapsedTimeText = '';
 
     const elapsedMin = elapsedSec / 60;
@@ -157,6 +147,7 @@ const NotificationItem = ({
       return elapsedTimeText;
     }
   }, []);
+  
 
   return (
     <TouchableWithoutFeedback

@@ -18,29 +18,15 @@ import DeviceInfo from 'react-native-device-info';
 const Container = Styled.View`
 width: ${wp('100%')}px;
 flex-direction: row;
-height: ${DeviceInfo.hasNotch() ? hp('8.128%') + 34 : hp('11.2')}px;
 border-top-width: 1px;
 border-color: #E2E6ED;
-background-color: #ffffff;
-padding-top: 10px;
+padding-top: 6px;
+padding-bottom: ${DeviceInfo.hasNotch() ? 0 : 8}px;
 padding-right: 16px;
+background-color: #FFFFFF;
 justify-content: space-between;
 position: absolute;
 bottom: 0;
-`;
-
-const DefaultContainer = Styled.View`
-flex: 1;
-flex-direction: row;
-align-items: center;
-justify-content: space-between;
-`;
-
-const CommentInputContainer = Styled.View`
-padding: 12px 16px;
-flex-direction: row;
-align-items: center;
-justify-content: space-around;
 `;
 
 const SocialInfoListContainer = Styled.View`
@@ -101,6 +87,8 @@ height: ${wp('6.4%')}px;
 `;
 
 const SeeDentalInfoButtonContainer = Styled.View`
+background-color: #ffffff;
+justify-content: center;
 `;
 
 const SeeDentalInfoButton = Styled.View`

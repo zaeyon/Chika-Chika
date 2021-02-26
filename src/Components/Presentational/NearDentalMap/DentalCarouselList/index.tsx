@@ -40,7 +40,7 @@ const carouselItem = (({item, index, todayIndex, moveToDentalDetail, clickDental
 
     const splitedAddressArray = item.address.split(" ");
 
-    const deletedAddress = splitedAddressArray[0] + " " + splitedAddressArray[1] + " " + splitedAddressArray[2];
+    const deletedAddress = splitedAddressArray[0] + " " + splitedAddressArray[1] + " " + splitedAddressArray[2] + " " + splitedAddressArray[3]
     
     let todayStartTime = ""
     let todayEndTime = ""

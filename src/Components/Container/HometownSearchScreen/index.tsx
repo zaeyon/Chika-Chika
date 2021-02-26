@@ -675,7 +675,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
               showsVerticalScrollIndicator={false}
               data={cityArray}
               renderItem={renderHometownItem}
-              keyExtractor={(index) => `${index}`}
+              keyExtractor={(item, index) => `${index}`}
             />
           </HometownListContainer>
         )}

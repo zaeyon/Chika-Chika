@@ -1085,7 +1085,7 @@ const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalI
                 {(parkingInfo.parkingCost !== '' && parkingInfo.parkingCost !== 'N' && parkingInfo.parkingCost >= 0) && (
                   <DetailInfoDescripText>{`주차 비용 ${parkingInfo.parkingCost}원`}</DetailInfoDescripText>
                 )}
-                {parkingInfo.parkingNotice !== '' && (
+                {parkingInfo.parkingNotice !== '' && parkingInfo.parkingNotice !== 'nan' && (
                   <DetailInfoDescripText style={{marginTop: 3}}>{`${parkingInfo.parkingNotice}`}</DetailInfoDescripText>
                 )}
               </DetailInfoItemContainer>

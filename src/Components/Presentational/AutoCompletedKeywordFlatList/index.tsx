@@ -180,7 +180,9 @@ const AutoCompletedTotalKeywordFlatList = ({
   searchTotalKeyword,
   searchRecordArray,
 }: Props) => {
+  console.log("AutoCompletedTotalKeywordFlatList autoCompletedKeywordArr", autoCompletedKeywordArr);
   const renderSearchRecordItem = ({item, index}: any) => {
+    console.log("renderSearchRecordItem item", item);
     const renderIcon = (category: string) => {
       switch (category) {
         case 'clinic':
@@ -205,8 +207,8 @@ const AutoCompletedTotalKeywordFlatList = ({
         }}
         onPress={() =>
           searchTotalKeyword({
-            keyword: item.query,
-            searchQuery: item.category === 'city' ? item.fullAddress : '',
+            keyword: item.inputQuery,
+            searchQuery: item.searchQuery,
             category: item.category,
             tagId: item.id,
           })
@@ -214,7 +216,12 @@ const AutoCompletedTotalKeywordFlatList = ({
         <SearchRecordItemContainer>
           <SearchRecordContentView>
             <RepresentIcon source={renderIcon(item.category)} />
-            <AutoCompletedKeywordText>{item.query}</AutoCompletedKeywordText>
+            <AutoCompletedKeywordText>{item.inputQuery}</AutoCompletedKeywordText>
+            {item.category === 'city' && (
+            <AutoCompletedKeywordDescriptionView>
+              <AutoCompletedKeywordDescriptionText>{item.searchQuery}</AutoCompletedKeywordDescriptionText>
+            </AutoCompletedKeywordDescriptionView>
+            )}
           </SearchRecordContentView>
           <TouchableWithoutFeedback
             onPress={() => deleteSingleSearchRecord(item.id, item.category)}>
