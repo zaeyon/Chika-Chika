@@ -211,7 +211,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
     } else {
       setLoadingSocial(true);
       console.log('카카오 로그인 시도');
-      KakaoLogins.login([KAKAO_AUTH_TYPES.Talk, KAKAO_AUTH_TYPES.Account])
+      KakaoLogins.login([KAKAO_AUTH_TYPES.Talk])
         .then((result) => {
           console.log('카카오 로그인 성공 result', result);
           KakaoLogins.getProfile()
@@ -399,7 +399,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
             certifiedPhoneNumber: phoneNumber ? true : false,
             birthdate: userProfile.birthdate,
             profileImg: userProfile.profileImg,
-            img_thumbNail: response.user?.img_thumbNail,
+            img_thumbNail: userProfile.img_thumbNail,
             nickname: userProfile.nickname,
             phoneNumber: phoneNumber,
             fcmToken: fcmToken,

@@ -94,8 +94,10 @@ if (
 }
 
 interface Props {
+  jwtToken: string;
   changeNotificationSetting: any;
   signout: any;
+  logout: ant;
   profile: any;
 }
 interface Props {
@@ -106,6 +108,8 @@ interface Props {
 const GeneralSettingScreen = ({
   jwtToken,
   changeNotificationSetting,
+  signout,
+  logout,
   profile,
 }: Props) => {
   const dispatch = useDispatch();
@@ -163,27 +167,6 @@ const GeneralSettingScreen = ({
     });
   }, [isLikesAlertEnabled, isCommentsAlertEnabled, isEventAlertEnabled]);
 
-  const logout = useCallback(() => {
-    storeUserInfo(null);
-    dispatch(allActions.userActions.logOut());
-  }, []);
-
-  const signout = useCallback(() => {
-    console.log('sign out');
-
-    setSignoutModalVisible(false);
-    storeUserInfo(null);
-    dispatch(allActions.userActions.logOut());
-
-    DELETEWithdrawal({jwtToken})
-      .then((response) => {
-        console.log('DELETEWithdrawal response', response);
-      })
-      .catch((error) => {
-        console.log('DELETEWithdrawal error', error);
-      });
-  }, []);
-
   return (
     <ContainerView
       keyboardShouldPersistTaps={'always'}
@@ -197,7 +180,11 @@ const GeneralSettingScreen = ({
           },
           {
             title: '예',
-            onPress: () => logout(),
+            onPress: () =>
+              logout(() => {
+                storeUserInfo(null);
+                dispatch(allActions.userActions.logOut());
+              }),
           },
         ]}>
         <ModalText>{'로그아웃 하시겠어요?'}</ModalText>
@@ -212,8 +199,11 @@ const GeneralSettingScreen = ({
           {
             title: '예',
             onPress: () => {
-              signout();
-              logout();
+              setSignoutModalVisible(false);
+              signout(() => {
+                storeUserInfo(null);
+                dispatch(allActions.userActions.logOut());
+              });
             },
           },
         ]}>

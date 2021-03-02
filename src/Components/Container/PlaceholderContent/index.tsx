@@ -16,7 +16,7 @@ import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import GETLocalClinics from '~/Routes/Dental/GETLocalClinics';
 const ContainerView = Styled.View`
 flex: 1;
-padding: 0px 16px
+padding: 0px 16px;
 `;
 
 const PlaceholderTitleView = Styled.View`
@@ -273,11 +273,15 @@ border-radius: 4px;
 
 const BannerContainerView = Styled.View`
 box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
+width: auto;
+height: auto;
 margin-bottom: 16px;
+border-radius: 8px;
+background: #FFFFFF;
 `;
 
 const BannerImage = Styled.Image`
-width: 100%;
+width: auto;
 border-radius: 8px;
 `;
 
@@ -554,6 +558,9 @@ const PlaceholderContent = ({navigation, title}: Props) => {
       </LocalClinicInfoView>
       <BannerContainerView>
         <BannerImage
+          style={{
+            resizeMode: 'contain',
+          }}
           source={require('~/Assets/Images/Banner/banner_review_starbucks.png')}
         />
       </BannerContainerView>

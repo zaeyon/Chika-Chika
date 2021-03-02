@@ -275,10 +275,7 @@ function HomeStackScreen() {
       screenOptions={{
         gestureEnabled: true,
       }}>
-      <HomeStack.Screen
-        name="HomeScreen"
-        component={HomeScreen}
-      />
+      <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
       <HomeStack.Screen
         name="CommunityStackScreen"
         component={CommunityStackScreen}
@@ -583,7 +580,8 @@ function ReviewUploadStackScreen() {
               config: {duration: 0},
             },
           },
-        }}/>
+        }}
+      />
     </ReviewUploadStack.Navigator>
   );
 }
@@ -938,19 +936,11 @@ function BottomTab() {
       ? routeName.state.routes[routeName.state.index].name
       : '';
 
-
-    console.log("getHomeBottomTabBarVisibility routeName", routeName);
-    console.log("getHomeBottomTabBarVisibility stackRouteName", stackRouteName);
+    console.log('getHomeBottomTabBarVisibility routeName', routeName);
+    console.log('getHomeBottomTabBarVisibility stackRouteName', stackRouteName);
 
     if (
       routeName.name === 'ReviewStackScreen' ||
-      routeName.name === 'ReviewUploadStackScreen'
-    ) {
-      return false;
-    }
-
-    if (
-      stackRouteName === 'ReviewStackScreen' ||
       routeName.name === 'ReviewUploadStackScreen'
     ) {
       return false;
@@ -960,7 +950,10 @@ function BottomTab() {
       return false;
     }
 
-    if (routeName.name === 'HometownSettingScreen' || routeName.name === 'HometownSearchScreen') {
+    if (
+      routeName.name === 'HometownSettingScreen' ||
+      routeName.name === 'HometownSearchScreen'
+    ) {
       return false;
     }
 
@@ -968,7 +961,10 @@ function BottomTab() {
       return false;
     }
 
-    if (stackRouteName === 'CommunityStackScreen' || stackRouteName === 'ReviewStackScreen') {
+    if (
+      stackRouteName === 'CommunityStackScreen' ||
+      stackRouteName === 'ReviewStackScreen'
+    ) {
       return false;
     }
 
