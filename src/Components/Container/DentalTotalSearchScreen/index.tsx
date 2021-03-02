@@ -360,6 +360,18 @@ line-height: 24px;
 color: #9AA2A9;
 `;
 
+const NoMoreNearDentalContainer = Styled.View`
+padding-top: 20px;
+padding-bottom: 70px;
+align-items: center;
+`;
+
+const NoMoreNearDentalText = Styled.Text`
+font-weight: 400;
+font-size: 14px;
+color: #9AA2A9;
+`;
+
 const TEST_DENTAL_LIST = [
   {
     name: '연세자연치과의원',
@@ -424,9 +436,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const [isFocusedSearchInput, setIsFocusedSearchInput] = useState<boolean>(
     route.params?.requestType === 'search' ? true : false,
   );
-  const [autoCompletedKeywordArray, setAutoCompletedKeywordArray] = useState<Array<any>>([]);
 
-  const [query, setQuery] = useState<string>('');
+  const [noMoreNearDental, setNoMoreNearDental] = useState<boolean>(false);
+
+  const [query, setQuery] = useState<string>(route.params?.query ? route.params?.query : '');
 
   const searchQueryRef = useRef<string>('');
 
@@ -471,10 +484,9 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     .parkingFilter;
 
   // 병원 지도 관련 redux state
-  const dentalMapRedux = useSelector((state: any) => state.dentalMap);
-  const searchedKeyword = dentalMapRedux.searchedKeyword;
-  const searchedDentalArray = dentalMapRedux.searchedDentalArray;
-
+  const searchedKeyword = useSelector((state: any) => state.dentalMap.searchedKeyword);
+  const searchedDentalArray = useSelector((state: any) => state.dentalMap.searchedDentalArray);
+  const autoCompletedKeywordArray = useSelector((state: any) => state.dentalMap.autoCompletedKeywordArray);
 
   const dentalSearchRecordArray = useSelector((state: any) => state.currentUser)
     .dentalSearchRecordArray;
@@ -506,6 +518,14 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   //   }
   //   fetchData();
   // }, [query])
+
+  useEffect(() => {
+    if(searchedKeyword) {
+      setQuery(searchedKeyword);
+      inputingText = searchedKeyword;
+      //getAutoCompleteKeyword(searchedKeyword)
+    }
+  }, [searchedKeyword])
 
   const goBack = () => {
     navigation.goBack();
@@ -549,10 +569,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const onChangeSearchInput = (text: string) => {
     inputingText = text;
     setQuery(text);
+    
 
     if (text.trim() === '') {
-      //dispatch(allActions.dentalMapActions.setAutoCompletedKeywordArr([]));
-      setAutoCompletedKeywordArray([]);
+      dispatch(allActions.dentalMapActions.setAutoCompletedKeywordArray([]));
     } else {
       getAutoCompleteKeyword(text);
     }
@@ -572,7 +592,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       .then((response: any) => {
         console.log('GETDentalKeywordAutoComplete response', response);
         if (query === inputingText) {
-          setAutoCompletedKeywordArray(response);
+          dispatch(allActions.dentalMapActions.setAutoCompletedKeywordArray(response));
         } else {
         }
       })
@@ -610,6 +630,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         console.log("GETDentalTotalSearch iq", iq);
         console.log("GETDentalTotalSearch sq", sq);
         setLoadingSearchDental(false);
+        dispatch(allActions.dentalMapActions.setSearchedKeyword(iq));
 
         if (response.length > 0) {
           dispatch(
@@ -629,6 +650,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       })
       .catch((error: any) => {
         setLoadingSearchDental(false);
+        dispatch(allActions.dentalMapActions.setSearchedKeyword(iq));
         console.log('GETDentalTotalSearch error', error);
       });
   };
@@ -887,9 +909,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   const deleteAllSearchRecord = () => {
-    const searchId = 'all';
     dispatch(allActions.userActions.setDentalSearchRecord([]));
-    dispatch(allActions.userActions.setSearchRecord([]));
+    const searchId = 'all';
 
     DELETESearchRecord({jwtToken, searchId})
       .then((response) => {
@@ -903,7 +924,6 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const deleteSingleSearchRecord = (id: number, category: string) => {
     const searchId = id;
     dispatch(allActions.userActions.deleteDentalSearchRecord(id));
-    dispatch(allActions.userActions.deleteSearchRecord(id));
 
     DELETESearchRecord({jwtToken, searchId})
       .then((response) => {
@@ -1034,7 +1054,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const onEndReachedDentalFlat = () => {
     console.log("onEndReachedDentalFlat noMoreDentalData.current", noMoreDentalData.current);
     console.log("onEndReachedDentalFlat loadingMoreDental", loadingMoreDental);
-    if (!noMoreDentalData.current && !loadingMoreDental) {
+    if (!noMoreDentalData.current && !loadingMoreDental && !loadingSearchDental) {
 
       setLoadingMoreDental(true);
       offsetRef.current = offsetRef.current + 15;
@@ -1126,6 +1146,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
           );
         } else if (response.length === 0) {
           noMoreDentalData.current = true;
+          setNoMoreNearDental(true);
         }
       })
       .catch((error: any) => {
@@ -1257,6 +1278,14 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     callDentalPhoneNumber(phoneNumber, jwtToken, dentalId);
   };
 
+  const renderNoMoreNearDentalComponent = () => {
+    return (
+      <NoMoreNearDentalContainer>
+        <NoMoreNearDentalText>{"현재 지도 중심 반경\n2km내 더이상 치과가 없습니다."}</NoMoreNearDentalText>
+      </NoMoreNearDentalContainer>
+    )
+  }
+
   const renderFooterIndicator = () => {
     if (loadingMoreDental) {
       return (
@@ -1264,7 +1293,15 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
           <ActivityIndicator />
         </FooterIndicatorContainer>
       );
-    } else {
+    } else if(noMoreDentalData) {
+      return (
+        <NoMoreNearDentalContainer>
+          <NoMoreNearDentalText>{"주변 2km안에 치과를 전부 불러왔습니다."}</NoMoreNearDentalText>
+        </NoMoreNearDentalContainer>
+      )
+    }
+    
+    else {
       return (
         <FooterIndicatorContainer
           style={{height: 10, backgroundColor: '#F5F7F9'}}

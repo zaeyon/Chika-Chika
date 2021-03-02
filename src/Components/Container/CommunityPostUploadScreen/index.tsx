@@ -174,6 +174,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
       setImages(route.params.selectedImages);
     }
   }, [route]);
+
   const fetchData = useCallback(() => {
     const incompleteKorean = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
     if (!incompleteKorean.test(searchQuery)) {
@@ -239,6 +240,23 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
     );
     return result;
   }, []);
+
+  const goBack = () => {
+    Alert.alert('글 작성을 취소하시겠어요?', '', [
+      {
+        text: '아니요',
+        onPress: () => 0,
+        style: 'cancel',
+      },
+      {
+        text: '예',
+        onPress: () => {
+          navigation.goBack()
+        },
+        style: 'default',
+      }
+    ])
+  }
 
   const formatDescription = useCallback((oldDescription: string) => {
     let formattedDescription = [];
@@ -436,7 +454,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         headerLeftProps={{
           onPress: () => {
             ReactNativeHapticFeedback.trigger('notificationWarning');
-            setIsModalVisible(true);
+            goBack();
           },
           type: 'arrow',
         }}

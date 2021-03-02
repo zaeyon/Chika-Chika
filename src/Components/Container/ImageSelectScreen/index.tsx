@@ -213,7 +213,7 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
 
   const navigateToCamera = useCallback(() => {
     if (selectedImages.length > 11) {
-      setIsModalVisible(true);
+      alertImageLimit();
       return;
     } else {
       launchCamera({includeBase64: true}, (response: CameraResponse) => {
@@ -245,7 +245,7 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
         );
       }
       if (prev.length > 11) {
-        setIsModalVisible(true);
+        alertImageLimit();
         return prev;
       } else {
         return [...prev, image];
@@ -272,6 +272,16 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
       }
     });
   }, []);
+
+  const alertImageLimit = () => {
+    Alert.alert('사진 업로드는 최대\n12개 까지 가능합니다.', '', [
+      {
+        text: '닫기',
+        style: 'cancel',
+        onPress: () => 0,
+      },
+    ])
+  }
 
   return (
     <ContainerView>

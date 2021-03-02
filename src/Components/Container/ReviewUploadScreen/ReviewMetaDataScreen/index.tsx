@@ -613,6 +613,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     if(route.params?.selectedTreatmentArray) {
+      console.log("route.params?.selectedTreatmentArray", route.params?.selectedTreatmentArray);
       setTreatmentArray(route.params?.selectedTreatmentArray);
     }      
   }, [route.params?.selectedTreatmentArray])
@@ -1036,7 +1037,6 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 100}}
         onScroll={(event: any) => {
-          console.log("event.nativeEvent.contentOffset.y", event.nativeEvent.contentOffset.y)
           scrollY.current = event.nativeEvent.contentOffset.y
         }}
         scrollEventThrottle={16}

@@ -232,11 +232,11 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
               </TouchableOpacity>
             )}
             <VerticalPartitionView />
-            <TouchableOpacity onPress={() => console.log('share')}>
+            {/* <TouchableOpacity onPress={() => console.log('share')}>
               <FloatingContentView>
                 <FloatingContentText>{'공유'}</FloatingContentText>
               </FloatingContentView>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </FloatingView>
         </BackdropView>
       </TouchableWithoutFeedback>

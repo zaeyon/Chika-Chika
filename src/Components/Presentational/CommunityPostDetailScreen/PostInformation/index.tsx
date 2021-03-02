@@ -89,7 +89,7 @@ const PostInformation = ({
             신고
           </HeaderContentText>
         </TouchableOpacity>
-        <TouchableOpacity>
+        {/* <TouchableOpacity>
           <HeaderContentText
             style={{
               textAlignVertical: 'center',
@@ -97,7 +97,7 @@ const PostInformation = ({
             }}>
             공유
           </HeaderContentText>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </HeaderContentView>
     </HeaderConatinerView>
   );

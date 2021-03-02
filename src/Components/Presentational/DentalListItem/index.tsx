@@ -271,7 +271,7 @@ const DentalListItem = ({
 };
 
 function isEqualItem(prevItem: any, nextItem: any) {
-  return prevItem.dentalId === prevItem.dentalId;
+  return prevItem.dentalId === nextItem.dentalId;
 }
 
 const MemoizedDentalListItem = React.memo(DentalListItem, isEqualItem);

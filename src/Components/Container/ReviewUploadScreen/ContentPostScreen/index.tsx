@@ -391,38 +391,6 @@ const ContentPostScreen = ({navigation, route}: Props) => {
       }
 
       insertImageToParagraph();
-
-
-      // let tmpParagraphArray = paragraphArray.slice();
-
-      // route.params.selectedImages.forEach((item: any, index: number) => {
-
-      //   if (index == 0) {
-      //     let paraObj = tmpParagraphArray[route.params?.startIndex];
-      //     paraObj.image = item;
-      //     paraObj.order = 'before';
-      //     tmpParagraphArray[route.params?.startIndex] = paraObj;
-
-      //     console.log("index", index);
-      //     console.log("paraObj", paraObj);
-      //   } else {
-      //     let paraObj = {
-      //       index: paragraphArray.length + index,
-      //       image: item,
-      //       description: '',
-      //       order: 'before',
-      //     };
-
-      //     console.log("index", index);
-      //     console.log("paraObj", paraObj);
-      //     tmpParagraphArray.push(paraObj);
-      //   }
-      // });
-
-      // setTimeout(() => {
-      //   console.log("tmpParagraphArray", tmpParagraphArray);
-      //   setParagraphArray(tmpParagraphArray);
-      // }, 100)
     }
   }, [route.params?.selectedImages]);
 

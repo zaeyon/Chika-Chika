@@ -72,6 +72,8 @@ import SavedHospitalTabScreen from '~/Components/Container/MyProfileScreen/Saved
 import LikedPostsTabScreen from '~/Components/Container/MyProfileScreen/LikedPostsTabScreen';
 import ScrapedPostsTabScreen from '~/Components/Container/MyProfileScreen/ScrapedPostsTabScreen';
 import CommentedPostsTabScreen from '~/Components/Container/MyProfileScreen/CommentedPostsTabScreen';
+import DeveloperInfoScreen from '~/Components/Container/MyProfileScreen/DeveloperInfoScreen';
+
 
 // Another Profile Stack Screen
 import AnotherProfileScreen from '~/Components/Container/AnotherProfileScreen';
@@ -750,6 +752,9 @@ function MyProfileStackScreen() {
         name="AnotherProfileStackScreen"
         component={AnotherProfileStackScreen}
       />
+      <MyProfileStack.Screen
+        name="DeveloperInfoScreen"
+        component={DeveloperInfoScreen}/>
     </MyProfileStack.Navigator>
   );
 }

@@ -962,6 +962,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
       isNearDentalList: isNearDentalList.current,
       currentMapLongitude: currentMapLocation.current.longitude,
       currentMapLatitude: currentMapLocation.current.latitude,
+      query: searchedKeyword,
     });
   };
 
@@ -997,6 +998,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
       currentMapLatitude: currentMapLocation.current.latitude,
       offset: offsetRef.current,
       limit: limitRef.current,
+      query: searchedKeyword,
     });
   };
 
@@ -1325,6 +1327,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   const reSearchNearDentalInCurrentLocation = () => {
+    dispatch(allActions.dentalMapActions.setSearchedKeyword(""))
     limitRef.current = 15;
     offsetRef.current = 0;
     getNearDental();

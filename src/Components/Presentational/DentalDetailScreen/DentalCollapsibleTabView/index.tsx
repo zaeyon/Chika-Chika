@@ -563,6 +563,11 @@ const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalI
     extrapolate: 'clamp',
   });
 
+  const backIconColor = scrollY.interpolate({
+    inputRange: [hp('18%'), hp('28%')],
+    outputRange: ["rgb(255,255,255)", "rgb(19,31,60)"],
+  })
+
   const formatTreatmentSubjectList = useCallback(() => {
   
       console.log("formatTreatmentSubjectList 함수 실행");
@@ -1345,7 +1350,7 @@ const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalI
       </Animated.View>
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <HeaderLeftContainer>
-            <HeaderBackIcon
+            <Animated.Image
               source={require('~/Assets/Images/HeaderBar/ic_back.png')}
             />
           </HeaderLeftContainer>

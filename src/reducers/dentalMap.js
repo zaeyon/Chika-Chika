@@ -31,10 +31,10 @@ const dentalMap = (state = { nearDentalArray: [], mapLocation: TEST_COORDINATE, 
                     searchedDentalArray: addedSearchedDentalArray
                 }
             }
-        case "SET_AUTO_COMPLETED_KEYWORD_ARR":
+        case "SET_AUTO_COMPLETED_KEYWORD_ARRAY":
             return {
                 ...state,
-                autoCompletedKeywordArr: action.payload,
+                autoCompletedKeywordArray: action.payload,
             }
         case "SET_LOADING_GET_DENTAL":
             return {

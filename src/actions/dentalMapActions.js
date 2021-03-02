@@ -33,10 +33,10 @@ const addSearchedDentalArray = (newSearchedDentalArray) => {
     }
 }
 
-const setAutoCompletedKeywordArr = (autoCompletedKeywordArr) => {
+const setAutoCompletedKeywordArray = (autoCompletedKeywordArray) => {
     return {
-        type: "SET_AUTO_COMPLETED_KEYWORD_ARR",
-        payload: autoCompletedKeywordArr,
+        type: "SET_AUTO_COMPLETED_KEYWORD_ARRAY",
+        payload: autoCompletedKeywordArray,
     }
 }
 
@@ -53,7 +53,7 @@ export default {
     setMapLocation,
     setSearchedKeyword,
     setSearchedDentalArray,
-    setAutoCompletedKeywordArr,
+    setAutoCompletedKeywordArray,
     setLoadingGetDental,
     addSearchedDentalArray,
 }

@@ -8,6 +8,9 @@ import {
   Platform,
   UIManager,
   TouchableHighlight,
+  Alert,
+  ActivityIndicator,
+  Linking,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -86,6 +89,14 @@ line-height: 20px;
 color: #131F3C;
 `;
 
+const LoadingContainer = Styled.View`
+position: absolute;
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
+align-items: center;
+justify-content: center;
+`;
+
 if (
   Platform.OS === 'android' &&
   UIManager.setLayoutAnimationEnabledExperimental
@@ -106,8 +117,10 @@ interface Props {
 const GeneralSettingScreen = ({
   jwtToken,
   changeNotificationSetting,
+  navigation,
   profile,
 }: Props) => {
+  console.log("GeneralSettingScreen profile", profile);
   const dispatch = useDispatch();
 
   const [sectionArrow, setSectionArrow] = useState(
@@ -130,8 +143,7 @@ const GeneralSettingScreen = ({
     profile.notificationConfig?.event,
   );
 
-  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
-  const [signoutModalVisible, setSignoutModalVisible] = useState(false);
+  const [loadingSignout, setLoadingSignout] = useState<boolean>(false);
 
   useEffect(() => {
     cleanup();
@@ -170,55 +182,66 @@ const GeneralSettingScreen = ({
 
   const signout = useCallback(() => {
     console.log('sign out');
-
-    setSignoutModalVisible(false);
-    storeUserInfo(null);
-    dispatch(allActions.userActions.logOut());
+    setLoadingSignout(true);
 
     DELETEWithdrawal({jwtToken})
       .then((response) => {
         console.log('DELETEWithdrawal response', response);
+        storeUserInfo(null);
+        dispatch(allActions.userActions.logOut());
+        setLoadingSignout(false);
       })
       .catch((error) => {
         console.log('DELETEWithdrawal error', error);
+        Alert.alert('회원탈퇴에 실패하셨습니다.');
+        setLoadingSignout(false);
       });
   }, []);
+
+  const alertLogout = () => {
+    Alert.alert('로그아웃 하시겠어요?', '', [
+      {
+        text: '아니요',
+        style: 'cancel',
+        onPress: () => 0
+      },
+      {
+        text: '예',
+        onPress: () => logout(),
+      }
+    ])
+  }
+
+  const alertSignout = () => {
+    Alert.alert('탈퇴하시겠어요?', '', [
+      {
+        text: '아니요',
+        style: 'cancel',
+        onPress: () => 0,
+      },
+      {
+        text: '예',
+        style: 'default',
+        onPress: () => {
+          signout();
+          logout();
+        }
+      }
+    ])
+  }
+
+  const moveToDeveloperInfo = () => {
+    navigation.navigate("DeveloperInfoScreen");
+  }
+
+  const openEmailSend = () => {
+    Linking.openURL(`mailto:wodus5677@gmail.com?subject=이메일 문의&body=치카치카 앱 이용중 불편한점이나 개선할점을 작성해주세요.\n작성자 닉네임: ${profile.nickname}`)
+  }
 
   return (
     <ContainerView
       keyboardShouldPersistTaps={'always'}
       showsVerticalScrollIndicator={false}>
-      <AnimatedModal
-        visible={logoutModalVisible}
-        buttons={[
-          {
-            title: '아니요',
-            onPress: () => setLogoutModalVisible(false),
-          },
-          {
-            title: '예',
-            onPress: () => logout(),
-          },
-        ]}>
-        <ModalText>{'로그아웃 하시겠어요?'}</ModalText>
-      </AnimatedModal>
-      <AnimatedModal
-        visible={signoutModalVisible}
-        buttons={[
-          {
-            title: '아니요',
-            onPress: () => setSignoutModalVisible(false),
-          },
-          {
-            title: '예',
-            onPress: () => {
-              signout();
-              logout();
-            },
-          },
-        ]}>
-        <ModalText>{'탈퇴하시겠어요?'}</ModalText>
-      </AnimatedModal>
       <SectionContainerView>
         <SectionContentView>
           <SectionContentTitleText>{'알림'}</SectionContentTitleText>
@@ -319,9 +342,10 @@ const GeneralSettingScreen = ({
         ) : null}
       </SectionContainerView>
       <SectionContainerView>
-        <TouchableHighlight activeOpacity={0.9} underlayColor="black">
+        <TouchableHighlight activeOpacity={0.9} underlayColor="black"
+        onPress={() => openEmailSend()}>
           <SectionContentView>
-            <SectionContentTitleText>{'이메일 상담'}</SectionContentTitleText>
+            <SectionContentTitleText>{'이메일 문의'}</SectionContentTitleText>
             <SectionImage source={sectionArrow} />
           </SectionContentView>
         </TouchableHighlight>
@@ -329,7 +353,7 @@ const GeneralSettingScreen = ({
         <TouchableHighlight
           activeOpacity={0.9}
           underlayColor="black"
-          onPress={() => setLogoutModalVisible(true)}>
+          onPress={() => alertLogout()}>
           <SectionContentView>
             <SectionContentTitleText>{'로그아웃'}</SectionContentTitleText>
             <SectionImage source={sectionArrow} />
@@ -339,7 +363,7 @@ const GeneralSettingScreen = ({
         <TouchableHighlight
           activeOpacity={0.9}
           underlayColor="black"
-          onPress={() => setSignoutModalVisible(true)}>
+          onPress={() => alertSignout()}>
           <SectionContentView>
             <SectionContentTitleText>{'회원탈퇴'}</SectionContentTitleText>
             <SectionImage source={sectionArrow} />
@@ -370,7 +394,24 @@ const GeneralSettingScreen = ({
             <SectionImage source={sectionArrow} />
           </SectionContentView>
         </TouchableHighlight>
+        <TouchableHighlight
+        activeOpacity={0.9}
+        underlayColor="black"
+        onPress={() => moveToDeveloperInfo()}>
+          <SectionContentView>
+            <SectionContentTitleText>
+              {'개발자 정보'}
+            </SectionContentTitleText>
+            <SectionImage source={sectionArrow} />
+          </SectionContentView>
+        </TouchableHighlight>
+        <SectionVerticalDivider />
       </SectionContainerView>
+      {loadingSignout && (
+        <LoadingContainer>
+          <ActivityIndicator/>
+        </LoadingContainer>
+      )}
     </ContainerView>
   );
 };

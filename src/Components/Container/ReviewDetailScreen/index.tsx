@@ -181,6 +181,7 @@ let startTime: any;
 let endTime: any;
 
 const ReviewDetailScreen = ({navigation, route}: Props) => {
+  const userProfile = useSelector((state: any) => state.currentUser.profile);
   const [paragraphArray, setParagraphArray] = useState<Array<any>>([]);
 
   const [isCurUserLike, setIsCurUserLike] = useState<boolean>(
@@ -247,6 +248,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     isVisibleOtherMoreViewModal,
     setIsVisibleOtherMoreViewModal,
   ] = useState<boolean>(false);
+  const [isOwnReview, setIsOwnReview] = useState<boolean>(route.params?.writer?.userId === userProfile?.id);
 
   const [isCertifiedReceipt, setIsCertifiedReceipt] = useState<boolean>(false);
   const [changeCommentArray, setChangeCommentArray] = useState<boolean>(false);
@@ -271,24 +273,24 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const commentCount = commentState.commentCount;
 
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
-  const userProfile = useSelector((state: any) => state.currentUser.profile);
 
   const reviewId = route.params?.reviewId;
 
   const createdDate = route.params?.createdAt;
   const isVisibleElapsedTime = route.params?.visibleElapsedTime;
-  //const imageArray = route.params?.imageArray;
-  const isOwnReview = route.params?.writer?.userId === userProfile?.id;
 
-  console.log('route.params?.reviewId', route.params?.reviewId);
-  console.log('route.params?.imageArray', route.params?.imageArray);
-  console.log('route.params?.writer', route.params?.writer);
-  console.log('route.params?.writer.userId', route.params?.writer?.userId);
-  console.log('userProfile.id', userProfile?.id);
-  console.log('route.params?.ratingObj', route.params?.ratingObj);
-  console.log('route.params?.dentalObj', route.params?.dentalObj);
-  console.log('route.params?.treatmentDate', route.params?.treatmentDate);
-  console.log('route.params?.elapsedTime', route.params?.elapsedTime);
+  //const imageArray = route.params?.imageArray;
+  //const isOwnReview = route.params?.writer?.userId === userProfile?.id;
+
+  // console.log('route.params?.reviewId', route.params?.reviewId);
+  // console.log('route.params?.imageArray', route.params?.imageArray);
+  // console.log('route.params?.writer', route.params?.writer);
+  // console.log('route.params?.writer.userId', route.params?.writer?.userId);
+  // console.log('userProfile.id', userProfile?.id);
+  // console.log('route.params?.ratingObj', route.params?.ratingObj);
+  // console.log('route.params?.dentalObj', route.params?.dentalObj);
+  // console.log('route.params?.treatmentDate', route.params?.treatmentDate);
+  // console.log('route.params?.elapsedTime', route.params?.elapsedTime);
 
   useEffect(() => {
     startTime = new Date();
@@ -352,12 +354,15 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         setImageArray(tmpImageArray);
       }
 
+      const tmpDentalObj = route.params.dentalObj;
+      tmpDentalObj.profileImages = [];
+
       getRevisedImageArray();
       setParagraphArrayDisplay(route.params.paragraphArray);
       setTreatmentArrayDisplay(route.params.treatmentArray);
 
       const tmpMetaInfoObj = {
-        dentalObj: route.params.dentalObj,
+        dentalObj: tmpDentalObj,
         ratingObj: route.params.ratingObj,
         totalPriceObj: tmpTreatPriceObj,
         treatmentDateObj: tmpTreatmentDateObj,
@@ -468,10 +473,19 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         );
         setIsCertifiedReceipt(response.reviewBody.certifiedBill);
 
+        console.log("response.reviewBody.user.userId", response.reviewBody.userId);
+        console.log("userProfile.id", userProfile.id);
+
+        if(response.reviewBody.userId === userProfile.id) {
+          setIsOwnReview(true);
+        } else {
+          setIsOwnReview(false);
+        }
+
         const tmpWriterObj = {
           nickname: response.reviewBody.user.nickname,
           profileImage: response.reviewBody.user.profileImg,
-          userId: response.reviewBody.user.userId,
+          userId: response.reviewBody.userId,
         };
 
         setWriterObj(tmpWriterObj);
@@ -497,7 +511,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         }
 
         // 현재 사용자의 리뷰일때 리뷰 수정용 데이터 변환 작업
-        if (isOwnReview) {
+        if (response.reviewBody.userId === userProfile.id) {
           const tmpTreatmentArray = response.reviewBody.TreatmentItems.map(
             (item: any, index: number) => {
               let tmpTreatmentObj;
@@ -1112,9 +1126,9 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
                 <MoreViewItemLabelText>{'신고'}</MoreViewItemLabelText>
               </MoreViewItemContainer>
             </TouchableWithoutFeedback>
-            <MoreViewItemContainer style={{borderBottomWidth: 0}}>
+            {/* <MoreViewItemContainer style={{borderBottomWidth: 0}}>
               <MoreViewItemLabelText>{'공유'}</MoreViewItemLabelText>
-            </MoreViewItemContainer>
+            </MoreViewItemContainer> */}
           </MoreViewModalContainer>
         )}
         {isVisibleOtherMoreViewModal && (
@@ -1124,9 +1138,9 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
                 <MoreViewItemLabelText>{'신고'}</MoreViewItemLabelText>
               </MoreViewItemContainer>
             </TouchableWithoutFeedback>
-            <MoreViewItemContainer style={{borderBottomWidth: 0}}>
+            {/* <MoreViewItemContainer style={{borderBottomWidth: 0}}>
               <MoreViewItemLabelText>{'공유'}</MoreViewItemLabelText>
-            </MoreViewItemContainer>
+            </MoreViewItemContainer> */}
           </MoreViewModalContainer>
         )}
         <ActionSheet

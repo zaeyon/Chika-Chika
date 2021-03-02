@@ -55,6 +55,7 @@ const GeneralSettingTabScreen = ({navigation, route}: Props) => {
         headerTitle="설정"
       />
       <GeneralSettingScreen
+      navigation={navigation}
         jwtToken={jwtToken}
         changeNotificationSetting={changeNotificationSetting}
         signout={signout}

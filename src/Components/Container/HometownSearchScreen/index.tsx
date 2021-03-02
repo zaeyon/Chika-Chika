@@ -340,6 +340,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
       Geolocation.getCurrentPosition(
         (position) => {
           console.log('사용자 현재 위치 position', position);
+          getAroundCities(position.coords.latitude, position.coords.longitude);
         },
         (error) => {
           setLoadingFindAroundCites(false);
@@ -656,7 +657,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
           </TouchableWithoutFeedback>
         </FindAroundCitesContainer>
         <HometownListHeaderContainer>
-          {inputText.length > 0 && (
+          {inputText.length > 0 && !isAroundCities && (
             <ListLabelText>{`'${inputText}'`}</ListLabelText>
           )}
           {isAroundCities && <ListLabelText>{`근처 동네`}</ListLabelText>}
