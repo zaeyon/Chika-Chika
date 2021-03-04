@@ -424,12 +424,12 @@ const CommunityCreatePostScreen = ({
       }}>
       <ContainerView>
         <BodyContainerView>
-          <CategoryContainerView>
+          {/* <CategoryContainerView>
             <CategoryTitleText>카테고리</CategoryTitleText>
             <CategoryContentView>
               {renderCategories(categoryList)}
             </CategoryContentView>
-          </CategoryContainerView>
+          </CategoryContainerView> */}
           {isPopupShown ? (
             <PopupAdviceView>
               <TouchableOpacity

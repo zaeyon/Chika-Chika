@@ -550,14 +550,28 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
       <TabBar
         {...props}
         onTabPress={({route, preventDefault}) => {
+          if (this.state.scrolling) {
+            preventDefault();
+            console.log(this.reviewRef.getNode());
+            return;
+          }
+          if (route.key === this.state.routes[this.state.index].key) {
+            if (route.key === 'first') {
+              this.reviewRef.getNode().scrollToOffset({
+                offset: 0,
+              });
+              return;
+            } else {
+              this.communityRef.getNode().scrollToOffset({
+                offset: 0,
+              });
+              return;
+            }
+          }
           if (
             this.state.prevScrollY ===
             Math.min(PROFILEHEIGHT, this.state.lastScrollY)
           ) {
-            return;
-          }
-          if (this.state.scrolling) {
-            preventDefault();
             return;
           }
           if (route.key === 'first') {
@@ -635,7 +649,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
               </ProfileImageView>
               <ProfileReservationTouchableOpacity>
                 <ProfileReservationText>
-                  {this.props.reviewData.length}
+                  {this.props.targetUser?.reviewsNum}
                 </ProfileReservationText>
                 <ProfileReservationTitleText>
                   {'리뷰 수'}
@@ -644,7 +658,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
               <VerticalPartitionView />
               <ProfileReservationTouchableOpacity>
                 <ProfileReservationText>
-                  {this.props.communityPostData.length}
+                  {this.props.targetUser?.communitiesNum}
                 </ProfileReservationText>
                 <ProfileReservationTitleText>
                   {'수다글 수'}

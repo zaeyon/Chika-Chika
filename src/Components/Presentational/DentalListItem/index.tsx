@@ -191,7 +191,6 @@ const DentalListItem = ({
   moveToDentalDetail,
   clickDentalCallReservation,
 }: Prop) => {
-
   const formatDistance = useCallback((distance: number) => {
     if (distance >= 1) {
       return `${distance}km`;
@@ -247,10 +246,11 @@ const DentalListItem = ({
             </FooterContainer>
           </DentalInfoContainer>
           {dentalObj.dentalClinicProfileImgs[0] && (
-          <DentalImageContainer>
-            <DentalImage
-            source={{uri: dentalObj.dentalClinicProfileImgs[0]}}/>
-          </DentalImageContainer>
+            <DentalImageContainer>
+              <DentalImage
+                source={{uri: dentalObj.dentalClinicProfileImgs[0]}}
+              />
+            </DentalImageContainer>
           )}
         </BodyContainer>
         <CallContainer>

@@ -11,7 +11,7 @@ width: ${wp('100%')}px;
 height: 112px;
 background: #F0F6FC;
 align-items: center;
-margin-bottom: 8px;
+margin-top: 8px;
 `;
 
 interface Props {
@@ -19,8 +19,8 @@ interface Props {
 }
 
 const images = {
-  question: require('~/Assets/Images/topbanner1.jpg'),
-  freetalk: require('~/Assets/Images/topbanner1.jpg'),
+  question: require('~/Assets/Images/Home/banner_1.png'),
+  freetalk: require('~/Assets/Images/Home/banner_1.png'),
 };
 
 const TopBanner = ({type}: Props) => {

@@ -167,10 +167,9 @@ interface Props {
   route: any;
 }
 
-let fcmToken = '';
-
 const UnauthorizedScreen = ({navigation, route}: Props) => {
   const [loadingSocial, setLoadingSocial] = useState<boolean>(false);
+  const [fcmToken, setFcmToken] = useState('');
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -185,7 +184,8 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
 
     if (enabled) {
       console.log('Authorization status:', authStatus);
-      fcmToken = await messaging().getToken();
+      const token = await messaging().getToken();
+      setFcmToken(fcmToken);
       console.log('getFcmToken fcmToken', fcmToken);
     }
   };
@@ -211,46 +211,57 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
     } else {
       setLoadingSocial(true);
       console.log('카카오 로그인 시도');
-      KakaoLogins.login([KAKAO_AUTH_TYPES.Talk])
+      KakaoLogins.login([KAKAO_AUTH_TYPES.Talk, KAKAO_AUTH_TYPES.Account])
         .then((result) => {
           console.log('카카오 로그인 성공 result', result);
-          KakaoLogins.getProfile()
-            .then((profile: any) => {
-              console.log('카카오 계정 프로필 불러오기 성공 profile', profile);
+          if (result.scopes?.includes('profile')) {
+            KakaoLogins.getProfile()
+              .then((profile: any) => {
+                console.log(
+                  '카카오 계정 프로필 불러오기 성공 profile',
+                  profile,
+                );
+
+                const userProfile = {
+                  birthdate: `${profile.birthyear}-${profile.birthday}`,
+                  profileImg: profile.profile_image_url
+                    ? profile.profile_image_url
+                    : '',
+                  img_thumbNail: profile.thumb_image_url,
+                  nickname: createRandomNickname(),
+                  socialId: profile.id,
+                };
+
+                const phoneNumber = profile.phone_number
+                  ? profile.phone_number
+                  : '';
+
+                progressSocialLogin(
+                  'kakao',
+                  profile.email,
+                  phoneNumber,
+                  userProfile,
+                );
+              })
+              .catch((error) => {
+                setLoadingSocial(false);
+                console.log('카카오 계정 프로필 불러오기 실패 error', error);
+              });
+          } else {
+            KakaoLogins.getProfile().then((profile: any) => {
 
               const userProfile = {
-                birthdate: profile.birthyear
-                  ? profile.birthday
-                    ? profile.birthyear + profile.birthday
-                    : ''
-                  : '',
-                profileImg: profile.profile_image_url
-                  ? profile.profile_image_url
-                  : '',
-                img_thumbNail: '',
-                //nickname: profile.nickname ? profile.nickname : "TEST" + Date.now(),
                 nickname: createRandomNickname(),
                 socialId: profile.id,
               };
-
-              const phoneNumber = profile.phone_number
-                ? profile.phone_number
-                : '';
-
-              progressSocialLogin(
-                'kakao',
-                profile.email,
-                phoneNumber,
-                userProfile,
-              );
-            })
-            .catch((error) => {
-              setLoadingSocial(false);
-              console.log('카카오 계정 프로필 불러오기 실패 error', error);
+              
+              progressSocialLogin('kakao', profile.email, '', userProfile);
             });
+          }
         })
         .catch((error) => {
           setLoadingSocial(false);
+          Alert.alert('로그인 실패', '다시 시도해주세요');
           console.log('카카오 로그인 실패 error', error);
         });
     }

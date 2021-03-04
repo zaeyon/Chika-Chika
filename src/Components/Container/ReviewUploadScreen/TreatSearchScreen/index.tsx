@@ -1,7 +1,12 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {TouchableWithoutFeedback, FlatList, Keyboard, StyleSheet} from 'react-native';
+import {
+  TouchableWithoutFeedback,
+  FlatList,
+  Keyboard,
+  StyleSheet,
+} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -169,14 +174,19 @@ interface Treatment {
   id: number;
 }
 
-let inputText = "";
+let inputText = '';
 
 const TreatSearchScreen = ({navigation, route}: Props) => {
-  const [selectedTreatmentArray, setSelectedTreatmentArray] = useState<Array<Object>>([]);
-  const [onChangeSelectedTreatList, setOnChangeSelectedTreatList] = useState<boolean>(false);
-  const [autoCompletedTreatmentArray, setAutoCompletedTreatmentArray] = useState<
-    Array<Treatment>
+  const [selectedTreatmentArray, setSelectedTreatmentArray] = useState<
+    Array<Object>
   >([]);
+  const [onChangeSelectedTreatList, setOnChangeSelectedTreatList] = useState<
+    boolean
+  >(false);
+  const [
+    autoCompletedTreatmentArray,
+    setAutoCompletedTreatmentArray,
+  ] = useState<Array<Treatment>>([]);
   const [isActivatedFinish, setIsActivatedFinish] = useState<boolean>(false);
 
   const treatmentSearchInputRef = useRef<any>();
@@ -188,15 +198,14 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
   }, [route.params?.selectedTreatmentArray]);
 
   useEffect(() => {
-    if(selectedTreatmentArray.length > 0 && !isActivatedFinish) {
+    if (selectedTreatmentArray.length > 0 && !isActivatedFinish) {
       setIsActivatedFinish(true);
-    } else if(selectedTreatmentArray.length === 0 && isActivatedFinish) {
+    } else if (selectedTreatmentArray.length === 0 && isActivatedFinish) {
       setIsActivatedFinish(false);
     }
-  }, [selectedTreatmentArray])
+  }, [selectedTreatmentArray]);
 
   const selectTreatItem = (treat: object, index: number) => {
-    
     treatmentSearchInputRef.current.clear();
 
     var tmpSelectedTreatmentArray = selectedTreatmentArray.slice();
@@ -217,33 +226,32 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
   };
 
   const onPressFinishButton = () => {
-    navigation.navigate("ReviewMetaDataScreen", {
-      selectedTreatmentArray: selectedTreatmentArray
-    })
+    navigation.navigate('ReviewMetaDataScreen', {
+      selectedTreatmentArray: selectedTreatmentArray,
+    });
   };
 
   const onChangeTreatInput = (text: string) => {
-
     inputText = text;
 
-    if(text === "") {
+    if (text === '') {
       setAutoCompletedTreatmentArray([]);
     } else {
       GETTreatmentSearch(text)
-      .then(function (response: any) {
-        console.log('GETTreatmentSearch response', response);
-        // response.forEach((item: any, index: any) => {
-        //   console.log('item', item);
-        //   console.log('selectedTreatList', selectedTreatList);
-        // });
+        .then(function (response: any) {
+          console.log('GETTreatmentSearch response', response);
+          // response.forEach((item: any, index: any) => {
+          //   console.log('item', item);
+          //   console.log('selectedTreatList', selectedTreatList);
+          // });
 
-        if(inputText === text) {
-          setAutoCompletedTreatmentArray(response);
-        } 
-      })
-      .catch(function (error: any) {
-        console.log('GETTreatmentSearch error', error);
-      });
+          if (inputText === text) {
+            setAutoCompletedTreatmentArray(response);
+          }
+        })
+        .catch(function (error: any) {
+          console.log('GETTreatmentSearch error', error);
+        });
     }
   };
 
@@ -255,15 +263,16 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
     return (
       <TreatItemContainer>
         <TreatBodyContainer>
-        <TreatItemNameText>{'# ' + item.name}</TreatItemNameText>
-        <TouchableWithoutFeedback onPress={() => selectTreatItem(item, index)}>
-          <TreatItemAddContainer>
-            <TreatItemAddText>추가</TreatItemAddText>
-          </TreatItemAddContainer>
-        </TouchableWithoutFeedback>
+          <TreatItemNameText>{'# ' + item.name}</TreatItemNameText>
+          <TouchableWithoutFeedback
+            onPress={() => selectTreatItem(item, index)}>
+            <TreatItemAddContainer>
+              <TreatItemAddText>추가</TreatItemAddText>
+            </TreatItemAddContainer>
+          </TouchableWithoutFeedback>
         </TreatBodyContainer>
         <HorizontalDividerContainer>
-        <HorizontalDivider/>
+          <HorizontalDivider />
         </HorizontalDividerContainer>
       </TreatItemContainer>
     );
@@ -272,21 +281,25 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
   return (
     <Container as={SafeAreaView} forceInset={{top: 'always'}}>
       <NavigationHeader
-      headerLeftProps={{type: 'arrow', onPress: goBack}}
-      headerTitle={"질병 및 치료 항목"}
-      headerRightProps={{type: 'text', text: '완료', onPress: onPressFinishButton}}
-      headerRightActiveColor={"#00D1FF"}
-      headerRightDisabled={!isActivatedFinish}/>
-      <SearchContainer
-      style={styles.searchInputShadow}>
+        headerLeftProps={{type: 'arrow', onPress: goBack}}
+        headerTitle={'질병 및 치료 항목'}
+        headerRightProps={{
+          type: 'text',
+          text: '완료',
+          onPress: onPressFinishButton,
+        }}
+        headerRightActiveColor={'#00D1FF'}
+        headerRightDisabled={!isActivatedFinish}
+      />
+      <SearchContainer style={styles.searchInputShadow}>
         <SearchInputContainer>
           <SearchIcon
-            style={{tintColor: "#4E525D"}}
+            style={{tintColor: '#4E525D'}}
             source={require('~/Assets/Images/Search/ic_search.png')}
           />
           <SearchTextInput
             ref={treatmentSearchInputRef}
-            selectionColor={"#00D1FF"}
+            selectionColor={'#00D1FF'}
             autoCapitalize={'none'}
             autoFocus={true}
             placeholder={'질병 이름, 치료 항목을 검색하세요.'}
@@ -297,26 +310,27 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
       </SearchContainer>
       <BodyContainer>
         {selectedTreatmentArray.length > 0 && (
-        <SelectedTreatContainer>
-          {selectedTreatmentArray.map((item: any, index: number) => {
-            return (
-              <SelectedTreatItemBackground 
-              key={index}
-              style={{marginRight: 8}}>
-                <SelectedTreatItemText>
-                  {'# ' + item.name}
-                </SelectedTreatItemText>
-                <TouchableWithoutFeedback onPress={() => deleteTreatItem(item)}>
-                  <DeleteTreatItemContainer>
-                    <TreatItemDeleteIcon
-                      source={require('~/Assets/Images/Upload/ic_delete.png')}
-                    />
-                  </DeleteTreatItemContainer>
-                </TouchableWithoutFeedback>
-              </SelectedTreatItemBackground>
-            );
-          })}
-        </SelectedTreatContainer>
+          <SelectedTreatContainer>
+            {selectedTreatmentArray.map((item: any, index: number) => {
+              return (
+                <SelectedTreatItemBackground
+                  key={index}
+                  style={{marginRight: 8}}>
+                  <SelectedTreatItemText>
+                    {'# ' + item.name}
+                  </SelectedTreatItemText>
+                  <TouchableWithoutFeedback
+                    onPress={() => deleteTreatItem(item)}>
+                    <DeleteTreatItemContainer>
+                      <TreatItemDeleteIcon
+                        source={require('~/Assets/Images/Upload/ic_delete.png')}
+                      />
+                    </DeleteTreatItemContainer>
+                  </TouchableWithoutFeedback>
+                </SelectedTreatItemBackground>
+              );
+            })}
+          </SelectedTreatContainer>
         )}
         <TreatListContainer>
           <FlatList
@@ -339,8 +353,8 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 12,
     shadowOpacity: 0.1,
-  }
-})
+  },
+});
 
 export default TreatSearchScreen;
 
@@ -351,7 +365,6 @@ horizontal={true}
 data={selectedTreatList}
 renderItem={renderSelectedItem}/>
 */
-
 
 /*
 <FooterContainer style={{bottom: buttonBottomPadding}}>

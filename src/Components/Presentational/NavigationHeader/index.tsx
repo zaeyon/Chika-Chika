@@ -55,7 +55,7 @@ z-index: -1;
 
 const HeadeIconText = Styled.Text`
 font-style: normal;
-font-weight: normal;
+font-weight: 500;
 font-size: 18px;
 line-height: 20px;
 color: #131F3C;
@@ -63,7 +63,7 @@ color: #131F3C;
 
 const HeaderTitleText = Styled.Text`
 font-style: normal;
-font-weight: bold;
+font-weight: 500;
 font-size: 16px;
 line-height: 24px;
 color: #131F3C;
@@ -179,7 +179,7 @@ const NavigationHeader = ({
       <TouchableWithoutFeedback
         disabled={headerLeftDisabled}
         onPress={() => {
-          headerLeftProps?.onPress();
+          headerLeftProps?.onPress && headerLeftProps?.onPress();
         }}>
         {headerLeftProps ? (
           <HeaderLeftContainer>
@@ -219,7 +219,7 @@ const NavigationHeader = ({
       <TouchableWithoutFeedback
         disabled={headerRightDisabled}
         onPress={() => {
-          headerRightProps?.onPress();
+          headerRightProps?.onPress && headerRightProps?.onPress();
         }}>
         <HeaderRightContainer>
           {renderHeaderRightContent()}

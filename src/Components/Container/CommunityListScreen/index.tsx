@@ -32,6 +32,8 @@ flex-direction: row;
 padding: 20px 16px 15px 16px;
 background: white;
 z-index: 2;
+border-bottom-width: 1px;
+border-color: #F5F7F9;
 `;
 
 const HeaderTitleView = Styled.View`
@@ -227,6 +229,7 @@ const CommunityListScreen = ({navigation, route}: Props) => {
           style={{
             flex: 1,
           }}
+          tabBar={() => null}
           tabBarOptions={{
             tabStyle: {
               height: hp('7.7%'),
@@ -249,7 +252,6 @@ const CommunityListScreen = ({navigation, route}: Props) => {
               borderBottomWidth: 1,
             },
           }}>
-          <CommunityTopTab.Screen name="수다방" component={GeneralTabScreen} />
           <CommunityTopTab.Screen name="질문방" component={QuestionTabScreen} />
         </CommunityTopTab.Navigator>
       </BodyContainerView>

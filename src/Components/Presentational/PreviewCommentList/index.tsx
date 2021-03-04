@@ -1,6 +1,10 @@
 import React, {useState, useEffect, useCallback, useRef} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, FlatList} from 'react-native';
+import {
+  TouchableWithoutFeedback,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -52,28 +56,45 @@ font-size: 14px;
 color: #9AA2A9;
 `;
 
+const ListFooterText = Styled.Text`
+font-weight: normal;
+font-size: 15px;
+line-height: 24px;
+align-self: center;
+padding: 12px;
+
+`;
+
 const ViewTotalCommentIcon = Styled.Image`
 margin-left: 4px;
 width: ${wp('4.266%')}px;
 height: ${wp('4.266%')}px;
 `;
 
+const ActivityIndicatorContianerView = Styled.View`
+margin-top: 150px;
+justify-content: center;
+`;
 interface Props {
+  isLoading: boolean;
   commentList: Array<any>;
   commentCount: number;
   navigation: any;
   profile: any;
   postId: string;
   postType: string;
+  commentsNum: any;
 }
 
 const PreviewCommentList = ({
+  isLoading,
   profile,
   commentList,
   commentCount,
   navigation,
   postId,
   postType,
+  commentsNum,
 }: Props) => {
   const [previewCommentList, setPreviewCommentList] = useState<Array<any>>([]);
   const [maxCommentNum, setMaxCommentNum] = useState(10);
@@ -244,28 +265,48 @@ const PreviewCommentList = ({
     [postId, postType],
   );
 
+  const renderFooterContent = useCallback(() => {
+    if (commentList.length > 10) {
+      return (
+        <TouchableWithoutFeedback onPress={() => moveToCommentList()}>
+          <ListFooterText>
+            {`${commentList.length - 10}개 댓글 더보기`}
+          </ListFooterText>
+        </TouchableWithoutFeedback>
+      );
+    } else {
+      return <></>;
+    }
+  }, [commentList]);
+
   return (
     <Container>
       <HeaderContainer>
         <TouchableWithoutFeedback onPress={() => moveToCommentList()}>
           <ViewTotalCommentContainer>
-            <HeaderCommentCountText>{`댓글 ${commentCount}`}</HeaderCommentCountText>
+            <HeaderCommentCountText>{`댓글 ${
+              String(commentCount) || String(commentsNum)
+            }`}</HeaderCommentCountText>
             <ViewTotalCommentIcon
               source={require('~/Assets/Images/Arrow/ic_viewTotalComments.png')}
             />
           </ViewTotalCommentContainer>
         </TouchableWithoutFeedback>
       </HeaderContainer>
-      {commentList.length > 0 && (
+      {isLoading ? (
+        <ActivityIndicatorContianerView>
+          <ActivityIndicator />
+        </ActivityIndicatorContianerView>
+      ) : commentList.length > 0 ? (
         <CommentListContainer>
           <FlatList
             data={previewCommentList}
             CellRendererComponent={renderCommentItem}
             keyExtractor={(item) => `${item.id}`}
+            ListFooterComponent={renderFooterContent}
           />
         </CommentListContainer>
-      )}
-      {commentList.length === 0 && (
+      ) : (
         <NoCommentContainer>
           <NoCommentText>{'등록된 댓글이 없어요!'}</NoCommentText>
         </NoCommentContainer>

@@ -486,21 +486,16 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
             data={postData}
           />
 
-          {isLoading ? (
-            <ActivityIndicatorContianerView>
-              <ActivityIndicator size="small" />
-            </ActivityIndicatorContianerView>
-          ) : (
-            // <PostCommentList commentList={comments} />
-            <PreviewCommentList
-              commentList={commentArray}
-              commentCount={commentCount}
-              profile={profile}
-              navigation={navigation}
-              postId={postData.id}
-              postType="community"
-            />
-          )}
+          <PreviewCommentList
+            isLoading={isLoading}
+            commentList={commentArray}
+            commentCount={commentCount}
+            profile={profile}
+            navigation={navigation}
+            commentsNum={postData.postCommentsNum}
+            postId={postData.id}
+            postType="community"
+          />
         </BodyContainerScrollView>
         <PostBottomBar
           moveToCommentList={moveToCommentList}

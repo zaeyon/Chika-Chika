@@ -4,6 +4,7 @@ import {Alert} from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
 import {SharedElement} from 'react-navigation-shared-element';
 // Local Components
+import ToastMessage from '~/Components/Presentational/ToastMessage';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 // Redux
@@ -86,19 +87,24 @@ const EditNicknameScreen = ({navigation, route}: Props) => {
       PUTEditProfile(jwtToken, {nickname})
         .then((response: any) => {
           console.log('프로필 변경 성공', response.body.message);
-          GETUserInfo(jwtToken).then((response: any) => {
-            dispatch(
-              allActions.userActions.setUser({
-                profile: response,
-              }),
-            );
-            setIsLoading(false);
+          GETUserInfo(jwtToken)
+            .then((response: any) => {
+              dispatch(
+                allActions.userActions.setUser({
+                  profile: response,
+                }),
+              );
+              ToastMessage.show('닉네임이 변경되었습니다.');
+              setIsLoading(false);
 
-            navigation.goBack();
-          });
+              navigation.goBack();
+            })
+            .catch((e) => {
+              console.log('get user info error', e);
+            });
         })
         .catch((e) => {
-          console.log(e);
+          console.log('프로필 변경 실패', e);
           // if (e.data.statusCode === 403) {
           //   Alert.alert('변경 실패', '이미 있는 닉네임입니다.', [
           //     {

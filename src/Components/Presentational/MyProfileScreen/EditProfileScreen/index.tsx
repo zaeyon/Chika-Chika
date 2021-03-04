@@ -227,7 +227,6 @@ interface Props {
   moveToPhoneVerify: any;
   profile: any;
   hometown: any;
-  changeProfileNickname: (nickname: string) => void;
   changeProfileGender: (gender: string) => void;
   changeProfileBirthdate: (birthdate: string) => void;
 }
@@ -240,7 +239,6 @@ const EditProfileScreen = ({
   moveToPhoneVerify,
   hometown,
   profile,
-  changeProfileNickname,
   changeProfileGender,
   changeProfileBirthdate,
 }: Props) => {
@@ -371,7 +369,7 @@ const EditProfileScreen = ({
     const startYear = 1900;
     const currentYear = new Date(Date.now()).getFullYear();
     const result = [];
-    for (let i = 0; i < currentYear - startYear; i++) {
+    for (let i = 0; i <= currentYear - startYear; i++) {
       result.push(
         <Picker.Item
           label={String(startYear + i)}
@@ -383,25 +381,72 @@ const EditProfileScreen = ({
   }, []);
 
   const renderMonthPickerItem = useCallback(() => {
+    const currentDate = new Date(Date.now());
     const result = [];
-    for (let i = 1; i <= 12; i++) {
-      result.push(<Picker.Item label={String(i)} value={String(i)} />);
+    if (parseInt(selectedBirthYear) === currentDate.getFullYear()) {
+      for (let i = 1; i <= currentDate.getMonth() + 1; i++) {
+        result.push(<Picker.Item label={String(i)} value={String(i)} />);
+      }
+    } else {
+      for (let i = 1; i <= 12; i++) {
+        result.push(<Picker.Item label={String(i)} value={String(i)} />);
+      }
     }
     return result;
-  }, []);
+  }, [selectedBirthYear]);
 
   const renderDayPickerItem = useCallback(() => {
+    const currentDate = new Date(Date.now());
     const result = [];
-    for (let i = 1; i <= 31; i++) {
-      result.push(<Picker.Item label={String(i)} value={String(i)} />);
+    if (
+      parseInt(selectedBirthYear) === currentDate.getFullYear() &&
+      parseInt(selectedBirthMonth) === currentDate.getMonth() + 1
+    ) {
+      for (let i = 1; i <= currentDate.getDay(); i++) {
+        result.push(<Picker.Item label={String(i)} value={String(i)} />);
+      }
+    } else {
+      if (selectedBirthMonth === '2') {
+        if (
+          (parseInt(selectedBirthYear) % 4) +
+            (parseInt(selectedBirthYear) % 100) +
+            (parseInt(selectedBirthYear) % 400) ===
+          0
+        ) {
+          for (let i = 1; i <= 29; i++) {
+            result.push(<Picker.Item label={String(i)} value={String(i)} />);
+          }
+        } else {
+          for (let i = 1; i <= 28; i++) {
+            result.push(<Picker.Item label={String(i)} value={String(i)} />);
+          }
+        }
+      } else if (
+        [1, 3, 5, 7, 8, 10, 12].includes(parseInt(selectedBirthMonth))
+      ) {
+        for (let i = 1; i <= 31; i++) {
+          result.push(<Picker.Item label={String(i)} value={String(i)} />);
+        }
+      } else {
+        for (let i = 1; i <= 30; i++) {
+          result.push(<Picker.Item label={String(i)} value={String(i)} />);
+        }
+      }
     }
     return result;
-  }, []);
-  
+  }, [selectedBirthMonth, selectedBirthYear]);
+
   const initializeBirthDate = useCallback(() => {
-    setSelectedBirthYear(String(parseInt(profile.birthdate.split('-')[0])));
-    setSelectedBirthMonth(String(parseInt(profile.birthdate.split('-')[1])));
-    setSelectedBirthDay(String(parseInt(profile.birthdate.split('-')[2])));
+    if (profile.birthdate) {
+      setSelectedBirthYear(String(parseInt(profile.birthdate.split('-')[0])));
+      setSelectedBirthMonth(String(parseInt(profile.birthdate.split('-')[1])));
+      setSelectedBirthDay(String(parseInt(profile.birthdate.split('-')[2])));
+    } else {
+      const currentDate = new Date(Date.now());
+      setSelectedBirthYear(String(currentDate.getFullYear()));
+      setSelectedBirthMonth(String(currentDate.getMonth() + 1));
+      setSelectedBirthDay(String(currentDate.getDay()));
+    }
   }, [profile]);
 
   const registerTimeFilter = useCallback(() => {}, []);

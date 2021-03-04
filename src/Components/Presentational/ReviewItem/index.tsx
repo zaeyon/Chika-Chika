@@ -513,7 +513,7 @@ const ReviewItem = ({
             <ProfileLeftContainer>
               <ProfileImage
                 source={{
-                  uri: writer.img_thumbNail ? writer.img_thumbNail : undefined,
+                  uri: writer.img_thumbNail || writer.profileImage,
                 }}
               />
               <NicknameCreatedAtContainer>

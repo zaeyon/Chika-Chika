@@ -53,42 +53,27 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
       PUTEditProfile(jwtToken, form)
         .then((response: any) => {
           console.log('프로필 변경 성공', response.body.message);
-          GETUserInfo(jwtToken).then((response: any) => {
-            console.log('get user info res', response);
-            dispatch(
-              allActions.userActions.setUser({
-                profile: response,
-              }),
-            );
-            showToastMessage(message);
-            setIsLoading(false);
-          });
+          GETUserInfo(jwtToken)
+            .then((response: any) => {
+              console.log('get user info res', response);
+              dispatch(
+                allActions.userActions.setUser({
+                  profile: response,
+                }),
+              );
+              showToastMessage(message);
+              setIsLoading(false);
+            })
+            .catch((e) => {
+              console.log('get user info error', e);
+            });
           callback();
         })
         .catch((e) => {
-          console.log(e);
-          // if (e.data.statusCode === 403) {
-          //   Alert.alert('변경 실패', '이미 있는 닉네임입니다.', [
-          //     {
-          //       text: '확인',
-          //       onPress: () => setIsLoading(false),
-          //     },
-          //   ]);
-          // } else if (e.data.statusCode === 500) {
-          //   Alert.alert(
-          //     '서버 오류',
-          //     '닉네임 변경에 실패하였습니다. 다시 한 번 시도해주세요.',
-          //     [
-          //       {
-          //         text: '확인',
-          //         onPress: () => setIsLoading(false),
-          //       },
-          //     ],
-          //   );
-          // }
+          console.log('프로필 변경 실패', e);
         });
     },
-    [],
+    [jwtToken],
   );
 
   const changeProfileImage = useCallback((selectedImage: any) => {
@@ -107,29 +92,27 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
     });
   }, []);
 
-  const changeProfileNickname = useCallback((nickname: string) => {
-    setIsLoading(true);
-    const form = {
-      nickname,
-    };
-    updateUserProfile(form, '닉네임이 변경되었습니다.');
-  }, []);
+  const changeProfileBirthdate = useCallback(
+    (birthdate: string) => {
+      setIsLoading(true);
+      const form = {
+        birthdate,
+      };
+      updateUserProfile(form, '생일이 변경되었습니다.');
+    },
+    [updateUserProfile],
+  );
 
-  const changeProfileBirthdate = useCallback((birthdate: string) => {
-    setIsLoading(true);
-    const form = {
-      birthdate,
-    };
-    updateUserProfile(form, '생일이 변경되었습니다.');
-  }, []);
-
-  const changeProfileGender = useCallback((gender: string) => {
-    setIsLoading(true);
-    const form = {
-      gender,
-    };
-    updateUserProfile(form, '성별이 변경되었습니다.');
-  }, []);
+  const changeProfileGender = useCallback(
+    (gender: string) => {
+      setIsLoading(true);
+      const form = {
+        gender,
+      };
+      updateUserProfile(form, '성별이 변경되었습니다.');
+    },
+    [updateUserProfile],
+  );
 
   const headerLeftAction = useCallback(() => {
     navigation.goBack();
@@ -194,7 +177,6 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
         moveToPhoneVerify={moveToPhoneVerify}
         profile={profile}
         hometown={hometown}
-        changeProfileNickname={changeProfileNickname}
         changeProfileGender={changeProfileGender}
         changeProfileBirthdate={changeProfileBirthdate}
       />

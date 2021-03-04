@@ -440,9 +440,12 @@ const DentalInfoEditRequestScreen = ({navigation, route}: Props) => {
   }, []);
 
   const navigateToGallery = useCallback(() => {
-    navigation.navigate('ImageSelectScreen', {
-      requestType: 'DentalInfoEditRequestScreen',
-      selectedImages: selectedImages,
+    navigation.navigate('ImageSelectStackScreen', {
+      screen: 'ImageSelectScreen',
+      params: {
+        requestType: 'DentalInfoEditRequestScreen',
+        selectedImages: selectedImages,
+      },
     });
   }, [selectedImages]);
 

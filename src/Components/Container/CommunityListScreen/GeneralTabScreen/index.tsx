@@ -152,23 +152,13 @@ const FreeTalkTabScreen = ({navigation, route}: Props) => {
             type,
             posts: response,
           };
-          if (
-            JSON.stringify(response).replace(
-              /"createdDiff\(second\)\"\:\d*\,/gi,
-              '',
-            ) !==
-            JSON.stringify(postData).replace(
-              /"createdDiff\(second\)\"\:\d*\,/gi,
-              '',
-            )
-          ) {
-            console.log('liked post diff');
-            LayoutAnimation.configureNext(
-              LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-            );
 
-            dispatch(allActions.communityActions.setPosts(data));
-          }
+          console.log('liked post diff');
+          LayoutAnimation.configureNext(
+            LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+          );
+
+          dispatch(allActions.communityActions.setPosts(data));
         },
       );
     }

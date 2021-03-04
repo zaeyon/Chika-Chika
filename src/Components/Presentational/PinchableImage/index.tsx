@@ -64,9 +64,11 @@ const PinchableImage = ({
 
   const pinchRef = useRef();
   const panRef = useRef();
+  const swipeRef = useRef();
 
   useEffect(() => {
     if (currentIndex !== index) {
+      console.log('init', index);
       baseScale.setValue(1);
       pinchScale.setValue(1);
       moveX.setValue(0);
@@ -99,21 +101,35 @@ const PinchableImage = ({
         useNativeDriver: true,
         listener: (e: any) => {
           const newX = lastX + e.nativeEvent.translationX;
-          const range = ((lastScale - 1) * (wp('100%') / 2)) / lastScale;
-
-          if (newX > range || newX < -range) {
+          const rangeX = ((lastScale - 1) * (wp('100%') / 2)) / lastScale;
+          const newY = lastY + e.nativeEvent.translationY;
+          const rangeY =
+            (((image.img_height * wp('100%')) / image.img_width >
+            hp('100%') - getStatusBarHeight() * 2 - 112
+              ? hp('100%') - getStatusBarHeight() * 2 - 112
+              : (image.img_height * wp('100%')) / image.img_width) *
+              lastScale -
+              (hp('100%') - getStatusBarHeight() * 2 - 112)) /
+            2 /
+            lastScale;
+          if (newX > rangeX || newX < -rangeX) {
             scrollRef.current.scrollToOffset({
               offset:
                 currentIndex * wp('100%') -
-                (newX > range ? newX - range : newX + range),
+                (newX > rangeX ? newX - rangeX : newX + rangeX),
               animated: false,
             });
           } else {
           }
+          if (newY > rangeY) {
+          } else {
+            console.log('rev');
+            setSwipeDownEnabled(false);
+          }
         },
       },
     ),
-    [moveX, moveY, lastX, lastScale, currentIndex],
+    [moveX, moveY, lastX, lastY, lastScale, currentIndex],
   );
 
   const onHorizontalPanHandlerStateChange = useCallback(
@@ -188,10 +204,15 @@ const PinchableImage = ({
           if (newY > range || newY < -range) {
             baseY.setValue(newY > range ? range : -range);
             moveY.setValue(0);
+            if (newY >= range) {
+              console.log('swupte avble');
+              setSwipeDownEnabled(true);
+            }
             return newY > range ? range : -range;
           } else {
             baseY.setValue(newY);
             moveY.setValue(0);
+            setSwipeDownEnabled(false);
             return newY;
           }
         });
@@ -210,26 +231,27 @@ const PinchableImage = ({
   const onVerticalPanHandlerStateChange = useCallback(
     ({nativeEvent}) => {
       if (nativeEvent.oldState === State.ACTIVE) {
-        if (nativeEvent.velocityY > 500) {
-          Animated.spring(dragY, {
-            toValue: hp('100%'),
-            velocity: nativeEvent.velocityY,
-            friction: 7,
-            tension: 33,
-            useNativeDriver: true,
-          }).start();
-        } else {
-          Animated.spring(dragY, {
-            toValue: 0,
-            velocity: nativeEvent.velocityY,
-            friction: 7,
-            tension: 33,
-            useNativeDriver: true,
-          }).start();
+        console.log(nativeEvent.translationY);
+        if (nativeEvent.translationY > 0) {
+          if (nativeEvent.velocityY > 500) {
+            Animated.spring(dragY, {
+              toValue: hp('100%'),
+              velocity: nativeEvent.velocityY,
+              friction: 7,
+              tension: 33,
+              useNativeDriver: true,
+            }).start();
+          } else {
+            Animated.timing(dragY, {
+              toValue: 0,
+              duration: 200,
+              useNativeDriver: true,
+            }).start();
+          }
         }
       }
     },
-    [dragY],
+    [dragY, swipeDownEnabled],
   );
 
   const onPinchGestureEvent = useCallback(
@@ -317,6 +339,22 @@ const PinchableImage = ({
           } else {
             baseScale.setValue(newScale);
             pinchScale.setValue(1);
+            setLastX((prevX) => {
+              const lastScale = prev * nativeEvent.scale;
+              const range = ((lastScale - 1) * (wp('100%') / 2)) / lastScale;
+              if (range < prevX) {
+                moveX.setValue(0);
+                baseX.setValue(range);
+                return range;
+              } else if (prevX < -range) {
+                moveX.setValue(0);
+                baseX.setValue(-range);
+                return -range;
+              } else {
+                return prevX;
+              }
+            });
+
             // if (nativeEvent.scale > 1) {
             //   setFocal((prevFocalValue) => {
             //     setPrevFocal((prevFocaled) => ({
@@ -351,7 +389,7 @@ const PinchableImage = ({
       } else if (nativeEvent.oldState === State.BEGAN) {
       }
     },
-    [pinchScale, baseScale],
+    [pinchScale, baseScale, lastScale],
   );
 
   const onTapGestureEvent = useCallback(({nativeEvent}) => {}, []);
@@ -410,6 +448,8 @@ const PinchableImage = ({
   }, []);
   return (
     <PanGestureHandler
+      ref={swipeRef}
+      activeOffsetX={[-10000000, 10000000]}
       activeOffsetY={[-30, 30]}
       enabled={swipeDownEnabled}
       shouldCancelWhenOutside={true}
@@ -450,7 +490,7 @@ const PinchableImage = ({
             }}>
             <PanGestureHandler
               ref={panRef}
-              simultaneousHandlers={pinchRef}
+              simultaneousHandlers={swipeDownEnabled ? swipeRef : []}
               enabled={travelEnabled}
               maxPointers={1}
               activeOffsetX={[-1, 1]}
@@ -478,7 +518,6 @@ const PinchableImage = ({
                         ],
                         outputRange: [
                           -((lastScale - 1) * (wp('100%') / 2)) / lastScale,
-
                           -((lastScale - 1) * (wp('100%') / 2)) / lastScale,
                           ((lastScale - 1) * (wp('100%') / 2)) / lastScale,
                           ((lastScale - 1) * (wp('100%') / 2)) / lastScale,

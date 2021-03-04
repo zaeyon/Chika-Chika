@@ -76,10 +76,13 @@ const FilteringHeader = ({
   moveToHomeTownSetting,
 }: Props) => {
   const [floatVisible, setFloatVisible] = useState(false);
-
+  const [floatStartPixel, setFloatStartPixel] = useState(0);
   return (
     <>
-      <FilterContainer>
+      <FilterContainer
+        onLayout={(e) => {
+          setFloatStartPixel(e.nativeEvent.layout.y);
+        }}>
         <OrderFilterContainer>
           <TouchableWithoutFeedback
             onPress={() => {
@@ -128,7 +131,7 @@ const FilteringHeader = ({
           setFloatVisible={setFloatVisible}
           moveToHomeTownSetting={moveToHomeTownSetting}
           style={{
-            top: 54,
+            top: floatStartPixel + 54,
             right: 16,
           }}
         />

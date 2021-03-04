@@ -1,4 +1,10 @@
-import React, {useState, useEffect, useRef, createRef, useCallback} from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  createRef,
+  useCallback,
+} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
 import {
@@ -323,22 +329,25 @@ interface Props {
 var selectedParaIndex: number;
 
 const ContentPostScreen = ({navigation, route}: Props) => {
-  
   const [certifiedBill, setCertifiedBill] = useState<boolean>(false);
   const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
   const [isActivatedUpload, setIsActivatedUpload] = useState<boolean>(false);
-  const [isVisibleDescripModal, setIsVisibleDescripModal] = useState<boolean>(false);
+  const [isVisibleDescripModal, setIsVisibleDescripModal] = useState<boolean>(
+    false,
+  );
 
   const totalPriceInputRef = useRef();
   const scrollViewRef = useRef<any>();
   let descripInputRef = useRef<any>();
 
   const [selectedImageList, setSelectedImageList] = useState<Array<any>>([]);
-  const descriptionStr = useRef<string>("");
+  const descriptionStr = useRef<string>('');
 
-  const [paragraphArray, setParagraphArray] = useState<Array<object>>(route.params?.paragraphArray);
+  const [paragraphArray, setParagraphArray] = useState<Array<object>>(
+    route.params?.paragraphArray,
+  );
 
-  const [changeParagraph, setChangeParagraph] = useState<boolean>(false); 
+  const [changeParagraph, setChangeParagraph] = useState<boolean>(false);
 
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
   let reviewId = route.params?.reviewId;
@@ -347,8 +356,8 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   const paraFlatListRef = useRef<any>();
 
   useEffect(() => {
-    console.log("ContentPostScreen route", route);
-  }, [route])
+    console.log('ContentPostScreen route', route);
+  }, [route]);
 
   useEffect(() => {
     if (route.params.requestType === 'revise') {
@@ -364,31 +373,36 @@ const ContentPostScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     if (route.params?.selectedImages) {
-      console.log("리뷰 사진 선택 route.params?.selectedImages", route.params?.selectedImages)
+      console.log(
+        '리뷰 사진 선택 route.params?.selectedImages',
+        route.params?.selectedImages,
+      );
 
       const insertImageToParagraph = async () => {
         let tmpParagraphArray = paragraphArray.slice();
-        
-        await route.params.selectedImages.forEach((item: any, index: number) => {
-        var paraObj: any;
-        if (index == 0) {
-          paraObj = tmpParagraphArray[route.params?.startIndex];
-          paraObj.image = item;
-          paraObj.order = 'before';
-          tmpParagraphArray[route.params?.startIndex] = paraObj;
-        } else {
-          paraObj = {
-            index: paragraphArray.length + index,
-            image: item,
-            description: '',
-            order: 'before',
-          };
-          tmpParagraphArray.push(paraObj);
-        }
-        })
+
+        await route.params.selectedImages.forEach(
+          (item: any, index: number) => {
+            var paraObj: any;
+            if (index == 0) {
+              paraObj = tmpParagraphArray[route.params?.startIndex];
+              paraObj.image = item;
+              paraObj.order = 'before';
+              tmpParagraphArray[route.params?.startIndex] = paraObj;
+            } else {
+              paraObj = {
+                index: paragraphArray.length + index,
+                image: item,
+                description: '',
+                order: 'before',
+              };
+              tmpParagraphArray.push(paraObj);
+            }
+          },
+        );
 
         setParagraphArray(tmpParagraphArray);
-      }
+      };
 
       insertImageToParagraph();
     }
@@ -412,23 +426,21 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   }, [route.params?.selectedImage]);
 
   useEffect(() => {
-    let descriptions = "";
+    let descriptions = '';
     paragraphArray.forEach((item: any, index: number) => {
-      
-      if(item.description !== null) {
-        if(item.description.length > 0) {
-          descriptions = descriptions + item.description
+      if (item.description !== null) {
+        if (item.description.length > 0) {
+          descriptions = descriptions + item.description;
         }
       }
-    })
+    });
 
-    if(descriptions.length > 0) {
-      setIsActivatedUpload(true)
+    if (descriptions.length > 0) {
+      setIsActivatedUpload(true);
     } else {
-      setIsActivatedUpload(false)
+      setIsActivatedUpload(false);
     }
-    
-  }, [paragraphArray])
+  }, [paragraphArray]);
 
   const openCamera = () => {
     navigation.navigate('Camera');
@@ -443,30 +455,33 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   };
 
   const onPressAddImage = (index: number) => {
-    navigation.navigate('ImageSelectScreen', {
-      requestType: 'ContentPostScreen',
-      startIndex: index,
-      selectedImages: [],
+    navigation.navigate('ImageSelectStackScreen', {
+      screen: 'ImageSelectScreen',
+      params: {
+        requestType: 'ContentPostScreen',
+        startIndex: index,
+        selectedImages: [],
+      },
     });
   };
 
   const onPressAddPara = () => {
     console.log('onPressAddPara paragraphArray', paragraphArray);
-    if(paragraphArray[paragraphArray.length - 1].description.trim().length > 0 || paragraphArray[paragraphArray.length - 1].image?.uri) {
-
+    if (
+      paragraphArray[paragraphArray.length - 1].description.trim().length > 0 ||
+      paragraphArray[paragraphArray.length - 1].image?.uri
+    ) {
       const tmpParagraphArray = paragraphArray.slice();
       const paraObj = {
         index: tmpParagraphArray.length,
         image: null,
-        description: "",
+        description: '',
       };
-  
+
       tmpParagraphArray.push(paraObj);
       setParagraphArray(tmpParagraphArray);
-
     } else {
-      ToastMessage.show("더이상 문단을 만들 수 없습니다.")
-
+      ToastMessage.show('더이상 문단을 만들 수 없습니다.');
     }
   };
 
@@ -502,10 +517,10 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   };
 
   const onFocusParaDescripInput = (index: number) => {
-    console.log("onFocusParaDescripInput index", index);
+    console.log('onFocusParaDescripInput index', index);
 
-    paraFlatListRef.current.scrollToIndex({index: index, animated: true})
-  }
+    paraFlatListRef.current.scrollToIndex({index: index, animated: true});
+  };
 
   const clickUpload = () => {
     if (route.params.requestType === 'post') {
@@ -516,7 +531,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   };
 
   const goBack = () => {
-    navigation.navigate("ReviewMetaDataScreen", {
+    navigation.navigate('ReviewMetaDataScreen', {
       paragraphArray: paragraphArray,
     });
   };
@@ -524,14 +539,38 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   const uploadReview = async () => {
     Keyboard.dismiss();
     setLoadingUpload(true);
-    console.log('uploadReview route.params?.dentalObj', route.params?.dentalObj);
-    console.log('uploadReview route.params?.treatmentArray', route.params?.treatmentArray);
-    console.log('uploadReview route.params?.ratingObj', route.params?.ratingObj);
-    console.log('uploadReview route.params?.treatmentDate', route.params?.treatmentDate);
-    console.log('uploadReview route.params?.totalPrice', route.params?.totalPrice);
-    console.log('uploadReview route.params?.selectedProofImage', route.params?.selectedProofImage);
-    console.log('uploadReview route.params?.selectedDentalImages', route.params?.selectedDentalImages);
-    console.log('uploadReview route.params?.requestType', route.params?.requestType);
+    console.log(
+      'uploadReview route.params?.dentalObj',
+      route.params?.dentalObj,
+    );
+    console.log(
+      'uploadReview route.params?.treatmentArray',
+      route.params?.treatmentArray,
+    );
+    console.log(
+      'uploadReview route.params?.ratingObj',
+      route.params?.ratingObj,
+    );
+    console.log(
+      'uploadReview route.params?.treatmentDate',
+      route.params?.treatmentDate,
+    );
+    console.log(
+      'uploadReview route.params?.totalPrice',
+      route.params?.totalPrice,
+    );
+    console.log(
+      'uploadReview route.params?.selectedProofImage',
+      route.params?.selectedProofImage,
+    );
+    console.log(
+      'uploadReview route.params?.selectedDentalImages',
+      route.params?.selectedDentalImages,
+    );
+    console.log(
+      'uploadReview route.params?.requestType',
+      route.params?.requestType,
+    );
 
     // 문단 내용 정보
     const tmpParagraphArray = paragraphArray.slice();
@@ -545,7 +584,6 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     const starRate_treatment = route.params?.ratingObj.treatmentRating;
     const starRate_service = route.params?.ratingObj.serviceRating;
 
-
     // 병원 정보
     const dentalClinicId = route.params?.dentalObj.id;
 
@@ -555,12 +593,11 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     // 전체 가격 정보
     const totalPrice = route.params?.totalPrice;
 
-
     const formatedParagraphArray = await formatParagraph(tmpParagraphArray);
     const formatedTreatmentArray = await formatTreatment(tmpTreatmentArray);
-    let formattedProofImage = {}
-    if(tmpSelectedProofImage.uri) {
-    formattedProofImage = await formatProofImage(tmpSelectedProofImage)
+    let formattedProofImage = {};
+    if (tmpSelectedProofImage.uri) {
+      formattedProofImage = await formatProofImage(tmpSelectedProofImage);
     }
 
     console.log('uploadReview formatedParagraph', formatedParagraphArray);
@@ -607,10 +644,10 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     const starRate_service = route.params?.ratingObj.serviceRating;
 
     const tmpSelectedProofImage = route.params?.selectedProofImage;
-    
+
     // 병원 정보
     const dentalClinicId = route.params?.dentalObj.id;
-    
+
     // 진료 날짜 정보
     const treatmentDate = route.params?.treatmentDate;
 
@@ -619,9 +656,9 @@ const ContentPostScreen = ({navigation, route}: Props) => {
 
     const formatedParagraphArray = await formatParagraph(tmpParagraphArray);
     const formatedTreatmentArray = await formatTreatment(tmpTreatmentArray);
-    let formattedProofImage = {}
-    if(tmpSelectedProofImage.uri) {
-    formattedProofImage = await formatProofImage(tmpSelectedProofImage)
+    let formattedProofImage = {};
+    if (tmpSelectedProofImage.uri) {
+      formattedProofImage = await formatProofImage(tmpSelectedProofImage);
     }
     console.log('reviseReview formatedParagraph', formatedParagraphArray);
     console.log('reviseReview formatedTreatment', formatedTreatmentArray);
@@ -782,21 +819,21 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     return tmpTreatmentArray;
   };
 
-
   const formatProofImage = async (selectedProofImage: any) => {
-
-    const result: any = await uploadImageToS3(selectedProofImage, 'reviewBills');
+    const result: any = await uploadImageToS3(
+      selectedProofImage,
+      'reviewBills',
+    );
 
     const tmpProofImage = {
       location: result.response.location,
       originalname: result.originalName,
       mimetype: result.type,
       size: result.size,
-    }
-    
+    };
+
     return tmpProofImage;
   };
-
 
   const clickInsertedImage = (index: number) => {
     selectedParaIndex = index;
@@ -826,9 +863,9 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     }
   };
 
-    const renderParaUnitItem = ({item, index}: any) => {
-      return (
-        <ParagraphItem
+  const renderParaUnitItem = ({item, index}: any) => {
+    return (
+      <ParagraphItem
         item={item}
         index={index}
         clickInsertedImage={clickInsertedImage}
@@ -838,22 +875,19 @@ const ContentPostScreen = ({navigation, route}: Props) => {
         onFocusParaDescripInput={onFocusParaDescripInput}
         onPressAddImage={onPressAddImage}
         descripInputRef={descripInputRef}
-        />
-      )
-    }
-  
+      />
+    );
+  };
+
   const renderAddParaUnitItem = useCallback(() => {
     return (
       <TouchableWithoutFeedback onPress={() => onPressAddPara()}>
         <EntireParaUnitContainer>
-          <ParaUnitContainer
-            style={[
-              styles.paragraphUnitShadow,
-            ]}>
+          <ParaUnitContainer style={[styles.paragraphUnitShadow]}>
             <AddImageButton>
               <AddImageContainer>
                 <AddImageIcon
-                style={{borderRadius: 100}}
+                  style={{borderRadius: 100}}
                   source={require('~/Assets/Images/Upload/ic_addImage.png')}
                 />
                 <AddImageText>사진 추가하기(선택)</AddImageText>
@@ -870,10 +904,10 @@ const ContentPostScreen = ({navigation, route}: Props) => {
             </ParaDescripInputContainer>
           </ParaUnitContainer>
           <BlurView
-          style={styles.blurView}
-          blurType="light"
-          blurAmount={1.7}
-          reducedTransparencyFallbackColor="white"
+            style={styles.blurView}
+            blurType="light"
+            blurAmount={1.7}
+            reducedTransparencyFallbackColor="white"
           />
           <AddNewParaUnitContainer>
             <AddNewParaUnitButton
@@ -886,23 +920,22 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   }, [paragraphArray.length]);
 
   const renderDescripModal = () => {
-    return (
-      <DescripModalContainer>
-      </DescripModalContainer>
-    )
-  }
+    return <DescripModalContainer></DescripModalContainer>;
+  };
 
   return (
     <Container>
       <NavigationHeader
-      headerLeftProps={{type: 'arrow', onPress: goBack}}
-      headerTitle={"리뷰작성"}
-      headerRightProps={{
-      type: 'text', 
-      text: route.params?.requestType === 'post' ? '업로드' : '업로드',
-      onPress: clickUpload}}
-      headerRightDisabled={!isActivatedUpload}
-      headerRightActiveColor={"#00D1FF"}/>
+        headerLeftProps={{type: 'arrow', onPress: goBack}}
+        headerTitle={'리뷰작성'}
+        headerRightProps={{
+          type: 'text',
+          text: route.params?.requestType === 'post' ? '업로드' : '업로드',
+          onPress: clickUpload,
+        }}
+        headerRightDisabled={!isActivatedUpload}
+        headerRightActiveColor={'#00D1FF'}
+      />
       <BodyContainer>
         <ContentContainer>
           <FlatList
@@ -923,11 +956,8 @@ const ContentPostScreen = ({navigation, route}: Props) => {
         destructiveButtonIndex={2}
         onPress={(index: any) => onPressInsertedImageActionSheet(index)}
       />
-      {isVisibleDescripModal && (
-        renderDescripModal()
-      )}
-      <TouchBlockIndicatorCover
-      loading={loadingUpload}/>
+      {isVisibleDescripModal && renderDescripModal()}
+      <TouchBlockIndicatorCover loading={loadingUpload} />
     </Container>
   );
 };
@@ -954,13 +984,13 @@ const styles = StyleSheet.create({
   },
   blurView: {
     height: wp('32.47%'),
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 20,
     bottom: 0,
     right: 20,
     opacity: 0.92,
-  }
+  },
 });
 
 /*

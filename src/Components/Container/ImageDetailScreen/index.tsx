@@ -177,30 +177,29 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
           </HeaderIndicatorView>
         </HeaderConatinerView>
       ) : null}
-      <NativeViewGestureHandler>
-        <ContentFlatList
-          ref={scrollRef}
-          horizontal
-          disableScrollViewPanResponder={true}
-          scrollEnabled={scrollEnabled}
-          initialScrollIndex={route.params.imageIndex}
-          getItemLayout={(data, index) => ({
-            length: wp('100%'),
-            offset: wp('100%') * index,
-            index,
-          })}
-          onScrollBeginDrag={() => console.log('startss')}
-          data={route.params.imageArray}
-          onScroll={onScroll}
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(_, index) => 'image-detail-' + String(index)}
-          pagingEnabled={true}
-          renderItem={renderImageItem}
-          contentContainerStyle={{
-            justifyContent: 'center',
-          }}
-        />
-      </NativeViewGestureHandler>
+
+      <ContentFlatList
+        ref={scrollRef}
+        horizontal
+        scrollEnabled={scrollEnabled}
+        initialScrollIndex={route.params.imageIndex}
+        getItemLayout={(data, index) => ({
+          length: wp('100%'),
+          offset: wp('100%') * index,
+          index,
+        })}
+        onScrollBeginDrag={() => console.log('startss')}
+        data={route.params.imageArray}
+        onScroll={onScroll}
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(_, index) => 'image-detail-' + String(index)}
+        pagingEnabled={true}
+        renderItem={renderImageItem}
+        contentContainerStyle={{
+          justifyContent: 'center',
+        }}
+      />
+
       <BackgroundView
         as={Animated.View}
         style={{
