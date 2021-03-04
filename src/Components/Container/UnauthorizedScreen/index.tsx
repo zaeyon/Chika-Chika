@@ -480,32 +480,6 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
         <Icon source={require('~/Assets/Images/Logo/ic_icon.png')} />
         <LogoImage source={require('~/Assets/Images/Logo/ic_logo.png')} />
       </LogoContainer>
-      <SocialContainer>
-        <TouchableWithoutFeedback onPress={() => loginWithKakao()}>
-          <KakaoLoginButton>
-            <SocialIcon
-              source={require('~/Assets/Images/Social/ic_kakao.png')}
-            />
-            <KakaoLoginText>카카오 로그인</KakaoLoginText>
-          </KakaoLoginButton>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={() => loginWithGoogle()}>
-          <GoogleLoginButton>
-            <SocialIcon
-              source={require('~/Assets/Images/Social/ic_google.png')}
-            />
-            <GoogleLoginText>구글 로그인</GoogleLoginText>
-          </GoogleLoginButton>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={() => loginWithApple()}>
-          <AppleLoginButton>
-            <SocialIcon
-              source={require('~/Assets/Images/Social/ic_apple.png')}
-            />
-            <AppleLoginText>Apple 로그인</AppleLoginText>
-          </AppleLoginButton>
-        </TouchableWithoutFeedback>
-      </SocialContainer>
       <LocalContainer>
         <TouchableWithoutFeedback onPress={() => moveToLocalLogin()}>
           <LocalLoginContainer>
@@ -523,3 +497,32 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
 };
 
 export default UnauthorizedScreen;
+
+/*
+<SocialContainer>
+<TouchableWithoutFeedback onPress={() => loginWithKakao()}>
+  <KakaoLoginButton>
+    <SocialIcon
+      source={require('~/Assets/Images/Social/ic_kakao.png')}
+    />
+    <KakaoLoginText>카카오 로그인</KakaoLoginText>
+  </KakaoLoginButton>
+</TouchableWithoutFeedback>
+<TouchableWithoutFeedback onPress={() => loginWithGoogle()}>
+  <GoogleLoginButton>
+    <SocialIcon
+      source={require('~/Assets/Images/Social/ic_google.png')}
+    />
+    <GoogleLoginText>구글 로그인</GoogleLoginText>
+  </GoogleLoginButton>
+</TouchableWithoutFeedback>
+<TouchableWithoutFeedback onPress={() => loginWithApple()}>
+  <AppleLoginButton>
+    <SocialIcon
+      source={require('~/Assets/Images/Social/ic_apple.png')}
+    />
+    <AppleLoginText>Apple 로그인</AppleLoginText>
+  </AppleLoginButton>
+</TouchableWithoutFeedback>
+</SocialContainer>
+*/

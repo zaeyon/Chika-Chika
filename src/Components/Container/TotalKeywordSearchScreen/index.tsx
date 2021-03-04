@@ -17,6 +17,7 @@ import GETAllTagSearch from '~/Routes/Search/GETAllTagSearch';
 import GETTotalSearch from '~/Routes/Search/GETTotalSearch';
 import GETSearchRecord from '~/Routes/Search/GETSearchRecord';
 import DELETESearchRecord from '~/Routes/Search/DELETESearchRecord';
+import POSTSearchRecord from '~/Routes/Search/POSTSearchRecord';
 
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
@@ -112,7 +113,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   const searchInputRef = useRef<any>();
 
   useEffect(() => {
-    GETSearchRecord({jwtToken})
+    GETSearchRecord({jwtToken, isUnified: true})
       .then((response: any) => {
         console.log('GETSearchRecord response', response);
         dispatch(allActions.userActions.setSearchRecord(response));
@@ -121,7 +122,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
         console.log('GETSearchRecord error', error);
       });
   }, []);
-  
+
   useEffect(() => {
     async function fetchData() {
       const incompleteKorean = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
@@ -236,10 +237,25 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
       setSearchQuery(searchQuery);
       setCategory(category);
       setTagId(tagId);
+      POSTSearchRecord({
+        jwtToken,
+        tagCategory: category,
+        sq: searchQuery,
+        iq: keyword,
+      }).then((response: any) => {
+        GETSearchRecord({jwtToken, isUnified: true})
+          .then((response: any) => {
+            console.log('GETSearchRecord response', response);
+            dispatch(allActions.userActions.setSearchRecord(response));
+          })
+          .catch((error) => {
+            console.log('GETSearchRecord error', error);
+          });
+      });
 
       // }
     },
-    [],
+    [jwtToken],
   );
 
   const onFocusSearchKeywordInput = () => {

@@ -54,6 +54,7 @@ padding: 16px;
 align-items: center;
 background: #FFFFFF;
 `;
+
 const SectionContentTitleText = Styled.Text`
 font-style: normal;
 font-weight: bold;
@@ -105,19 +106,23 @@ if (
 }
 
 interface Props {
+  jwtToken: string;
   changeNotificationSetting: any;
   signout: any;
+  logout: any;
   profile: any;
 }
 interface Props {
   jwtToken: string;
   navigation: any;
-  route: any;
 }
+
 const GeneralSettingScreen = ({
   jwtToken,
   changeNotificationSetting,
   navigation,
+  signout,
+  logout,
   profile,
 }: Props) => {
   console.log("GeneralSettingScreen profile", profile);
@@ -175,28 +180,28 @@ const GeneralSettingScreen = ({
     });
   }, [isLikesAlertEnabled, isCommentsAlertEnabled, isEventAlertEnabled]);
 
-  const logout = useCallback(() => {
-    storeUserInfo(null);
-    dispatch(allActions.userActions.logOut());
-  }, []);
+  // const logout = useCallback(() => {
+  //   storeUserInfo(null);
+  //   dispatch(allActions.userActions.logOut());
+  // }, []);
 
-  const signout = useCallback(() => {
-    console.log('sign out');
-    setLoadingSignout(true);
+  // const signout = useCallback(() => {
+  //   console.log('sign out');
+  //   setLoadingSignout(true);
 
-    DELETEWithdrawal({jwtToken})
-      .then((response) => {
-        console.log('DELETEWithdrawal response', response);
-        storeUserInfo(null);
-        dispatch(allActions.userActions.logOut());
-        setLoadingSignout(false);
-      })
-      .catch((error) => {
-        console.log('DELETEWithdrawal error', error);
-        Alert.alert('회원탈퇴에 실패하셨습니다.');
-        setLoadingSignout(false);
-      });
-  }, []);
+  //   DELETEWithdrawal({jwtToken})
+  //     .then((response) => {
+  //       console.log('DELETEWithdrawal response', response);
+  //       storeUserInfo(null);
+  //       dispatch(allActions.userActions.logOut());
+  //       setLoadingSignout(false);
+  //     })
+  //     .catch((error) => {
+  //       console.log('DELETEWithdrawal error', error);
+  //       Alert.alert('회원탈퇴에 실패하셨습니다.');
+  //       setLoadingSignout(false);
+  //     });
+  // }, []);
 
   const alertLogout = () => {
     Alert.alert('로그아웃 하시겠어요?', '', [
@@ -224,14 +229,21 @@ const GeneralSettingScreen = ({
         style: 'default',
         onPress: () => {
           signout();
-          logout();
         }
       }
     ])
   }
 
-  const moveToDeveloperInfo = () => {
-    navigation.navigate("DeveloperInfoScreen");
+  const moveToPrivacyPolicy = () => {
+    navigation.navigate("PrivacyPolicyScreen");
+  }
+
+  const moveToTermsOfService = () => {
+    navigation.navigate("TermsOfServiceScreen");
+  }
+
+  const moveToLocationInfoTermsOfUse = () => {
+    navigation.navigate("LocationInfoTermsOfUseScreen");
   }
 
   const openEmailSend = () => {
@@ -377,30 +389,37 @@ const GeneralSettingScreen = ({
           </SectionContentView>
         </TouchableHighlight>
         <SectionVerticalDivider />
-        <TouchableHighlight activeOpacity={0.9} underlayColor="black">
+        <TouchableHighlight 
+        activeOpacity={0.9} 
+        underlayColor="black"
+        onPress={() => moveToTermsOfService()}>
           <SectionContentView>
             <SectionContentTitleText>
-              {'개인정보보호정책'}
+              {'서비스 이용약관'}
             </SectionContentTitleText>
             <SectionImage source={sectionArrow} />
           </SectionContentView>
         </TouchableHighlight>
         <SectionVerticalDivider />
-        <TouchableHighlight activeOpacity={0.9} underlayColor="black">
+        <TouchableHighlight
+        activeOpacity={0.9}
+        underlayColor="black"
+        onPress={() => moveToPrivacyPolicy()}>
           <SectionContentView>
             <SectionContentTitleText>
-              {'약관 및 이용동의'}
+              {'개인정보 처리방침'}
             </SectionContentTitleText>
             <SectionImage source={sectionArrow} />
           </SectionContentView>
         </TouchableHighlight>
+        <SectionVerticalDivider />
         <TouchableHighlight
         activeOpacity={0.9}
         underlayColor="black"
-        onPress={() => moveToDeveloperInfo()}>
+        onPress={() => moveToLocationInfoTermsOfUse()}>
           <SectionContentView>
             <SectionContentTitleText>
-              {'개발자 정보'}
+              {'위치정보 이용약관'}
             </SectionContentTitleText>
             <SectionImage source={sectionArrow} />
           </SectionContentView>

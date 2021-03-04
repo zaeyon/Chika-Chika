@@ -3,18 +3,19 @@ import serverConfig from '../server.config';
 
 interface Params {
     jwtToken: string,
-    searchId?: any,
-    unified?: any,
+    tagCategory: string,
+    sq: string,
+    iq: string,
 }
 
-const DELETESearchRecord = ({jwtToken, searchId, unified=false}: Params) => {
-    
-    const uri = serverConfig.baseUri + `/search/recent?searchId=${searchId}&unifiedSearch=${String(unified)}`
+const POSTSearchRecord = ({jwtToken, tagCategory, sq, iq}: Params) => {
 
-    console.log(uri)
+    const uri = serverConfig.baseUri + `/search/recent?tagCategory=${tagCategory}&iq=${iq}&sq=${sq}`;
+
     return new Promise((resolve, reject) => {
+
         axios
-        .delete(uri, {
+        .post(uri, '',{
             headers: {
                 Authorization: jwtToken,
             }
@@ -23,9 +24,12 @@ const DELETESearchRecord = ({jwtToken, searchId, unified=false}: Params) => {
             resolve(response.data);
         })
         .catch((error) => {
-            reject(error.data);
+            reject(error.response);
         })
     })
 }
 
-export default DELETESearchRecord;
+export default POSTSearchRecord;
+
+
+

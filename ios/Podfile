@@ -26,6 +26,8 @@ target 'chikaApp' do
 
   pod 'RNSharedElement', :path => '../node_modules/react-native-shared-element'
 
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+
   target 'chikaAppTests' do
     inherit! :complete
     # Pods for testing

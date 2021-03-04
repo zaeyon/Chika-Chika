@@ -313,9 +313,9 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
     Keyboard.dismiss();
     if (route.params?.requestType === 'signUp') {
       if (provider === 'local') {
-        signUp(item);
+        moveToTermsOfServiceAgreeByLocal(item);
       } else {
-        signUpSocial(item);
+        moveToTermsOfServiceAgreeBySocial(item);
       }
     } else if (route.params?.requestType === 'add') {
       addSubHometown(item);
@@ -352,9 +352,9 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
     }
   }
 
-  const signUp = (hometown: any) => {
+  const moveToTermsOfServiceAgreeByLocal = (hometown: any) => {
     Keyboard.dismiss();
-    setLoadingSignUp(true);
+    //setLoadingSignUp(true);
 
     const certifiedPhoneNumber = route.params.certifiedPhoneNumber;
     const provider = route.params.provider;
@@ -363,53 +363,62 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
     const nickname = route.params.nickname;
     const cityId = hometown.id;
 
-    POSTRegister({
-      certifiedPhoneNumber,
-      provider,
-      fcmToken,
-      phoneNumber,
-      nickname,
-      cityId,
+    navigation.navigate("TermsAgreeScreen", {
+      certifiedPhoneNumber: route.params?.certifiedPhoneNumber,
+      provider: route.params?.provider,
+      fcmToken: route.params?.fcmToken,
+      phoneNumber: route.params?.phoneNumber,
+      nickname: route.params?.nickname,
+      cityId: hometown.id,
     })
-      .then((response: any) => {
-        setLoadingSignUp(false);
-        console.log('POSTRegister (response)', typeof response);
-        console.log('POSTRegister response', response);
-        console.log('POSTRegister response.user', response.user);
-        console.log('POSTRegister response.user.userId', response.user.userId);
 
-        const profile = {
-          id: response.user.userId,
-          nickname: response.user.userNickname,
-          profileImg: response.user.userProfileImg,
-          img_thumbNail: response.user?.img_thumbNail,
-          phoneNumber,
-          birthdate: response.user.userBirthdate,
-          gender: response.user.userGender,
-          provider,
-          Residences: response.user.userResidences,
-        };
-        const userInfo = {
-          jwtToken: response.token,
-          profile,
-        };
+    // POSTRegister({
+    //   certifiedPhoneNumber,
+    //   provider,
+    //   fcmToken,
+    //   phoneNumber,
+    //   nickname,
+    //   cityId,
+    // })
+    //   .then((response: any) => {
+    //     setLoadingSignUp(false);
+    //     console.log('POSTRegister (response)', typeof response);
+    //     console.log('POSTRegister response', response);
+    //     console.log('POSTRegister response.user', response.user);
+    //     console.log('POSTRegister response.user.userId', response.user.userId);
 
-        storeUserInfo(response.token);
-        dispatch(allActions.userActions.setUser(userInfo));
-        dispatch(
-          allActions.userActions.setHometown(response.user.userResidences),
-        );
-      })
-      .catch((error) => {
-        setLoadingSignUp(false);
-        console.log('POSTRegister error', error);
-      });
+    //     const profile = {
+    //       id: response.user.userId,
+    //       nickname: response.user.userNickname,
+    //       profileImg: response.user.userProfileImg,
+    //       img_thumbNail: response.user?.img_thumbNail,
+    //       phoneNumber,
+    //       birthdate: response.user.userBirthdate,
+    //       gender: response.user.userGender,
+    //       provider,
+    //       Residences: response.user.userResidences,
+    //     };
+    //     const userInfo = {
+    //       jwtToken: response.token,
+    //       profile,
+    //     };
+
+    //     storeUserInfo(response.token);
+    //     dispatch(allActions.userActions.setUser(userInfo));
+    //     dispatch(
+    //       allActions.userActions.setHometown(response.user.userResidences),
+    //     );
+    //   })
+    //   .catch((error) => {
+    //     setLoadingSignUp(false);
+    //     console.log('POSTRegister error', error);
+    //   });
   };
 
-  const signUpSocial = (hometown: any) => {
+  const moveToTermsOfServiceAgreeBySocial = (hometown: any) => {
     console.log('signUpSocial hometown', hometown);
     Keyboard.dismiss();
-    setLoadingSignUp(true);
+    //setLoadingSignUp(true);
 
     const certifiedPhoneNumber = route.params.certifiedPhoneNumber;
     const birthdate = route.params.birthdate;
@@ -422,49 +431,63 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
     const socialId = route.params.socialId;
     const cityId = hometown.id;
 
-    POSTSocialRegister({
-      certifiedPhoneNumber,
-      birthdate,
-      profileImg,
-      nickname,
-      phoneNumber,
-      fcmToken,
-      email,
-      provider,
-      socialId,
-      cityId,
+
+    navigation.navigate("TermsAgreeScreen", {
+      certifiedPhoneNumber: route.params?.certifiedPhoneNumber,
+      birthdate: route.params?.birthdate,
+      profileImg: route.params?.profileImg,
+      provider: route.params?.provider,
+      fcmToken: route.params?.fcmToken,
+      phoneNumber: route.params?.phoneNumber,
+      nickname: route.params?.nickname,
+      email: route.params?.email,
+      socialId: route.params?.socialId,
+      cityId: hometown.id,
     })
-      .then((response: any) => {
-        setLoadingSignUp(false);
-        console.log('POSTSocialRegister response', response);
-        console.log("POSTSocialRegister response.")
 
-        const profile = {
-          id: response.user.userId,
-          nickname: response.user.userNickname,
-          profileImg: response.user.userProfileImg,
-          img_thumbNail: response.user?.img_thumbNail,
-          phoneNumber,
-          birthdate,
-          gender: '',
-          provider,
-          Residences: response.user.userResidences,
-        };
-        const userInfo = {
-          jwtToken: response.token,
-          profile,
-        };
+    // POSTSocialRegister({
+    //   certifiedPhoneNumber,
+    //   birthdate,
+    //   profileImg,
+    //   nickname,
+    //   phoneNumber,
+    //   fcmToken,
+    //   email,
+    //   provider,
+    //   socialId,
+    //   cityId,
+    // })
+    //   .then((response: any) => {
+    //     setLoadingSignUp(false);
+    //     console.log('POSTSocialRegister response', response);
+    //     console.log("POSTSocialRegister response.")
 
-        storeUserInfo(response.token);
-        dispatch(allActions.userActions.setUser(userInfo));
-        dispatch(
-          allActions.userActions.setHometown(response.user.userResidences),
-        );
-      })
-      .catch((error: any) => {
-        setLoadingSignUp(false);
-        console.log('POSTSocialRegister error', error);
-      });
+    //     const profile = {
+    //       id: response.user.userId,
+    //       nickname: response.user.userNickname,
+    //       profileImg: response.user.userProfileImg,
+    //       img_thumbNail: response.user?.img_thumbNail,
+    //       phoneNumber,
+    //       birthdate,
+    //       gender: '',
+    //       provider,
+    //       Residences: response.user.userResidences,
+    //     };
+    //     const userInfo = {
+    //       jwtToken: response.token,
+    //       profile,
+    //     };
+
+    //     storeUserInfo(response.token);
+    //     dispatch(allActions.userActions.setUser(userInfo));
+    //     dispatch(
+    //       allActions.userActions.setHometown(response.user.userResidences),
+    //     );
+    //   })
+    //   .catch((error: any) => {
+    //     setLoadingSignUp(false);
+    //     console.log('POSTSocialRegister error', error);
+    //   });
   };
 
   const getAroundCities = (latitude: number, longitude: number) => {

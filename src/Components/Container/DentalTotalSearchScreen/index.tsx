@@ -1278,14 +1278,6 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     callDentalPhoneNumber(phoneNumber, jwtToken, dentalId);
   };
 
-  const renderNoMoreNearDentalComponent = () => {
-    return (
-      <NoMoreNearDentalContainer>
-        <NoMoreNearDentalText>{"현재 지도 중심 반경\n2km내 더이상 치과가 없습니다."}</NoMoreNearDentalText>
-      </NoMoreNearDentalContainer>
-    )
-  }
-
   const renderFooterIndicator = () => {
     if (loadingMoreDental) {
       return (
@@ -1293,7 +1285,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
           <ActivityIndicator />
         </FooterIndicatorContainer>
       );
-    } else if(noMoreDentalData) {
+    } else if(noMoreNearDental) {
       return (
         <NoMoreNearDentalContainer>
           <NoMoreNearDentalText>{"주변 2km안에 치과를 전부 불러왔습니다."}</NoMoreNearDentalText>

@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, StyleSheet} from 'react-native';
+import {TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Animated} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -368,6 +368,13 @@ position: absolute;
 bottom: 0;
 `;
 
+const TreatmentDateModalBackground = Styled.View`
+background: #000000;
+position: absolute;
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
+`;
+
 const DetailFilterHeaderContainer = Styled.View`
 flex-direction: row;
 padding-top: 16px;
@@ -593,6 +600,8 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   const actionSheetRefByProof = useRef() as any;
   const actionSheetRefByDental = useRef() as any;
 
+  const modalContentY = useRef(new Animated.Value(hp('50%'))).current;
+
   useEffect(() => {
     console.log("ReviewMetaDataScreen route", route)
   }, [route]);
@@ -729,6 +738,12 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   const onPressTreatmentDate = () => {
     setIsVisibleDatePicker(true);
     priceInputRef.current.blur();
+    Animated.spring(modalContentY, {
+      toValue: 0,
+      friction: 17,
+      tension: 68,
+      useNativeDriver: true,
+    }).start();
   };
 
   const onPressTotalPrice = () => {
@@ -911,7 +926,11 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }, [])
 
   const cancelTreatmentDateModal = useCallback(() => {
-    setIsVisibleDatePicker(false);
+    Animated.timing(modalContentY, {
+      toValue: hp('50%'),
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => setIsVisibleDatePicker(false));
   }, []);
 
 
@@ -925,7 +944,10 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
   const initializeTreatmentDate = () => {
     setIsVisibleDatePicker(false);
-    setTreatmentDateObj({});
+    setTreatmentDateObj({
+      displayTreatmentDate: '',
+      treatmentDate: ''
+    });
   }
 
   const registerTreatmentDate = () => {
@@ -1200,7 +1222,6 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
           <MetaDataItemContainer
           onLayout={(event) => {
             console.log("전체치료비용 onLayout event.nativeEvent", event.nativeEvent);
-
           }}>
           <MetaDataHeaderContainer>
           <MetaDataLabelText>{"전체 치료 비용(선택)"}</MetaDataLabelText>
@@ -1253,13 +1274,27 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
           </ScrollViewInnerContainer>
           </TouchableWithoutFeedback>
         </BodyContainer>
-        <Modal
-        isVisible={isVisibleDatePicker}
-        style={styles.treatmentDateModalView}
-        onBackdropPress={() => cancelTreatmentDateModal()}
-        backdropOpacity={0.25}
-        >
-        <TreatmentDateModalContainer>
+        <TreatmentDateModal
+        visible={isVisibleDatePicker}
+        transparent={true}
+        animationType="none">
+          <TouchableWithoutFeedback onPress={() => cancelTreatmentDateModal()}>
+            <TreatmentDateModalBackground
+            as={Animated.View}
+            style={{
+              opacity: modalContentY.interpolate({
+                inputRange: [0, hp('50%')],
+                outputRange: [0.3, 0],
+                extrapolate: 'clamp',
+              })
+            }}>
+            </TreatmentDateModalBackground>
+          </TouchableWithoutFeedback>
+        <TreatmentDateModalContainer
+        as={Animated.View}
+        style={{
+          transform: [{translateY: modalContentY}]
+        }}>
             <DetailFilterHeaderContainer>
               <DetailFilterTitleText>{'방문일 설정'}</DetailFilterTitleText>
             </DetailFilterHeaderContainer>
@@ -1321,7 +1356,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
               </DetailFilterFooterContainer>
               </TimeFilterModalContainer>
           </TreatmentDateModalContainer>
-        </Modal>
+        </TreatmentDateModal>
         {/* {isFocusedTotalPriceInput && (
           <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>

@@ -716,9 +716,9 @@ const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalI
       onStartShouldSetPanResponder: (evt, gestureState) => false,
       onMoveShouldSetPanResponder: (evt, gestureState) => {
         headerScrollY.stopAnimation();
-        return true;
+        return false;
       },
-      onShouldBlockNativeResponder: () => true,
+      onShouldBlockNativeResponder: () => false,
       onPanResponderGrant: (evt, gestureState) => {
         headerScrollY.stopAnimation();
       },
@@ -941,7 +941,7 @@ const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalI
 
         return (
           <Animated.ScrollView
-            //{...tabPanResponder.panHandlers}
+            {...tabPanResponder.panHandlers}
             ref={(ref) => {
               if (ref) {
                 const found = listRefArr.current.find(
@@ -1116,7 +1116,7 @@ const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalI
       case 'review':
         return (
           <Animated.ScrollView
-            //{...tabPanResponder.panHandlers}
+            {...tabPanResponder.panHandlers}
             ref={(ref) => {
               if (ref) {
                 const found = listRefArr.current.find(

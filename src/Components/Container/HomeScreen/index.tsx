@@ -244,18 +244,16 @@ const HomeScreen = ({navigation, route}: Props) => {
       }
     });
 
-    
-
-      GETSearchRecord({jwtToken, isUnified:true})
+    GETSearchRecord({jwtToken, isUnified: true})
       .then((response: any) => {
         console.log('통합검색 검색기록 response', response);
         dispatch(allActions.userActions.setSearchRecord(response));
       })
       .catch((error) => {
         console.log('통합검색 검색기록 error', error);
-      })
+      });
 
-      GETSearchRecord({jwtToken})
+    GETSearchRecord({jwtToken})
       .then((response: any) => {
         console.log('병원검색 검색기록 response', response);
         dispatch(allActions.userActions.setDentalSearchRecord(response));
@@ -263,20 +261,17 @@ const HomeScreen = ({navigation, route}: Props) => {
       .catch((error) => {
         console.log('병원검색 검색기록 error', error);
       });
-
   }, []);
 
-  
-
   const fetchLocalInfo = useCallback(
-    (selectedHometown, callback=() => console.log('fetchLocalInfo')) => {
+    (selectedHometown, callback = () => console.log('fetchLocalInfo')) => {
       GETLocalClinicAndReviewCount({
         jwtToken,
         cityId: String(selectedHometown.id),
       }).then((response: any) => {
         setLocalClinicCount(response.residenceClinicsNum);
         setLocalReviewCount(response.residenceReviewsNum);
-        callback()
+        callback();
       });
     },
     [jwtToken],
@@ -330,12 +325,16 @@ const HomeScreen = ({navigation, route}: Props) => {
     [jwtToken],
   );
   const onRefresh = useCallback(() => {
-    setRefreshing(true)
+    setRefreshing(true);
     fetchLocalInfo(selectedHometown, () => setRefreshing(false));
     fetchRecentReviews(selectedHometown);
     fetchRecentCommunityPosts(selectedHometown);
-  
-  }, [selectedHometown, fetchLocalInfo, fetchRecentReviews, fetchRecentCommunityPosts])
+  }, [
+    selectedHometown,
+    fetchLocalInfo,
+    fetchRecentReviews,
+    fetchRecentCommunityPosts,
+  ]);
 
   const moveToCommunityDetail = useCallback(
     (postId: number, postType: string) => {
@@ -403,13 +402,13 @@ const HomeScreen = ({navigation, route}: Props) => {
   return (
     <ContainerView as={SafeAreaView}>
       <ContentScrollView
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          enabled={refreshing}
-        />
-      }
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            enabled={refreshing}
+          />
+        }
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: hp('9.1%'),

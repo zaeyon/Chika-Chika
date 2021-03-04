@@ -34,6 +34,7 @@ import LoginScreen from '~/Components/Container/LoginScreen';
 import ProfileInputScreen from '~/Components/Container/SignUpScreen/ProfileInputScreen';
 import BasicInputScreen from './Components/Container/SignUpScreen/BasicInputScreen';
 import PhoneVerifyScreen from '~/Components/Container/PhoneVerifyScreen';
+import TermsAgreeScreen from '~/Components/Container/TermsAgreeScreen';
 
 // Home Stack Screee
 import HomeScreen from '~/Components/Container/HomeScreen';
@@ -80,6 +81,9 @@ import AnotherProfileScreen from '~/Components/Container/AnotherProfileScreen';
 
 // Setting Stack Screen
 import SettingScreen from '~/Components/Container/SettingScreen';
+import TermsOfServiceScreen from '~/Components/Container/MyProfileScreen/GeneralSettingTabScreen/TermsOfServiceScreen';
+import LocationInfoTermsOfUseScreen from '~/Components/Container/MyProfileScreen/GeneralSettingTabScreen/LocationInfoTermsOfUseScreen';
+import PrivacyPolicyScreen from '~/Components/Container/MyProfileScreen/GeneralSettingTabScreen/PrivacyPolicyScreen';
 
 // Community Stack Screen
 import CommunityListScreen from '~/Components/Container/CommunityListScreen';
@@ -171,6 +175,19 @@ function AuthStackScreen() {
         name="HometownSearchScreen"
         component={HometownSearchScreen}
       />
+      <AuthStack.Screen
+        name="TermsAgreeScreen"
+        component={TermsAgreeScreen}/>
+
+      <AuthStack.Screen
+        name="TermsOfServiceScreen"
+        component={TermsOfServiceScreen}/>
+      <AuthStack.Screen
+        name="LocationInfoTermsOfUseScreen"
+        component={LocationInfoTermsOfUseScreen}/>
+      <AuthStack.Screen
+        name="PrivacyPolicyScreen"
+        component={PrivacyPolicyScreen}/>
     </AuthStack.Navigator>
   );
 }
@@ -277,10 +294,7 @@ function HomeStackScreen() {
       screenOptions={{
         gestureEnabled: true,
       }}>
-      <HomeStack.Screen
-        name="HomeScreen"
-        component={HomeScreen}
-      />
+      <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
       <HomeStack.Screen
         name="CommunityStackScreen"
         component={CommunityStackScreen}
@@ -585,7 +599,8 @@ function ReviewUploadStackScreen() {
               config: {duration: 0},
             },
           },
-        }}/>
+        }}
+      />
     </ReviewUploadStack.Navigator>
   );
 }
@@ -755,6 +770,15 @@ function MyProfileStackScreen() {
       <MyProfileStack.Screen
         name="DeveloperInfoScreen"
         component={DeveloperInfoScreen}/>
+      <MyProfileStack.Screen
+        name="TermsOfServiceScreen"
+        component={TermsOfServiceScreen}/>
+      <MyProfileStack.Screen
+        name="LocationInfoTermsOfUseScreen"
+        component={LocationInfoTermsOfUseScreen}/>
+      <MyProfileStack.Screen
+        name="PrivacyPolicyScreen"
+        component={PrivacyPolicyScreen}/>
     </MyProfileStack.Navigator>
   );
 }
@@ -943,19 +967,11 @@ function BottomTab() {
       ? routeName.state.routes[routeName.state.index].name
       : '';
 
-
-    console.log("getHomeBottomTabBarVisibility routeName", routeName);
-    console.log("getHomeBottomTabBarVisibility stackRouteName", stackRouteName);
+    console.log('getHomeBottomTabBarVisibility routeName', routeName);
+    console.log('getHomeBottomTabBarVisibility stackRouteName', stackRouteName);
 
     if (
       routeName.name === 'ReviewStackScreen' ||
-      routeName.name === 'ReviewUploadStackScreen'
-    ) {
-      return false;
-    }
-
-    if (
-      stackRouteName === 'ReviewStackScreen' ||
       routeName.name === 'ReviewUploadStackScreen'
     ) {
       return false;
@@ -965,7 +981,10 @@ function BottomTab() {
       return false;
     }
 
-    if (routeName.name === 'HometownSettingScreen' || routeName.name === 'HometownSearchScreen') {
+    if (
+      routeName.name === 'HometownSettingScreen' ||
+      routeName.name === 'HometownSearchScreen'
+    ) {
       return false;
     }
 
@@ -973,7 +992,10 @@ function BottomTab() {
       return false;
     }
 
-    if (stackRouteName === 'CommunityStackScreen' || stackRouteName === 'ReviewStackScreen') {
+    if (
+      stackRouteName === 'CommunityStackScreen' ||
+      stackRouteName === 'ReviewStackScreen'
+    ) {
       return false;
     }
 
@@ -1114,6 +1136,10 @@ function BottomTab() {
       return false;
     }
     if (routeName.name === 'AccuseScreen') {
+      return false;
+    }
+
+    if(routeName.name === 'LocationInfoTermsOfUseScreen' || routeName.name === 'PrivacyPolicyScreen' || routeName.name === 'TermsOfServiceScreen') {
       return false;
     }
 

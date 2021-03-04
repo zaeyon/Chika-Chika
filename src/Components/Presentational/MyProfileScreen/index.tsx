@@ -385,6 +385,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         style={{
           flex: 1,
           marginBottom: DeviceInfo.hasNotch() ? hp('6.5') : hp('7.2%'),
+          overflow: 'visible',
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
         contentContainerStyle={{
@@ -470,6 +471,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         style={{
           flex: 1,
           marginBottom: DeviceInfo.hasNotch() ? hp('6.5%') : hp('7.2%'),
+          overflow: 'visible',
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
         contentContainerStyle={{

@@ -135,7 +135,7 @@ justify-content: center;
 
 const DisabledLoginButton = Styled.View`
 width: ${wp('100%')}px;
-height: ${DeviceInfo.hasNotch() ? hp('6.89%') : hp('8.3%')}px;
+height: ${DeviceInfo.hasNotch() ? hp('7.5%') : hp('8.3%')}px;
 background-color: #E2E6ED;
 justify-content: center;
 align-items: center;
@@ -149,7 +149,7 @@ color: #ffffff;
 
 const AbledLoginButton = Styled.View`
 width: ${wp('100%')}px;
-height: ${DeviceInfo.hasNotch() ? hp('6.89%') : hp('8.3%')}px;
+height: ${DeviceInfo.hasNotch() ? hp('7.5%') : hp('8.3%')}px;
 background-color: #00D1FF;
 justify-content: center;
 align-items: center;
@@ -257,6 +257,8 @@ const LoginScreen = ({navigation, route}: Props) => {
 
   const numberInputRef = useRef(null);
   const authCodeInputRef = useRef(null);
+  const isCertified = useRef<boolean>(false);
+  const certifiedAuthCode = useRef<any>(0);
 
   let submitingNumber: any;
   let submitingPassword: any;
@@ -362,7 +364,6 @@ const LoginScreen = ({navigation, route}: Props) => {
 
   const clickLoginButton = () => {
     Keyboard.dismiss();
-    setLoadingVerify(true);
     console.log('isUser', isUser);
     const fcmToken = route.params?.fcmToken;
 
@@ -370,19 +371,33 @@ const LoginScreen = ({navigation, route}: Props) => {
       const phoneNumber = String(number);
       login(phoneNumber, authCode);
     } else {
-      POSTVerifyPhoneNumber(String(number), String(authCode))
+      if(isCertified.current && (authCode == certifiedAuthCode.current)) {
+        navigation.navigate('HometownSearchScreen', {
+          requestType: 'signUp',
+          certifiedPhoneNumber: true,
+          provider: 'local',
+          fcmToken: fcmToken,
+          phoneNumber: String(number),
+          nickname: createRandomNickname(),
+          isUser: isUser,
+        });
+      } else {
+        setLoadingVerify(true);
+        POSTVerifyPhoneNumber(String(number), String(authCode))
         .then(function (response: any) {
           setLoadingVerify(false);
           clearInterval(timeout);
           console.log('POSTVerifyPhoneNumber response', response);
           console.log('number', number);
+          isCertified.current = true;
+          certifiedAuthCode.current = authCode;
 
           navigation.navigate('HometownSearchScreen', {
             requestType: 'signUp',
             certifiedPhoneNumber: true,
             provider: 'local',
             fcmToken: fcmToken,
-            userPhoneNumber: String(number),
+            phoneNumber: String(number),
             nickname: createRandomNickname(),
             isUser: isUser,
           });
@@ -390,7 +405,11 @@ const LoginScreen = ({navigation, route}: Props) => {
         .catch(function (error) {
           setLoadingVerify(false);
           console.log('POSTVerifyPhoneNumber error', error);
+          if (error.status == 401) {
+            setInvalidAuthCode(true);
+          }
         });
+      }
     }
   };
 

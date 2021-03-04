@@ -73,6 +73,7 @@
     "react-native-swiper": "^1.6.0",
     "react-native-tab-view": "^2.15.2",
     "react-native-upload-aws-s3": "^0.8.1",
+    "react-native-webview": "^11.2.3",
     "react-navigation-shared-element": "^5.0.0-alpha1",
     "react-redux": "^7.2.1",
     "redux": "^4.0.5",
