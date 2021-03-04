@@ -395,7 +395,7 @@ const PlaceholderContent = ({navigation, title}: Props) => {
 
   const renderLocalCommunityItem = useCallback(() => {
     LayoutAnimation.configureNext(
-      LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+      LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
     );
     return communityPost.map((item: any) => (
       <TouchableWithoutFeedback
@@ -431,7 +431,7 @@ const PlaceholderContent = ({navigation, title}: Props) => {
 
   const renderLocalClinicItem = useCallback(() => {
     LayoutAnimation.configureNext(
-      LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+      LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
     );
     return localClinic.map((item: any) => (
       <TouchableWithoutFeedback key={String(item.id)}>

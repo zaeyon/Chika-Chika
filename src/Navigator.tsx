@@ -131,6 +131,7 @@ const DentalClinicStack = createStackNavigator();
 const TeethCareStack = createStackNavigator();
 const TotalKeywordSearchStack = createStackNavigator();
 const NotificationStack = createStackNavigator();
+const ImageSelectStack = createStackNavigator();
 
 const EditProfileStack = createSharedElementStackNavigator();
 const ImageSelectOneStack = createSharedElementStackNavigator();
@@ -315,11 +316,11 @@ function HomeStackScreen() {
           transitionSpec: {
             open: {
               animation: 'timing',
-              config: {duration: 0},
+              config: {duration: 150},
             },
             close: {
               animation: 'timing',
-              config: {duration: 0},
+              config: {duration: 150},
             },
           },
           cardStyleInterpolator: ({current: {progress}}) => {
@@ -332,6 +333,20 @@ function HomeStackScreen() {
         })}
       />
     </HomeStack.Navigator>
+  );
+}
+
+function ImageSelectStackScreen() {
+  return (
+    <ImageSelectStack.Navigator headerMode="none" mode="modal">
+      <ImageSelectStack.Screen
+        name="ImageSelectScreen"
+        component={ImageSelectScreen}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
+    </ImageSelectStack.Navigator>
   );
 }
 
@@ -382,8 +397,8 @@ function NearDentalMapStackScreen() {
         component={DentalLocationMapScreen}
       />
       <NearDentalMapStack.Screen
-        name="ImageSelectScreen"
-        component={ImageSelectScreen}
+        name="ImageSelectStackScreen"
+        component={ImageSelectStackScreen}
         options={{
           gestureEnabled: false,
         }}
@@ -423,8 +438,8 @@ function DentalClinicStackScreen() {
         component={DentalLocationMapScreen}
       />
       <DentalClinicStack.Screen
-        name="ImageSelectScreen"
-        component={ImageSelectScreen}
+        name="ImageSelectStackScreen"
+        component={ImageSelectStackScreen}
         options={{
           gestureEnabled: false,
         }}
@@ -476,7 +491,7 @@ function TeethCareStackScreen() {
 
 function ReviewUploadStackScreen() {
   return (
-    <ReviewUploadStack.Navigator headerMode="none">
+    <ReviewUploadStack.Navigator headerMode="none" mode="modal">
       <ReviewUploadStack.Screen
         name="ReviewGuideScreen"
         component={ReviewGuideScreen}
@@ -531,16 +546,10 @@ function ReviewUploadStackScreen() {
       <ReviewUploadStack.Screen
         name="DentalNameSearchScreen"
         component={DentalNameSearchScreen}
-        options={{
-          gestureEnabled: false,
-        }}
       />
       <ReviewUploadStack.Screen
         name="TreatSearchScreen"
         component={TreatSearchScreen}
-        options={{
-          gestureEnabled: false,
-        }}
       />
       <ReviewUploadStack.Screen
         name="DetailPriceScreen"
@@ -551,8 +560,8 @@ function ReviewUploadStackScreen() {
       />
       <ReviewUploadStack.Screen name="RatingScreen" component={RatingScreen} />
       <ReviewUploadStack.Screen
-        name="ImageSelectScreen"
-        component={ImageSelectScreen}
+        name="ImageSelectStackScreen"
+        component={ImageSelectStackScreen}
         options={{
           gestureEnabled: false,
         }}
@@ -560,6 +569,9 @@ function ReviewUploadStackScreen() {
       <ReviewUploadStack.Screen
         name="ImageSelectOneStackScreen"
         component={ImageSelectOneStackScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <ReviewUploadStack.Screen
         name="ProofImageGuideScreen"
@@ -752,17 +764,9 @@ function MyProfileStackScreen() {
   );
 }
 
-function SettingStackScreen() {
-  return (
-    <SettingStack.Navigator headerMode="none">
-      <SettingStack.Screen name="SettingScreen" component={SettingScreen} />
-    </SettingStack.Navigator>
-  );
-}
-
 function CommunityPostUploadStackScreen({route}: any) {
   return (
-    <CommunityPostUploadStack.Navigator headerMode="none">
+    <CommunityPostUploadStack.Navigator headerMode="none" mode="modal">
       <CommunityPostUploadStack.Screen
         name="CommunityPostUploadScreen"
         component={CommunityPostUploadScreen}
@@ -772,8 +776,8 @@ function CommunityPostUploadStackScreen({route}: any) {
         }}
       />
       <CommunityPostUploadStack.Screen
-        name="ImageSelectScreen"
-        component={ImageSelectScreen}
+        name="ImageSelectStackScreen"
+        component={ImageSelectStackScreen}
         options={{
           gestureEnabled: false,
         }}
@@ -852,11 +856,11 @@ function CommunityStackScreen() {
           transitionSpec: {
             open: {
               animation: 'timing',
-              config: {duration: 100},
+              config: {duration: 150},
             },
             close: {
               animation: 'timing',
-              config: {duration: 100},
+              config: {duration: 150},
             },
           },
           cardStyleInterpolator: ({current: {progress}}) => {

@@ -45,8 +45,8 @@ z-index: 2;
 
 const HeaderNicknameText = Styled.Text`
 font-style: normal;
-font-weight: 800;
-font-size: 23px;
+font-weight: bold;
+font-size: 20px;
 margin-right: 8px;
 `;
 
@@ -574,10 +574,12 @@ export default class MyProfile extends React.PureComponent<Props, State> {
                 this.reviewRef.getNode().scrollToOffset({
                   offset: 0,
                 });
+                return;
               } else {
                 this.communityRef.getNode().scrollToOffset({
                   offset: 0,
                 });
+                return;
               }
             }
             if (
@@ -673,7 +675,9 @@ export default class MyProfile extends React.PureComponent<Props, State> {
               <ProfileImageView>
                 <ProfileImage
                   source={{
-                    uri: this.props.currentUser.img_thumbNail,
+                    uri:
+                      this.props.currentUser.img_thumbNail ||
+                      this.props.currentUser.profileImg,
                     cache: 'force-cache',
                   }}
                 />

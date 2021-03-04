@@ -3,6 +3,7 @@ import {
   TouchableWithoutFeedback,
   Animated,
   LayoutAnimation,
+  Image,
 } from 'react-native';
 import Styled from 'styled-components/native';
 import {
@@ -225,7 +226,7 @@ const ReviewThumbnail = ({review, moveToReviewDetail}: Props) => {
           }}>
           <ReviewThumbnailHeaderImage
             source={{
-              uri: review.user.img_thumbNail,
+              uri: review.user.img_thumbNail || review.user.profileImg,
               cache: 'force-cache',
             }}
           />
@@ -239,17 +240,18 @@ const ReviewThumbnail = ({review, moveToReviewDetail}: Props) => {
             )}
           </ReviewThumbnailHeaderTimeText>
         </LinearGradient>
-        <FastImage
+        <Image
           style={{
             flex: 1,
             height: wp('50%'),
             borderTopLeftRadius: 8,
             borderTopRightRadius: 8,
+            resizeMode: 'cover',
           }}
           source={{
             uri: review.review_contents[0].img_thumbNail,
+            cache: 'force-cache',
           }}
-          resizeMode={FastImage.resizeMode.cover}
         />
         <ReviewThumbnailContentView>
           <HashTagContainerView>

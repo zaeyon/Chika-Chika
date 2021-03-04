@@ -54,12 +54,12 @@ const ProfileContentView = Styled.View`
 width: auto;
 height: auto;
 padding-left: 8px;
+justify-content: center;
 `;
 const ProfileNameText = Styled.Text`
 font-style: normal;
 font-weight: 600;
 font-size: 15px;
-line-height: 16px;
 margin-bottom: 2px;
 color: #131F3C;
 `;
@@ -67,7 +67,6 @@ color: #131F3C;
 const ProfileDescriptionText = Styled.Text`
 font-style: normal;
 font-weight: normal;
-
 font-size: 13px;
 color: #9AA2A9;
 `;

@@ -169,23 +169,13 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
             type,
             posts: response,
           };
-          if (
-            JSON.stringify(response).replace(
-              /"createdDiff\(second\)\"\:\d*\,/gi,
-              '',
-            ) !==
-            JSON.stringify(postData).replace(
-              /"createdDiff\(second\)\"\:\d*\,/gi,
-              '',
-            )
-          ) {
-            console.log('liked post diff2');
-            LayoutAnimation.configureNext(
-              LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-            );
 
-            dispatch(allActions.communityActions.setPosts(data));
-          }
+          console.log('liked post diff2');
+          LayoutAnimation.configureNext(
+            LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+          );
+
+          dispatch(allActions.communityActions.setPosts(data));
         },
       );
     }
@@ -422,6 +412,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   const renderHeaderComponent = useCallback(() => {
     return (
       <>
+        <TopBanner type="question" />
         <FilteringHeader
           onFiltering={onFiltering}
           hometown={hometown}
@@ -430,8 +421,6 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
           order={order}
           moveToHomeTownSetting={moveToHomeTownSetting}
         />
-        <AdviceInfoHeader profile={profile} />
-        <TopBanner type="question" />
         {postData.length === 0 ? (
           <EmptyIndicatorContainerView>
             <EmptyIndicatorView>

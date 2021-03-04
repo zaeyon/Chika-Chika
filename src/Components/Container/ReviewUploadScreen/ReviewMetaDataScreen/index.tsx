@@ -1,7 +1,13 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, StyleSheet} from 'react-native';
+import {
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -24,7 +30,6 @@ const Container = Styled.View`
  padding-top: ${getStatusBarHeight()}px;
  background-color: #FFFFFF;
 `;
-
 
 const BodyContainer = Styled.ScrollView`
 background-color: #F5F7F9;
@@ -61,7 +66,6 @@ line-height: 24px;
 color: #131F3C;
 `;
 
-
 const AsteriskText = Styled.Text`
 margin-top: 3px;
 margin-left: 2px;
@@ -74,7 +78,6 @@ color: #FF001F;
 const RightArrowIconContainer = Styled.View`
 padding-right: 16px;
 `;
-
 
 const MetaDataValueContainer = Styled.View`
 flex-direction: row;
@@ -200,7 +203,6 @@ padding-top: 16px;
 background-color: #ffffff;
 `;
 
-
 const GalleryContainerView = Styled.View`
 width: ${wp('100%')}px;
 margin-bottom: ${DeviceInfo.hasNotch() ? 0 : 16}px;
@@ -209,7 +211,6 @@ margin-bottom: ${DeviceInfo.hasNotch() ? 0 : 16}px;
 const GalleryFlatList = Styled.FlatList`
 width: ${wp('100%')}px;
 `;
-
 
 const ItemContainerView = Styled.View`
 width: ${wp('19.2%')}px;
@@ -262,7 +263,6 @@ font-size: 14px;
 line-height: 24px;
 color: #131F3C;
 `;
-
 
 const SelectedTreatContainer = Styled.View`
 width: ${wp('100%')}px;
@@ -405,7 +405,6 @@ line-height: 24px;
 color: #131F3C;
 `;
 
-
 const DetailFilterFooterContainer = Styled.View`
 padding-top: 16px;
 padding-left: 0px;
@@ -458,7 +457,6 @@ const SelectedProofImageContainer = Styled.View`
 width: ${wp('91%')}px;
 height: ${wp('91%')}px;
 `;
-
 
 const SelectProofImageContainer = Styled.View`
 background-color: #FAFCFF;
@@ -553,12 +551,12 @@ type RatingObj = {
   serviceRating: any;
   priceRating: any;
   treatmentRating: any;
-}
+};
 
 const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   const [treatmentDateObj, setTreatmentDateObj] = useState<any>({
     displayTreatmentDate: '',
-    treatmentDate: ''
+    treatmentDate: '',
   });
 
   const [totalPrice, setTotalPrice] = useState<string>('');
@@ -574,15 +572,27 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   const [displayPrice, setDisplayPrice] = useState<any>();
 
   const [isActivatedNext, setIsActivatedNext] = useState<boolean>(false);
-  const [isVisibleDatePicker, setIsVisibleDatePicker] = useState<boolean>(false);
-  const [isFocusedTotalPriceInput, setIsFocusedTotalPriceInput] = useState<boolean>(false);
+  const [isVisibleDatePicker, setIsVisibleDatePicker] = useState<boolean>(
+    false,
+  );
+  const [isFocusedTotalPriceInput, setIsFocusedTotalPriceInput] = useState<
+    boolean
+  >(false);
 
-  const [selectedTreatmentYear, setSelectedTreatmentYear] = useState<any>(`${new Date().getFullYear()}`);
-  const [selectedTreatmentMonth, setSelectedTreatmentMonth] = useState<any>(`${new Date().getMonth() + 1}`);
-  const [selectedTreatmentDay, setSelectedTreatmentDay] = useState<any>(`${new Date().getDate()}`);
+  const [selectedTreatmentYear, setSelectedTreatmentYear] = useState<any>(
+    `${new Date().getFullYear()}`,
+  );
+  const [selectedTreatmentMonth, setSelectedTreatmentMonth] = useState<any>(
+    `${new Date().getMonth() + 1}`,
+  );
+  const [selectedTreatmentDay, setSelectedTreatmentDay] = useState<any>(
+    `${new Date().getDate()}`,
+  );
 
   const [selectedProofImage, setSelectedProofImage] = useState<Object>({});
-  const [selectedDentalImages, setSelectedDentalImages] = useState<Array<any>>([]);
+  const [selectedDentalImages, setSelectedDentalImages] = useState<Array<any>>(
+    [],
+  );
 
   const actionSheetItemList = ['취소', '촬영', '앨범'];
 
@@ -594,81 +604,88 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   const actionSheetRefByDental = useRef() as any;
 
   useEffect(() => {
-    console.log("ReviewMetaDataScreen route", route)
+    console.log('ReviewMetaDataScreen route', route);
   }, [route]);
-  
+
   useEffect(() => {
-    if(route.params?.selectedProofImage) {
-      setSelectedProofImage(route.params.selectedProofImage)
+    if (route.params?.selectedProofImage) {
+      setSelectedProofImage(route.params.selectedProofImage);
     }
   }, [route.params?.selectedProofImage]);
 
   useEffect(() => {
-    if(route.params?.selectedDentalImages) {
-      setSelectedDentalImages(route.params.selectedDentalImages)
+    if (route.params?.selectedDentalImages) {
+      setSelectedDentalImages(route.params.selectedDentalImages);
     }
-  }, [route.params?.selectedDentalImages])
+  }, [route.params?.selectedDentalImages]);
 
   const priceInputRef = useRef<any>();
 
   useEffect(() => {
-    if(route.params?.selectedTreatmentArray) {
+    if (route.params?.selectedTreatmentArray) {
       setTreatmentArray(route.params?.selectedTreatmentArray);
-    }      
-  }, [route.params?.selectedTreatmentArray])
+    }
+  }, [route.params?.selectedTreatmentArray]);
 
   useEffect(() => {
     if (route.params?.dentalObj) {
-      console.log("route.params.dentalObj", route.params.dentalObj);
+      console.log('route.params.dentalObj', route.params.dentalObj);
       setDentalObj(route.params?.dentalObj);
     }
   }, [route.params?.dentalObj]);
 
   useEffect(() => {
-    if(route.params?.ratingObj) {
-      console.log("route.params?.ratingObj", route.params.ratingObj);
+    if (route.params?.ratingObj) {
+      console.log('route.params?.ratingObj', route.params.ratingObj);
       setRatingObj(route.params?.ratingObj);
     }
   }, [route.params?.ratingObj]);
 
   useEffect(() => {
-    if(route.params?.treatmentDateObj) {
-      console.log("route.params?.treatmentDateObj", route.params.treatmentDateObj);
-      setTreatmentDateObj(route.params?.treatmentDateObj)
+    if (route.params?.treatmentDateObj) {
+      console.log(
+        'route.params?.treatmentDateObj',
+        route.params.treatmentDateObj,
+      );
+      setTreatmentDateObj(route.params?.treatmentDateObj);
     }
-  }, [route.params?.treatmentDateObj])
+  }, [route.params?.treatmentDateObj]);
 
   useEffect(() => {
     Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
-    Keyboard.addListener("keyboardWillHide", _keyboardWillHide);
+    Keyboard.addListener('keyboardWillHide', _keyboardWillHide);
 
     // cleanup function
     return () => {
-      Keyboard.removeListener("keyboardWillHide", _keyboardWillHide);
+      Keyboard.removeListener('keyboardWillHide', _keyboardWillHide);
     };
   }, []);
 
   useEffect(() => {
-    if(dentalObj.originalName && treatmentArray.length > 0 && ratingObj.serviceRating &&  treatmentDateObj.treatmentDate !== '') {
-      setIsActivatedNext(true)
+    if (
+      dentalObj.originalName &&
+      treatmentArray.length > 0 &&
+      ratingObj.serviceRating &&
+      treatmentDateObj.treatmentDate !== ''
+    ) {
+      setIsActivatedNext(true);
     } else {
       setIsActivatedNext(false);
     }
-  }, [dentalObj, treatmentArray, ratingObj, treatmentDateObj])
+  }, [dentalObj, treatmentArray, ratingObj, treatmentDateObj]);
 
   useEffect(() => {
-    if(route.params?.totalPriceObj) {
-      console.log("route.params?.totalPriceObj", route.params?.totalPriceObj);
+    if (route.params?.totalPriceObj) {
+      console.log('route.params?.totalPriceObj', route.params?.totalPriceObj);
       setDisplayPrice(route.params?.totalPriceObj.displayTreatPrice);
       setTotalPrice(route.params?.totalPriceObj.treatPrice);
     }
-  }, [route.params?.totalPriceObj])
+  }, [route.params?.totalPriceObj]);
 
-  const _keyboardWillShow = () => {
-};
+  const _keyboardWillShow = () => {};
 
   const _keyboardWillHide = () => {
-      setIsFocusedTotalPriceInput(false);
+    setIsFocusedTotalPriceInput(false);
   };
 
   const unSelectProofImage = useCallback((image) => {
@@ -709,21 +726,21 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     navigation.navigate('DentalNameSearchScreen', {
       requestPage: 'metadata',
     });
-    
+
     priceInputRef.current.blur();
   };
 
   const moveToTreatmentSearch = () => {
     navigation.navigate('TreatSearchScreen', {
-      selectedTreatmentArray: treatmentArray
+      selectedTreatmentArray: treatmentArray,
     });
-  }
+  };
 
   const moveToRatingScreen = () => {
-    navigation.navigate("RatingScreen", {
-      ratingObj: ratingObj
+    navigation.navigate('RatingScreen', {
+      ratingObj: ratingObj,
     });
-  }
+  };
 
   const onPressTreatmentDate = () => {
     setIsVisibleDatePicker(true);
@@ -731,29 +748,27 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   };
 
   const onPressTotalPrice = () => {
-
     if (priceInputRef.current.isFocused()) priceInputRef.current.blur();
     else priceInputRef.current.focus();
 
-    if(treatmentArray.length === 0 && !ratingObj.serviceRating) {
-      if(scrollY.current < hp('6%')) {
-        scrollViewRef.current.scrollTo({y: hp('8%')})
+    if (treatmentArray.length === 0 && !ratingObj.serviceRating) {
+      if (scrollY.current < hp('6%')) {
+        scrollViewRef.current.scrollTo({y: hp('8%')});
       }
-    } else if(treatmentArray.length > 0 && !ratingObj.serviceRating) {
-      if(scrollY.current < hp('8.5%')) {
-        scrollViewRef.current.scrollTo({y: hp('12%')})
+    } else if (treatmentArray.length > 0 && !ratingObj.serviceRating) {
+      if (scrollY.current < hp('8.5%')) {
+        scrollViewRef.current.scrollTo({y: hp('12%')});
       }
-    } else if(treatmentArray.length === 0 && ratingObj.serviceRating) {
-      if(scrollY.current < hp('6.5%')) {
-        scrollViewRef.current.scrollTo({y: hp('10%')})
+    } else if (treatmentArray.length === 0 && ratingObj.serviceRating) {
+      if (scrollY.current < hp('6.5%')) {
+        scrollViewRef.current.scrollTo({y: hp('10%')});
       }
-    } else if(treatmentArray.length > 0 && ratingObj.serviceRating) {
-      if(scrollY.current < hp('10%')) {
-        scrollViewRef.current.scrollTo({y: hp('13.5%')})
+    } else if (treatmentArray.length > 0 && ratingObj.serviceRating) {
+      if (scrollY.current < hp('10%')) {
+        scrollViewRef.current.scrollTo({y: hp('13.5%')});
       }
     }
   };
-
 
   const convertDisplayDate = (date: any) => {
     console.log('convertDisplayDate date', date);
@@ -790,54 +805,54 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   };
 
   const onPressBackground = () => {
-    console.log("onPressBackground")
-    if(isVisibleDatePicker) {
+    console.log('onPressBackground');
+    if (isVisibleDatePicker) {
       setIsVisibleDatePicker(false);
     }
 
     // if(isFocusedTotalPriceInput) {
-    //   setIsFocusedTotalPriceInput(false); 
+    //   setIsFocusedTotalPriceInput(false);
     // }
 
     Keyboard.dismiss();
   };
 
   const onChangeTotalPriceInput = (text: string) => {
-    if(text.trim() !== "") {
+    if (text.trim() !== '') {
       setTotalPrice(text);
       setDisplayPrice(Number(text).toLocaleString() + '원');
     } else {
-      setTotalPrice("");
-      setDisplayPrice("");
+      setTotalPrice('');
+      setDisplayPrice('');
     }
   };
 
   const finishTotalPriceInput = () => {
     Keyboard.dismiss();
-  }
+  };
 
   const onFocusTotalPriceInput = () => {
-      if(treatmentArray.length === 0 && !ratingObj.serviceRating) {
-        if(scrollY.current < hp('6%')) {
-          scrollViewRef.current.scrollTo({y: hp('8%')})
-        }
-      } else if(treatmentArray.length > 0 && !ratingObj.serviceRating) {
-        if(scrollY.current < hp('8.5%')) {
-          scrollViewRef.current.scrollTo({y: hp('12%')})
-        }
-      } else if(treatmentArray.length === 0 && ratingObj.serviceRating) {
-        if(scrollY.current < hp('6.5%')) {
-          scrollViewRef.current.scrollTo({y: hp('10%')})
-        }
-      } else if(treatmentArray.length > 0 && ratingObj.serviceRating) {
-        if(scrollY.current < hp('10%')) {
-          scrollViewRef.current.scrollTo({y: hp('13.5%')})
-        }
+    if (treatmentArray.length === 0 && !ratingObj.serviceRating) {
+      if (scrollY.current < hp('6%')) {
+        scrollViewRef.current.scrollTo({y: hp('8%')});
       }
-  }
+    } else if (treatmentArray.length > 0 && !ratingObj.serviceRating) {
+      if (scrollY.current < hp('8.5%')) {
+        scrollViewRef.current.scrollTo({y: hp('12%')});
+      }
+    } else if (treatmentArray.length === 0 && ratingObj.serviceRating) {
+      if (scrollY.current < hp('6.5%')) {
+        scrollViewRef.current.scrollTo({y: hp('10%')});
+      }
+    } else if (treatmentArray.length > 0 && ratingObj.serviceRating) {
+      if (scrollY.current < hp('10%')) {
+        scrollViewRef.current.scrollTo({y: hp('13.5%')});
+      }
+    }
+  };
 
   const moveToContentPost = () => {
-    console.log("route.params?.paragraphArray", route.params?.paragraphArray);
+    console.log('route.params?.paragraphArray', route.params?.paragraphArray);
     navigation.navigate('ContentPostScreen', {
       dentalObj,
       treatmentArray,
@@ -847,14 +862,18 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
       selectedProofImage,
       selectedDentalImages,
       requestType: route.params?.requestType,
-      paragraphArray: route.params?.paragraphArray ? route.params?.paragraphArray : [{
-        index: 1,
-        image: null,
-        description: "",
-      },],
+      paragraphArray: route.params?.paragraphArray
+        ? route.params?.paragraphArray
+        : [
+            {
+              index: 1,
+              image: null,
+              description: '',
+            },
+          ],
       reviewId: route.params?.reviewId,
-    })
-  }
+    });
+  };
 
   const onPressActionSheetByProof = useCallback(
     (index: number) => {
@@ -884,35 +903,39 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     [actionSheetItemList],
   );
 
-
   const navigateToCameraByDental = useCallback(() => {
-    launchCamera({includeBase64: true, mediaType: 'photo'}, (response: CameraResponse) => {
-      if (!response.didCancel) {
-        const capturedImage = {
-          filename: response.fileName,
-          fileSize: response.fileSize,
-          width: response.width,
-          height: response.height,
-          uri: response.uri,
-          base64: response.base64,
-          camera: true,
-        };
-        setSelectedDentalImages((prev) => [...prev, capturedImage]);
-      }
-    });
+    launchCamera(
+      {includeBase64: true, mediaType: 'photo'},
+      (response: CameraResponse) => {
+        if (!response.didCancel) {
+          const capturedImage = {
+            filename: response.fileName,
+            fileSize: response.fileSize,
+            width: response.width,
+            height: response.height,
+            uri: response.uri,
+            base64: response.base64,
+            camera: true,
+          };
+          setSelectedDentalImages((prev) => [...prev, capturedImage]);
+        }
+      },
+    );
   }, []);
 
   const navigateToGalleryByDental = useCallback(() => {
-    navigation.navigate('ImageSelectScreen', {
-      requestType: 'dentalImage',
-      selectedImages: selectedDentalImages,
+    navigation.navigate('ImageSelectStackScreen', {
+      screen: 'ImageSelectScreen',
+      params: {
+        requestType: 'dentalImage',
+        selectedImages: selectedDentalImages,
+      },
     });
-  }, [])
+  }, []);
 
   const cancelTreatmentDateModal = useCallback(() => {
     setIsVisibleDatePicker(false);
   }, []);
-
 
   const deleteTreatItem = (treat: object) => {
     var tmpTreatmentArray = treatmentArray.slice();
@@ -925,28 +948,38 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   const initializeTreatmentDate = () => {
     setIsVisibleDatePicker(false);
     setTreatmentDateObj({});
-  }
+  };
 
   const registerTreatmentDate = () => {
     setIsVisibleDatePicker(false);
 
     const tmpTreatmentDate = {
-      displayTreatmentDate: selectedTreatmentYear + '.' + selectedTreatmentMonth + '.' + selectedTreatmentDay,
-      treatmentDate: selectedTreatmentYear + '-' + selectedTreatmentMonth + '-' + selectedTreatmentDay
-    }
+      displayTreatmentDate:
+        selectedTreatmentYear +
+        '.' +
+        selectedTreatmentMonth +
+        '.' +
+        selectedTreatmentDay,
+      treatmentDate:
+        selectedTreatmentYear +
+        '-' +
+        selectedTreatmentMonth +
+        '-' +
+        selectedTreatmentDay,
+    };
 
     setTreatmentDateObj(tmpTreatmentDate);
   };
 
   const moveToSelectProofImage = () => {
-    if(selectedProofImage.uri) {
-      navigation.navigate("ProofImageGuideScreen", {
+    if (selectedProofImage.uri) {
+      navigation.navigate('ProofImageGuideScreen', {
         selectedProofImage: selectedProofImage,
-      })
+      });
     } else {
-      navigation.navigate("ProofImageGuideScreen");
+      navigation.navigate('ProofImageGuideScreen');
     }
-  }
+  };
 
   const renderDentalImageListHeader = useCallback(
     () => (
@@ -961,8 +994,6 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     ),
     [],
   );
-
-
 
   const renderDentalImageItem = useCallback(
     ({item, index}) => (
@@ -981,7 +1012,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                     uri: item.base64
                       ? 'data:image/jpeg;base64,' + item.base64
                       : item.uri,
-              }
+                  }
             }
           />
         </ItemContainerView>
@@ -994,7 +1025,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     const startYear = 1900;
     const currentYear = new Date(Date.now()).getFullYear();
     const result = [];
-    for (let i = 0; i < (currentYear - startYear) + 1; i++) {
+    for (let i = 0; i < currentYear - startYear + 1; i++) {
       result.push(
         <Picker.Item
           label={String(startYear + i)}
@@ -1022,248 +1053,283 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }, []);
 
   return (
-      <Container>
-        <NavigationHeader
+    <Container>
+      <NavigationHeader
         headerLeftProps={{type: 'arrow', onPress: goBack}}
-        headerTitle={"관련정보"}
-        headerRightProps={{type: 'text', text: "다음", onPress: moveToContentPost}}
+        headerTitle={'관련정보'}
+        headerRightProps={{
+          type: 'text',
+          text: '다음',
+          onPress: moveToContentPost,
+        }}
         headerRightDisabled={!isActivatedNext}
-        headerRightActiveColor={"#00D1FF"}/>
-        <BodyContainer
+        headerRightActiveColor={'#00D1FF'}
+      />
+      <BodyContainer
         ref={scrollViewRef}
         keyboardDismissMode={'none'}
         bounces={true}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 100}}
         onScroll={(event: any) => {
-          console.log("event.nativeEvent.contentOffset.y", event.nativeEvent.contentOffset.y)
-          scrollY.current = event.nativeEvent.contentOffset.y
+          console.log(
+            'event.nativeEvent.contentOffset.y',
+            event.nativeEvent.contentOffset.y,
+          );
+          scrollY.current = event.nativeEvent.contentOffset.y;
         }}
-        scrollEventThrottle={16}
-        >
-          <TouchableWithoutFeedback onPress={() => onPressBackground()}>
+        scrollEventThrottle={16}>
+        <TouchableWithoutFeedback onPress={() => onPressBackground()}>
           <ScrollViewInnerContainer>
-          <ProofImageItemContainer>
-          <SelectProofImageContainer
-          style={styles.proofImageContainerShadow}>
-            <ProofImageEventBannerImage
-            source={{uri: ""}}
-            />
-            <SelectProofImageButtonContainer>
-            <TouchableWithoutFeedback onPress={() => moveToSelectProofImage()}>
-            <SelectProofImageButton
-            style={styles.proofImageContainerShadow}>
-              <SelectProofImageTextContainer>
-              <EventTextContainer>
-                <EventText>{"EVENT"}</EventText>
-              </EventTextContainer>
-              <SelectProofImageText>{"진료 인증자료 올리기"}</SelectProofImageText>
-              </SelectProofImageTextContainer>
-              {!selectedProofImage?.uri && (
-              <RightArrowIcon
-              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
-              )}
-              {selectedProofImage?.uri && (
-              <IsExistProofImageIcon
-              source={require('~/Assets/Images/Upload/ic_isExistProofImage.png')}/>
-              )}
-            </SelectProofImageButton>
-            </TouchableWithoutFeedback>
-            </SelectProofImageButtonContainer>
-          </SelectProofImageContainer>
-          </ProofImageItemContainer>
-          <TouchableWithoutFeedback onPress={() => moveToDentalSearch()}>
-          <MetaDataItemContainer
-          style={{marginTop: 8}}>
-          <MetaDataHeaderContainer>
-            <MetaDataLabelContainer>
-              <MetaDataLabelText>{"병원명"}</MetaDataLabelText>
-              <AsteriskText>{"*"}</AsteriskText>
-            </MetaDataLabelContainer>
-            <RightArrowIconContainer>
-              <RightArrowIcon
-              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
-            </RightArrowIconContainer>
-          </MetaDataHeaderContainer>
-            <MetaDataValueContainer>
-            {!dentalObj.originalName && (
-              <MetaDataPlaceholderText>{"방문한 병원의 이름을 선택하세요."}</MetaDataPlaceholderText>
-            )}
-            {dentalObj.originalName && (
-              <SelectedDentalItemContainer>
-                <SelectedDentalNameText>{dentalObj.originalName}</SelectedDentalNameText>
-              </SelectedDentalItemContainer>
-            )}
-            </MetaDataValueContainer>
-          </MetaDataItemContainer>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => moveToTreatmentSearch()}>
-          <MetaDataItemContainer>
-          <MetaDataHeaderContainer>
-            <MetaDataLabelContainer>
-              <MetaDataLabelText>{"질병 및 치료 항목"}</MetaDataLabelText>
-              <AsteriskText>{"*"}</AsteriskText>
-            </MetaDataLabelContainer>
-            <RightArrowIconContainer>
-              <RightArrowIcon
-              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
-            </RightArrowIconContainer>
-          </MetaDataHeaderContainer>
-            <MetaDataValueContainer>
-            {treatmentArray.length === 0 && (
-              <MetaDataPlaceholderText>{"질병 및 치료 항목을 선택하세요."}</MetaDataPlaceholderText>
-            )}
-            {treatmentArray.length > 0 && (
-            <SelectedTreatContainer>
-            {treatmentArray.map((item: any, index: number) => {
-              return (
-                <SelectedTreatItemBackground 
-                key={index}
-                style={{marginRight: 8}}>
-                  <SelectedTreatItemText>
-                    {'# ' + item.name}
-                  </SelectedTreatItemText>
-                  <TouchableWithoutFeedback onPress={() => deleteTreatItem(item)}>
-                    <DeleteTreatItemContainer>
-                      <TreatItemDeleteIcon
-                        source={require('~/Assets/Images/Upload/ic_delete.png')}
-                      />
-                    </DeleteTreatItemContainer>
+            <ProofImageItemContainer>
+              <SelectProofImageContainer
+                style={styles.proofImageContainerShadow}>
+                <ProofImageEventBannerImage source={{uri: ''}} />
+                <SelectProofImageButtonContainer>
+                  <TouchableWithoutFeedback
+                    onPress={() => moveToSelectProofImage()}>
+                    <SelectProofImageButton
+                      style={styles.proofImageContainerShadow}>
+                      <SelectProofImageTextContainer>
+                        <EventTextContainer>
+                          <EventText>{'EVENT'}</EventText>
+                        </EventTextContainer>
+                        <SelectProofImageText>
+                          {'진료 인증자료 올리기'}
+                        </SelectProofImageText>
+                      </SelectProofImageTextContainer>
+                      {!selectedProofImage?.uri && (
+                        <RightArrowIcon
+                          source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
+                        />
+                      )}
+                      {selectedProofImage?.uri && (
+                        <IsExistProofImageIcon
+                          source={require('~/Assets/Images/Upload/ic_isExistProofImage.png')}
+                        />
+                      )}
+                    </SelectProofImageButton>
                   </TouchableWithoutFeedback>
-                </SelectedTreatItemBackground>
-              );
-          })}
-          </SelectedTreatContainer>
-            )}
-            </MetaDataValueContainer>
-          </MetaDataItemContainer>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => moveToRatingScreen()}>
-          <MetaDataItemContainer>
-          <MetaDataHeaderContainer>
-          <MetaDataLabelContainer>
-          <MetaDataLabelText>{"병원 만족도"}</MetaDataLabelText>
-          <AsteriskText>{"*"}</AsteriskText>
-          </MetaDataLabelContainer>
-          <RightArrowIconContainer>
-            <RightArrowIcon
-            source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
-          </RightArrowIconContainer>
-          </MetaDataHeaderContainer>
-            <MetaDataValueContainer>
-            {!ratingObj.serviceRating && (
-              <MetaDataPlaceholderText>{"병원 만족도를 알려주세요."}</MetaDataPlaceholderText>
-            )}
-            {ratingObj.serviceRating && (
-              <RatingContainer>
-                <RatingItemContainer
-                style={{marginLeft: 0}}>
-                  <RatingLabelText>{"진료"}</RatingLabelText>
-                  <RatingHorizontalDivider/>
-                  <RatingValueText>{ratingObj.treatmentRating.toFixed(1)}</RatingValueText>
-                </RatingItemContainer>
-                <RatingItemContainer
-                style={{marginLeft: 8}}>
-                  <RatingLabelText>{"비용"}</RatingLabelText>
-                  <RatingHorizontalDivider/>
-                  <RatingValueText>{ratingObj.priceRating.toFixed(1)}</RatingValueText>
-                </RatingItemContainer>
-                <RatingItemContainer
-                style={{marginLeft: 8}}>
-                  <RatingLabelText>{"서비스"}</RatingLabelText>
-                  <RatingHorizontalDivider/>
-                  <RatingValueText>{ratingObj.serviceRating.toFixed(1)}</RatingValueText>
-                </RatingItemContainer>
-              </RatingContainer>
-            )}
-            </MetaDataValueContainer>
-          </MetaDataItemContainer>
-          </TouchableWithoutFeedback>
-          <MetaDataItemContainer>
-          <MetaDataHeaderContainer>
-          <MetaDataLabelContainer>
-            <MetaDataLabelText>{"방문 일자"}</MetaDataLabelText>
-            <AsteriskText>{"*"}</AsteriskText>
-          </MetaDataLabelContainer>
-          </MetaDataHeaderContainer>
-          <TouchableWithoutFeedback onPress={() => onPressTreatmentDate()}>
-            <MetaDataValueContainer>
-            {treatmentDateObj?.displayTreatmentDate === "" && (
-            <MetaDataPlaceholderText>{"방문일을 알려주세요."}</MetaDataPlaceholderText>
-            )}
-            {treatmentDateObj?.displayTreatmentDate !== "" && (
-            <MetaDataText>{treatmentDateObj?.displayTreatmentDate}</MetaDataText>
-            )}
-            </MetaDataValueContainer>
-          </TouchableWithoutFeedback>
-          </MetaDataItemContainer>
-          <MetaDataItemContainer
-          onLayout={(event) => {
-            console.log("전체치료비용 onLayout event.nativeEvent", event.nativeEvent);
-
-          }}>
-          <MetaDataHeaderContainer>
-          <MetaDataLabelText>{"전체 치료 비용(선택)"}</MetaDataLabelText>
-          </MetaDataHeaderContainer>
-          <TouchableWithoutFeedback onPress={() => onPressTotalPrice()}>
-            <MetaDataValueContainer>
-              <PriceTextInput
-                ref={priceInputRef}
-                value={totalPrice}
-                placeholder={totalPrice === "" ? "전체 비용을 알려주세요." : ""}
-                placeholderTextColor={"#9AA2A9"}
-                autoCapitalize={'none'}
-                keyboardType={'numeric'}
-                onChangeText={(text: string) => onChangeTotalPriceInput(text)}
-                onFocus={() => onFocusTotalPriceInput()}
-                caretHidden={true}
-              />
-              <DisplayPriceContainer>
-                <DisplayPriceText>{displayPrice}</DisplayPriceText>
-              </DisplayPriceContainer>
-            </MetaDataValueContainer>
-          </TouchableWithoutFeedback>
-          </MetaDataItemContainer>
-          <MetaDataItemContainer
-          style={{marginTop: 8}}>
-          <MetaDataHeaderContainer>
-            <MetaDataLabelContainer>
-              <MetaDataLabelText>{"병원 이미지 첨부하기(선택)"}</MetaDataLabelText>
-            </MetaDataLabelContainer>
-          </MetaDataHeaderContainer>
-          <MetaDataGuideText>{"병원 외부 혹은 내부 이미지를 첨부해주세요."}</MetaDataGuideText>
-          <SelectImagesContainer>  
-            <GalleryContainerView>
-              <GalleryFlatList
-              data={selectedDentalImages}
-              horizontal
-              alwaysBounceHorizontal={false}
-              scrollIndicatorInsets={{bottom: -1, left: 13, right: 8}}
-              
-              keyExtractor={(item: any) =>
-                'preview' + (item.filename || item.img_filename)
-              }
-              renderItem={renderDentalImageItem}
-              ListHeaderComponent={renderDentalImageListHeader}
-              showsHorizontalScrollIndicator={false}
-              />
-              </GalleryContainerView>
-          </SelectImagesContainer>
-          </MetaDataItemContainer>
+                </SelectProofImageButtonContainer>
+              </SelectProofImageContainer>
+            </ProofImageItemContainer>
+            <TouchableWithoutFeedback onPress={() => moveToDentalSearch()}>
+              <MetaDataItemContainer style={{marginTop: 8}}>
+                <MetaDataHeaderContainer>
+                  <MetaDataLabelContainer>
+                    <MetaDataLabelText>{'병원명'}</MetaDataLabelText>
+                    <AsteriskText>{'*'}</AsteriskText>
+                  </MetaDataLabelContainer>
+                  <RightArrowIconContainer>
+                    <RightArrowIcon
+                      source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
+                    />
+                  </RightArrowIconContainer>
+                </MetaDataHeaderContainer>
+                <MetaDataValueContainer>
+                  {!dentalObj.originalName && (
+                    <MetaDataPlaceholderText>
+                      {'방문한 병원의 이름을 선택하세요.'}
+                    </MetaDataPlaceholderText>
+                  )}
+                  {dentalObj.originalName && (
+                    <SelectedDentalItemContainer>
+                      <SelectedDentalNameText>
+                        {dentalObj.originalName}
+                      </SelectedDentalNameText>
+                    </SelectedDentalItemContainer>
+                  )}
+                </MetaDataValueContainer>
+              </MetaDataItemContainer>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => moveToTreatmentSearch()}>
+              <MetaDataItemContainer>
+                <MetaDataHeaderContainer>
+                  <MetaDataLabelContainer>
+                    <MetaDataLabelText>{'질병 및 치료 항목'}</MetaDataLabelText>
+                    <AsteriskText>{'*'}</AsteriskText>
+                  </MetaDataLabelContainer>
+                  <RightArrowIconContainer>
+                    <RightArrowIcon
+                      source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
+                    />
+                  </RightArrowIconContainer>
+                </MetaDataHeaderContainer>
+                <MetaDataValueContainer>
+                  {treatmentArray.length === 0 && (
+                    <MetaDataPlaceholderText>
+                      {'질병 및 치료 항목을 선택하세요.'}
+                    </MetaDataPlaceholderText>
+                  )}
+                  {treatmentArray.length > 0 && (
+                    <SelectedTreatContainer>
+                      {treatmentArray.map((item: any, index: number) => {
+                        return (
+                          <SelectedTreatItemBackground
+                            key={index}
+                            style={{marginRight: 8}}>
+                            <SelectedTreatItemText>
+                              {'# ' + item.name}
+                            </SelectedTreatItemText>
+                            <TouchableWithoutFeedback
+                              onPress={() => deleteTreatItem(item)}>
+                              <DeleteTreatItemContainer>
+                                <TreatItemDeleteIcon
+                                  source={require('~/Assets/Images/Upload/ic_delete.png')}
+                                />
+                              </DeleteTreatItemContainer>
+                            </TouchableWithoutFeedback>
+                          </SelectedTreatItemBackground>
+                        );
+                      })}
+                    </SelectedTreatContainer>
+                  )}
+                </MetaDataValueContainer>
+              </MetaDataItemContainer>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => moveToRatingScreen()}>
+              <MetaDataItemContainer>
+                <MetaDataHeaderContainer>
+                  <MetaDataLabelContainer>
+                    <MetaDataLabelText>{'병원 만족도'}</MetaDataLabelText>
+                    <AsteriskText>{'*'}</AsteriskText>
+                  </MetaDataLabelContainer>
+                  <RightArrowIconContainer>
+                    <RightArrowIcon
+                      source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}
+                    />
+                  </RightArrowIconContainer>
+                </MetaDataHeaderContainer>
+                <MetaDataValueContainer>
+                  {!ratingObj.serviceRating && (
+                    <MetaDataPlaceholderText>
+                      {'병원 만족도를 알려주세요.'}
+                    </MetaDataPlaceholderText>
+                  )}
+                  {ratingObj.serviceRating && (
+                    <RatingContainer>
+                      <RatingItemContainer style={{marginLeft: 0}}>
+                        <RatingLabelText>{'진료'}</RatingLabelText>
+                        <RatingHorizontalDivider />
+                        <RatingValueText>
+                          {ratingObj.treatmentRating.toFixed(1)}
+                        </RatingValueText>
+                      </RatingItemContainer>
+                      <RatingItemContainer style={{marginLeft: 8}}>
+                        <RatingLabelText>{'비용'}</RatingLabelText>
+                        <RatingHorizontalDivider />
+                        <RatingValueText>
+                          {ratingObj.priceRating.toFixed(1)}
+                        </RatingValueText>
+                      </RatingItemContainer>
+                      <RatingItemContainer style={{marginLeft: 8}}>
+                        <RatingLabelText>{'서비스'}</RatingLabelText>
+                        <RatingHorizontalDivider />
+                        <RatingValueText>
+                          {ratingObj.serviceRating.toFixed(1)}
+                        </RatingValueText>
+                      </RatingItemContainer>
+                    </RatingContainer>
+                  )}
+                </MetaDataValueContainer>
+              </MetaDataItemContainer>
+            </TouchableWithoutFeedback>
+            <MetaDataItemContainer>
+              <MetaDataHeaderContainer>
+                <MetaDataLabelContainer>
+                  <MetaDataLabelText>{'방문 일자'}</MetaDataLabelText>
+                  <AsteriskText>{'*'}</AsteriskText>
+                </MetaDataLabelContainer>
+              </MetaDataHeaderContainer>
+              <TouchableWithoutFeedback onPress={() => onPressTreatmentDate()}>
+                <MetaDataValueContainer>
+                  {treatmentDateObj?.displayTreatmentDate === '' && (
+                    <MetaDataPlaceholderText>
+                      {'방문일을 알려주세요.'}
+                    </MetaDataPlaceholderText>
+                  )}
+                  {treatmentDateObj?.displayTreatmentDate !== '' && (
+                    <MetaDataText>
+                      {treatmentDateObj?.displayTreatmentDate}
+                    </MetaDataText>
+                  )}
+                </MetaDataValueContainer>
+              </TouchableWithoutFeedback>
+            </MetaDataItemContainer>
+            <MetaDataItemContainer
+              onLayout={(event) => {
+                console.log(
+                  '전체치료비용 onLayout event.nativeEvent',
+                  event.nativeEvent,
+                );
+              }}>
+              <MetaDataHeaderContainer>
+                <MetaDataLabelText>{'전체 치료 비용(선택)'}</MetaDataLabelText>
+              </MetaDataHeaderContainer>
+              <TouchableWithoutFeedback onPress={() => onPressTotalPrice()}>
+                <MetaDataValueContainer>
+                  <PriceTextInput
+                    ref={priceInputRef}
+                    value={totalPrice}
+                    placeholder={
+                      totalPrice === '' ? '전체 비용을 알려주세요.' : ''
+                    }
+                    placeholderTextColor={'#9AA2A9'}
+                    autoCapitalize={'none'}
+                    keyboardType={'numeric'}
+                    onChangeText={(text: string) =>
+                      onChangeTotalPriceInput(text)
+                    }
+                    onFocus={() => onFocusTotalPriceInput()}
+                    caretHidden={true}
+                  />
+                  <DisplayPriceContainer>
+                    <DisplayPriceText>{displayPrice}</DisplayPriceText>
+                  </DisplayPriceContainer>
+                </MetaDataValueContainer>
+              </TouchableWithoutFeedback>
+            </MetaDataItemContainer>
+            <MetaDataItemContainer style={{marginTop: 8}}>
+              <MetaDataHeaderContainer>
+                <MetaDataLabelContainer>
+                  <MetaDataLabelText>
+                    {'병원 이미지 첨부하기(선택)'}
+                  </MetaDataLabelText>
+                </MetaDataLabelContainer>
+              </MetaDataHeaderContainer>
+              <MetaDataGuideText>
+                {'병원 외부 혹은 내부 이미지를 첨부해주세요.'}
+              </MetaDataGuideText>
+              <SelectImagesContainer>
+                <GalleryContainerView>
+                  <GalleryFlatList
+                    data={selectedDentalImages}
+                    horizontal
+                    alwaysBounceHorizontal={false}
+                    scrollIndicatorInsets={{bottom: -1, left: 13, right: 8}}
+                    keyExtractor={(item: any) =>
+                      'preview' + (item.filename || item.img_filename)
+                    }
+                    renderItem={renderDentalImageItem}
+                    ListHeaderComponent={renderDentalImageListHeader}
+                    showsHorizontalScrollIndicator={false}
+                  />
+                </GalleryContainerView>
+              </SelectImagesContainer>
+            </MetaDataItemContainer>
           </ScrollViewInnerContainer>
-          </TouchableWithoutFeedback>
-        </BodyContainer>
-        <Modal
+        </TouchableWithoutFeedback>
+      </BodyContainer>
+      <Modal
         isVisible={isVisibleDatePicker}
         style={styles.treatmentDateModalView}
         onBackdropPress={() => cancelTreatmentDateModal()}
-        backdropOpacity={0.25}
-        >
+        backdropOpacity={0.25}>
         <TreatmentDateModalContainer>
-            <DetailFilterHeaderContainer>
-              <DetailFilterTitleText>{'방문일 설정'}</DetailFilterTitleText>
-            </DetailFilterHeaderContainer>
-            <TimeFilterModalContainer>
+          <DetailFilterHeaderContainer>
+            <DetailFilterTitleText>{'방문일 설정'}</DetailFilterTitleText>
+          </DetailFilterHeaderContainer>
+          <TimeFilterModalContainer>
             <TimePickerContainer>
               <Picker
                 itemStyle={{
@@ -1273,7 +1339,9 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                   color: '#131F3C',
                 }}
                 style={{width: wp('20%'), height: '100%'}}
-                onValueChange={(itemValue: any) => setSelectedTreatmentYear(itemValue)}
+                onValueChange={(itemValue: any) =>
+                  setSelectedTreatmentYear(itemValue)
+                }
                 selectedValue={selectedTreatmentYear}>
                 {renderYearPickerItem()}
               </Picker>
@@ -1286,7 +1354,9 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                   color: '#131F3C',
                 }}
                 selectedValue={selectedTreatmentMonth}
-                onValueChange={(itemValue: any) => setSelectedTreatmentMonth(itemValue)}
+                onValueChange={(itemValue: any) =>
+                  setSelectedTreatmentMonth(itemValue)
+                }
                 style={{width: wp('20%'), height: '100%'}}>
                 {renderMonthPickerItem()}
               </Picker>
@@ -1299,30 +1369,34 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                   color: '#131F3C',
                 }}
                 style={{width: wp('20%'), height: '100%'}}
-                onValueChange={(itemValue: any) => setSelectedTreatmentDay(itemValue)}
+                onValueChange={(itemValue: any) =>
+                  setSelectedTreatmentDay(itemValue)
+                }
                 selectedValue={selectedTreatmentDay}>
                 {renderDayPickerItem()}
               </Picker>
               <FilterDividingText>{'일'}</FilterDividingText>
             </TimePickerContainer>
-              <DetailFilterFooterContainer>
-                <TouchableWithoutFeedback onPress={() => initializeTreatmentDate()}>
+            <DetailFilterFooterContainer>
+              <TouchableWithoutFeedback
+                onPress={() => initializeTreatmentDate()}>
                 <InitializeFilterContainer>
-                  <InitializeFilterText>{"방문일 초기화"}</InitializeFilterText>
+                  <InitializeFilterText>{'방문일 초기화'}</InitializeFilterText>
                   <InitializeFilterIcon
-                  source={require('~/Assets/Images/Map/ic_initialize.png')}/>
+                    source={require('~/Assets/Images/Map/ic_initialize.png')}
+                  />
                 </InitializeFilterContainer>
-                </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => registerTreatmentDate()}>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback onPress={() => registerTreatmentDate()}>
                 <RegisterFilterButton>
-                  <RegisterFilterText>{"적용하기"}</RegisterFilterText>
+                  <RegisterFilterText>{'적용하기'}</RegisterFilterText>
                 </RegisterFilterButton>
-                </TouchableWithoutFeedback>
-              </DetailFilterFooterContainer>
-              </TimeFilterModalContainer>
-          </TreatmentDateModalContainer>
-        </Modal>
-        {/* {isFocusedTotalPriceInput && (
+              </TouchableWithoutFeedback>
+            </DetailFilterFooterContainer>
+          </TimeFilterModalContainer>
+        </TreatmentDateModalContainer>
+      </Modal>
+      {/* {isFocusedTotalPriceInput && (
           <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <ModalHeaderContainer>
@@ -1334,19 +1408,19 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
             </ModalHeaderContainer>
           </KeyboardAvoidingView>
         )} */}
-        <ActionSheet
-          ref={actionSheetRefByProof}
-          options={actionSheetItemList}
-          cancelButtonIndex={0}
-          onPress={(index: any) => onPressActionSheetByProof(index)}
-        />
-        <ActionSheet
-          ref={actionSheetRefByDental}
-          options={actionSheetItemList}
-          cancelButtonIndex={0}
-          onPress={(index: any) => onPressActionSheetByDental(index)}
-        />
-      </Container>
+      <ActionSheet
+        ref={actionSheetRefByProof}
+        options={actionSheetItemList}
+        cancelButtonIndex={0}
+        onPress={(index: any) => onPressActionSheetByProof(index)}
+      />
+      <ActionSheet
+        ref={actionSheetRefByDental}
+        options={actionSheetItemList}
+        cancelButtonIndex={0}
+        onPress={(index: any) => onPressActionSheetByDental(index)}
+      />
+    </Container>
   );
 };
 
@@ -1363,10 +1437,9 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOpacity: 0.1,
   },
-})
+});
 
 export default ReviewMetaDataScreen;
-
 
 /*
   <FooterContainer>

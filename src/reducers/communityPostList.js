@@ -559,12 +559,6 @@ const communityPostList = (
             FreeTalkPosts: newFreeTalkPosts,
           };
       }
-    case 'REFRESH_DETAIL':
-      switch (action.payload.type) {
-        case 'Question':
-
-        case 'FreeTalk':
-      }
     default:
       return state;
   }

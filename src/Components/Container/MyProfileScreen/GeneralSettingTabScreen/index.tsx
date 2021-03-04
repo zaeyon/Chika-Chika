@@ -61,6 +61,10 @@ const GeneralSettingTabScreen = ({navigation, route}: Props) => {
           callback();
           setLoading(false);
           return;
+        default:
+          callback();
+          setLoading(false);
+          return;
       }
     },
     [profile],

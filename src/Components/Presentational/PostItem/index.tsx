@@ -378,9 +378,14 @@ const PostItem = ({
             <ProfileContainerView>
               <ProfileImage
                 source={
-                  user?.img_thumbNail
+                  user.img_thumbNail
                     ? {
-                        uri: user?.img_thumbNail,
+                        uri: user.img_thumbNail,
+                        cache: 'force-cache',
+                      }
+                    : user.profileImg
+                    ? {
+                        uri: user.profileImg,
                         cache: 'force-cache',
                       }
                     : require('~/Assets/Images/appIcon_chika.png')

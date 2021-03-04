@@ -389,9 +389,12 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   }, []);
 
   const navigateToGallery = useCallback(() => {
-    navigation.navigate('ImageSelectScreen', {
-      requestType: 'CommunityPostUploadScreen',
-      selectedImages: images,
+    navigation.navigate('ImageSelectStackScreen', {
+      screen: 'ImageSelectScreen',
+      params: {
+        requestType: 'CommunityPostUploadScreen',
+        selectedImages: images,
+      },
     });
   }, [images]);
 

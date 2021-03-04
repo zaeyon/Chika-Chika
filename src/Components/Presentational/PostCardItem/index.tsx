@@ -224,8 +224,16 @@ const PostCardItem = ({
         <ProfileContainerView>
           <ProfileImage
             source={
-              user.profileImg
-                ? {url: user.img_thumbNail, cache: 'force-cache'}
+              user.img_thumbNail
+                ? {
+                    url: user.img_thumbNail,
+                    cache: 'force-cache',
+                  }
+                : user.profileImg
+                ? {
+                    url: user.profileImg,
+                    cache: 'force-cache',
+                  }
                 : require('~/Assets/Images/appIcon_chika.png')
             }
           />
