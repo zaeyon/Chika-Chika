@@ -38,6 +38,7 @@ import GETAroundDental from '~/Routes/Dental/GETAroundDental';
 import GETDentalKeywordAutoComplete from '~/Routes/Search/GETDentalKeywordAutoComplete';
 import DELETESearchRecord from '~/Routes/Search/DELETESearchRecord';
 import GETSearchRecord from '~/Routes/Search/GETSearchRecord';
+import GETUserReservations from '~/Routes/User/GETUserReservations';
 
 const Container = Styled.View`
 flex: 1;
@@ -439,18 +440,22 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
 
   const [noMoreNearDental, setNoMoreNearDental] = useState<boolean>(false);
 
-  const [query, setQuery] = useState<string>(route.params?.query ? route.params?.query : '');
+  const [query, setQuery] = useState<string>(
+    route.params?.query ? route.params?.query : '',
+  );
 
   const searchQueryRef = useRef<string>('');
 
   const timeFilterActionSheet = createRef<any>();
   const searchInputRef = createRef<any>();
 
-  const currentUserLocation = useSelector((state: any) => state.currentUser.currentUserLocation);
+  const currentUserLocation = useSelector(
+    (state: any) => state.currentUser.currentUserLocation,
+  );
   const currentMapLocation = {
     latitude: route.params?.currentMapLatitude,
     longitude: route.params?.currentMapLongitude,
-  }
+  };
 
   const dispatch = useDispatch();
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
@@ -484,9 +489,15 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     .parkingFilter;
 
   // 병원 지도 관련 redux state
-  const searchedKeyword = useSelector((state: any) => state.dentalMap.searchedKeyword);
-  const searchedDentalArray = useSelector((state: any) => state.dentalMap.searchedDentalArray);
-  const autoCompletedKeywordArray = useSelector((state: any) => state.dentalMap.autoCompletedKeywordArray);
+  const searchedKeyword = useSelector(
+    (state: any) => state.dentalMap.searchedKeyword,
+  );
+  const searchedDentalArray = useSelector(
+    (state: any) => state.dentalMap.searchedDentalArray,
+  );
+  const autoCompletedKeywordArray = useSelector(
+    (state: any) => state.dentalMap.autoCompletedKeywordArray,
+  );
 
   const dentalSearchRecordArray = useSelector((state: any) => state.currentUser)
     .dentalSearchRecordArray;
@@ -520,12 +531,12 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   // }, [query])
 
   useEffect(() => {
-    if(searchedKeyword) {
+    if (searchedKeyword) {
       setQuery(searchedKeyword);
       inputingText = searchedKeyword;
       //getAutoCompleteKeyword(searchedKeyword)
     }
-  }, [searchedKeyword])
+  }, [searchedKeyword]);
 
   const goBack = () => {
     navigation.goBack();
@@ -569,7 +580,6 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const onChangeSearchInput = (text: string) => {
     inputingText = text;
     setQuery(text);
-    
 
     if (text.trim() === '') {
       dispatch(allActions.dentalMapActions.setAutoCompletedKeywordArray([]));
@@ -583,7 +593,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
 
     if (keyword.trim() !== '') {
       setIsFocusedSearchInput(false);
-      searchDental(keyword, keyword, "");
+      searchDental(keyword, keyword, '');
     }
   };
 
@@ -592,7 +602,9 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       .then((response: any) => {
         console.log('GETDentalKeywordAutoComplete response', response);
         if (query === inputingText) {
-          dispatch(allActions.dentalMapActions.setAutoCompletedKeywordArray(response));
+          dispatch(
+            allActions.dentalMapActions.setAutoCompletedKeywordArray(response),
+          );
         } else {
         }
       })
@@ -601,7 +613,11 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       });
   };
 
-  const searchDental = (searchQuery: string, inputQuery: string, category: string) => {
+  const searchDental = (
+    searchQuery: string,
+    inputQuery: string,
+    category: string,
+  ) => {
     setLoadingSearchDental(true);
 
     const offset = offsetRef.current;
@@ -627,8 +643,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     })
       .then((response: any) => {
         console.log('GETDentalTotalSearch response', response);
-        console.log("GETDentalTotalSearch iq", iq);
-        console.log("GETDentalTotalSearch sq", sq);
+        console.log('GETDentalTotalSearch iq', iq);
+        console.log('GETDentalTotalSearch sq', sq);
         setLoadingSearchDental(false);
         dispatch(allActions.dentalMapActions.setSearchedKeyword(iq));
 
@@ -675,7 +691,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   ) => {
     setLoadingSearchDental(true);
 
-    const iq = "";
+    const iq = '';
     const sq = searchQueryRef.current;
 
     const dayFilter = tmpDayFilter;
@@ -1052,14 +1068,20 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   const onEndReachedDentalFlat = () => {
-    console.log("onEndReachedDentalFlat noMoreDentalData.current", noMoreDentalData.current);
-    console.log("onEndReachedDentalFlat loadingMoreDental", loadingMoreDental);
-    if (!noMoreDentalData.current && !loadingMoreDental && !loadingSearchDental) {
-
+    console.log(
+      'onEndReachedDentalFlat noMoreDentalData.current',
+      noMoreDentalData.current,
+    );
+    console.log('onEndReachedDentalFlat loadingMoreDental', loadingMoreDental);
+    if (
+      !noMoreDentalData.current &&
+      !loadingMoreDental &&
+      !loadingSearchDental
+    ) {
       setLoadingMoreDental(true);
       offsetRef.current = offsetRef.current + 15;
 
-      if(!isNearDentalList.current) {
+      if (!isNearDentalList.current) {
         getMoreDentalList();
       } else {
         getMoreNearDentalList();
@@ -1074,8 +1096,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
 
     const offset = offsetRef.current;
     const limit = limitRef.current;
-    
-    const iq = "";
+
+    const iq = '';
     const sq = searchQueryRef.current;
 
     GETDentalTotalSearch({
@@ -1094,7 +1116,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       parkingFilter,
     })
       .then((response: any) => {
-        console.log('검색된 병원 더불러오기 GETDentalTotalSearch response', response);
+        console.log(
+          '검색된 병원 더불러오기 GETDentalTotalSearch response',
+          response,
+        );
         setLoadingMoreDental(false);
 
         if (response.length > 0) {
@@ -1115,7 +1140,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   const getMoreNearDentalList = () => {
-    console.log("getMoreNearDentalList offsetRef.current", offsetRef.current);
+    console.log('getMoreNearDentalList offsetRef.current', offsetRef.current);
 
     const offset = offsetRef.current;
     const limit = limitRef.current;
@@ -1136,7 +1161,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     })
       .then((response: any) => {
         console.log('주변 병원 더불러오기 GETAroundDental response', response);
-        console.log("주변 병원 더불러오기 GETAroundDental offset", offset);
+        console.log('주변 병원 더불러오기 GETAroundDental offset', offset);
         setLoadingMoreDental(false);
 
         if (response.length > 0) {
@@ -1166,7 +1191,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     const mapLong = route.params?.currentMapLongitude;
     const category = keywordRef?.current?.category;
 
-    const iq = "";
+    const iq = '';
     const sq = searchQueryRef.current;
 
     if (isNearDentalList.current) {
@@ -1240,8 +1265,17 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     Keyboard.dismiss();
   };
 
-  const searchTotalKeyword = ({keyword, searchQuery = '', category, tagId}: {keyword: string; searchQuery?: string; category: string; tagId: string;}) => {
-
+  const searchTotalKeyword = ({
+    keyword,
+    searchQuery = '',
+    category,
+    tagId,
+  }: {
+    keyword: string;
+    searchQuery?: string;
+    category: string;
+    tagId: string;
+  }) => {
     console.log('searchTotalKeyword keyword', keyword);
     console.log('searchTotalKeyword searchQuery', searchQuery);
     console.log('searchTotalKeyword category', category);
@@ -1257,7 +1291,6 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     getAutoCompleteKeyword(keyword);
     setQuery(keyword);
     searchDental(searchQuery, keyword, category);
-
 
     keywordRef.current = {
       name: searchQuery,
@@ -1275,7 +1308,11 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     phoneNumber: number,
     dentalId: number,
   ) => {
-    callDentalPhoneNumber(phoneNumber, jwtToken, dentalId);
+    callDentalPhoneNumber(phoneNumber, jwtToken, dentalId, () => {
+      GETUserReservations({jwtToken}).then((response: any) => {
+        dispatch(allActions.userActions.setReservations(response));
+      });
+    });
   };
 
   const renderFooterIndicator = () => {
@@ -1285,15 +1322,15 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
           <ActivityIndicator />
         </FooterIndicatorContainer>
       );
-    } else if(noMoreNearDental) {
+    } else if (noMoreNearDental) {
       return (
         <NoMoreNearDentalContainer>
-          <NoMoreNearDentalText>{"주변 2km안에 치과를 전부 불러왔습니다."}</NoMoreNearDentalText>
+          <NoMoreNearDentalText>
+            {'주변 2km안에 치과를 전부 불러왔습니다.'}
+          </NoMoreNearDentalText>
         </NoMoreNearDentalContainer>
-      )
-    }
-    
-    else {
+      );
+    } else {
       return (
         <FooterIndicatorContainer
           style={{height: 10, backgroundColor: '#F5F7F9'}}
@@ -1425,152 +1462,152 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       </HeaderBar>
       <BodyContainer>
         {!isFocusedSearchInput && (
-        <SearchResultContainer>
-          <FilterListContainer
-            style={[
-              {backgroundColor: '#ffffff'},
-              styles.dentalFilterListShadow,
-            ]}>
-            <ScrollView
-              contentContainerStyle={[{paddingTop: 12, paddingBottom: 12}]}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}>
-              {selectedDayList.length === 0 && (
-                <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
-                  <FilterItemContainer style={[{marginLeft: 16}]}>
-                    <FilterItemText>{'방문일'}</FilterItemText>
-                  </FilterItemContainer>
-                </TouchableWithoutFeedback>
-              )}
-              {selectedDayList.length === 1 && (
-                <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
+          <SearchResultContainer>
+            <FilterListContainer
+              style={[
+                {backgroundColor: '#ffffff'},
+                styles.dentalFilterListShadow,
+              ]}>
+              <ScrollView
+                contentContainerStyle={[{paddingTop: 12, paddingBottom: 12}]}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}>
+                {selectedDayList.length === 0 && (
+                  <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
+                    <FilterItemContainer style={[{marginLeft: 16}]}>
+                      <FilterItemText>{'방문일'}</FilterItemText>
+                    </FilterItemContainer>
+                  </TouchableWithoutFeedback>
+                )}
+                {selectedDayList.length === 1 && (
+                  <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
+                    <FilterItemContainer
+                      style={[
+                        {
+                          marginLeft: 16,
+                          backgroundColor: '#ffffff',
+                          borderColor: '#9AA2A9',
+                        },
+                      ]}>
+                      <FilterItemText style={{color: '#4E525D'}}>
+                        {selectedDayList[0].day + '요일'}
+                      </FilterItemText>
+                    </FilterItemContainer>
+                  </TouchableWithoutFeedback>
+                )}
+                {selectedDayList.length > 1 && (
+                  <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
+                    <FilterItemContainer
+                      style={[
+                        {
+                          marginLeft: 16,
+                          backgroundColor: '#ffffff',
+                          borderColor: '#9AA2A9',
+                        },
+                      ]}>
+                      {selectedDayList.map((item: any, index: number) => {
+                        if (index === 0) {
+                          return (
+                            <FilterItemText
+                              key={index}
+                              style={{color: '#4E525D'}}>
+                              {item.day + '요일'}
+                            </FilterItemText>
+                          );
+                        } else {
+                          return (
+                            <FilterItemText
+                              key={index}
+                              style={{color: '#4E525D'}}>
+                              {', ' + item.day + '요일'}
+                            </FilterItemText>
+                          );
+                        }
+                      })}
+                    </FilterItemContainer>
+                  </TouchableWithoutFeedback>
+                )}
+                <TouchableWithoutFeedback onPress={() => clickTimeFilter()}>
                   <FilterItemContainer
                     style={[
-                      {
-                        marginLeft: 16,
+                      {marginLeft: 8},
+                      timeFilter !== '' && {
                         backgroundColor: '#ffffff',
                         borderColor: '#9AA2A9',
                       },
                     ]}>
-                    <FilterItemText style={{color: '#4E525D'}}>
-                      {selectedDayList[0].day + '요일'}
+                    <FilterItemText
+                      style={timeFilter !== '' && {color: '#4E525D'}}>
+                      {timeFilter ? timeFilter.slice(0, 5) : '방문시간'}
                     </FilterItemText>
                   </FilterItemContainer>
                 </TouchableWithoutFeedback>
-              )}
-              {selectedDayList.length > 1 && (
-                <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
+                <TouchableWithoutFeedback onPress={() => changeHolidayFilter()}>
                   <FilterItemContainer
                     style={[
-                      {
-                        marginLeft: 16,
+                      {marginLeft: 8},
+                      holidayFilter && {
                         backgroundColor: '#ffffff',
                         borderColor: '#9AA2A9',
                       },
                     ]}>
-                    {selectedDayList.map((item: any, index: number) => {
-                      if (index === 0) {
-                        return (
-                          <FilterItemText
-                            key={index}
-                            style={{color: '#4E525D'}}>
-                            {item.day + '요일'}
-                          </FilterItemText>
-                        );
-                      } else {
-                        return (
-                          <FilterItemText
-                            key={index}
-                            style={{color: '#4E525D'}}>
-                            {', ' + item.day + '요일'}
-                          </FilterItemText>
-                        );
-                      }
-                    })}
+                    <FilterItemText style={holidayFilter && {color: '#4E525D'}}>
+                      {'일요일･공휴일 진료'}
+                    </FilterItemText>
                   </FilterItemContainer>
                 </TouchableWithoutFeedback>
-              )}
-              <TouchableWithoutFeedback onPress={() => clickTimeFilter()}>
-                <FilterItemContainer
-                  style={[
-                    {marginLeft: 8},
-                    timeFilter !== '' && {
-                      backgroundColor: '#ffffff',
-                      borderColor: '#9AA2A9',
-                    },
-                  ]}>
-                  <FilterItemText
-                    style={timeFilter !== '' && {color: '#4E525D'}}>
-                    {timeFilter ? timeFilter.slice(0, 5) : '방문시간'}
-                  </FilterItemText>
-                </FilterItemContainer>
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback onPress={() => changeHolidayFilter()}>
-                <FilterItemContainer
-                  style={[
-                    {marginLeft: 8},
-                    holidayFilter && {
-                      backgroundColor: '#ffffff',
-                      borderColor: '#9AA2A9',
-                    },
-                  ]}>
-                  <FilterItemText style={holidayFilter && {color: '#4E525D'}}>
-                    {'일요일･공휴일 진료'}
-                  </FilterItemText>
-                </FilterItemContainer>
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback onPress={() => changeParkingFilter()}>
-                <FilterItemContainer
-                  style={[
-                    {marginLeft: 8, marginRight: 16},
-                    parkingFilter === 'y' && {
-                      backgroundColor: '#ffffff',
-                      borderColor: '#9AA2A9',
-                    },
-                  ]}>
-                  <FilterItemText
-                    style={parkingFilter === 'y' && {color: '#4E525D'}}>
-                    {'주차가능'}
-                  </FilterItemText>
-                </FilterItemContainer>
-              </TouchableWithoutFeedback>
-            </ScrollView>
-          </FilterListContainer>
-          <DentalListContainer>
-            {searchedDentalArray.length > 0 && (
-              <FlatList
-                contentContainerStyle={{
-                  backgroundColor: '#F5F7F9',
-                  paddingBottom: DeviceInfo.hasNotch()
-                    ? hp('6.8%')
-                    : hp('7.5%'),
-                }}
-                refreshing={refreshingDentalFlat}
-                onRefresh={onRefreshDentalFlat}
-                showsVerticalScrollIndicator={false}
-                data={searchedDentalArray}
-                renderItem={renderDentalItem}
-                onEndReached={onEndReachedDentalFlat}
-                onEndReachedThreshold={0.5}
-                ListFooterComponent={renderFooterIndicator}
-                keyExtractor={(item, index) => `${index}`}
-              />
-            )}
-            {searchedDentalArray.length === 0 && !loadingSearchDental && (
-              <NoSearchedDentalContainer>
-                <NoDataImage
-                  source={require('~/Assets/Images/ic_noData.png')}
+                <TouchableWithoutFeedback onPress={() => changeParkingFilter()}>
+                  <FilterItemContainer
+                    style={[
+                      {marginLeft: 8, marginRight: 16},
+                      parkingFilter === 'y' && {
+                        backgroundColor: '#ffffff',
+                        borderColor: '#9AA2A9',
+                      },
+                    ]}>
+                    <FilterItemText
+                      style={parkingFilter === 'y' && {color: '#4E525D'}}>
+                      {'주차가능'}
+                    </FilterItemText>
+                  </FilterItemContainer>
+                </TouchableWithoutFeedback>
+              </ScrollView>
+            </FilterListContainer>
+            <DentalListContainer>
+              {searchedDentalArray.length > 0 && (
+                <FlatList
+                  contentContainerStyle={{
+                    backgroundColor: '#F5F7F9',
+                    paddingBottom: DeviceInfo.hasNotch()
+                      ? hp('6.8%')
+                      : hp('7.5%'),
+                  }}
+                  refreshing={refreshingDentalFlat}
+                  onRefresh={onRefreshDentalFlat}
+                  showsVerticalScrollIndicator={false}
+                  data={searchedDentalArray}
+                  renderItem={renderDentalItem}
+                  onEndReached={onEndReachedDentalFlat}
+                  onEndReachedThreshold={0.5}
+                  ListFooterComponent={renderFooterIndicator}
+                  keyExtractor={(item, index) => `${index}`}
                 />
-                <NoDataText>{'검색결과가 없습니다.'}</NoDataText>
-              </NoSearchedDentalContainer>
-            )}
-            {loadingSearchDental && (
-              <LoadingSearchContainer>
-                <ActivityIndicator />
-              </LoadingSearchContainer>
-            )}
-          </DentalListContainer>
-        </SearchResultContainer>
+              )}
+              {searchedDentalArray.length === 0 && !loadingSearchDental && (
+                <NoSearchedDentalContainer>
+                  <NoDataImage
+                    source={require('~/Assets/Images/ic_noData.png')}
+                  />
+                  <NoDataText>{'검색결과가 없습니다.'}</NoDataText>
+                </NoSearchedDentalContainer>
+              )}
+              {loadingSearchDental && (
+                <LoadingSearchContainer>
+                  <ActivityIndicator />
+                </LoadingSearchContainer>
+              )}
+            </DentalListContainer>
+          </SearchResultContainer>
         )}
         {isFocusedSearchInput && (
           <AutoCompletedKeywordFlatList

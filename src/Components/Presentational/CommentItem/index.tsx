@@ -4,15 +4,10 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {
-  TouchableWithoutFeedback,
-  TouchableHighlight,
-  TouchableOpacity,
-  FlatList,
-} from 'react-native';
+import {TouchableWithoutFeedback, Keyboard} from 'react-native';
 import {useSelector} from 'react-redux';
 
-import ReplyItem from '~/Components/Presentational/ReplyItem';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 const Container = Styled.View`
  width: ${wp('100%')}px;
@@ -31,11 +26,10 @@ flex: 1;
 `;
 
 const HeaderContainer = Styled.View`
-background: #FFFFFF;
 align-items: center;
 flex-direction: row;
 justify-content: space-between;
-padding-top: 9px;
+padding-top: 2px;
 `;
 
 const NicknameContentContainer = Styled.View`
@@ -46,7 +40,7 @@ justify-content: center;
 `;
 
 const BodyContainer = Styled.View`
-padding-top: 3px;
+padding-top: 2px;
 `;
 
 const FooterContainer = Styled.View`
@@ -64,7 +58,7 @@ height: ${wp('9%')}px;
 const NicknameText = Styled.Text`
 line-height: 16px;
  font-size: 14px;
- font-weight: 800;
+ font-weight: 600;
  color: #131F3C
 `;
 
@@ -105,11 +99,9 @@ const HeaderLeftContainer = Styled.View`
 `;
 
 const MoreViewContainer = Styled.TouchableOpacity`
-top: 0px;
+top: 4px;
 right: 0px;
 position: absolute;
-padding-top: 5px;
-padding-bottom: 16px;
 padding-right: 16px;
 `;
 
@@ -204,65 +196,79 @@ const CommentItem = ({
   }, []);
 
   return (
-    <Container
-      onLayout={() => {
-        containerRef.current &&
-          containerRef.current.measure((fx, fy, width, height, px, py) => {
-            console.log('comment', description, fx, fy, width, height, px, py);
-            setPositionY(fy);
-          });
-      }}
-      ref={containerRef}>
-      <TouchableWithoutFeedback
-        onPress={() => moveToAnotherProfile(userId, nickname, profileImage)}>
-        <ProfileImageContainer>
-          <ProfileImage
-            source={{
-              uri: profileImage
-                ? profileImage
-                : 'https://pickk.one/images/defaultProfile.jpg',
-            }}
-          />
-        </ProfileImageContainer>
-      </TouchableWithoutFeedback>
-      <CommentRightContainer>
-        <HeaderContainer>
-          <TouchableWithoutFeedback
-            onPress={() =>
-              moveToAnotherProfile(userId, nickname, profileImage)
-            }>
-            <HeaderLeftContainer>
-              <NicknameText>{nickname}</NicknameText>
-            </HeaderLeftContainer>
-          </TouchableWithoutFeedback>
-          <MoreViewContainer
-            onPress={() => openCommentActionSheet(userId, nickname, commentId)}>
-            <MoreViewIcon
-              source={require('~/Assets/Images/Comment/ic_moreView.png')}
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <Container
+        onLayout={() => {
+          containerRef.current &&
+            containerRef.current.measure((fx, fy, width, height, px, py) => {
+              console.log(
+                'comment',
+                description,
+                fx,
+                fy,
+                width,
+                height,
+                px,
+                py,
+              );
+              setPositionY(fy);
+            });
+        }}
+        ref={containerRef}>
+        <TouchableWithoutFeedback
+          onPress={() => moveToAnotherProfile(userId, nickname, profileImage)}>
+          <ProfileImageContainer>
+            <ProfileImage
+              source={{
+                uri: profileImage
+                  ? profileImage
+                  : 'https://pickk.one/images/defaultProfile.jpg',
+              }}
             />
-          </MoreViewContainer>
-        </HeaderContainer>
-        <BodyContainer>
-          <CommentDescripText>{description}</CommentDescripText>
-        </BodyContainer>
-        <FooterContainer>
-          <CreateAtText>
-            {getElapsedTime(commentObj['createdDiff(second)'])}
-          </CreateAtText>
-          {isVisibleReplyButton && (
+          </ProfileImageContainer>
+        </TouchableWithoutFeedback>
+        <CommentRightContainer>
+          <HeaderContainer>
             <TouchableWithoutFeedback
               onPress={() =>
-                clickReply(commentObj, nickname, index, positionY)
+                moveToAnotherProfile(userId, nickname, profileImage)
               }>
-              <ReplyContainer>
-                <PointDivider />
-                <ReplyText>{'답글달기'}</ReplyText>
-              </ReplyContainer>
+              <HeaderLeftContainer>
+                <NicknameText>{nickname}</NicknameText>
+              </HeaderLeftContainer>
             </TouchableWithoutFeedback>
-          )}
-        </FooterContainer>
-      </CommentRightContainer>
-    </Container>
+            <MoreViewContainer
+              onPress={() =>
+                openCommentActionSheet(userId, nickname, commentId)
+              }>
+              <MoreViewIcon
+                source={require('~/Assets/Images/Comment/ic_moreView.png')}
+              />
+            </MoreViewContainer>
+          </HeaderContainer>
+          <BodyContainer>
+            <CommentDescripText>{description}</CommentDescripText>
+          </BodyContainer>
+          <FooterContainer>
+            <CreateAtText>
+              {getElapsedTime(commentObj['createdDiff(second)'])}
+            </CreateAtText>
+            {isVisibleReplyButton && (
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  ReactNativeHapticFeedback.trigger('selection');
+                  clickReply(commentObj, nickname, index, positionY);
+                }}>
+                <ReplyContainer>
+                  <PointDivider />
+                  <ReplyText>{'답글달기'}</ReplyText>
+                </ReplyContainer>
+              </TouchableWithoutFeedback>
+            )}
+          </FooterContainer>
+        </CommentRightContainer>
+      </Container>
+    </TouchableWithoutFeedback>
   );
 };
 

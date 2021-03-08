@@ -35,7 +35,7 @@ const GETTotalSearch = ({lat='0', long='0', jwtToken, searchQuery, inputQuery, c
             resolve(response.data);
         })
         .catch((error) => {
-            console.log(error)
+            console.log('GETTotalSearch error', error)
             reject(error.data);
         })
     })

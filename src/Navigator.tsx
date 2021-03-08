@@ -75,7 +75,6 @@ import ScrapedPostsTabScreen from '~/Components/Container/MyProfileScreen/Scrape
 import CommentedPostsTabScreen from '~/Components/Container/MyProfileScreen/CommentedPostsTabScreen';
 import DeveloperInfoScreen from '~/Components/Container/MyProfileScreen/DeveloperInfoScreen';
 
-
 // Another Profile Stack Screen
 import AnotherProfileScreen from '~/Components/Container/AnotherProfileScreen';
 
@@ -198,13 +197,16 @@ function AuthStackScreen() {
 
       <AuthStack.Screen
         name="TermsOfServiceScreen"
-        component={TermsOfServiceScreen}/>
+        component={TermsOfServiceScreen}
+      />
       <AuthStack.Screen
         name="LocationInfoTermsOfUseScreen"
-        component={LocationInfoTermsOfUseScreen}/>
+        component={LocationInfoTermsOfUseScreen}
+      />
       <AuthStack.Screen
         name="PrivacyPolicyScreen"
-        component={PrivacyPolicyScreen}/>
+        component={PrivacyPolicyScreen}
+      />
     </AuthStack.Navigator>
   );
 }
@@ -797,16 +799,20 @@ function MyProfileStackScreen() {
       />
       <MyProfileStack.Screen
         name="DeveloperInfoScreen"
-        component={DeveloperInfoScreen}/>
+        component={DeveloperInfoScreen}
+      />
       <MyProfileStack.Screen
         name="TermsOfServiceScreen"
-        component={TermsOfServiceScreen}/>
+        component={TermsOfServiceScreen}
+      />
       <MyProfileStack.Screen
         name="LocationInfoTermsOfUseScreen"
-        component={LocationInfoTermsOfUseScreen}/>
+        component={LocationInfoTermsOfUseScreen}
+      />
       <MyProfileStack.Screen
         name="PrivacyPolicyScreen"
-        component={PrivacyPolicyScreen}/>
+        component={PrivacyPolicyScreen}
+      />
     </MyProfileStack.Navigator>
   );
 }
@@ -1159,7 +1165,11 @@ function BottomTab() {
       return false;
     }
 
-    if(routeName.name === 'LocationInfoTermsOfUseScreen' || routeName.name === 'PrivacyPolicyScreen' || routeName.name === 'TermsOfServiceScreen') {
+    if (
+      routeName.name === 'LocationInfoTermsOfUseScreen' ||
+      routeName.name === 'PrivacyPolicyScreen' ||
+      routeName.name === 'TermsOfServiceScreen'
+    ) {
       return false;
     }
 

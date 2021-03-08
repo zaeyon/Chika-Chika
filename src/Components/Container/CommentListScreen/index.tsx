@@ -14,6 +14,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+
 import {useSelector, useDispatch} from 'react-redux';
 import ActionSheet from 'react-native-actionsheet';
 import allActions from '~/actions';
@@ -90,7 +91,7 @@ const CommentListScreen = ({navigation, route}: Props) => {
   const [initialScroll, setInitialScroll] = useState(true);
   const [loadingCommentPost, setLoadingCommentPost] = useState<boolean>(false);
   //const [commentArray, setCommentArray] = useState<Array<any>>(route.params?.commentArray);
-  
+
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [commentActionType, setCommentActionType] = useState<string>(
     route.params?.commentActionType || 'comment',
@@ -267,19 +268,19 @@ const CommentListScreen = ({navigation, route}: Props) => {
 
   const onPressOwnCommentActionSheet = useCallback((index: number) => {
     if (index === 1) {
-      Alert.alert("선택한 댓글을 삭제하시겠습니까?", "", [
+      Alert.alert('선택한 댓글을 삭제하시겠습니까?', '', [
         {
-          text: "취소",
+          text: '취소',
           onPress: () => 0,
-          style: "cancel"
+          style: 'cancel',
         },
         {
-          text: "삭제",
+          text: '삭제',
           onPress: () => {
             deleteReviewComment();
           },
-        }
-      ])
+        },
+      ]);
     }
   }, []);
 
@@ -381,7 +382,7 @@ const CommentListScreen = ({navigation, route}: Props) => {
         </LoadingContainerView>
       ) : (
         <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
-          {(commentArray.length === 0 && !route.params?.commentId) ? (
+          {commentArray.length === 0 && !route.params?.commentId ? (
             <TouchableWithoutFeedback onPress={() => clickBackground()}>
               <NoCommentListContainer>
                 <Animated.View
@@ -436,6 +437,7 @@ const CommentListScreen = ({navigation, route}: Props) => {
               ref={commentFlatListRef}
               showsVerticalScrollIndicator={false}
               data={commentArray}
+              keyboardShouldPersistTaps="always"
               renderItem={renderCommentItem}
               keyExtractor={(item: any, index: number) =>
                 item.id + String(index)

@@ -46,6 +46,7 @@ const PinchableImage = ({
   const [lastScale, setLastScale] = useState(1);
   const [lastX, setLastX] = useState(0);
   const [lastY, setLastY] = useState(0);
+  const [isZooming, setIsZooming] = useState(false);
 
   const [pinchEnabled, setPinchEnabled] = useState(true);
   const [travelEnabled, setTravelEnabled] = useState(false);
@@ -102,16 +103,7 @@ const PinchableImage = ({
         listener: (e: any) => {
           const newX = lastX + e.nativeEvent.translationX;
           const rangeX = ((lastScale - 1) * (wp('100%') / 2)) / lastScale;
-          const newY = lastY + e.nativeEvent.translationY;
-          const rangeY =
-            (((image.img_height * wp('100%')) / image.img_width >
-            hp('100%') - getStatusBarHeight() * 2 - 112
-              ? hp('100%') - getStatusBarHeight() * 2 - 112
-              : (image.img_height * wp('100%')) / image.img_width) *
-              lastScale -
-              (hp('100%') - getStatusBarHeight() * 2 - 112)) /
-            2 /
-            lastScale;
+
           if (newX > rangeX || newX < -rangeX) {
             scrollRef.current.scrollToOffset({
               offset:
@@ -121,15 +113,10 @@ const PinchableImage = ({
             });
           } else {
           }
-          if (newY > rangeY) {
-          } else {
-            console.log('rev');
-            setSwipeDownEnabled(false);
-          }
         },
       },
     ),
-    [moveX, moveY, lastX, lastY, lastScale, currentIndex],
+    [moveX, moveY, lastX, lastScale, currentIndex],
   );
 
   const onHorizontalPanHandlerStateChange = useCallback(
@@ -204,15 +191,10 @@ const PinchableImage = ({
           if (newY > range || newY < -range) {
             baseY.setValue(newY > range ? range : -range);
             moveY.setValue(0);
-            if (newY >= range) {
-              console.log('swupte avble');
-              setSwipeDownEnabled(true);
-            }
             return newY > range ? range : -range;
           } else {
             baseY.setValue(newY);
             moveY.setValue(0);
-            setSwipeDownEnabled(false);
             return newY;
           }
         });
@@ -287,10 +269,11 @@ const PinchableImage = ({
             //   x: 0,
             //   y: 0,
             // });
-            Animated.timing(pinchScale, {
+            Animated.spring(pinchScale, {
               toValue: 1 / prev,
-              duration: 100,
-              easing: Easing.ease,
+              friction: 16,
+              tension: 108,
+
               useNativeDriver: true,
             }).start(() => {
               pinchScale.setValue(1);
@@ -298,20 +281,20 @@ const PinchableImage = ({
               setTravelEnabled(false);
               setSwipeDownEnabled(true);
             });
-            Animated.timing(baseX, {
+            Animated.spring(baseX, {
               toValue: 0,
-              duration: 100,
-              easing: Easing.ease,
+              friction: 16,
+              tension: 108,
               useNativeDriver: true,
             }).start(() => {
               setLastX(0);
               baseX.setValue(0);
               moveX.setValue(0);
             });
-            Animated.timing(baseY, {
+            Animated.spring(baseY, {
               toValue: 0,
-              duration: 100,
-              easing: Easing.ease,
+              friction: 16,
+              tension: 108,
               useNativeDriver: true,
             }).start(() => {
               setLastY(0);
@@ -393,59 +376,68 @@ const PinchableImage = ({
   );
 
   const onTapGestureEvent = useCallback(({nativeEvent}) => {}, []);
-  const onTapHandlerStateChange = useCallback(({nativeEvent}) => {
-    if (nativeEvent.oldState === State.ACTIVE) {
-      setLastScale((prev) => {
-        if (prev === 1) {
-          Animated.timing(pinchScale, {
-            toValue: 4,
-            duration: 200,
-            easing: Easing.ease,
-            useNativeDriver: true,
-          }).start(() => {
-            pinchScale.setValue(1);
-            baseScale.setValue(4);
-            setTravelEnabled(true);
-            setSwipeDownEnabled(false);
+  const onTapHandlerStateChange = useCallback(
+    ({nativeEvent}) => {
+      if (nativeEvent.oldState === State.ACTIVE) {
+        if (!isZooming) {
+          setIsZooming(true);
+
+          setLastScale((prev) => {
+            if (prev === 1) {
+              Animated.spring(pinchScale, {
+                toValue: 4,
+                friction: 17,
+                tension: 108,
+                useNativeDriver: true,
+              }).start(() => {
+                pinchScale.setValue(1);
+                baseScale.setValue(4);
+                setTravelEnabled(true);
+                setSwipeDownEnabled(false);
+                setIsZooming(false);
+              });
+              return 4;
+            } else {
+              Animated.spring(baseScale, {
+                toValue: 1,
+                friction: 17,
+                tension: 108,
+                useNativeDriver: true,
+              }).start(() => {
+                pinchScale.setValue(1);
+                baseScale.setValue(1);
+                setTravelEnabled(false);
+                setSwipeDownEnabled(true);
+                setIsZooming(false);
+              });
+              Animated.spring(baseX, {
+                toValue: 0,
+                friction: 17,
+                tension: 108,
+                useNativeDriver: true,
+              }).start(() => {
+                setLastX(0);
+                baseX.setValue(0);
+                moveX.setValue(0);
+              });
+              Animated.spring(baseY, {
+                toValue: 0,
+                friction: 17,
+                tension: 108,
+                useNativeDriver: true,
+              }).start(() => {
+                setLastY(0);
+                baseY.setValue(0);
+                moveY.setValue(0);
+              });
+              return 1;
+            }
           });
-          return 4;
-        } else {
-          Animated.timing(baseScale, {
-            toValue: 1,
-            duration: 200,
-            easing: Easing.ease,
-            useNativeDriver: true,
-          }).start(() => {
-            pinchScale.setValue(1);
-            baseScale.setValue(1);
-            setTravelEnabled(false);
-            setSwipeDownEnabled(true);
-          });
-          Animated.timing(baseX, {
-            toValue: 0,
-            duration: 200,
-            easing: Easing.ease,
-            useNativeDriver: true,
-          }).start(() => {
-            setLastX(0);
-            baseX.setValue(0);
-            moveX.setValue(0);
-          });
-          Animated.timing(baseY, {
-            toValue: 0,
-            duration: 200,
-            easing: Easing.ease,
-            useNativeDriver: true,
-          }).start(() => {
-            setLastY(0);
-            baseY.setValue(0);
-            moveY.setValue(0);
-          });
-          return 1;
         }
-      });
-    }
-  }, []);
+      }
+    },
+    [isZooming],
+  );
   return (
     <PanGestureHandler
       ref={swipeRef}
