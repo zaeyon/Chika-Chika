@@ -84,6 +84,7 @@ font-style: normal;
 font-weight: 600;
 font-size: 15px;
 margin-right: 4px;
+color: #131F3C;
 `;
 
 const ProfileSplitView = Styled.View`
@@ -339,7 +340,6 @@ const PostItem = ({
     if (
       Clinics.length +
         GeneralTags.length +
-        SymptomItems.length +
         TreatmentItems.length +
         CityTags.length ===
       0
@@ -356,13 +356,12 @@ const PostItem = ({
       const result = [
         Clinics,
         GeneralTags,
-        SymptomItems,
         TreatmentItems,
         CityTags,
       ].map((item) => item.map(renderItem));
       return <HashTagContainerView>{result}</HashTagContainerView>;
     }
-  }, [Clinics, GeneralTags, SymptomItems, TreatmentItems, CityTags]);
+  }, [Clinics, GeneralTags, TreatmentItems, CityTags]);
 
   return (
     <TouchableWithoutFeedback

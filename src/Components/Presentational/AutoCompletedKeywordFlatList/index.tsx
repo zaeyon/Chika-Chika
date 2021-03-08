@@ -180,9 +180,12 @@ const AutoCompletedTotalKeywordFlatList = ({
   searchTotalKeyword,
   searchRecordArray,
 }: Props) => {
-  console.log("AutoCompletedTotalKeywordFlatList autoCompletedKeywordArr", autoCompletedKeywordArr);
+  console.log(
+    'AutoCompletedTotalKeywordFlatList autoCompletedKeywordArr',
+    autoCompletedKeywordArr,
+  );
   const renderSearchRecordItem = ({item, index}: any) => {
-    console.log("renderSearchRecordItem item", item);
+    console.log('renderSearchRecordItem item', item);
     const renderIcon = (category: string) => {
       switch (category) {
         case 'clinic':
@@ -216,11 +219,15 @@ const AutoCompletedTotalKeywordFlatList = ({
         <SearchRecordItemContainer>
           <SearchRecordContentView>
             <RepresentIcon source={renderIcon(item.category)} />
-            <AutoCompletedKeywordText>{item.inputQuery}</AutoCompletedKeywordText>
+            <AutoCompletedKeywordText>
+              {item.inputQuery}
+            </AutoCompletedKeywordText>
             {item.category === 'city' && (
-            <AutoCompletedKeywordDescriptionView>
-              <AutoCompletedKeywordDescriptionText>{item.searchQuery}</AutoCompletedKeywordDescriptionText>
-            </AutoCompletedKeywordDescriptionView>
+              <AutoCompletedKeywordDescriptionView>
+                <AutoCompletedKeywordDescriptionText>
+                  {item.searchQuery}
+                </AutoCompletedKeywordDescriptionText>
+              </AutoCompletedKeywordDescriptionView>
             )}
           </SearchRecordContentView>
           <TouchableWithoutFeedback
@@ -385,7 +392,7 @@ const AutoCompletedTotalKeywordFlatList = ({
           </TouchableHighlight>
         );
       } else if (item.category === 'treatment') {
-        const startIndex = item.name.indexOf(inputQuery);
+        const startIndex = item.usualName.indexOf(inputQuery);
         const endIndex = startIndex + (inputQuery.length - 1);
 
         return (
@@ -396,7 +403,7 @@ const AutoCompletedTotalKeywordFlatList = ({
             }}
             onPress={() =>
               searchTotalKeyword({
-                keyword: item.name,
+                keyword: item.usualName,
                 category: item.category,
                 tagId: item.id,
               })
@@ -407,21 +414,21 @@ const AutoCompletedTotalKeywordFlatList = ({
               />
               {startIndex !== -1 ? (
                 <>
-                  <AutoCompletedKeywordText key={item.name + String(1)}>
-                    {item.name.slice(0, startIndex)}
+                  <AutoCompletedKeywordText key={item.usualName + String(1)}>
+                    {item.usualName.slice(0, startIndex)}
                   </AutoCompletedKeywordText>
                   <AutoCompletedKeywordText
-                    key={item.name + String(2)}
+                    key={item.usualName + String(2)}
                     style={{color: '#00D1FF'}}>
-                    {item.name.slice(startIndex, endIndex + 1)}
+                    {item.usualName.slice(startIndex, endIndex + 1)}
                   </AutoCompletedKeywordText>
-                  <AutoCompletedKeywordText key={item.name + String(3)}>
-                    {item.name.slice(endIndex + 1)}
+                  <AutoCompletedKeywordText key={item.usualName + String(3)}>
+                    {item.usualName.slice(endIndex + 1)}
                   </AutoCompletedKeywordText>
                 </>
               ) : (
-                <AutoCompletedKeywordText key={item.name + String(1)}>
-                  {item.name}
+                <AutoCompletedKeywordText key={item.usualName + String(1)}>
+                  {item.usualName}
                 </AutoCompletedKeywordText>
               )}
             </AutoCompletedKeywordItemContainer>

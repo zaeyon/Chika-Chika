@@ -1010,7 +1010,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
     isNearDentalList.current = true;
 
     mapRef.current.setLocationTrackingMode(2);
-    
+
     setTimeout(() => {
       getNearDental();
     }, 100);
@@ -1327,7 +1327,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   const reSearchNearDentalInCurrentLocation = () => {
-    dispatch(allActions.dentalMapActions.setSearchedKeyword(""))
+    dispatch(allActions.dentalMapActions.setSearchedKeyword(''));
     limitRef.current = 15;
     offsetRef.current = 0;
     getNearDental();
@@ -1395,6 +1395,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     longitude: Number(item.geographLong),
                   }}
                   onClick={() => clickDentalMarker(index)}
+                  zIndex={index == selectedDentalIndex ? 1 : 0}
                   image={
                     index == selectedDentalIndex
                       ? require('~/Assets/Images/Map/ic_marker_focus.png')
@@ -1549,14 +1550,13 @@ const NearDentalMap = ({navigation, route}: Props) => {
           </FilterListContainer>
         </MapHeaderContainer>
         {nearDentalArray.length > 0 && (
-          <DentalListContainer>
+          <DentalListContainer pointerEvents="box-none">
             <MapInsetBottomShadow style={styles.insetShadow} />
-            <ViewDentalListContainer>
+            <ViewDentalListContainer pointerEvents="box-none">
               {isVisibleReSearch && (
                 <TouchableHighlight
-                style={{position: 'absolute', left: 16, borderRadius: 100}}
-                activeOpacity={0.95}
-
+                  style={{position: 'absolute', left: 16, borderRadius: 100}}
+                  activeOpacity={0.95}
                   onPress={() => reSearchNearDentalInCurrentLocation()}>
                   <ReSearchInCurrentRegionButton>
                     <ReSearchIcon
@@ -1569,9 +1569,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 </TouchableHighlight>
               )}
               <TouchableHighlight
-              style={{position: 'absolute', right: 16, borderRadius: 100}}
-              activeOpacity={0.95}
-              onPress={() => moveToDentalList()}>
+                style={{position: 'absolute', right: 16, borderRadius: 100}}
+                activeOpacity={0.95}
+                onPress={() => moveToDentalList()}>
                 <ViewDentalListButton>
                   <ViewDentalListIcon
                     source={require('~/Assets/Images/Map/ic_viewDentalList.png')}
@@ -1604,21 +1604,23 @@ const NearDentalMap = ({navigation, route}: Props) => {
             />
           </DentalListContainer>
         )}
-        {isVisibleReSearch && nearDentalArray.length === 0 && !loadingGetDental && (
-          <TouchableHighlight
-            style={{borderRadius: 100, bottom: hp('7.3%')}}
-            activeOpacity={0.95}
-            onPress={() => reSearchNearDentalInCurrentLocation()}>
-            <ReSearchInCurrentRegionButton>
-              <ReSearchIcon
-                source={require('~/Assets/Images/Map/ic_reload.png')}
-              />
-              <ViewDentalListText style={{marginLeft: 7}}>
-                {'현재위치에서 검색'}
-              </ViewDentalListText>
-            </ReSearchInCurrentRegionButton>
-          </TouchableHighlight>
-        )}
+        {isVisibleReSearch &&
+          nearDentalArray.length === 0 &&
+          !loadingGetDental && (
+            <TouchableHighlight
+              style={{borderRadius: 100, bottom: hp('7.3%')}}
+              activeOpacity={0.95}
+              onPress={() => reSearchNearDentalInCurrentLocation()}>
+              <ReSearchInCurrentRegionButton>
+                <ReSearchIcon
+                  source={require('~/Assets/Images/Map/ic_reload.png')}
+                />
+                <ViewDentalListText style={{marginLeft: 7}}>
+                  {'현재위치에서 검색'}
+                </ViewDentalListText>
+              </ReSearchInCurrentRegionButton>
+            </TouchableHighlight>
+          )}
         {loadingGetDental && (
           <LoadingGetNearDentalContainer>
             <ActivityIndicator color={'#000000'} style={{zIndex: 10}} />
@@ -1767,7 +1769,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
         destructiveButtonIndex={2}
         onPress={(index: any) => onPressTimeFilterActionSheet(index)}
       />
-      <BottomTabCoverContainer/>
+      <BottomTabCoverContainer />
     </Container>
   );
 };

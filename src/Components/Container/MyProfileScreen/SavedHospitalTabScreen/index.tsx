@@ -15,6 +15,8 @@ import allActions from '~/actions';
 import {useSelector, useDispatch} from 'react-redux';
 // Routes
 import DELETEDentalScrap from '~/Routes/Dental/DELETEDentalScrap';
+import callDentalPhoneNumber from '~/method/callDentalPhoneNumber';
+import GETUserReservations from '~/Routes/User/GETUserReservations';
 
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
@@ -46,6 +48,17 @@ const SavedHospitalTabScreen = ({navigation, route}: Props) => {
   );
 
   const dispatch = useDispatch();
+
+  const clickDentalCallReservation = useCallback(
+    (dentalPhoneNumber: number, jwtToken: string, dentalId: number) => {
+      callDentalPhoneNumber(dentalPhoneNumber, jwtToken, dentalId, () => {
+        GETUserReservations({jwtToken}).then((response: any) => {
+          dispatch(allActions.userActions.setReservations(response));
+        });
+      });
+    },
+    [],
+  );
 
   const deleteSavedHospital = useCallback(
     (dentalId) => {
@@ -88,6 +101,7 @@ const SavedHospitalTabScreen = ({navigation, route}: Props) => {
           hospitals={hospitals}
           deleteSavedHospital={deleteSavedHospital}
           moveToDentalDetail={moveToDentalDetail}
+          clickDentalCallReservation={clickDentalCallReservation}
         />
       )}
     </ContainerView>

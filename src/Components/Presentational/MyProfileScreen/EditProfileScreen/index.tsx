@@ -372,6 +372,7 @@ const EditProfileScreen = ({
     for (let i = 0; i <= currentYear - startYear; i++) {
       result.push(
         <Picker.Item
+          key={String(startYear + i)}
           label={String(startYear + i)}
           value={String(startYear + i)}
         />,

@@ -204,18 +204,26 @@ const MyProfileScreen = ({navigation, route}: Props) => {
 
   const fetchCommunityData = useCallback(
     (form: Form, callback: any) => {
-      GETUserCommunityPosts(jwtToken, userId, form).then((response) => {
-        callback(response);
-      });
+      GETUserCommunityPosts(jwtToken, userId, form)
+        .then((response) => {
+          callback(response);
+        })
+        .catch((e) => {
+          console.log('fetch user community posts error', e);
+        });
     },
     [jwtToken, userId],
   );
 
   const fetchReviewData = useCallback(
     (form: Form, callback: any) => {
-      GETUserReviewPosts(jwtToken, userId, form).then((response) => {
-        callback(response);
-      });
+      GETUserReviewPosts(jwtToken, userId, form)
+        .then((response) => {
+          callback(response);
+        })
+        .catch((e) => {
+          console.log('fetch user reviews error', e);
+        });
     },
     [jwtToken, userId],
   );
