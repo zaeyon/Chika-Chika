@@ -55,28 +55,31 @@ const SocialContainer = Styled.View`
 `;
 
 const LocalContainer = Styled.View`
- flex: 1;
- align-items: center;
+ flex: 0.9;
  padding-left: 20px;
  padding-right: 20px;
  padding-top: ${DeviceInfo.hasNotch() ? hp('2%') : hp('5.5%')};
 `;
 
 const LocalLoginContainer = Styled.View`
+background-color: #FFFFFF;
+padding-left: 16px;
+padding-right: 16px;
+`;
+
+const LocalLoginButton = Styled.View`
 padding-top: 16px;
 padding-bottom: 16px;
-padding-left: 5px;
-padding-right: 5px;
- align-items: center;
- justify-content: center;
+background-color: #00D1FF;
+align-items: center;
+border-radius: 8px;
 `;
 
 const LocalLoginText = Styled.Text`
-font-weight: 400;
- color: #131F3C;
+font-weight: 700;
+ color: #ffffff;
  font-size: 16px;
  line-height: 24px;
-
 `;
 
 const LocalSignUpContainer = Styled.View`
@@ -493,9 +496,9 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
       </LogoContainer>
       <LocalContainer>
         <TouchableWithoutFeedback onPress={() => moveToLocalLogin()}>
-          <LocalLoginContainer>
-            <LocalLoginText>{'로그인 / 회원가입'}</LocalLoginText>
-          </LocalLoginContainer>
+            <LocalLoginButton>
+            <LocalLoginText>{'전화번호로 로그인'}</LocalLoginText>
+            </LocalLoginButton>
         </TouchableWithoutFeedback>
       </LocalContainer>
       {loadingSocial && (

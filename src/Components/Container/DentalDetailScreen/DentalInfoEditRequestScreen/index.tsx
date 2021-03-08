@@ -20,6 +20,7 @@ import {useSelector} from 'react-redux';
 import DeviceInfo from 'react-native-device-info';
 import ActionSheet from 'react-native-actionsheet';
 import {launchCamera} from 'react-native-image-picker';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 // Local Component
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
@@ -31,7 +32,8 @@ import POSTDentalInfoEdit from '~/Routes/Dental/POSTDentalInfoEdit';
 
 const Container = Styled.View`
 flex: 1;
- background-color: #FFFFFF;
+background-color: #F5F7F9;
+padding-top: ${getStatusBarHeight()};
 `;
 
 const BodyContainer = Styled.ScrollView`
@@ -341,6 +343,7 @@ const DentalInfoEditRequestScreen = ({navigation, route}: Props) => {
   const [infoEditDescrip, setInfoEditDescrip] = useState<string>('');
   const [selectedImages, setSelectedImages] = useState<Array<any>>([]);
   const [isEnabledFinish, setIsEnabledFinish] = useState<boolean>(false);
+  const [infoEditTextInputY, setInfoEditTextInputY] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
   const scrollViewRef = useRef<any>();
 
@@ -500,6 +503,10 @@ const DentalInfoEditRequestScreen = ({navigation, route}: Props) => {
     return tmpImageArray;
   };
 
+  const onFocusInfoEditTextInput = () => {
+    scrollViewRef.current.scrollTo({y: infoEditTextInputY})
+  }
+
   const formatReason = async (selectedType: Array<string>) => {
     const tmpReason = selectedType.map((item: any, index: number) => {
       return "'" + item + "'";
@@ -549,7 +556,7 @@ const DentalInfoEditRequestScreen = ({navigation, route}: Props) => {
   );
 
   return (
-    <Container as={SafeAreaView} forceInset={{top: 'always'}}>
+    <Container>
       <NavigationHeader
         headerLeftProps={{type: 'arrow', onPress: goBack}}
         headerRightProps={{type: 'text', text: '완료', onPress: finishInfoEdit}}
@@ -558,7 +565,8 @@ const DentalInfoEditRequestScreen = ({navigation, route}: Props) => {
         }
         headerTitle={'정보수정 요청'}
       />
-      <KeyboardAwareScrollView
+      <ScrollView
+        contentContainerStyle={{backgroundColor: "#F5F7F9", paddingBottom: 10}}
         showsVerticalScrollIndicator={false}
         ref={scrollViewRef}>
         <BodyContainer>
@@ -584,7 +592,12 @@ const DentalInfoEditRequestScreen = ({navigation, route}: Props) => {
               />
             </SelectInfoTypeListContainer>
           </InfoContainer>
-          <InfoContainer style={{paddingBottom: 24}}>
+          <InfoContainer 
+          onLayout={(event) => {
+            console.log("onLayout event.nativeEvent", event.nativeEvent);
+            setInfoEditTextInputY(event.nativeEvent.layout.y)
+          }}
+          style={{paddingBottom: 24}}>
             <LabelContainer>
               <InfoLabelText>
                 {'구체적인 수정 내용을 말씀해주세요. (필수)'}
@@ -605,6 +618,7 @@ const DentalInfoEditRequestScreen = ({navigation, route}: Props) => {
                 textAlignVertical={'center'}
                 onChangeText={(text) => onChangeInfoEditInput(text)}
                 autoCapitalize={'none'}
+                onFocus={() => onFocusInfoEditTextInput()}
               />
             </InfoEditInputContainer>
             <NumberOfCharacters>{`${infoEditDescrip.length}/300`}</NumberOfCharacters>
@@ -642,7 +656,7 @@ const DentalInfoEditRequestScreen = ({navigation, route}: Props) => {
             </GalleryContainerView>
           </SelectImagesContainer>
         </BodyContainer>
-      </KeyboardAwareScrollView>
+      </ScrollView>
       <ActionSheet
         ref={actionSheetRef}
         options={actionSheetItemList}

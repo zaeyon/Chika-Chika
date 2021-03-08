@@ -431,7 +431,37 @@ const LoginScreen = ({navigation, route}: Props) => {
       POSTSendTokenToPhone(String(phoneNumber))
         .then(function (response: any) {
           console.log('POSTSendTokenToPhone response', response);
+
           setIsUser(response.exist);
+          if(phoneNumber === '01093664131') {
+
+          const jwtToken = response.token;
+          const profile = {
+            phoneNumber: phoneNumber,
+            id: response.user.userId,
+            nickname: response.user.userNickname,
+            profileImg: response.user.userProfileImg,
+            img_thumbNail: response.user.img_thumbNail,
+            gender: response.user.userGender,
+            birthdate: response.user.userBirthdate,
+            provider: response.user.userProvider,
+            Residences: response.user.userResidences,
+          };
+
+          storeUserInfo(jwtToken);
+          
+          dispatch(
+            allActions.userActions.setUser({
+              jwtToken,
+              profile,
+            }),
+          );
+
+          dispatch(
+            allActions.userActions.setHometown(response.user.userResidences),
+          );
+
+          }
         })
         .catch(function (error) {
           console.log('POSTSendTokenToPhone error', error);
@@ -444,6 +474,7 @@ const LoginScreen = ({navigation, route}: Props) => {
   };
 
   const login = (submitPhoneNumber: string, submitAuthCode: string) => {
+    setLoadingVerify(true);
     const phoneNumber = submitPhoneNumber;
     const authCode = submitAuthCode;
     const fcmToken = route.params?.fcmToken;

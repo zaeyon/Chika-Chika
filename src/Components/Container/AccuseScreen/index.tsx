@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useRef, memo, useCallback} from 'react';
 import SafeAreaView from 'react-native-safe-area-view';
 import Styled from 'styled-components/native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   TouchableWithoutFeedback,
   FlatList,
@@ -146,7 +145,7 @@ padding: 10px 16px 16px 16px;
 
 `;
 
-const InfoEditInput = Styled.TextInput`
+const AccuseDescripInput = Styled.TextInput`
 width: ${wp('82.933%')}px;
 min-height: ${hp('17.24%')}px;
 font-size: 12px;
@@ -285,6 +284,8 @@ const AccuseScreen = ({navigation, route}: Props) => {
   const [accuseDescrip, setAccuseDescrip] = useState<string>('');
   const [selectedImages, setSelectedImages] = useState<Array<any>>([]);
   const [isEnabledFinish, setIsEnabledFinish] = useState<boolean>(false);
+
+  const [descripY, setDescripY] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const scrollViewRef = useRef<any>();
 
@@ -358,6 +359,10 @@ const AccuseScreen = ({navigation, route}: Props) => {
     return '[' + tmpReason + ']';
   };
 
+  const onFocusAccuseDescripInput = () => {
+    scrollViewRef.current.scrollTo({y: descripY})
+  }
+
   return (
     <Container>
       <NavigationHeader
@@ -367,8 +372,8 @@ const AccuseScreen = ({navigation, route}: Props) => {
         headerTitle={'신고하기'}
         headerRightActiveColor={'#00D1FF'}
       />
-      <KeyboardAwareScrollView
-        contentContainerStyle={{backgroundColor: '#F5F7F9', flex: 1}}
+      <ScrollView
+        contentContainerStyle={{paddingBottom: descripY}}
         showsVerticalScrollIndicator={false}
         ref={scrollViewRef}>
         <BodyContainer>
@@ -388,7 +393,11 @@ const AccuseScreen = ({navigation, route}: Props) => {
               />
             </SelectInfoTypeListContainer>
           </InfoContainer>
-          <InfoContainer style={{paddingBottom: 24}}>
+          <InfoContainer 
+          onLayout={(event) => {
+            setDescripY(event.nativeEvent.layout.y)
+          }}
+          style={{paddingBottom: 24}}>
             <LabelContainer>
               <InfoLabelText>
                 {'구체적인 신고 내용을 말씀해주세요(선택)'}
@@ -399,19 +408,20 @@ const AccuseScreen = ({navigation, route}: Props) => {
               <HorizontalDivider />
             </HorizontalDividerContainer>
             <InfoEditInputContainer>
-              <InfoEditInput
+              <AccuseDescripInput
                 value={accuseDescrip}
                 placeholderTextColor={'#9AA2A9'}
                 multiline={true}
                 textAlignVertical={'center'}
                 onChangeText={(text) => onChangeInfoEditInput(text)}
                 autoCapitalize={'none'}
+                onFocus={() => onFocusAccuseDescripInput()}
               />
             </InfoEditInputContainer>
             <NumberOfCharacters>{`${accuseDescrip.length}/300`}</NumberOfCharacters>
           </InfoContainer>
         </BodyContainer>
-      </KeyboardAwareScrollView>
+      </ScrollView>
       <TouchBlockIndicatorCover loading={loading} />
     </Container>
   );

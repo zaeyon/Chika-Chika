@@ -805,6 +805,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
   }
 
   const getNearDental = () => {
+    isNearDentalList.current = true;
     const offset = offsetRef.current;
     const limit = limitRef.current;
 
@@ -813,6 +814,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
     const mapLat = currentMapLocation.current.latitude;
     const mapLong = currentMapLocation.current.longitude;
+
 
     const sort = 'd';
     dispatch(allActions.dentalMapActions.setLoadingGetDental(true));
@@ -1003,7 +1005,16 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   const clickMyLocationTrackingButton = () => {
-    limitRef.current = 15;
+    if(currentMapLocation.current.zoom <= 12) {
+      limitRef.current = 45;
+    } else if (12 < currentMapLocation.current.zoom && currentMapLocation.current.zoom <= 13) {
+      limitRef.current = 45;
+    } else if(13 < currentMapLocation.current.zoom && currentMapLocation.current.zoom <= 14) {
+      limitRef.current = 30;
+    } else if(14 < currentMapLocation.current.zoom) {
+      limitRef.current = 15;
+    }
+
     offsetRef.current = 0;
 
     dispatch(allActions.dentalMapActions.setSearchedKeyword(''));
@@ -1022,6 +1033,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
   }, []);
 
   const onMapCameraChange = (event: any) => {
+    console.log("onMapCameraChange event", event);
     const prevMapLocation = {...currentMapLocation.current};
     currentMapLocation.current = event;
 
@@ -1328,7 +1340,19 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
   const reSearchNearDentalInCurrentLocation = () => {
     dispatch(allActions.dentalMapActions.setSearchedKeyword(""))
-    limitRef.current = 15;
+
+    console.log("currentLocation.current.zoom", currentMapLocation.current.zoom);
+
+    if(currentMapLocation.current.zoom <= 12) {
+      limitRef.current = 45;
+    } else if (12 < currentMapLocation.current.zoom && currentMapLocation.current.zoom <= 13) {
+      limitRef.current = 45;
+    } else if(13 < currentMapLocation.current.zoom && currentMapLocation.current.zoom <= 14) {
+      limitRef.current = 30;
+    } else if(14 < currentMapLocation.current.zoom) {
+      limitRef.current = 15;
+    }
+
     offsetRef.current = 0;
     getNearDental();
   };

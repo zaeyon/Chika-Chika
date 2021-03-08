@@ -190,7 +190,11 @@ const DentalCarouselItem = ({
     displayDistance = dentalObj['distance(km)'] + 'km';
   } else {
     displayDistance = Math.round(dentalObj['distance(km)'] * 1000) + 'm';
-  } 
+  }
+
+  if(name.length > 12) {
+    name = name.substring(0, 12) + "..."
+  }
 
   return (
     <Container

@@ -162,8 +162,17 @@ function AuthStackScreen() {
           },
         }}
       />
-      <AuthStack.Screen name="LoginScreen" component={LoginScreen} />
-      <AuthStack.Screen name="BasicInputScreen" component={BasicInputScreen} />
+      <AuthStack.Screen
+        name="LoginScreen" 
+        component={LoginScreen} 
+        options={{
+          gestureEnabled: false,
+        }}
+      />
+      <AuthStack.Screen
+        name="BasicInputScreen" 
+        component={BasicInputScreen} 
+      />
       <AuthStack.Screen
         name="ProfileInputScreen"
         component={ProfileInputScreen}
@@ -175,10 +184,17 @@ function AuthStackScreen() {
       <AuthStack.Screen
         name="HometownSearchScreen"
         component={HometownSearchScreen}
+        options={{
+          gestureEnabled: false,
+        }}
       />
       <AuthStack.Screen
         name="TermsAgreeScreen"
-        component={TermsAgreeScreen}/>
+        component={TermsAgreeScreen}
+        options={{
+          gestureEnabled: false,
+        }}
+        />
 
       <AuthStack.Screen
         name="TermsOfServiceScreen"
@@ -335,11 +351,11 @@ function HomeStackScreen() {
           transitionSpec: {
             open: {
               animation: 'timing',
-              config: {duration: 150},
+              config: {duration: 0},
             },
             close: {
               animation: 'timing',
-              config: {duration: 150},
+              config: {duration: 0},
             },
           },
           cardStyleInterpolator: ({current: {progress}}) => {
@@ -510,7 +526,7 @@ function TeethCareStackScreen() {
 
 function ReviewUploadStackScreen() {
   return (
-    <ReviewUploadStack.Navigator headerMode="none" mode="modal">
+    <ReviewUploadStack.Navigator headerMode="none">
       <ReviewUploadStack.Screen
         name="ReviewGuideScreen"
         component={ReviewGuideScreen}
@@ -887,11 +903,11 @@ function CommunityStackScreen() {
           transitionSpec: {
             open: {
               animation: 'timing',
-              config: {duration: 150},
+              config: {duration: 0},
             },
             close: {
               animation: 'timing',
-              config: {duration: 150},
+              config: {duration: 0},
             },
           },
           cardStyleInterpolator: ({current: {progress}}) => {
@@ -1255,7 +1271,7 @@ const Navigator = () => {
   //   console.log('getFcmToken fcmToken', fcmToken);
   // };
   useEffect(() => {
-    if (currentUser.loggedIn) {
+    if (currentUser.loggedIn === true) {
       SplashScreen.hide();
     }
   }, [currentUser]);
@@ -1274,6 +1290,7 @@ const Navigator = () => {
               allActions.userActions.setUser({jwtToken, profile: response}),
             );
             dispatch(allActions.userActions.setHometown(response.Residences));
+
             GETUserReservations({jwtToken}).then((response: any) => {
               dispatch(allActions.userActions.setReservations(response));
             });
@@ -1283,11 +1300,13 @@ const Navigator = () => {
           })
           .catch((error: any) => {
             console.log('get user error', error);
+            dispatch(allActions.userActions.logOut());
             SplashScreen.hide();
           });
       })
       .catch((error) => {
         console.log('getUserInfo error', error);
+        dispatch(allActions.userActions.logOut());
         SplashScreen.hide();
       });
   }, []);
@@ -1295,7 +1314,10 @@ const Navigator = () => {
   return (
     <NavigationContainer>
       <StatusBar barStyle="dark-content" />
-      {currentUser.loggedIn ? <BottomTab /> : <AuthStackScreen />}
+      {(currentUser.loggedIn === true) ? <BottomTab /> : (
+      (currentUser.loggedIn === false) && (
+        <AuthStackScreen />
+      ))}
     </NavigationContainer>
   );
 };

@@ -339,7 +339,7 @@ const PostItem = ({
     if (
       Clinics.length +
         GeneralTags.length +
-        SymptomItems.length +
+        //SymptomItems.length +
         TreatmentItems.length +
         CityTags.length ===
       0

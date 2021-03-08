@@ -241,7 +241,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
         </BackdropView>
       </TouchableWithoutFeedback>
     ),
-    [],
+    [postData, profile],
   );
   const toggleKeyboardAnimation = useCallback(
     (height: Number) => {
