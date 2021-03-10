@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {PermissionsAndroid, Platform, Alert} from 'react-native';
+import {PermissionsAndroid, Platform, Alert, Dimensions} from 'react-native';
 import CameraRoll from '@react-native-community/cameraroll';
 import styled from 'styled-components/native';
 import {Provider} from 'react-redux';
@@ -7,7 +7,6 @@ import {createStore} from 'redux';
 import rootReducer from './reducers';
 import Navigator from '~/Navigator';
 import messaging from '@react-native-firebase/messaging';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {RootSiblingParent, setSiblingWrapper} from 'react-native-root-siblings';
 import SplashScreen from 'react-native-splash-screen';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
@@ -59,16 +58,18 @@ function checkIosPermission() {
   });
 }
 
-
-
+const {height, width} = Dimensions.get('window');
 
 // Waring 경고창 숨기기
 console.disableYellowBox = true;
 
 const App = () => {
   useEffect(() => {
+    console.log("device height", height);
+    console.log("device width", width);
+    
     if(Platform.OS === 'android') {
-      checkAndroidPermission()
+      //checkAndroidPermission()
     } else if(Platform.OS === 'ios') {
       checkIosPermission()
     }
@@ -78,9 +79,7 @@ const App = () => {
   return (
     <RootSiblingParent>
       <Provider store={store}>
-        <SafeAreaProvider>
           <Navigator />
-        </SafeAreaProvider>
       </Provider>
     </RootSiblingParent>
   );

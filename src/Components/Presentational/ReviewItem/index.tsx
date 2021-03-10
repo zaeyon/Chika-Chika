@@ -273,6 +273,7 @@ flex-direction: row;
 
 interface UserObj {
   profileImage: string;
+  img_thumbNail: string;
   nickname: string;
   userId: string;
 }
@@ -512,9 +513,19 @@ const ReviewItem = ({
             }>
             <ProfileLeftContainer>
               <ProfileImage
-                source={{
-                  uri: writer.img_thumbNail || writer.profileImage,
-                }}
+                source={
+                  writer.img_thumbNail
+                    ? {
+                        uri: writer.img_thumbNail,
+                        cache: 'force-cache',
+                      }
+                    : writer.profileImage
+                    ? {
+                        uri: writer.profileImage,
+                        cache: 'force-cache',
+                      }
+                    : require('~/Assets/Images/MyPage/default_profileImg.png')
+                }
               />
               <NicknameCreatedAtContainer>
                 <NicknameText>{writer.nickname}</NicknameText>

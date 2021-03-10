@@ -20,7 +20,8 @@ import messaging from '@react-native-firebase/messaging';
 import AboveKeyboard from 'react-native-above-keyboard';
 //import {getStatusBarHeight} from 'react-native-status-bar-height'
 import {getStatusBarHeight} from 'react-native-status-bar-height';
-import DeviceInfo from 'react-native-device-info';
+//import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 
 // Async Storage
 import {storeUserInfo} from '~/storage/currentUser';
@@ -135,7 +136,7 @@ justify-content: center;
 
 const DisabledLoginButton = Styled.View`
 width: ${wp('100%')}px;
-height: ${DeviceInfo.hasNotch() ? hp('7.5%') : hp('8.3%')}px;
+height: ${hasNotch() ? hp('7.5%') : hp('8.3%')}px;
 background-color: #E2E6ED;
 justify-content: center;
 align-items: center;
@@ -149,7 +150,7 @@ color: #ffffff;
 
 const AbledLoginButton = Styled.View`
 width: ${wp('100%')}px;
-height: ${DeviceInfo.hasNotch() ? hp('7.5%') : hp('8.3%')}px;
+height: ${hasNotch() ? hp('7.5%') : hp('8.3%')}px;
 background-color: #00D1FF;
 justify-content: center;
 align-items: center;
@@ -278,9 +279,10 @@ const LoginScreen = ({navigation, route}: Props) => {
   }
 
   const onKeyPressNumberInput = (event: any) => {
+    console.log('onKeyPressNumberInput event.nativeEvent', event.nativeEvent);
     var numberArray = formattedNumber.split('');
     console.log('numberArray', numberArray);
-    console.log('event.nativeEvent', event.nativeEvent.key);
+    console.log('event.nativeEvent,key', event.nativeEvent.key);
 
     if (numberArray.length === 17 && event.nativeEvent.key !== 'Backspace') {
       return;
@@ -363,6 +365,7 @@ const LoginScreen = ({navigation, route}: Props) => {
   };
 
   const clickLoginButton = () => {
+    console.log("clickLoginButton");
     Keyboard.dismiss();
     console.log('isUser', isUser);
     const fcmToken = route.params?.fcmToken;
@@ -433,6 +436,7 @@ const LoginScreen = ({navigation, route}: Props) => {
           console.log('POSTSendTokenToPhone response', response);
 
           setIsUser(response.exist);
+      
           if(phoneNumber === '01093664131') {
 
           const jwtToken = response.token;
@@ -460,7 +464,6 @@ const LoginScreen = ({navigation, route}: Props) => {
           dispatch(
             allActions.userActions.setHometown(response.user.userResidences),
           );
-
           }
         })
         .catch(function (error) {

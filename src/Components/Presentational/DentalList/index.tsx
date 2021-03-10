@@ -15,14 +15,15 @@ import {
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import {useSelector} from 'react-redux';
 import AboveKeyboard from 'react-native-above-keyboard';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 import {isIphoneX} from 'react-native-iphone-x-helper'
 
 // Local Component
 import DentalListItem from '~/Components/Presentational/DentalListItem'
 
 const Container = Styled.View`
-height: ${hp('100%') - (DeviceInfo.hasNotch() ? wp('44%') : wp('38%'))}px;
+height: ${hp('100%') - (hasNotch() ? wp('44%') : wp('38%'))}px;
 background-color: #ffffff;
 `;
 

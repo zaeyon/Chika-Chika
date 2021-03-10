@@ -21,7 +21,8 @@ import {
 } from 'react-native';
 import {TabView, TabBar} from 'react-native-tab-view';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 
 // Local Component
 import ReviewList from '~/Components/Presentational/ReviewList';
@@ -75,13 +76,13 @@ color: #131F3C;
 
 const CoverImageContainer = Styled.View`
 width: ${wp('100%')}px;
-height: ${DeviceInfo.hasNotch() ? hp('26') : hp('28')}px;
+height: ${hasNotch() ? hp('26') : hp('28')}px;
 background-color: #F5F7F9;
 `;
 
 const CoverImage = Styled.Image`
 width: ${wp('100%')}px;
-height: ${DeviceInfo.hasNotch() ? hp('26') : hp('28')}px;
+height: ${hasNotch() ? hp('26') : hp('28')}px;
 `;
 
 const RepresentingKeywordContainer = Styled.View`
@@ -197,7 +198,7 @@ border-radius: 100px;
 `;
 
 const DetailInfoTypeContainer = Styled.View`
-height: ${DeviceInfo.hasNotch() ? hp('10.83%') : hp('12.8%')}px;
+height: ${hasNotch() ? hp('10.83%') : hp('12.8%')}px;
 background-color: #ffffff;
 padding: 24px 16px;
 flex-direction: row;
@@ -497,9 +498,9 @@ let isReachedTop = false;
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
-const tabBarHeight = DeviceInfo.hasNotch() ?  hp('6.77%') : hp("8.5%");
-const collapsibleViewHeight = DeviceInfo.hasNotch() ? hp('38.54%') : hp('45.5%');
-const detailInfoTypeHeight = DeviceInfo.hasNotch() ? hp('10.83%') : hp('15%');
+const tabBarHeight = hasNotch() ?  hp('6.77%') : hp("8.5%");
+const collapsibleViewHeight = hasNotch() ? hp('38.54%') : hp('45.5%');
+const detailInfoTypeHeight = hasNotch() ? hp('10.83%') : hp('15%');
 const headerHeight = getStatusBarHeight() + hp('8%');
 const SafeStatusBar = Platform.select({
   ios: 44,

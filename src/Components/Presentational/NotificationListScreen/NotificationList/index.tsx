@@ -13,7 +13,7 @@ import {
   RefreshControl,
   View,
 } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
 
 // Local Component
 import NotificationItem from '~/Components/Presentational/NotificationListScreen/NotificationItem';

@@ -15,7 +15,8 @@ import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import Animated, {Extrapolate, Easing} from 'react-native-reanimated';
 import {TabView, TabBar} from 'react-native-tab-view';
 import {PanGestureHandler} from 'react-native-gesture-handler';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 //Local Component
 import PostItem from '~/Components/Presentational/PostItem';
 import ReviewItem from '~/Components/Presentational/ReviewItem';
@@ -85,7 +86,6 @@ flex-direction: row;
 const ProfileImageView = Styled.View`
 width: 77px;
 height: 77px;
-background: grey;
 border-radius: 100px;
 margin-right: 16px;
 
@@ -94,10 +94,9 @@ margin-right: 16px;
 const ProfileImage = Styled.Image`
 width: 100%;
 height: 100%;
-border-width: 0.5px;
-border-color: #A6A8AC;
 border-radius: 100px;
 `;
+
 const ProfileReservationTouchableOpacity = Styled(
   TouchableOpacity as new () => TouchableOpacity,
 )`
@@ -384,7 +383,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         }
         style={{
           flex: 1,
-          marginBottom: DeviceInfo.hasNotch() ? hp('6.5') : hp('7.2%'),
+          marginBottom: hasNotch() ? hp('6.5') : hp('7.2%'),
           overflow: 'visible',
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
@@ -393,7 +392,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           minHeight:
             hp('100%') -
             HEADERHEIGHT -
-            (DeviceInfo.hasNotch() ? hp('6.5%') : hp('7.2%')) +
+            (hasNotch() ? hp('6.5%') : hp('7.2%')) +
             PROFILEHEIGHT,
           paddingTop: PROFILEHEIGHT + TABBARHEIGHT,
         }}
@@ -470,7 +469,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         }
         style={{
           flex: 1,
-          marginBottom: DeviceInfo.hasNotch() ? hp('6.5%') : hp('7.2%'),
+          marginBottom: hasNotch() ? hp('6.5%') : hp('7.2%'),
           overflow: 'visible',
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
@@ -479,7 +478,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           minHeight:
             hp('100%') -
             HEADERHEIGHT -
-            (DeviceInfo.hasNotch() ? hp('6.5%') : hp('7.2%')) +
+            (hasNotch() ? hp('6.5%') : hp('7.2%')) +
             PROFILEHEIGHT,
           paddingTop: PROFILEHEIGHT + TABBARHEIGHT,
         }}
@@ -674,12 +673,16 @@ export default class MyProfile extends React.PureComponent<Props, State> {
             <ProfileContentView>
               <ProfileImageView>
                 <ProfileImage
-                  source={{
-                    uri:
-                      this.props.currentUser.img_thumbNail ||
-                      this.props.currentUser.profileImg,
-                    cache: 'force-cache',
-                  }}
+                  source={
+                    this.props.currentUser.profileImg
+                      ? {
+                          uri:
+                            this.props.currentUser.img_thumbNail ||
+                            this.props.currentUser.profileImg,
+                          cache: 'force-cache',
+                        }
+                      : require('~/Assets/Images/MyPage/default_profileImg.png')
+                  }
                 />
               </ProfileImageView>
               <ProfileReservationTouchableOpacity

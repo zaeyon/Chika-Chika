@@ -7,7 +7,8 @@ import {
 } from 'react-native-responsive-screen';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import AboveKeyboard from 'react-native-above-keyboard';
-import DeviceInfo from 'react-native-device-info';
+//import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 import {useDispatch, useSelector} from 'react-redux';
 import allActions from '~/actions';
 
@@ -149,7 +150,7 @@ const LoginButtonContainer = Styled.View`
 
 const DisabledLoginButton = Styled.View`
 width: ${wp('100%')}px;
-height: ${DeviceInfo.hasNotch() ? hp('7.5%') : hp('8.3%')}px;
+height: ${hasNotch() ? hp('7.5%') : hp('8.3%')}px;
 background-color: #E2E6ED;
 justify-content: center;
 align-items: center;
@@ -163,7 +164,7 @@ color: #ffffff;
 
 const AbledLoginButton = Styled.View`
 width: ${wp('100%')}px;
-height: ${DeviceInfo.hasNotch() ? hp('7.5%') : hp('8.3%')}px;
+height: ${hasNotch() ? hp('7.5%') : hp('8.3%')}px;
 background-color: #00D1FF;
 justify-content: center;
 align-items: center;

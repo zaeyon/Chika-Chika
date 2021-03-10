@@ -4,13 +4,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {
-  TouchableWithoutFeedback,
-  KeyboardAvoidingView,
-  Keyboard,
-} from 'react-native';
-import {getBottomSpace} from 'react-native-iphone-x-helper';
-import DeviceInfo from 'react-native-device-info';
+import {TouchableWithoutFeedback} from 'react-native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 const Container = Styled.View`
 border-top-width: 0.5px;
@@ -135,7 +130,11 @@ const CommentPostBottomBar = ({
             </ActionTypeIndicatorTitleText>
             {'에게 댓글 다는 중'}
           </ActionTypeIndicatorText>
-          <TouchableWithoutFeedback onPress={() => onReplyCancel()}>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              ReactNativeHapticFeedback.trigger('impactLight');
+              onReplyCancel();
+            }}>
             <ActionTypeIndicatorButtonView>
               <ActionTypeIndicatorImage
                 source={require('~/Assets/Images/Social/cancel.png')}

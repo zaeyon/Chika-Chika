@@ -22,6 +22,7 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 // Local Components
 import DentalListItem from '~/Components/Presentational/DentalListItem';
+import GETUserReservations from '~/Routes/User/GETUserReservations';
 
 // Routes
 
@@ -237,9 +238,13 @@ const ClinicRoute = ({
 
   const clickDentalCallReservation = useCallback(
     (phoneNumber: number, dentalId: number) => {
-      callDentalPhoneNumber(phoneNumber, jwtToken, dentalId);
+      callDentalPhoneNumber(phoneNumber, jwtToken, dentalId, () => {
+        GETUserReservations({jwtToken}).then((response: any) => {
+          dispatch(allActions.userActions.setReservations(response));
+        });
+      });
     },
-    [],
+    [jwtToken],
   );
 
   const renderClinicItem = useCallback(({item}) => {

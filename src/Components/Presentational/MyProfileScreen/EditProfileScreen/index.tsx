@@ -229,6 +229,7 @@ interface Props {
   hometown: any;
   changeProfileGender: (gender: string) => void;
   changeProfileBirthdate: (birthdate: string) => void;
+  deleteProfileImage: () => void;
 }
 
 const EditProfileScreen = ({
@@ -241,6 +242,7 @@ const EditProfileScreen = ({
   profile,
   changeProfileGender,
   changeProfileBirthdate,
+  deleteProfileImage,
 }: Props) => {
   const [textInput, setTextInput] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -303,6 +305,9 @@ const EditProfileScreen = ({
         console.log('open gallery');
         moveToGallery();
         break;
+      case '현재 사진 삭제':
+        console.log('delete profileImg');
+        deleteProfileImage();
     }
   }, []);
 
@@ -334,11 +339,6 @@ const EditProfileScreen = ({
     console.log(formattedDate);
     changeProfileBirthdate(formattedDate);
   }, [selectedBirthYear, selectedBirthMonth, selectedBirthDay]);
-
-  const onChangeText = useCallback(
-    (input: string) => setTextInput(input.replace(/\s/g, '')),
-    [],
-  );
 
   const renderResidences = useCallback(() => {
     let result = '';
@@ -372,6 +372,7 @@ const EditProfileScreen = ({
     for (let i = 0; i <= currentYear - startYear; i++) {
       result.push(
         <Picker.Item
+          key={String(startYear + i)}
           label={String(startYear + i)}
           value={String(startYear + i)}
         />,

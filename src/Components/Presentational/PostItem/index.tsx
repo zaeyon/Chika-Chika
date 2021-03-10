@@ -84,6 +84,7 @@ font-style: normal;
 font-weight: 600;
 font-size: 15px;
 margin-right: 4px;
+color: #131F3C;
 `;
 
 const ProfileSplitView = Styled.View`
@@ -266,9 +267,9 @@ const PostItem = ({
 
   const formatHashTag = useCallback((text: string, index: number) => {
     return (
-      <TouchableWithoutFeedback key={text + index}>
-        <HashTagHighlightText>{'#' + text}</HashTagHighlightText>
-      </TouchableWithoutFeedback>
+      <HashTagHighlightText key={text + index}>
+        {'#' + text}
+      </HashTagHighlightText>
     );
   }, []);
   const formatDescription = useCallback((oldDescription: string) => {
@@ -339,7 +340,6 @@ const PostItem = ({
     if (
       Clinics.length +
         GeneralTags.length +
-        //SymptomItems.length +
         TreatmentItems.length +
         CityTags.length ===
       0
@@ -349,20 +349,21 @@ const PostItem = ({
       const renderItem = (item: any) => (
         <HashTagIconView key={String(item.id)}>
           <HashTagText>{'#'}</HashTagText>
-          <HashTagIconText>{item.name || item.emdName}</HashTagIconText>
+          <HashTagIconText>
+            {item.name || item.emdName || item.usualName}
+          </HashTagIconText>
         </HashTagIconView>
       );
 
       const result = [
         Clinics,
         GeneralTags,
-        SymptomItems,
         TreatmentItems,
         CityTags,
       ].map((item) => item.map(renderItem));
       return <HashTagContainerView>{result}</HashTagContainerView>;
     }
-  }, [Clinics, GeneralTags, SymptomItems, TreatmentItems, CityTags]);
+  }, [Clinics, GeneralTags, TreatmentItems, CityTags]);
 
   return (
     <TouchableWithoutFeedback
@@ -388,7 +389,7 @@ const PostItem = ({
                         uri: user.profileImg,
                         cache: 'force-cache',
                       }
-                    : require('~/Assets/Images/appIcon_chika.png')
+                    : require('~/Assets/Images/MyPage/default_profileImg.png')
                 }
               />
               <ProfileContentView>

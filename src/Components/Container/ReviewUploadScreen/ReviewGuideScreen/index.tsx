@@ -13,10 +13,10 @@ import ActionSheet from 'react-native-actionsheet';
 const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
+ padding-top: ${getStatusBarHeight()};
 `;
 
 const HeaderBar = Styled.View`
-padding-top: ${getStatusBarHeight()};
  width: ${wp('100%')}px;
  flex-direction: row;
  align-items: center;
@@ -24,7 +24,7 @@ padding-top: ${getStatusBarHeight()};
 `;
 
 const HeaderLeftContainer = Styled.View`
-padding: 24px 16px 16px 16px;
+padding: 12px 16px 16px 16px;
 flex-direction: row;
 `;
 

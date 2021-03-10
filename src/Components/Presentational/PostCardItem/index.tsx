@@ -234,7 +234,7 @@ const PostCardItem = ({
                     url: user.profileImg,
                     cache: 'force-cache',
                   }
-                : require('~/Assets/Images/appIcon_chika.png')
+                : require('~/Assets/Images/MyPage/default_profileImg.png')
             }
           />
           <ProfileNameText>{user.nickname}</ProfileNameText>

@@ -8,7 +8,8 @@ import {
 import SafeAreaView from 'react-native-safe-area-view';
 import {NavigationContainer} from '@react-navigation/native';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
-import DeviceInfo from 'react-native-device-info';
+//import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 import {useSelector} from 'react-redux';
 
 // Local Components
@@ -30,7 +31,7 @@ const SearchContainer = Styled.View`
 
 const BodyContainer = Styled.View`
 align-items: center;
-padding-bottom: ${DeviceInfo.hasNotch() ? hp('3s%') : hp('14%')}px;
+padding-bottom: ${hasNotch() ? hp('3s%') : hp('14%')}px;
 `;
 
 const SearchInputContainer = Styled.View`

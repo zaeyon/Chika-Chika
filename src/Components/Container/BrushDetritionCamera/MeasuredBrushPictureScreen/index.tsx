@@ -9,7 +9,8 @@ import {
 } from 'react-native-responsive-screen';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {isIphoneX} from 'react-native-iphone-x-helper';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 
 import MeasuredBrushSlidingUpPanel from '~/Components/Presentational/TeethCareScreen/MeasuredBrushSlidingUpPanel';
 
@@ -20,7 +21,7 @@ height: ${hp('100%')}px;
 
 const HeaderBar = Styled.View`
 position: absolute;
-top: ${DeviceInfo.hasNotch() ? hp('5%') : hp('4%')}
+top: ${hasNotch() ? hp('5%') : hp('4%')}
 width: ${wp('100%')}px;
 height: ${wp('13.8%')}px;
 flex-direction: row;
@@ -133,7 +134,6 @@ interface Props {
 }
 
 const MeasuredBrushPictureScreen = ({navigation, route}: Props) => {
-  console.log('DeviceInfo.hasNotch()', DeviceInfo.hasNotch());
 
   console.log(
     'MeasuredBrushPictureScreen route.params.takenPicture',

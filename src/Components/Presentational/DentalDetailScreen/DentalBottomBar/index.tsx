@@ -5,11 +5,12 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 
 const Container = Styled.View`
 width: ${wp('100%')}px;
-height: ${DeviceInfo.hasNotch() ? hp('8.128%') + 34 : hp('11.2')}px;
+height: ${hasNotch() ? hp('8.128%') + 34 : hp('11.2')}px;
 background-color: #ffffff;
 border-top-width: 1px;
 border-color: #E2E6ED;

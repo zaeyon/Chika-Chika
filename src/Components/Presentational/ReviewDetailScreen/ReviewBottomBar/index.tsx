@@ -13,7 +13,8 @@ import {
   Animated,
 } from 'react-native';
 import {getBottomSpace} from 'react-native-iphone-x-helper';
-import DeviceInfo from 'react-native-device-info';
+// mport DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 
 const Container = Styled.View`
 width: ${wp('100%')}px;
@@ -21,7 +22,7 @@ flex-direction: row;
 border-top-width: 1px;
 border-color: #E2E6ED;
 padding-top: 6px;
-padding-bottom: ${DeviceInfo.hasNotch() ? 0 : 8}px;
+padding-bottom: ${hasNotch() ? 0 : 8}px;
 padding-right: 16px;
 background-color: #FFFFFF;
 justify-content: space-between;

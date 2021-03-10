@@ -10,7 +10,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import callDentalPhoneNumber from '~/method/callDentalPhoneNumber';
 
 const ContainerView = Styled.View`
 flex: 1;
@@ -136,6 +135,11 @@ interface Props {
   deleteSavedHospital: (dentalId: string) => void;
   hospitals: any;
   moveToDentalDetail: (dentalId: any) => void;
+  clickDentalCallReservation: (
+    dentalPhoneNumber: number,
+    jwtToken: string,
+    dentalId: number,
+  ) => void;
 }
 
 const SavedHospitalScreen = ({
@@ -144,6 +148,7 @@ const SavedHospitalScreen = ({
   hospitals,
   navigation,
   route,
+  clickDentalCallReservation,
 }: Props) => {
   const moveToDentalDetail = (dentalId: number) => {
     navigation.navigate('DentalClinicStackScreen', {
@@ -152,14 +157,6 @@ const SavedHospitalScreen = ({
         dentalId: dentalId,
       },
     });
-  };
-
-  const clickDentalCallReservation = (
-    dentalPhoneNumber: number,
-    jwtToken: string,
-    dentalId: number,
-  ) => {
-    callDentalPhoneNumber(dentalPhoneNumber, jwtToken, dentalId);
   };
 
   const renderSavedHospitalItemView = ({item, index}: any) => {

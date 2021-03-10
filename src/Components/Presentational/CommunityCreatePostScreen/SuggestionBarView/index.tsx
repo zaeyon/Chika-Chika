@@ -94,6 +94,8 @@ interface Props {
 interface Tag {
   id: number;
   name: string | undefined;
+  usualName: string | undefined;
+  technicalName: string | undefined;
   category: string;
   postNum: number;
   address: string | undefined;
@@ -213,6 +215,49 @@ const SuggestionBarView = ({
               </HashTagItemNameText>
               <HashTagItemLocationText>
                 {item.address?.split(' ').slice(0, 2).join(' ')}
+              </HashTagItemLocationText>
+            </HashTagItemView>
+          </TouchableHighlight>
+        );
+      } else {
+        return (
+          <TouchableHighlight
+            activeOpacity={1}
+            underlayColor="#EEEEEE"
+            onPress={() => {
+              completeCurrentHashTag(item.usualName);
+            }}>
+            <HashTagItemView style={{borderTopWidth: index === 0 ? 0.5 : 0}}>
+              <HashTagItemIconImage source={iconDic[item.category]} />
+              <HashTagItemNameText>
+                {item.usualName?.includes(searchQuery) ? (
+                  <>
+                    <HashTagItemNameText
+                      style={{
+                        color: '#00D1FF',
+                      }}>
+                      {searchQuery}
+                    </HashTagItemNameText>
+                    {item.usualName?.slice(searchQuery.length)}{' '}
+                  </>
+                ) : (
+                  item.usualName
+                )}
+              </HashTagItemNameText>
+              <HashTagItemLocationText>
+                {item.technicalName?.includes(searchQuery) ? (
+                  <>
+                    <HashTagItemLocationText
+                      style={{
+                        color: '#00D1FF',
+                      }}>
+                      {searchQuery}
+                    </HashTagItemLocationText>
+                    {item.technicalName?.slice(searchQuery.length)}{' '}
+                  </>
+                ) : (
+                  item.technicalName
+                )}
               </HashTagItemLocationText>
             </HashTagItemView>
           </TouchableHighlight>

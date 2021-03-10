@@ -9,7 +9,7 @@ import {
     StyleSheet,
 } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
 
 import DentalCarouselItem from '~/Components/Presentational/NearDentalMap/DentalCarouselItem';
 

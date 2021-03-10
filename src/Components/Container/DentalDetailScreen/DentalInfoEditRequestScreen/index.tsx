@@ -17,7 +17,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {useSelector} from 'react-redux';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
 import ActionSheet from 'react-native-actionsheet';
 import {launchCamera} from 'react-native-image-picker';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
@@ -29,6 +29,7 @@ import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndi
 
 // Route
 import POSTDentalInfoEdit from '~/Routes/Dental/POSTDentalInfoEdit';
+import {hasNotch} from '~/method/deviceInfo'
 
 const Container = Styled.View`
 flex: 1;
@@ -167,7 +168,7 @@ padding-bottom: 150px;
 
 const GalleryContainerView = Styled.View`
 width: ${wp('100%')}px;
-margin-bottom: ${DeviceInfo.hasNotch() ? 0 : 16}px;
+margin-bottom: ${hasNotch() ? 0 : 16}px;
 `;
 
 const GalleryFlatList = Styled.FlatList`

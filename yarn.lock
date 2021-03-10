@@ -6375,11 +6375,6 @@
     "prop-types" "^15.5.10"
     "react-native-measureme" "0.0.2"
 
-"react-native-device-info@^7.2.1":
-  "integrity" "sha512-7zn2cASst13qlSSGsKOhGsPpeX2yV0O69s7o0kc/4E00VqWrlpx241YB09AL2ZerCPsVOPdKcAvXM+wcJ9xQTw=="
-  "resolved" "https://registry.npmjs.org/react-native-device-info/-/react-native-device-info-7.2.1.tgz"
-  "version" "7.2.1"
-
 "react-native-fast-image@^8.3.4":
   "integrity" "sha512-LpzAdjUphihUpVEBn5fEv5AILe55rHav0YiZroPZ1rumKDhAl4u2cG01ku2Pb7l8sayjTsNu7FuURAlXUUDsow=="
   "resolved" "https://registry.npmjs.org/react-native-fast-image/-/react-native-fast-image-8.3.4.tgz"

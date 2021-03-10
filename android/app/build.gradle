@@ -79,7 +79,7 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    enableHermes: false,  // clean and rebuild if changing
+    enableHermes: true,  // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -177,26 +177,29 @@ android {
                 output.versionCodeOverride =
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             }
-
         }
     }
 }
 
 dependencies {
 
-    compile project(':react-native-fs')
+    compile project(':react-native-fs');
+    implementation project(':react-native-gesture-handler');
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation(project(":react-native-google-signin"))
+    implementation project(':@react-native-async-storage')
+    implementation project(':react-native-permissions')
+    implementation project(':react-native-safe-area-context')
     
     // Google sign in
     implementation platform('com.google.firebase:firebase-bom:26.1.0')
     implementation 'com.google.firebase:firebase-analytics'
 
     // Naver Map SDK
-    implementation 'com.naver.maps:map-sdk:3.10.0'
+    implementation 'com.naver.maps:map-sdk:3.11.0'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'

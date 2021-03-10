@@ -3,14 +3,25 @@ package com.chikaapp;
 import android.app.Application;
 import android.content.Context;
 
-import com.facebook.react.BuildConfig;
+//import com.facebook.react.BuildConfig;
+import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.github.quadflask.react.navermap.RNNaverMapPackage;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
+import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
+import com.swmansion.reanimated.ReanimatedPackage;
+import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+import com.zoontek.rnpermissions.RNPermissionsPackage;
+
+import com.facebook.react.bridge.JSIModulePackage;
+import com.swmansion.reanimated.ReanimatedJSIModulePackage;
+
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.ijzerenhein.sharedelement.RNSharedElementPackage;
 import com.reactnativecommunity.picker.RNCPickerPackage;
 import com.rnfs.RNFSPackage;
 import com.facebook.react.shell.MainReactPackage;
-import com.reactnativecommunity.imageeditor.ImageEditorPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -19,17 +30,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
-
-import co.apptailor.googlesignin.RNGoogleSigninPackage;
-import com.rnfs.RNFSPackage;
+import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
+import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHost(this) {
+
         @Override
         public boolean getUseDeveloperSupport() {
-          return BuildConfig.DEBUG;
+          //return BuildConfig.DEBUG;
+            return true;
         }
 
         /*
@@ -46,19 +58,31 @@ public class MainApplication extends Application implements ReactApplication {
         @Override
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
-                    new MainReactPackage(),
+            new MainReactPackage(),
+            new RNNaverMapPackage(),
+            new SplashScreenReactPackage(),
+            new SafeAreaContextPackage(),
+            new ReanimatedPackage(),
+            new RNGestureHandlerPackage(),
             new RNCWebViewPackage(),
             new RNSharedElementPackage(),
             new RNCPickerPackage(),
             new RNFSPackage(),
-                    new RNGoogleSigninPackage(), // <-- this needs to be in the list
-                    new RNSPackage();
+            new AsyncStoragePackage(),
+            new RNPermissionsPackage(),
+            new ReactNativeFirebaseAppPackage(),
+            new ReactNativeFirebaseMessagingPackage()
             );
         }
 
         @Override
         protected String getJSMainModuleName() {
           return "index";
+        }
+
+        @Override
+        protected JSIModulePackage getJSIModulePackage() {
+            return new ReanimatedJSIModulePackage(); // <- add
         }
       };
 
@@ -71,7 +95,7 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
-    initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+    //initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 
   /**
@@ -81,27 +105,27 @@ public class MainApplication extends Application implements ReactApplication {
    * @param context
    * @param reactInstanceManager
    */
-  private static void initializeFlipper(
-      Context context, ReactInstanceManager reactInstanceManager) {
-    if (BuildConfig.DEBUG) {
-      try {
-        /*
-         We use reflection here to pick up the class that initializes Flipper,
-        since Flipper library is not available in release mode
-        */
-        Class<?> aClass = Class.forName("com.chikaapp.ReactNativeFlipper");
-        aClass
-            .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
-            .invoke(null, context, reactInstanceManager);
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
-      } catch (NoSuchMethodException e) {
-        e.printStackTrace();
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      } catch (InvocationTargetException e) {
-        e.printStackTrace();
-      }
-    }
-  }
+//  private static void initializeFlipper(
+//      Context context, ReactInstanceManager reactInstanceManager) {
+//    if (BuildConfig.DEBUG) {
+//      try {
+//        /*
+//         We use reflection here to pick up the class that initializes Flipper,
+//        since Flipper library is not available in release mode
+//        */
+//        Class<?> aClass = Class.forName("com.chikaapp.ReactNativeFlipper");
+//        aClass
+//            .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
+//            .invoke(null, context, reactInstanceManager);
+//      } catch (ClassNotFoundException e) {
+//        e.printStackTrace();
+//      } catch (NoSuchMethodException e) {
+//        e.printStackTrace();
+//      } catch (IllegalAccessException e) {
+//        e.printStackTrace();
+//      } catch (InvocationTargetException e) {
+//        e.printStackTrace();
+//      }
+//    }
+//  }
 }

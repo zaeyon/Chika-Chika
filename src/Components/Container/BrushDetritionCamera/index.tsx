@@ -8,7 +8,8 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 
 const Container = Styled.View`
 position: absolute;
@@ -18,7 +19,7 @@ height: ${hp('100%')}px;
 
 const HeaderBar = Styled.View`
 position: absolute;
-top: ${DeviceInfo.hasNotch() ? hp('5%') : hp('4%')}px;
+top: ${hasNotch() ? hp('5%') : hp('4%')}px;
 width: ${wp('100%')}px;
 height: ${wp('13.8%')}px;
 flex-direction: row;

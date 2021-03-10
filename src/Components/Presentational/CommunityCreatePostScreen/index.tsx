@@ -16,7 +16,8 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {
   isIphoneX,
@@ -146,7 +147,7 @@ line-height: 24px;
 
 const GalleryContainerView = Styled.View`
 width: ${wp('100%')}px;
-margin-bottom: ${DeviceInfo.hasNotch() ? 0 : 16}px;
+margin-bottom: ${hasNotch() ? 0 : 16}px;
 `;
 
 const GalleryFlatList = Styled.FlatList`
@@ -461,7 +462,7 @@ const CommunityCreatePostScreen = ({
           <KeyboardAvoidingView
             behavior="padding"
             keyboardVerticalOffset={
-              (DeviceInfo.hasNotch() ? getBottomSpace() : 16) + 62.5
+              (hasNotch() ? getBottomSpace() : 16) + 62.5
             }
             style={{
               width: '100%',

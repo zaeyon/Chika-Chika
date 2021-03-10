@@ -7,12 +7,13 @@ import {
 } from 'react-native-responsive-screen';
 import {useDispatch, useSelector} from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
-import KakaoLogins, {KAKAO_AUTH_TYPES} from '@react-native-seoul/kakao-login';
-import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
+//import KakaoLogins, {KAKAO_AUTH_TYPES} from '@react-native-seoul/kakao-login';
+//import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
+//import {appleAuth} from '@invertase/react-native-apple-authentication';
 import allActions from '~/actions';
-import DeviceInfo from 'react-native-device-info';
+//import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 
-import {appleAuth} from '@invertase/react-native-apple-authentication';
 import createRandomNickname from '~/method/createRandomNickname';
 // route
 import GETUserInfo from '~/Routes/Auth/GETUserInfo';
@@ -58,7 +59,7 @@ const LocalContainer = Styled.View`
  flex: 0.9;
  padding-left: 20px;
  padding-right: 20px;
- padding-top: ${DeviceInfo.hasNotch() ? hp('2%') : hp('5.5%')};
+ padding-top: ${hasNotch() ? hp('2%') : hp('5.5%')};
 `;
 
 const LocalLoginContainer = Styled.View`
@@ -200,7 +201,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
     }
     */
 
-  GoogleSignin.configure();
+  // GoogleSignin.configure();
 
   const moveToLocalLogin = () => {
     navigation.navigate('LoginScreen', {
@@ -208,285 +209,6 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
     });
   };
 
-  const loginWithKakao = () => {
-    if (!KakaoLogins) {
-      console.log('카카오 모듈 연결안됨');
-    } else {
-      setLoadingSocial(true);
-      console.log('카카오 로그인 시도');
-      KakaoLogins.login([KAKAO_AUTH_TYPES.Talk, KAKAO_AUTH_TYPES.Account])
-        .then((result) => {
-          console.log('카카오 로그인 성공 result', result);
-          if (result.scopes?.includes('profile')) {
-            KakaoLogins.getProfile()
-              .then((profile: any) => {
-                console.log(
-                  '카카오 계정 프로필 불러오기 성공 profile',
-                  profile,
-                );
-
-                const userProfile = {
-                  birthdate: `${profile.birthyear}-${profile.birthday}`,
-                  profileImg: profile.profile_image_url
-                    ? profile.profile_image_url
-                    : '',
-                  img_thumbNail: profile.thumb_image_url,
-                  nickname: createRandomNickname(),
-                  socialId: profile.id,
-                };
-
-                const phoneNumber = profile.phone_number
-                  ? profile.phone_number
-                  : '';
-
-                progressSocialLogin(
-                  'kakao',
-                  profile.email,
-                  phoneNumber,
-                  userProfile,
-                );
-              })
-              .catch((error) => {
-                setLoadingSocial(false);
-                console.log('카카오 계정 프로필 불러오기 실패 error', error);
-              });
-          } else {
-            KakaoLogins.getProfile().then((profile: any) => {
-
-              const userProfile = {
-                nickname: createRandomNickname(),
-                socialId: profile.id,
-              };
-              
-              progressSocialLogin('kakao', profile.email, '', userProfile);
-            });
-          }
-        })
-        .catch((error) => {
-          setLoadingSocial(false);
-          Alert.alert('로그인 실패', '다시 시도해주세요');
-          console.log('카카오 로그인 실패 error', error);
-        });
-    }
-  };
-
-  const loginWithGoogle = async () => {
-    try {
-      setLoadingSocial(true);
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      console.log('구글 로그인 성공 userInfo', userInfo);
-
-      if (userInfo) {
-        const userProfile = {
-          birthdate: '',
-          profileImg: userInfo.user.photo ? userInfo.user.photo : '',
-          img_thumbNail: '',
-          //nickname: userInfo.user.name ? userInfo.user.name : "",
-          nickname: createRandomNickname(),
-          socialId: userInfo.user.id,
-        };
-
-        const phoneNumber = '';
-
-        progressSocialLogin(
-          'google',
-          userInfo.user.email,
-          phoneNumber,
-          userProfile,
-        );
-      }
-    } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        setLoadingSocial(false);
-        // user cancelled the login flow
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        setLoadingSocial(false);
-        // operation (e.g. sign in) is in progress already
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        setLoadingSocial(false);
-        // play services not available or outdated
-      } else {
-        // some other error happened
-      }
-    }
-  };
-
-  async function loginWithApple() {
-    console.log('appleAuth.isSupported', appleAuth.isSupported);
-    if (appleAuth.isSupported) {
-      setLoadingSocial(true);
-
-      try {
-        // performs login request
-        const appleAuthRequestResponse = await appleAuth.performRequest({
-          requestedOperation: appleAuth.Operation.LOGIN,
-          requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
-        });
-
-        // get current authentication state for user
-        // /!\ This method must be tested on a real device. On the iOS simulator it always throws an error.
-        const credentialState = await appleAuth.getCredentialStateForUser(
-          appleAuthRequestResponse.user,
-        );
-
-        // use credentialState response to ensure the user is authenticated
-        if (credentialState === appleAuth.State.AUTHORIZED) {
-          console.log('Apple Login Success credentialState', credentialState);
-          console.log('appleAuthRequestResponse', appleAuthRequestResponse);
-
-          const userProfile = {
-            birthdate: '',
-            profileImg: '',
-            img_thumbNail: '',
-            //nickname: appleAuthRequestResponse.fullName?.givenName ? (appleAuthRequestResponse.fullName.familyName ? (appleAuthRequestResponse.fullName.familyName + appleAuthRequestResponse.fullName.givenName) : appleAuthRequestResponse.fullName.givenName) : ("TEST" + Date.now()),
-            nickname: createRandomNickname(),
-            socialId: appleAuthRequestResponse.user,
-          };
-
-          const email = appleAuthRequestResponse.email
-            ? appleAuthRequestResponse.email
-            : '';
-
-          progressAppleLogin('apple', email, userProfile);
-        }
-      } catch {
-        console.log('Apple Login Fail appleAuth.State', appleAuth.State);
-        setLoadingSocial(false);
-      }
-    } else {
-      Alert.alert('애플로그인을 지원하지 않는 디바이스입니다.');
-    }
-  }
-
-  const progressSocialLogin = (
-    provider: string,
-    email: string,
-    phoneNumber: string,
-    userProfile: any,
-  ) => {
-    POSTSocialUserCheck(provider, email, fcmToken)
-      .then((response: any) => {
-        console.log('POSTSocialUserCheck response', response);
-        console.log(
-          'POSTSocialUserCheck response.user.userResidences',
-          response.user.userResidences,
-        );
-        if (response.statusText === 'Accepted') {
-          console.log('등록된 소셜 계정 존재');
-
-          GETUserInfo(response.token)
-            .then((profile: any) => {
-              console.log('profile', profile);
-              setLoadingSocial(false);
-
-              dispatch(
-                allActions.userActions.setUser({
-                  jwtToken: response.token,
-                  profile,
-                }),
-              );
-              dispatch(allActions.userActions.setHometown(profile.Residences));
-              GETUserReservations({jwtToken: response.token}).then(
-                (profile: any) => {
-                  dispatch(allActions.userActions.setReservations(profile));
-                },
-              );
-              GETUserSavedHospitals({jwtToken: response.token}).then(
-                (profile: any) => {
-                  dispatch(allActions.userActions.setSavedHospitals(profile));
-                },
-              );
-            })
-            .catch((error: any) => {
-              console.log('get user error', error);
-            });
-
-          storeUserInfo(response.token);
-        }
-      })
-      .catch((error) => {
-        setLoadingSocial(false);
-        console.log('POSTSocialUserCheck error', error);
-        if (error.status === 401) {
-          console.log('등록된 소셜 계정 없음');
-          navigation.navigate('HometownSearchScreen', {
-            requestType: 'signUp',
-            certifiedPhoneNumber: phoneNumber ? true : false,
-            birthdate: userProfile.birthdate,
-            profileImg: userProfile.profileImg,
-            img_thumbNail: userProfile.img_thumbNail,
-            nickname: userProfile.nickname,
-            phoneNumber: phoneNumber,
-            fcmToken: fcmToken,
-            email: email,
-            provider: provider,
-            socialId: userProfile.socialId,
-          });
-        }
-      });
-  };
-
-  const progressAppleLogin = (
-    provider: string,
-    email: string,
-    userProfile: any,
-  ) => {
-    POSTSocialUserCheck(provider, email, fcmToken, userProfile.socialId)
-      .then((response: any) => {
-        console.log('POSTSocialUserCheck response', response);
-        console.log(
-          'POSTSocialUserCheck response.user.userResidences',
-          response.user.userResidences,
-        );
-        setLoadingSocial(false);
-        if (response.statusText === 'Accepted') {
-          console.log('등록된 애플 계정 존재');
-
-          const profile = {
-            phoneNumber: response.user.userPhoneNumber,
-            id: response.user.userId,
-            nickname: response.user.userNickname,
-            profileImg: response.user.userProfileImg,
-            img_thumbNail: response.user?.img_thumbNail,
-            gender: response.user.userGender,
-            birthdate: response.user.userBirthdate,
-            provider: response.user.userProvider,
-            Residences: response.user.userResidences,
-          };
-
-          const userInfo = {
-            jwtToken: response.token,
-            profile,
-          };
-          storeUserInfo(response.token);
-          dispatch(allActions.userActions.setUser(userInfo));
-          dispatch(
-            allActions.userActions.setHometown(response.user.userResidences),
-          );
-        }
-      })
-      .catch((error) => {
-        setLoadingSocial(false);
-        console.log('POSTSocialUserCheck error', error);
-        if (error.status === 401) {
-          console.log('등록된 소셜 계정 없음');
-          navigation.navigate('HometownSearchScreen', {
-            requestType: 'signUp',
-            certifiedPhoneNumber: false,
-            birthdate: userProfile.birthdate,
-            profileImg: userProfile.profileImg,
-            img_thumbNail: userProfile.img_thumbNail,
-            nickname: userProfile.nickname,
-            phoneNumber: '',
-            fcmToken: fcmToken,
-            email: email,
-            provider: provider,
-            socialId: userProfile.socialId,
-          });
-        }
-      });
-  };
 
   return (
     <Container>
@@ -539,4 +261,288 @@ export default UnauthorizedScreen;
   </AppleLoginButton>
 </TouchableWithoutFeedback>
 </SocialContainer>
+*/
+
+
+
+/*
+const loginWithKakao = () => {
+  if (!KakaoLogins) {
+    console.log('카카오 모듈 연결안됨');
+  } else {
+    setLoadingSocial(true);
+    console.log('카카오 로그인 시도');
+    KakaoLogins.login([KAKAO_AUTH_TYPES.Talk, KAKAO_AUTH_TYPES.Account])
+      .then((result) => {
+        console.log('카카오 로그인 성공 result', result);
+        if (result.scopes?.includes('profile')) {
+          KakaoLogins.getProfile()
+            .then((profile: any) => {
+              console.log(
+                '카카오 계정 프로필 불러오기 성공 profile',
+                profile,
+              );
+
+              const userProfile = {
+                birthdate: `${profile.birthyear}-${profile.birthday}`,
+                profileImg: profile.profile_image_url
+                  ? profile.profile_image_url
+                  : '',
+                img_thumbNail: profile.thumb_image_url,
+                nickname: createRandomNickname(),
+                socialId: profile.id,
+              };
+
+              const phoneNumber = profile.phone_number
+                ? profile.phone_number
+                : '';
+
+              progressSocialLogin(
+                'kakao',
+                profile.email,
+                phoneNumber,
+                userProfile,
+              );
+            })
+            .catch((error) => {
+              setLoadingSocial(false);
+              console.log('카카오 계정 프로필 불러오기 실패 error', error);
+            });
+        } else {
+          KakaoLogins.getProfile().then((profile: any) => {
+
+            const userProfile = {
+              nickname: createRandomNickname(),
+              socialId: profile.id,
+            };
+            
+            progressSocialLogin('kakao', profile.email, '', userProfile);
+          });
+        }
+      })
+      .catch((error) => {
+        setLoadingSocial(false);
+        Alert.alert('로그인 실패', '다시 시도해주세요');
+        console.log('카카오 로그인 실패 error', error);
+      });
+  }
+};
+
+const loginWithGoogle = async () => {
+  try {
+    setLoadingSocial(true);
+    await GoogleSignin.hasPlayServices();
+    const userInfo = await GoogleSignin.signIn();
+    console.log('구글 로그인 성공 userInfo', userInfo);
+
+    if (userInfo) {
+      const userProfile = {
+        birthdate: '',
+        profileImg: userInfo.user.photo ? userInfo.user.photo : '',
+        img_thumbNail: '',
+        //nickname: userInfo.user.name ? userInfo.user.name : "",
+        nickname: createRandomNickname(),
+        socialId: userInfo.user.id,
+      };
+
+      const phoneNumber = '';
+
+      progressSocialLogin(
+        'google',
+        userInfo.user.email,
+        phoneNumber,
+        userProfile,
+      );
+    }
+  } catch (error) {
+    if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+      setLoadingSocial(false);
+      // user cancelled the login flow
+    } else if (error.code === statusCodes.IN_PROGRESS) {
+      setLoadingSocial(false);
+      // operation (e.g. sign in) is in progress already
+    } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+      setLoadingSocial(false);
+      // play services not available or outdated
+    } else {
+      // some other error happened
+    }
+  }
+};
+
+async function loginWithApple() {
+  console.log('appleAuth.isSupported', appleAuth.isSupported);
+  if (appleAuth.isSupported) {
+    setLoadingSocial(true);
+
+    try {
+      // performs login request
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+      });
+
+      // get current authentication state for user
+      // /!\ This method must be tested on a real device. On the iOS simulator it always throws an error.
+      const credentialState = await appleAuth.getCredentialStateForUser(
+        appleAuthRequestResponse.user,
+      );
+
+      // use credentialState response to ensure the user is authenticated
+      if (credentialState === appleAuth.State.AUTHORIZED) {
+        console.log('Apple Login Success credentialState', credentialState);
+        console.log('appleAuthRequestResponse', appleAuthRequestResponse);
+
+        const userProfile = {
+          birthdate: '',
+          profileImg: '',
+          img_thumbNail: '',
+          //nickname: appleAuthRequestResponse.fullName?.givenName ? (appleAuthRequestResponse.fullName.familyName ? (appleAuthRequestResponse.fullName.familyName + appleAuthRequestResponse.fullName.givenName) : appleAuthRequestResponse.fullName.givenName) : ("TEST" + Date.now()),
+          nickname: createRandomNickname(),
+          socialId: appleAuthRequestResponse.user,
+        };
+
+        const email = appleAuthRequestResponse.email
+          ? appleAuthRequestResponse.email
+          : '';
+
+        progressAppleLogin('apple', email, userProfile);
+      }
+    } catch {
+      console.log('Apple Login Fail appleAuth.State', appleAuth.State);
+      setLoadingSocial(false);
+    }
+  } else {
+    Alert.alert('애플로그인을 지원하지 않는 디바이스입니다.');
+  }
+}
+
+const progressSocialLogin = (
+  provider: string,
+  email: string,
+  phoneNumber: string,
+  userProfile: any,
+) => {
+  POSTSocialUserCheck(provider, email, fcmToken)
+    .then((response: any) => {
+      console.log('POSTSocialUserCheck response', response);
+      console.log(
+        'POSTSocialUserCheck response.user.userResidences',
+        response.user.userResidences,
+      );
+      if (response.statusText === 'Accepted') {
+        console.log('등록된 소셜 계정 존재');
+
+        GETUserInfo(response.token)
+          .then((profile: any) => {
+            console.log('profile', profile);
+            setLoadingSocial(false);
+
+            dispatch(
+              allActions.userActions.setUser({
+                jwtToken: response.token,
+                profile,
+              }),
+            );
+            dispatch(allActions.userActions.setHometown(profile.Residences));
+            GETUserReservations({jwtToken: response.token}).then(
+              (profile: any) => {
+                dispatch(allActions.userActions.setReservations(profile));
+              },
+            );
+            GETUserSavedHospitals({jwtToken: response.token}).then(
+              (profile: any) => {
+                dispatch(allActions.userActions.setSavedHospitals(profile));
+              },
+            );
+          })
+          .catch((error: any) => {
+            console.log('get user error', error);
+          });
+
+        storeUserInfo(response.token);
+      }
+    })
+    .catch((error) => {
+      setLoadingSocial(false);
+      console.log('POSTSocialUserCheck error', error);
+      if (error.status === 401) {
+        console.log('등록된 소셜 계정 없음');
+        navigation.navigate('HometownSearchScreen', {
+          requestType: 'signUp',
+          certifiedPhoneNumber: phoneNumber ? true : false,
+          birthdate: userProfile.birthdate,
+          profileImg: userProfile.profileImg,
+          img_thumbNail: userProfile.img_thumbNail,
+          nickname: userProfile.nickname,
+          phoneNumber: phoneNumber,
+          fcmToken: fcmToken,
+          email: email,
+          provider: provider,
+          socialId: userProfile.socialId,
+        });
+      }
+    });
+};
+
+const progressAppleLogin = (
+  provider: string,
+  email: string,
+  userProfile: any,
+) => {
+  POSTSocialUserCheck(provider, email, fcmToken, userProfile.socialId)
+    .then((response: any) => {
+      console.log('POSTSocialUserCheck response', response);
+      console.log(
+        'POSTSocialUserCheck response.user.userResidences',
+        response.user.userResidences,
+      );
+      setLoadingSocial(false);
+      if (response.statusText === 'Accepted') {
+        console.log('등록된 애플 계정 존재');
+
+        const profile = {
+          phoneNumber: response.user.userPhoneNumber,
+          id: response.user.userId,
+          nickname: response.user.userNickname,
+          profileImg: response.user.userProfileImg,
+          img_thumbNail: response.user?.img_thumbNail,
+          gender: response.user.userGender,
+          birthdate: response.user.userBirthdate,
+          provider: response.user.userProvider,
+          Residences: response.user.userResidences,
+        };
+
+        const userInfo = {
+          jwtToken: response.token,
+          profile,
+        };
+        storeUserInfo(response.token);
+        dispatch(allActions.userActions.setUser(userInfo));
+        dispatch(
+          allActions.userActions.setHometown(response.user.userResidences),
+        );
+      }
+    })
+    .catch((error) => {
+      setLoadingSocial(false);
+      console.log('POSTSocialUserCheck error', error);
+      if (error.status === 401) {
+        console.log('등록된 소셜 계정 없음');
+        navigation.navigate('HometownSearchScreen', {
+          requestType: 'signUp',
+          certifiedPhoneNumber: false,
+          birthdate: userProfile.birthdate,
+          profileImg: userProfile.profileImg,
+          img_thumbNail: userProfile.img_thumbNail,
+          nickname: userProfile.nickname,
+          phoneNumber: '',
+          fcmToken: fcmToken,
+          email: email,
+          provider: provider,
+          socialId: userProfile.socialId,
+        });
+      }
+    });
+};
 */

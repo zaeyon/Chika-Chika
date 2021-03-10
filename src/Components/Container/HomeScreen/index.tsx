@@ -7,7 +7,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 // Firebase
@@ -31,6 +31,8 @@ import GETTotalSearch from '~/Routes/Search/GETTotalSearch';
 import GETLocalClinicAndReviewCount from '~/Routes/Main/GETLocalClinicAndReviewCount';
 import GETLocalClinic from '~/Routes/Main/GETLocalClinic';
 import GETUserNotifications from '~/Routes/Notification/GETUserNotifications';
+
+import {hasNotch} from '~/method/deviceInfo'
 
 const ContainerView = Styled.View`
 flex: 1;
@@ -78,7 +80,7 @@ align-items: center;
 const FloatingButtonView = Styled.View`
 position: absolute;
 align-self: center;
-bottom: ${24 + (DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'))}px;
+bottom: ${24 + (hasNotch() ? hp('10.59%') : hp('7.2%'))}px;
 padding: 8px 24px;
 background: #131F3C;
 box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
@@ -523,7 +525,7 @@ const HomeScreen = ({navigation, route}: Props) => {
               translateY: floatY.interpolate({
                 inputRange: [0, 1],
                 outputRange: [
-                  64 + (DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%')),
+                  64 + (hasNotch() ? hp('10.59%') : hp('7.2%')),
                   0,
                 ],
                 extrapolate: 'clamp',

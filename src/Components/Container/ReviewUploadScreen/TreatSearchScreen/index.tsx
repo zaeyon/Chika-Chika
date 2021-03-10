@@ -14,7 +14,8 @@ import {
 import {NavigationContainer} from '@react-navigation/native';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import AboveKeyboard from 'react-native-above-keyboard';
-import DeviceInfo from 'react-native-device-info';
+//import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 
 // Local Components
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
@@ -37,7 +38,7 @@ const SearchContainer = Styled.View`
 
 const BodyContainer = Styled.View`
 align-items: center;
-padding-bottom: ${DeviceInfo.hasNotch() ? hp('3s%') : hp('14%')}px;
+padding-bottom: ${hasNotch() ? hp('3s%') : hp('14%')}px;
 `;
 
 const SearchInputContainer = Styled.View`
@@ -263,7 +264,7 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
     return (
       <TreatItemContainer>
         <TreatBodyContainer>
-          <TreatItemNameText>{'# ' + item.name}</TreatItemNameText>
+          <TreatItemNameText>{'# ' + item.usualName}</TreatItemNameText>
           <TouchableWithoutFeedback
             onPress={() => selectTreatItem(item, index)}>
             <TreatItemAddContainer>
@@ -317,7 +318,7 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
                   key={index}
                   style={{marginRight: 8}}>
                   <SelectedTreatItemText>
-                    {'# ' + item.name}
+                    {'# ' + item.usualName}
                   </SelectedTreatItemText>
                   <TouchableWithoutFeedback
                     onPress={() => deleteTreatItem(item)}>

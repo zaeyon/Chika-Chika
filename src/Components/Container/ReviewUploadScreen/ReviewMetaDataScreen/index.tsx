@@ -9,7 +9,8 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import AboveKeyboard from 'react-native-above-keyboard';
-import DeviceInfo from 'react-native-device-info';
+//import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 import ActionSheet from 'react-native-actionsheet';
 import {Picker} from '@react-native-picker/picker';
 import Modal from 'react-native-modal';
@@ -203,7 +204,7 @@ background-color: #ffffff;
 
 const GalleryContainerView = Styled.View`
 width: ${wp('100%')}px;
-margin-bottom: ${DeviceInfo.hasNotch() ? 0 : 16}px;
+margin-bottom: ${hasNotch() ? 0 : 16}px;
 `;
 
 const GalleryFlatList = Styled.FlatList`

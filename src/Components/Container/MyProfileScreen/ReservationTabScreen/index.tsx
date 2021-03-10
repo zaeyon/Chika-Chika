@@ -11,6 +11,7 @@ import allActions from '~/actions';
 import {useSelector, useDispatch} from 'react-redux';
 // Routes
 import DELETEDentalCallReserve from '~/Routes/Reserve/DELETEDentalCallReserve';
+import GETUserReservations from '~/Routes/User/GETUserReservations';
 const ContainerView = Styled.SafeAreaView`
  flex: 1;
  background-color: #FFFFFF;
@@ -77,7 +78,11 @@ const ReservationTabScreen = ({navigation, route}: Props) => {
 
   const onPressReservation = useCallback(
     (phoneNumber: number, dentalId: number) => {
-      callDentalPhoneNumber(phoneNumber, jwtToken, dentalId);
+      callDentalPhoneNumber(phoneNumber, jwtToken, dentalId, () => {
+        GETUserReservations({jwtToken}).then((response: any) => {
+          dispatch(allActions.userActions.setReservations(response));
+        });
+      });
     },
     [jwtToken],
   );

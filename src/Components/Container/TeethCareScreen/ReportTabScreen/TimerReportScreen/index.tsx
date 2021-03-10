@@ -11,7 +11,8 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 
 // Local Component
 import TimerGraph from '~/Components/Presentational/TeethCareScreen/TimerGraph';
@@ -71,7 +72,7 @@ height: ${wp('6.4%')}px;
 
 const BodyContainer = Styled.View`
 flex: 1;
-padding-bottom: ${DeviceInfo.hasNotch() ? hp('6%') : hp('14%')}px;
+padding-bottom: ${hasNotch() ? hp('6%') : hp('14%')}px;
 `;
 
 const SelectDateContainer = Styled.View`

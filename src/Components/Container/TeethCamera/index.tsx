@@ -8,7 +8,6 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
-import ImageEditor from '@react-native-community/image-editor';
 
 let {width, height} = Dimensions.get('window');
 const Container = Styled.View`
@@ -127,18 +126,6 @@ const TeethCamera = ({navigation, route}: Props) => {
               displaySize: {width: 500, height: 500},
               resizeMode: 'cover',
             };
-
-            ImageEditor.cropImage(result, cropData).then((url: any) => {
-              console.log('Cropped image url', url);
-
-              CameraRoll.save(url)
-                .then((result) => {
-                  console.log('잘린 사진 저장 성공', result);
-                })
-                .catch((error) => {
-                  console.log('사진 자르기 실패', error);
-                });
-            });
           })
           .catch((error) => {
             console.log('사진 저장 실패 error', error);

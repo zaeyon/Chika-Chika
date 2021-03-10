@@ -15,7 +15,8 @@ import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import Animated, {Extrapolate, Easing} from 'react-native-reanimated';
 import {TabView, TabBar} from 'react-native-tab-view';
 import {PanGestureHandler} from 'react-native-gesture-handler';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 //Local Component
 import PostItem from '~/Components/Presentational/PostItem';
 import ReviewItem from '~/Components/Presentational/ReviewItem';
@@ -373,7 +374,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
         }
         style={{
           flex: 1,
-          marginBottom: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'),
+          marginBottom: hasNotch() ? hp('10.59%') : hp('7.2%'),
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
         contentContainerStyle={{
@@ -381,7 +382,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
           minHeight:
             hp('100%') -
             HEADERHEIGHT -
-            (DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%')) +
+            (hasNotch() ? hp('10.59%') : hp('7.2%')) +
             PROFILEHEIGHT,
           paddingTop: PROFILEHEIGHT + TABBARHEIGHT,
         }}
@@ -459,7 +460,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
         }
         style={{
           flex: 1,
-          marginBottom: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'),
+          marginBottom: hasNotch() ? hp('10.59%') : hp('7.2%'),
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
         contentContainerStyle={{
@@ -467,7 +468,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
           minHeight:
             hp('100%') -
             HEADERHEIGHT -
-            (DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%')) +
+            (hasNotch() ? hp('10.59%') : hp('7.2%')) +
             PROFILEHEIGHT,
           paddingTop: PROFILEHEIGHT + TABBARHEIGHT,
         }}
@@ -641,27 +642,42 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
             <ProfileContentView>
               <ProfileImageView>
                 <ProfileImage
-                  source={{
-                    uri: this.props.targetUserSkeletonData.profileImageUri,
-                    cache: 'force-cache',
-                  }}
+                  source={
+                    this.props.targetUser?.img_thumbNail
+                      ? {
+                          uri: this.props.targetUser?.img_thumbNail,
+                          cache: 'force-cache',
+                        }
+                      : this.props.targetUser?.profileImg
+                      ? {
+                          uri: this.props.targetUser?.profileImg,
+                          cache: 'force-cache',
+                        }
+                      : require('~/Assets/Images/MyPage/default_profileImg.png')
+                  }
                 />
               </ProfileImageView>
               <ProfileReservationTouchableOpacity>
                 <ProfileReservationText>
-                  {this.props.targetUser?.reviewsNum}
+                  {this.props.targetUser?.reviewsNum ||
+                    this.props.targetUser?.appointmentsNum}
                 </ProfileReservationText>
                 <ProfileReservationTitleText>
-                  {'리뷰 수'}
+                  {this.props.targetUser?.reviewsNum === undefined
+                    ? '예약 피드'
+                    : '리뷰 수'}
                 </ProfileReservationTitleText>
               </ProfileReservationTouchableOpacity>
               <VerticalPartitionView />
               <ProfileReservationTouchableOpacity>
                 <ProfileReservationText>
-                  {this.props.targetUser?.communitiesNum}
+                  {this.props.targetUser?.communitiesNum ||
+                    this.props.targetUser?.scrapClinicsNum}
                 </ProfileReservationText>
                 <ProfileReservationTitleText>
-                  {'수다글 수'}
+                  {this.props.targetUser?.reviewsNum === undefined
+                    ? '찜한 병원'
+                    : '수다글 수'}
                 </ProfileReservationTitleText>
               </ProfileReservationTouchableOpacity>
             </ProfileContentView>

@@ -6,7 +6,8 @@ import {
 } from 'react-native-responsive-screen';
 import {TouchableWithoutFeedback, FlatList, StyleSheet} from 'react-native';
 import {isIphoneX} from 'react-native-iphone-x-helper';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 
 // Local Component
 import SlidingUpPanel from '~/Components/Presentational/TeethCareScreen/MeasuredBrushSlidingUpPanel/SlidingUpPanel/SlidingUpPanel';
@@ -67,7 +68,7 @@ color: #595959;
 
 const PanelIntroContainer = Styled.View`
 width: ${wp('100%')}
-margin-top: ${DeviceInfo.hasNotch() ? 30 : 10}px;
+margin-top: ${hasNotch() ? 30 : 10}px;
 padding-left: 24px;
 padding-right: 24px;
 `;
@@ -175,7 +176,7 @@ const MeasuredBrushSlidingUpPanel = ({navigation, route}: Props) => {
 
   useEffect(() => {
     const obj = {
-      toValue: DeviceInfo.hasNotch() ? hp('55%') : hp('48%'),
+      toValue: hasNotch() ? hp('55%') : hp('48%'),
       velocity: 1,
     };
     panelRef.current.show(obj);
@@ -196,7 +197,7 @@ const MeasuredBrushSlidingUpPanel = ({navigation, route}: Props) => {
       ref={panelRef}
       minimumVelocityThreshold={0.1}
       draggableRange={{
-        top: DeviceInfo.hasNotch() ? hp('55%') : hp('48%'),
+        top: hasNotch() ? hp('55%') : hp('48%'),
         bottom: hp('10.59%'),
       }}
       openPanel={openPanel}

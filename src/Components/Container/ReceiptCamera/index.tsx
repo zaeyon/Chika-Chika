@@ -8,9 +8,9 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
-import ImageEditor from '@react-native-community/image-editor';
 
 let {width, height} = Dimensions.get('window');
+
 const Container = Styled.View`
 position: absolute;
 width: ${wp('100%')}px;

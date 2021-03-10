@@ -10,7 +10,8 @@ import {
 } from 'react-native-responsive-screen';
 import {useDispatch, useSelector} from 'react-redux';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
+import {hasNotch} from '~/method/deviceInfo'
 import {enableScreens} from 'react-native-screens';
 import SplashScreen from 'react-native-splash-screen';
 
@@ -74,7 +75,6 @@ import LikedPostsTabScreen from '~/Components/Container/MyProfileScreen/LikedPos
 import ScrapedPostsTabScreen from '~/Components/Container/MyProfileScreen/ScrapedPostsTabScreen';
 import CommentedPostsTabScreen from '~/Components/Container/MyProfileScreen/CommentedPostsTabScreen';
 import DeveloperInfoScreen from '~/Components/Container/MyProfileScreen/DeveloperInfoScreen';
-
 
 // Another Profile Stack Screen
 import AnotherProfileScreen from '~/Components/Container/AnotherProfileScreen';
@@ -198,13 +198,16 @@ function AuthStackScreen() {
 
       <AuthStack.Screen
         name="TermsOfServiceScreen"
-        component={TermsOfServiceScreen}/>
+        component={TermsOfServiceScreen}
+      />
       <AuthStack.Screen
         name="LocationInfoTermsOfUseScreen"
-        component={LocationInfoTermsOfUseScreen}/>
+        component={LocationInfoTermsOfUseScreen}
+      />
       <AuthStack.Screen
         name="PrivacyPolicyScreen"
-        component={PrivacyPolicyScreen}/>
+        component={PrivacyPolicyScreen}
+      />
     </AuthStack.Navigator>
   );
 }
@@ -797,16 +800,20 @@ function MyProfileStackScreen() {
       />
       <MyProfileStack.Screen
         name="DeveloperInfoScreen"
-        component={DeveloperInfoScreen}/>
+        component={DeveloperInfoScreen}
+      />
       <MyProfileStack.Screen
         name="TermsOfServiceScreen"
-        component={TermsOfServiceScreen}/>
+        component={TermsOfServiceScreen}
+      />
       <MyProfileStack.Screen
         name="LocationInfoTermsOfUseScreen"
-        component={LocationInfoTermsOfUseScreen}/>
+        component={LocationInfoTermsOfUseScreen}
+      />
       <MyProfileStack.Screen
         name="PrivacyPolicyScreen"
-        component={PrivacyPolicyScreen}/>
+        component={PrivacyPolicyScreen}
+      />
     </MyProfileStack.Navigator>
   );
 }
@@ -1159,7 +1166,11 @@ function BottomTab() {
       return false;
     }
 
-    if(routeName.name === 'LocationInfoTermsOfUseScreen' || routeName.name === 'PrivacyPolicyScreen' || routeName.name === 'TermsOfServiceScreen') {
+    if (
+      routeName.name === 'LocationInfoTermsOfUseScreen' ||
+      routeName.name === 'PrivacyPolicyScreen' ||
+      routeName.name === 'TermsOfServiceScreen'
+    ) {
       return false;
     }
 
@@ -1324,7 +1335,7 @@ const Navigator = () => {
 
 const styles = StyleSheet.create({
   tabBar: {
-    height: DeviceInfo.hasNotch() ? hp('10.59%') : hp('7.2%'),
+    height: hasNotch() ? hp('10.59%') : hp('7.2%'),
     paddingHorizontal: 0,
     position: 'absolute',
     shadowOffset: {

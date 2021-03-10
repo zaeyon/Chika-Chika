@@ -132,19 +132,27 @@ const RatingScreen = ({navigation, route}: Props) => {
   const [treatmentRating, setTreatmentRating] = useState<number>(0);
   const [priceRating, setPriceRating] = useState<number>(0);
 
-  const [defaultServiceRating, setDefaultServiceRating] = useState<number>(route.params.ratingObj.serviceRating ? route.params.ratingObj.serviceRating : 0);
+  const [defaultServiceRating, setDefaultServiceRating] = useState<number>(
+    route.params.ratingObj.serviceRating
+      ? route.params.ratingObj.serviceRating
+      : 0,
+  );
 
+  const [defaultTreatmentRating, setDefaultTreatmentRating] = useState<number>(
+    route.params.ratingObj.treatmentRating
+      ? route.params.ratingObj.treatmentRating
+      : 0,
+  );
 
-  const [defaultTreatmentRating, setDefaultTreatmentRating] = useState<number>(route.params.ratingObj.treatmentRating ? route.params.ratingObj.treatmentRating : 0);
-
-  const [defaultPriceRating, setDefaultPriceRating] = useState<number>(route.params.ratingObj.priceRating ? route.params.ratingObj.priceRating : 0);
+  const [defaultPriceRating, setDefaultPriceRating] = useState<number>(
+    route.params.ratingObj.priceRating ? route.params.ratingObj.priceRating : 0,
+  );
 
   const [isActivatedFinish, setIsActivatedFinish] = useState<boolean>(false);
 
   useEffect(() => {
     if (route.params?.ratingObj.serviceRating) {
-
-      console.log("route.params?.ratingObj", route.params?.ratingObj);
+      console.log('route.params?.ratingObj', route.params?.ratingObj);
       setServiceRating(route.params.ratingObj.serviceRating);
       setTreatmentRating(route.params.ratingObj.treatmentRating);
       setPriceRating(route.params.ratingObj.priceRating);
@@ -156,10 +164,15 @@ const RatingScreen = ({navigation, route}: Props) => {
   }, [route.params?.ratingObj]);
 
   useEffect(() => {
-    if(serviceRating > 0 && treatmentRating > 0 && priceRating > 0 && !isActivatedFinish) {
+    if (
+      serviceRating > 0 &&
+      treatmentRating > 0 &&
+      priceRating > 0 &&
+      !isActivatedFinish
+    ) {
       setIsActivatedFinish(true);
     }
-  }, [serviceRating, treatmentRating, priceRating])
+  }, [serviceRating, treatmentRating, priceRating]);
 
   const goBack = () => {
     navigation.goBack();
@@ -195,66 +208,85 @@ const RatingScreen = ({navigation, route}: Props) => {
         serviceRating: serviceRating,
         priceRating: priceRating,
         treatmentRating: treatmentRating,
-      }
-    })
+      },
+    });
   };
 
   const renderSwipeServiceRating = useCallback(() => {
     return (
-        <Rating
+      <Rating
         type="custom"
         ratingImage={ratingImage}
         imageSize={wp('8.53%')}
         fractions={2}
+        minValue={0.5}
+        jumpValue={0.5}
+        ratingColor="#00D1FF"
+        ratingBackgroundColor="#E2E6ED"
         startingValue={defaultServiceRating}
         onFinishRating={completeServiceRating}
-        setRatingInMove={movingServiceRating}/>
-    )
-  }, [defaultServiceRating])
+        onSwipeRating={movingServiceRating}
+      />
+    );
+  }, [defaultServiceRating]);
 
   const renderSwipeTreatmentRating = useCallback(() => {
     return (
       <Rating
-      type="custom"
-      ratingImage={ratingImage}
-      imageSize={wp('8.53%')}
-      fractions={2}
-      startingValue={defaultTreatmentRating}
-      onFinishRating={completeTreatmentRating}
-      setRatingInMove={movingTreatmentRating}/>
-    )
-  }, [defaultTreatmentRating])
+        type="custom"
+        ratingImage={ratingImage}
+        imageSize={wp('8.53%')}
+        fractions={2}
+        minValue={0.5}
+        jumpValue={0.5}
+        ratingColor="#00D1FF"
+        ratingBackgroundColor="#E2E6ED"
+        startingValue={defaultTreatmentRating}
+        onFinishRating={completeTreatmentRating}
+        onSwipeRating={movingTreatmentRating}
+      />
+    );
+  }, [defaultTreatmentRating]);
 
   const renderSwipePriceRating = useCallback(() => {
     return (
       <Rating
-      type="custom"
-      ratingImage={ratingImage}
-      imageSize={wp('8.53%')}
-      fractions={2}
-      startingValue={defaultPriceRating}
-      onFinishRating={completePriceRating}
-      setRatingInMove={movingPriceRating}/>
-    )
-  }, [defaultPriceRating])
-
+        type="custom"
+        ratingImage={ratingImage}
+        imageSize={wp('8.53%')}
+        fractions={2}
+        minValue={0.5}
+        jumpValue={0.5}
+        ratingColor="#00D1FF"
+        ratingBackgroundColor="#E2E6ED"
+        startingValue={defaultPriceRating}
+        onFinishRating={completePriceRating}
+        onSwipeRating={movingPriceRating}
+      />
+    );
+  }, [defaultPriceRating]);
 
   return (
     <Container as={SafeAreaView} forceInset={{top: 'always'}}>
       <NavigationHeader
-      headerLeftProps={{type: 'arrow', onPress: goBack}}
-      headerTitle={"병원 만족도"}
-      headerRightProps={{type: 'text', text: '완료', onPress: onPressFinishButton}}
-      headerRightActiveColor={'#00D1FF'}
-      headerRightDisabled={!isActivatedFinish}
+        headerLeftProps={{type: 'arrow', onPress: goBack}}
+        headerTitle={'병원 만족도'}
+        headerRightProps={{
+          type: 'text',
+          text: '완료',
+          onPress: onPressFinishButton,
+        }}
+        headerRightActiveColor={'#00D1FF'}
+        headerRightDisabled={!isActivatedFinish}
       />
       <BodyContainer>
         <RatingItemContainer style={{marginTop: 0}}>
           <RatingLabelText>{'진료 만족도'}</RatingLabelText>
-          <SwipeRatingContainer>
+          <SwipeRatingContainer
+            onLayout={(e) => console.log('container', e.nativeEvent.layout)}>
             {renderSwipeTreatmentRating()}
             <RatingValueContainer>
-            <RatingValueText>{treatmentRating.toFixed(1)}</RatingValueText>
+              <RatingValueText>{treatmentRating.toFixed(1)}</RatingValueText>
             </RatingValueContainer>
           </SwipeRatingContainer>
         </RatingItemContainer>
@@ -263,18 +295,18 @@ const RatingScreen = ({navigation, route}: Props) => {
           <SwipeRatingContainer>
             {renderSwipePriceRating()}
             <RatingValueContainer>
-            <RatingValueText>{priceRating.toFixed(1)}</RatingValueText>
+              <RatingValueText>{priceRating.toFixed(1)}</RatingValueText>
             </RatingValueContainer>
           </SwipeRatingContainer>
         </RatingItemContainer>
         <RatingItemContainer style={{marginTop: 16}}>
           <RatingLabelContainer>
-          <RatingLabelText>{'서비스 만족도'}</RatingLabelText>
+            <RatingLabelText>{'서비스 만족도'}</RatingLabelText>
           </RatingLabelContainer>
           <SwipeRatingContainer>
             {renderSwipeServiceRating()}
             <RatingValueContainer>
-            <RatingValueText>{serviceRating.toFixed(1)}</RatingValueText>
+              <RatingValueText>{serviceRating.toFixed(1)}</RatingValueText>
             </RatingValueContainer>
           </SwipeRatingContainer>
         </RatingItemContainer>
@@ -284,7 +316,6 @@ const RatingScreen = ({navigation, route}: Props) => {
 };
 
 export default RatingScreen;
-
 
 /*
 
