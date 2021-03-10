@@ -92,6 +92,16 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
     });
   }, []);
 
+  const deleteProfileImage = useCallback(() => {
+    setIsLoading(true);
+    const form = {
+      userProfileImgKeyValue: '',
+      profileImg: '',
+    };
+
+    updateUserProfile(form, '프로필 사진이 삭제되었습니다.');
+  }, [updateUserProfile]);
+
   const changeProfileBirthdate = useCallback(
     (birthdate: string) => {
       setIsLoading(true);
@@ -179,6 +189,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
         hometown={hometown}
         changeProfileGender={changeProfileGender}
         changeProfileBirthdate={changeProfileBirthdate}
+        deleteProfileImage={deleteProfileImage}
       />
       <TouchBlockIndicatorCover loading={isLoading} />
     </ContainerView>

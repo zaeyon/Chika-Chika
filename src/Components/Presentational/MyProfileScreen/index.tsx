@@ -85,7 +85,6 @@ flex-direction: row;
 const ProfileImageView = Styled.View`
 width: 77px;
 height: 77px;
-background: grey;
 border-radius: 100px;
 margin-right: 16px;
 
@@ -674,12 +673,16 @@ export default class MyProfile extends React.PureComponent<Props, State> {
             <ProfileContentView>
               <ProfileImageView>
                 <ProfileImage
-                  source={{
-                    uri:
-                      this.props.currentUser.img_thumbNail ||
-                      this.props.currentUser.profileImg,
-                    cache: 'force-cache',
-                  }}
+                  source={
+                    this.props.currentUser.profileImg
+                      ? {
+                          uri:
+                            this.props.currentUser.img_thumbNail ||
+                            this.props.currentUser.profileImg,
+                          cache: 'force-cache',
+                        }
+                      : require('~/Assets/Images/MyPage/default_profileImg.png')
+                  }
                 />
               </ProfileImageView>
               <ProfileReservationTouchableOpacity

@@ -263,7 +263,7 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
     return (
       <TreatItemContainer>
         <TreatBodyContainer>
-          <TreatItemNameText>{'# ' + item.name}</TreatItemNameText>
+          <TreatItemNameText>{'# ' + item.usualName}</TreatItemNameText>
           <TouchableWithoutFeedback
             onPress={() => selectTreatItem(item, index)}>
             <TreatItemAddContainer>
@@ -317,7 +317,7 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
                   key={index}
                   style={{marginRight: 8}}>
                   <SelectedTreatItemText>
-                    {'# ' + item.name}
+                    {'# ' + item.usualName}
                   </SelectedTreatItemText>
                   <TouchableWithoutFeedback
                     onPress={() => deleteTreatItem(item)}>

@@ -641,27 +641,42 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
             <ProfileContentView>
               <ProfileImageView>
                 <ProfileImage
-                  source={{
-                    uri: this.props.targetUserSkeletonData.profileImageUri,
-                    cache: 'force-cache',
-                  }}
+                  source={
+                    this.props.targetUser?.img_thumbNail
+                      ? {
+                          uri: this.props.targetUser?.img_thumbNail,
+                          cache: 'force-cache',
+                        }
+                      : this.props.targetUser?.profileImg
+                      ? {
+                          uri: this.props.targetUser?.profileImg,
+                          cache: 'force-cache',
+                        }
+                      : require('~/Assets/Images/MyPage/default_profileImg.png')
+                  }
                 />
               </ProfileImageView>
               <ProfileReservationTouchableOpacity>
                 <ProfileReservationText>
-                  {this.props.targetUser?.reviewsNum}
+                  {this.props.targetUser?.reviewsNum ||
+                    this.props.targetUser?.appointmentsNum}
                 </ProfileReservationText>
                 <ProfileReservationTitleText>
-                  {'리뷰 수'}
+                  {this.props.targetUser?.reviewsNum === undefined
+                    ? '예약 피드'
+                    : '리뷰 수'}
                 </ProfileReservationTitleText>
               </ProfileReservationTouchableOpacity>
               <VerticalPartitionView />
               <ProfileReservationTouchableOpacity>
                 <ProfileReservationText>
-                  {this.props.targetUser?.communitiesNum}
+                  {this.props.targetUser?.communitiesNum ||
+                    this.props.targetUser?.scrapClinicsNum}
                 </ProfileReservationText>
                 <ProfileReservationTitleText>
-                  {'수다글 수'}
+                  {this.props.targetUser?.reviewsNum === undefined
+                    ? '찜한 병원'
+                    : '수다글 수'}
                 </ProfileReservationTitleText>
               </ProfileReservationTouchableOpacity>
             </ProfileContentView>

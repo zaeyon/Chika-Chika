@@ -191,7 +191,7 @@ PODS:
     - nanopb/encode (= 2.30906.0)
   - nanopb/decode (2.30906.0)
   - nanopb/encode (2.30906.0)
-  - NMapsMap (3.7.0)
+  - NMapsMap (3.10.2)
   - OpenSSL-Universal (1.0.2.19):
     - OpenSSL-Universal/Static (= 1.0.2.19)
   - OpenSSL-Universal/Static (1.0.2.19)
@@ -370,13 +370,13 @@ PODS:
   - React-jsinspector (0.63.3)
   - react-native-blur (0.8.0):
     - React
-  - react-native-camera (3.40.0):
+  - react-native-camera (3.42.0):
     - React-Core
-    - react-native-camera/RCT (= 3.40.0)
-    - react-native-camera/RN (= 3.40.0)
-  - react-native-camera/RCT (3.40.0):
+    - react-native-camera/RCT (= 3.42.0)
+    - react-native-camera/RN (= 3.42.0)
+  - react-native-camera/RCT (3.42.0):
     - React-Core
-  - react-native-camera/RN (3.40.0):
+  - react-native-camera/RN (3.42.0):
     - React-Core
   - react-native-cameraroll (4.0.1):
     - React
@@ -387,8 +387,8 @@ PODS:
     - React-RCTImage
   - react-native-image-picker (3.1.4):
     - React-Core
-  - react-native-nmap (0.0.52):
-    - NMapsMap (~> 3.7.0)
+  - react-native-nmap (0.0.59):
+    - NMapsMap (~> 3.10.1)
     - React
   - react-native-phasset (1.0.10):
     - React
@@ -788,7 +788,7 @@ SPEC CHECKSUMS:
   KakaoOpenSDK: 7a7b728491fc199bf2186fec5bbf2c70ba14f474
   libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
-  NMapsMap: 46ce3d48d7976dd10c6ec63cd7eecf655a7dd955
+  NMapsMap: 2c092c6408c738774edea41e00f0fd1bad9e0ca9
   OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355
   Permission-LocationAlways: 20c287ae79fbc5659a9cc95b32a725810f5529df
   Permission-LocationWhenInUse: e09ae67e8db2b1eeefb35f18ca59848d0785de5b
@@ -805,12 +805,12 @@ SPEC CHECKSUMS:
   React-jsiexecutor: b56c03e61c0dd5f5801255f2160a815f4a53d451
   React-jsinspector: 8e68ffbfe23880d3ee9bafa8be2777f60b25cbe2
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
-  react-native-camera: 5c1fbfecf63b802b8ca4a71c60d30a71550fb348
+  react-native-camera: d145df27a9178041b48b839b80ad79c9ef373fbd
   react-native-cameraroll: 9d2b7c1707204d2040d2812f960c6cebdbd9f670
   react-native-geolocation-service: 141e33bdb179bcba10b216ee13962611e21f2be4
   react-native-image-editor: bd67912f38a8e7a895bf6eb8f445acdcefd8fd0c
   react-native-image-picker: 248afb60a0c5a24153cb7c7483b257f30541323b
-  react-native-nmap: 5d572d0318d0cecdc711e319b896604db349c880
+  react-native-nmap: 740b7152586a39d9c77eeeec7c8c292816c19110
   react-native-phasset: b70130ff812fa4fd07f2a3f2a632db28ccd0e771
   react-native-safe-area-context: 86612d2c9a9e94e288319262d10b5f93f0b395f5
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865

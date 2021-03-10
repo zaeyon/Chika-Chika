@@ -249,7 +249,6 @@ const PinchableImage = ({
       ],
       {
         useNativeDriver: true,
-        listener: (e: any) => {},
       },
     ),
     [pinchScale],
@@ -265,14 +264,15 @@ const PinchableImage = ({
               enableVibrateFallback: false,
               ignoreAndroidSystemSettings: false,
             });
+            setPinchEnabled(false);
             // setPrevFocal({
             //   x: 0,
             //   y: 0,
             // });
             Animated.spring(pinchScale, {
               toValue: 1 / prev,
-              friction: 16,
-              tension: 108,
+              friction: 20,
+              tension: 158,
 
               useNativeDriver: true,
             }).start(() => {
@@ -280,27 +280,17 @@ const PinchableImage = ({
               baseScale.setValue(1);
               setTravelEnabled(false);
               setSwipeDownEnabled(true);
+              setPinchEnabled(true);
             });
-            Animated.spring(baseX, {
-              toValue: 0,
-              friction: 16,
-              tension: 108,
-              useNativeDriver: true,
-            }).start(() => {
-              setLastX(0);
-              baseX.setValue(0);
-              moveX.setValue(0);
-            });
-            Animated.spring(baseY, {
-              toValue: 0,
-              friction: 16,
-              tension: 108,
-              useNativeDriver: true,
-            }).start(() => {
-              setLastY(0);
-              baseY.setValue(0);
-              moveY.setValue(0);
-            });
+
+            setLastX(0);
+            baseX.setValue(0);
+            moveX.setValue(0);
+
+            setLastY(0);
+            baseY.setValue(0);
+            moveY.setValue(0);
+
             return 1;
           } else if (newScale > 4) {
             ReactNativeHapticFeedback.trigger('impactMedium', {
@@ -381,9 +371,10 @@ const PinchableImage = ({
       if (nativeEvent.oldState === State.ACTIVE) {
         if (!isZooming) {
           setIsZooming(true);
-
+          setPinchEnabled(false);
           setLastScale((prev) => {
             if (prev === 1) {
+              setSwipeDownEnabled(false);
               Animated.spring(pinchScale, {
                 toValue: 4,
                 friction: 17,
@@ -393,7 +384,7 @@ const PinchableImage = ({
                 pinchScale.setValue(1);
                 baseScale.setValue(4);
                 setTravelEnabled(true);
-                setSwipeDownEnabled(false);
+                setPinchEnabled(true);
                 setIsZooming(false);
               });
               return 4;
@@ -407,6 +398,7 @@ const PinchableImage = ({
                 pinchScale.setValue(1);
                 baseScale.setValue(1);
                 setTravelEnabled(false);
+                setPinchEnabled(true);
                 setSwipeDownEnabled(true);
                 setIsZooming(false);
               });
@@ -441,7 +433,6 @@ const PinchableImage = ({
   return (
     <PanGestureHandler
       ref={swipeRef}
-      activeOffsetX={[-10000000, 10000000]}
       activeOffsetY={[-30, 30]}
       enabled={swipeDownEnabled}
       shouldCancelWhenOutside={true}

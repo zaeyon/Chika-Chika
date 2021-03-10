@@ -267,9 +267,9 @@ const PostItem = ({
 
   const formatHashTag = useCallback((text: string, index: number) => {
     return (
-      <TouchableWithoutFeedback key={text + index}>
-        <HashTagHighlightText>{'#' + text}</HashTagHighlightText>
-      </TouchableWithoutFeedback>
+      <HashTagHighlightText key={text + index}>
+        {'#' + text}
+      </HashTagHighlightText>
     );
   }, []);
   const formatDescription = useCallback((oldDescription: string) => {
@@ -349,7 +349,9 @@ const PostItem = ({
       const renderItem = (item: any) => (
         <HashTagIconView key={String(item.id)}>
           <HashTagText>{'#'}</HashTagText>
-          <HashTagIconText>{item.name || item.emdName}</HashTagIconText>
+          <HashTagIconText>
+            {item.name || item.emdName || item.usualName}
+          </HashTagIconText>
         </HashTagIconView>
       );
 
@@ -387,7 +389,7 @@ const PostItem = ({
                         uri: user.profileImg,
                         cache: 'force-cache',
                       }
-                    : require('~/Assets/Images/appIcon_chika.png')
+                    : require('~/Assets/Images/MyPage/default_profileImg.png')
                 }
               />
               <ProfileContentView>

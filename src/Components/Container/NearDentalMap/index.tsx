@@ -815,7 +815,6 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const mapLat = currentMapLocation.current.latitude;
     const mapLong = currentMapLocation.current.longitude;
 
-
     const sort = 'd';
     dispatch(allActions.dentalMapActions.setLoadingGetDental(true));
     setSelectedDentalIndex(0);
@@ -1005,13 +1004,19 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   const clickMyLocationTrackingButton = () => {
-    if(currentMapLocation.current.zoom <= 12) {
+    if (currentMapLocation.current.zoom <= 12) {
       limitRef.current = 45;
-    } else if (12 < currentMapLocation.current.zoom && currentMapLocation.current.zoom <= 13) {
+    } else if (
+      12 < currentMapLocation.current.zoom &&
+      currentMapLocation.current.zoom <= 13
+    ) {
       limitRef.current = 45;
-    } else if(13 < currentMapLocation.current.zoom && currentMapLocation.current.zoom <= 14) {
+    } else if (
+      13 < currentMapLocation.current.zoom &&
+      currentMapLocation.current.zoom <= 14
+    ) {
       limitRef.current = 30;
-    } else if(14 < currentMapLocation.current.zoom) {
+    } else if (14 < currentMapLocation.current.zoom) {
       limitRef.current = 15;
     }
 
@@ -1033,7 +1038,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
   }, []);
 
   const onMapCameraChange = (event: any) => {
-    console.log("onMapCameraChange event", event);
+    console.log('onMapCameraChange event', event);
     const prevMapLocation = {...currentMapLocation.current};
     currentMapLocation.current = event;
 
@@ -1339,17 +1344,26 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   const reSearchNearDentalInCurrentLocation = () => {
-    dispatch(allActions.dentalMapActions.setSearchedKeyword(""))
+    dispatch(allActions.dentalMapActions.setSearchedKeyword(''));
 
-    console.log("currentLocation.current.zoom", currentMapLocation.current.zoom);
+    console.log(
+      'currentLocation.current.zoom',
+      currentMapLocation.current.zoom,
+    );
 
-    if(currentMapLocation.current.zoom <= 12) {
+    if (currentMapLocation.current.zoom <= 12) {
       limitRef.current = 45;
-    } else if (12 < currentMapLocation.current.zoom && currentMapLocation.current.zoom <= 13) {
+    } else if (
+      12 < currentMapLocation.current.zoom &&
+      currentMapLocation.current.zoom <= 13
+    ) {
       limitRef.current = 45;
-    } else if(13 < currentMapLocation.current.zoom && currentMapLocation.current.zoom <= 14) {
+    } else if (
+      13 < currentMapLocation.current.zoom &&
+      currentMapLocation.current.zoom <= 14
+    ) {
       limitRef.current = 30;
-    } else if(14 < currentMapLocation.current.zoom) {
+    } else if (14 < currentMapLocation.current.zoom) {
       limitRef.current = 15;
     }
 
@@ -1409,11 +1423,19 @@ const NearDentalMap = ({navigation, route}: Props) => {
             showsMyLocationButton={false}
             center={{...mapLocation, zoom: mapZoom}}
             onCameraChange={(event: any) => onMapCameraChange(event)}
+            minZoomLevel={6}
             zoomControl={true}>
             {nearDentalArray.map((item: any, index: number) => {
               return (
                 <Marker
                   key={index}
+                  caption={{
+                    text: 'FDFSDFSFDSFSDFS',
+                  }}
+                  subCaption={{
+                    text: 'subCaption',
+                  }}
+                  flat={true}
                   coordinate={{
                     latitude: Number(item.geographLat),
                     longitude: Number(item.geographLong),

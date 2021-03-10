@@ -1,11 +1,10 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {
   TouchableWithoutFeedback,
   FlatList,
   TouchableHighlight,
-  TouchableOpacity,
+  LayoutAnimation,
   View,
-  KeyboardAvoidingView,
 } from 'react-native';
 import Styled from 'styled-components/native';
 import {
