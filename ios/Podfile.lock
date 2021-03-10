@@ -370,8 +370,6 @@ PODS:
   - React-jsinspector (0.63.3)
   - react-native-blur (0.8.0):
     - React
-<<<<<<< HEAD
-<<<<<<< HEAD
   - react-native-camera (3.43.0):
     - React-Core
     - react-native-camera/RCT (= 3.43.0)
@@ -379,24 +377,6 @@ PODS:
   - react-native-camera/RCT (3.43.0):
     - React-Core
   - react-native-camera/RN (3.43.0):
-=======
-  - react-native-camera (3.42.0):
-    - React-Core
-    - react-native-camera/RCT (= 3.42.0)
-    - react-native-camera/RN (= 3.42.0)
-  - react-native-camera/RCT (3.42.0):
-    - React-Core
-  - react-native-camera/RN (3.42.0):
->>>>>>> 1a5c7632f171b0f4b0d276f911e6dd821c4630f8
-=======
-  - react-native-camera (3.42.0):
-    - React-Core
-    - react-native-camera/RCT (= 3.42.0)
-    - react-native-camera/RN (= 3.42.0)
-  - react-native-camera/RCT (3.42.0):
-    - React-Core
-  - react-native-camera/RN (3.42.0):
->>>>>>> 1a5c7632f171b0f4b0d276f911e6dd821c4630f8
     - React-Core
   - react-native-cameraroll (4.0.1):
     - React
@@ -847,11 +827,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: b56c03e61c0dd5f5801255f2160a815f4a53d451
   React-jsinspector: 8e68ffbfe23880d3ee9bafa8be2777f60b25cbe2
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
-<<<<<<< HEAD
   react-native-camera: c2cb270b2546bb6d99352455676cd01a1cbeb1d5
-=======
-  react-native-camera: d145df27a9178041b48b839b80ad79c9ef373fbd
->>>>>>> 1a5c7632f171b0f4b0d276f911e6dd821c4630f8
   react-native-cameraroll: 9d2b7c1707204d2040d2812f960c6cebdbd9f670
   react-native-geolocation-service: 141e33bdb179bcba10b216ee13962611e21f2be4
   react-native-image-editor: bd67912f38a8e7a895bf6eb8f445acdcefd8fd0c
