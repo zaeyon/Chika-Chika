@@ -1,6 +1,7 @@
 const reviewList = (
   state = {
     mainReviewList: [],
+    dentalReviewArray: [],
     MyReviews: [],
     OpponentReviews: [],
     LikedReviews: [],
@@ -23,6 +24,7 @@ const reviewList = (
       const tmpScrapedReviews = state.ScrapedReviews.concat();
       const tmpCommentedReviews = state.CommentedReviews.concat();
       const tmpSearchResultReviews = state.SearchResultReviews.concat();
+      const tmpDentalReviewArray = state.dentalReviewArray.concat();
 
       const targetReviewIndex = tmpReviewList.findIndex((item, index) => {
         return item.id == action.payload;
@@ -55,6 +57,12 @@ const reviewList = (
           return item.id === action.payload;
         }
       )
+
+      const targetDentalReviewIndex = tmpDentalReviewArray.findIndex(
+        (item, index) => {
+          return item.id === action.payload;
+        }
+      )
       
       if(targetReviewIndex !== -1) {
         tmpReviewList.splice(targetReviewIndex, 1);
@@ -79,6 +87,10 @@ const reviewList = (
       if(targetSearchResultReviewIndex !== -1) {
         tmpSearchResultReviews.splice(targetSearchResultReviewIndex, 1);
       }
+
+      if(targetDentalReviewIndex !== -1) {
+        tmpDentalReviewArray.splice(targetDentalReviewIndex, 1);
+      }
       
       return {
         ...state,
@@ -88,6 +100,7 @@ const reviewList = (
         ScrapedReviews: tmpScrapedReviews,
         CommentedReviews: tmpCommentedReviews,
         SearchResultReviews: tmpSearchResultReviews,
+        dentalReviewArray: tmpDentalReviewArray,
       }
     }
     case 'TOGGLE_REVIEW_LIKE': {
@@ -98,6 +111,7 @@ const reviewList = (
       const tmpScrapedReviews = state.ScrapedReviews.concat();
       const tmpCommentedReviews = state.CommentedReviews.concat();
       const tmpSearchResultReviews = state.SearchResultReviews.concat();
+      const tmpDentalReviewArray = state.dentalReviewArray.concat();
 
       const targetReviewIndex = tmpReviewList.findIndex((item, index) => {
         return item.id == action.payload;
@@ -132,6 +146,12 @@ const reviewList = (
       );
 
       const targetSearchResultReviewIndex = tmpSearchResultReviews.findIndex(
+        (item, index) => {
+          return item.id === action.payload;
+        }
+      )
+
+      const targetDentalReviewIndex = tmpDentalReviewArray.findIndex(
         (item, index) => {
           return item.id === action.payload;
         }
@@ -222,7 +242,14 @@ const reviewList = (
               ? -1
               : 1),
         });
-        
+      }
+
+      if(targetDentalReviewIndex >= 0) {
+        tmpDentalReviewArray.splice(targetDentalReviewIndex, 1, {
+          ...state.dentalReviewArray[targetDentalReviewIndex],
+          viewerLikedReview: !state.dentalReviewArray[targetDentalReviewIndex].viewerLikedReview,
+          reviewLikeNum: state.dentalReviewArray[targetDentalReviewIndex].reviewLikeNum + (state.dentalReviewArray[targetDentalReviewIndex].viewerLikedReview ? -1 : 1),
+        })
       }
 
       return {
@@ -234,6 +261,7 @@ const reviewList = (
         ScrapedReviews: tmpScrapedReviews,
         CommentedReviews: tmpCommentedReviews,
         SearchResultReviews: tmpSearchResultReviews,
+        dentalReviewArray: tmpDentalReviewArray,
       };
     }
     case 'TOGGLE_REVIEW_SCRAP': {
@@ -244,6 +272,7 @@ const reviewList = (
       const tmpScrapedReviews = state.ScrapedReviews.concat();
       const tmpCommentedReviews = state.CommentedReviews.concat();
       const tmpSearchResultReviews = state.SearchResultReviews.concat();
+      const tmpDentalReviewArray = state.dentalReviewArray.concat();
 
       const targetIndex = tmpReviewList.findIndex((item, index) => {
         return item.id == action.payload;
@@ -278,6 +307,12 @@ const reviewList = (
       );
 
       const targetSearchResultReviewIndex = tmpSearchResultReviews.findIndex(
+        (item, index) => {
+          return item.id === action.payload;
+        }
+      )
+
+      const targetDentalReviewIndex = tmpDentalReviewArray.findIndex(
         (item, index) => {
           return item.id === action.payload;
         }
@@ -339,6 +374,13 @@ const reviewList = (
         });
       }
 
+      if(targetDentalReviewIndex >= 0) {
+        tmpDentalReviewArray.splice(targetDentalReviewIndex, 1, {
+          ...state.dentalReviewArray[targetDentalReviewIndex],
+          viewerScrapedReview: !state.dentalReviewArray[targetDentalReviewIndex].viewerScrapedReview
+        })
+      }
+
       return {
         ...state,
         mainReviewList: tmpReviewList,
@@ -347,7 +389,8 @@ const reviewList = (
         LikedReviews: tmpLikedReviews,
         ScrapedReviews: tmpScrapedReviews,
         CommentedReviews: tmpCommentedReviews,
-        SearchResultReviews: tmpSearchResultReviews
+        SearchResultReviews: tmpSearchResultReviews,
+        dentalReviewArray: tmpDentalReviewArray,
       };
     }
     case 'SET_MY_REVIEWS':
@@ -380,6 +423,11 @@ const reviewList = (
         ...state,
         SearchResultReviews: action.payload,
       };
+    case 'SET_DENTAL_REVIEW_ARRAY':
+      return {
+        ...state,
+        dentalReviewArray: action.payload,
+      }
     default:
       return state;
   }

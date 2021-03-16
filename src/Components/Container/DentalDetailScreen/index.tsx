@@ -65,7 +65,6 @@ let limit = 10;
 const DentalDetailScreen = ({navigation, route}: Props) => {
   console.log('DentalDetailScreen dentalId', route.params?.dentalId);
   const [dentalDetailInfo, setDentalDetailInfo] = useState<any>();
-  const [dentalReviewArray, setDentalReviewArray] = useState<Array<any>>([]);
   const [dentalImageArray, setDentalImageArray] = useState<Array<any>>([]);
   const [loadingGetDentalDetail, setLoadingGetDentalDetail] = useState<boolean>(
     true,
@@ -74,15 +73,21 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
   const [isCurUserScrap, setIsCurUserScrap] = useState<boolean>(false);
 
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
+  const dentalReviewArray = useSelector((state: any) => state.reviewList.dentalReviewArray);
   const dentalId = route.params?.dentalId;
 
   const dispatch = useDispatch();
+
 
   useEffect(() => {
     if (route.params?.dentalId) {
       getDentalDetail();
       getCurUserScrap();
       getDentalReview();
+    }
+
+    return () => {
+      dispatch(allActions.reviewListActions.setDentalReviewArray([]));
     }
   }, []);
 
@@ -92,6 +97,14 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
       navigation.setParams({infoEditRequest: false});
     }
   }, [route.params?.infoEditRequest]);
+
+  useEffect(() => {
+    if(route.params?.isRefreshReview) {
+      ToastMessage.show('해당병원에 리뷰가 작성되었습니다!');
+      navigation.setParams({isRefreshReview: false});
+      getDentalReview();
+    }
+  }, [route.params?.isRefreshReview])
 
   const getDentalDetail = () => {
     GETDentalDetail({jwtToken, dentalId})
@@ -153,7 +166,7 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
     GETDentalReview({jwtToken, dentalId, offset, limit})
       .then((response) => {
         console.log('GETDentalReview response', response);
-        setDentalReviewArray(response);
+        dispatch(allActions.reviewListActions.setDentalReviewArray(response));
       })
       .catch((error) => {
         console.log('GETDentalReview error', error);
@@ -203,6 +216,8 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
       screen: 'ReviewMetaDataScreen',
       params: {
         dentalObj: dentalObj,
+        requestScreen: 'DentalDetailScreen',
+        requestType: 'post'
       },
     });
   };

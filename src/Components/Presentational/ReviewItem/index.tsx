@@ -411,7 +411,7 @@ const ReviewItem = ({
   };
 
   const clickLike = () => {
-    console.log(isCurUserLikeProp);
+    console.log("clickLike isCurUserLikeProp", isCurUserLikeProp);
     dispatch(allActions.reviewListActions.toggleReviewLike(reviewId));
     if (isCurUserLikeProp) {
       deleteReviewLike();
@@ -450,6 +450,7 @@ const ReviewItem = ({
   };
 
   const postReviewScrap = () => {
+    console.log("리뷰 스크랩")
     POSTReviewScrap({jwtToken, reviewId})
       .then((response) => {
         console.log('POSTReviewScrap response', response);
@@ -615,4 +616,4 @@ const isEqual = (prevItem: any, nextItem: any) => {
 
 const MemoizedReviewItem = React.memo(ReviewItem, isEqual);
 
-export default MemoizedReviewItem;
+export default ReviewItem;

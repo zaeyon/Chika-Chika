@@ -88,7 +88,6 @@ width: 77px;
 height: 77px;
 border-radius: 100px;
 margin-right: 16px;
-
 `;
 
 const ProfileImage = Styled.Image`
@@ -236,8 +235,10 @@ interface Residence {
 }
 
 export default class MyProfile extends React.PureComponent<Props, State> {
+
   reviewRef: any;
   communityRef: any;
+
 
   constructor(props: Props) {
     super(props);

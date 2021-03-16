@@ -26,11 +26,11 @@ background-color: #00000030;
 `;
 
 const HeaderCancelView = Styled.View`
-padding: 0px 16px 16px 16px;
+padding: 16px 16px 16px 16px;
 `;
 const HeaderCancelImage = Styled.Image`
-width: 24px;
-height: 24px;
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
 `;
 
 const FooterContainer = Styled.View`
@@ -55,6 +55,14 @@ font-size: 20px;
 color: #FF001F;
 `;
 
+const ProofImageContainer = Styled.View`
+`;
+
+const ProofImage = Styled.Image`
+resize-mode: contain;
+flex: 1;
+`;
+
 interface Props {
   navigation: any,
   route: any,
@@ -74,27 +82,6 @@ const images = [
     navigation.goBack();
   }
 
-  const renderEmptyContainer = () => {
-    return (
-      <View/>
-    )
-  }
-
-  const renderImage = (props) => {
-    return (
-      <Image
-      style={{maxHeight: hp('10%')}}
-      {...props}
-      />
-    )
-  }
-
-  const deleteSelectedImage = () => {
-    navigation.navigate("ProofImageGuideScreen", {
-      isDeletedProofImage: true
-    })
-  }
-
   return (
     <Container>
       <HeaderContainerView>
@@ -106,17 +93,8 @@ const images = [
         </HeaderCancelView>
         </TouchableWithoutFeedback>
       </HeaderContainerView>
-      <ImageViewer
-      imageUrls={images}
-      renderImage={renderImage}
-      renderIndicator={renderEmptyContainer}/>
-      <FooterContainer>
-        <TouchableWithoutFeedback onPress={() => deleteSelectedImage()}>
-        <DeleteContainer>
-        <DeleteText>{"삭제"}</DeleteText>
-        </DeleteContainer>
-        </TouchableWithoutFeedback>
-      </FooterContainer>
+      <ProofImage
+      source={{uri: route.params?.selectedProofImage.uri}}/>
     </Container>
   )
 }

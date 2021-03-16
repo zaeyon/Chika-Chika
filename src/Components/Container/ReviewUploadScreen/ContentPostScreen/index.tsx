@@ -523,6 +523,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   };
 
   const clickUpload = () => {
+    console.log("clickUpload")
     if (route.params.requestType === 'post') {
       uploadReview();
     } else if (route.params.requestType === 'revise') {
@@ -618,9 +619,17 @@ const ContentPostScreen = ({navigation, route}: Props) => {
       .then((response) => {
         setLoadingUpload(false);
         console.log('POSTReviewUpload response', response);
-        navigation.navigate('HomeScreen', {
-          isUploadReview: true,
-        });
+        console.log("route.params?.requestScreen", route.params?.requestScreen)
+        if(route.params?.requestScreen === 'DentalDetailScreen') {
+          navigation.navigate('DentalDetailScreen', {
+            isRefreshReview: true,
+            dentalId: dentalClinicId,
+          });
+        } else {
+          navigation.navigate('HomeScreen', {
+            isUploadReview: true,
+          });
+        }
       })
       .catch((error) => {
         setLoadingUpload(false);

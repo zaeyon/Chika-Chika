@@ -149,7 +149,7 @@ border-radius: 100px;
 background-color: #F5F7F9;
 flex-direction: row;
 align-items: center;
-border-width: 0.5px;
+border-width: 1px;
 border-color: #E2E6ED;
 `;
 
@@ -346,7 +346,6 @@ justify-content: center;
 `;
 
 const DentalListContainer = Styled.View`
-flex: 1;
 `;
 
 const NoDataImage = Styled.Image`
@@ -507,6 +506,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const noMoreDentalData = useRef<boolean>(false);
 
   const keywordRef = useRef<any>();
+  const searchedDentalFlatListRef = useRef<any>();
 
   // useEffect(() => {
   //   async function fetchData() {
@@ -593,6 +593,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     console.log('onSubmitSearchInput keyword', keyword);
 
     if (keyword.trim() !== '') {
+      searchQueryRef.current = keyword;
       setIsFocusedSearchInput(false);
       searchDental(keyword, keyword, '');
     }
@@ -723,6 +724,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         console.log('filterDental 실행');
         setLoadingSearchDental(false);
         console.log('GETDentalTotalSearch response', response);
+        searchedDentalFlatListRef.current.scrollToIndex({animated: false, index: 0})
 
         if (response.length > 0) {
           dispatch(
@@ -778,6 +780,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         );
         setLoadingSearchDental(false);
         dispatch(allActions.dentalMapActions.setSearchedDentalArray(response));
+        searchedDentalFlatListRef.current.scrollToIndex({animated: false, index: 0})
       })
       .catch((error) => {
         console.log('GETAroundDental error', error);
@@ -1487,10 +1490,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                         {
                           marginLeft: 16,
                           backgroundColor: '#ffffff',
-                          borderColor: '#9AA2A9',
+                          borderColor: '#131F3C',
                         },
                       ]}>
-                      <FilterItemText style={{color: '#4E525D'}}>
+                      <FilterItemText style={{color: '#131F3C'}}>
                         {selectedDayList[0].day + '요일'}
                       </FilterItemText>
                     </FilterItemContainer>
@@ -1503,7 +1506,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                         {
                           marginLeft: 16,
                           backgroundColor: '#ffffff',
-                          borderColor: '#9AA2A9',
+                          borderColor: '#131F3C',
                         },
                       ]}>
                       {selectedDayList.map((item: any, index: number) => {
@@ -1511,7 +1514,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                           return (
                             <FilterItemText
                               key={index}
-                              style={{color: '#4E525D'}}>
+                              style={{color: '#131F3C'}}>
                               {item.day + '요일'}
                             </FilterItemText>
                           );
@@ -1519,7 +1522,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                           return (
                             <FilterItemText
                               key={index}
-                              style={{color: '#4E525D'}}>
+                              style={{color: '#131F3C'}}>
                               {', ' + item.day + '요일'}
                             </FilterItemText>
                           );
@@ -1534,11 +1537,11 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                       {marginLeft: 8},
                       timeFilter !== '' && {
                         backgroundColor: '#ffffff',
-                        borderColor: '#9AA2A9',
+                        borderColor: '#131F3C',
                       },
                     ]}>
                     <FilterItemText
-                      style={timeFilter !== '' && {color: '#4E525D'}}>
+                      style={timeFilter !== '' && {color: '#131F3C'}}>
                       {timeFilter ? timeFilter.slice(0, 5) : '방문시간'}
                     </FilterItemText>
                   </FilterItemContainer>
@@ -1549,10 +1552,10 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                       {marginLeft: 8},
                       holidayFilter && {
                         backgroundColor: '#ffffff',
-                        borderColor: '#9AA2A9',
+                        borderColor: '#131F3C',
                       },
                     ]}>
-                    <FilterItemText style={holidayFilter && {color: '#4E525D'}}>
+                    <FilterItemText style={holidayFilter && {color: '#131F3C'}}>
                       {'일요일･공휴일 진료'}
                     </FilterItemText>
                   </FilterItemContainer>
@@ -1563,11 +1566,11 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                       {marginLeft: 8, marginRight: 16},
                       parkingFilter === 'y' && {
                         backgroundColor: '#ffffff',
-                        borderColor: '#9AA2A9',
+                        borderColor: '#131F3C',
                       },
                     ]}>
                     <FilterItemText
-                      style={parkingFilter === 'y' && {color: '#4E525D'}}>
+                      style={parkingFilter === 'y' && {color: '#131F3C'}}>
                       {'주차가능'}
                     </FilterItemText>
                   </FilterItemContainer>
@@ -1577,6 +1580,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
             <DentalListContainer>
               {searchedDentalArray.length > 0 && (
                 <FlatList
+                  ref={searchedDentalFlatListRef}
                   contentContainerStyle={{
                     backgroundColor: '#F5F7F9',
                     paddingBottom: hasNotch()
@@ -1589,7 +1593,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                   data={searchedDentalArray}
                   renderItem={renderDentalItem}
                   onEndReached={onEndReachedDentalFlat}
-                  onEndReachedThreshold={0.5}
+                  onEndReachedThreshold={1}
                   ListFooterComponent={renderFooterIndicator}
                   keyExtractor={(item, index) => `${index}`}
                 />

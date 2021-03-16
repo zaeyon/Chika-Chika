@@ -37,6 +37,7 @@ const POSTReviewUpload = ({jwtToken, starRate_cost, starRate_treatment, starRate
         "starRate_treatment":${starRate_treatment},
         "starRate_service":${starRate_service},
         "treatments":${JSON.stringify(formatedTreatmentArray)},
+        "diseases":${JSON.stringify([])},
         "dentalClinicId":${dentalClinicId},
         "totalCost":${totalPrice},
         "treatmentDate":"${treatmentDate}"

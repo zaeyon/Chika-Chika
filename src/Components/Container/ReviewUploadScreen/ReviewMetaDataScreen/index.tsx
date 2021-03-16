@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Animated} from 'react-native';
+import {TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Animated, Alert} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -73,6 +73,8 @@ color: #FF001F;
 `;
 
 const RightArrowIconContainer = Styled.View`
+flex-direction: row;
+align-items: center;
 padding-right: 16px;
 `;
 
@@ -240,6 +242,7 @@ z-index: 1;
 background: #131F3C80;
 border-radius: 100px;
 `;
+
 const DeleteButtonImage = Styled.Image`
 width: ${wp('4.26%')}px;
 height: ${wp('4.26%')}px;
@@ -462,12 +465,6 @@ line-height: 24px;
 color: #ffffff;
 `;
 
-const SelectedProofImageContainer = Styled.View`
-width: ${wp('91%')}px;
-height: ${wp('91%')}px;
-`;
-
-
 const SelectProofImageContainer = Styled.View`
 background-color: #FAFCFF;
 border-radius: 8px;
@@ -482,10 +479,6 @@ height: ${wp('25.599%')}px;
 background-color: #c3c3c3;
 `;
 
-const SelectedProofImage = Styled.Image`
-width: ${wp('91%')}px;
-height: ${wp('91%')}px;
-`;
 
 const SelectProofImageText = Styled.Text`
 margin-left: 8px;
@@ -532,9 +525,12 @@ color: #00D1FF;
 `;
 
 const RightArrowIcon = Styled.Image`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
+margin-left: 7px;
+width: ${wp('1.4%')}px;
+height: ${wp('2.7%')}px;
 `;
+
+
 
 const IsExistProofImageIcon = Styled.Image`
 width: ${wp('6.4%')}px;
@@ -545,6 +541,64 @@ const SelectProofImageTextContainer = Styled.View`
 flex-direction: row;
 align-items: center;
 `;
+
+const EventBannerImageContainer = Styled.View`
+padding-top: 10px;
+padding-bottom: 10px;
+`;
+
+const EventBannerImage = Styled.Image`
+background-color: #c3c3c3;
+width: ${wp('100%')}px;
+height: ${hp('12.93%')}px;
+`;
+
+const UploadProofImage = Styled.Image`
+border-radius: 4px;
+margin-top: 16px;
+width: ${wp('91.2%')}px;
+height: ${wp('21%')}px;
+`;
+
+const ProofImageDescripText = Styled.Text`
+margin-top: 1px;
+font-weight: 400;
+font-size: 10px;
+line-height: 16px;
+color: #9AA2A9;
+`;
+
+
+const SelectedProofImageContainer = Styled.View`
+border-radius: 4px;
+margin-top: 16px;
+width: ${wp('91.2%')}px;
+height: ${wp('21%')}px;
+`;
+
+const SelectedProofImageCover = Styled.View`
+position: absolute;
+background-color: #131F3C50;
+border-radius: 4px;
+width: ${wp('91.2%')}px;
+height: ${wp('21%')}px;
+align-items: center;
+justify-content: center;
+`;
+
+const SelectedProofImage = Styled.Image`
+resize-mode: contain;
+width: ${wp('91.2%')}px;
+height: ${wp('21%')}px;
+`;
+
+const ViewProofImageText = Styled.Text`
+font-weight: 700;
+font-size: 16px;
+line-height: 24px;
+color: #FFFFFF;
+`;
+
 
 interface Props {
   navigation: any;
@@ -592,6 +646,8 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   const [selectedProofImage, setSelectedProofImage] = useState<Object>({});
   const [selectedDentalImages, setSelectedDentalImages] = useState<Array<any>>([]);
 
+  const [loadingTakingPicture, setLoadingTakingPicture] = useState<boolean>(false);
+
   const actionSheetItemList = ['취소', '촬영', '앨범'];
 
   const scrollY = useRef<number>(0);
@@ -602,14 +658,11 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   const actionSheetRefByDental = useRef() as any;
 
   const modalContentY = useRef(new Animated.Value(hp('50%'))).current;
-
-  useEffect(() => {
-    console.log("ReviewMetaDataScreen route", route)
-  }, [route]);
   
   useEffect(() => {
     if(route.params?.selectedProofImage) {
       setSelectedProofImage(route.params.selectedProofImage)
+      console.log("route.params.selectedProofImage", route.params.selectedProofImage);
     }
   }, [route.params?.selectedProofImage]);
 
@@ -682,21 +735,6 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
       setIsFocusedTotalPriceInput(false);
   };
 
-  const unSelectProofImage = useCallback((image) => {
-    setSelectedProofImages((prev) => {
-      const targetIndex = prev.findIndex(
-        (item) => item.filename === image.filename,
-      );
-      const newSelectedProofImages = prev.concat();
-      if (targetIndex >= 0) {
-        newSelectedProofImages.splice(targetIndex, 1);
-        return newSelectedProofImages;
-      } else {
-        return prev;
-      }
-    });
-  }, []);
-
   const unSelectDentalImage = useCallback((image) => {
     setSelectedDentalImages((prev) => {
       const targetIndex = prev.findIndex(
@@ -713,15 +751,30 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }, []);
 
   const goBack = () => {
-    navigation.goBack();
+    Alert.alert('리뷰 작성을 취소하시겠어요?', '', [
+      {
+        text: '아니요',
+        style: 'cancel',
+        onPress: () => 0,
+      },
+      {
+        text: '예',
+        onPress: () => {
+          navigation.goBack()
+        }
+      }
+    ])
   };
 
   const moveToDentalSearch = () => {
-    navigation.navigate('DentalNameSearchScreen', {
-      requestPage: 'metadata',
-    });
-    
     priceInputRef.current.blur();
+    if(route.params?.requestScreen === 'DentalDetailScreen') {
+      Alert.alert('병원이름은 수정 할 수 없습니다.')
+    } else {
+      navigation.navigate('DentalNameSearchScreen', {
+        requestPage: 'metadata',
+      });
+    }
   };
 
   const moveToTreatmentSearch = () => {
@@ -734,6 +787,10 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     navigation.navigate("RatingScreen", {
       ratingObj: ratingObj
     });
+  }
+
+  const moveToProofImageEvent = () => {
+    navigation.navigate("ProofImageEventScreen");
   }
 
   const onPressTreatmentDate = () => {
@@ -864,12 +921,19 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
       selectedProofImage,
       selectedDentalImages,
       requestType: route.params?.requestType,
+      requestScreen: route.params?.requestScreen,
       paragraphArray: route.params?.paragraphArray ? route.params?.paragraphArray : [{
         index: 1,
         image: null,
         description: "",
       },],
       reviewId: route.params?.reviewId,
+    })
+  }
+
+  const moveToFullProofImage = () => {
+    navigation.navigate('FullProofImageScreen', {
+      selectedProofImage: selectedProofImage,
     })
   }
 
@@ -900,6 +964,34 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     },
     [actionSheetItemList],
   );
+
+  const navigateToCameraByProof = useCallback(() => {
+    setLoadingTakingPicture(true);
+    launchCamera({includeBase64: true, mediaType: 'photo'}, (response: CameraResponse) => {
+      setLoadingTakingPicture(false); 
+      if (!response.didCancel) {
+        const capturedImage = {
+          filename: response.fileName,
+          fileSize: response.fileSize,
+          width: response.width,
+          height: response.height,
+          uri: response.uri,
+          base64: response.base64,
+          camera: true,
+        };
+        setSelectedProofImage(capturedImage);
+      }
+    });
+  }, []);
+
+  const navigateToGalleryByProof = useCallback(() => {
+    navigation.navigate('ImageSelectOneStackScreen', {
+      screen: "ImageSelectOneScreen",
+      params: {
+        requestType: 'ReviewMetaDataScreen',
+      }
+    });
+  }, [])
 
 
   const navigateToCameraByDental = useCallback(() => {
@@ -970,6 +1062,14 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     } else {
       navigation.navigate("ProofImageGuideScreen");
     }
+  }
+
+  const clickUploadProofImage = () => {
+    actionSheetRefByProof.current.show();
+  }
+
+  const deleteSelectedProofImage = () => {
+    setSelectedProofImage({});
   }
 
   const renderDentalImageListHeader = useCallback(
@@ -1066,35 +1166,54 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
         >
           <TouchableWithoutFeedback onPress={() => onPressBackground()}>
           <ScrollViewInnerContainer>
-          <ProofImageItemContainer>
-          <SelectProofImageContainer
-          style={styles.proofImageContainerShadow}>
-            <ProofImageEventBannerImage
-            source={{uri: ""}}
-            />
-            <SelectProofImageButtonContainer>
-            <TouchableWithoutFeedback onPress={() => moveToSelectProofImage()}>
-            <SelectProofImageButton
-            style={styles.proofImageContainerShadow}>
-              <SelectProofImageTextContainer>
-              <EventTextContainer>
-                <EventText>{"EVENT"}</EventText>
-              </EventTextContainer>
-              <SelectProofImageText>{"진료 인증자료 올리기"}</SelectProofImageText>
-              </SelectProofImageTextContainer>
-              {!selectedProofImage?.uri && (
-              <RightArrowIcon
-              source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
-              )}
-              {selectedProofImage?.uri && (
-              <IsExistProofImageIcon
-              source={require('~/Assets/Images/Upload/ic_isExistProofImage.png')}/>
-              )}
-            </SelectProofImageButton>
+            <TouchableWithoutFeedback onPress={() => moveToProofImageEvent()}>
+            <EventBannerImageContainer>
+              <EventBannerImage
+              source={require("~/Assets/Images/Banner/banner_review_starbucks2.png")}/>
+            </EventBannerImageContainer>
             </TouchableWithoutFeedback>
-            </SelectProofImageButtonContainer>
-          </SelectProofImageContainer>
-          </ProofImageItemContainer>
+          <MetaDataItemContainer
+          style={{marginTop: 0}}>
+          <MetaDataHeaderContainer>
+            <MetaDataLabelContainer>
+              <MetaDataLabelText>{"진료인증 자료 첨부하기"}</MetaDataLabelText>
+            </MetaDataLabelContainer>
+            <RightArrowIconContainer>
+              <MetaDataLabelText>{"가이드라인"}</MetaDataLabelText>
+              <RightArrowIcon
+              source={require('~/Assets/Images/Upload/ic_rightArrow.png')}/>
+            </RightArrowIconContainer>
+          </MetaDataHeaderContainer>
+          <ProofImageDescripText>{"종이 영수증, 온라인 영수증, 카드내역 전체화면중 한가지를 첨부해주세요."}</ProofImageDescripText>
+          {!selectedProofImage.uri && (
+          <TouchableWithoutFeedback onPress={() => clickUploadProofImage()}>
+          <UploadProofImage
+          source={require('~/Assets/Images/Upload/uploadProofImage.png')}/>
+          </TouchableWithoutFeedback>
+          )}
+          {selectedProofImage.uri && (
+          <TouchableWithoutFeedback onPress={() => moveToFullProofImage()}>
+          <SelectedProofImageContainer>
+          <SelectedProofImage
+          source={{uri: selectedProofImage.uri}}/>
+          <SelectedProofImageCover>
+          <ViewProofImageText>{"사진 상세보기"}</ViewProofImageText>
+          </SelectedProofImageCover>
+          <TouchableWithoutFeedback onPress={() => deleteSelectedProofImage()}>
+          <DeleteButtonView
+          style={{
+            top: -7.5,
+            right: -7.5,
+          }}>
+            <DeleteButtonImage
+              source={require('~/Assets/Images/Picture/ic_delete.png')}
+            />
+          </DeleteButtonView>
+          </TouchableWithoutFeedback>
+          </SelectedProofImageContainer>
+          </TouchableWithoutFeedback>
+          )}
+          </MetaDataItemContainer>  
           <TouchableWithoutFeedback onPress={() => moveToDentalSearch()}>
           <MetaDataItemContainer
           style={{marginTop: 8}}>
@@ -1103,10 +1222,10 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
               <MetaDataLabelText>{"병원명"}</MetaDataLabelText>
               <AsteriskText>{"*"}</AsteriskText>
             </MetaDataLabelContainer>
-            <RightArrowIconContainer>
+            {/* <RightArrowIconContainer>
               <RightArrowIcon
               source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
-            </RightArrowIconContainer>
+            </RightArrowIconContainer> */}
           </MetaDataHeaderContainer>
             <MetaDataValueContainer>
             {!dentalObj.originalName && (
@@ -1127,10 +1246,10 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
               <MetaDataLabelText>{"질병 및 치료 항목"}</MetaDataLabelText>
               <AsteriskText>{"*"}</AsteriskText>
             </MetaDataLabelContainer>
-            <RightArrowIconContainer>
+            {/* <RightArrowIconContainer>
               <RightArrowIcon
               source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
-            </RightArrowIconContainer>
+            </RightArrowIconContainer> */}
           </MetaDataHeaderContainer>
             <MetaDataValueContainer>
             {treatmentArray.length === 0 && (
@@ -1144,7 +1263,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                 key={index}
                 style={{marginRight: 8}}>
                   <SelectedTreatItemText>
-                    {'# ' + item.name}
+                    {'# ' + item.usualName}
                   </SelectedTreatItemText>
                   <TouchableWithoutFeedback onPress={() => deleteTreatItem(item)}>
                     <DeleteTreatItemContainer>
@@ -1168,10 +1287,10 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
           <MetaDataLabelText>{"병원 만족도"}</MetaDataLabelText>
           <AsteriskText>{"*"}</AsteriskText>
           </MetaDataLabelContainer>
-          <RightArrowIconContainer>
+          {/* <RightArrowIconContainer>
             <RightArrowIcon
             source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
-          </RightArrowIconContainer>
+          </RightArrowIconContainer> */}
           </MetaDataHeaderContainer>
             <MetaDataValueContainer>
             {!ratingObj.serviceRating && (
@@ -1417,3 +1536,31 @@ export default ReviewMetaDataScreen;
           </AboveKeyboard>
         </FooterContainer>
 */
+
+
+// <ProofImageItemContainer>
+//           <SelectProofImageContainer
+//           style={styles.proofImageContainerShadow}>
+//             <SelectProofImageButtonContainer>
+//             <TouchableWithoutFeedback onPress={() => moveToSelectProofImage()}>
+//             <SelectProofImageButton
+//             style={styles.proofImageContainerShadow}>
+//               <SelectProofImageTextContainer>
+//               <EventTextContainer>
+//                 <EventText>{"EVENT"}</EventText>
+//               </EventTextContainer>
+//               <SelectProofImageText>{"진료 인증자료 올리기"}</SelectProofImageText>
+//               </SelectProofImageTextContainer>
+//               {!selectedProofImage?.uri && (
+//               <RightArrowIcon
+//               source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
+//               )}
+//               {selectedProofImage?.uri && (
+//               <IsExistProofImageIcon
+//               source={require('~/Assets/Images/Upload/ic_isExistProofImage.png')}/>
+//               )}
+//             </SelectProofImageButton>
+//             </TouchableWithoutFeedback>
+//             </SelectProofImageButtonContainer>
+//           </SelectProofImageContainer>
+//           </ProofImageItemContainer>

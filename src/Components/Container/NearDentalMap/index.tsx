@@ -1436,13 +1436,6 @@ const NearDentalMap = ({navigation, route}: Props) => {
               return (
                 <Marker
                   key={index}
-                  caption={{
-                    text: 'FDFSDFSFDSFSDFS',
-                  }}
-                  subCaption={{
-                    text: 'subCaption',
-                  }}
-                  flat={true}
                   coordinate={{
                     latitude: Number(item.geographLat),
                     longitude: Number(item.geographLong),

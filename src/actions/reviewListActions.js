@@ -68,6 +68,13 @@ const deleteReview = (reviewId) => {
   }
 }
 
+const setDentalReviewArray = (reviewArray) => {
+  return {
+    type: 'SET_DENTAL_REVIEW_ARRAY',
+    payload: reviewArray,
+  }
+}
+
 export default {
   setMainReviewList,
   setOpponentReviews,
@@ -79,4 +86,5 @@ export default {
   setCommentedReviews,
   setSearchResultReviews,
   deleteReview,
+  setDentalReviewArray,
 };

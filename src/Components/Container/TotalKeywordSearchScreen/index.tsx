@@ -22,9 +22,8 @@ import POSTSearchRecord from '~/Routes/Search/POSTSearchRecord';
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 
-const ContainerView = Styled(
-  (SafeAreaView as unknown) as new () => SafeAreaView,
-)`
+const ContainerView = Styled.View`
+padding-top: ${getStatusBarHeight()}px;
 flex: 1;
 background: white;
 `;
@@ -271,7 +270,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   }, []);
 
   return (
-    <ContainerView forceInset={{top: 'always'}}>
+    <ContainerView>
       <HeaderBar>
         <BackIconTouchableWithoutFeedback
           onPress={() => {

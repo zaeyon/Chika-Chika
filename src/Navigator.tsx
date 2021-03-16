@@ -62,7 +62,8 @@ import TreatSearchScreen from '~/Components/Container/ReviewUploadScreen/TreatSe
 import DetailPriceScreen from '~/Components/Container/ReviewUploadScreen/DetailPriceScreen';
 import RatingScreen from '~/Components/Container/ReviewUploadScreen/RatingScreen';
 import ProofImageGuideScreen from '~/Components/Container/ReviewUploadScreen/ProofImageGuideScreen';
-import FullProofImageScreen from '~/Components/Container/ReviewUploadScreen/ProofImageGuideScreen/FullProofImageScreen';
+import FullProofImageScreen from '~/Components/Container/ReviewUploadScreen/FullProofImageScreen';
+import ProofImageEventScreen from '~/Components/Container/ProofImageEventScreen';
 
 // My Profile Stack Screen
 import MyProfileScreen from '~/Components/Container/MyProfileScreen';
@@ -632,6 +633,9 @@ function ReviewUploadStackScreen() {
           },
         }}
       />
+      <ReviewUploadStack.Screen
+        name="ProofImageEventScreen"
+        component={ProofImageEventScreen}/>
     </ReviewUploadStack.Navigator>
   );
 }
@@ -1220,7 +1224,7 @@ function BottomTab() {
           ),
         })}
       />
-      {
+      {/*
         <Tab.Screen
           name="관리"
           component={TeethCareStackScreen}
@@ -1237,7 +1241,7 @@ function BottomTab() {
             ),
           })}
         />
-      }
+        */}
       <Tab.Screen
         name="수다방"
         component={CommunityStackScreen}

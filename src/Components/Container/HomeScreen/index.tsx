@@ -379,7 +379,7 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   const moveToReviewUpload = useCallback(() => {
     navigation.navigate('ReviewUploadStackScreen', {
-      screen: 'ReviewGuideScreen',
+      screen: 'ReviewMetaDataScreen',
       params: {
         requestType: 'post',
       },
@@ -403,50 +403,6 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   return (
     <ContainerView as={SafeAreaView}>
-      <ContentScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            enabled={refreshing}
-          />
-        }
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: hp('9.1%'),
-        }}
-        scrollEventThrottle={16}
-        onScroll={(event) => {
-          setPrevOffsetY(event.nativeEvent.contentOffset.y);
-          if (prevOffsetY - event.nativeEvent.contentOffset.y >= 5) {
-            if (
-              scrollDirection === 'down' &&
-              event.nativeEvent.contentOffset.y > 0 &&
-              event.nativeEvent.contentSize.height -
-                event.nativeEvent.layoutMeasurement.height >
-                event.nativeEvent.contentOffset.y
-            ) {
-              Animated.timing(floatY, {
-                toValue: 1,
-                duration: 150,
-                useNativeDriver: true,
-              }).start();
-              setScrollDirection('up');
-            }
-          } else if (event.nativeEvent.contentOffset.y - prevOffsetY >= 5) {
-            if (
-              scrollDirection === 'up' &&
-              event.nativeEvent.contentOffset.y > 0
-            ) {
-              Animated.timing(floatY, {
-                toValue: 0,
-                duration: 300,
-                useNativeDriver: true,
-              }).start();
-              setScrollDirection('down');
-            }
-          }
-        }}>
         <HeaderContainerView>
           <HomeLogoImage
             source={require('~/Assets/Images/Logo/ic_home_logo.png')}
@@ -494,6 +450,50 @@ const HomeScreen = ({navigation, route}: Props) => {
             </HeaderIconTouchableOpacity>
           </HeaderIconContainerView>
         </HeaderContainerView>
+      <ContentScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            enabled={refreshing}
+          />
+        }
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: hp('9.1%'),
+        }}
+        scrollEventThrottle={16}
+        onScroll={(event) => {
+          setPrevOffsetY(event.nativeEvent.contentOffset.y);
+          if (prevOffsetY - event.nativeEvent.contentOffset.y >= 5) {
+            if (
+              scrollDirection === 'down' &&
+              event.nativeEvent.contentOffset.y > 0 &&
+              event.nativeEvent.contentSize.height -
+                event.nativeEvent.layoutMeasurement.height >
+                event.nativeEvent.contentOffset.y
+            ) {
+              Animated.timing(floatY, {
+                toValue: 1,
+                duration: 150,
+                useNativeDriver: true,
+              }).start();
+              setScrollDirection('up');
+            }
+          } else if (event.nativeEvent.contentOffset.y - prevOffsetY >= 5) {
+            if (
+              scrollDirection === 'up' &&
+              event.nativeEvent.contentOffset.y > 0
+            ) {
+              Animated.timing(floatY, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: true,
+              }).start();
+              setScrollDirection('down');
+            }
+          }
+        }}>
         <HomeInfoContent
           isMainHomeChanged={isMainHomeChanged}
           selectedHometown={selectedHometown}

@@ -53,7 +53,7 @@ class ToastMessage extends Component {
         }).start(({finished}) => {
           toastMessage.destroy();
         });
-      }, 4000);
+      }, 1500);
     });
 
     console.log('ToastMessage message', message);

@@ -6,6 +6,7 @@ import {
   FlatList,
   Keyboard,
   StyleSheet,
+  Alert
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -165,6 +166,13 @@ height: 1px;
 background-color: #F5F7F9;
 `;
 
+const TechnicalNameText = Styled.Text`
+color: #9AA2A9;
+font-weight: 400;
+font-size: 13px;
+line-height: 16px;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -207,15 +215,27 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
   }, [selectedTreatmentArray]);
 
   const selectTreatItem = (treat: object, index: number) => {
+
+    console.log("selectTreatItem treat", treat);
+    console.log("selectTreatItem selectedTreatmentArray", selectedTreatmentArray);
+
     treatmentSearchInputRef.current.clear();
-
     var tmpSelectedTreatmentArray = selectedTreatmentArray.slice();
-    tmpSelectedTreatmentArray.push(treat);
-    setSelectedTreatmentArray(tmpSelectedTreatmentArray);
 
-    var tmpAutoCompletedTreatmentArray = autoCompletedTreatmentArray.slice();
-    tmpAutoCompletedTreatmentArray.splice(index, 1);
-    setAutoCompletedTreatmentArray(tmpAutoCompletedTreatmentArray);
+    const isExistIndex = tmpSelectedTreatmentArray.findIndex((item, index) => (treat.usualName === item.usualName))
+
+    console.log("selectTreatItem isExistIndex", isExistIndex);
+
+    if(isExistIndex !== -1) {
+      Alert.alert('이미 등록된 항목입니다.');
+    } else {
+      tmpSelectedTreatmentArray.push(treat);
+      setSelectedTreatmentArray(tmpSelectedTreatmentArray);
+  
+      var tmpAutoCompletedTreatmentArray = autoCompletedTreatmentArray.slice();
+      tmpAutoCompletedTreatmentArray.splice(index, 1);
+      setAutoCompletedTreatmentArray(tmpAutoCompletedTreatmentArray);
+    }
   };
 
   const deleteTreatItem = (treat: object) => {
@@ -264,7 +284,9 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
     return (
       <TreatItemContainer>
         <TreatBodyContainer>
-          <TreatItemNameText>{'# ' + item.usualName}</TreatItemNameText>
+          <TreatItemNameText>{'# ' + item.usualName}
+          <TechnicalNameText>{" " + item.technicalName}</TechnicalNameText>
+          </TreatItemNameText>
           <TouchableWithoutFeedback
             onPress={() => selectTreatItem(item, index)}>
             <TreatItemAddContainer>

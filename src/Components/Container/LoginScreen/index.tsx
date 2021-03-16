@@ -280,7 +280,8 @@ const LoginScreen = ({navigation, route}: Props) => {
 
   const onKeyPressNumberInput = (event: any) => {
     console.log('onKeyPressNumberInput event.nativeEvent', event.nativeEvent);
-    var numberArray = formattedNumber.split('');
+    const tmpFormattedNumber = formattedNumber.slice();
+    var numberArray = tmpFormattedNumber.split('');
     console.log('numberArray', numberArray);
     console.log('event.nativeEvent,key', event.nativeEvent.key);
 
@@ -291,6 +292,7 @@ const LoginScreen = ({navigation, route}: Props) => {
     if (!isNaN(event.nativeEvent.key)) {
       // 입력값 숫자
       numberArray.push(event.nativeEvent.key);
+      const joinedNumberArray = numberArray.join('');
       setFormattedNumber(numberArray.join(''));
 
       if (numberArray.length === 4) {
@@ -302,6 +304,7 @@ const LoginScreen = ({navigation, route}: Props) => {
         console.log('하이폰 추가', numberArray);
         setFormattedNumber(numberArray.join(''));
       }
+
     } else if (event.nativeEvent.key === 'Backspace') {
       // 입력값 Backspace
 
