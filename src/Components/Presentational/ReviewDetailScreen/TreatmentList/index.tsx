@@ -114,7 +114,7 @@ const TreatmentList = ({treatmentArray, elapsedTime}: Props) => {
             key={index}>
               <TreatmentText>
                 <HashText>{'# '}</HashText>
-                {item.name}
+                {item.name || item.usualName}
               </TreatmentText>
             </TreatmentItemContainer>
           );

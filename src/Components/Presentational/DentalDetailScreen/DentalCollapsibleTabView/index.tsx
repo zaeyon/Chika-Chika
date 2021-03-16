@@ -55,8 +55,7 @@ const HeaderBar = Styled.View`
 `;
 
 const HeaderLeftContainer = Styled.View`
-height: ${wp('13.8%')}px;
-padding: 0px 16px 0px 15px;
+padding: 8px 0px 8px 15px;
  align-items: center;
  justify-content: center;
  flex-direction: row;

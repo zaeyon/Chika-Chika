@@ -111,7 +111,7 @@ const PostBottomBar = ({
             <Image
               source={require('~/Assets/Images/Community/bottomBar/comment.png')}
             />
-            <SocialInfoText>{commentCount || postCommentsNum}</SocialInfoText>
+            <SocialInfoText>{commentCount || String(postCommentsNum)}</SocialInfoText>
           </SocialInfoView>
         </TouchableWithoutFeedback>
       </SocialInfoContentView>

@@ -6,24 +6,24 @@ interface params {
     starRate_cost: number,
     starRate_treatment: number,
     starRate_service: number,
-    formatedTreatmentArray: Array<object>,
+    formattedTreatmentArray: Array<object>,
+    formattedDiseaseArray: Array<object>,
     dentalClinicId: number,
-    formatedParagraphArray: Array<object>,
+    formattedParagraphArray: Array<object>,
     formattedProofImage: Object,
     totalPrice?: any,
     treatmentDate: string,
 } 
 
-const POSTReviewUpload = ({jwtToken, starRate_cost, starRate_treatment, starRate_service, formatedParagraphArray, dentalClinicId, formatedTreatmentArray, totalPrice, treatmentDate, formattedProofImage}: params) => {
-    console.log("serverConfig.jwtToken", serverConfig.jwtToken);
+const POSTReviewUpload = ({jwtToken, starRate_cost, starRate_treatment, starRate_service, formattedParagraphArray, dentalClinicId, formattedTreatmentArray=[], formattedDiseaseArray=[], totalPrice, treatmentDate, formattedProofImage}: params) => {
     const uri = serverConfig.baseUri + "/api/v1/reviews"
 
     console.log("POSTReviewUpload starRate_cost", starRate_cost);
     console.log("POSTReviewUpload starRate_treatment", starRate_treatment);
     console.log("POSTReviewUpload starRate_service", starRate_service);
-    console.log("POSTReviewUpload treatments", formatedTreatmentArray);
+    console.log("POSTReviewUpload treatments", formattedTreatmentArray);
     console.log("POSTReviewUpload dentalClinicId", dentalClinicId);
-    console.log("POSTReviewUpload paragraphs", formatedParagraphArray);
+    console.log("POSTReviewUpload paragraphs", formattedParagraphArray);
     console.log("POSTReviewUpload totalCost", totalPrice);
     console.log("POSTReviewUpload treatmentDate", treatmentDate);
     console.log("POSTReviewUpload formattedProofImage", formattedProofImage);
@@ -36,15 +36,15 @@ const POSTReviewUpload = ({jwtToken, starRate_cost, starRate_treatment, starRate
         "starRate_cost":${starRate_cost},
         "starRate_treatment":${starRate_treatment},
         "starRate_service":${starRate_service},
-        "treatments":${JSON.stringify(formatedTreatmentArray)},
-        "diseases":${JSON.stringify([])},
+        "treatments":${JSON.stringify(formattedTreatmentArray)},
+        "diseases":${JSON.stringify(formattedDiseaseArray)},
         "dentalClinicId":${dentalClinicId},
         "totalCost":${totalPrice},
         "treatmentDate":"${treatmentDate}"
     }`
-    var formData = new FormData();
+    let formData = new FormData();
 
-    const stringfiedPara = JSON.stringify(formatedParagraphArray); 
+    const stringfiedPara = JSON.stringify(formattedParagraphArray);
 
     if(formattedProofImage.location) {
         const stringfiedProofImage = JSON.stringify(formattedProofImage);
@@ -54,6 +54,7 @@ const POSTReviewUpload = ({jwtToken, starRate_cost, starRate_treatment, starRate
     console.log("body", body);
     formData.append("body", body);
     formData.append("paragraphs", stringfiedPara);
+    console.log(formData)
 
     return new Promise(function(resolve, reject) {
         axios

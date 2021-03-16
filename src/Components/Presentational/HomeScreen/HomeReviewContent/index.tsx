@@ -16,6 +16,7 @@ import ReviewThumbnail from '~/Components/Presentational/HomeScreen/HomeReviewCo
 
 const ContainerView = Styled.View`
 width: 100%;
+flex: 1;
 padding: 16px 0px 8px 0px;
 margin-bottom: 16px;
 `;
@@ -23,7 +24,7 @@ margin-bottom: 16px;
 const ContentTitleText = Styled.Text`
 margin: 0px 16px;
 font-weight: bold;
-font-size: 17px;
+font-size: 16px;
 line-height: 24px;
 color: #131F3C;
 margin-bottom: 16px;
@@ -92,13 +93,10 @@ const HomeReviewContent = ({
   reviewData,
   moveToReviewDetail,
 }: Props) => {
-  const [selectedTagFilterItem, setSelectedTagFilterItem] = useState('충치');
+  const [selectedTagFilterItem, setSelectedTagFilterItem] = useState('스케일링');
   const flatlistRef: any = useRef();
 
   const renderTagFilter = useCallback(() => {
-    LayoutAnimation.configureNext(
-      LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-    );
     return (
       <TagFilterContainerView>
         {tagFilterItems.map((item: any) => (
@@ -139,10 +137,8 @@ const HomeReviewContent = ({
   return (
     <ContainerView>
       <ContentTitleText>{`최근 올라온 ${selectedHometown} 치과 후기`}</ContentTitleText>
-      {renderTagFilter()}
       <ReviewThumbnailFlatlist
         ref={flatlistRef}
-        initialNumToRender={2}
         contentContainerStyle={{
           paddingLeft: 16,
         }}
@@ -158,11 +154,7 @@ const HomeReviewContent = ({
         snapToInterval={wp('79%') + 16}
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
-        getItemLayout={(data, index) => ({
-          length: wp('79%'),
-          offset: wp('79%') * index,
-          index,
-        })}
+        
       />
     </ContainerView>
   );

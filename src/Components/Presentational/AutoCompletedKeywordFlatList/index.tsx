@@ -212,7 +212,7 @@ const AutoCompletedTotalKeywordFlatList = ({
             keyword: item.inputQuery,
             searchQuery: item.searchQuery,
             category: item.category,
-            tagId: item.id,
+            tagId: item.targetId ? item.targetId : '',
           })
         }>
         <SearchRecordItemContainer>
@@ -334,7 +334,7 @@ const AutoCompletedTotalKeywordFlatList = ({
                 keyword: item.name,
                 searchQuery: item.fullAddress,
                 category: item.category,
-                tagId: -1,
+                tagId: '',
               })
             }>
             <AutoCompletedKeywordItemContainer>
@@ -403,6 +403,7 @@ const AutoCompletedTotalKeywordFlatList = ({
             onPress={() =>
               searchTotalKeyword({
                 keyword: item.usualName,
+                searchQuery: item.usualName,
                 category: item.category,
                 tagId: item.id,
               })

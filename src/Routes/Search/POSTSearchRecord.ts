@@ -4,13 +4,14 @@ import serverConfig from '../server.config';
 interface Params {
     jwtToken: string,
     tagCategory: string,
+    targetId: string,
     sq: string,
     iq: string,
 }
 
-const POSTSearchRecord = ({jwtToken, tagCategory, sq, iq}: Params) => {
+const POSTSearchRecord = ({jwtToken, tagCategory, targetId, sq, iq}: Params) => {
 
-    const uri = serverConfig.baseUri + `/search/recent?tagCategory=${tagCategory}&iq=${iq}&sq=${sq}`;
+    const uri = serverConfig.baseUri + `/search/recent?tagCategory=${tagCategory}&iq=${iq}&sq=${sq}&targetId=${targetId}`;
 
     return new Promise((resolve, reject) => {
 

@@ -11,7 +11,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {getStatusBarHeight} from 'react-native-iphone-x-helper';
+import {getStatusBarHeight, getBottomSpace} from 'react-native-iphone-x-helper';
 import Animated, {Extrapolate, Easing} from 'react-native-reanimated';
 import {TabView, TabBar} from 'react-native-tab-view';
 import {PanGestureHandler} from 'react-native-gesture-handler';
@@ -189,6 +189,7 @@ interface Props {
   onCommunityEndReached: any;
   targetUser?: User;
   targetUserSkeletonData: any;
+  isMyProfile: boolean;
   moveToCommunityDetail: any;
   moveToAnotherProfile: any;
   toggleSocialLike: any;
@@ -220,6 +221,10 @@ interface User {
   Residences: Array<Residence>;
   gender: string;
   birthdate: string;
+  communitiesNum: number;
+  reviewsNum: number;
+  appointmentsNum: number;
+  scrapClinicsNum: number;
 }
 
 interface Residence {
@@ -374,7 +379,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
         }
         style={{
           flex: 1,
-          marginBottom: hasNotch() ? hp('10.59%') : hp('7.2%'),
+          marginBottom: -getBottomSpace() + (hasNotch() ? hp('10.59%') : hp('7.2%')),
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
         contentContainerStyle={{
@@ -460,7 +465,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
         }
         style={{
           flex: 1,
-          marginBottom: hasNotch() ? hp('10.59%') : hp('7.2%'),
+          marginBottom: -getBottomSpace() + (hasNotch() ? hp('10.59%') : hp('7.2%')),
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
         contentContainerStyle={{
@@ -622,6 +627,7 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
   );
 
   render() {
+    console.log(this.props.targetUser)
     return (
       <ContainerView>
         <FloatingView
@@ -643,39 +649,37 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
               <ProfileImageView>
                 <ProfileImage
                   source={
-                    this.props.targetUser?.img_thumbNail
+                    this.props.targetUserSkeletonData?.img_thumbNail
                       ? {
-                          uri: this.props.targetUser?.img_thumbNail,
+                          uri: this.props.targetUserSkeletonData?.img_thumbNail,
                           cache: 'force-cache',
                         }
-                      : this.props.targetUser?.profileImg
+                      : this.props.targetUserSkeletonData?.profileImageUri
                       ? {
-                          uri: this.props.targetUser?.profileImg,
+                          uri: this.props.targetUserSkeletonData?.profileImageUri,
                           cache: 'force-cache',
                         }
                       : require('~/Assets/Images/MyPage/default_profileImg.png')
                   }
                 />
               </ProfileImageView>
-              <ProfileReservationTouchableOpacity>
+              <ProfileReservationTouchableOpacity onPress={() => this.props.moveToReservationTabScreen()}>
                 <ProfileReservationText>
-                  {this.props.targetUser?.reviewsNum ||
-                    this.props.targetUser?.appointmentsNum}
+                  {(this.props.isMyProfile ? this.props.targetUser?.appointmentsNum : this.props.targetUser?.reviewsNum)}
                 </ProfileReservationText>
                 <ProfileReservationTitleText>
-                  {this.props.targetUser?.reviewsNum === undefined
+                  {this.props.isMyProfile
                     ? '예약 피드'
                     : '리뷰 수'}
                 </ProfileReservationTitleText>
               </ProfileReservationTouchableOpacity>
               <VerticalPartitionView />
-              <ProfileReservationTouchableOpacity>
+              <ProfileReservationTouchableOpacity onPress={() => this.props.moveToSavedHospitalTabScreen()}>
                 <ProfileReservationText>
-                  {this.props.targetUser?.communitiesNum ||
-                    this.props.targetUser?.scrapClinicsNum}
+                    {(this.props.isMyProfile ? this.props.targetUser?.scrapClinicsNum :this.props.targetUser?.communitiesNum)}
                 </ProfileReservationText>
                 <ProfileReservationTitleText>
-                  {this.props.targetUser?.reviewsNum === undefined
+                  {this.props.isMyProfile
                     ? '찜한 병원'
                     : '수다글 수'}
                 </ProfileReservationTitleText>

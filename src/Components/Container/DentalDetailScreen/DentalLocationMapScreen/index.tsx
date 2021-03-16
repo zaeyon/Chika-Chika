@@ -1,8 +1,6 @@
 import React, {useRef} from 'react';
 import Styled from 'styled-components/native';
-import {
-    PanResponder,
-} from 'react-native'
+import {hasNotch} from '~/method/deviceInfo'
 import SafeAreaView from 'react-native-safe-area-view';
 import {
     widthPercentageToDP as wp,
@@ -34,9 +32,21 @@ const DentalLocationMapScreen = ({navigation, route}: Props) => {
             headerLeftProps={{type: "arrow", onPress: goBack}}
             headerTitle={"지도보기"}/>
             <NaverMapView
-            style={{width: '100%', height: hp('100%')}}
+            center={{...route.params.coordinate, zoom: 16}}
+            style={{flex: 1, marginBottom: hasNotch() ? hp('10.59%') : hp('7.2%')}}
+            minZoomLevel={6}
             compass={false}
-            />
+            showsMyLocationButton={true}
+            >
+                <Marker
+                    coordinate={route.params.coordinate}
+                    isHideCollidedSymbols={true}
+                    caption={{
+                        text: route.params.dentalObj?.originalName
+                    }}
+                    image={require('~/Assets/Images/Dental/marker_detail.png')}
+                />
+            </NaverMapView>
         </Container>
     )
 }

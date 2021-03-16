@@ -11,7 +11,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {getStatusBarHeight} from 'react-native-iphone-x-helper';
+import {getStatusBarHeight, getBottomSpace} from 'react-native-iphone-x-helper';
 import Animated, {Extrapolate, Easing} from 'react-native-reanimated';
 import {TabView, TabBar} from 'react-native-tab-view';
 import {PanGestureHandler} from 'react-native-gesture-handler';
@@ -168,6 +168,103 @@ margin-top: 12px;
 font-weight: normal;
 font-size: 16px;
 color: #9AA2A9;
+`;
+
+const ReviewSkeletonView = Styled.View`
+ padding-top: 8px;
+ padding-left: 16px;
+ padding-right: 16px;
+ padding-bottom: 10px;
+ width: ${wp('100')}px;
+ background-color: #FFFFFF;
+ flex-direction: column;
+  margin-bottom: 8px;
+`;
+
+const ProfileSkeletonContainer = Styled.View`
+width: ${wp('91.46%')}px;
+ flex-direction: row;
+ align-items: center;
+ justify-content: space-between;
+ background-color: #ffffff;
+ padding: 8px 0px;
+`;
+
+const ProfileSkeletonLeftContainer = Styled.View`
+ flex-direction: row;
+ align-items: center;
+ background-color: #ffffff;
+`;
+
+
+const ProfileSkeletonImage = Styled.Image`
+ width: ${wp('7.46')}px;
+ height: ${wp('7.46%')}px;
+ border-radius: 40px;
+ background-color: #F5F7F9;
+`;
+
+const NicknameCreatedAtSkeletonContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+ margin-left: 8px;
+`;
+
+const NicknameSkeletonText = Styled.Text`
+ font-size: 15px;
+ font-weight: 600;
+ color: #F5F7F9;
+ background: #F5F7F9;
+`;
+
+const CreatedAtSkeletonText = Styled.Text`
+margin-left: 4px;
+font-size: 13px;
+line-height: 16px;
+color: #F5F7F9;
+background: #F5F7F9;
+`;
+
+const ImageSkeletonContainerView = Styled.View`
+flex-direction: row;
+justify-content: space-between;
+flex: 1;
+`;
+const ImageSkeletonLeftView = Styled.View`
+width: ${wp('45.13%')}px;
+ height: ${wp('45.13%')}px;
+ border-top-left-radius: 8px;
+ border-bottom-left-radius: 8px;
+ background: #F5F7F9;
+`;
+
+const ImageSkeletonRightView = Styled.View`
+width: ${wp('45.13%')}px;
+ height: ${wp('45.13%')}px;
+ border-top-right-radius: 8px;
+ border-bottom-right-radius: 8px;
+ background: #F5F7F9;
+`;
+
+const TagSkeletonContainerView = Styled.View`
+flex-direction: row;
+flex: 1;
+`
+const TagSkeletonView = Styled.View`
+background-color: #F5F7F9;
+border-radius: 4px;
+width: 80px;
+height: 25px;
+margin: 8px 8px 8px 0px;
+`
+const DescripText = Styled.Text`
+margin-top: 4px;
+font-weight: 500;
+ font-size: 14px;
+ line-height: 24px;
+ color: #F5F7F9;
+ background: #F5F7F9;
+ margin-right: auto;
 `;
 
 interface Props {
@@ -363,6 +460,41 @@ export default class MyProfile extends React.PureComponent<Props, State> {
     );
   };
 
+  renderReviewSkeletonItem = () => {
+    return (
+      <ReviewSkeletonView>
+        <ProfileSkeletonContainer>
+          
+            <ProfileSkeletonLeftContainer>
+              <ProfileSkeletonImage
+                
+              />
+              <NicknameCreatedAtSkeletonContainer>
+                <NicknameSkeletonText>{"치카치카"}</NicknameSkeletonText>
+                <CreatedAtSkeletonText>
+                  {"Fdsaf"}
+                </CreatedAtSkeletonText>
+              </NicknameCreatedAtSkeletonContainer>
+            </ProfileSkeletonLeftContainer>
+
+        </ProfileSkeletonContainer>
+        <ImageSkeletonContainerView>
+          <ImageSkeletonLeftView/>
+          <ImageSkeletonRightView/>
+        </ImageSkeletonContainerView>
+        <TagSkeletonContainerView>
+
+        <TagSkeletonView key='tag1'/>
+        <TagSkeletonView key='tag2'/>
+        <TagSkeletonView key='tag3'/>
+        </TagSkeletonContainerView>
+        <DescripText>
+          {"치카치카치카치카치카치카치카치카"}
+        </DescripText>
+</ReviewSkeletonView>
+    )
+  }
+
   renderPostFlatList = () => {
     return this.props.isCommunityInitializing ? (
       <InitializingView>
@@ -384,7 +516,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         }
         style={{
           flex: 1,
-          marginBottom: hasNotch() ? hp('6.5') : hp('7.2%'),
+          marginBottom: -getBottomSpace() + (hasNotch() ? hp('10.59%') : hp('7.2%')),
           overflow: 'visible',
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
@@ -452,14 +584,10 @@ export default class MyProfile extends React.PureComponent<Props, State> {
   };
 
   renderReviewFlatList = () => {
-    return this.props.isReviewInitializing ? (
-      <InitializingView>
-        <ActivityIndicator />
-      </InitializingView>
-    ) : (
+    return (
       <AnimatedFlatList
         ListHeaderComponent={() =>
-          this.props.reviewData.length === 0 ? (
+          (!this.props.isReviewInitializing && this.props.reviewData.length === 0) ? (
             <EmptyContainerView>
               <EmptyContentImage
                 source={require('~/Assets/Images/Comment/ic_noComment.png')}
@@ -470,7 +598,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         }
         style={{
           flex: 1,
-          marginBottom: hasNotch() ? hp('6.5%') : hp('7.2%'),
+          marginBottom: -getBottomSpace() + (hasNotch() ? hp('10.59%') : hp('7.2%')),
           overflow: 'visible',
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
@@ -524,8 +652,8 @@ export default class MyProfile extends React.PureComponent<Props, State> {
             </ActivityIndicatorContianerView>
           ) : null
         }
-        data={this.props.reviewData}
-        renderItem={this.renderReviewItem}
+        data={this.props.isReviewInitializing ? [1, 2] : this.props.reviewData}
+        renderItem={this.props.isReviewInitializing ? this.renderReviewSkeletonItem : this.renderReviewItem}
         keyExtractor={(item: any, index: number) => String(index)}
         refreshControl={
           <RefreshControl

@@ -17,7 +17,7 @@ align-items: center;
 
 const ToastMessageBackground = Styled.View`
 border-radius: 8px;
-background: #000000;
+background: #00000099;
 align-items: center;
 flex-direction: row;
 padding-right: 4px;

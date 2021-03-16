@@ -4,6 +4,7 @@ import {
   TouchableWithoutFeedback,
   FlatList,
   ActivityIndicator,
+  LayoutAnimation,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -14,17 +15,16 @@ import CommentItem from '~/Components/Presentational/CommentItem';
 import ReplyItem from '~/Components/Presentational/ReplyItem';
 
 const Container = Styled.View`
-padding-top: 12px;
 `;
 
 const HeaderContainer = Styled.View`
-padding-left: 16px;
-padding-right: 16px;
+padding: 16px 16px 12px 16px;
 flex-direction: row;
 `;
 
 const HeaderCommentCountText = Styled.Text`
-font-size: 16px;
+font-size: 15px;
+line-height: 24px;
 color: #000000;
 font-weight: bold;
 `;
@@ -36,9 +36,7 @@ border-color: #F5F7F9;
 `;
 
 const ViewTotalCommentContainer = Styled.View`
-padding-top: 12px;
-padding-bottom: 5px;
-background-color: #ffffff;
+align-items: center;
 flex-direction: row;
 align-items: center;
 `;
@@ -143,7 +141,15 @@ const PreviewCommentList = ({
     }
   }, [commentList, maxCommentNum]);
 
+  useEffect(() => {
+    if(!isLoading) {
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
+      );
+    }
+  }, [isLoading])
   const renderCommentItem = useCallback(({item, index}: any) => {
+    console.log(item.user)
     return (
       <>
         <CommentItem
@@ -153,6 +159,7 @@ const PreviewCommentList = ({
           clickReply={clickReply}
           userId={item.user?.id}
           profileImage={item.user?.profileImg}
+          img_thumbNail={item.user?.img_thumbNail}
           nickname={item.user?.nickname}
           description={item.description}
           createdDate={item.createdAt}
@@ -224,12 +231,13 @@ const PreviewCommentList = ({
   );
 
   const moveToAnotherProfile = useCallback(
-    (userId: string, nickname: string, profileImageUri: string) => {
+    (userId: string, nickname: string, profileImageUri: string, img_thumbNail: string) => {
       navigation.navigate('AnotherProfileStackScreen', {
         targetUser: {
           userId,
           nickname,
           profileImageUri,
+          img_thumbNail,
         },
       });
     },
@@ -285,7 +293,8 @@ const PreviewCommentList = ({
         <TouchableWithoutFeedback onPress={() => moveToCommentList()}>
           <ViewTotalCommentContainer>
             <HeaderCommentCountText>{`댓글 ${
-              String(commentCount) || String(commentsNum)
+              (commentCount > 99 || commentsNum > 99) ? '99+' :
+              commentCount || String(commentsNum)
             }`}</HeaderCommentCountText>
             <ViewTotalCommentIcon
               source={require('~/Assets/Images/Arrow/ic_viewTotalComments.png')}

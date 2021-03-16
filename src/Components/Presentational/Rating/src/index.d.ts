@@ -99,12 +99,12 @@ export interface RatingProps {
   /**
    * Callback method when the user starts rating.
    */
-  onStartRating?(): void;
+  onStartRating?( rating: number ): void;
 
   /**
    * Callback method when the user is swiping.
    */
-  onSwipeRating?( rating: number): void;
+  onSwipeRating?( rating: number ): void;
   /**
    * Callback method when the user finishes rating. Gives you the final rating value as a whole number
    */

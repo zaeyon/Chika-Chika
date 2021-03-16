@@ -217,9 +217,7 @@ function ReviewStackScreen() {
   return (
     <ReviewStack.Navigator
       headerMode="none"
-      screenOptions={{
-        gestureEnabled: true,
-      }}>
+      >
       <ReviewStack.Screen
         name="ReviewListScreen"
         component={ReviewListScreen}
@@ -230,6 +228,7 @@ function ReviewStackScreen() {
       <ReviewStack.Screen
         name="ReviewDetailScreen"
         component={ReviewDetailScreen}
+        
       />
       <ReviewStack.Screen
         name="FullImagesScreen"
@@ -304,6 +303,14 @@ function AnotherProfileStackScreen({route}) {
         name="ReviewStackScreen"
         component={ReviewStackScreen}
       />
+      <AnotherProfileStack.Screen
+        name="ReservationTabScreen"
+        component={ReservationTabScreen}
+      />
+      <AnotherProfileStack.Screen
+        name="SavedHospitalTabScreen"
+        component={SavedHospitalTabScreen}
+      />
     </AnotherProfileStack.Navigator>
   );
 }
@@ -312,9 +319,10 @@ function HomeStackScreen() {
   return (
     <HomeStack.Navigator
       headerMode="none"
-      screenOptions={{
-        gestureEnabled: true,
-      }}>
+      screenOptions={({route}) => ({
+        gestureEnabled: route.state && route.state.routes[route.state.index].name !== 'ImageDetailScreen'
+      })}
+      >
       <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
       <HomeStack.Screen
         name="CommunityStackScreen"
@@ -434,6 +442,27 @@ function NearDentalMapStackScreen() {
       <NearDentalMapStack.Screen
         name="DentalLocationMapScreen"
         component={DentalLocationMapScreen}
+        options={() => ({
+          gestureEnabled: false,
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {duration: 150},
+            },
+            close: {
+              animation: 'timing',
+              config: {duration: 150},
+            },
+          },
+          cardStyle: {backgroundColor: 'transparent'},
+          cardStyleInterpolator: ({current: {progress}}) => {
+            return {
+              cardStyle: {
+                opacity: progress,
+              },
+            };
+          },
+        })}
       />
       <NearDentalMapStack.Screen
         name="ImageSelectStackScreen"

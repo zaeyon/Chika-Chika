@@ -31,7 +31,7 @@ const HomeCommunityContent = ({
     <ContainerView>
       <CarouselContent
         postData={postData}
-        titleFontSize={17}
+        titleFontSize={16}
         titleText={`최근 올라온 ${selectedHometown} 소통글`}
         moveToCommunityDetail={moveToCommunityDetail}
         moveToAnotherProfile={moveToAnotherProfile}

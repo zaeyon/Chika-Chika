@@ -13,6 +13,7 @@ import {uploadImageToS3} from '~/method/uploadImageToS3';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import CommunityCreatePostScreen from '~/Components/Presentational/CommunityCreatePostScreen';
 import AnimatedModal from '~/Components/Presentational/AnimatedModal';
+import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover'
 // Routes
 import GETAllTagSearch from '~/Routes/Search/GETAllTagSearch';
 import POSTCreateCommunityPost from '~/Routes/Community/createPost/POSTCreateCommunityPost';
@@ -153,6 +154,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEmptyPost, setIsEmptyPost] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     //fetch here!!
@@ -296,6 +298,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
       console.log('empty');
       return;
     } else {
+      setUploading(true);
       LayoutAnimation.configureNext(
         LayoutAnimation.create(
           200,
@@ -315,6 +318,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
       };
       POSTCreateCommunityPost(jwtToken, postData)
         .then((response: any) => {
+          setUploading(false);
           navigation.navigate('CommunityListScreen', {
             screen: formattedCategory === 'Question' ? '질문방' : '수다방',
             params: {
@@ -343,6 +347,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
     if (isEmptyPost) {
       return;
     } else {
+      setUploading(true);
       LayoutAnimation.configureNext(
         LayoutAnimation.create(
           200,
@@ -362,6 +367,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
       };
       PUTCommunityPost(jwtToken, postData, prevData.id).then(
         (response: any) => {
+          setUploading(false);
           if (prevData.type === formattedCategory) {
             const form = {
               id: prevData.id,
@@ -504,6 +510,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         setIsPopupShown={setIsPopupShown}
         isLoading={isLoading}
       />
+      <TouchBlockIndicatorCover loading={uploading}/>
     </ContainerView>
   );
 };

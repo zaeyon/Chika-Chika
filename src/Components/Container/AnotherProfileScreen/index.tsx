@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
-import {LayoutAnimation} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -422,8 +421,11 @@ const AnotherProfileScreen = ({navigation, route}: Props) => {
         onCommunityEndReached={onCommunityEndReached}
         targetUser={targetUserProfile}
         targetUserSkeletonData={route.params.targetUser}
+        isMyProfile={route.params.targetUser.userId === profile.id}
         moveToCommunityDetail={moveToCommunityDetail}
         moveToAnotherProfile={moveToAnotherProfile}
+        moveToReservationTabScreen={moveToReservationTabScreen}
+        moveToSavedHospitalTabScreen={moveToSavedHospitalTabScreen}
         toggleSocialLike={toggleSocialLike}
         toggleSocialScrap={toggleSocialScrap}
         moveToReviewDetail={moveToReviewDetail}

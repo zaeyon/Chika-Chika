@@ -26,7 +26,7 @@ import FilteringHeader from '~/Components/Container/CommunityListScreen/Filterin
 import TopBanner from '~/Components/Container/CommunityListScreen/TopBanner';
 import AdviceInfoHeader from '~/Components/Container/CommunityListScreen/AdviceInfoHeader';
 import CarouselContent from '~/Components/Container/CommunityListScreen/CarouselContent';
-
+import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover'
 // Routes
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
@@ -97,11 +97,14 @@ interface Props {
 const QuestionTabScreen = ({navigation, route}: Props) => {
   const type = 'Question';
   const limit = 10;
+  const [initialize, setInitialize] = useState(true);
   const [isDataFinish, setIsDataFinish] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
   const [region, setRegion] = useState('all');
   const [order, setOrder] = useState('createdAt');
+  const [isFiltering, setIsFiltering] = useState(false);
+  const [isRegionChanging, setIsRegionChanging] = useState(false);
   const [selectedHometown, setSelectedHometown] = useState({
     emdName: '전국',
     id: -1,
@@ -118,6 +121,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   useEffect(() => {
     setOrder('createdAt');
     setRegion(selectedHometown.id === -1 ? 'all' : 'residence');
+    !initialize && setIsRegionChanging(true);
     const form = {
       type,
       limit: 10,
@@ -131,29 +135,21 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
           type,
           posts: response,
         };
-        if (
-          JSON.stringify(response).replace(
-            /"createdDiff\(second\)\"\:\d*\,/gi,
-            '',
-          ) !==
-          JSON.stringify(postData).replace(
-            /"createdDiff\(second\)\"\:\d*\,/gi,
-            '',
-          )
-        ) {
+        
           console.log('liked post diff1');
           LayoutAnimation.configureNext(
             LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
           );
-
+          setInitialize(false);
           dispatch(allActions.communityActions.setPosts(data));
-        }
+          setIsRegionChanging(false)
       },
     );
   }, [selectedHometown]);
 
   useEffect(() => {
     if (route.params?.isPostCreated) {
+      console.log('post created')
       setOrder('createdAt');
       navigation.setParams({isPostCreated: false});
       const form = {
@@ -290,6 +286,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   const onFiltering = useCallback(
     (order: string, callback = () => console.log('filtered')) => {
       setOrder(order);
+      setIsFiltering(true);
       const form = {
         type,
         limit,
@@ -304,24 +301,25 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
             type,
             posts: response,
           };
-          if (
-            postData &&
-            JSON.stringify(response).replace(
-              /"createdDiff\(second\)\"\:\d*\,/gi,
-              '',
-            ) !==
-              JSON.stringify(postData).replace(
-                /"createdDiff\(second\)\"\:\d*\,/gi,
-                '',
-              )
-          ) {
-            console.log('liked post diff5');
-            LayoutAnimation.configureNext(
-              LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-            );
+          // if (
+          //   postData &&
+          //   JSON.stringify(response).replace(
+          //     /"createdDiff\(second\)\"\:\d*\,/gi,
+          //     '',
+          //   ) !==
+          //     JSON.stringify(postData).replace(
+          //       /"createdDiff\(second\)\"\:\d*\,/gi,
+          //       '',
+          //     )
+          // ) {
+          //   console.log('liked post diff5');
+          //   LayoutAnimation.configureNext(
+          //     LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+          //   );
 
             dispatch(allActions.communityActions.setPosts(data));
-          }
+            setIsFiltering(false)
+          // }
           callback();
         },
       );
@@ -332,8 +330,9 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   const moveToCommunityDetail = useCallback(
     (postId: number, postType: string) => {
       navigation.navigate('CommunityDetailScreen', {
-        id: postId,
-        type: postType,
+
+          id: postId,
+          type: postType,
       });
     },
     [],
@@ -348,12 +347,13 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   }, []);
 
   const moveToAnotherProfile = useCallback(
-    (userId: string, nickname: string, profileImageUri: string) => {
+    (userId: string, nickname: string, profileImageUri: string, img_thumbNail: string) => {
       navigation.navigate('AnotherProfileStackScreen', {
         targetUser: {
           userId,
           nickname,
           profileImageUri,
+          img_thumbNail,
         },
       });
     },
@@ -421,7 +421,13 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
           order={order}
           moveToHomeTownSetting={moveToHomeTownSetting}
         />
-        {postData.length === 0 ? (
+        {initialize || postData.length !== 0 ? <CarouselContent
+        initialize={initialize}
+            postData={postData}
+            titleText="💬 답변을 기다리는 질문"
+            moveToCommunityDetail={moveToCommunityDetail}
+            moveToAnotherProfile={moveToAnotherProfile}
+          /> : (
           <EmptyIndicatorContainerView>
             <EmptyIndicatorView>
               <EmptyIndicatorImage
@@ -443,21 +449,15 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
               </TouchableWithoutFeedback>
             </EmptyIndicatorView>
           </EmptyIndicatorContainerView>
-        ) : (
-          <CarouselContent
-            postData={postData}
-            titleText="💬 답변을 기다리는 질문"
-            moveToCommunityDetail={moveToCommunityDetail}
-            moveToAnotherProfile={moveToAnotherProfile}
-          />
-        )}
+        ) }
       </>
     );
-  }, [profile, postData, order, region, hometown, selectedHometown]);
+  }, [profile, postData, order, region, hometown, selectedHometown, initialize]);
 
   return (
     <ContainerView>
       <CommunityPostList
+        initialize={initialize}
         postData={postData}
         refreshing={refreshing}
         onRefresh={onRefresh}
@@ -469,6 +469,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         toggleSocialScrap={toggleSocialScrap}
         renderHeaderComponent={renderHeaderComponent}
       />
+      <TouchBlockIndicatorCover loading={isRegionChanging || isFiltering}/>
     </ContainerView>
   );
 };
