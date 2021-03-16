@@ -1,19 +1,17 @@
 import React from 'react';
 import Styled from 'styled-components/native';
-import {ActivityIndicator} from 'react-native';
+import {ActivityIndicator, Modal} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 const Container = Styled.View`
-position: absolute;
-background-color: #00000030;
+background: #00000030;
 width: ${wp('100%')}px;
 height: ${hp('100%')}px;
 align-items: center;
 justify-content: center;
-z-index: 100;
 `;
 
 const EmptyContainer = Styled.View`
@@ -24,15 +22,14 @@ interface Props {
 }
 
 const TouchBlockIndicatorCover = ({loading}: Props) => {
-  if (loading) {
     return (
+      <Modal transparent={true} visible={loading}>
       <Container>
         <ActivityIndicator color={'#ffffff'} />
       </Container>
+      </Modal>
     );
-  } else {
-    return <EmptyContainer />;
-  }
+
 };
 
 export default TouchBlockIndicatorCover;

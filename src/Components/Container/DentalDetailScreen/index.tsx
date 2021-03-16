@@ -18,7 +18,6 @@ import {
 } from 'react-native-responsive-screen';
 import allActions from '~/actions';
 import {useSelector, useDispatch} from 'react-redux';
-import CallDetectorManager from 'react-native-call-detection';
 
 // Local Components
 import DentalCollapsibleTabView from '~/Components/Presentational/DentalDetailScreen/DentalCollapsibleTabView';
@@ -58,12 +57,10 @@ interface Props {
   route: any;
 }
 
-let dentalObj: object;
-let offset = 0;
-let limit = 10;
 
 const DentalDetailScreen = ({navigation, route}: Props) => {
-  console.log('DentalDetailScreen dentalId', route.params?.dentalId);
+  const offset = 0;
+  const limit = 10;
   const [dentalDetailInfo, setDentalDetailInfo] = useState<any>();
   const [dentalReviewArray, setDentalReviewArray] = useState<Array<any>>([]);
   const [dentalImageArray, setDentalImageArray] = useState<Array<any>>([]);
@@ -123,14 +120,8 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
           setDentalImageArray(tmpDentalImageArray);
         }
         setDentalDetailInfo(response);
+        console.log(response)
         setLoadingGetDentalDetail(false);
-
-        dentalObj = {
-          id: route.params?.dentalId,
-          name: response.clinicInfoHeader.name,
-          originalName: response.clinicInfoHeader.originalName,
-          address: response.clinicInfoHeader.address,
-        };
       })
       .catch((error) => {
         console.log('GETDentalDetail error', error);
@@ -151,7 +142,7 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
 
   const getDentalReview = () => {
     GETDentalReview({jwtToken, dentalId, offset, limit})
-      .then((response) => {
+      .then((response: any) => {
         console.log('GETDentalReview response', response);
         setDentalReviewArray(response);
       })
@@ -185,6 +176,12 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
   };
 
   const moveToDentalInfoEdit = () => {
+    const dentalObj = {
+      id: dentalId,
+      name: dentalDetailInfo.clinicInfoHeader.name,
+      originalName: dentalDetailInfo.clinicInfoHeader.originalName,
+      address: dentalDetailInfo.clinicInfoHeader.address,
+    }
     navigation.navigate('DentalInfoEditRequestScreen', {
       dentalObj: dentalObj,
     });
@@ -209,9 +206,16 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
 
   const moveToDentalLocationMap = () => {
     navigation.navigate('DentalLocationMapScreen', {
+      dentalObj: {
+        address: dentalDetailInfo.clinicInfoHeader.address,
+        id: dentalId,
+        local: dentalDetailInfo.clinicInfoHeader.address,
+        name: dentalDetailInfo.clinicInfoHeader.name,
+        originalName: dentalDetailInfo.clinicInfoHeader.originalName,
+      },
       coordinate: {
-        latitude: 37.566515657875435,
-        longitude: 126.9781164904998,
+        latitude: parseFloat(dentalDetailInfo.clinicInfoHeader.geographLat),
+        longitude: parseFloat(dentalDetailInfo.clinicInfoHeader.geographLong),
       },
     });
   };
@@ -320,104 +324,5 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
   );
 };
 
-const styles = StyleSheet.create({
-  certificationIconShadow: {
-    shadowOffset: {
-      height: 0,
-      width: 0,
-    },
-    shadowRadius: 16,
-    shadowOpacity: 0.05,
-  },
-});
 
 export default DentalDetailScreen;
-
-const TEST_DENTAL_DETAIL_DATA = {
-  clinicInfoHeader: {
-    name: '아너스치과교정과치과의원(강서구-화곡동)',
-    address:
-      '서울특별시 강서구 강서로 242 3층 307호 (화곡동, 강서힐스테이트상가)',
-    telNumber: '02-2602-7222',
-    website: 'http://www.honorsdental.com',
-    launchDate: '2014-10-14',
-    reviewNum: 15,
-    conclustionNow: 0,
-    lunchTimeNow: 0,
-    reviewAVGStarRate: 3.6,
-  },
-  clinicInfoBody: {
-    description: '',
-    treatmentTime: {
-      weekday: {
-        weekdayReceiptNotice: '',
-        weekdayLunchTimeNotice: '',
-        mon: {
-          treatmentTime: ['00:00:00', '00:00:00'],
-          lunchTime: ['00:00:00', '00:00:00'],
-        },
-        tus: {
-          treatmentTime: ['00:00:00', '00:00:00'],
-          lunchTime: ['00:00:00', '00:00:00'],
-        },
-        wed: {
-          treatmentTime: ['00:00:00', '00:00:00'],
-          lunchTime: ['00:00:00', '00:00:00'],
-        },
-        thu: {
-          treatmentTime: ['00:00:00', '00:00:00'],
-          lunchTime: ['00:00:00', '00:00:00'],
-        },
-        fri: {
-          treatmentTime: ['00:00:00', '00:00:00'],
-          lunchTime: ['00:00:00', '00:00:00'],
-        },
-      },
-      sat: {
-        weekendReceiptNotice: '',
-        weekendLunchTimeNotice: '',
-        weekend_non_consulation_notice: '',
-        sat: {
-          treatmentTime: ['00:00:00', '00:00:00'],
-          lunchTime: ['00:00:00', '00:00:00'],
-        },
-      },
-      sunAndHoliday: {
-        weekend_non_consulation_notice: '',
-        treatmentTime: [null, null],
-      },
-    },
-    treatmentSubject: [
-      {
-        name: '치과교정과',
-        Clinic_subject: {
-          SpecialistDentist_NUM: 1,
-          choiceTreatmentDentist_NUM: 0,
-        },
-      },
-    ],
-    SpecialTreatment: [
-      {
-        name: '측두하악관절 자극요법',
-      },
-      {
-        name: '소아야간진료(20시 이후)',
-      },
-    ],
-    dentistInfo: {
-      specialistDentist: 1,
-      generalDentist: 0,
-      resident: 0,
-      intern: 1,
-    },
-    parkingInfo: {
-      parkingAllowNum: 0,
-      parkingCost: '',
-      parkingNotice: '',
-    },
-    location: {
-      address:
-        '서울특별시 강서구 강서로 242 3층 307호 (화곡동, 강서힐스테이트상가)',
-    },
-  },
-};

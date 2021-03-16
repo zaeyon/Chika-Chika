@@ -188,7 +188,7 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
 
     if (enabled) {
       console.log('Authorization status:', authStatus);
-      const token = await messaging().getToken();
+      const fcmToken = await messaging().getToken();
       setFcmToken(fcmToken);
       console.log('getFcmToken fcmToken', fcmToken);
     }

@@ -119,10 +119,7 @@ const HomeScreen = ({navigation, route}: Props) => {
   const alertScale = useRef(new Animated.Value(0)).current;
 
   const [tagFilterItems, setTagFilterItems] = useState([
-    {name: '충치', category: 'treatment', id: '1386'},
-    {name: '복합레진', category: 'treatment'},
-    {name: '발치', category: 'treatment'},
-    {name: '임플란트', category: 'treatment'},
+    {name: '스케일링', category: 'treatment'},
   ]);
 
   const [reviewData, setReviewData] = useState([]);
@@ -289,7 +286,7 @@ const HomeScreen = ({navigation, route}: Props) => {
             inputQuery: tagItem.name,
             category: tagItem.category,
             pathType: 'review',
-            tagId: tagItem.id,
+            tagId: tagItem?.id,
             limit: '10',
             offset: '0',
             order: 'createdAt',

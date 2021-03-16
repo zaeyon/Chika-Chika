@@ -10,7 +10,6 @@ import {
 const ContainerView = Styled.View`
 flex: 1;
 padding: 0px 16px;
-background: #FFFFFF;
 z-index: 3;
 `;
 
@@ -18,17 +17,29 @@ const TopTitleView = Styled.View`
 padding: 0px 8px;
 margin-bottom: 24px;
 margin-top: 24px;
+flex-direction: row;
+align-items: center;
 `;
+
+const TopTitleContentView = Styled.View`
+`;
+
+const TopTitleHeaderView = Styled.View`
+flex-direction: row;
+align-items: center;
+margin-bottom: 12px;
+`
 
 const TopTitleText = Styled.Text`
 font-weight: normal;
-font-size: 24px;
-margin-bottom: 12px;
+font-size: 20px;
+line-height: 24px;
+margin-right: 8px;
 `;
 
 const TopTitleBoldText = Styled.Text`
 font-weight: bold;
-font-size: 24px;
+font-size: 20px;
 `;
 
 const HeaderContainerView = Styled.View`
@@ -55,6 +66,7 @@ margin-bottom: 16px;
 flex-direction: row;
 `;
 const LocationHighlightContainerView = Styled.View`
+margin-bottom: auto;
 `;
 
 const LocationUnderlineView = Styled.View`
@@ -67,23 +79,21 @@ background: #DAECFE;
 
 const HeaderTitleText = Styled.Text`
 font-weight: bold;
-font-size: 20px;
-line-height: 24px;
+font-size: 24px;
 `;
 
 const HeaderContentButtonView = Styled.View`
 margin-left: auto;
 padding: 2px 11px;
-background: #FFFFFF;
+background: #F5F7F9;
 border-radius: 100px;
-
 `;
 
 const HeaderContentButtonText = Styled.Text`
 font-weight: bold;
 font-size: 13px;
 line-height: 24px;
-color: #131F3C;
+color: #4E525D;
 `;
 
 const LocalInfoContainerView = Styled.View`
@@ -327,36 +337,11 @@ const HomeInfoContent = ({
             },
           ],
         }}>
-        <TopTitleText>{'우리동네'}</TopTitleText>
-        <TopTitleBoldText>{'치과 정보 확인하세요'}</TopTitleBoldText>
-      </TopTitleView>
-      <HeaderContainerView>
-        <HeaderContentView
-          as={Animated.View}
-          style={{
-            backgroundColor: '#F5F7F9',
-            opacity: secondY,
-            transform: [
-              {
-                translateY: secondY.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [5, 0],
-                  extrapolate: 'clamp',
-                }),
-              },
+        <TopTitleContentView>
 
-              {
-                scale: secondY.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0.98, 1],
-                  extrapolate: 'clamp',
-                }),
-              },
-            ],
-          }}>
-          <HeaderContentText>{'지금 내 동네'}</HeaderContentText>
-          <HeaderTitleContainerView>
-            <LocationHighlightContainerView>
+        <TopTitleHeaderView>
+        <TopTitleText>{'우리동네'}</TopTitleText>
+        <LocationHighlightContainerView>
               <LocationUnderlineView
                 as={Animated.View}
                 style={{
@@ -366,7 +351,7 @@ const HomeInfoContent = ({
                     extrapolate: 'clamp',
                   }),
                 }}
-              />
+                />
               <HeaderTitleText
                 as={Animated.Text}
                 style={{
@@ -374,50 +359,17 @@ const HomeInfoContent = ({
                 }}>
                 {selectedHometown?.emdName}
               </HeaderTitleText>
-            </LocationHighlightContainerView>
-          </HeaderTitleContainerView>
-          <TouchableWithoutFeedback onPress={() => moveToHomeTownSetting()}>
+                </LocationHighlightContainerView>
+          </TopTitleHeaderView>
+        <TopTitleBoldText>{'치과 정보 확인하세요'}</TopTitleBoldText>
+        </TopTitleContentView>
+        <TouchableWithoutFeedback onPress={() => moveToHomeTownSetting()}>
             <HeaderContentButtonView>
               <HeaderContentButtonText>{'동네설정'}</HeaderContentButtonText>
             </HeaderContentButtonView>
           </TouchableWithoutFeedback>
-        </HeaderContentView>
-
-        <HeaderContentView
-          as={Animated.View}
-          style={{
-            marginLeft: 8,
-            backgroundColor: '#EFFAFF',
-            opacity: secondY,
-            transform: [
-              {
-                translateY: secondY.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [5, 0],
-                  extrapolate: 'clamp',
-                }),
-              },
-
-              {
-                scale: secondY.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0.98, 1],
-                  extrapolate: 'clamp',
-                }),
-              },
-            ],
-          }}>
-          <HeaderContentText>{'나의 치아 상태'}</HeaderContentText>
-          <HeaderTitleContainerView>
-            <HeaderTitleText>{'체크하러 가기'}</HeaderTitleText>
-          </HeaderTitleContainerView>
-          <HeaderContentButtonView>
-            <HeaderContentButtonText style={{color: '#00D1FF'}}>
-              {'확인하기'}
-            </HeaderContentButtonText>
-          </HeaderContentButtonView>
-        </HeaderContentView>
-      </HeaderContainerView>
+      </TopTitleView>
+      
       <LocalInfoContainerView
         as={Animated.View}
         style={{

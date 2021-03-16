@@ -225,6 +225,7 @@ const RatingScreen = ({navigation, route}: Props) => {
         ratingBackgroundColor="#E2E6ED"
         startingValue={defaultServiceRating}
         onFinishRating={completeServiceRating}
+        onStartRating={movingServiceRating}
         onSwipeRating={movingServiceRating}
       />
     );
@@ -243,6 +244,7 @@ const RatingScreen = ({navigation, route}: Props) => {
         ratingBackgroundColor="#E2E6ED"
         startingValue={defaultTreatmentRating}
         onFinishRating={completeTreatmentRating}
+        onStartRating={movingTreatmentRating}
         onSwipeRating={movingTreatmentRating}
       />
     );
@@ -261,6 +263,7 @@ const RatingScreen = ({navigation, route}: Props) => {
         ratingBackgroundColor="#E2E6ED"
         startingValue={defaultPriceRating}
         onFinishRating={completePriceRating}
+        onStartRating={movingPriceRating}
         onSwipeRating={movingPriceRating}
       />
     );

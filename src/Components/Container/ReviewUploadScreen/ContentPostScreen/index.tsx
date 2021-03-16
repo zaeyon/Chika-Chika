@@ -593,24 +593,24 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     // 전체 가격 정보
     const totalPrice = route.params?.totalPrice;
 
-    const formatedParagraphArray = await formatParagraph(tmpParagraphArray);
-    const formatedTreatmentArray = await formatTreatment(tmpTreatmentArray);
+    const formattedParagraphArray = await formatParagraph(tmpParagraphArray);
+    const formattedTreatmentArray = await formatTreatment(tmpTreatmentArray);
     let formattedProofImage = {};
     if (tmpSelectedProofImage.uri) {
       formattedProofImage = await formatProofImage(tmpSelectedProofImage);
     }
 
-    console.log('uploadReview formatedParagraph', formatedParagraphArray);
-    console.log('uploadReview formatedTreatment', formatedTreatmentArray);
+    console.log('uploadReview formatedParagraph', formattedParagraphArray);
+    console.log('uploadReview formatedTreatment', formattedTreatmentArray);
 
     POSTReviewUpload({
       jwtToken,
       starRate_cost,
       starRate_treatment,
       starRate_service,
-      formatedTreatmentArray,
+      formattedTreatmentArray,
       dentalClinicId,
-      formatedParagraphArray,
+      formattedParagraphArray,
       formattedProofImage,
       totalPrice,
       treatmentDate,
@@ -654,14 +654,14 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     // 전체 가격 정보
     const totalPrice = route.params?.totalPrice;
 
-    const formatedParagraphArray = await formatParagraph(tmpParagraphArray);
-    const formatedTreatmentArray = await formatTreatment(tmpTreatmentArray);
+    const formattedParagraphArray = await formatParagraph(tmpParagraphArray);
+    const formattedTreatmentArray = await formatTreatment(tmpTreatmentArray);
     let formattedProofImage = {};
     if (tmpSelectedProofImage.uri) {
       formattedProofImage = await formatProofImage(tmpSelectedProofImage);
     }
-    console.log('reviseReview formatedParagraph', formatedParagraphArray);
-    console.log('reviseReview formatedTreatment', formatedTreatmentArray);
+    console.log('reviseReview formatedParagraph', formattedParagraphArray);
+    console.log('reviseReview formatedTreatment', formattedTreatmentArray);
 
     PUTReviewRevise({
       jwtToken,
@@ -669,9 +669,9 @@ const ContentPostScreen = ({navigation, route}: Props) => {
       starRate_cost,
       starRate_treatment,
       starRate_service,
-      formatedTreatmentArray,
+      formattedTreatmentArray,
       dentalClinicId,
-      formatedParagraphArray,
+      formattedParagraphArray,
       formattedProofImage,
       totalPrice,
       treatmentDate,

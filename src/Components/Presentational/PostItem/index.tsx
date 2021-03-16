@@ -374,7 +374,7 @@ const PostItem = ({
         <BodyContainerView>
           <TouchableWithoutFeedback
             onPress={() => {
-              moveToAnotherProfile(userId, user?.nickname, user?.img_thumbNail);
+              moveToAnotherProfile(userId, user?.nickname, user?.profileImg, user?.img_thumbNail);
             }}>
             <ProfileContainerView>
               <ProfileImage
@@ -412,7 +412,7 @@ const PostItem = ({
                 showsHorizontalScrollIndicator={false}
                 alwaysBounceHorizontal={false}
                 data={community_imgs}
-                keyExtractor={(item) => String(item.id)}
+                keyExtractor={(item: any) => String(item.id)}
                 snapToInterval={128}
                 renderItem={renderImage}
                 ItemSeparatorComponent={() => <ImageSeperatorView />}
@@ -431,7 +431,7 @@ const PostItem = ({
             <TouchableWithoutFeedback
               onPress={() => {
                 toggleSocialLike(id, viewerLikeCommunityPost, type);
-                setIsLiked((prev) => !prev);
+                setIsLiked((prev: boolean) => !prev);
                 if (!viewerLikeCommunityPost) {
                   ReactNativeHapticFeedback.trigger('impactLight');
                 }
@@ -461,7 +461,6 @@ const PostItem = ({
             </TouchableWithoutFeedback>
           </SocialInfoContentView>
           <SocialInfoContentView>
-            <TouchableWithoutFeedback>
               <SocialInfoView>
                 <Image
                   style={{
@@ -472,13 +471,12 @@ const PostItem = ({
                 />
                 <SocialInfoText>{postCommentsNum}</SocialInfoText>
               </SocialInfoView>
-            </TouchableWithoutFeedback>
           </SocialInfoContentView>
 
           <TouchableWithoutFeedback
             onPress={() => {
               toggleSocialScrap(id, viewerScrapCommunityPost, type);
-              setIsScraped((prev) => !prev);
+              setIsScraped((prev: boolean) => !prev);
               if (!viewerScrapCommunityPost) {
                 ReactNativeHapticFeedback.trigger('impactLight');
               }

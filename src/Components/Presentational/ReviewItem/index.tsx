@@ -330,6 +330,7 @@ interface Props {
     userId: string,
     nickname: string,
     profileImageUri: string,
+    img_thumbNail: string,
   ) => void;
   moveToDentalDetail: (dentalId: number) => void;
 }
@@ -474,7 +475,7 @@ const ReviewItem = ({
       <TagBackground>
         <TagText>
           <HashText>{'# '}</HashText>
-          {item.name}
+          {item.name || item.usualName}
         </TagText>
       </TagBackground>
     );
@@ -506,9 +507,10 @@ const ReviewItem = ({
           <TouchableWithoutFeedback
             onPress={() =>
               moveToAnotherProfile(
-                writer.id,
+                writer.userId,
                 writer.nickname,
                 writer.profileImage,
+                writer.img_thumbNail
               )
             }>
             <ProfileLeftContainer>

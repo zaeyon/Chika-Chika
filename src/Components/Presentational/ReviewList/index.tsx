@@ -74,8 +74,6 @@ const ReviewList = ({
   navigation,
   renderHeaderComponent,
 }: Props) => {
-  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
-  const userProfile = useSelector((state: any) => state.currentUser.profile);
 
   const moveToDentalDetail = useCallback((dentalId: number) => {
     navigation.navigate('DentalClinicStack', {
@@ -87,12 +85,13 @@ const ReviewList = ({
   }, []);
 
   const moveToAnotherProfile = useCallback(
-    (userId: string, nickname: string, profileImageUri: string) => {
+    (userId: string, nickname: string, profileImageUri: string, img_thumbNail: string) => {
       navigation.navigate('AnotherProfileStackScreen', {
         targetUser: {
           userId,
           nickname,
           profileImageUri,
+          img_thumbNail,
         },
       });
     },
@@ -207,7 +206,7 @@ const ReviewList = ({
     return (
       <ReviewItem
         reviewId={item.id}
-        writer={item.user}
+        writer={writer}
         createdAt={item.createdAt}
         elapsedTimeText={elapsedTimeText}
         visibleElapsedTime={visibleElapsedTime}

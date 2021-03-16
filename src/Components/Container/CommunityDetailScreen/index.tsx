@@ -107,6 +107,7 @@ interface Props {
 }
 
 const CommunityDetailScreen = ({navigation, route, key}: Props) => {
+  console.log(route)
   const scrollView: any = useRef();
   const scrollY: Animated.Value = useRef(new Animated.Value(0)).current;
 
@@ -453,7 +454,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
         <NavigationHeader
           headerLeftProps={{
             type: 'arrow',
-            text: formatCategory(),
+            text: '커뮤니티',
             onPress: () => navigation.goBack(),
           }}
           headerRightProps={{

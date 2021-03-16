@@ -84,8 +84,8 @@ export default class BottomSheet extends Component<IProps, IState> {
       this._translateYOffset,
       Animated.add(this._dragY, this._reverseLastScrollY),
     ).interpolate({
-      inputRange: [0, START, END],
-      outputRange: [START / 1.2, START, END],
+      inputRange: [-windowHeight, START, END],
+      outputRange: [START / 2, START, END],
       extrapolate: 'clamp',
     });
 

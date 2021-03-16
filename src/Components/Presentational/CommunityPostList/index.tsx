@@ -33,6 +33,76 @@ align-items: center;
 padding: 10px 0px;
 `;
 
+const PostItemSkeletonView = Styled.View`
+width: ${wp('100%')}px;
+height: auto;
+padding: 16px 16px 16px 16px;
+background: #FFFFFF;
+margin-bottom: 8px;
+`;
+
+
+const ProfileContainerView = Styled.View`
+width: auto;
+height: auto;
+margin-right: auto;
+flex-direction: row;
+align-items: center;
+padding: 8px 0px 6px 0px;
+`;
+
+const ProfileImage = Styled.Image<{source: any}>`
+width: ${wp('7.46')}px;
+ height: ${wp('7.46%')}px;
+background-color: #F5F7F9;
+border-width: 0.5px
+border-color: #E2E6ED;
+border-radius: 100px;
+`;
+
+const ProfileContentView = Styled.View`
+width: auto;
+height: auto;
+flex-direction: row;
+align-items: center;
+padding-left: 8px;
+`;
+const ProfileNameText = Styled.Text`
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+margin-right: 4px;
+background-color: #F5F7F9;
+color: #F5F7F9;
+`;
+
+
+const ProfileDescriptionText = Styled.Text`
+font-style: normal;
+font-weight: normal;
+font-size: 13px;
+background-color: #F5F7F9;
+color: #F5F7F9;
+`
+const ImageSkeletonView = Styled.View`
+width: 124px;
+height: 124px;
+background-color: #F5F7F9;
+margin: 6px 0px;
+border-radius: 8px;
+border-color: #F5F7F9;
+border-width: 1px;
+`
+const ContentText = Styled.Text`
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 24px;
+background-color: #F5F7F9;
+color: #F5F7F9;
+margin-right: auto;
+`;
+
 interface User {
   nickname: string;
   profileImg: string | null;
@@ -59,6 +129,7 @@ interface PostData {
 }
 
 interface Props {
+  initialize: boolean;
   postData: Array<PostData>;
   refreshing: boolean;
   onRefresh: any;
@@ -71,6 +142,7 @@ interface Props {
   renderHeaderComponent?: () => any;
 }
 const CommunityPostList = ({
+  initialize,
   postData,
   refreshing,
   onRefresh,
@@ -84,7 +156,27 @@ const CommunityPostList = ({
 }: Props) => {
   const listRef: any = useRef();
   useScrollToTop(listRef);
-  const renderPosts = useCallback(({item, index}: any) => {
+
+  const renderPostSkeleton = useCallback(({item, index}: any) => {
+    return (
+      <PostItemSkeletonView>
+      <ProfileContainerView>
+      <ProfileImage/>
+      <ProfileContentView>
+        <ProfileNameText>{"치카치카"}</ProfileNameText>
+        <ProfileDescriptionText>
+          {"1분 전"}
+        </ProfileDescriptionText>
+      </ProfileContentView>
+    </ProfileContainerView>
+    <ImageSkeletonView/>
+    <ContentText>
+      {"가나다라마바사아자차카타파하"}
+    </ContentText>
+    </PostItemSkeletonView>
+    )
+  }, [])
+  const renderPost = useCallback(({item, index}: any) => {
     return (
       <PostItem
         data={item}
@@ -101,7 +193,7 @@ const CommunityPostList = ({
   return (
     <BodyContainerFlatList
       ref={listRef}
-      data={postData}
+      data={initialize ? [{id: 'skeleton1'}, {id: 'skeleton2'}] : postData}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -114,7 +206,7 @@ const CommunityPostList = ({
       contentContainerStyle={{
         paddingBottom: isIphoneX() ? wp('13%') : wp('15%'),
       }}
-      renderItem={renderPosts}
+      renderItem={initialize ? renderPostSkeleton : renderPost}
       scrollEventThrottle={16}
       onEndReached={onEndReached}
       onEndReachedThreshold={2}

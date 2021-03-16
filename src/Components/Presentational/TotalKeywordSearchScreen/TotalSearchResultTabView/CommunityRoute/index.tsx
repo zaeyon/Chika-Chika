@@ -283,9 +283,12 @@ const CommunityRoute = ({
 
   const moveToCommunityDetail = useCallback(
     (postId: number, postType: string) => {
-      navigation.navigate('CommunityDetailScreen', {
-        id: postId,
-        type: postType,
+      navigation.navigate('CommunityStackScreen', {
+        screen: 'CommunityDetailScreen',
+        params: {
+          id: postId,
+          type: postType,
+        }
       });
     },
     [],

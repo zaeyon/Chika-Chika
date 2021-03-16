@@ -18,11 +18,58 @@ import {Rating} from 'react-native-ratings';
 
 const ReviewThumbnailContainerView = Styled.View`
 width: ${wp('79%')}px;
-height: auto;
+flex: 1;
 border-radius: 8px;
 margin-right: 16px;
+padding: 16px;
 background: #FFFFFF;
 box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const ReviewHeaderView = Styled.View`
+flex-direction: row;
+align-items:center;
+`;
+
+const ReviewTitleText = Styled.Text`
+font-weight: 600;
+font-size: 13.5px;
+line-height: 16px;
+color: #131F3C;
+`;
+
+const ReviewRatingView = Styled.View`
+margin-left: auto;
+flex-direction: row;
+align-items:center;
+`
+const ReviewRatingText = Styled.Text`
+margin-left: 4px;
+font-weight: 800;
+font-size: 14px;
+color: #131F3C;`;
+
+const ReviewContentView = Styled.View`
+flex-direction: row;
+flex: 1;
+`;
+
+const ReviewContentDescriptionView= Styled.View`
+flex: 1;
+margin-right: 8px;
+`;
+const ReviewContentText = Styled.Text`
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 24px;
+`;
+
+const ReviewContentImage = Styled.Image`
+width: 72px;
+height: 72px;
+margin-left: auto;
+border-radius: 8px;
 `;
 
 const ReviewThumbnailHeaderImage = Styled.Image`
@@ -56,7 +103,7 @@ padding: 0px 8px 16px 8px;
 const HashTagContainerView = Styled.View`
 width: 100%;
 height: auto;
-padding: 12px 4px;
+padding: 12px 0px;
 flex-direction: row;
 
 `;
@@ -211,84 +258,34 @@ const ReviewThumbnail = ({review, moveToReviewDetail}: Props) => {
             },
           ],
         }}>
-        <LinearGradient
-          colors={['#00000080', '#00000000']}
-          style={{
-            position: 'absolute',
-            width: '100%',
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8,
-            zIndex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-            top: 0,
-            padding: 8,
-          }}>
-          <ReviewThumbnailHeaderImage
-            source={{
-              uri: review.user.img_thumbNail || review.user.profileImg,
-              cache: 'force-cache',
-            }}
-          />
-          <ReviewThumbnailHeaderText>
-            {review.user.nickname}
-          </ReviewThumbnailHeaderText>
-          <ReviewThumbnailHeaderTimeText>
-            {formatElapsedDate(
-              review['createdDiff(second)'] * 1000,
-              review.createdAt,
-            )}
-          </ReviewThumbnailHeaderTimeText>
-        </LinearGradient>
-        <Image
-          style={{
-            flex: 1,
-            height: wp('50%'),
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8,
-            resizeMode: 'cover',
-          }}
-          source={{
-            uri: review.review_contents[0].img_thumbNail,
-            cache: 'force-cache',
-          }}
-        />
-        <ReviewThumbnailContentView>
+          <ReviewHeaderView>
+            <ReviewTitleText>
+              {review.dental_clinic.originalName}
+            </ReviewTitleText>
+            <ReviewRatingView>
+              <Image style={{
+                backgroundColor: '#00D1FF'
+              }} source={require('~/Assets/Images/Review/ic_ratingStar_swipe.png')}/>
+              <ReviewRatingText>
+                {review.AVGStarRate.toFixed(1)}
+              </ReviewRatingText>
+            </ReviewRatingView>
+          </ReviewHeaderView>
           <HashTagContainerView>
             {review.reviewTreatmentTags.map(renderHashTagItem)}
           </HashTagContainerView>
-          <RatingValueContainer>
-            <AvgRatingValueContainer>
-              <Rating
-                type={'custom'}
-                ratingImage={require('~/Assets/Images/Review/ic_ratingStar_swipe.png')}
-                ratingColor={'#00D1FF'}
-                ratingBackgroundColor={'#E2E6ED'}
-                imageSize={wp('4.26%')}
-                ratingCount={5}
-                startingValue={review.AVGStarRate}
-                readonly={true}
-              />
-              <AvgRatingValueText>{review.AVGStarRate}</AvgRatingValueText>
-            </AvgRatingValueContainer>
-            <DetailRatingContainer>
-              <DetailRatingTypeText>{'시술'}</DetailRatingTypeText>
-              <DetailRatingValueText>
-                {review.starRate_treatment}
-              </DetailRatingValueText>
-              <DetailRatingDivider />
-              <DetailRatingTypeText>{'서비스'}</DetailRatingTypeText>
-              <DetailRatingValueText>
-                {review.starRate_service}
-              </DetailRatingValueText>
-              <DetailRatingDivider />
-              <DetailRatingTypeText>{'가격'}</DetailRatingTypeText>
-              <DetailRatingValueText>
-                {review.starRate_cost}
-              </DetailRatingValueText>
-            </DetailRatingContainer>
-          </RatingValueContainer>
-        </ReviewThumbnailContentView>
+          <ReviewContentView>
+            <ReviewContentDescriptionView>
+            <ReviewContentText numberOfLines={3}>
+              {review?.reviewDescriptions}
+            </ReviewContentText>
+            </ReviewContentDescriptionView>
+            {review?.review_contents[0]?.img_url ? 
+            <ReviewContentImage source={{
+              uri: review?.review_contents[0]?.img_url,
+            }}/> : null}
+          </ReviewContentView>
+            
       </ReviewThumbnailContainerView>
     </TouchableWithoutFeedback>
   );

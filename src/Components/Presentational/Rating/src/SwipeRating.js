@@ -63,22 +63,17 @@ export default class SwipeRating extends Component {
     const panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderGrant: (event, gesture) => {
-        if (typeof onStartRating === 'function') {
-          onStartRating();
-        }
-        const newPosition = new Animated.ValueXY();
         const tapPositionX = gesture.x0 - this.state.centerX + gesture.dx;
-        newPosition.setValue({x: tapPositionX, y: 0});
+        const newPosition = new Animated.ValueXY({x: tapPositionX, y: 0});
         if (this.state.isComponentMounted) {
           this.setState({position: newPosition, value: tapPositionX});
           const rating = this.getCurrentRating(tapPositionX);
-          if (typeof onSwipeRating === 'function') onSwipeRating(rating);
+          if (typeof onStartRating === 'function') onStartRating(rating);
         }
       },
       onPanResponderMove: (event, gesture) => {
-        const newPosition = new Animated.ValueXY();
         const tapPositionX = gesture.x0 - this.state.centerX + gesture.dx;
-        newPosition.setValue({x: tapPositionX, y: 0});
+        const newPosition = new Animated.ValueXY({x: tapPositionX, y: 0});
         if (this.state.isComponentMounted) {
           this.setState({position: newPosition, value: tapPositionX});
           const rating = this.getCurrentRating(tapPositionX);

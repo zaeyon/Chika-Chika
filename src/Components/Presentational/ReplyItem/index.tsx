@@ -12,40 +12,26 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 const Container = Styled.View`
  width: ${wp('100%')}px;
  padding: 12px 0px 12px 60px;
- flex-direction: row;
  background: #FFFFFF;
 `;
 
 const ProfileImageContainer = Styled.View`
-padding: 0px 8px 16px 8px;
-margin-bottom: auto;
-`;
-
-const CommentRightContainer = Styled.View`
-flex: 1;
+margin-right: 8px;
 `;
 
 const HeaderContainer = Styled.View`
-background-color: #FFFFFF;
 align-items: center;
 flex-direction: row;
-justify-content: space-between;
-padding-top: 6px;
 `;
 
-const NicknameContentContainer = Styled.View`
-padding-top: 5px;
-padding-bottom: 0px;
-padding-right: 10px;
-justify-content: center;
-`;
 
 const BodyContainer = Styled.View`
-padding-top: 3px;
-padding-right: 85px;
+padding-left: ${wp('7.46%') + 8}px;
+margin-top: -6px;
 `;
 
 const FooterContainer = Styled.View`
+padding-left: ${wp('7.46%') + 8}px;
 flex-direction: row;
 align-items: flex-end;
 `;
@@ -61,19 +47,18 @@ const NicknameText = Styled.Text`
 line-height: 16px;
  font-size: 14px;
  font-weight: 800;
- 
  color: #131F3C
 `;
 
 const CommentDescripText = Styled.Text`
-font-weight: 400;
+font-weight: normal;
 font-size: 14px;
 line-height: 16px;
 color: #131F3C;
 `;
 
 const CreateAtText = Styled.Text`
-font-weight: 400;
+font-weight: normal;
 font-size: 12px;
 line-height: 16px;
  color: #9AA2A9;
@@ -222,6 +207,7 @@ const ReplyItem = ({
               setPositionY(fy);
             });
         }}>
+          <HeaderContainer>
         <TouchableWithoutFeedback
           onPress={() => moveToAnotherProfile(userId, nickname, profileImage)}>
           <ProfileImageContainer>
@@ -234,8 +220,6 @@ const ReplyItem = ({
             />
           </ProfileImageContainer>
         </TouchableWithoutFeedback>
-        <CommentRightContainer>
-          <HeaderContainer>
             <TouchableWithoutFeedback
               onPress={() =>
                 moveToAnotherProfile(userId, nickname, profileImage)
@@ -276,7 +260,6 @@ const ReplyItem = ({
               </TouchableWithoutFeedback>
             )}
           </FooterContainer>
-        </CommentRightContainer>
       </Container>
     </TouchableWithoutFeedback>
   );

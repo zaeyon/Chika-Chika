@@ -12,45 +12,31 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 const Container = Styled.View`
  width: ${wp('100%')}px;
  padding: 12px 0px 12px 18px;
- flex-direction: row;
  background-color: #FFFFFF;
 `;
 
 const ProfileImageContainer = Styled.View`
-padding: 0px 8px 16px 8px;
-margin-bottom: auto;
-`;
-
-const CommentRightContainer = Styled.View`
-flex: 1;
+margin-right: 8px;
 `;
 
 const HeaderContainer = Styled.View`
 align-items: center;
 flex-direction: row;
-justify-content: space-between;
-padding-top: 2px;
 `;
-
-const NicknameContentContainer = Styled.View`
-padding-top: 5px;
-padding-bottom: 0px;
-padding-right: 10px;
-justify-content: center;
-`;
-
 const BodyContainer = Styled.View`
-padding-top: 2px;
+padding-left: 42px;
+margin-top: -7px;
 `;
 
 const FooterContainer = Styled.View`
+padding-left: 42px;
  flex-direction: row;
  align-items: flex-end;
 `;
 
 const ProfileImage = Styled.Image`
-width: ${wp('9%')}px;
-height: ${wp('9%')}px;
+width: 34px;
+height: 34px;
  border-radius: 100px;
  background-color: #E2E6ED;
 `;
@@ -58,7 +44,7 @@ height: ${wp('9%')}px;
 const NicknameText = Styled.Text`
 line-height: 16px;
  font-size: 14px;
- font-weight: 600;
+ font-weight: 800;
  color: #131F3C
 `;
 
@@ -95,8 +81,6 @@ font-weight: 600;
 color: #979797;
 `;
 
-const HeaderLeftContainer = Styled.View`
-`;
 
 const MoreViewContainer = Styled.TouchableOpacity`
 top: 4px;
@@ -125,6 +109,7 @@ interface Props {
   commentId: any;
   userId: any;
   profileImage: string;
+  img_thumbNail: string;
   nickname: string;
   description: string;
   createdDate: string;
@@ -139,6 +124,7 @@ interface Props {
     userId: string,
     nickname: string,
     profileImageUri: string,
+    img_thumbNail: string,
   ) => void;
 }
 
@@ -148,6 +134,7 @@ const CommentItem = ({
   userId,
   commentId,
   profileImage,
+  img_thumbNail,
   nickname,
   description,
   createdDate,
@@ -201,22 +188,13 @@ const CommentItem = ({
         onLayout={() => {
           containerRef.current &&
             containerRef.current.measure((fx, fy, width, height, px, py) => {
-              console.log(
-                'comment',
-                description,
-                fx,
-                fy,
-                width,
-                height,
-                px,
-                py,
-              );
               setPositionY(fy);
             });
         }}
         ref={containerRef}>
+          <HeaderContainer>
         <TouchableWithoutFeedback
-          onPress={() => moveToAnotherProfile(userId, nickname, profileImage)}>
+          onPress={() => moveToAnotherProfile(userId, nickname, profileImage, img_thumbNail)}>
           <ProfileImageContainer>
             <ProfileImage
               source={{
@@ -227,15 +205,11 @@ const CommentItem = ({
             />
           </ProfileImageContainer>
         </TouchableWithoutFeedback>
-        <CommentRightContainer>
-          <HeaderContainer>
             <TouchableWithoutFeedback
               onPress={() =>
-                moveToAnotherProfile(userId, nickname, profileImage)
+                moveToAnotherProfile(userId, nickname, profileImage, img_thumbNail)
               }>
-              <HeaderLeftContainer>
                 <NicknameText>{nickname}</NicknameText>
-              </HeaderLeftContainer>
             </TouchableWithoutFeedback>
             <MoreViewContainer
               onPress={() =>
@@ -266,7 +240,6 @@ const CommentItem = ({
               </TouchableWithoutFeedback>
             )}
           </FooterContainer>
-        </CommentRightContainer>
       </Container>
     </TouchableWithoutFeedback>
   );

@@ -240,6 +240,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
       POSTSearchRecord({
         jwtToken,
         tagCategory: category,
+        targetId: category === 'city' ? '' : tagId,
         sq: searchQuery,
         iq: keyword,
       }).then((response: any) => {

@@ -5,8 +5,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {TouchableWithoutFeedback, FlatList, View} from 'react-native';
-import {isIphoneX} from 'react-native-iphone-x-helper';
+import {LayoutAnimation} from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
@@ -246,12 +245,13 @@ const MyProfileScreen = ({navigation, route}: Props) => {
   );
 
   const moveToAnotherProfile = useCallback(
-    (userId: string, nickname: string, profileImageUri: string) => {
+    (userId: string, nickname: string, profileImageUri: string, img_thumbNail: string) => {
       navigation.navigate('AnotherProfileStackScreen', {
         targetUser: {
           userId,
           nickname,
           profileImageUri,
+          img_thumbNail,
         },
       });
     },
@@ -372,6 +372,9 @@ const MyProfileScreen = ({navigation, route}: Props) => {
       order: order,
     };
     fetchReviewData(form, (response: any) => {
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+      );
       dispatch(allActions.reviewListActions.setMyReviews(response));
       setIsReviewInitializing(false);
     });

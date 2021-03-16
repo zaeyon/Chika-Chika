@@ -1436,16 +1436,14 @@ const NearDentalMap = ({navigation, route}: Props) => {
               return (
                 <Marker
                   key={index}
-                  caption={{
-                    text: 'FDFSDFSFDSFSDFS',
-                  }}
-                  subCaption={{
-                    text: 'subCaption',
-                  }}
-                  flat={true}
                   coordinate={{
                     latitude: Number(item.geographLat),
                     longitude: Number(item.geographLong),
+                  }}
+                  isHideCollidedSymbols={true}
+                  isHideCollidedCaptions={true}
+                  caption={{
+                    text: item.originalName
                   }}
                   onClick={() => clickDentalMarker(index)}
                   zIndex={index == selectedDentalIndex ? 1 : 0}
