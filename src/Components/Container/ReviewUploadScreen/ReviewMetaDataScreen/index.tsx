@@ -1120,9 +1120,10 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     const startYear = 1900;
     const currentYear = new Date(Date.now()).getFullYear();
     const result = [];
-    for (let i = 0; i < (currentYear - startYear) + 1; i++) {
+    for (let i = 0; i <= currentYear - startYear; i++) {
       result.push(
         <Picker.Item
+          key={String(startYear + i)}
           label={String(startYear + i)}
           value={String(startYear + i)}
         />,
@@ -1132,20 +1133,60 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }, []);
 
   const renderMonthPickerItem = useCallback(() => {
+    const currentDate = new Date(Date.now());
     const result = [];
-    for (let i = 1; i <= 12; i++) {
-      result.push(<Picker.Item label={String(i)} value={String(i)} />);
+    if (parseInt(selectedTreatmentYear) === currentDate.getFullYear()) {
+      for (let i = 1; i <= currentDate.getMonth() + 1; i++) {
+        result.push(<Picker.Item label={String(i)} value={String(i)} />);
+      }
+    } else {
+      for (let i = 1; i <= 12; i++) {
+        result.push(<Picker.Item label={String(i)} value={String(i)} />);
+      }
     }
     return result;
-  }, []);
+  }, [selectedTreatmentYear]);
 
   const renderDayPickerItem = useCallback(() => {
+    const currentDate = new Date(Date.now());
     const result = [];
-    for (let i = 1; i <= 31; i++) {
-      result.push(<Picker.Item label={String(i)} value={String(i)} />);
+    if (
+      parseInt(selectedTreatmentYear) === currentDate.getFullYear() &&
+      parseInt(selectedTreatmentMonth) === currentDate.getMonth() + 1
+    ) {
+      for (let i = 1; i <= currentDate.getDate(); i++) {
+        result.push(<Picker.Item label={String(i)} value={String(i)} />);
+      }
+    } else {
+      if (selectedTreatmentMonth === '2') {
+        if (
+          (parseInt(selectedTreatmentYear) % 4) +
+            (parseInt(selectedTreatmentYear) % 100) +
+            (parseInt(selectedTreatmentYear) % 400) ===
+          0
+        ) {
+          for (let i = 1; i <= 29; i++) {
+            result.push(<Picker.Item label={String(i)} value={String(i)} />);
+          }
+        } else {
+          for (let i = 1; i <= 28; i++) {
+            result.push(<Picker.Item label={String(i)} value={String(i)} />);
+          }
+        }
+      } else if (
+        [1, 3, 5, 7, 8, 10, 12].includes(parseInt(selectedTreatmentMonth))
+      ) {
+        for (let i = 1; i <= 31; i++) {
+          result.push(<Picker.Item label={String(i)} value={String(i)} />);
+        }
+      } else {
+        for (let i = 1; i <= 30; i++) {
+          result.push(<Picker.Item label={String(i)} value={String(i)} />);
+        }
+      }
     }
     return result;
-  }, []);
+  }, [selectedTreatmentMonth, selectedTreatmentYear]);
 
   return (
       <Container>
