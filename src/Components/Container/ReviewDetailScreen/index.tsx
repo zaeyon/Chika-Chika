@@ -201,6 +201,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
   const [loadingReviewDetail, setLoadingReviewDetail] = useState<boolean>(true);
   const [loadingCommentPost, setLoadingCommentPost] = useState<boolean>(false);
+  const [isCommentLoading, setIsCommentLoading] = useState(true);
   const [refreshingReviewDetail, setRefreshingReviewDetail] = useState<boolean>(
     false,
   );
@@ -666,6 +667,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       .then((response: any) => {
         console.log('GETCommentList response', response);
         //setCommentArray(response.reverse())
+        setIsCommentLoading(false)
         dispatch(
           allActions.commentListActions.setCommentList(response.comments),
         );
@@ -1072,6 +1074,9 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
                   </MetaInfoContainer>
                   <CommentListContainer>
                     <PreviewCommentList
+                      jwtToken={jwtToken}
+                      isLoading={isCommentLoading}
+                      commentsNum={route.params.commentCount}
                       navigation={navigation}
                       commentList={commentArray}
                       commentsNum={commentCount}

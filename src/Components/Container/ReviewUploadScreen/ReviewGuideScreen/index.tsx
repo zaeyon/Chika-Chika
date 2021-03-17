@@ -6,14 +6,12 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
-import {NavigationContainer} from '@react-navigation/native';
-import ActionSheet from 'react-native-actionsheet';
+import {getBottomSpace} from 'react-native-iphone-x-helper';
 
 const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
- padding-top: ${getStatusBarHeight()};
+
 `;
 
 const HeaderBar = Styled.View`
@@ -75,18 +73,13 @@ const ReceiptPromotionContainer = Styled.View`
 flex: 2;
 `;
 
-const PostReviewContainer = Styled.View`
-border-top-width: 1px;
-border-color: #E2E6ED;
-width: ${wp('100%')}px;
-height: ${hp('10.59%')}px;
-background-color: #ffffff;
-`;
-
 
 const PostReviewButtonContainer = Styled.View`
-padding-top: 16px;
+padding: 16px;
 align-items: center;
+border-top-width: 1px;
+border-color: #E2E6ED;
+margin-bottom: ${getBottomSpace() ? -10 : 0}px;
 `;
 
 const PostReviewText = Styled.Text`
@@ -174,7 +167,7 @@ const ReviewGuideScreen = ({navigation, route}: Props) => {
   };
 
   return (
-    <Container>
+    <Container as={SafeAreaView}>
       <HeaderBar>
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <HeaderLeftContainer>
@@ -209,13 +202,13 @@ const ReviewGuideScreen = ({navigation, route}: Props) => {
           source={require('~/Assets/Images/Upload/sb_event.png')}/>
           </EventSpeechBubbleContainer>
         </GuideContainer>
-        <PostReviewContainer>
+
           <TouchableWithoutFeedback onPress={() => moveToReviewMetaData()}>
             <PostReviewButtonContainer>
               <PostReviewText>리뷰 작성</PostReviewText>
             </PostReviewButtonContainer>
           </TouchableWithoutFeedback>
-        </PostReviewContainer>
+
       </BodyContainer>
     </Container>
   );

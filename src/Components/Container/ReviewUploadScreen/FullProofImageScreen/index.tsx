@@ -5,7 +5,6 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen'; 
 import {View, TouchableWithoutFeedback, Image} from 'react-native';
-import ImageViewer from 'react-native-image-zoom-viewer';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 const Container = Styled.View`
@@ -94,7 +93,7 @@ const images = [
         </TouchableWithoutFeedback>
       </HeaderContainerView>
       <ProofImage
-      source={{uri: route.params?.selectedProofImage.uri}}/>
+      source={{uri: route.params?.selectedProofImage.uri, cache: 'force-cache'}}/>
     </Container>
   )
 }

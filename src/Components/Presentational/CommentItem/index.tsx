@@ -106,7 +106,6 @@ background-color: #9AA2A9;
 interface Props {
   index: number;
   commentObj: any;
-  commentId: any;
   userId: any;
   profileImage: string;
   img_thumbNail: string;
@@ -132,7 +131,6 @@ const CommentItem = ({
   index,
   commentObj,
   userId,
-  commentId,
   profileImage,
   img_thumbNail,
   nickname,
@@ -198,9 +196,9 @@ const CommentItem = ({
           <ProfileImageContainer>
             <ProfileImage
               source={{
-                uri: profileImage
-                  ? profileImage
-                  : 'https://pickk.one/images/defaultProfile.jpg',
+                uri: img_thumbNail
+                  ? img_thumbNail
+                  : profileImage
               }}
             />
           </ProfileImageContainer>
@@ -213,7 +211,7 @@ const CommentItem = ({
             </TouchableWithoutFeedback>
             <MoreViewContainer
               onPress={() =>
-                openCommentActionSheet(userId, nickname, commentId)
+                openCommentActionSheet(userId, nickname, commentObj.id)
               }>
               <MoreViewIcon
                 source={require('~/Assets/Images/Comment/ic_moreView.png')}

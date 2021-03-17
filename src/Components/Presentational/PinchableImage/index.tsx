@@ -4,7 +4,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {TouchableWithoutFeedback, Animated, Easing} from 'react-native';
+import {TouchableWithoutFeedback, Animated, Easing, Image} from 'react-native';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import FastImage from 'react-native-fast-image';
 import {
@@ -43,6 +43,9 @@ const PinchableImage = ({
   image,
   scrollRef,
 }: Props) => {
+  const IMG_WIDTH = image.img_width || image.width;
+  const IMG_HEIGHT = image.img_height || image.height;
+
   const [lastScale, setLastScale] = useState(1);
   const [lastX, setLastX] = useState(0);
   const [lastY, setLastY] = useState(0);
@@ -66,7 +69,9 @@ const PinchableImage = ({
   const pinchRef = useRef();
   const panRef = useRef();
   const swipeRef = useRef();
+  const doubleTapRef = useRef();
 
+  console.log(image)
   useEffect(() => {
     if (currentIndex !== index) {
       console.log('init', index);
@@ -179,10 +184,10 @@ const PinchableImage = ({
         setLastY((prev) => {
           const newY = prev + nativeEvent.translationY;
           const range =
-            (((image.img_height * wp('100%')) / image.img_width >
+            (((IMG_HEIGHT * wp('100%')) / IMG_WIDTH >
             hp('100%') - getStatusBarHeight() * 2 - 112
               ? hp('100%') - getStatusBarHeight() * 2 - 112
-              : (image.img_height * wp('100%')) / image.img_width) *
+              : (IMG_HEIGHT * wp('100%')) / IMG_WIDTH) *
               lastScale -
               (hp('100%') - getStatusBarHeight() * 2 - 112)) /
             2 /
@@ -366,7 +371,15 @@ const PinchableImage = ({
   );
 
   const onTapGestureEvent = useCallback(({nativeEvent}) => {}, []);
-  const onTapHandlerStateChange = useCallback(
+
+  const onTapHandlerStateChange = useCallback(({nativeEvent}) => {
+    if(nativeEvent.oldState === State.ACTIVE){
+      setHeaderVisible(prev => !prev)
+    }
+  }, [setHeaderVisible]);
+
+  const onDoubleTapGestureEvent = useCallback(({nativeEvent}) => {}, []);
+  const onDoubleTapHandlerStateChange = useCallback(
     ({nativeEvent}) => {
       if (nativeEvent.oldState === State.ACTIVE) {
         if (!isZooming) {
@@ -377,8 +390,8 @@ const PinchableImage = ({
               setSwipeDownEnabled(false);
               Animated.spring(pinchScale, {
                 toValue: 4,
-                friction: 17,
-                tension: 108,
+                friction: 100,
+                tension: 508,
                 useNativeDriver: true,
               }).start(() => {
                 pinchScale.setValue(1);
@@ -391,8 +404,8 @@ const PinchableImage = ({
             } else {
               Animated.spring(baseScale, {
                 toValue: 1,
-                friction: 17,
-                tension: 108,
+                friction: 100,
+                tension: 508,
                 useNativeDriver: true,
               }).start(() => {
                 pinchScale.setValue(1);
@@ -508,10 +521,10 @@ const PinchableImage = ({
                         extrapolate: 'clamp',
                       }),
                     },
-                    ((image.img_height * wp('100%')) / image.img_width >
+                    ((IMG_HEIGHT * wp('100%')) / IMG_WIDTH >
                     hp('100%') - getStatusBarHeight() * 2 - 112
                       ? hp('100%') - getStatusBarHeight() * 2 - 112
-                      : (image.img_height * wp('100%')) / image.img_width) *
+                      : (IMG_HEIGHT * wp('100%')) / IMG_WIDTH) *
                       lastScale >
                     hp('100%') - getStatusBarHeight() * 2 - 112
                       ? {
@@ -519,24 +532,24 @@ const PinchableImage = ({
                             inputRange: [
                               -hp('100%'),
                               -(
-                                ((image.img_height * wp('100%')) /
-                                  image.img_width >
+                                ((IMG_HEIGHT * wp('100%')) /
+                                  IMG_WIDTH >
                                 hp('100%') - getStatusBarHeight() * 2 - 112
                                   ? hp('100%') - getStatusBarHeight() * 2 - 112
-                                  : (image.img_height * wp('100%')) /
-                                    image.img_width) *
+                                  : (IMG_HEIGHT * wp('100%')) /
+                                    IMG_WIDTH) *
                                   lastScale -
                                 (hp('100%') - getStatusBarHeight() * 2 - 112)
                               ) /
                                 2 /
                                 lastScale,
                               0,
-                              (((image.img_height * wp('100%')) /
-                                image.img_width >
+                              (((IMG_HEIGHT * wp('100%')) /
+                                IMG_WIDTH >
                               hp('100%') - getStatusBarHeight() * 2 - 112
                                 ? hp('100%') - getStatusBarHeight() * 2 - 112
-                                : (image.img_height * wp('100%')) /
-                                  image.img_width) *
+                                : (IMG_HEIGHT * wp('100%')) /
+                                  IMG_WIDTH) *
                                 lastScale -
                                 (hp('100%') - getStatusBarHeight() * 2 - 112)) /
                                 2 /
@@ -545,46 +558,46 @@ const PinchableImage = ({
                             ],
                             outputRange: [
                               -(
-                                ((image.img_height * wp('100%')) /
-                                  image.img_width >
+                                ((IMG_HEIGHT * wp('100%')) /
+                                  IMG_WIDTH >
                                 hp('100%') - getStatusBarHeight() * 2 - 112
                                   ? hp('100%') - getStatusBarHeight() * 2 - 112
-                                  : (image.img_height * wp('100%')) /
-                                    image.img_width) *
+                                  : (IMG_HEIGHT * wp('100%')) /
+                                    IMG_WIDTH) *
                                   lastScale -
                                 (hp('100%') - getStatusBarHeight() * 2 - 112)
                               ) /
                                 2 /
                                 lastScale,
                               -(
-                                ((image.img_height * wp('100%')) /
-                                  image.img_width >
+                                ((IMG_HEIGHT * wp('100%')) /
+                                  IMG_WIDTH >
                                 hp('100%') - getStatusBarHeight() * 2 - 112
                                   ? hp('100%') - getStatusBarHeight() * 2 - 112
-                                  : (image.img_height * wp('100%')) /
-                                    image.img_width) *
+                                  : (IMG_HEIGHT * wp('100%')) /
+                                    IMG_WIDTH) *
                                   lastScale -
                                 (hp('100%') - getStatusBarHeight() * 2 - 112)
                               ) /
                                 2 /
                                 lastScale,
                               0,
-                              (((image.img_height * wp('100%')) /
-                                image.img_width >
+                              (((IMG_HEIGHT * wp('100%')) /
+                                IMG_WIDTH >
                               hp('100%') - getStatusBarHeight() * 2 - 112
                                 ? hp('100%') - getStatusBarHeight() * 2 - 112
-                                : (image.img_height * wp('100%')) /
-                                  image.img_width) *
+                                : (IMG_HEIGHT * wp('100%')) /
+                                  IMG_WIDTH) *
                                 lastScale -
                                 (hp('100%') - getStatusBarHeight() * 2 - 112)) /
                                 2 /
                                 lastScale,
-                              (((image.img_height * wp('100%')) /
-                                image.img_width >
+                              (((IMG_HEIGHT * wp('100%')) /
+                                IMG_WIDTH >
                               hp('100%') - getStatusBarHeight() * 2 - 112
                                 ? hp('100%') - getStatusBarHeight() * 2 - 112
-                                : (image.img_height * wp('100%')) /
-                                  image.img_width) *
+                                : (IMG_HEIGHT * wp('100%')) /
+                                  IMG_WIDTH) *
                                 lastScale -
                                 (hp('100%') - getStatusBarHeight() * 2 - 112)) /
                                 2 /
@@ -598,17 +611,24 @@ const PinchableImage = ({
                         },
                   ],
                 }}>
-                <TapGestureHandler
+                  <TapGestureHandler
                   onGestureEvent={onTapGestureEvent}
                   onHandlerStateChange={onTapHandlerStateChange}
+                  waitFor={doubleTapRef}
+                  >
+                <TapGestureHandler
+                ref={doubleTapRef}
+                  onGestureEvent={onDoubleTapGestureEvent}
+                  onHandlerStateChange={onDoubleTapHandlerStateChange}
                   numberOfTaps={2}>
                   <ContentView as={Animated.View}>
+                    {image.img_url ? 
                     <FastImage
                       key={'image' + currentIndex}
                       style={{
                         width: wp('100%'),
-                        height: image.img_height
-                          ? (image.img_height * wp('100%')) / image.img_width
+                        height: IMG_HEIGHT
+                          ? (IMG_HEIGHT * wp('100%')) / IMG_WIDTH
                           : '100%',
                         maxHeight: hp('100%') - getStatusBarHeight() * 2 - 112,
                       }}
@@ -621,8 +641,24 @@ const PinchableImage = ({
                         cache: FastImage.cacheControl.immutable,
                       }}
                       resizeMode={FastImage.resizeMode.contain}
-                    />
+                    /> :
+                    <Image
+                    key={'image' + currentIndex}
+                    style={{
+                      width: wp('100%'),
+                      height: IMG_WIDTH
+                        ? (IMG_HEIGHT * wp('100%')) / IMG_WIDTH
+                        : '100%',
+                      maxHeight: hp('100%') - getStatusBarHeight() * 2 - 112,
+                      resizeMode: 'contain'
+                    }}
+                    source={{
+                      uri: image.uri,
+                      cache: 'force-cache',
+                    }}
+                    /> }
                   </ContentView>
+                </TapGestureHandler>
                 </TapGestureHandler>
               </ContentView>
             </PanGestureHandler>

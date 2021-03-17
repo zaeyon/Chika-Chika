@@ -13,6 +13,7 @@ import {
   Animated,
   ActivityIndicator,
   Alert,
+  LayoutAnimation,
 } from 'react-native';
 
 import {useSelector, useDispatch} from 'react-redux';
@@ -267,6 +268,17 @@ const CommentListScreen = ({navigation, route}: Props) => {
     [jwtToken, postType, postId, replyTargetInfo, commentFlatListRef],
   );
 
+  
+
+  const onPressOtherCommentActionSheet = useCallback((index: number) => {
+    if (index === 1) {
+    }
+  }, []);
+
+  const clickBackground = useCallback(() => {
+    Keyboard.dismiss();
+  }, []);
+
   const onPressOwnCommentActionSheet = useCallback((index: number) => {
     if (index === 1) {
       Alert.alert('선택한 댓글을 삭제하시겠습니까?', '', [
@@ -278,42 +290,24 @@ const CommentListScreen = ({navigation, route}: Props) => {
         {
           text: '삭제',
           onPress: () => {
-            deleteReviewComment();
+            setSelectedCommentId((prev: number) => {
+              DELETEComment({jwtToken, commentId: prev, type: postType, id: postId}).then((response: any) => {
+                LayoutAnimation.configureNext(
+                  LayoutAnimation.create(150, 'easeInEaseOut', 'opacity'),
+                );
+                dispatch(
+                  allActions.commentListActions.setCommentCount(response.commentsNum),
+                );
+                dispatch(
+                  allActions.commentListActions.setCommentList(response.comments),
+                );
+              })
+            })
           },
         },
       ]);
     }
-  }, []);
-
-  const onPressOtherCommentActionSheet = useCallback((index: number) => {
-    if (index === 1) {
-    }
-  }, []);
-
-  const clickBackground = useCallback(() => {
-    Keyboard.dismiss();
-  }, []);
-
-  const deleteReviewComment = useCallback(() => {
-    DELETEComment({
-      jwtToken,
-      commentId: selectedCommentId,
-      type: postType,
-      id: postId,
-    })
-      .then((response: any) => {
-        console.log('DELETEComment response', response);
-        dispatch(
-          allActions.commentListActions.setCommentList(response.comments),
-        );
-        dispatch(
-          allActions.commentListActions.setCommentCount(response.commentsNum),
-        );
-      })
-      .catch((error) => {
-        console.log('DELETEComment error', error);
-      });
-  }, [postId, postType, selectedCommentId]);
+  }, [jwtToken, postType, postId]);
 
   const onReplyCancel = useCallback(() => {
     setReplyTargetInfo({

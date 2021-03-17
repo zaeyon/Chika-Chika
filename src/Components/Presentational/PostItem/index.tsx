@@ -182,6 +182,7 @@ margin-right: 4px;
 
 interface Props {
   data: any;
+  moveToKeywordSearch: ({keyword, searchQuery, category, tagId}: any) => void;
   moveToCommunityDetail: any;
   moveToAnotherProfile: any;
   toggleSocialLike: any;
@@ -192,6 +193,7 @@ const PostItem = ({
   data,
   moveToCommunityDetail,
   moveToAnotherProfile,
+  moveToKeywordSearch,
   toggleSocialLike,
   toggleSocialScrap,
 }: Props) => {
@@ -217,6 +219,8 @@ const PostItem = ({
 
   const likeButtonScale = useRef(new Animated.Value(1)).current;
   const scrapButtonScale = useRef(new Animated.Value(1)).current;
+
+
 
   const [isLiked, setIsLiked] = useState(viewerLikeCommunityPost);
   const [isScraped, setIsScraped] = useState(viewerScrapCommunityPost);
@@ -325,6 +329,7 @@ const PostItem = ({
           console.log(item);
         }}>
         <ImageView
+          as={Animated.Image}
           key={'image' + index}
           source={{
             url: item.img_thumbNail,
@@ -346,11 +351,24 @@ const PostItem = ({
     ) {
       return null;
     } else {
-      const renderItem = (item: any) => (
-        <HashTagIconView key={String(item.id)}>
+      const renderItem = (item: any, categoryIndex: number) => (
+        <HashTagIconView key={String(item.id)} onPress={() => {
+          console.log(item)
+          moveToKeywordSearch({
+            keyword: item.originalName || item.name || item.emdName || item.usualName,
+            searchQuery: item.originalName || item.name || item.usualName || item.fullCityName,
+            category: [
+              'clinic',
+              'general',
+              'treatment',
+              'city',
+            ][categoryIndex],
+            tagId: item.id
+          })
+        }}>
           <HashTagText>{'#'}</HashTagText>
           <HashTagIconText>
-            {item.name || item.emdName || item.usualName}
+            {item.originalName || item.name || item.emdName || item.usualName}
           </HashTagIconText>
         </HashTagIconView>
       );
@@ -360,7 +378,7 @@ const PostItem = ({
         GeneralTags,
         TreatmentItems,
         CityTags,
-      ].map((item) => item.map(renderItem));
+      ].map((item, index) => item.map((item) => renderItem(item, index)));
       return <HashTagContainerView>{result}</HashTagContainerView>;
     }
   }, [Clinics, GeneralTags, TreatmentItems, CityTags]);

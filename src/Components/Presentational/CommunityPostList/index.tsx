@@ -135,6 +135,7 @@ interface Props {
   onRefresh: any;
   isEndReached: boolean;
   onEndReached: any;
+  moveToKeywordSearch: ({keyword, searchQuery, category, tagId}: any) => void;
   moveToCommunityDetail: any;
   moveToAnotherProfile: any;
   toggleSocialLike: any;
@@ -148,6 +149,7 @@ const CommunityPostList = ({
   onRefresh,
   isEndReached,
   onEndReached,
+  moveToKeywordSearch,
   moveToCommunityDetail,
   moveToAnotherProfile,
   toggleSocialLike,
@@ -180,6 +182,7 @@ const CommunityPostList = ({
     return (
       <PostItem
         data={item}
+        moveToKeywordSearch={moveToKeywordSearch}
         moveToCommunityDetail={moveToCommunityDetail}
         moveToAnotherProfile={moveToAnotherProfile}
         toggleSocialLike={toggleSocialLike}

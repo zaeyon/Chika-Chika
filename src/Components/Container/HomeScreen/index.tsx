@@ -58,7 +58,9 @@ padding: 20px 16px 15px 16px;
 background: #FFFFFF;
 align-items: center;
 z-index: 2;
-margin-bottom: 8px;
+border-bottom-width: 1px;
+border-color: #F5F7F9;
+
 `;
 
 const HeaderIconContainerView = Styled.View`

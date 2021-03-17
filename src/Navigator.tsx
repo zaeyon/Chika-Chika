@@ -143,6 +143,8 @@ const ImageSelectStack = createStackNavigator();
 const EditProfileStack = createSharedElementStackNavigator();
 const ImageSelectOneStack = createSharedElementStackNavigator();
 
+const ReviewUploadCardStack = createStackNavigator();
+
 const staticConfig = {
   animation: 'timing',
   config: {
@@ -220,6 +222,7 @@ function AuthStackScreen() {
     </AuthStack.Navigator>
   );
 }
+
 
 function ReviewStackScreen() {
   return (
@@ -483,9 +486,33 @@ function NearDentalMapStackScreen() {
         name="ReviewStackScreen"
         component={ReviewStackScreen}
       />
-      <HomeStack.Screen
+      <NearDentalMapStack.Screen
         name="AnotherProfileStackScreen"
         component={AnotherProfileStackScreen}
+      />
+      <NearDentalMapStack.Screen
+        name="TotalKeywordSearchStackScreen"
+        component={TotalKeywordSearchStackScreen}
+        options={() => ({
+          gestureEnabled: false,
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {duration: 0},
+            },
+            close: {
+              animation: 'timing',
+              config: {duration: 0},
+            },
+          },
+          cardStyleInterpolator: ({current: {progress}}) => {
+            return {
+              cardStyle: {
+                opacity: progress,
+              },
+            };
+          },
+        })}
       />
     </NearDentalMapStack.Navigator>
   );
@@ -524,6 +551,7 @@ function DentalClinicStackScreen() {
         name="ReviewStackScreen"
         component={ReviewStackScreen}
       />
+      
     </DentalClinicStack.Navigator>
   );
 }
@@ -565,33 +593,36 @@ function TeethCareStackScreen() {
   );
 }
 
-function ReviewUploadStackScreen() {
+function ReviewUploadCardStackScreen() {
   return (
-    <ReviewUploadStack.Navigator headerMode="none">
-      <ReviewUploadStack.Screen
-        name="ReviewGuideScreen"
-        component={ReviewGuideScreen}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
-      <ReviewUploadStack.Screen
-        name="ReviewUploadScreen"
-        component={ReviewUploadScreen}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
-      <ReviewUploadStack.Screen
+    <ReviewUploadCardStack.Navigator
+      headerMode="none"
+      >
+        <ReviewUploadCardStack.Screen
         name="ReviewMetaDataScreen"
         component={ReviewMetaDataScreen}
         options={{
           gestureEnabled: false,
         }}
       />
-      <ReviewUploadStack.Screen
+      <ReviewUploadCardStack.Screen
         name="ContentPostScreen"
         component={ContentPostScreen}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
+      </ReviewUploadCardStack.Navigator>
+  )
+}
+
+function ReviewUploadStackScreen() {
+  return (
+    <ReviewUploadStack.Navigator headerMode="none" mode="modal">
+      
+      <ReviewUploadStack.Screen
+        name="ReviewUploadCardStackScreen"
+        component={ReviewUploadCardStackScreen}
         options={{
           gestureEnabled: false,
         }}
@@ -640,6 +671,7 @@ function ReviewUploadStackScreen() {
         component={ImageSelectStackScreen}
         options={{
           gestureEnabled: false,
+          
         }}
       />
       <ReviewUploadStack.Screen
@@ -653,22 +685,39 @@ function ReviewUploadStackScreen() {
         name="ProofImageGuideScreen"
         component={ProofImageGuideScreen}
       />
+      
       <ReviewUploadStack.Screen
         name="FullProofImageScreen"
-        component={FullProofImageScreen}
-        options={{
+        component={ImageDetailScreen}
+        options={() => ({
           gestureEnabled: false,
           transitionSpec: {
             open: {
               animation: 'timing',
-              config: {duration: 0},
+              config: {duration: 150},
             },
             close: {
               animation: 'timing',
-              config: {duration: 0},
+              config: {duration: 150},
             },
           },
-        }}
+          cardStyle: {backgroundColor: 'transparent'},
+          cardStyleInterpolator: ({current: {progress}}) => {
+            return {
+              cardStyle: {
+                opacity: progress,
+              },
+            };
+          },
+        })}
+        // sharedElementsConfig={(route, otherRoute, showing) => {
+        //   console.log(route.params.imageIndex);
+        //   if (showing) {
+        //     const item = route.params.imageArray;
+        //     return item.map((item) => `item.${item}`);
+        //     return [`item.${item[route.params.imageIndex]}`];
+        //   }
+        // }}
       />
       <ReviewUploadStack.Screen
         name="ProofImageEventScreen"
@@ -854,6 +903,30 @@ function MyProfileStackScreen() {
       <MyProfileStack.Screen
         name="PrivacyPolicyScreen"
         component={PrivacyPolicyScreen}
+      />
+      <MyProfileStack.Screen
+        name="TotalKeywordSearchStackScreen"
+        component={TotalKeywordSearchStackScreen}
+        options={() => ({
+          gestureEnabled: false,
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {duration: 0},
+            },
+            close: {
+              animation: 'timing',
+              config: {duration: 0},
+            },
+          },
+          cardStyleInterpolator: ({current: {progress}}) => {
+            return {
+              cardStyle: {
+                opacity: progress,
+              },
+            };
+          },
+        })}
       />
     </MyProfileStack.Navigator>
   );
@@ -1206,7 +1279,9 @@ function BottomTab() {
     if (routeName.name === 'AccuseScreen') {
       return false;
     }
-
+    if (routeName.name === 'TotalKeywordSearchStackScreen'){
+      return false;
+    }
     if (
       routeName.name === 'LocationInfoTermsOfUseScreen' ||
       routeName.name === 'PrivacyPolicyScreen' ||

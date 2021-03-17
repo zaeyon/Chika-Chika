@@ -112,6 +112,13 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   const searchInputRef = useRef<any>();
 
   useEffect(() => {
+    if(route?.params?.redirected){
+      searchTotalKeyword(route.params.redirectionBody)
+      navigation.setParams({
+        redirected: false,
+        redirectionBody: null,
+      })
+    }
     GETSearchRecord({jwtToken, isUnified: true})
       .then((response: any) => {
         console.log('GETSearchRecord response', response);
@@ -190,7 +197,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
           console.log('fetch search result error', e);
         });
     },
-    [jwtToken, searchQuery, inputQuery, category, tagId],
+    [jwtToken, searchQuery, inputQuery, category, tagId, route],
   );
 
   const deleteAllSearchRecord = () => {
@@ -230,12 +237,13 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
       // if (inputQuery.trim() === '') {
       // } else {
 
-      searchInputRef.current.blur();
-      setIsVisibleAutoCompletedKeyword(false);
       setInputQuery(keyword);
       setSearchQuery(searchQuery);
       setCategory(category);
       setTagId(tagId);
+      searchInputRef.current.blur();
+      setIsVisibleAutoCompletedKeyword(false);
+      if (!route?.params?.redirected) {
       POSTSearchRecord({
         jwtToken,
         tagCategory: category,
@@ -252,14 +260,14 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
             console.log('GETSearchRecord error', error);
           });
       });
-
+    }
       // }
     },
-    [jwtToken],
+    [jwtToken, route],
   );
 
   const onFocusSearchKeywordInput = () => {
-    if (!isVisibleAutoCompletedKeyword) {
+    if (!isVisibleAutoCompletedKeyword && !route.params.redirected) {
       setIsVisibleAutoCompletedKeyword(true);
     }
   };
@@ -296,7 +304,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
               setInputQuery(text);
             }}
             autoCorrect={false}
-            autoFocus={true}
+            autoFocus={!(route?.params?.redirected)}
             onSubmitEditing={() => searchInputRef.current.blur()}
             onFocus={() => onFocusSearchKeywordInput()}
           />
