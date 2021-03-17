@@ -223,15 +223,13 @@ const ScrapedReviewScreen = ({navigation, route}: Props) => {
         <ActivityIndicator />
       ) : (
         <ReviewList
+        navigation={navigation}
           renderHeaderComponent={renderHeaderComponent}
           reviewList={postData}
           loadingMoreReview={isEndReached}
           onEndReachedReviewList={onEndReached}
           refreshingReviewList={isRefreshing}
           onRefreshReviewList={onRefresh}
-          moveToReviewDetail={moveToReviewDetail}
-          moveToWriterProfile={moveToWriterProfile}
-          moveToDentalDetail={moveToDentalDetail}
         />
       )}
     </ContainerView>

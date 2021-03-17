@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, StatusBar, Image} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createStackNavigator} from '@react-navigation/stack';
+import {createStackNavigator, TransitionSpecs, CardStyleInterpolators} from '@react-navigation/stack';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
 import {
   widthPercentageToDP as wp,
@@ -168,25 +168,23 @@ function AuthStackScreen() {
         component={LoginScreen} 
         options={{
           gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
-      />
-      <AuthStack.Screen
-        name="BasicInputScreen" 
-        component={BasicInputScreen} 
-      />
-      <AuthStack.Screen
-        name="ProfileInputScreen"
-        component={ProfileInputScreen}
       />
       <AuthStack.Screen
         name="PhoneVerifyScreen"
         component={PhoneVerifyScreen}
+        options={{
+          gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
       />
       <AuthStack.Screen
         name="HometownSearchScreen"
         component={HometownSearchScreen}
         options={{
           gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <AuthStack.Screen
@@ -194,20 +192,30 @@ function AuthStackScreen() {
         component={TermsAgreeScreen}
         options={{
           gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         />
 
       <AuthStack.Screen
         name="TermsOfServiceScreen"
         component={TermsOfServiceScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
       />
       <AuthStack.Screen
         name="LocationInfoTermsOfUseScreen"
         component={LocationInfoTermsOfUseScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
       />
       <AuthStack.Screen
         name="PrivacyPolicyScreen"
         component={PrivacyPolicyScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
       />
     </AuthStack.Navigator>
   );

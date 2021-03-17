@@ -6,6 +6,7 @@ import android.content.Context;
 //import com.facebook.react.BuildConfig;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 import com.github.quadflask.react.navermap.RNNaverMapPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
@@ -59,6 +60,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new RNFusedLocationPackage(),
             new RNNaverMapPackage(),
             new SplashScreenReactPackage(),
             new SafeAreaContextPackage(),

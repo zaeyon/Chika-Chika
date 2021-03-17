@@ -7,6 +7,9 @@ import {
   Alert,
   ActivityIndicator,
   Keyboard,
+  View,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import axios from 'axios';
 import {resolvePlugin} from '@babel/core';
@@ -107,7 +110,6 @@ padding-right: 10px;
 border-bottom-width: 1px;
 border-color: #E2E6ED;
 font-size: 16px;
-line-height: 18px;
 `;
 
 const VerifyText = Styled.Text`
@@ -238,7 +240,9 @@ const LoginScreen = ({navigation, route}: Props) => {
   const [numberInputFocus, setNumberInputFocus] = useState<boolean>(false);
   const [authCodeInputFocus, setAuthCodeInputFocus] = useState<boolean>(false);
   const [isUser, setIsUser] = useState<boolean>(false);
+
   const [formattedNumber, setFormattedNumber] = useState<string>('');
+  const [formattedNumberArray, setFormattedNumberArray] = useState<Array<any>>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingVerify, setLoadingVerify] = useState<boolean>(false);
 
@@ -256,13 +260,19 @@ const LoginScreen = ({navigation, route}: Props) => {
 
   const dispatch = useDispatch();
 
-  const numberInputRef = useRef(null);
-  const authCodeInputRef = useRef(null);
+  const numberInputRef = useRef<any>(null);
+  const authCodeInputRef = useRef<any>(null);
   const isCertified = useRef<boolean>(false);
   const certifiedAuthCode = useRef<any>(0);
 
   let submitingNumber: any;
   let submitingPassword: any;
+
+  useEffect(() => {
+    setTimeout(() => {
+      numberInputRef.current.focus();
+    }, 5)
+  }, [])
 
   function checkNumber(str: string) {
     var regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
@@ -278,6 +288,28 @@ const LoginScreen = ({navigation, route}: Props) => {
     }
   }
 
+  const onChangeTextNumberInput = (text: string) => {
+    if(text.length > 13) {
+      return 
+    } else {
+      const prevFormattedNumber = formattedNumber.slice();
+      setFormattedNumber(text);
+
+      if(text.length === 3 && prevFormattedNumber.charAt(prevFormattedNumber.length -1) !== " ") {
+        setFormattedNumber((prevState) => {
+          return prevState + " "
+        })
+      }
+  
+      if(text.length === 8 && prevFormattedNumber.charAt(prevFormattedNumber.length -1) !== " ") {
+        setFormattedNumber((prevState) => {
+          return prevState + " "
+        })
+      }
+    }
+  
+  }
+
   const onKeyPressNumberInput = (event: any) => {
     console.log('onKeyPressNumberInput event.nativeEvent', event.nativeEvent);
     const tmpFormattedNumber = formattedNumber.slice();
@@ -291,19 +323,23 @@ const LoginScreen = ({navigation, route}: Props) => {
 
     if (!isNaN(event.nativeEvent.key)) {
       // 입력값 숫자
-      numberArray.push(event.nativeEvent.key);
-      const joinedNumberArray = numberArray.join('');
-      setFormattedNumber(numberArray.join(''));
+      //numberArray.push(event.nativeEvent.key);
+      //const formattedNumberStr = tmpFormattedNumber + event.nativeEvent.key;
+      setFormattedNumber((prevState) => {
+        return prevState + event.nativeEvent.key;
+      });
 
-      if (numberArray.length === 4) {
-        numberArray.splice(3, 0, ' ', '-', ' ');
-        console.log('하이폰 추가', numberArray);
-        setFormattedNumber(numberArray.join(''));
-      } else if (numberArray.length === 11) {
-        numberArray.splice(10, 0, ' ', '-', ' ');
-        console.log('하이폰 추가', numberArray);
-        setFormattedNumber(numberArray.join(''));
-      }
+      //setFormattedNumber(numberArray.join(''));
+
+      // if (numberArray.length === 4) {
+      //   numberArray.splice(3, 0, ' ', '-', ' ');
+      //   console.log('하이폰 추가', numberArray);
+      //   setFormattedNumber(numberArray.join(''));
+      // } else if (numberArray.length === 11) {
+      //   numberArray.splice(10, 0, ' ', '-', ' ');
+      //   console.log('하이폰 추가', numberArray);
+      //   setFormattedNumber(numberArray.join(''));
+      // }
 
     } else if (event.nativeEvent.key === 'Backspace') {
       // 입력값 Backspace
@@ -339,6 +375,8 @@ const LoginScreen = ({navigation, route}: Props) => {
 
 
       if (limitTime < 0) {
+        setLimitSec("00");
+        setLimitMin(0);
         clearInterval(timeout);
         setTimeOver(true);
       }
@@ -420,12 +458,12 @@ const LoginScreen = ({navigation, route}: Props) => {
   };
 
   const clickSendAuthCode = () => {
-    if (formattedNumber.split('').length === 17) {
+    if (formattedNumber.length === 13) {
       setInvalidPhoneNumber(false);
       clearInterval(timeout);
       startTimeout();
 
-      var tmpNumber = formattedNumber.split(' - ');
+      var tmpNumber = formattedNumber.split(' ');
       var phoneNumber = tmpNumber.join('');
       console.log('tmpNumber', tmpNumber.join(''));
 
@@ -440,34 +478,34 @@ const LoginScreen = ({navigation, route}: Props) => {
 
           setIsUser(response.exist);
       
-          if(phoneNumber === '01093664131') {
+          // if(phoneNumber === '01093664131') {
 
-          const jwtToken = response.token;
-          const profile = {
-            phoneNumber: phoneNumber,
-            id: response.user.userId,
-            nickname: response.user.userNickname,
-            profileImg: response.user.userProfileImg,
-            img_thumbNail: response.user.img_thumbNail,
-            gender: response.user.userGender,
-            birthdate: response.user.userBirthdate,
-            provider: response.user.userProvider,
-            Residences: response.user.userResidences,
-          };
+          // const jwtToken = response.token;
+          // const profile = {
+          //   phoneNumber: phoneNumber,
+          //   id: response.user.userId,
+          //   nickname: response.user.userNickname,
+          //   profileImg: response.user.userProfileImg,
+          //   img_thumbNail: response.user.img_thumbNail,
+          //   gender: response.user.userGender,
+          //   birthdate: response.user.userBirthdate,
+          //   provider: response.user.userProvider,
+          //   Residences: response.user.userResidences,
+          // };
 
-          storeUserInfo(jwtToken);
+          // storeUserInfo(jwtToken);
           
-          dispatch(
-            allActions.userActions.setUser({
-              jwtToken,
-              profile,
-            }),
-          );
+          // dispatch(
+          //   allActions.userActions.setUser({
+          //     jwtToken,
+          //     profile,
+          //   }),
+          // );
 
-          dispatch(
-            allActions.userActions.setHometown(response.user.userResidences),
-          );
-          }
+          // dispatch(
+          //   allActions.userActions.setHometown(response.user.userResidences),
+          // );
+          // }
         })
         .catch(function (error) {
           console.log('POSTSendTokenToPhone error', error);
@@ -572,9 +610,10 @@ const LoginScreen = ({navigation, route}: Props) => {
             keyboardType={'number-pad'}
             onEndEditing={(text) => onUnfocusNumberInput(text.nativeEvent.text)}
             onFocus={() => onFocusNumberInput()}
-            autoFocus={true}
+            autoFocus={Platform.OS === 'ios' ? true : false}
             value={formattedNumber}
-            onKeyPress={(event) => onKeyPressNumberInput(event)}
+            onChangeText={(text) => onChangeTextNumberInput(text)}
+            //onKeyPress={(event) => onKeyPressNumberInput(event)}
           />
           <TouchableWithoutFeedback onPress={() => clickSendAuthCode()}>
             <VerifyTextContainer
@@ -634,29 +673,75 @@ const LoginScreen = ({navigation, route}: Props) => {
             )}
           </ItemContainer>
         )}
+        {Platform.OS === 'android' && (
         <FinishButtonContainer>
-          <AboveKeyboard>
+          <KeyboardAvoidingView
+          behavior={'height'}>
             <LoginButtonContainer>
               {number !== '' &&
                 authCode !== '' &&
                 !timeOver &&
                 !invalidPhoneNumber && (
-                  <TouchableWithoutFeedback onPress={() => clickLoginButton()}>
+                  <TouchableWithoutFeedback 
+                  style={{backgroundColor: "#c3c3c3"}}
+                  onPress={() => {
+                    clickLoginButton();
+                    console.log("로그인 버튼 클릭");
+                  }}>
+                    <View>
                     <AbledLoginButton>
                       <AbledLoginText>{"로그인 / 회원가입"}</AbledLoginText>
                     </AbledLoginButton>
+                    </View>
                   </TouchableWithoutFeedback>
                 )}
               {((authCode == '') ||
                 timeOver ||
                 invalidPhoneNumber) && (
+                <TouchableWithoutFeedback onPress={() => console.log("로그인 버튼 비활성")}>
                 <DisabledLoginButton>
                   <DisabledLoginText>{"로그인 / 회원가입"}</DisabledLoginText>
                 </DisabledLoginButton>
+                </TouchableWithoutFeedback>
               )}
             </LoginButtonContainer>
-          </AboveKeyboard>
+          </KeyboardAvoidingView>
         </FinishButtonContainer>
+        )}
+        {Platform.OS === 'ios' && (
+        <FinishButtonContainer>
+        <AboveKeyboard>
+          <LoginButtonContainer>
+            {number !== '' &&
+              authCode !== '' &&
+              !timeOver &&
+              !invalidPhoneNumber && (
+                <TouchableWithoutFeedback 
+                style={{backgroundColor: "#c3c3c3"}}
+                onPress={() => {
+                  clickLoginButton();
+                  console.log("로그인 버튼 클릭");
+                }}>
+                  <View>
+                  <AbledLoginButton>
+                    <AbledLoginText>{"로그인 / 회원가입"}</AbledLoginText>
+                  </AbledLoginButton>
+                  </View>
+                </TouchableWithoutFeedback>
+              )}
+            {((authCode == '') ||
+              timeOver ||
+              invalidPhoneNumber) && (
+              <TouchableWithoutFeedback onPress={() => console.log("로그인 버튼 비활성")}>
+              <DisabledLoginButton>
+                <DisabledLoginText>{"로그인 / 회원가입"}</DisabledLoginText>
+              </DisabledLoginButton>
+              </TouchableWithoutFeedback>
+            )}
+          </LoginButtonContainer>
+        </AboveKeyboard>
+        </FinishButtonContainer>
+        )}
       </BodyContainer>
       {(loading || loadingVerify) && (
         <LoadingContainer>
@@ -668,3 +753,4 @@ const LoginScreen = ({navigation, route}: Props) => {
 };
 
 export default LoginScreen;
+

@@ -38,6 +38,8 @@ target 'chikaApp' do
 
   pod 'react-native-nmap', :path => '../node_modules/react-native-nmap'
 
+  pod 'react-native-geolocation-service', :path => '../node_modules/react-native-geolocation-service'
+
   target 'chikaAppTests' do
     inherit! :complete
     # Pods for testing

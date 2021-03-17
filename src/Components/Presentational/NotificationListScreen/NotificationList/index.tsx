@@ -203,14 +203,6 @@ const NotificationList = ({
     );
   };
 
-  const renderNotificationFooter = () => {
-    return (
-      <GuideContainer>
-        <GuideText>{'최근 30일 동안 받은 알림을 모두 확인했습니다.'}</GuideText>
-      </GuideContainer>
-    );
-  };
-
   return (
     <Container>
       {notificationArray?.length > 0 && (
@@ -222,7 +214,6 @@ const NotificationList = ({
             onRefresh={onRefreshNotificationArray}
             renderItem={renderNotificationItem}
             data={notificationArray}
-            ListFooterComponent={renderNotificationFooter}
           />
         </NotificationListContainer>
       )}

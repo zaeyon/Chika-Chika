@@ -1012,9 +1012,12 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }, []);
 
   const navigateToGalleryByDental = useCallback(() => {
-    navigation.navigate('ImageSelectScreen', {
-      requestType: 'dentalImage',
-      selectedImages: selectedDentalImages,
+    navigation.navigate('ImageSelectStackScreen', {
+      screen: 'ImageSelectScreen',
+      params: {
+        requestType: 'dentalImage',
+        selectedImages: selectedDentalImages,
+      }
     });
   }, [])
 

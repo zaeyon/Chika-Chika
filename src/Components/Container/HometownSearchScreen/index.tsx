@@ -680,7 +680,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
           </TouchableWithoutFeedback>
         </FindAroundCitesContainer>
         <HometownListHeaderContainer>
-          {inputText.length > 0 && !isAroundCities && (
+          {!isAroundCities && (
             <ListLabelText>{`'${inputText}'`}</ListLabelText>
           )}
           {isAroundCities && <ListLabelText>{`근처 동네`}</ListLabelText>}

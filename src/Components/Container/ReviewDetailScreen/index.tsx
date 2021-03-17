@@ -1074,7 +1074,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
                     <PreviewCommentList
                       navigation={navigation}
                       commentList={commentArray}
-                      commentCount={commentCount}
+                      commentsNum={commentCount}
                       profile={userProfile}
                       postId={reviewId}
                       postType="review"
