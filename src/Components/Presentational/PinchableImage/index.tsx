@@ -390,8 +390,8 @@ const PinchableImage = ({
               setSwipeDownEnabled(false);
               Animated.spring(pinchScale, {
                 toValue: 4,
-                friction: 17,
-                tension: 108,
+                friction: 100,
+                tension: 508,
                 useNativeDriver: true,
               }).start(() => {
                 pinchScale.setValue(1);
@@ -404,8 +404,8 @@ const PinchableImage = ({
             } else {
               Animated.spring(baseScale, {
                 toValue: 1,
-                friction: 17,
-                tension: 108,
+                friction: 100,
+                tension: 508,
                 useNativeDriver: true,
               }).start(() => {
                 pinchScale.setValue(1);
