@@ -211,6 +211,7 @@ margin-bottom: ${hasNotch() ? 0 : 16}px;
 
 const GalleryFlatList = Styled.FlatList`
 width: ${wp('100%')}px;
+overflow: visible;
 `;
 
 
@@ -859,9 +860,6 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     return year + '-' + month + '-' + day;
   };
 
-  const onChangeDatePicker = (event: any, date: any) => {
-    setDate(date);
-  };
 
   const onPressBackground = () => {
     console.log("onPressBackground")
@@ -933,7 +931,8 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
   const moveToFullProofImage = () => {
     navigation.navigate('FullProofImageScreen', {
-      selectedProofImage: selectedProofImage,
+      imageArray: [selectedProofImage],
+      imageIndex: 0,
     })
   }
 
@@ -1012,9 +1011,12 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }, []);
 
   const navigateToGalleryByDental = useCallback(() => {
-    navigation.navigate('ImageSelectScreen', {
+    navigation.navigate('ImageSelectStackScreen', {
+      screen: 'ImageSelectScreen',
+      params: {
       requestType: 'dentalImage',
       selectedImages: selectedDentalImages,
+      }
     });
   }, [])
 
@@ -1044,7 +1046,6 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }
 
   const registerTreatmentDate = () => {
-    setIsVisibleDatePicker(false);
 
     const tmpTreatmentDate = {
       displayTreatmentDate: selectedTreatmentYear + '.' + selectedTreatmentMonth + '.' + selectedTreatmentDay,
@@ -1052,6 +1053,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     }
 
     setTreatmentDateObj(tmpTreatmentDate);
+    cancelTreatmentDateModal()
   };
 
   const moveToSelectProofImage = () => {

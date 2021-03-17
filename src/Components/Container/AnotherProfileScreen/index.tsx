@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
+import {LayoutAnimation} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -112,6 +113,9 @@ const AnotherProfileScreen = ({navigation, route}: Props) => {
       },
       (response: any) => {
         setIsReviewInitializing((prev) => {
+          LayoutAnimation.configureNext(
+            LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+          );
           dispatch(allActions.reviewListActions.setOpponentReviews(response));
           return false;
         });
@@ -335,6 +339,28 @@ const AnotherProfileScreen = ({navigation, route}: Props) => {
     });
   };
 
+  const moveToKeywordSearch = useCallback((
+    {
+      keyword,
+      searchQuery = '',
+      category,
+      tagId,
+    }
+  ) => {
+    navigation.navigate('TotalKeywordSearchStackScreen', {
+      screen: 'TotalKeywordSearchScreen',
+      params: {
+        redirected: true,
+        redirectionBody: {
+          keyword,
+          searchQuery,
+          category,
+          tagId,
+        }
+      }
+    })
+  }, []);
+
   const moveToDentalDetail = (dentalId: number) => {
     navigation.navigate('DentalClinicStackScreen', {
       screen: 'DentalDetailScreen',
@@ -422,6 +448,7 @@ const AnotherProfileScreen = ({navigation, route}: Props) => {
         targetUser={targetUserProfile}
         targetUserSkeletonData={route.params.targetUser}
         isMyProfile={route.params.targetUser.userId === profile.id}
+        moveToKeywordSearch={moveToKeywordSearch}
         moveToCommunityDetail={moveToCommunityDetail}
         moveToAnotherProfile={moveToAnotherProfile}
         moveToReservationTabScreen={moveToReservationTabScreen}

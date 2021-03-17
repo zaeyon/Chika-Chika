@@ -121,6 +121,7 @@ interface Props {
   commentObj: any;
   userId: any;
   profileImage: string;
+  img_thumbNail: string;
   nickname: string;
   description: string;
   createdDate: string;
@@ -147,6 +148,7 @@ const ReplyItem = ({
   index,
   userId,
   profileImage,
+  img_thumbNail,
   nickname,
   description,
   createdDate,
@@ -157,6 +159,8 @@ const ReplyItem = ({
   replyObj,
   commentObj,
 }: Props) => {
+
+  console.log('comment', replyObj)
   const userProfile = useSelector((state: any) => state.currentUser.profile);
   const containerRef: any = useRef();
   const [positionY, setPositionY] = useState(0);
@@ -213,9 +217,9 @@ const ReplyItem = ({
           <ProfileImageContainer>
             <ProfileImage
               source={{
-                uri: profileImage
-                  ? profileImage
-                  : 'https://pickk.one/images/defaultProfile.jpg',
+                uri: img_thumbNail
+                ? img_thumbNail:
+                  profileImage
               }}
             />
           </ProfileImageContainer>

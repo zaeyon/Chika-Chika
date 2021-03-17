@@ -284,6 +284,7 @@ interface Props {
   onCommunityEndReached: any;
   currentUser: User;
   openModal: any;
+  moveToKeywordSearch: any;
   moveToCommunityDetail: any;
   moveToReservationTabScreen: any;
   moveToSavedHospitalTabScreen: any;
@@ -383,6 +384,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
     return (
       <PostItem
         data={item}
+        moveToKeywordSearch={this.props.moveToKeywordSearch}
         moveToCommunityDetail={this.props.moveToCommunityDetail}
         moveToAnotherProfile={this.props.moveToAnotherProfile}
         toggleSocialLike={this.props.toggleSocialLike}

@@ -5,7 +5,7 @@ interface params {
     jwtToken: string,
     commentId: number,
     type: string,
-    id: number,
+    id: number | string,
 }
 
 const DELETEComment = ({jwtToken, commentId, type, id}: params) => {

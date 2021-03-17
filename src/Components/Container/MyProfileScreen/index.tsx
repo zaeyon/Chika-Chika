@@ -330,6 +330,28 @@ const MyProfileScreen = ({navigation, route}: Props) => {
     });
   };
 
+  const moveToKeywordSearch = useCallback((
+    {
+      keyword,
+      searchQuery = '',
+      category,
+      tagId,
+    }
+  ) => {
+    navigation.navigate('TotalKeywordSearchStackScreen', {
+      screen: 'TotalKeywordSearchScreen',
+      params: {
+        redirected: true,
+        redirectionBody: {
+          keyword,
+          searchQuery,
+          category,
+          tagId,
+        }
+      }
+    })
+  }, []);
+
   const moveToReviewDetail = (
     reviewId: number,
     writer: object,
@@ -419,6 +441,7 @@ const MyProfileScreen = ({navigation, route}: Props) => {
         onCommunityEndReached={onCommunityEndReached}
         currentUser={profile}
         openModal={openModal}
+        moveToKeywordSearch={moveToKeywordSearch}
         moveToCommunityDetail={moveToCommunityDetail}
         moveToAnotherProfile={moveToAnotherProfile}
         moveToReservationTabScreen={moveToReservationTabScreen}

@@ -137,7 +137,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         };
         
           console.log('liked post diff1');
-          LayoutAnimation.configureNext(
+          initialize && LayoutAnimation.configureNext(
             LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
           );
           setInitialize(false);
@@ -327,6 +327,28 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
     [jwtToken, postData, region, order, selectedHometown],
   );
 
+  const moveToKeywordSearch = useCallback((
+    {
+      keyword,
+      searchQuery = '',
+      category,
+      tagId,
+    }
+  ) => {
+    navigation.navigate('TotalKeywordSearchStackScreen', {
+      screen: 'TotalKeywordSearchScreen',
+      params: {
+        redirected: true,
+        redirectionBody: {
+          keyword,
+          searchQuery,
+          category,
+          tagId,
+        }
+      }
+    })
+  }, []);
+  
   const moveToCommunityDetail = useCallback(
     (postId: number, postType: string) => {
       navigation.navigate('CommunityDetailScreen', {
@@ -463,6 +485,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         onRefresh={onRefresh}
         isEndReached={isEndReached}
         onEndReached={onEndReached}
+        moveToKeywordSearch={moveToKeywordSearch}
         moveToCommunityDetail={moveToCommunityDetail}
         moveToAnotherProfile={moveToAnotherProfile}
         toggleSocialLike={toggleSocialLike}

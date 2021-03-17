@@ -488,6 +488,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
           />
 
           <PreviewCommentList
+          jwtToken={jwtToken}
             isLoading={isLoading}
             commentList={commentArray}
             commentCount={commentCount}

@@ -14,6 +14,12 @@ import ActionSheet from 'react-native-actionsheet';
 import CommentItem from '~/Components/Presentational/CommentItem';
 import ReplyItem from '~/Components/Presentational/ReplyItem';
 
+// Routes
+import DELETEComment from '~/Routes/Comment/DELETEComment'
+
+import {useSelector, useDispatch} from 'react-redux';
+import allActions from '~/actions';
+
 const Container = Styled.View`
 `;
 
@@ -74,6 +80,7 @@ margin-top: 150px;
 justify-content: center;
 `;
 interface Props {
+  jwtToken: string;
   isLoading: boolean;
   commentList: Array<any>;
   commentCount: number;
@@ -85,6 +92,7 @@ interface Props {
 }
 
 const PreviewCommentList = ({
+  jwtToken,
   isLoading,
   profile,
   commentList,
@@ -94,6 +102,7 @@ const PreviewCommentList = ({
   postType,
   commentsNum,
 }: Props) => {
+  const dispatch = useDispatch();
   const [previewCommentList, setPreviewCommentList] = useState<Array<any>>([]);
   const [maxCommentNum, setMaxCommentNum] = useState(10);
 
@@ -108,7 +117,7 @@ const PreviewCommentList = ({
     setOtherCommentActionSheetOptions,
   ] = useState(['닫기', '신고하기']);
 
-  const [selectedCommentId, setSelectedCommentId] = useState<number>(); //for action sheet
+  const [selectedCommentId, setSelectedCommentId] = useState<number>(-1); //for action sheet
 
   useEffect(() => {
     console.log('reorder', commentList);
@@ -139,7 +148,7 @@ const PreviewCommentList = ({
     if (!reachLimit) {
       setPreviewCommentList(commentList);
     }
-  }, [commentList, maxCommentNum]);
+  }, [commentList]);
 
   useEffect(() => {
     if(!isLoading) {
@@ -185,6 +194,7 @@ const PreviewCommentList = ({
         isVisibleReplyButton={true}
         userId={item.user.id}
         profileImage={item.user.profileImg}
+        img_thumbNail={item.user?.img_thumbNail}
         nickname={item.user.nickname}
         description={item.description}
         createdDate={item.createdAt}
@@ -200,10 +210,23 @@ const PreviewCommentList = ({
         case '닫기':
           return;
         case '삭제하기':
+          setSelectedCommentId((prev: number) => {
+            DELETEComment({jwtToken, commentId: prev, type: postType, id: postId}).then((response: any) => {
+              LayoutAnimation.configureNext(
+                LayoutAnimation.create(150, 'easeInEaseOut', 'opacity'),
+              );
+              dispatch(
+                allActions.commentListActions.setCommentCount(response.commentsNum),
+              );
+              dispatch(
+                allActions.commentListActions.setCommentList(response.comments),
+              );
+            })
+          })
           return;
       }
     },
-    [ownCommentActionSheetOptions],
+    [ownCommentActionSheetOptions, jwtToken, postType, postId],
   );
 
   const onPressOtherCommentActionSheet = useCallback(

@@ -403,7 +403,7 @@ const EditProfileScreen = ({
       parseInt(selectedBirthYear) === currentDate.getFullYear() &&
       parseInt(selectedBirthMonth) === currentDate.getMonth() + 1
     ) {
-      for (let i = 1; i <= currentDate.getDay(); i++) {
+      for (let i = 1; i <= currentDate.getDate(); i++) {
         result.push(<Picker.Item label={String(i)} value={String(i)} />);
       }
     } else {
@@ -446,7 +446,7 @@ const EditProfileScreen = ({
       const currentDate = new Date(Date.now());
       setSelectedBirthYear(String(currentDate.getFullYear()));
       setSelectedBirthMonth(String(currentDate.getMonth() + 1));
-      setSelectedBirthDay(String(currentDate.getDay()));
+      setSelectedBirthDay(String(currentDate.getDate()));
     }
   }, [profile]);
 

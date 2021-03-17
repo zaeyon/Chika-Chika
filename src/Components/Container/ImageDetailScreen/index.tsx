@@ -22,7 +22,6 @@ top: ${getStatusBarHeight()}
 z-index: 1;
 flex-direction: row;
 align-items: center;
-background: #000000;
 `;
 
 const HeaderCancelView = Styled.View`
@@ -66,8 +65,8 @@ width: ${wp('100%')}px;
 height: ${getStatusBarHeight() + 53}px;
 position: absolute;
 top: 0px;
-background: #000000;
 z-index: 0;
+background: #00000080
 `;
 
 const BottomMaskView = Styled.View`
@@ -75,7 +74,6 @@ width: ${wp('100%')}px;
 height: ${getStatusBarHeight() + 53}px;
 position: absolute;
 bottom: 0px;
-background: #000000;
 `;
 
 const BackgroundView = Styled.View`

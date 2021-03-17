@@ -24,9 +24,7 @@ import NavigationHeader from '~/Components/Container/ImageSelectScreen/Navigatio
 import SelectedList from '~/Components/Container/ImageSelectScreen/SelectedList';
 import AnimatedModal from '~/Components/Presentational/AnimatedModal';
 
-const ContainerView = Styled(
-  (SafeAreaView as unknown) as new () => SafeAreaView,
-)`
+const ContainerView = Styled.View`
 flex: 1;
 background: #FFFFFF;
 `;
@@ -284,7 +282,7 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
   }
 
   return (
-    <ContainerView>
+    <ContainerView as={SafeAreaView}>
       <AnimatedModal
         visible={isModalVisible}
         buttons={[
