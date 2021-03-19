@@ -1,5 +1,5 @@
 const serverConfig = {
-  baseUri: 'https://6fqodlsasj.execute-api.ap-northeast-1.amazonaws.com/test',
+  baseUri: 'https://test-api.chikachika-app.com',
 };
 
 export default serverConfig;

@@ -4,7 +4,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {TouchableWithoutFeedback, Animated} from 'react-native';
+import {TouchableWithoutFeedback, Animated, StatusBar} from 'react-native';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {NativeViewGestureHandler} from 'react-native-gesture-handler';
 // Local Component
@@ -228,6 +228,7 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
           }),
         }}
       />
+
     </ContainerView>
   );
 };

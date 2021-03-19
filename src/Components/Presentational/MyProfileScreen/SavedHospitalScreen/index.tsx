@@ -222,9 +222,6 @@ const SavedHospitalScreen = ({
     <ContainerView>
       {hospitals.length === 0 ? (
         <>
-          <BannerImage
-            source={require('~/Assets/Images/Banner/banner_review_starbucks.png')}
-          />
           <EmptyIndicatorView>
             <EmptyIndicatorImage
               source={require('~/Assets/Images/ic_noData.png')}

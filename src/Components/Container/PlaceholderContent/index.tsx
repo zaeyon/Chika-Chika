@@ -494,46 +494,6 @@ const PlaceholderContent = ({navigation, title}: Props) => {
       <PlaceholderTitleView>
         <PlaceholderTitleText>{title}</PlaceholderTitleText>
       </PlaceholderTitleView>
-      <LocalHospitalInfoView>
-        <LocalHospitalImage
-          source={require('~/Assets/Images/DentalClinic/common/gan/hospital.png')}
-        />
-        <HighlightContainerView>
-          <LocalHospitalText>{`우리동네 치과`}</LocalHospitalText>
-          <HighlightView />
-        </HighlightContainerView>
-        <LocalHospitalText>{` 확인하기`}</LocalHospitalText>
-        <LocalIndicatorView>
-          <LocalIndicatorImage
-            source={require('~/Assets/Images/Map/pick/target_white.png')}
-          />
-          <LocalIndicatorText>{selectedHometown.emdName}</LocalIndicatorText>
-        </LocalIndicatorView>
-      </LocalHospitalInfoView>
-      <LocalCommunityInfoView>
-        <LocalCommunityTitleText>{'우리동네 수다글'}</LocalCommunityTitleText>
-        <LocalCommunityItemContainerView>
-          {communityPost
-            ? renderLocalCommunityItem()
-            : renderLocalCommunityItemSkeleton()}
-        </LocalCommunityItemContainerView>
-        <TouchableWithoutFeedback onPress={() => moveToCommunity()}>
-          <NavigatoinButtonView>
-            <NavigatoinButtonText>
-              <NavigatoinButtonText
-                style={{
-                  color: '#00D1FF',
-                }}>
-                {'다른 글들도 '}
-              </NavigatoinButtonText>
-              {'궁금해요'}
-            </NavigatoinButtonText>
-            <NavigatoinButtonImage
-              source={require('~/Assets/Images/Arrow/common/gan/button_right_arrow.png')}
-            />
-          </NavigatoinButtonView>
-        </TouchableWithoutFeedback>
-      </LocalCommunityInfoView>
       <LocalClinicInfoView>
         <LocalClinicTitleText>{'내 주변 치과'}</LocalClinicTitleText>
         {localClinic
@@ -556,14 +516,6 @@ const PlaceholderContent = ({navigation, title}: Props) => {
           </NavigatoinButtonView>
         </TouchableWithoutFeedback>
       </LocalClinicInfoView>
-      <BannerContainerView>
-        <BannerImage
-          style={{
-            resizeMode: 'contain',
-          }}
-          source={require('~/Assets/Images/Banner/banner_review_starbucks.png')}
-        />
-      </BannerContainerView>
     </ContainerView>
   );
 };

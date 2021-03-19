@@ -132,6 +132,8 @@ const NotificationItem = ({
     [notificationObj],
   );
 
+  console.log(notificationObj)
+
   const currentDate = new Date();
   const createdAtDate = new Date(notificationObj.createdAt);
 
@@ -156,7 +158,7 @@ const NotificationItem = ({
       elapsedTimeText = formatDate(notificationObj.createdAt);
       return elapsedTimeText;
     }
-  }, []);
+  }, [notificationObj]);
 
   return (
     <TouchableWithoutFeedback
@@ -174,16 +176,16 @@ const NotificationItem = ({
           <TouchableWithoutFeedback
             onPress={() =>
               moveToAnotherProfile(
-                notificationObj?.sender.id,
-                notificationObj?.sender.nickname,
-                notificationObj?.sender.profileImg,
+                notificationObj?.sender?.id,
+                notificationObj?.sender?.nickname,
+                notificationObj?.sender?.profileImg,
               )
             }>
             <ProfileImageContainer>
               <ProfileImage
                 source={{
-                  uri: notificationObj?.sender.profileImg
-                    ? notificationObj?.sender.profileImg
+                  uri: notificationObj?.sender?.profileImg
+                    ? notificationObj?.sender?.profileImg
                     : 'https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/436/8142f53e51d2ec31bc0fa4bec241a919_crop.jpeg',
                 }}
               />
@@ -191,7 +193,7 @@ const NotificationItem = ({
           </TouchableWithoutFeedback>
           <BodyContainer>
             <NicknameContainer>
-              <NicknameText>{notificationObj?.sender.nickname}</NicknameText>
+              <NicknameText>{notificationObj?.sender?.nickname}</NicknameText>
               <DateText>
                 {getElapsedTime(notificationObj['createdDiff(second)'])}
               </DateText>

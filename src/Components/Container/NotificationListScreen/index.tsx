@@ -50,6 +50,9 @@ const NotificationListScreen = ({navigation, route}: Props) => {
   );
 
   useEffect(() => {
+    console.log('notificationArray: ', notificationArray)
+  }, [notificationArray])
+  useEffect(() => {
     GETUserNotifications({jwtToken})
       .then((response) => {
         console.log('GETUserNotifications response', response);

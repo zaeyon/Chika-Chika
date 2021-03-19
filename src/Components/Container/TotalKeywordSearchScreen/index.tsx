@@ -267,7 +267,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   );
 
   const onFocusSearchKeywordInput = () => {
-    if (!isVisibleAutoCompletedKeyword && !route.params.redirected) {
+    if (!isVisibleAutoCompletedKeyword) {
       setIsVisibleAutoCompletedKeyword(true);
     }
   };

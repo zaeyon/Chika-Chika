@@ -519,45 +519,14 @@ const EditProfileScreen = ({
             <SectionImage source={sectionArrow} />
           </SectionContentView>
         </TouchableHighlight>
+        <SectionContentView>
+            <SectionContentTitleText>{'전화번호'}</SectionContentTitleText>
+            <SectionContentText>
+              {`${profile.phoneNumber.slice(0, 3)}-${profile.phoneNumber.slice(3, 7)}-${profile.phoneNumber.slice(7)}`|| '미등록'}
+            </SectionContentText>
+          </SectionContentView>
       </SectionContainerView>
 
-      <SectionContainerView>
-        <TouchableHighlight
-          activeOpacity={0.9}
-          underlayColor="black"
-          onPress={() => console.log('h')}>
-          <SectionContentView>
-            <SectionContentTitleText>{'연동계정'}</SectionContentTitleText>
-            <SectionContentText>
-              {formatProvider(profile.provider)}
-            </SectionContentText>
-            <SectionImage source={sectionArrow} />
-          </SectionContentView>
-        </TouchableHighlight>
-        <SectionVerticalDivider />
-        <TouchableHighlight
-          activeOpacity={0.9}
-          underlayColor="black"
-          onPress={() => console.log('h')}>
-          <SectionContentView>
-            <SectionContentTitleText>{'본인인증'}</SectionContentTitleText>
-            <SectionContentText>
-              {profile.phoneNumber || '미인증'}
-            </SectionContentText>
-            {profile.phoneNumber ? (
-              <VerifiedBadgeView>
-                <VerifiedBadgeText>{'인증완료'}</VerifiedBadgeText>
-              </VerifiedBadgeView>
-            ) : null}
-            <SectionImage
-              source={sectionArrow}
-              style={{
-                marginLeft: profile.phoneNumber ? 8 : 'auto',
-              }}
-            />
-          </SectionContentView>
-        </TouchableHighlight>
-      </SectionContainerView>
       <BitrhdateModal
         visible={isModalVisible}
         transparent={true}
