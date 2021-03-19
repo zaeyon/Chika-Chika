@@ -248,11 +248,7 @@ const ReservationScreen = ({
           navigation={navigation}
           title={'아직 병원 예약 내역이 없습니다.'}
         />
-      ) : (
-        <BannerImage
-          source={require('~/Assets/Images/Banner/banner_review_starbucks.png')}
-        />
-      ),
+      ) : null,
     [navigation, reservations],
   );
   return (

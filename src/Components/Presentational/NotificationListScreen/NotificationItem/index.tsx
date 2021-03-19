@@ -133,6 +133,8 @@ const NotificationItem = ({
     [notificationObj],
   );
 
+  console.log(notificationObj)
+
   const currentDate = new Date();
   const createdAtDate = new Date(notificationObj.createdAt);
 
@@ -157,7 +159,7 @@ const NotificationItem = ({
       elapsedTimeText = formatDate(notificationObj.createdAt);
       return elapsedTimeText;
     }
-  }, []);
+  }, [notificationObj]);
 
   return (
     <TouchableWithoutFeedback
