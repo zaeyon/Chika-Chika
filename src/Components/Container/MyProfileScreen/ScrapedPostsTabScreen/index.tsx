@@ -7,9 +7,7 @@ import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import ScrapedReviewScreen from '~/Components/Container/MyProfileScreen/ScrapedPostsTabScreen/ScrapedReviewScreen';
 import ScrapedCommunityPostScreen from '~/Components/Container/MyProfileScreen/ScrapedPostsTabScreen/ScrapedCommunityPostScreen';
 
-const ContainerView = Styled(
-  (SafeAreaView as unknown) as new () => SafeAreaView,
-)`
+const ContainerView = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
 `;

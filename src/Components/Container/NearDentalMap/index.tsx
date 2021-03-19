@@ -56,6 +56,7 @@ import GETUserReservations from '~/Routes/User/GETUserReservations';
 
 const Container = Styled.View`
 flex: 1;
+background-color: #FFFFFF;
 `;
 
 const HeaderBar = Styled.View`

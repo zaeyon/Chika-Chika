@@ -44,14 +44,11 @@ import {hasNotch} from '~/method/deviceInfo'
 const Container = Styled.View`
 flex: 1;
 background-color: #ffffff;
-padding-top: ${getStatusBarHeight()}px;
 `;
 
 const HeaderBar = Styled.View`
 width: ${wp('100%')}px;
- height: ${wp('14.1%') + getStatusBarHeight()}px;
- margin-top: ${-getStatusBarHeight()}px;
- padding-top: ${getStatusBarHeight()}px;
+ padding-top: ${hasNotch() ? getStatusBarHeight() : 0}px;
  flex-direction: row;
  justify-content: space-between;
  border-bottom-width: 0.5px;
@@ -102,7 +99,7 @@ const BackIconTouchableWithoutFeedback = Styled(
 `;
 
 const BackIconView = Styled.View`
-padding: 0px 10px 0px 16px;
+padding: 17px 10px 16px 16px;
 align-items: center;
 justify-content: center;
 `;
@@ -407,7 +404,7 @@ interface Props {
 
 //let offset = 0;
 //let limit = 20;
-let sort = 'accuracy';
+let sort = 'distance';
 
 let inputedKeyword = '';
 let inputingText = '';

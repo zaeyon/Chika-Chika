@@ -12,7 +12,6 @@ import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 
 const Container = Styled.View`
 flex: 1;
-padding-top: ${getStatusBarHeight()};
 `;
 
 const BodyContainer = Styled.ScrollView`

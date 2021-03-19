@@ -47,7 +47,7 @@ border-color: #E2E6ED;
 
 const HeaderBar = Styled.View`
  position: absolute;
- padding-top: ${getStatusBarHeight()}px;
+ padding-top: ${hasNotch() ? getStatusBarHeight() : 0}px;
  width: ${wp('100%')}px;
  height: ${getStatusBarHeight() + hp('8%')}px;
  flex-direction: row;

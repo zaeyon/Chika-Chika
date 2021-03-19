@@ -6,10 +6,11 @@ import {
 } from 'react-native-responsive-screen'; 
 import {View, TouchableWithoutFeedback, Image} from 'react-native';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
+import {hasNotch} from '~/method/deviceInfo';
 
 const Container = Styled.View`
 background-color: #000000;
-padding-top: ${getStatusBarHeight()}
+padding-top: ${hasNotch() ? getStatusBarHeight() : 0}px;
 flex: 1;
 `;
 
@@ -17,7 +18,6 @@ const HeaderContainerView = Styled.View`
 width: ${wp('100%')}px;
 height: auto;
 position: absolute;
-top: ${getStatusBarHeight()}
 z-index: 1;
 flex-direction: row;
 align-items: center;

@@ -140,6 +140,7 @@ const NotificationListScreen = ({navigation, route}: Props) => {
   return (
     <Container as={SafeAreaView} forceInset={{top: 'always'}}>
       <NavigationHeader
+        inSafeAreaView={true}
         headerLeftProps={{type: 'arrow', onPress: goBack}}
         headerRightProps={
           notificationArray.length > 0

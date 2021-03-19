@@ -28,7 +28,7 @@ import {useSelector} from 'react-redux';
 import ActionSheet from 'react-native-actionsheet';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {BlurView} from '@react-native-community/blur';
-import AboveKeyboard from 'react-native-above-keyboard';
+import {hasNotch} from '~/method/deviceInfo';
 
 import {uploadImageToS3} from '~/method/uploadImageToS3';
 
@@ -44,7 +44,6 @@ import PUTReviewRevise from '~/Routes/Review/PUTReviewRevise';
 
 const Container = Styled.View`
  flex: 1;
- padding-top: ${getStatusBarHeight()}
  background-color: #FFFFFF;
 `;
 
@@ -458,7 +457,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     navigation.navigate('ImageSelectStackScreen', {
       screen: 'ImageSelectScreen',
       params: {
-        requestType: 'ContentPostScreen',
+        requestScreen: 'ContentPostScreen',
         startIndex: index,
         selectedImages: [],
       },
@@ -524,6 +523,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
 
   const clickUpload = () => {
     console.log("clickUpload")
+    console.log("route.params?.requestType", route.params?.requestType);
     if (route.params.requestType === 'post') {
       uploadReview();
     } else if (route.params.requestType === 'revise') {
@@ -855,7 +855,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     if (index === 1) {
       navigation.navigate('ImageSelectOneStackScreen', {
         screen: 'ImageSelectOneScreen',
-        requestType: 'ContentPostScreen',
+        requestScreen: 'ContentPostScreen',
         selectedIndex: selectedParaIndex,
       });
     } else if (index === 2) {
@@ -1002,293 +1002,3 @@ const styles = StyleSheet.create({
   },
 });
 
-/*
-<FlatList
-showsHorizontalScrollIndicator={false}
-horizontal={true}
-data={metaInfoList1}
-renderItem={renderFirstMetaInfoItem}/>
-<FlatList
-style={{marginTop: 8}}
-showsHorizontalScrollIndicator={false}
-horizontal={true}
-data={metaInfoList2}
-renderItem={renderSecondMetaInfoItem}/>
-*/
-
-/*
-        <MetaInfoContainer>
-          <ScrollView
-            ref={scrollViewRef}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}>
-            <FirstMetaDataListContainer>
-              <TouchableWithoutFeedback
-                onPress={() => moveToDentalClinicSearch()}>
-                <MetaInfoItemBackground style={[{marginLeft: 16}]}>
-                  <MetaInfoItemText>
-                    {dentalClinic.name ? dentalClinic.name : '병원'}
-                  </MetaInfoItemText>
-                </MetaInfoItemBackground>
-              </TouchableWithoutFeedback>
-              {treatDate.displayTreatDate != '' && (
-                <TouchableWithoutFeedback onPress={() => onPressTreatDate()}>
-                  <MetaInfoItemBackground style={{marginLeft: 8}}>
-                    <MetaInfoItemText>
-                      {treatDate.displayTreatDate}
-                    </MetaInfoItemText>
-                  </MetaInfoItemBackground>
-                </TouchableWithoutFeedback>
-              )}
-              {treatDate.displayTreatDate == '' && (
-                <TouchableWithoutFeedback onPress={() => onPressTreatDate()}>
-                  <MetaInfoItemBackground
-                    style={{marginLeft: 8, backgroundColor: '#F3F3F3'}}>
-                    <MetaInfoItemText style={{color: '#BCBCBC'}}>
-                      {'날짜'}
-                    </MetaInfoItemText>
-                  </MetaInfoItemBackground>
-                </TouchableWithoutFeedback>
-              )}
-              <TouchableWithoutFeedback onPress={() => onPressTreatPrice()}>
-                <MetaInfoItemBackground
-                  style={[
-                    {marginLeft: 8, marginRight: 16},
-                    !displayTotalPrice && {backgroundColor: '#f3f3f3'},
-                  ]}>
-                  <TotalPriceInput
-                    style={{paddingLeft: 8, paddingRight: 8}}
-                    ref={totalPriceInputRef}
-                    value={totalPrice}
-                    keyboardType={'number-pad'}
-                    caretHidden={true}
-                    onChangeText={(text: string) => onChangePriceInput(text)}
-                  />
-                  <TotalPriceContainer>
-                    <MetaInfoItemText
-                      style={!displayTotalPrice && {color: '#bcbcbc'}}>
-                      {displayTotalPrice ? displayTotalPrice : '비용'}
-                    </MetaInfoItemText>
-                  </TotalPriceContainer>
-                </MetaInfoItemBackground>
-              </TouchableWithoutFeedback>
-            </FirstMetaDataListContainer>
-          </ScrollView>
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            <SecondMetaDataListContainer style={{marginTop: 8}}>
-              {selectedTreatList.length === 0 && (
-                <TouchableWithoutFeedback onPress={() => moveToTreatSearch()}>
-                  <MetaInfoItemBackground
-                    style={{marginLeft: 16, backgroundColor: '#f3f3f3'}}>
-                    <MetaInfoItemText style={{color: '#bcbcbc'}}>
-                      {'진료항목'}
-                    </MetaInfoItemText>
-                  </MetaInfoItemBackground>
-                </TouchableWithoutFeedback>
-              )}
-              {selectedTreatList.length > 0 && (
-                <TouchableWithoutFeedback onPress={() => moveToTreatSearch()}>
-                  <MetaInfoItemBackground style={{marginLeft: 16}}>
-                    <MetaInfoItemTextList>
-                      {selectedTreatList.map((treat: any, index: number) => {
-                        if (index === selectedTreatList.length - 1) {
-                          return (
-                            <MetaInfoItemText>{treat.name}</MetaInfoItemText>
-                          );
-                        } else {
-                          return (
-                            <MetaInfoItemText>
-                              {treat.name + ','}
-                            </MetaInfoItemText>
-                          );
-                        }
-                      })}
-                    </MetaInfoItemTextList>
-                  </MetaInfoItemBackground>
-                </TouchableWithoutFeedback>
-              )}
-              <TouchableWithoutFeedback onPress={() => moveToRating()}>
-                <MetaInfoItemBackground style={{marginLeft: 8}}>
-                  <RatingStarIcon
-                    source={require('~/Assets/Images/Upload/ic_ratingStar.png')}
-                  />
-                  <MetaInfoItemText style={{marginLeft: 2}}>
-                    {rating.avgRating}
-                  </MetaInfoItemText>
-                </MetaInfoItemBackground>
-              </TouchableWithoutFeedback>
-              {detailPriceList.length === 0 && (
-                <TouchableWithoutFeedback onPress={() => moveToDetailPrice()}>
-                  <MetaInfoItemBackground
-                    style={{
-                      marginLeft: 8,
-                      marginRight: 16,
-                      backgroundColor: '#f3f3f3',
-                    }}>
-                    <MetaInfoItemText style={{color: '#bcbcbc'}}>
-                      {'상세비용'}
-                    </MetaInfoItemText>
-                  </MetaInfoItemBackground>
-                </TouchableWithoutFeedback>
-              )}
-              {detailPriceList.length > 0 && (
-                <TouchableWithoutFeedback onPress={() => moveToDetailPrice()}>
-                  <MetaInfoItemBackground
-                    style={{marginLeft: 8, marginRight: 16}}>
-                    <MetaInfoItemText>{'상세비용'}</MetaInfoItemText>
-                  </MetaInfoItemBackground>
-                </TouchableWithoutFeedback>
-              )}
-            </SecondMetaDataListContainer>
-          </ScrollView>
-        </MetaInfoContainer>
-*/
-
-/*  useEffect(() => {
-    if (route.params?.dentalClinic) {
-      setDentalClinic(route.params?.dentalClinic);
-    }
-  }, [route.params?.dentalClinic]);
-
-  useEffect(() => {
-    if (route.params?.treatDate) {
-      setTreatDate(route.params?.treatDate);
-    }
-  }, [route.params?.treatDate]);
-
-  useEffect(() => {
-    if (route.params?.treatPrice) {
-      setTreatPrice(route.params?.treatPrice);
-      setDisplayTotalPrice(route.params?.treatPrice.displayTreatPrice);
-      setTotalPrice(route.params?.treatPrice.treatPrice);
-    }
-  }, [route.params?.treatPrice]);
-
-  useEffect(() => {
-    if (route.params?.selectedTreatList) {
-      console.log(
-        'route.params.selectedTreatList',
-        route.params.selectedTreatList,
-      );
-      console.log('route.params.detailPriceList', route.params.detailPriceList);
-      setSelectedTreatList(route.params?.selectedTreatList);
-    }
-  }, [route.params?.selectedTreatList]);
-
-  useEffect(() => {
-    if (route.params?.rating) {
-      console.log('route.params.rating', route.params?.rating);
-      setRating(route.params?.rating);
-    }
-  }, [route.params?.rating]);
-
-  useEffect(() => {
-    if (route.params?.isDetailPrice) {
-      console.log('route.params.isDetailPrice', route.params?.isDetailPrice);
-      setIsDetailPrice(route.params.isDetailPrice);
-    }
-  }, [route.params?.isDetailPrice]);
-
-  useEffect(() => {
-    if (route.params?.detailPriceList) {
-      console.log('route.params.detailPriceList', route.params.detailPriceList);
-      setDetailPriceList(route.params.detailPriceList);
-    }
-  }, [route.params?.detailPriceList]);
-
-*/
-
-/*
-
-  const moveToDentalClinicSearch = () => {
-    navigation.push('DentalNameSearchScreen', {
-      requestPage: 'content',
-      requestType: route.params?.requestType,
-    });
-  };
-
-  const onChangeDatePicker = (event: any, date: any) => {
-    var tmpTreatDate = treatDate;
-    tmpTreatDate.treatDate = date;
-    setTreatDate(tmpTreatDate);
-  };
-
-  const applyTreatDate = () => {
-    console.log('applyTreatDate date', treatDate);
-    var tmpTreatDate: any = treatDate;
-    tmpTreatDate.dateValue = treatDate.treatDate;
-    tmpTreatDate.displayTreatDate = convertDisplayDate(treatDate.treatDate);
-    tmpTreatDate.treatDate = convertSubmitDate(treatDate.treatDate);
-
-    setTreatDate(tmpTreatDate);
-    setVisibleDatePicker(false);
-  };
-
-  const convertDisplayDate = (date: any) => {
-    var tmpDate = new Date(date),
-      month = '' + (tmpDate.getMonth() + 1),
-      day = '' + tmpDate.getDate(),
-      year = '' + tmpDate.getFullYear();
-
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-
-    return year + '년' + ' ' + month + '월' + ' ' + day + '일';
-  };
-
-  const convertSubmitDate = (date: any) => {
-    console.log('convertDisplayDate date', date);
-
-    var tmpDate = new Date(date),
-      month = '' + (tmpDate.getMonth() + 1),
-      day = '' + tmpDate.getDate(),
-      year = '' + tmpDate.getFullYear();
-
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-
-    return year + '-' + month + '-' + day;
-  };
-
-  const onPressTreatPrice = () => {
-    totalPriceInputRef.current.focus();
-  };
-
-  const onChangePriceInput = (text: string) => {
-    console.log('text', text);
-    console.log('treatPrice', treatPrice);
-
-    if (text.trim() === '') {
-      setTotalPrice('');
-      setDisplayTotalPrice('');
-    } else {
-      setTotalPrice(text);
-      setDisplayTotalPrice(Number(text).toLocaleString() + '원');
-    }
-  };
-
-  const moveToTreatSearch = () => {
-    navigation.push('TreatSearchScreen', {
-      requestPage: 'content',
-      selectedTreatList: selectedTreatList,
-      requestType: route.params?.requestType,
-    });
-  };
-
-  const moveToDetailPrice = () => {
-    navigation.push('DetailPriceScreen', {
-      requestPage: 'content',
-      selectedTreatList: selectedTreatList,
-      treatPrice: treatPrice,
-      requestType: route.params?.requestType,
-    });
-  };
-
-  const moveToRating = () => {
-    navigation.push('RatingScreen', {
-      requestPage: 'content',
-      inputedRating: rating,
-      requestType: route.params?.requestType,
-    });
-  };
-*/

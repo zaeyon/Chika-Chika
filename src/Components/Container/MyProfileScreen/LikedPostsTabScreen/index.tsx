@@ -7,9 +7,7 @@ import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import LikedCommunityPostScreen from '~/Components/Container/MyProfileScreen/LikedPostsTabScreen/LikedCommunityPostScreen';
 import LikedReviewScreen from '~/Components/Container/MyProfileScreen/LikedPostsTabScreen/LikedReviewScreen';
 
-const ContainerView = Styled(
-  (SafeAreaView as unknown) as new () => SafeAreaView,
-)`
+const ContainerView = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
 `;

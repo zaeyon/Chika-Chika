@@ -189,21 +189,17 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
   const goBack = useCallback(() => navigation.goBack(), [navigation]);
 
   const onSubmit = useCallback(() => {
-    if (route.params.requestType === 'ContentPostScreen') {
+    if (route.params.requestScreen === 'ContentPostScreen') {
       navigation.navigate('ContentPostScreen', {
         selectedImages,
         startIndex: route.params.startIndex,
       });
-    } else if (route.params.requestType === 'proofImage') {
-      navigation.navigate('ReviewMetaDataScreen', {
-        selectedProofImages: selectedImages,
-      });
-    } else if (route.params.requestType === 'dentalImage') {
+    } else if (route.params.requestScreen === 'ReviewMetaDataScreen_DentalImage') {
       navigation.navigate('ReviewMetaDataScreen', {
         selectedDentalImages: selectedImages,
       });
     } else {
-      navigation.navigate(route.params.requestType, {
+      navigation.navigate(route.params.requestScreen, {
         selectedImages,
       });
     }

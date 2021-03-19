@@ -22,7 +22,6 @@ import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 
 const Container = Styled.View`
  flex: 1;
- padding-top: ${getStatusBarHeight()}px;
  background-color: #FFFFFF;
 `;
 
@@ -660,6 +659,8 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
   const modalContentY = useRef(new Animated.Value(hp('50%'))).current;
   
+  console.log("ReviewMetaDataScreen route.params?", route);
+  
   useEffect(() => {
     if(route.params?.selectedProofImage) {
       setSelectedProofImage(route.params.selectedProofImage)
@@ -987,7 +988,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     navigation.navigate('ImageSelectOneStackScreen', {
       screen: "ImageSelectOneScreen",
       params: {
-        requestType: 'ReviewMetaDataScreen',
+        requestScreen: 'ReviewMetaDataScreen_ProofImage',
       }
     });
   }, [])
@@ -1014,7 +1015,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     navigation.navigate('ImageSelectStackScreen', {
       screen: 'ImageSelectScreen',
       params: {
-        requestType: 'dentalImage',
+        requestScreen: 'ReviewMetaDataScreen_DentalImage',
         selectedImages: selectedDentalImages,
       }
     });
@@ -1137,11 +1138,20 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     const result = [];
     if (parseInt(selectedTreatmentYear) === currentDate.getFullYear()) {
       for (let i = 1; i <= currentDate.getMonth() + 1; i++) {
-        result.push(<Picker.Item label={String(i)} value={String(i)} />);
+        result.push(
+        <Picker.Item
+        key={String(i)}
+        label={String(i)}
+        value={String(i)} />
+        );
       }
     } else {
       for (let i = 1; i <= 12; i++) {
-        result.push(<Picker.Item label={String(i)} value={String(i)} />);
+        result.push(
+        <Picker.Item
+        key={String(i)}
+        label={String(i)}
+        value={String(i)} />);
       }
     }
     return result;
@@ -1155,7 +1165,12 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
       parseInt(selectedTreatmentMonth) === currentDate.getMonth() + 1
     ) {
       for (let i = 1; i <= currentDate.getDate(); i++) {
-        result.push(<Picker.Item label={String(i)} value={String(i)} />);
+        result.push(
+        <Picker.Item 
+        key={String(i)}
+        label={String(i)}
+        value={String(i)} />
+        );
       }
     } else {
       if (selectedTreatmentMonth === '2') {
@@ -1166,22 +1181,40 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
           0
         ) {
           for (let i = 1; i <= 29; i++) {
-            result.push(<Picker.Item label={String(i)} value={String(i)} />);
+            result.push(
+            <Picker.Item
+            key={String(i)}
+            label={String(i)}
+            value={String(i)} />
+            );
           }
         } else {
           for (let i = 1; i <= 28; i++) {
-            result.push(<Picker.Item label={String(i)} value={String(i)} />);
+            result.push(
+            <Picker.Item
+            key={String(i)}
+            label={String(i)}
+            value={String(i)} />
+            );
           }
         }
       } else if (
         [1, 3, 5, 7, 8, 10, 12].includes(parseInt(selectedTreatmentMonth))
       ) {
         for (let i = 1; i <= 31; i++) {
-          result.push(<Picker.Item label={String(i)} value={String(i)} />);
+          result.push(
+          <Picker.Item
+          key={String(i)}
+          label={String(i)}
+          value={String(i)} />);
         }
       } else {
         for (let i = 1; i <= 30; i++) {
-          result.push(<Picker.Item label={String(i)} value={String(i)} />);
+          result.push(
+          <Picker.Item
+          key={String(i)}
+          label={String(i)}
+          value={String(i)}/>);
         }
       }
     }

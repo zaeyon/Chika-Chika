@@ -120,7 +120,7 @@ const GeneralSettingTabScreen = ({navigation, route}: Props) => {
   );
 
   return (
-    <ContainerView as={SafeAreaView}>
+    <ContainerView>
       <NavigationHeader
         headerLeftProps={{
           onPress: headerLeftAction,

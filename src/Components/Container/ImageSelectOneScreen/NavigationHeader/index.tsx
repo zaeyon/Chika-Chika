@@ -15,12 +15,13 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
+import {hasNotch} from '~/method/deviceInfo';
 
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
  height: ${wp('14.1%') + getStatusBarHeight()}px;
  margin-top: ${-getStatusBarHeight()}
- padding-top: ${getStatusBarHeight()}
+ padding-top: ${hasNotch() ? getStatusBarHeight() : 0}px;
  flex-direction: row;
  justify-content: space-between;
  border-bottom-width: 1px;

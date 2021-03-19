@@ -416,7 +416,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
     navigation.navigate('ImageSelectStackScreen', {
       screen: 'ImageSelectScreen',
       params: {
-        requestType: 'CommunityPostUploadScreen',
+        requestScreen: 'CommunityPostUploadScreen',
         selectedImages: images,
       },
     });
@@ -460,6 +460,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
         <ModalContentText>{'글 작성을 취소하시겠어요?'}</ModalContentText>
       </AnimatedModal>
       <NavigationHeader
+      inSafeAreaView={true}
         headerLeftProps={{
           onPress: () => {
             ReactNativeHapticFeedback.trigger('notificationWarning');

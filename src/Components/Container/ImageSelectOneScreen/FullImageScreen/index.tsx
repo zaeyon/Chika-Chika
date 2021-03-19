@@ -34,18 +34,18 @@ const FullImageScreen = ({navigation, route}: Props) => {
 
 
   const moveToRequestScreen = () => {
-    console.log("route.params.requestType", route.params?.requestType);
-    if(route.params?.requestType === 'ContentPostScreen') {
-      navigation.navigate(route.params.requestType, {
+    console.log("route.params.requestScreen", route.params?.requestScreen);
+    if(route.params?.requestScreen === 'ContentPostScreen') {
+      navigation.navigate(route.params.requestScreen, {
         selectedImage: route.params.image,
         selectedIndex: route.params.selectedIndex,
       })
-    } else if(route.params?.requestType === 'ReviewMetaDataScreen') {
-      navigation.navigate(route.params.requestType, {
+    } else if(route.params?.requestScreen === 'ReviewMetaDataScreen_ProofImage') {
+      navigation.navigate("ReviewMetaDataScreen", {
         selectedProofImage: route.params.image,
       })
     } else {
-      navigation.navigate(route.params.requestType, {
+      navigation.navigate(route.params.requestScreen, {
         selectedImage: route.params.image,
       })
     }

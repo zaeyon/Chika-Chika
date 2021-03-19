@@ -247,7 +247,7 @@ const GeneralSettingScreen = ({
   }
 
   const openEmailSend = () => {
-    Linking.openURL(`mailto:wodus5677@gmail.com?subject=이메일 문의&body=치카치카 앱 이용중 불편한점이나 개선할점을 작성해주세요.\n작성자 닉네임: ${profile.nickname}`)
+    Linking.openURL(`mailto:chikachikaapp@gmail.com?subject=이메일 문의&body=치카치카 앱 이용중 불편한점이나 개선할점을 작성해주세요.\n작성자 닉네임: ${profile.nickname}`)
   }
 
   return (

@@ -270,7 +270,7 @@ const RatingScreen = ({navigation, route}: Props) => {
   }, [defaultPriceRating]);
 
   return (
-    <Container as={SafeAreaView} forceInset={{top: 'always'}}>
+    <Container>
       <NavigationHeader
         headerLeftProps={{type: 'arrow', onPress: goBack}}
         headerTitle={'병원 만족도'}

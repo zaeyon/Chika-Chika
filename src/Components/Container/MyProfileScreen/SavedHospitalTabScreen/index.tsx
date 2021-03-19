@@ -18,7 +18,7 @@ import DELETEDentalScrap from '~/Routes/Dental/DELETEDentalScrap';
 import callDentalPhoneNumber from '~/method/callDentalPhoneNumber';
 import GETUserReservations from '~/Routes/User/GETUserReservations';
 
-const ContainerView = Styled.SafeAreaView`
+const ContainerView = Styled.View`
  flex: 1;
  background-color: #F5F7F9;
 `;

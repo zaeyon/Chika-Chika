@@ -413,7 +413,7 @@ const AnotherProfileScreen = ({navigation, route}: Props) => {
   };
 
   return (
-    <ContainerView as={SafeAreaView}>
+    <ContainerView>
       <NavigationHeader
         headerLeftProps={{
           type: 'arrow',

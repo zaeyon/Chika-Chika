@@ -26,13 +26,13 @@ import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import {uploadImageToS3} from '~/method/uploadImageToS3';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 import ToastMessage from '~/Components/Presentational/ToastMessage';
+import {hasNotch} from '~/method/deviceInfo';
 
 // Route
 import POSTReport from '~/Routes/Report/POSTReport';
 
 const Container = Styled.View`
 background-color: #F5F7F9;
-padding-top: ${getStatusBarHeight()};
 flex: 1;
 `;
 

@@ -11,7 +11,6 @@ import {WebView} from 'react-native-webview';
 const Container = Styled.View`
 flex: 1;
 background-color: #FFFFFF;
-padding-top: ${getStatusBarHeight()};
 `;
 
 const BodyContainer = Styled.View`

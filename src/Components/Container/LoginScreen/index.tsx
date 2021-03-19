@@ -39,55 +39,13 @@ import POSTVerifyPhoneNumber from '~/Routes/Auth/POSTVerifyPhoneNumber';
 import POSTLogin from '~/Routes/Auth/POSTLogin';
 
 const Container = Styled.View`
-  padding-top: ${getStatusBarHeight()};
   flex: 1;
   background-color: #FEFFFF;
 `;
 
-const HeaderBar = Styled.View`
- width: ${wp('100%')}px;
- height: ${hp('6.5%')}px;
- flex-direction: row;
- align-items: center;
- justify-content: space-between;
- background-color:#ffffff;
-`;
-
-const HeaderLeftContainer = Styled.View`
-padding: 12px 15px 13px 16px;
-align-items: center;
-justify-content: center;
-background-color: #ffffff;
-`;
-
-const HeaderBackIcon = Styled.Image`
- width: ${wp('6.4%')}px;
- height: ${wp('6.4%')}px;
- background-color: #ffffff;
-`;
-
-const HeaderTitleText = Styled.Text`
-font-weight: 600;
-font-size: 18px;
-color: #000000;
-`;
-
-const HeaderRightContainer = Styled.View`
-padding: 7px 16px 13px 15px;
- align-items: center;
- justify-content: center;
- flex-direction: row;
- background-color: #ffffff;
-`;
-
-const HeaderEmptyContainer = Styled.View`
- width: ${wp('6.4%')}px;
- height: ${wp('6.4%')}px;
- background-color: #ffffff;
-`;
 
 const BodyContainer = Styled.View`
- padding-top: 32px;
+ padding-top: ${hasNotch() ? 32 : 10}px;
  padding-left: 24px;
  padding-right: 24px;
  flex: 1;
@@ -192,6 +150,7 @@ const LoadingContainer = Styled.View`
  align-items: center;
  justify-content: center;
  background-color: #00000030;
+ z-index: 10;
 `;
 
 const TimeLimitTextContainer = Styled.View`
@@ -416,7 +375,7 @@ const LoginScreen = ({navigation, route}: Props) => {
       login(phoneNumber, authCode);
     } else {
       if(isCertified.current && (authCode == certifiedAuthCode.current)) {
-        navigation.navigate('HometownSearchScreen', {
+        navigation.navigate('InitialHometownSettingScreen', {
           requestType: 'signUp',
           certifiedPhoneNumber: true,
           provider: 'local',
@@ -435,8 +394,9 @@ const LoginScreen = ({navigation, route}: Props) => {
           console.log('number', number);
           isCertified.current = true;
           certifiedAuthCode.current = authCode;
+          clearTimeout(timeout);
 
-          navigation.navigate('HometownSearchScreen', {
+          navigation.navigate('InitialHometownSettingScreen', {
             requestType: 'signUp',
             certifiedPhoneNumber: true,
             provider: 'local',
@@ -576,18 +536,10 @@ const LoginScreen = ({navigation, route}: Props) => {
 
   return (
     <Container>
-      <HeaderBar>
-        <TouchableWithoutFeedback onPress={() => goBack()}>
-          <HeaderLeftContainer>
-            <HeaderBackIcon
-              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
-            />
-          </HeaderLeftContainer>
-        </TouchableWithoutFeedback>
-        <HeaderRightContainer>
-          <HeaderEmptyContainer />
-        </HeaderRightContainer>
-      </HeaderBar>
+      <NavigationHeader
+      headerLeftProps={{type: 'arrow', onPress: goBack}}
+      headerTitle={" "}
+      borderDisable={true}/>
       <BodyContainer>
         <MainLabelText>{'전화번호 인증'}</MainLabelText>
         <ItemContainer style={{marginTop: 20}}>

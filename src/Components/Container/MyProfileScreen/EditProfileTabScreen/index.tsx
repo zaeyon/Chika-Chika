@@ -16,7 +16,7 @@ import {uploadImageToS3} from '~/method/uploadImageToS3';
 import PUTEditProfile from '~/Routes/User/PUTEditProfile';
 import GETUserInfo from '~/Routes/Auth/GETUserInfo';
 
-const ContainerView = Styled.SafeAreaView`
+const ContainerView = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
 `;
@@ -160,7 +160,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
   const moveToGallery = useCallback(() => {
     navigation.navigate('ImageSelectOneStackScreen', {
       screen: 'ImageSelectOneScreen',
-      requestType: 'EditProfileTabScreen',
+      requestScreen: 'EditProfileTabScreen',
     });
   }, []);
 

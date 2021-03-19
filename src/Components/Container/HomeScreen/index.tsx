@@ -33,10 +33,12 @@ import GETLocalClinic from '~/Routes/Main/GETLocalClinic';
 import GETUserNotifications from '~/Routes/Notification/GETUserNotifications';
 
 import {hasNotch} from '~/method/deviceInfo'
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 const ContainerView = Styled.View`
 flex: 1;
 background: #FFFFFF;
+padding-top: ${hasNotch() ? getStatusBarHeight() : 0};
 `;
 
 const HomeLogoImage = Styled.Image``;
@@ -401,7 +403,7 @@ const HomeScreen = ({navigation, route}: Props) => {
   }, []);
 
   return (
-    <ContainerView as={SafeAreaView}>
+    <ContainerView>
         <HeaderContainerView>
           <HomeLogoImage
             source={require('~/Assets/Images/Logo/ic_home_logo.png')}

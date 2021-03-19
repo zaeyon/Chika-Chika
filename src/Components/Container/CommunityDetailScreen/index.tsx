@@ -452,6 +452,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
       <ContainerView>
         {floatingVisible ? renderFloatingView() : null}
         <NavigationHeader
+          inSafeAreaView={true}
           headerLeftProps={{
             type: 'arrow',
             text: '커뮤니티',

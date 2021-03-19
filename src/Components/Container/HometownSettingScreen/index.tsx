@@ -12,6 +12,7 @@ import allActions from '~/actions';
 
 // local component
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
+import {hasNotch} from '~/method/deviceInfo';
 
 // route
 import DELETEUserHometown from '~/Routes/User/DELETEUserHometown';
@@ -20,7 +21,6 @@ import POSTMainHometownChange from '~/Routes/User/POSTMainHometownChange';
 
 const Container = Styled.View`
 flex: 1;
-padding-top: ${getStatusBarHeight()}px;
 background-color: #ffffff;
 `;
 

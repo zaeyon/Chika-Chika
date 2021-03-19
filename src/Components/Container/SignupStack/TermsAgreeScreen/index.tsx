@@ -25,51 +25,7 @@ import POSTSocialRegister from '~/Routes/Auth/POSTSocialRegister';
 const Container = Styled.View`
 flex: 1;
 background-color: #FFFFFF;
-padding-top: ${getStatusBarHeight()}px;
 `;
-
-const HeaderBar = Styled.View`
- width: ${wp('100%')}px;
- height: ${hp('6.5%')}px;
- flex-direction: row;
- align-items: center;
- justify-content: space-between;
- background-color:#ffffff;
-`;
-
-const HeaderLeftContainer = Styled.View`
-padding: 12px 15px 13px 16px;
-align-items: center;
-justify-content: center;
-background-color: #ffffff;
-`;
-
-const HeaderBackIcon = Styled.Image`
- width: ${wp('6.4%')}px;
- height: ${wp('6.4%')}px;
- background-color: #ffffff;
-`;
-
-const HeaderTitleText = Styled.Text`
-font-weight: 600;
-font-size: 18px;
-color: #000000;
-`;
-
-const HeaderRightContainer = Styled.View`
-padding: 7px 16px 13px 15px;
- align-items: center;
- justify-content: center;
- flex-direction: row;
- background-color: #ffffff;
-`;
-
-const HeaderEmptyContainer = Styled.View`
- width: ${wp('6.4%')}px;
- height: ${wp('6.4%')}px;
- background-color: #ffffff;
-`;
-
 
 const TitleText = Styled.Text`
 font-weight: 400;
@@ -88,7 +44,7 @@ color: #9AA2A9;
 
 const BodyContainer = Styled.View`
 background-color: #FFFFFF;
-padding-top: 32px;
+padding-top: ${hasNotch() ? 32 : 10}px;
 padding-bottom: 32px;
 padding-left: 23px;
 padding-right: 23px;
@@ -337,19 +293,11 @@ const TermsAgreeScreen = ({navigation, route}: Props) => {
 
     return (
         <Container>
-          <HeaderBar>
-            <TouchableWithoutFeedback onPress={() => goBack()}>
-            <HeaderLeftContainer>
-            <HeaderBackIcon
-              source={require('~/Assets/Images/HeaderBar/ic_back.png')}
-            />
-          </HeaderLeftContainer>
-        </TouchableWithoutFeedback>
-        <HeaderRightContainer>
-          <HeaderEmptyContainer />
-        </HeaderRightContainer>
-      </HeaderBar>
-            <BodyContainer>
+           <NavigationHeader
+           headerLeftProps={{type: 'arrow', onPress: goBack}}
+           headerTitle={" "}
+           borderDisable={true}/>
+          <BodyContainer>
                 <TitleText>{"이용약관"}</TitleText>
                 <TouchableWithoutFeedback onPress={() => clickAgreeAll()}>
                 <AllAgreeItemContainer>
@@ -402,7 +350,6 @@ const TermsAgreeScreen = ({navigation, route}: Props) => {
             </BodyContainer>
 
         <FinishButtonContainer>
-          <AboveKeyboard>
             <LoginButtonContainer>
               {isAgreedAll && (
                   <TouchableWithoutFeedback onPress={() => clickSignUp()}>
@@ -417,7 +364,6 @@ const TermsAgreeScreen = ({navigation, route}: Props) => {
                 </DisabledLoginButton>
               )}
             </LoginButtonContainer>
-          </AboveKeyboard>
         </FinishButtonContainer>
         {(loadingSignUp) && (
         <IndicatorContainer>

@@ -557,9 +557,11 @@ const ReviewItem = ({
           </TouchableWithoutFeedback>
         </ProfileContainer>
         <InfoContainer>
+          {imageArray.length > 0 && (
           <ImagesPreviewContainer>
             <PreviewImages sortedImageArray={imageArray} />
           </ImagesPreviewContainer>
+          )}
           <TagListContainer>
             <FlatList
               keyExtractor={(item, index) => `${index}`}

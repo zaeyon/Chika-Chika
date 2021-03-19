@@ -6,12 +6,11 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
+import {hasNotch} from '~/method/deviceInfo';
 
-const HeaderBar = Styled.View<{borderDisable: boolean}>`
+const HeaderBar = Styled.View<{borderDisable: boolean, inSafeAreaView: boolean}>`
  width: ${wp('100%')}px;
- height: ${wp('14.1%') + getStatusBarHeight()}px;
-  margin-top: ${-getStatusBarHeight()}px;
-  padding-top: ${getStatusBarHeight()}px;
+ padding-top: ${(props) => (hasNotch() ? (props.inSafeAreaView ? 0 : getStatusBarHeight()): 0)}px;
  flex-direction: row;
  justify-content: space-between;
  border-bottom-width: ${(props) => (props.borderDisable ? 0 : 0.5)}px;
@@ -43,14 +42,9 @@ font-weight: 700;
 `;
 
 const HeaderTitleContainer = Styled.View`
-width: 100%;
-position: absolute;
-height: 100%;
-top: ${getStatusBarHeight()}px;
 padding: 12px 16px 16px 16px;
 justify-content: center;
 align-items: center;
-z-index: -1;
 `;
 
 const HeadeIconText = Styled.Text`
@@ -114,6 +108,7 @@ interface HeaderProps {
 
 interface Props {
   borderDisable?: boolean;
+  inSafeAreaView?: boolean;
   headerLeftProps?: HeaderProps;
   headerRightProps?: HeaderProps;
   headerCenterProps?: HeaderProps;
@@ -125,6 +120,7 @@ interface Props {
 }
 const NavigationHeader = ({
   borderDisable = false,
+  inSafeAreaView = false,
   headerLeftProps,
   headerRightProps,
   headerCenterProps,
@@ -172,10 +168,16 @@ const NavigationHeader = ({
         default:
           return <HeaderEmptyContainer />;
       }
+    } else {
+      return (
+        <HeaderEmptyContainer/>
+      )
     }
   }, [headerRightProps, headerRightDisabled, headerRightActiveColor]);
   return (
-    <HeaderBar borderDisable={borderDisable}>
+    <HeaderBar
+    borderDisable={borderDisable}
+    inSafeAreaView={inSafeAreaView}>
       <TouchableWithoutFeedback
         disabled={headerLeftDisabled}
         onPress={() => {

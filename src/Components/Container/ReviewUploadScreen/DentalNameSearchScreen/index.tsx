@@ -31,7 +31,7 @@ const SearchContainer = Styled.View`
 
 const BodyContainer = Styled.View`
 align-items: center;
-padding-bottom: ${hasNotch() ? hp('3s%') : hp('14%')}px;
+padding-bottom: ${hasNotch() ? hp('3%') : hp('14%')}px;
 `;
 
 const SearchInputContainer = Styled.View`
@@ -157,7 +157,7 @@ const DentalNameSearchScreen = ({navigation, route}: Props) => {
   };
 
   return (
-    <Container as={SafeAreaView} forceInset={{top: 'always'}}>
+    <Container>
       <NavigationHeader
       headerLeftProps={{type: 'arrow', onPress: goBack}}
       headerTitle={"병원 선택"}/>

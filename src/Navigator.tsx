@@ -35,7 +35,8 @@ import LoginScreen from '~/Components/Container/LoginScreen';
 import ProfileInputScreen from '~/Components/Container/SignUpScreen/ProfileInputScreen';
 import BasicInputScreen from './Components/Container/SignUpScreen/BasicInputScreen';
 import PhoneVerifyScreen from '~/Components/Container/PhoneVerifyScreen';
-import TermsAgreeScreen from '~/Components/Container/TermsAgreeScreen';
+import TermsAgreeScreen from '~/Components/Container/SignupStack/TermsAgreeScreen';
+import InitialHometownSettingScreen from '~/Components/Container/SignupStack/InitialHometownSettingScreen';
 
 // Home Stack Screee
 import HomeScreen from '~/Components/Container/HomeScreen';
@@ -181,6 +182,14 @@ function AuthStackScreen() {
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
+      <AuthStack.Screen
+        name="InitialHometownSettingScreen"
+        component={InitialHometownSettingScreen}
+        options={{
+          gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+        />
       <AuthStack.Screen
         name="HometownSearchScreen"
         component={HometownSearchScreen}
@@ -596,8 +605,7 @@ function TeethCareStackScreen() {
 function ReviewUploadCardStackScreen() {
   return (
     <ReviewUploadCardStack.Navigator
-      headerMode="none"
-      >
+      headerMode="none">
         <ReviewUploadCardStack.Screen
         name="ReviewMetaDataScreen"
         component={ReviewMetaDataScreen}
@@ -618,8 +626,21 @@ function ReviewUploadCardStackScreen() {
 
 function ReviewUploadStackScreen() {
   return (
-    <ReviewUploadStack.Navigator headerMode="none" mode="modal">
-      
+    <ReviewUploadStack.Navigator headerMode="none">
+      <ReviewUploadCardStack.Screen
+        name="ReviewMetaDataScreen"
+        component={ReviewMetaDataScreen}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
+      <ReviewUploadCardStack.Screen
+        name="ContentPostScreen"
+        component={ContentPostScreen}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
       <ReviewUploadStack.Screen
         name="ReviewUploadCardStackScreen"
         component={ReviewUploadCardStackScreen}

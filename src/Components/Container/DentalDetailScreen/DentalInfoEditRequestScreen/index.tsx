@@ -26,15 +26,14 @@ import {getStatusBarHeight} from 'react-native-status-bar-height';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import {uploadImageToS3} from '~/method/uploadImageToS3';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
+import {hasNotch} from '~/method/deviceInfo';
 
 // Route
 import POSTDentalInfoEdit from '~/Routes/Dental/POSTDentalInfoEdit';
-import {hasNotch} from '~/method/deviceInfo'
 
 const Container = Styled.View`
 flex: 1;
 background-color: #F5F7F9;
-padding-top: ${getStatusBarHeight()};
 `;
 
 const BodyContainer = Styled.ScrollView`
@@ -447,7 +446,7 @@ const DentalInfoEditRequestScreen = ({navigation, route}: Props) => {
     navigation.navigate('ImageSelectStackScreen', {
       screen: 'ImageSelectScreen',
       params: {
-        requestType: 'DentalInfoEditRequestScreen',
+        requestScreen: 'DentalInfoEditRequestScreen',
         selectedImages: selectedImages,
       },
     });

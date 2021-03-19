@@ -22,11 +22,13 @@ import {
 import {TabView, TabBar} from 'react-native-tab-view';
 import {getStatusBarHeight} from 'react-native-status-bar-height'
 import {Rating} from 'react-native-ratings';
+import {hasNotch} from '~/method/deviceInfo';
 
 // Local Component
 import ReviewList from '~/Components/Presentational/ReviewList';
 import ShowingRating from '~/Components/Presentational/ShowingRating';
 import RatingReport from '~/Components/Presentational/RatingReport';
+
 const ratingStarImage = require('~/Assets/Images/Indicator/ic_ratingStar.png');
 ;
 const Container = Styled.View`
@@ -46,7 +48,7 @@ border-color: #F5F7F9;
 
 const HeaderBar = Styled.View`
  position: absolute;
- padding-top: ${getStatusBarHeight()}
+ padding-top: ${hasNotch() ? getStatusBarHeight() : 0}px;
  width: ${wp('100%')}px;
  height: ${getStatusBarHeight() + hp('8%')}px;
  flex-direction: row;

@@ -12,7 +12,8 @@ import {useSelector, useDispatch} from 'react-redux';
 // Routes
 import DELETEDentalCallReserve from '~/Routes/Reserve/DELETEDentalCallReserve';
 import GETUserReservations from '~/Routes/User/GETUserReservations';
-const ContainerView = Styled.SafeAreaView`
+
+const ContainerView = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
 `;

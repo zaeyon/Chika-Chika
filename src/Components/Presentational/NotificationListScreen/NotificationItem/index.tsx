@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback} from 'react-native';
+import {TouchableWithoutFeedback, Alert} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -116,6 +116,7 @@ const NotificationItem = ({
   moveToAnotherProfile,
   moveToNotifiedPost,
 }: Props) => {
+  console.log("notificationObj", notificationObj)
   const formatDate = useCallback(
     (createdAt: string) => {
       const currentYear = new Date(Date.now()).getFullYear();
@@ -172,26 +173,39 @@ const NotificationItem = ({
       <Container>
         <ContentContainer>
           <TouchableWithoutFeedback
-            onPress={() =>
-              moveToAnotherProfile(
-                notificationObj?.sender.id,
-                notificationObj?.sender.nickname,
-                notificationObj?.sender.profileImg,
-              )
-            }>
+            onPress={() => {
+              if(notificationObj?.sender === null) {
+                Alert.alert("탈퇴한 회원입니다.")
+              } else {
+                moveToAnotherProfile(
+                  notificationObj?.sender.id,
+                  notificationObj?.sender.nickname,
+                  notificationObj?.sender.profileImg,
+                )
+              }
+              
+            }}>
             <ProfileImageContainer>
               <ProfileImage
-                source={{
-                  uri: notificationObj?.sender.profileImg
-                    ? notificationObj?.sender.profileImg
-                    : 'https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/436/8142f53e51d2ec31bc0fa4bec241a919_crop.jpeg',
-                }}
+                // source={{
+                //   uri: notificationObj?.sender?.profileImg
+                //     ? notificationObj?.sender?.profileImg
+                //     : 'https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/436/8142f53e51d2ec31bc0fa4bec241a919_crop.jpeg',
+                // }}
+                source={
+                  notificationObj?.sender?.profileImg
+                  ? {uri: notificationObj?.sender?.profileImg}
+                  : require("~/Assets/Images/MyPage/default_profileImg.png")
+                }
               />
             </ProfileImageContainer>
           </TouchableWithoutFeedback>
           <BodyContainer>
             <NicknameContainer>
-              <NicknameText>{notificationObj?.sender.nickname}</NicknameText>
+              <NicknameText>{
+              notificationObj?.sender === null 
+              ? "알수없음"
+              : notificationObj?.sender.nickname}</NicknameText>
               <DateText>
                 {getElapsedTime(notificationObj['createdDiff(second)'])}
               </DateText>

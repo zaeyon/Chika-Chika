@@ -1031,6 +1031,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     <TouchableWithoutFeedback onPress={() => pressBackground()}>
       <Container as={SafeAreaView} forceInset={{top: 'always'}}>
         <NavigationHeader
+        inSafeAreaView={true}
           headerLeftProps={{type: 'arrow', onPress: goBack, text: '리얼리뷰'}}
           headerRightProps={{type: 'viewMore', onPress: clickMoreView}}
         />

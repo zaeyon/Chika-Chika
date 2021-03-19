@@ -22,17 +22,16 @@ import POSTSearchRecord from '~/Routes/Search/POSTSearchRecord';
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 
+import {hasNotch} from '~/method/deviceInfo';
+
 const ContainerView = Styled.View`
-padding-top: ${getStatusBarHeight()}px;
 flex: 1;
 background: white;
 `;
 
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
- height: ${wp('14.1%') + getStatusBarHeight()}px;
- margin-top: ${-getStatusBarHeight()}px;
- padding-top: ${getStatusBarHeight()}px;
+ padding-top: ${hasNotch() ? getStatusBarHeight() : 0}px;
  flex-direction: row;
  justify-content: space-between;
  border-bottom-width: 0.5px;
@@ -53,7 +52,7 @@ const BackIconTouchableWithoutFeedback = Styled(
 `;
 
 const BackIconView = Styled.View`
-padding: 0px 10px 0px 16px;
+padding: 17px 10px 16px 16px;
 align-items: center;
 justify-content: center;
 `;

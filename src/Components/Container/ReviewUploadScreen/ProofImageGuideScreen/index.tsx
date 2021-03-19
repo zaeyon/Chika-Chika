@@ -23,7 +23,6 @@ import {launchCamera} from 'react-native-image-picker';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 
 const Container = Styled.View`
-padding-top: ${getStatusBarHeight()}
 flex: 1;
 background-color: #F5F7F9;
 `;
@@ -239,7 +238,7 @@ const ProofImageGuideScreen = ({navigation, route}: Props) => {
     navigation.navigate('ImageSelectOneStackScreen', {
       screen: 'ImageSelectOneScreen',
       params: {
-        requestType: 'ProofImageGuideScreen',
+        requestScreen: 'ProofImageGuideScreen',
       },
     });
   };

@@ -1,4 +1,5 @@
 import React, {useState, useRef, useEffect, useCallback} from 'react';
+import SafeAreaView from 'react-native-safe-area-view';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -33,7 +34,7 @@ import POSTReply from '~/Routes/Comment/POSTReply';
 import DELETEComment from '~/Routes/Comment/DELETEComment';
 import GETCommentList from '~/Routes/Comment/GETCommentList';
 
-const Container = Styled.SafeAreaView`
+const Container = Styled.View`
   flex: 1;
   background-color: #ffffff;
   `;
@@ -366,8 +367,9 @@ const CommentListScreen = ({navigation, route}: Props) => {
   );
 
   return (
-    <Container>
+    <Container as={SafeAreaView} forceInset={{top: 'always'}}>
       <NavigationHeader
+        inSafeAreaView={true}
         headerLeftProps={{type: 'arrow', onPress: goBack}}
         headerTitle={`댓글(${commentCount})`}
       />

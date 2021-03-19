@@ -27,13 +27,13 @@ const DentalLocationMapScreen = ({navigation, route}: Props) => {
     }
 
     return (
-        <Container as={SafeAreaView} forceInset={{top: "always"}}>
+        <Container>
             <NavigationHeader
             headerLeftProps={{type: "arrow", onPress: goBack}}
             headerTitle={"지도보기"}/>
             <NaverMapView
             center={{...route.params.coordinate, zoom: 16}}
-            style={{flex: 1, marginBottom: hasNotch() ? hp('10.59%') : hp('7.2%')}}
+            style={{flex: 1}}
             minZoomLevel={6}
             compass={false}
             showsMyLocationButton={true}
