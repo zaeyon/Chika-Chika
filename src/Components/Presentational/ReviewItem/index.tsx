@@ -1,6 +1,6 @@
-import React, {useState, useEffect, useLayoutEffect, useCallback} from 'react';
+import React, {useState, useEffect, useLayoutEffect, useCallback, useRef} from 'react';
 import Styled from 'styled-components/native';
-import {TouchableWithoutFeedback, TouchableHighlight} from 'react-native';
+import {TouchableWithoutFeedback, TouchableHighlight, Animated} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -365,6 +365,9 @@ const ReviewItem = ({
   const dispatch = useDispatch();
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 
+  const likeIconScale = useRef(new Animated.Value(1)).current;
+  const scrapIconScale = useRef(new Animated.Value(1)).current;
+
   let formatedCreatedAtDate = '';
   let formatedTreatmentDate = '';
 
@@ -417,6 +420,13 @@ const ReviewItem = ({
     if (isCurUserLikeProp) {
       deleteReviewLike();
     } else {
+      likeIconScale.setValue(0.8)
+      Animated.spring(likeIconScale, {
+        toValue: 1,
+        friction: 8,
+        tension: 300,
+        useNativeDriver: true,
+      }).start();
       postReviewLike();
     }
   };
@@ -426,6 +436,13 @@ const ReviewItem = ({
     if (isCurUserScrapProp) {
       deleteReviewScrap();
     } else {
+      scrapIconScale.setValue(0.8)
+      Animated.spring(scrapIconScale, {
+        toValue: 1,
+        friction: 8,
+        tension: 300,
+        useNativeDriver: true,
+      }).start();
       postReviewScrap();
     }
   };
@@ -571,8 +588,12 @@ const ReviewItem = ({
           <LikeCommentContainer>
             <TouchableWithoutFeedback onPress={() => clickLike()}>
               <LikeContainer>
-                <LikeIcon
-                  style={!isCurUserLikeProp && {tintColor: '#131F3C'}}
+                <Animated.Image
+                  style={[
+                    {width: wp('6.4%'), height: wp('6.4%')},
+                    !isCurUserLikeProp && {tintColor: '#131F3C'}, 
+                    {transform: [{scale: likeIconScale}]}
+                  ]}
                   source={
                     isCurUserLikeProp
                       ? require('~/Assets/Images/Indicator/list/ic_like_focus.png')
@@ -592,7 +613,10 @@ const ReviewItem = ({
           </LikeCommentContainer>
           <TouchableWithoutFeedback onPress={() => clickScrap()}>
             <ScrapContainer>
-              <ScrapIcon
+              <Animated.Image
+                style={[
+                  {width: wp('6.4%'), height: wp('6.4%'), transform: [{scale: scrapIconScale}]}
+                ]}
                 source={
                   isCurUserScrapProp
                     ? require('~/Assets/Images/Indicator/ic_scrap_focus.png')
@@ -618,4 +642,4 @@ const isEqual = (prevItem: any, nextItem: any) => {
 
 const MemoizedReviewItem = React.memo(ReviewItem, isEqual);
 
-export default ReviewItem;
+export default MemoizedReviewItem;

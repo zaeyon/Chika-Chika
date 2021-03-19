@@ -214,14 +214,15 @@ const CommentListScreen = ({navigation, route}: Props) => {
         .then((response: any) => {
           console.log('POSTReviewComment response', response);
           setLoadingCommentPost(false);
-          //etCommentArray(response.reverse());
           dispatch(
             allActions.commentListActions.setCommentList(response.comments),
           );
           dispatch(
             allActions.commentListActions.setCommentCount(response.commentsNum),
           );
-          //setChangeCommentArray(!changeCommentArray);
+          setTimeout(() => {
+          commentFlatListRef.current.scrollToEnd();
+          }, 10)
         })
         .catch((error) => {
           console.log('POSTReviewComment error', error);

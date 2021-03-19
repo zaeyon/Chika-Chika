@@ -235,7 +235,10 @@ const PhoneVerifyScreen = ({navigation}: Props) => {
   const [numberInputState, setNumberInputState] = useState<string>('noInput');
   const [numberInputFocus, setNumberInputFocus] = useState<boolean>(false);
   const [authCodeInputFocus, setAuthCodeInputFocus] = useState<boolean>(false);
+
   const [formattedNumber, setFormattedNumber] = useState<string>('');
+  const [formattedNumberArray, setFormattedNumberArray] = useState<Array<any>>([]);
+
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingVerify, setLoadingVerify] = useState<boolean>(false);
 
@@ -301,7 +304,8 @@ const PhoneVerifyScreen = ({navigation}: Props) => {
   };
 
   const onKeyPressNumberInput = (event: any) => {
-    var numberArray = formattedNumber.split('');
+    const tmpFormattedNumber = formattedNumber.slice();
+    var numberArray = tmpFormattedNumber.split('');
     console.log('numberArray', numberArray);
     console.log('event.nativeEvent', event.nativeEvent.key);
 
@@ -312,6 +316,7 @@ const PhoneVerifyScreen = ({navigation}: Props) => {
     if (!isNaN(event.nativeEvent.key)) {
       // 입력값 숫자
       numberArray.push(event.nativeEvent.key);
+
       setFormattedNumber(numberArray.join(''));
 
       if (numberArray.length === 4) {

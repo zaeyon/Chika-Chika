@@ -83,7 +83,6 @@ interface Props {
   jwtToken: string;
   isLoading: boolean;
   commentList: Array<any>;
-  commentCount: number;
   navigation: any;
   profile: any;
   postId: string;
@@ -96,7 +95,6 @@ const PreviewCommentList = ({
   isLoading,
   profile,
   commentList,
-  commentCount,
   navigation,
   postId,
   postType,
@@ -316,8 +314,8 @@ const PreviewCommentList = ({
         <TouchableWithoutFeedback onPress={() => moveToCommentList()}>
           <ViewTotalCommentContainer>
             <HeaderCommentCountText>{`댓글 ${
-              (commentCount > 99 || commentsNum > 99) ? '99+' :
-              commentCount || String(commentsNum)
+              ( commentsNum > 99) ? '99+' :
+             String(commentsNum)
             }`}</HeaderCommentCountText>
             <ViewTotalCommentIcon
               source={require('~/Assets/Images/Arrow/ic_viewTotalComments.png')}

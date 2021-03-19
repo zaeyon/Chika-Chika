@@ -1014,8 +1014,8 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     navigation.navigate('ImageSelectStackScreen', {
       screen: 'ImageSelectScreen',
       params: {
-      requestType: 'dentalImage',
-      selectedImages: selectedDentalImages,
+        requestType: 'dentalImage',
+        selectedImages: selectedDentalImages,
       }
     });
   }, [])
