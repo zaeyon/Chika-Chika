@@ -519,12 +519,13 @@ const EditProfileScreen = ({
             <SectionImage source={sectionArrow} />
           </SectionContentView>
         </TouchableHighlight>
+        <SectionVerticalDivider />
         <SectionContentView>
-            <SectionContentTitleText>{'전화번호'}</SectionContentTitleText>
-            <SectionContentText>
+          <SectionContentTitleText>{'전화번호'}</SectionContentTitleText>
+          <SectionContentText>
               {`${profile.phoneNumber.slice(0, 3)}-${profile.phoneNumber.slice(3, 7)}-${profile.phoneNumber.slice(7)}`|| '미등록'}
-            </SectionContentText>
-          </SectionContentView>
+          </SectionContentText>
+        </SectionContentView>
       </SectionContainerView>
 
       <BitrhdateModal
