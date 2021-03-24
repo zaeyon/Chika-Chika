@@ -403,7 +403,7 @@ const HomeScreen = ({navigation, route}: Props) => {
   }, []);
 
   return (
-    <ContainerView>
+    <ContainerView as={SafeAreaView}>
         <HeaderContainerView>
           <HomeLogoImage
             source={require('~/Assets/Images/Logo/ic_home_logo.png')}

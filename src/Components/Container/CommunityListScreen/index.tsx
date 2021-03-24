@@ -19,9 +19,7 @@ import GeneralTabScreen from './GeneralTabScreen';
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 
-const ContainerView = Styled(
-  (SafeAreaView as unknown) as new () => SafeAreaView,
-)`
+const ContainerView = Styled.View`
  flex: 1;
  background: white;
 `;
@@ -177,7 +175,7 @@ const CommunityListScreen = ({navigation, route}: Props) => {
   }, []);
 
   return (
-    <ContainerView forceInset={{top: 'always'}}>
+    <ContainerView as={SafeAreaView} forceInset={{top: 'always'}}>
       <HeaderContainerView>
         <HeaderTitleView>
           <HeaderTitleText>{'커뮤니티'}</HeaderTitleText>
