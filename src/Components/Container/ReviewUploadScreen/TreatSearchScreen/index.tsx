@@ -47,7 +47,8 @@ border-radius: 8px;
 background-color: #ffffff;
 flex-direction: row;
 align-items: center;
-padding: 8px;
+padding-left: 8px;
+padding-right: 8px;
 `;
 
 const SearchIcon = Styled.Image`
@@ -61,6 +62,8 @@ background-color: #ffffff;
 margin-left: 8px;
 font-weight: 400;
 font-size: 14px;
+padding-top: 5px;
+padding-bottom: 5px;
 `;
 
 const TreatListContainer = Styled.View`

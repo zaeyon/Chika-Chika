@@ -8,6 +8,7 @@ import {
   Keyboard,
   StyleSheet,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -48,7 +49,7 @@ background-color: #ffffff;
 
 const HeaderBar = Styled.View`
 width: ${wp('100%')}px;
- padding-top: ${hasNotch() ? getStatusBarHeight() : 0}px;
+ padding-top: ${Platform.OS === 'ios' ? getStatusBarHeight() : 0}px;
  flex-direction: row;
  justify-content: space-between;
  border-bottom-width: 0.5px;

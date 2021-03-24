@@ -26,6 +26,7 @@ export const hasNotch = () => {
             return false
         }
     } else if(Platform.OS === 'android') {
+        console.log("hasNotch StatusBar.currentHeight", StatusBar.currentHeight);
         if(StatusBar.currentHeight > 24) {
             return true
         } else {

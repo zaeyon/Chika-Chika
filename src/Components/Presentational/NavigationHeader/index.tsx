@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {TouchableWithoutFeedback} from 'react-native';
+import {TouchableWithoutFeedback, Platform} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -8,9 +8,11 @@ import {
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {hasNotch} from '~/method/deviceInfo';
 
+// padding-top: ${(props) => (hasNotch() ? (props.inSafeAreaView ? 0 : getStatusBarHeight()) : ((Platform.OS === 'ios') ? getStatusBarHeight() : 0))}px;
+
 const HeaderBar = Styled.View<{borderDisable: boolean, inSafeAreaView: boolean}>`
  width: ${wp('100%')}px;
- padding-top: ${(props) => (hasNotch() ? (props.inSafeAreaView ? 0 : getStatusBarHeight()): 0)}px;
+ padding-top: ${(props) => (Platform.OS === 'ios' ? (props.inSafeAreaView ? 0 : getStatusBarHeight()) : 0)}px;
  flex-direction: row;
  justify-content: space-between;
  border-bottom-width: ${(props) => (props.borderDisable ? 0 : 0.5)}px;

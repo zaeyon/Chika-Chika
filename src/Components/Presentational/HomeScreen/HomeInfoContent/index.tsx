@@ -1,10 +1,16 @@
 import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
+import {BoxShadow} from 'react-native-shadow';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 import Styled from 'styled-components/native';
 import {
   Image,
   TouchableOpacity,
   Animated,
   TouchableWithoutFeedback,
+  Platform,
 } from 'react-native';
 
 const ContainerView = Styled.View`
@@ -97,6 +103,7 @@ color: #4E525D;
 `;
 
 const LocalInfoContainerView = Styled.View`
+elevation: 7;
 background: #FFFFFF;
 box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
 border-radius: 8px;
@@ -150,8 +157,8 @@ margin-bottom: 16px;
 
 const SlotContainerView = Styled.View`
 position: absolute;
-top: 0px;
-right: 21.5px;
+top: ${Platform.OS === 'android' ? -2 : 0}px;
+right: 24px;
 `;
 
 const SlotContentText = Styled.Text`
@@ -168,6 +175,15 @@ flex: 1;
 z-index: 3;
 top: 0px;
 background: red;
+`;
+
+const LocalInfoContainerShadow = Styled.View`
+background-color: #ffffff00;
+position: absolute;
+elevation: 3;
+opacity: 0.5;
+width: ${wp('91.4%')};
+height: ${wp('25.58%')};
 `;
 
 interface Props {
@@ -195,6 +211,19 @@ const HomeInfoContent = ({
 
   const imageY = useRef(new Animated.Value(0)).current;
   const hometownScale = useRef(new Animated.Value(1)).current;
+
+  const localInfoContainerRef = useRef<any>({width: 0, height: 0})
+
+  const localInfoContainerShadowOpt = {
+    width: wp('91.4%'),
+    height: wp('25.58%'),
+    color: "#000000",
+    border: 15,
+    radius: 3,
+    opacity: 0.2,
+    x: 0,
+    y: 3,
+  }
 
   useEffect(() => {
     Animated.timing(initialY, {
@@ -316,6 +345,7 @@ const HomeInfoContent = ({
     () => renderSlotNumber(localClinicCount, 'clinic'),
     [localClinicCount],
   );
+  
   const memoReviewCount = useMemo(
     () => renderSlotNumber(localReviewCount, 'review'),
     [localReviewCount],
@@ -369,8 +399,11 @@ const HomeInfoContent = ({
             </HeaderContentButtonView>
           </TouchableWithoutFeedback>
       </TopTitleView>
-      
       <LocalInfoContainerView
+        onLayout={(event: any) => {
+          localInfoContainerRef.current.width = event.nativeEvent.layout.width;
+          localInfoContainerRef.current.height = event.nativeEvent.layout.height;
+        }}
         as={Animated.View}
         style={{
           opacity: thirdY,

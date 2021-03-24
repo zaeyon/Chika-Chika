@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef, useCallback} from 'react';
-import {TouchableWithoutFeedback} from 'react-native';
+import {TouchableWithoutFeedback, Platform} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -31,7 +31,7 @@ background: white;
 
 const HeaderBar = Styled.View`
  width: ${wp('100%')}px;
- padding-top: ${hasNotch() ? getStatusBarHeight() : 0}px;
+ padding-top: ${Platform.OS === 'ios' ? getStatusBarHeight() : 0}px;
  flex-direction: row;
  justify-content: space-between;
  border-bottom-width: 0.5px;

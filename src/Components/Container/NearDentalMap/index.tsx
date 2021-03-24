@@ -27,6 +27,7 @@ import {
 import {Picker} from '@react-native-picker/picker';
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
+import {BoxShadow} from 'react-native-shadow';
 
 import NaverMapView, {Circle, Marker} from 'react-native-nmap';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
@@ -68,6 +69,7 @@ const HeaderBar = Styled.View`
 `;
 
 const MapContainer = Styled.View`
+background-color: #c3c3c3;
 align-items: center;
 justify-content: center;
 `;
@@ -80,8 +82,10 @@ padding-bottom: 0px;
 `;
 
 const SearchInputContainer = Styled.View`
+elevation: 10;
+width: ${wp('100%') - 30}px;
+height: ${(0.14 * (wp('100%') - 30))}px;
 flex-direction: row;
-flex: 1;
 background-color: #ffffff;
 border-radius: 8px;
 border-width: 1px;
@@ -138,7 +142,7 @@ height: ${wp('5.866%')}px;
 
 const MapHeaderContainer = Styled.View`
 width: ${wp('100%')}px;
-padding-top: ${getStatusBarHeight() + 5}
+padding-top: ${Platform.OS === 'ios' ? (getStatusBarHeight() + 5) : hp('2.58%')}
 position: absolute;
 top: 0;
 `;
@@ -375,6 +379,7 @@ margin-left: auto;
 `;
 
 const MyLocationTrackingButton = Styled.View`
+elevation: 2;
 width: 40px;
 height: 40px;
 border-radius: 3px;
@@ -408,7 +413,8 @@ background-color: #FFFFFF;
 position: absolute;
 bottom: 0px;
 width: ${wp('100%')}px;
-height: ${hasNotch() ? hp('10.59%') : hp('7.2%')}px;
+height: ${Platform.OS === 'ios' ? (hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%')
+}px;
 `;
 
 interface Props {
@@ -428,7 +434,7 @@ const TEST_COORDINATE = {
 
 let sort = 'distance';
 
-const bottomTabheight = hasNotch() ? hp('10.59%') : hp('7.2%');
+const bottomTabheight = Platform.OS === 'ios' ? (hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%');
 
 const mapHeight = hp('100%') - bottomTabheight;
 
@@ -516,6 +522,26 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
   const limitRef = useRef<number>(15);
   const offsetRef = useRef<number>(0);
+  
+  const searchBarAndroidShadowOpt = {
+    width: wp('100%') - 30,
+    height: (0.14 * (wp('100%') - 30)),
+    color: '#000000',
+    border: 15,
+    opacity: 0.03,
+    x: 0,
+    y: 0,
+  }
+
+  const searchBarIOSShadowOpt = {
+    width: wp('100%') - 30,
+    height: (0.14 * (wp('100%') - 30)),
+    color: '#000000',
+    border: 15,
+    opacity: 0.1,
+    x: 0,
+    y: 0,
+  }
 
   useEffect(() => {
     if (isNearDentalList.current) {
@@ -873,6 +899,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const dayFilter = tmpDayFilter;
     const parkingFilter = tmpParkingFilter;
     const holidayFilter = tmpHolidayFilter;
+
+    
 
     dispatch(allActions.dentalMapActions.setLoadingGetDental(true));
     setSelectedDentalIndex(0);
@@ -1472,8 +1500,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
         </NaverMapContainer>
         <MapHeaderContainer>
           <SearchContainer>
+            <BoxShadow setting={Platform.OS === 'ios' ? searchBarIOSShadowOpt : searchBarAndroidShadowOpt}>
             <TouchableWithoutFeedback onPress={() => moveToDentalSearch()}>
-              <SearchInputContainer style={styles.searchInputShadow}>
+              <SearchInputContainer>
                 <SearchIcon
                   source={require('~/Assets/Images/Search/ic_search.png')}
                 />
@@ -1487,6 +1516,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
                 )}
               </SearchInputContainer>
             </TouchableWithoutFeedback>
+            </BoxShadow>
           </SearchContainer>
           <FilterListContainer>
             <ScrollView
@@ -1842,6 +1872,7 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 6,
     shadowOpacity: 0.2,
+    elevation: 9,
   },
   detailFilterItemShadow: {
     shadowOffset: {
