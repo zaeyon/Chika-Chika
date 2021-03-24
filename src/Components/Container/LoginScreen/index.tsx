@@ -438,34 +438,34 @@ const LoginScreen = ({navigation, route}: Props) => {
 
           setIsUser(response.exist);
       
-          // if(phoneNumber === '01093664131') {
+          if(phoneNumber === '01093664131') {
 
-          // const jwtToken = response.token;
-          // const profile = {
-          //   phoneNumber: phoneNumber,
-          //   id: response.user.userId,
-          //   nickname: response.user.userNickname,
-          //   profileImg: response.user.userProfileImg,
-          //   img_thumbNail: response.user.img_thumbNail,
-          //   gender: response.user.userGender,
-          //   birthdate: response.user.userBirthdate,
-          //   provider: response.user.userProvider,
-          //   Residences: response.user.userResidences,
-          // };
+          const jwtToken = response.token;
+          const profile = {
+            phoneNumber: phoneNumber,
+            id: response.user.userId,
+            nickname: response.user.userNickname,
+            profileImg: response.user.userProfileImg,
+            img_thumbNail: response.user.img_thumbNail,
+            gender: response.user.userGender,
+            birthdate: response.user.userBirthdate,
+            provider: response.user.userProvider,
+            Residences: response.user.userResidences,
+          };
 
-          // storeUserInfo(jwtToken);
+          storeUserInfo(jwtToken);
           
-          // dispatch(
-          //   allActions.userActions.setUser({
-          //     jwtToken,
-          //     profile,
-          //   }),
-          // );
+          dispatch(
+            allActions.userActions.setUser({
+              jwtToken,
+              profile,
+            }),
+          );
 
-          // dispatch(
-          //   allActions.userActions.setHometown(response.user.userResidences),
-          // );
-          // }
+          dispatch(
+            allActions.userActions.setHometown(response.user.userResidences),
+          );
+          }
         })
         .catch(function (error) {
           console.log('POSTSendTokenToPhone error', error);

@@ -1,15 +1,17 @@
 import React from 'react';
 import Styled from 'styled-components/native';
-import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
+import {StyleSheet, TouchableWithoutFeedback, Platform} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {BoxShadow} from 'react-native-shadow';
 
 import RatingStarList from '~/Components/Presentational/RatingStarList';
 
 const Container = Styled.View`
 width: ${wp('91.46%')}px;
+height: ${wp('29.5%')}px;
 padding: 16px;
 flex-direction: row;
 justify-content: space-between;
@@ -191,6 +193,26 @@ const DentalCarouselItem = ({
     name = name.substring(0, 12) + '...';
   }
 
+  const shadowIosOpt = {
+    width: wp('91.46%'),
+    height: wp('29.5%'),
+    border: 8,
+    color: "#000000",
+    opacity: 0.05,
+    x: 0,
+    y: 0,
+  }
+
+  const shadowAndroidOpt = {
+    width: wp('91.46%'),
+    height: wp('29.5%'),
+    border: 15,
+    color: "#000000",
+    opacity: 0.1,
+    x: 0,
+    y: 0,
+  }
+
   return (
     <Container style={styles.containerShadow}>
       <DentalInfoContainer>
@@ -253,6 +275,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.15,
     shadowRadius: 10,
+    elevation: 12,
   },
 });
 

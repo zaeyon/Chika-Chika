@@ -1390,7 +1390,7 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'absolute',
-    paddingTop: getStatusBarHeight(),
+    paddingTop: hasNotch() ? getStatusBarHeight() : 0,
     width: wp('100%'),
     height: getStatusBarHeight() + hp('8%'),
     flexDirection: 'row',

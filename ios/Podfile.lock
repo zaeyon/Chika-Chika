@@ -474,6 +474,8 @@ PODS:
     - React
   - RNSharedElement (0.7.0):
     - React
+  - RNSVG (12.1.0):
+    - React
   - SDWebImage (5.10.4):
     - SDWebImage/Core (= 5.10.4)
   - SDWebImage/Core (5.10.4)
@@ -545,6 +547,7 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSharedElement (from `../node_modules/react-native-shared-element`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -689,6 +692,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNSharedElement:
     :path: "../node_modules/react-native-shared-element"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -771,10 +776,11 @@ SPEC CHECKSUMS:
   RNReanimated: 5231286440b796e09df3bfa5c1b12b02bfe07664
   RNScreens: 0e91da98ab26d5d04c7b59a9b6bd694124caf88c
   RNSharedElement: 591b3be4f03678cee37697acc62702984ea43de4
+  RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   SDWebImage: c666b97e1fa9c64b4909816a903322018f0a9c84
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Yoga: 7d13633d129fd179e01b8953d38d47be90db185a
 
-PODFILE CHECKSUM: 3aebded5ff25641e69a05482ee8ad86e57c4bd1c
+PODFILE CHECKSUM: 8754a4d3e1172350de670bcc0de3caa2190dd124
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.10.0

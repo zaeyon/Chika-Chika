@@ -193,7 +193,9 @@ dependencies {
     implementation project(':@react-native-async-storage')
     implementation project(':react-native-permissions')
     implementation project(':react-native-safe-area-context')
-    
+    implementation project(':react-native-svg')
+
+
     // Google sign in
     implementation platform('com.google.firebase:firebase-bom:26.1.0')
     implementation 'com.google.firebase:firebase-analytics'

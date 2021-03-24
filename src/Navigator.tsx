@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, StatusBar, Image} from 'react-native';
+import {StyleSheet, StatusBar, Image, Platform} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator, TransitionSpecs, CardStyleInterpolators} from '@react-navigation/stack';
@@ -347,33 +347,52 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name="CommunityStackScreen"
         component={CommunityStackScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
       />
       <HomeStack.Screen
         name="ReviewStackScreen"
         component={ReviewStackScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
       />
       <HomeStack.Screen
         name="AnotherProfileStackScreen"
         component={AnotherProfileStackScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
       />
       <HomeStack.Screen
         name="ReviewUploadStackScreen"
         component={ReviewUploadStackScreen}
         options={{
           gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <HomeStack.Screen
         name="NotificationStackScreen"
         component={NotificationStackScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
       />
       <HomeStack.Screen
         name="HometownSettingScreen"
         component={HometownSettingScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
       />
       <HomeStack.Screen
         name="HometownSearchScreen"
         component={HometownSearchScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
       />
       <HomeStack.Screen
         name="TotalKeywordSearchStackScreen"
@@ -431,6 +450,7 @@ function NearDentalMapStackScreen() {
         name="DentalTotalSearchScreen"
         component={DentalTotalSearchScreen}
         options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           gestureEnabled: false,
           transitionSpec: {
             open: {
@@ -447,15 +467,22 @@ function NearDentalMapStackScreen() {
       <NearDentalMapStack.Screen
         name="DentalDetailScreen"
         component={DentalDetailScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
       />
       <NearDentalMapStack.Screen
         name="DentalInfoEditRequestScreen"
         component={DentalInfoEditRequestScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
       />
       <NearDentalMapStack.Screen
         name="ReviewUploadStackScreen"
         component={ReviewUploadStackScreen}
         options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           gestureEnabled: false,
         }}
       />
@@ -632,6 +659,7 @@ function ReviewUploadStackScreen() {
         component={ReviewMetaDataScreen}
         options={{
           gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <ReviewUploadCardStack.Screen
@@ -639,60 +667,44 @@ function ReviewUploadStackScreen() {
         component={ContentPostScreen}
         options={{
           gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
-      <ReviewUploadStack.Screen
+      {/* <ReviewUploadStack.Screen
         name="ReviewUploadCardStackScreen"
         component={ReviewUploadCardStackScreen}
         options={{
           gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
-      />
-      <ReviewUploadStack.Screen name="TeethCamera" component={TeethCamera} />
-      <ReviewUploadStack.Screen name="Gallery" component={Gallery} />
-      <ReviewUploadStack.Screen
-        name="GallerySelectOne"
-        component={GallerySelectOne}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
-      <ReviewUploadStack.Screen
-        name="ReceiptCamera"
-        component={ReceiptCamera}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
-      <ReviewUploadStack.Screen
-        name="TakenPictureScreen"
-        component={TakenPictureScreen}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
+      /> */}
       <ReviewUploadStack.Screen
         name="DentalNameSearchScreen"
         component={DentalNameSearchScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
       />
       <ReviewUploadStack.Screen
         name="TreatSearchScreen"
         component={TreatSearchScreen}
-      />
-      <ReviewUploadStack.Screen
-        name="DetailPriceScreen"
-        component={DetailPriceScreen}
         options={{
-          gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
-      <ReviewUploadStack.Screen name="RatingScreen" component={RatingScreen} />
+      <ReviewUploadStack.Screen 
+      name="RatingScreen"
+      component={RatingScreen}
+      options={{
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+      }}
+      />
       <ReviewUploadStack.Screen
         name="ImageSelectStackScreen"
         component={ImageSelectStackScreen}
         options={{
           gestureEnabled: false,
-          
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <ReviewUploadStack.Screen
@@ -700,13 +712,16 @@ function ReviewUploadStackScreen() {
         component={ImageSelectOneStackScreen}
         options={{
           gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <ReviewUploadStack.Screen
         name="ProofImageGuideScreen"
         component={ProofImageGuideScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
       />
-      
       <ReviewUploadStack.Screen
         name="FullProofImageScreen"
         component={ImageDetailScreen}
@@ -742,7 +757,10 @@ function ReviewUploadStackScreen() {
       />
       <ReviewUploadStack.Screen
         name="ProofImageEventScreen"
-        component={ProofImageEventScreen}/>
+        component={ProofImageEventScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}/>
     </ReviewUploadStack.Navigator>
   );
 }
@@ -847,83 +865,136 @@ function MyProfileStackScreen() {
           return {
             gestureEnabled:
               routeName === 'ImageSelectOneStackScreen' ? false : true,
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           };
         }}
       />
       <MyProfileStack.Screen
         name="GeneralSettingTabScreen"
         component={GeneralSettingTabScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="ReservationTabScreen"
         component={ReservationTabScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="SavedHospitalTabScreen"
         component={SavedHospitalTabScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="LikedPostsTabScreen"
         component={LikedPostsTabScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="ScrapedPostsTabScreen"
         component={ScrapedPostsTabScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="CommentedPostsTabScreen"
         component={CommentedPostsTabScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="PhoneVerifyScreen"
         component={PhoneVerifyScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="CommunityStackScreen"
         component={CommunityStackScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="ReviewStackScreen"
         component={ReviewStackScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="DentalClinicStackScreen"
         component={DentalClinicStackScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="HometownSearchScreen"
         component={HometownSearchScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="HometownSettingScreen"
         component={HometownSettingScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <ReviewStack.Screen
         name="ReviewUploadStackScreen"
         component={ReviewUploadStackScreen}
         options={{
           gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
         }}
       />
       <MyProfileStack.Screen
         name="AnotherProfileStackScreen"
         component={AnotherProfileStackScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="DeveloperInfoScreen"
         component={DeveloperInfoScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="TermsOfServiceScreen"
         component={TermsOfServiceScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="LocationInfoTermsOfUseScreen"
         component={LocationInfoTermsOfUseScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="PrivacyPolicyScreen"
         component={PrivacyPolicyScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+        }}
       />
       <MyProfileStack.Screen
         name="TotalKeywordSearchStackScreen"
@@ -1315,6 +1386,7 @@ function BottomTab() {
   };
   return (
     <Tab.Navigator
+      lazy={true}
       initialRouteName="홈"
       tabBarOptions={{
         showLabel: false,
@@ -1472,7 +1544,7 @@ const Navigator = () => {
 
 const styles = StyleSheet.create({
   tabBar: {
-    height: hasNotch() ? hp('10.59%') : hp('7.2%'),
+    height: Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%'),
     paddingHorizontal: 0,
     position: 'absolute',
     shadowOffset: {

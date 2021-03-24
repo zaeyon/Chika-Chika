@@ -2,12 +2,13 @@ import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {Image, Animated, TouchableOpacity, RefreshControl} from 'react-native';
+import {Image, Animated, TouchableOpacity, RefreshControl, Platform} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 // import DeviceInfo from 'react-native-device-info';
+import {BoxShadow} from 'react-native-shadow';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 // Firebase
@@ -35,10 +36,12 @@ import GETUserNotifications from '~/Routes/Notification/GETUserNotifications';
 import {hasNotch} from '~/method/deviceInfo'
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
-const ContainerView = Styled.View`
+const ContainerView = Styled(
+  (SafeAreaView as unknown) as new () => SafeAreaView,
+)`
 flex: 1;
 background: #FFFFFF;
-padding-top: ${hasNotch() ? getStatusBarHeight() : 0};
+padding-top: ${Platform.OS === 'ios' ? (hasNotch() ? getStatusBarHeight() : 0) : 0};
 `;
 
 const HomeLogoImage = Styled.Image``;
@@ -83,8 +86,9 @@ align-items: center;
 
 const FloatingButtonView = Styled.View`
 position: absolute;
+elevation: 2;
 align-self: center;
-bottom: ${24 + (hasNotch() ? hp('10.59%') : hp('7.2%'))}px;
+bottom: ${24 + (Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%'))}px;
 padding: 8px 24px;
 background: #131F3C;
 box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
@@ -145,6 +149,17 @@ const HomeScreen = ({navigation, route}: Props) => {
   );
 
   const dispatch = useDispatch();
+
+  const uploadFloatingShadowOpt = {
+    width: wp('37.6%'),
+    height: wp('10%'),
+    color: "#000000",
+    border: 15,
+    radius: 3,
+    opacity: 0.2,
+    x: 0,
+    y: 3,
+  }
 
   useEffect(() => {
     if (route.params?.isUploadReview) {
@@ -517,7 +532,6 @@ const HomeScreen = ({navigation, route}: Props) => {
           moveToAnotherProfile={moveToAnotherProfile}
         />
       </ContentScrollView>
-
       <FloatingButtonView
         as={Animated.View}
         style={{
@@ -526,7 +540,7 @@ const HomeScreen = ({navigation, route}: Props) => {
               translateY: floatY.interpolate({
                 inputRange: [0, 1],
                 outputRange: [
-                  64 + (hasNotch() ? hp('10.59%') : hp('7.2%')),
+                  64 + (Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%')),
                   0,
                 ],
                 extrapolate: 'clamp',
