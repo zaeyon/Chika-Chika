@@ -262,15 +262,14 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
 
   const formatDescription = useCallback((oldDescription: string) => {
     let formattedDescription = [];
-    const lines = oldDescription.split(/\r\n|\r|\n/);
-
+    const lines = oldDescription.replace(/#/gi, " {{").split(/\r\n|\r|\n/);
     for (let line of lines) {
       let formattedLine = [];
       const words = line.split(' ');
       for (let word of words) {
-        if (word.charAt(0) === '#') {
+        if (word.charAt(0) + word.charAt(1) === '{{') {
           //isTag
-          const formattedWord = '{{' + word.slice(1) + '}}';
+          const formattedWord = word + '}}';
           formattedLine.push(formattedWord);
         } else {
           formattedLine.push(word);
