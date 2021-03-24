@@ -47,6 +47,10 @@ const HeaderTitleContainer = Styled.View`
 padding: 12px 16px 16px 16px;
 justify-content: center;
 align-items: center;
+position: absolute;
+width: 100%;
+z-index: -1;
+bottom: 0px;
 `;
 
 const HeadeIconText = Styled.Text`
@@ -82,7 +86,7 @@ color: #131F3C;
 const HeaderRightContainer = Styled.View`
 min-width: 44px;
 height: 100%;
-padding: 12px 16px 17px 16px;
+padding: 12px 16px 16.5px 16px;
  align-items: center;
  flex-direction: row;
 `;
@@ -172,7 +176,7 @@ const NavigationHeader = ({
       }
     } else {
       return (
-        <HeaderEmptyContainer/>
+        null
       )
     }
   }, [headerRightProps, headerRightDisabled, headerRightActiveColor]);
@@ -211,7 +215,7 @@ const NavigationHeader = ({
         ) : null}
       </TouchableWithoutFeedback>
       {headerTitle && (
-        <HeaderTitleContainer>
+        <HeaderTitleContainer >
           <HeaderTitleText>{headerTitle}</HeaderTitleText>
         </HeaderTitleContainer>
       )}
