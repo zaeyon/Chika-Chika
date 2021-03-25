@@ -17,6 +17,7 @@ import CameraRoll, {
 } from '@react-native-community/cameraroll';
 import {launchCamera} from 'react-native-image-picker';
 import SafeAreaView from 'react-native-safe-area-view';
+import {PERMISSIONS, RESULTS, request, check, openSettings} from 'react-native-permissions'
 // Local Components
 import ImageGrid from '~/Components/Container/ImageSelectScreen/ImageGrid';
 import AlbumList from '~/Components/Container/ImageSelectScreen/AlbumList';
@@ -117,32 +118,70 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
-    CameraRoll.getPhotos({
-      first: 89,
-      groupTypes: 'init',
-      groupName: 'init',
-    }).then((photos) => {
-      setSelectedAlbum(photos.edges[0].node.group_name);
-      const result = {
-        title: photos.edges[0].node.group_name,
-        type: 2,
-        photos: photos.edges,
-        page_info: photos.page_info,
-      };
-      console.log('rec', photos.edges[0].node.image);
-      setRecentlyAdded(result);
-    });
-
-    CameraRoll.getAlbums({
-      assetType: 'Photos',
-    }).then((albumInfos: Album[]) => {
-      const filteredAlbums: Album[] = albumInfos.filter(
-        (album) => !uselessAlbums.includes(album.title),
-      );
-
-      setAlbumInfos(filteredAlbums);
-
-      fetchGalleryData(filteredAlbums);
+    check(PERMISSIONS.IOS.PHOTO_LIBRARY)
+      .then((result) => {
+        switch (result) {
+          case RESULTS.UNAVAILABLE:
+            console.log('This feature is not available (on this device / in this context)');
+            break;
+          case RESULTS.DENIED:
+            console.log('The permission has not been requested / is denied but requestable');
+            break;
+          case RESULTS.LIMITED:
+            console.log('The permission is limited: some actions are possible');
+            break;
+          case RESULTS.GRANTED:
+            console.log('The permission is granted');
+            CameraRoll.getPhotos({
+              first: 89,
+              groupTypes: 'init',
+              groupName: 'init',
+            }).then((photos) => {
+              setSelectedAlbum(photos.edges[0].node.group_name);
+              const result = {
+                title: photos.edges[0].node.group_name,
+                type: 2,
+                photos: photos.edges,
+                page_info: photos.page_info,
+              };
+              setRecentlyAdded(result);
+            });
+        
+            CameraRoll.getAlbums({
+              assetType: 'Photos',
+            }).then((albumInfos: Album[]) => {
+              const filteredAlbums: Album[] = albumInfos.filter(
+                (album) => !uselessAlbums.includes(album.title),
+              );
+        
+              setAlbumInfos(filteredAlbums);
+        
+              fetchGalleryData(filteredAlbums);
+            });
+            break;
+          case RESULTS.BLOCKED:
+            Alert.alert('사진 권한이 없습니다.', '설정에서 권한을 허용해주세요', [{
+              text: '취소',
+              style: 'cancel',
+              onPress: () => {
+                navigation.goBack()
+              }
+            }, {
+              text: '설정',
+              onPress: () => {
+                openSettings().catch(() => navigation.goBack())
+                navigation.goBack()
+              }
+            }])
+            break;
+        }
+    }).catch((error) => {
+      Alert.alert('권환 확인 오류', '다시 시도해주세요.', [{
+        text: '확인',
+        onPress: () => {
+          navigation.goBack()
+        }
+      }])
     });
   }, []);
 

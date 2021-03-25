@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {TouchableWithoutFeedback, Platform} from 'react-native';
+import {TouchableWithoutFeedback, Platform, Keyboard} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -91,11 +91,6 @@ padding: 12px 16px 16.5px 16px;
  flex-direction: row;
 `;
 
-const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
-`;
-
 const HeaderIconView = Styled.View`
 flex-direction: row;
 align-items: center;
@@ -172,7 +167,7 @@ const NavigationHeader = ({
             </HeaderText>
           );
         default:
-          return <HeaderEmptyContainer />;
+          return null;
       }
     } else {
       return (
@@ -181,6 +176,7 @@ const NavigationHeader = ({
     }
   }, [headerRightProps, headerRightDisabled, headerRightActiveColor]);
   return (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
     <HeaderBar
     borderDisable={borderDisable}
     inSafeAreaView={inSafeAreaView}>
@@ -234,6 +230,7 @@ const NavigationHeader = ({
         </HeaderRightContainer>
       </TouchableWithoutFeedback>
     </HeaderBar>
+    </TouchableWithoutFeedback>
   );
 };
 
