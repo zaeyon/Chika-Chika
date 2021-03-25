@@ -17,6 +17,7 @@ import CameraRoll, {
 } from '@react-native-community/cameraroll';
 import {launchCamera} from 'react-native-image-picker';
 import SafeAreaView from 'react-native-safe-area-view';
+import {check, request, PERMISSIONS, RESULTS, openSettings} from 'react-native-permissions';
 // Local Components
 import ImageGrid from '~/Components/Container/ImageSelectScreen/ImageGrid';
 import AlbumList from '~/Components/Container/ImageSelectScreen/AlbumList';
@@ -117,6 +118,7 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
+
     CameraRoll.getPhotos({
       first: 89,
       groupTypes: 'init',

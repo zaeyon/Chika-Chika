@@ -69,7 +69,7 @@ const App = () => {
     console.log("device width", width);
     
     if(Platform.OS === 'android') {
-      //checkAndroidPermission()
+      checkAndroidPermission()
     } else if(Platform.OS === 'ios') {
       checkIosPermission()
     }

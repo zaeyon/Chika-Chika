@@ -144,9 +144,13 @@ PODS:
   - nanopb/decode (2.30906.0)
   - nanopb/encode (2.30906.0)
   - NMapsMap (3.10.2)
+  - Permission-Camera (3.0.1):
+    - RNPermissions
   - Permission-LocationAlways (3.0.1):
     - RNPermissions
   - Permission-LocationWhenInUse (3.0.1):
+    - RNPermissions
+  - Permission-PhotoLibrary (3.0.1):
     - RNPermissions
   - PromisesObjC (1.2.12)
   - RCTCallDetection (1.9.0):
@@ -494,8 +498,10 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - GoogleSignIn (~> 5.0.2)
   - "kakao-login (from `../node_modules/@react-native-seoul/kakao-login`)"
+  - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera`)
   - Permission-LocationAlways (from `../node_modules/react-native-permissions/ios/LocationAlways`)
   - Permission-LocationWhenInUse (from `../node_modules/react-native-permissions/ios/LocationWhenInUse`)
+  - Permission-PhotoLibrary (from `../node_modules/react-native-permissions/ios/PhotoLibrary`)
   - RCTCallDetection (from `../node_modules/react-native-call-detection`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -590,10 +596,14 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   kakao-login:
     :path: "../node_modules/@react-native-seoul/kakao-login"
+  Permission-Camera:
+    :path: "../node_modules/react-native-permissions/ios/Camera"
   Permission-LocationAlways:
     :path: "../node_modules/react-native-permissions/ios/LocationAlways"
   Permission-LocationWhenInUse:
     :path: "../node_modules/react-native-permissions/ios/LocationWhenInUse"
+  Permission-PhotoLibrary:
+    :path: "../node_modules/react-native-permissions/ios/PhotoLibrary"
   RCTCallDetection:
     :path: "../node_modules/react-native-call-detection"
   RCTRequired:
@@ -724,8 +734,10 @@ SPEC CHECKSUMS:
   libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
   NMapsMap: 2c092c6408c738774edea41e00f0fd1bad9e0ca9
+  Permission-Camera: 0d2d15352e9c54c3ea8686c8c21fb1a9edf3431b
   Permission-LocationAlways: 7f7f373d086af7a81b2f4f20d65d29266ca2043b
   Permission-LocationWhenInUse: 3ae82a9feb5da4e94e386dba17c7dd3531af9feb
+  Permission-PhotoLibrary: e5d0500209f22e2a5b281501cd3744a965747726
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   RCTCallDetection: 07da027560ada435ff38087f1f5c4de67ad48318
   RCTRequired: 48884c74035a0b5b76dbb7a998bd93bcfc5f2047
@@ -781,6 +793,6 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Yoga: 7d13633d129fd179e01b8953d38d47be90db185a
 
-PODFILE CHECKSUM: 8754a4d3e1172350de670bcc0de3caa2190dd124
+PODFILE CHECKSUM: c433ed0748318e2641226eb6d7bc0dea5ce1f707
 
 COCOAPODS: 1.10.0

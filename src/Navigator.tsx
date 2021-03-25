@@ -66,6 +66,11 @@ import ProofImageGuideScreen from '~/Components/Container/ReviewUploadScreen/Pro
 import FullProofImageScreen from '~/Components/Container/ReviewUploadScreen/FullProofImageScreen';
 import ProofImageEventScreen from '~/Components/Container/ProofImageEventScreen';
 
+
+// Brace Review Upload Stack Screen
+import BraceReviewMetaDataScreen from '~/Components/Container/BraceReviewUploadScreen/BraceReviewMetaDataScreen';
+import BraceReviewContentPostScreen from '~/Components/Container/BraceReviewUploadScreen/BraceReviewContentPostScreen';
+
 // My Profile Stack Screen
 import MyProfileScreen from '~/Components/Container/MyProfileScreen';
 import EditProfileTabScreen from '~/Components/Container/MyProfileScreen/EditProfileTabScreen';
@@ -129,6 +134,7 @@ const AuthStack = createStackNavigator();
 const HomeStack = createStackNavigator();
 const NearDentalMapStack = createStackNavigator();
 const ReviewUploadStack = createStackNavigator();
+const BraceReviewUploadStack = createStackNavigator();
 const MyProfileStack = createStackNavigator();
 const ReviewStack = createStackNavigator();
 const AnotherProfileStack = createStackNavigator();
@@ -373,6 +379,14 @@ function HomeStackScreen() {
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
+      <HomeStack.Screen
+        name="BraceReviewUploadStackScreen"
+        component={BraceReviewUploadStackScreen} 
+        options={{
+          gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+        />
       <HomeStack.Screen
         name="NotificationStackScreen"
         component={NotificationStackScreen}
@@ -670,14 +684,6 @@ function ReviewUploadStackScreen() {
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
-      {/* <ReviewUploadStack.Screen
-        name="ReviewUploadCardStackScreen"
-        component={ReviewUploadCardStackScreen}
-        options={{
-          gestureEnabled: false,
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-        }}
-      /> */}
       <ReviewUploadStack.Screen
         name="DentalNameSearchScreen"
         component={DentalNameSearchScreen}
@@ -746,14 +752,6 @@ function ReviewUploadStackScreen() {
             };
           },
         })}
-        // sharedElementsConfig={(route, otherRoute, showing) => {
-        //   console.log(route.params.imageIndex);
-        //   if (showing) {
-        //     const item = route.params.imageArray;
-        //     return item.map((item) => `item.${item}`);
-        //     return [`item.${item[route.params.imageIndex]}`];
-        //   }
-        // }}
       />
       <ReviewUploadStack.Screen
         name="ProofImageEventScreen"
@@ -762,6 +760,105 @@ function ReviewUploadStackScreen() {
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}/>
     </ReviewUploadStack.Navigator>
+  );
+}
+
+
+function BraceReviewUploadStackScreen() {
+  return (
+    <BraceReviewUploadStack.Navigator headerMode="none">
+      <BraceReviewUploadStack.Screen
+        name="BraceReviewMetaDataScreen"
+        component={BraceReviewMetaDataScreen}
+        options={{
+          gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <BraceReviewUploadStack.Screen
+        name="BraceReviewContentPostScreen"
+        component={ContentPostScreen}
+        options={{
+          gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <BraceReviewUploadStack.Screen
+        name="DentalNameSearchScreen"
+        component={DentalNameSearchScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <BraceReviewUploadStack.Screen
+        name="TreatSearchScreen"
+        component={TreatSearchScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <BraceReviewUploadStack.Screen 
+      name="RatingScreen"
+      component={RatingScreen}
+      options={{
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+      }}
+      />
+      <BraceReviewUploadStack.Screen
+        name="ImageSelectStackScreen"
+        component={ImageSelectStackScreen}
+        options={{
+          gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <BraceReviewUploadStack.Screen
+        name="ImageSelectOneStackScreen"
+        component={ImageSelectOneStackScreen}
+        options={{
+          gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <BraceReviewUploadStack.Screen
+        name="ProofImageGuideScreen"
+        component={ProofImageGuideScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <BraceReviewUploadStack.Screen
+        name="FullProofImageScreen"
+        component={ImageDetailScreen}
+        options={() => ({
+          gestureEnabled: false,
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {duration: 150},
+            },
+            close: {
+              animation: 'timing',
+              config: {duration: 150},
+            },
+          },
+          cardStyle: {backgroundColor: 'transparent'},
+          cardStyleInterpolator: ({current: {progress}}) => {
+            return {
+              cardStyle: {
+                opacity: progress,
+              },
+            };
+          },
+        })}
+      />
+      <BraceReviewUploadStack.Screen
+        name="ProofImageEventScreen"
+        component={ProofImageEventScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}/>
+    </BraceReviewUploadStack.Navigator>
   );
 }
 
@@ -1205,7 +1302,8 @@ function BottomTab() {
 
     if (
       routeName.name === 'ReviewStackScreen' ||
-      routeName.name === 'ReviewUploadStackScreen'
+      routeName.name === 'ReviewUploadStackScreen' ||
+      routeName.name === 'BraceReviewUploadStackScreen'
     ) {
       return false;
     }

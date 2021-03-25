@@ -394,8 +394,8 @@ const HomeScreen = ({navigation, route}: Props) => {
   };
 
   const moveToReviewUpload = useCallback(() => {
-    navigation.navigate('ReviewUploadStackScreen', {
-      screen: 'ReviewMetaDataScreen',
+    navigation.navigate('BraceReviewUploadStackScreen', {
+      screen: 'BraceReviewMetaDataScreen',
       params: {
         requestType: 'post',
       },

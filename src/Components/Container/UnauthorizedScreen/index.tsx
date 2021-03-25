@@ -59,7 +59,7 @@ const LocalContainer = Styled.View`
  flex: 0.9;
  padding-left: 20px;
  padding-right: 20px;
- padding-top: ${hasNotch() ? hp('2%') : hp('5.5%')};
+ padding-top: ${hasNotch() ? hp('2%') : hp('5.5%')}px;
 `;
 
 const LocalLoginContainer = Styled.View`
