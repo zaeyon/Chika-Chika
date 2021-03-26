@@ -21,8 +21,6 @@ import allActions from '~/actions';
 import AboveKeyboard from 'react-native-above-keyboard';
 import ActionSheet from 'react-native-actionsheet';
 import Modal from 'react-native-modal';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
-// import DeviceInfo from 'react-native-device-info';
 
 import {isIphoneX} from 'react-native-iphone-x-helper';
 
@@ -40,7 +38,7 @@ import GETDentalKeywordAutoComplete from '~/Routes/Search/GETDentalKeywordAutoCo
 import DELETESearchRecord from '~/Routes/Search/DELETESearchRecord';
 import GETSearchRecord from '~/Routes/Search/GETSearchRecord';
 import GETUserReservations from '~/Routes/User/GETUserReservations';
-import {hasNotch} from '~/method/deviceInfo'
+import {hasNotch, getStatusBarHeight} from '~/method/deviceInfo'
 
 const Container = Styled.View`
 flex: 1;

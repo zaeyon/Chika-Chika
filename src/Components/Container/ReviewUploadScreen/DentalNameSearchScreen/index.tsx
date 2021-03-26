@@ -115,7 +115,7 @@ const DentalNameSearchScreen = ({navigation, route}: Props) => {
 
   const onPressDentalClinicItem = (selectedDental: object) => {
     if (route.params?.requestPage === 'metadata') {
-      navigation.navigate('ReviewMetaDataScreen', {
+      navigation.navigate('BraceReviewMetaDataScreen', {
         dentalObj: selectedDental,
       });
     } else if (route.params?.requestPage === 'content') {

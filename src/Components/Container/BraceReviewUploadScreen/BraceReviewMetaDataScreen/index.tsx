@@ -6,10 +6,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
-import AboveKeyboard from 'react-native-above-keyboard';
-//import DeviceInfo from 'react-native-device-info';
 import {hasNotch} from '~/method/deviceInfo'
 import ActionSheet from 'react-native-actionsheet';
 import {Picker} from '@react-native-picker/picker';
@@ -41,7 +37,7 @@ background-color: #ffffff;
 padding-top: 16px;
 padding-bottom: 16px;
 padding-left: 16px;
-padding-right: 0px;
+padding-right: 16px;
 `;
 
 const MetaDataHeaderContainer = Styled.View`
@@ -600,6 +596,31 @@ line-height: 24px;
 color: #FFFFFF;
 `;
 
+const RecommendIconContainer = Styled.View`
+padding-right: 32px;
+
+justify-content: center;
+`;
+
+const RecommendIcon = Styled.Image`
+width: ${wp('10.66%')}px;
+height: ${wp('10.66%')}px;
+`;
+
+const RecommendItemContainer = Styled.View`
+background-color: #ffffff;
+padding-top: 16px;
+padding-bottom: 16px;
+padding-left: 16px;
+padding-right: 0px;
+flex-direction: row;
+justify-content: space-between;
+`;
+
+const RecommendLeftContainer = Styled.View`
+flex-direction: column;
+`;
+
 
 interface Props {
   navigation: any;
@@ -654,6 +675,8 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     displayBraceElapsedDate: '',
     braceElapsedDate: '',
   })
+
+  const [isRecommendDental, setIsRecommendDental] = useState<boolean>(false);
 
   const actionSheetItemList = ['취소', '촬영', '앨범'];
 
@@ -984,6 +1007,10 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     [actionSheetItemList],
   );
 
+  const onPressRecommendDental = () => {
+    setIsRecommendDental(!isRecommendDental);
+  }
+
   const navigateToCameraByProof = useCallback(() => {
     setLoadingTakingPicture(true);
     launchCamera({includeBase64: true, mediaType: 'photo'}, (response: CameraResponse) => {
@@ -1074,7 +1101,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     });
   }
 
-  const registerTreatmentDate = () => {
+  const registerBraceElapsedDate = () => {
 
     const tmpTreatmentDate = {
       displayTreatmentDate: selectedTreatmentYear + '.' + selectedTreatmentMonth + '.' + selectedTreatmentDay,
@@ -1082,7 +1109,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     }
 
     setTreatmentDateObj(tmpTreatmentDate);
-    cancelTreatmentDateModal()
+    cancelBraceElapsedDateModal()
   };
 
   const moveToSelectProofImage = () => {
@@ -1384,17 +1411,17 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
             </MetaDataValueContainer>
           </MetaDataItemContainer>
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => moveToRatingScreen()}>
+          {/* <TouchableWithoutFeedback onPress={() => moveToRatingScreen()}>
           <MetaDataItemContainer>
           <MetaDataHeaderContainer>
           <MetaDataLabelContainer>
           <MetaDataLabelText>{"병원 만족도"}</MetaDataLabelText>
           <AsteriskText>{"*"}</AsteriskText>
           </MetaDataLabelContainer>
-          {/* <RightArrowIconContainer>
+          <RightArrowIconContainer>
             <RightArrowIcon
             source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
-          </RightArrowIconContainer> */}
+          </RightArrowIconContainer>
           </MetaDataHeaderContainer>
             <MetaDataValueContainer>
             {!ratingObj.serviceRating && (
@@ -1424,7 +1451,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
             )}
             </MetaDataValueContainer>
           </MetaDataItemContainer>
-          </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback> */}
           {/* <MetaDataItemContainer>
           <MetaDataHeaderContainer>
           <MetaDataLabelContainer>
@@ -1487,6 +1514,27 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
             </MetaDataValueContainer>
           </TouchableWithoutFeedback>
           </MetaDataItemContainer>
+          <RecommendItemContainer
+          style={{marginTop: 8}}>
+            <RecommendLeftContainer>
+          <MetaDataHeaderContainer>
+            <MetaDataLabelText>{"병원 추천여부"}</MetaDataLabelText>
+          </MetaDataHeaderContainer>
+          <MetaDataValueContainer
+          style={{borderBottomWidth: 0}}>
+            <MetaDataPlaceholderText>{"이 병원을 추천해주세요."}</MetaDataPlaceholderText>
+          </MetaDataValueContainer>
+          </RecommendLeftContainer>
+          <TouchableWithoutFeedback onPress={() => onPressRecommendDental()}>
+          <RecommendIconContainer>
+            <RecommendIcon
+            source={
+              isRecommendDental 
+              ? require('~/Assets/Images/Upload/ic_recommend_selected.png')
+              : require('~/Assets/Images/Upload/ic_recommend_unselected.png')}/>
+          </RecommendIconContainer>
+          </TouchableWithoutFeedback>
+          </RecommendItemContainer>
           <MetaDataItemContainer
           style={{marginTop: 8}}>
           <MetaDataHeaderContainer>
@@ -1590,7 +1638,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                   source={require('~/Assets/Images/Map/ic_initialize.png')}/>
                 </InitializeFilterContainer>
                 </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => registerTreatmentDate()}>
+                <TouchableWithoutFeedback onPress={() => registerBraceElapsedDate()}>
                 <RegisterFilterButton>
                   <RegisterFilterText>{"적용하기"}</RegisterFilterText>
                 </RegisterFilterButton>

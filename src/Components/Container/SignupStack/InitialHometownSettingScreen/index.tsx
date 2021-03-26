@@ -7,9 +7,6 @@ import {
 } from 'react-native-responsive-screen'
 import Geolocation from 'react-native-geolocation-service';
 
-import {getStatusBarHeight} from 'react-native-status-bar-height';
-
-
 // Local Components
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import ToastMessage from '~/Components/Presentational/ToastMessage';

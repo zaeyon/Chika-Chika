@@ -27,7 +27,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import ActionSheet from 'react-native-actionsheet';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
+import {getStatusBarHeight} from '~/method/deviceInfo';
 import axios from 'axios';
 
 // Local Component

@@ -7,7 +7,6 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
 import AboveKeyboard from 'react-native-above-keyboard';
 //import DeviceInfo from 'react-native-device-info';
 import {hasNotch} from '~/method/deviceInfo'

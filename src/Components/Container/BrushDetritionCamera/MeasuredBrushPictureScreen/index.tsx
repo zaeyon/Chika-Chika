@@ -7,9 +7,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
-import {isIphoneX} from 'react-native-iphone-x-helper';
-// import DeviceInfo from 'react-native-device-info';
 import {hasNotch} from '~/method/deviceInfo'
 
 import MeasuredBrushSlidingUpPanel from '~/Components/Presentational/TeethCareScreen/MeasuredBrushSlidingUpPanel';

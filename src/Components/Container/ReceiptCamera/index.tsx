@@ -7,7 +7,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
+import {getStatusBarHeight} from '~/method/deviceInfo';
 
 let {width, height} = Dimensions.get('window');
 

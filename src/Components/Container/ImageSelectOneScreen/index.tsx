@@ -12,6 +12,7 @@ import CameraRoll, {
 import {launchCamera} from 'react-native-image-picker';
 import SafeAreaView from 'react-native-safe-area-view';
 import {SharedElement} from 'react-navigation-shared-element';
+import {PERMISSIONS, RESULTS, request, check, openSettings} from 'react-native-permissions'
 // Local Components
 import ImageGrid from '~/Components/Container/ImageSelectOneScreen/ImageGrid';
 import AlbumList from '~/Components/Container/ImageSelectOneScreen/AlbumList';
@@ -19,9 +20,7 @@ import NavigationHeader from '~/Components/Container/ImageSelectOneScreen/Naviga
 import SelectedList from '~/Components/Container/ImageSelectScreen/SelectedList';
 import AnimatedModal from '~/Components/Presentational/AnimatedModal';
 
-const ContainerView = Styled(
-  (SafeAreaView as unknown) as new () => SafeAreaView,
-)`
+const ContainerView = Styled.View`
 flex: 1;
 background: #FFFFFF;
 `;
@@ -101,33 +100,128 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
   ]);
 
   useEffect(() => {
-    CameraRoll.getPhotos({
-      first: 89,
-      groupTypes: 'init',
-      groupName: 'init',
-    }).then((photos) => {
-      setSelectedAlbum(photos.edges[0].node.group_name);
-      const result = {
-        title: photos.edges[0].node.group_name,
-        type: 2,
-        photos: photos.edges,
-        page_info: photos.page_info,
-      };
-      console.log('rec', photos.edges[0].node.image);
-      setRecentlyAdded(result);
-    });
-
-    CameraRoll.getAlbums({
-      assetType: 'Photos',
-    }).then((albumInfos: Album[]) => {
-      const filteredAlbums: Album[] = albumInfos.filter(
-        (album) => !uselessAlbums.includes(album.title),
-      );
-
-      setAlbumInfos(filteredAlbums);
-
-      fetchGalleryData(filteredAlbums);
-    });
+    check(PERMISSIONS.IOS.PHOTO_LIBRARY)
+    .then((result) => {
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          console.log('This feature is not available (on this device / in this context)');
+          break;
+        case RESULTS.DENIED:
+          console.log('The permission has not been requested / is denied but requestable');
+          request(PERMISSIONS.IOS.PHOTO_LIBRARY).then((result) => {
+            console.log("PERMISSIONS.IOS.PHOTO_LIBRARY result", result);
+            if(result === 'granted') {
+              CameraRoll.getPhotos({
+                first: 89,
+                groupTypes: 'init',
+                groupName: 'init',
+              }).then((photos) => {
+                setSelectedAlbum(photos.edges[0].node.group_name);
+                const result = {
+                  title: photos.edges[0].node.group_name,
+                  type: 2,
+                  photos: photos.edges,
+                  page_info: photos.page_info,
+                };
+                setRecentlyAdded(result);
+              });
+          
+              CameraRoll.getAlbums({
+                assetType: 'Photos',
+              }).then((albumInfos: Album[]) => {
+                const filteredAlbums: Album[] = albumInfos.filter(
+                  (album) => !uselessAlbums.includes(album.title),
+                );
+                setAlbumInfos(filteredAlbums);
+                fetchGalleryData(filteredAlbums);
+              });
+            } else {
+              navigation.goBack();
+            }
+          });
+          break;
+        case RESULTS.LIMITED:
+          console.log('The permission is limited: some actions are possible');
+          CameraRoll.getPhotos({
+            first: 89,
+            groupTypes: 'init',
+            groupName: 'init',
+          }).then((photos) => {
+            setSelectedAlbum(photos.edges[0].node.group_name);
+            const result = {
+              title: photos.edges[0].node.group_name,
+              type: 2,
+              photos: photos.edges,
+              page_info: photos.page_info,
+            };
+            setRecentlyAdded(result);
+          });
+      
+          CameraRoll.getAlbums({
+            assetType: 'Photos',
+          }).then((albumInfos: Album[]) => {
+            const filteredAlbums: Album[] = albumInfos.filter(
+              (album) => !uselessAlbums.includes(album.title),
+            );
+            setAlbumInfos(filteredAlbums);
+            fetchGalleryData(filteredAlbums);
+          });
+          break;
+        case RESULTS.GRANTED:
+          console.log('The permission is granted');
+          CameraRoll.getPhotos({
+            first: 89,
+            groupTypes: 'init',
+            groupName: 'init',
+          }).then((photos) => {
+            setSelectedAlbum(photos.edges[0].node.group_name);
+            const result = {
+              title: photos.edges[0].node.group_name,
+              type: 2,
+              photos: photos.edges,
+              page_info: photos.page_info,
+            };
+            console.log('rec', photos.edges[0].node.image);
+            setRecentlyAdded(result);
+          });
+      
+          CameraRoll.getAlbums({
+            assetType: 'Photos',
+          }).then((albumInfos: Album[]) => {
+            const filteredAlbums: Album[] = albumInfos.filter(
+              (album) => !uselessAlbums.includes(album.title),
+            );
+      
+            setAlbumInfos(filteredAlbums);
+      
+            fetchGalleryData(filteredAlbums);
+          });
+          break;
+        case RESULTS.BLOCKED:
+          Alert.alert('사진 권한이 없습니다.', '설정에서 권한을 허용해주세요', [{
+            text: '취소',
+            style: 'cancel',
+            onPress: () => {
+              navigation.goBack()
+            }
+          }, {
+            text: '설정',
+            onPress: () => {
+              openSettings().catch(() => navigation.goBack())
+              navigation.goBack()
+            }
+          }])
+          break;
+      }
+  }).catch((error) => {
+    Alert.alert('권환 확인 오류', '다시 시도해주세요.', [{
+      text: '확인',
+      onPress: () => {
+        navigation.goBack()
+      }
+    }])
+  });
+    
   }, []);
 
   const fetchGalleryData = useCallback(async (filteredAlbums) => {

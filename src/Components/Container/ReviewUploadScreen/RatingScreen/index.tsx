@@ -203,7 +203,7 @@ const RatingScreen = ({navigation, route}: Props) => {
   };
 
   const onPressFinishButton = () => {
-    navigation.navigate('ReviewMetaDataScreen', {
+    navigation.navigate('BraceReviewMetaDataScreen', {
       ratingObj: {
         serviceRating: serviceRating,
         priceRating: priceRating,

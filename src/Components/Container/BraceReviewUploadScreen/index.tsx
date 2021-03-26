@@ -64,7 +64,7 @@ interface Props {
   route: any;
 }
 
-const BraceReviewUploadScreen = ({navigation, route}: Props) => {
+const BraceUploadScreen = ({navigation, route}: Props) => {
   const openCamera = () => {
     navigation.navigate('Camera');
   };

@@ -41,7 +41,7 @@ const FullImageScreen = ({navigation, route}: Props) => {
         selectedIndex: route.params.selectedIndex,
       })
     } else if(route.params?.requestScreen === 'ReviewMetaDataScreen_ProofImage') {
-      navigation.navigate("ReviewMetaDataScreen", {
+      navigation.navigate("BraceReviewMetaDataScreen", {
         selectedProofImage: route.params.image,
       })
     } else {
@@ -52,7 +52,7 @@ const FullImageScreen = ({navigation, route}: Props) => {
   }
 
   return (
-    <ContainerView as={SafeAreaView}>
+    <ContainerView>
       <SharedElement id="header" style={{}}>
         <NavigationHeader
           headerLeftProps={{

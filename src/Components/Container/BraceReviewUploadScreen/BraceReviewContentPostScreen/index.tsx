@@ -532,7 +532,8 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   };
 
   const goBack = () => {
-    navigation.navigate('ReviewMetaDataScreen', {
+    console.log("goBack")
+    navigation.navigate('BraceReviewMetaDataScreen', {
       paragraphArray: paragraphArray,
     });
   };

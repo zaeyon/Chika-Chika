@@ -21,10 +21,8 @@ import {
 } from 'react-native-responsive-screen';
 import messaging from '@react-native-firebase/messaging';
 import AboveKeyboard from 'react-native-above-keyboard';
-//import {getStatusBarHeight} from 'react-native-status-bar-height'
-import {getStatusBarHeight} from 'react-native-status-bar-height';
 //import DeviceInfo from 'react-native-device-info';
-import {hasNotch} from '~/method/deviceInfo'
+import {hasNotch, getStatusBarHeight} from '~/method/deviceInfo'
 
 // Async Storage
 import {storeUserInfo} from '~/storage/currentUser';

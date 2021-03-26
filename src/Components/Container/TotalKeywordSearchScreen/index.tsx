@@ -6,7 +6,6 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import SafeAreaView from 'react-native-safe-area-view';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 //Local components
 import AutoCompletedTotalKeywordFlatList from '~/Components/Presentational/AutoCompletedKeywordFlatList';
@@ -22,7 +21,7 @@ import POSTSearchRecord from '~/Routes/Search/POSTSearchRecord';
 import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 
-import {hasNotch} from '~/method/deviceInfo';
+import {hasNotch, getStatusBarHeight} from '~/method/deviceInfo';
 
 const ContainerView = Styled.View`
 flex: 1;

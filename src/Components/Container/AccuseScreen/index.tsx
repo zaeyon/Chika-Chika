@@ -19,14 +19,13 @@ import {useSelector} from 'react-redux';
 // import DeviceInfo from 'react-native-device-info';
 import ActionSheet from 'react-native-actionsheet';
 import {launchCamera} from 'react-native-image-picker';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 // Local Component
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 import {uploadImageToS3} from '~/method/uploadImageToS3';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 import ToastMessage from '~/Components/Presentational/ToastMessage';
-import {hasNotch} from '~/method/deviceInfo';
+import {hasNotch, getStatusBarHeight} from '~/method/deviceInfo';
 
 // Route
 import POSTReport from '~/Routes/Report/POSTReport';

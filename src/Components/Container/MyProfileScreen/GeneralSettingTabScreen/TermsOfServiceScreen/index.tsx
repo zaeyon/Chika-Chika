@@ -5,7 +5,6 @@ import {
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {WebView} from 'react-native-webview';
 
 const Container = Styled.View`

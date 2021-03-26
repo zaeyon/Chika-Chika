@@ -250,7 +250,7 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
   };
 
   const onPressFinishButton = () => {
-    navigation.navigate('ReviewMetaDataScreen', {
+    navigation.navigate('BraceReviewMetaDataScreen', {
       selectedTreatmentArray: selectedTreatmentArray,
     });
   };

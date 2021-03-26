@@ -5,7 +5,6 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 // Presentational Components
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';

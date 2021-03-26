@@ -1,12 +1,11 @@
 import React, {useCallback} from 'react';
-import {TouchableWithoutFeedback, Platform} from 'react-native';
+import {TouchableWithoutFeedback, Platform, Keyboard} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
-import {hasNotch} from '~/method/deviceInfo';
+import {hasNotch, getStatusBarHeight} from '~/method/deviceInfo';
 
 // padding-top: ${(props) => (hasNotch() ? (props.inSafeAreaView ? 0 : getStatusBarHeight()) : ((Platform.OS === 'ios') ? getStatusBarHeight() : 0))}px;
 
@@ -47,6 +46,10 @@ const HeaderTitleContainer = Styled.View`
 padding: 12px 16px 16px 16px;
 justify-content: center;
 align-items: center;
+position: absolute;
+width: 100%;
+z-index: -1;
+bottom: 0px;
 `;
 
 const HeadeIconText = Styled.Text`
@@ -82,14 +85,9 @@ color: #131F3C;
 const HeaderRightContainer = Styled.View`
 min-width: 44px;
 height: 100%;
-padding: 12px 16px 17px 16px;
+padding: 12px 16px 16.5px 16px;
  align-items: center;
  flex-direction: row;
-`;
-
-const HeaderEmptyContainer = Styled.View`
-width: ${wp('6.4%')}px;
-height: ${wp('6.4%')}px;
 `;
 
 const HeaderIconView = Styled.View`
@@ -132,6 +130,8 @@ const NavigationHeader = ({
   headerRightActiveColor = '#131F3C',
   headerTitle,
 }: Props) => {
+  console.log("getStatusBarHeight", getStatusBarHeight());
+  
   const renderHeaderRightContent = useCallback(() => {
     if (headerRightProps) {
       switch (headerRightProps.type) {
@@ -168,15 +168,16 @@ const NavigationHeader = ({
             </HeaderText>
           );
         default:
-          return <HeaderEmptyContainer />;
+          return null;
       }
     } else {
       return (
-        <HeaderEmptyContainer/>
+        null
       )
     }
   }, [headerRightProps, headerRightDisabled, headerRightActiveColor]);
   return (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
     <HeaderBar
     borderDisable={borderDisable}
     inSafeAreaView={inSafeAreaView}>
@@ -211,7 +212,7 @@ const NavigationHeader = ({
         ) : null}
       </TouchableWithoutFeedback>
       {headerTitle && (
-        <HeaderTitleContainer>
+        <HeaderTitleContainer >
           <HeaderTitleText>{headerTitle}</HeaderTitleText>
         </HeaderTitleContainer>
       )}
@@ -230,6 +231,7 @@ const NavigationHeader = ({
         </HeaderRightContainer>
       </TouchableWithoutFeedback>
     </HeaderBar>
+    </TouchableWithoutFeedback>
   );
 };
 

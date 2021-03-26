@@ -16,7 +16,6 @@ import {
   Easing,
 } from 'react-native';
 import ActionSheet from 'react-native-actionsheet';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {launchCamera} from 'react-native-image-picker';
 
 // Local Components

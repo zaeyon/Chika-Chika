@@ -26,7 +26,6 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import {useSelector} from 'react-redux';
 import ActionSheet from 'react-native-actionsheet';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {BlurView} from '@react-native-community/blur';
 import {hasNotch} from '~/method/deviceInfo';
 
@@ -532,6 +531,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   };
 
   const goBack = () => {
+    console.log("ContentPostScreen goBack");
     navigation.navigate('ReviewMetaDataScreen', {
       paragraphArray: paragraphArray,
     });

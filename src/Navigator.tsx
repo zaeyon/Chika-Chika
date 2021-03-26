@@ -777,7 +777,7 @@ function BraceReviewUploadStackScreen() {
       />
       <BraceReviewUploadStack.Screen
         name="BraceReviewContentPostScreen"
-        component={ContentPostScreen}
+        component={BraceReviewContentPostScreen}
         options={{
           gestureEnabled: false,
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,

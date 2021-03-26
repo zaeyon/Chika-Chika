@@ -35,6 +35,19 @@ export const hasNotch = () => {
     }
 }
 
+export const getStatusBarHeight = () => {
+    if(Platform.OS === 'ios' && !Platform.isPad && !Platform.isTVOS) {
+        if((width === WIDTH_X && height === HEIGHT_X) || (width === WIDTH_11 && height === HEIGHT_11) || (width === WIDTH_12 && height === HEIGHT_12) || (width === WIDTH_12PM && height === HEIGHT_12PM)) {
+            return 44
+        } else {
+            return 20
+        }
+    } else if(Platform.OS === 'android') {
+        console.log("hasNotch StatusBar.currentHeight", StatusBar.currentHeight);
+        return StatusBar.currentHeight;
+    }
+}
+
 
 
 

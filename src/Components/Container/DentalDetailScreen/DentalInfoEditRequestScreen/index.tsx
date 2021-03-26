@@ -20,7 +20,6 @@ import {useSelector} from 'react-redux';
 // import DeviceInfo from 'react-native-device-info';
 import ActionSheet from 'react-native-actionsheet';
 import {launchCamera} from 'react-native-image-picker';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 // Local Component
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';

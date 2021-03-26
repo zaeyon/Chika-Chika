@@ -5,7 +5,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen'; 
 import {View, TouchableWithoutFeedback, Image} from 'react-native';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
+import {getStatusBarHeight} from '~/method/deviceInfo';
 import {hasNotch} from '~/method/deviceInfo';
 
 const Container = Styled.View`

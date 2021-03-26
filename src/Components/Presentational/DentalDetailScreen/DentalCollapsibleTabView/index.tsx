@@ -20,9 +20,8 @@ import {
   Linking,
 } from 'react-native';
 import {TabView, TabBar} from 'react-native-tab-view';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
 // import DeviceInfo from 'react-native-device-info';
-import {hasNotch} from '~/method/deviceInfo'
+import {hasNotch, getStatusBarHeight} from '~/method/deviceInfo'
 
 // Local Component
 import ReviewList from '~/Components/Presentational/ReviewList';

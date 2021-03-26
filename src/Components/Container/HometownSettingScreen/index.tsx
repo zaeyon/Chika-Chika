@@ -7,7 +7,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
 import allActions from '~/actions';
 
 // local component
