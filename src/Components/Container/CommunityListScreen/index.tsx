@@ -1,12 +1,13 @@
 import React, {useRef, useEffect, useCallback, useState} from 'react';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {Animated, Image} from 'react-native';
+import {Animated, Image, Platform} from 'react-native';
 
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {hasNotch} from '~/method/deviceInfo'
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import messaging from '@react-native-firebase/messaging';
 
@@ -22,13 +23,14 @@ import allActions from '~/actions';
 const ContainerView = Styled.View`
  flex: 1;
  background: white;
+ padding-bottom: ${Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%')}
 `;
 
 const HeaderContainerView = Styled.View`
 width: ${wp('100%')}px;
 flex-direction: row;
 padding: 20px 16px 15px 16px;
-background: white;
+background: #FFFFFF;
 z-index: 2;
 border-bottom-width: 1px;
 border-color: #F5F7F9;

@@ -177,7 +177,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
           onPress: headerLeftAction,
           type: 'arrow',
         }}
-        headerTitle="프로필 편집"
+        headerTitle="내 정보 수정"
       />
       <EditProfileScreen
         capturePhoto={capturePhoto}

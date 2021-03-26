@@ -313,7 +313,7 @@ const PreviewCommentList = ({
       <HeaderContainer>
         <TouchableWithoutFeedback onPress={() => moveToCommentList()}>
           <ViewTotalCommentContainer>
-            <HeaderCommentCountText>{`댓글 ${
+            <HeaderCommentCountText>{`댓글 ${commentList ? commentList.length : 
               ( commentsNum > 99) ? '99+' :
              String(commentsNum)
             }`}</HeaderCommentCountText>

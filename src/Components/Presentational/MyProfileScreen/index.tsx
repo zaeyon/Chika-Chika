@@ -779,7 +779,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
               padding: 10,
             }}
             onPress={() => {
-              this.props.openModal();
+              this.props.navigation.navigate("MyPostsTabScreen")
             }}>
             <HeaderIconImage
               source={require('~/Assets/Images/MyPage/Header/Mypage/ic/setting.png')}

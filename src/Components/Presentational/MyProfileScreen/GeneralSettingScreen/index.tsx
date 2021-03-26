@@ -354,14 +354,6 @@ const GeneralSettingScreen = ({
         ) : null}
       </SectionContainerView>
       <SectionContainerView>
-        <TouchableHighlight activeOpacity={0.9} underlayColor="black"
-        onPress={() => openEmailSend()}>
-          <SectionContentView>
-            <SectionContentTitleText>{'이메일 문의'}</SectionContentTitleText>
-            <SectionImage source={sectionArrow} />
-          </SectionContentView>
-        </TouchableHighlight>
-        <SectionVerticalDivider />
         <TouchableHighlight
           activeOpacity={0.9}
           underlayColor="black"
@@ -382,50 +374,7 @@ const GeneralSettingScreen = ({
           </SectionContentView>
         </TouchableHighlight>
       </SectionContainerView>
-      <SectionContainerView>
-        <TouchableHighlight activeOpacity={0.9} underlayColor="black">
-          <SectionContentView>
-            <SectionContentTitleText>{'버전정보'}</SectionContentTitleText>
-          </SectionContentView>
-        </TouchableHighlight>
-        <SectionVerticalDivider />
-        <TouchableHighlight 
-        activeOpacity={0.9} 
-        underlayColor="black"
-        onPress={() => moveToTermsOfService()}>
-          <SectionContentView>
-            <SectionContentTitleText>
-              {'서비스 이용약관'}
-            </SectionContentTitleText>
-            <SectionImage source={sectionArrow} />
-          </SectionContentView>
-        </TouchableHighlight>
-        <SectionVerticalDivider />
-        <TouchableHighlight
-        activeOpacity={0.9}
-        underlayColor="black"
-        onPress={() => moveToPrivacyPolicy()}>
-          <SectionContentView>
-            <SectionContentTitleText>
-              {'개인정보 처리방침'}
-            </SectionContentTitleText>
-            <SectionImage source={sectionArrow} />
-          </SectionContentView>
-        </TouchableHighlight>
-        <SectionVerticalDivider />
-        <TouchableHighlight
-        activeOpacity={0.9}
-        underlayColor="black"
-        onPress={() => moveToLocationInfoTermsOfUse()}>
-          <SectionContentView>
-            <SectionContentTitleText>
-              {'위치정보 이용약관'}
-            </SectionContentTitleText>
-            <SectionImage source={sectionArrow} />
-          </SectionContentView>
-        </TouchableHighlight>
-        <SectionVerticalDivider />
-      </SectionContainerView>
+      
       {loadingSignout && (
         <LoadingContainer>
           <ActivityIndicator/>

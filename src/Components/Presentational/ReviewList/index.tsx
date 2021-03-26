@@ -141,15 +141,14 @@ const ReviewList = ({
   );
 
   const renderEndRechedIndicator = useCallback(() => {
-    if (loadingMoreReview) {
+
       return (
+        loadingMoreReview ? 
         <EndReachedIndicatorContainer>
           <ActivityIndicator />
-        </EndReachedIndicatorContainer>
+        </EndReachedIndicatorContainer> : null
       );
-    } else {
-      return <EndReachedIndicatorContainer style={{height: 10}} />;
-    }
+
   }, [loadingMoreReview]);
 
   const renderReviewItem = useCallback(({item, index}: any) => {
