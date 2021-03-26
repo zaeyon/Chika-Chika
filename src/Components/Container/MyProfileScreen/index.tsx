@@ -1,464 +1,234 @@
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import React, {useState, useEffect, useRef, useCallback} from 'react';
+import {Platform, Linking, TouchableHighlight, TouchableWithoutFeedback} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {LayoutAnimation} from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {useSelector, useDispatch} from 'react-redux';
-import allActions from '~/actions';
+import {useSelector} from 'react-redux';
+import {hasNotch} from '~/method/deviceInfo';
 //Local Component
-import MyProfile from '~/Components/Presentational/MyProfileScreen';
-import BottomSheet from '~/Components/Presentational/BottomSheet';
-import SlideUpPanel from '~/Components/Presentational/MyProfileScreen/SlideUpPanel';
 //Routes
-import GETUserInfo from '~/Routes/Auth/GETUserInfo';
-import GETUserReviewPosts from '~/Routes/Community/showPosts/GETUserReviewPosts';
-import GETUserCommunityPosts from '~/Routes/Community/showPosts/GETUserCommunityPost';
-import POSTSocialLike from '~/Routes/Community/social/POSTSocialLike';
-import DELETESocialLike from '~/Routes/Community/social/DELETESocialLike';
-import POSTSocialScrap from '~/Routes/Community/social/POSTSocialScrap';
-import DELETESocialScrap from '~/Routes/Community/social/DELETESocialScrap';
-
-const ContainerView = Styled(
-  (SafeAreaView as unknown) as new () => SafeAreaView,
-)`
+const ContainerView = Styled.View`
 flex: 1;
-background: white;
+background: #FFFFFF;
+padding-bottom: ${
+  Platform.OS === 'ios' ? (hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%')
+}
 `;
+
+const HeaderContainerView = Styled.View`
+width: ${wp('100%')}px;
+flex-direction: row;
+padding: 20px 16px 15px 16px;
+align-items: flex-start;
+background: #FFFFFF;
+border-bottom-width: 0.5px;
+border-color: #F5F7F9;
+`;
+
+const HeaderNicknameText = Styled.Text`
+font-style: normal;
+font-weight: bold;
+font-size: 20px;
+line-height: 30px;
+color: #131F3C;
+`;
+
+const BodyScrollView = Styled.ScrollView`
+flex: 1;
+background: #FFFFFF
+`;
+
+const ProfileContainerView = Styled.View`
+width: 100%;
+padding: 13px 16px;
+flex-direction: row;
+background: #FFFFFF;
+`;
+
+const ProfileImage = Styled.Image`
+width: 77px;
+height: 77px;
+resize-mode: contain;
+border-width: 0.5px;
+border-color: #A6A8AC;
+border-radius: 100px;
+`;
+
+const ProfileContentView = Styled.View`
+margin-left: 20px;
+justify-content: center;
+`;
+
+const ProfileTitleText = Styled.Text`
+font-weight: 800;
+font-size: 22px;
+line-height: 24px;
+color: #000000;
+`;
+
+const ProfileSubTitleView = Styled.View`
+flex-direction: row;
+align-items: center;
+margin-top: 8px;
+`
+const ProfileSubTitleText = Styled.Text`
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+color: #000000;
+`;
+
+const SectionContainerView = Styled.View`
+background: #FFFFFF;
+`;
+
+const SectionTitleText = Styled.Text`
+font-style: normal;
+font-weight: 800;
+font-size: 16px;
+line-height: 24px;
+color: #131F3C;
+margin: 16px 16px;
+`;
+
+const SectionContentView = Styled.View`
+width: 100%;
+padding: 16px 16px;
+background: #FFFFFF;
+flex-direction: row;
+align-items: center;
+`;
+
+const SectionContentText = Styled.Text`
+font-style: normal;
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+`;
+
+const SectionLineView = Styled.View`
+width: auto;
+margin: 0px 16px;
+height: 0.5px;
+background: #E2E6ED
+`;
+
+const SectionPartitionView = Styled.View`
+width: 100%;
+height: 8px;
+background: #F5F7F9;
+`
+
+const SectionImage = Styled.Image`
+margin-left: auto;
+`;
+
 interface Props {
   navigation: any;
   route: any;
 }
 
-interface Form {
-  type: string;
-  limit: number;
-  offset: number;
-  order: string;
-}
-
 const MyProfileScreen = ({navigation, route}: Props) => {
-  const type = 'All';
-  const limit = 10;
-  const [order, setOrder] = useState('createdAt');
-  const [isCommunityInitializing, setIsCommunityInitializing] = useState(true);
-  const [isReviewInitializing, setIsReviewInitializing] = useState(true);
-  const [isCommunityDataFinish, setIsCommunityDataFinish] = useState(false);
-  const [isCommunityRefreshing, setIsCommunityRefreshing] = useState(false);
-  const [isCommunityEndReached, setIsCommunityEndReached] = useState(false);
-  const [isReviewDataFinish, setIsReviewDataFinish] = useState(false);
-  const [isReviewRefreshing, setIsReviewRefreshing] = useState(false);
-  const [isReviewEndReached, setIsReviewEndReached] = useState(false);
-
-  const bottomSheetRef = useRef<any>();
-
-  const dispatch = useDispatch();
-  const reviewData = useSelector((state: any) => state.reviewList.MyReviews);
-  const communityPostData = useSelector(
-    (state: any) => state.communityPostList.MyPosts,
+  const [sectionArrow, setSectionArrow] = useState(
+    require('~/Assets/Images/MyPage/EditProfile/Section/profile_edit_section_arrow.png'),
   );
-
-  const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
   const profile = useSelector((state: any) => state.currentUser.profile);
-  console.log(profile);
-  const reservations = useSelector(
-    (state: any) => state.currentUser.reservations,
-  );
-  const savedHospitals = useSelector(
-    (state: any) => state.currentUser.savedHospitals,
-  );
 
-  const userId = profile.id;
+  const myActivitys = [
+    {title: '찜한 병원', component: 'SavedHospitalTabScreen'},
+    {title: '예약피드', component: 'ReservationTabScreen'},
+    {title: '작성한 글', component: 'MyPostsTabScreen'},
+  ];
+  const myInterests = [
+    {title: '스크랩한 글', component: 'ScrapedPostsTabScreen'},
+    {title: '좋아요한 글', component: 'LikedPostsTabScreen'},
+    {title: '댓글단 글', component: 'CommentedPostsTabScreen'},
+  ];
+  const generals = [
+    {title: '설정', component: 'GeneralSettingTabScreen'},
+    {title: '약관 및 정책', component: 'TermsAndPoliciesTabScreen'},
+    {title: '이메일 문의', component: ''},
+    {title: '버전정보', component: null, version: 'V.1.0.7'},
+  ];
 
-  const updateUserInfo = useCallback(
-    (callback?: any) => {
-      GETUserInfo(jwtToken).then((response: any) => {
-        dispatch(
-          allActions.userActions.setUser({
-            profile: {
-              ...profile,
-              ...response,
-            },
-          }),
-        );
-        callback();
-      });
-    },
-    [jwtToken, userId, profile],
-  );
-
-  const onReviewRefresh = useCallback(() => {
-    const form = {
-      type: type,
-      limit: limit,
-      offset: 0,
-      order: order,
-    };
-    setIsReviewRefreshing(true);
-    fetchReviewData(form, (response: any) => {
-      setIsReviewDataFinish(false);
-      dispatch(allActions.reviewListActions.setMyReviews(response));
-      updateUserInfo(() => {
-        setIsReviewRefreshing(false);
-      });
-    });
-  }, [jwtToken, order, updateUserInfo]);
-
-  const onReviewEndReached = useCallback(
-    (info: any) => {
-      if (
-        isReviewDataFinish ||
-        !reviewData.length ||
-        reviewData.length % limit !== 0
-      ) {
-        return;
-      }
-      if (!isReviewEndReached) {
-        setIsReviewEndReached(true);
-        const pageIndex = Math.floor(reviewData.length / 10);
-
-        const form = {
-          type: type,
-          limit: limit,
-          offset: pageIndex * limit,
-          order: order,
-        };
-        fetchReviewData(form, (response: any) => {
-          if (response.length === 0) {
-            setIsReviewDataFinish(true);
-          }
-          dispatch(
-            allActions.reviewListActions.setMyReviews([
-              ...reviewData,
-              ...response,
-            ]),
-          );
-          setIsReviewEndReached(false);
-        });
-      }
-    },
-    [reviewData, isReviewEndReached, order, jwtToken],
-  );
-
-  const onCommunityRefresh = useCallback(() => {
-    const form = {
-      type: type,
-      limit: limit,
-      offset: 0,
-      order: order,
-    };
-    setIsCommunityRefreshing(true);
-    fetchCommunityData(form, (response: any) => {
-      console.log(response);
-      setIsCommunityDataFinish(false);
-      const form = {
-        type: 'My',
-        posts: response,
-      };
-      dispatch(allActions.communityActions.setPosts(form));
-      updateUserInfo(() => {
-        setIsCommunityRefreshing(false);
-      });
-    });
-  }, [jwtToken, order, updateUserInfo]);
-
-  const onCommunityEndReached = useCallback(
-    (info: any) => {
-      if (
-        isCommunityDataFinish ||
-        !communityPostData.length ||
-        communityPostData.length % limit !== 0
-      ) {
-        return;
-      }
-      if (!isCommunityEndReached) {
-        setIsCommunityEndReached(true);
-        const pageIndex = Math.floor(communityPostData.length / 10);
-
-        const form = {
-          type: type,
-          limit: limit,
-          offset: pageIndex * limit,
-          order: order,
-        };
-        fetchCommunityData(form, (response: any) => {
-          console.log(response.length);
-          if (response.length === 0) {
-            setIsCommunityDataFinish(true);
-          }
-          const form = {
-            type: 'My',
-            posts: [...communityPostData, ...response],
-          };
-          dispatch(allActions.communityActions.setPosts(form));
-          setIsCommunityEndReached(false);
-        });
-      }
-    },
-    [communityPostData, isCommunityEndReached, order, jwtToken],
-  );
-
-  const fetchCommunityData = useCallback(
-    (form: Form, callback: any) => {
-      GETUserCommunityPosts(jwtToken, userId, form)
-        .then((response) => {
-          callback(response);
-        })
-        .catch((e) => {
-          console.log('fetch user community posts error', e);
-        });
-    },
-    [jwtToken, userId],
-  );
-
-  const fetchReviewData = useCallback(
-    (form: Form, callback: any) => {
-      GETUserReviewPosts(jwtToken, userId, form)
-        .then((response) => {
-          callback(response);
-        })
-        .catch((e) => {
-          console.log('fetch user reviews error', e);
-        });
-    },
-    [jwtToken, userId],
-  );
-
-  const openModal = useCallback(() => {
-    bottomSheetRef.current && bottomSheetRef.current.open();
+  const openEmail = useCallback(() => {
+    Linking.openURL(
+      `mailto:chikachikaapp@gmail.com?subject=이메일 문의&body=치카치카 앱 이용중 불편한점이나 개선할점을 작성해주세요.\n작성자 닉네임: ${profile.nickname}`,
+    );
   }, []);
 
-  const moveToCommunityDetail = useCallback(
-    (postId: number, postType: string) => {
-      navigation.navigate('CommunityStackScreen', {
-        screen: 'CommunityDetailScreen',
-        params: {
-          id: postId,
-          type: 'MyPosts',
-        },
-      });
-    },
-    [],
+  const renderSection = ({sectionTitle, sectionItems}: any) => (
+    <SectionContainerView>
+      {sectionTitle ? (
+        <SectionTitleText>{sectionTitle}</SectionTitleText>
+      ) : null}
+      {sectionItems.map((item: any, index: number) => (
+        <>
+          {index === 0 ? null : <SectionLineView />}
+          <TouchableHighlight
+            activeOpacity={0.9}
+            underlayColor="black"
+            onPress={
+              item.title === '이메일 문의'
+                ? () => openEmail()
+                : () => navigation.navigate(item.component)
+            }>
+            <SectionContentView>
+              <SectionContentText>{item.title}</SectionContentText>
+              {item.version ? <SectionContentText style={{marginLeft: 'auto'}}>{item.version}</SectionContentText> : <SectionImage source={sectionArrow} />}
+            </SectionContentView>
+          </TouchableHighlight>
+        </>
+      ))}
+    </SectionContainerView>
   );
 
-  const moveToAnotherProfile = useCallback(
-    (userId: string, nickname: string, profileImageUri: string, img_thumbNail: string) => {
-      navigation.navigate('AnotherProfileStackScreen', {
-        targetUser: {
-          userId,
-          nickname,
-          profileImageUri,
-          img_thumbNail,
-        },
-      });
-    },
-    [],
-  );
-
-  const moveToReservationTabScreen = useCallback(() => {
-    navigation.navigate('ReservationTabScreen');
-  }, []);
-
-  const moveToSavedHospitalTabScreen = useCallback(() => {
-    navigation.navigate('SavedHospitalTabScreen');
-  }, []);
-
-  const toggleSocialLike = useCallback(
-    (postId: number, prevState: number, type: string) => {
-      const form = {
-        type,
-        id: postId,
-      };
-      dispatch(allActions.communityActions.toggleLike(form));
-      if (prevState) {
-        // true
-        DELETESocialLike(jwtToken, String(postId)).then((response: any) => {
-          if (response.statusText === 'OK') {
-          }
-        });
-      } else {
-        POSTSocialLike(jwtToken, String(postId)).then((response: any) => {
-          if (response.statusText === 'OK') {
-          }
-        });
-      }
-    },
-    [],
-  );
-
-  const toggleSocialScrap = useCallback(
-    (postId: number, prevState: number, type: string) => {
-      const form = {
-        type,
-        id: postId,
-      };
-      dispatch(allActions.communityActions.toggleScrap(form));
-      if (prevState) {
-        // true
-        DELETESocialScrap(jwtToken, String(postId)).then((response: any) => {
-          if (response.statusText === 'OK') {
-            console.log('delete scrap');
-          }
-        });
-      } else {
-        POSTSocialScrap(jwtToken, String(postId)).then((response: any) => {
-          if (response.statusText === 'OK') {
-            console.log('post scrap');
-          }
-        });
-      }
-    },
-    [],
-  );
-
-  //Review
-  const moveToWriterProfile = () => {
-    navigation.navigate('AnotherProfileStackScreen', {
-      screen: 'AnotherProfileScreen',
-    });
-  };
-
-  const moveToDentalDetail = (dentalId: number) => {
-    navigation.navigate('DentalClinicStackScreen', {
-      screen: 'DentalDetailScreen',
-      params: {
-        dentalId: dentalId,
-      },
-    });
-  };
-
-  const moveToKeywordSearch = useCallback((
-    {
-      keyword,
-      searchQuery = '',
-      category,
-      tagId,
-    }
-  ) => {
-    navigation.navigate('TotalKeywordSearchStackScreen', {
-      screen: 'TotalKeywordSearchScreen',
-      params: {
-        redirected: true,
-        redirectionBody: {
-          keyword,
-          searchQuery,
-          category,
-          tagId,
-        }
-      }
-    })
-  }, []);
-
-  const moveToReviewDetail = (
-    reviewId: number,
-    writer: object,
-    createdAt: string,
-    treatmentArray: Array<object>,
-    ratingObj: object,
-    treatmentDate: string,
-    imageArray: Array<object>,
-    isCurUserLike: boolean,
-    likeCount: number,
-    commentCount: number,
-    isCurUserScrap: boolean,
-    dentalObj: object,
-  ) => {
-    console.log('moveToReviewDetail reviewId', reviewId);
-
-    navigation.navigate('ReviewStackScreen', {
-      screen: 'ReviewDetailScreen',
-      params: {
-        reviewId: reviewId,
-        writer: writer,
-        createdAt: createdAt,
-        treatmentArray: treatmentArray,
-        ratingObj: ratingObj,
-        treatmentDate: treatmentDate,
-        imageArray: imageArray,
-        isCurUserLike: isCurUserLike,
-        isCurUserScrap: isCurUserScrap,
-        likeCount: likeCount,
-        commentCount: commentCount,
-        dentalObj: dentalObj,
-      },
-    });
-  };
-  useEffect(() => {
-    const form = {
-      type: type,
-      limit: limit,
-      offset: 0,
-      order: order,
-    };
-    fetchReviewData(form, (response: any) => {
-      LayoutAnimation.configureNext(
-        LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
-      );
-      dispatch(allActions.reviewListActions.setMyReviews(response));
-      setIsReviewInitializing(false);
-    });
-    fetchCommunityData(form, (response: any) => {
-      const form = {
-        type: 'My',
-        posts: [...communityPostData, ...response],
-      };
-      dispatch(allActions.communityActions.setPosts(form));
-      setIsCommunityInitializing(false);
-    });
-  }, []);
-
-  const renderBottomSheet = useCallback(
-    (onSwipe: boolean) => (
-      <SlideUpPanel
-        navigation={navigation}
-        closeBottomSheet={() =>
-          bottomSheetRef && bottomSheetRef.current.close()
-        }
-        disabled={onSwipe}
-      />
-    ),
-    [bottomSheetRef],
-  );
   return (
-    <ContainerView>
-      <MyProfile
-        navigation={navigation}
-        route={route}
-        isReviewInitializing={isReviewInitializing}
-        isCommunityInitializing={isCommunityInitializing}
-        reviewData={reviewData}
-        isReviewRefreshing={isReviewRefreshing}
-        onReviewRefresh={onReviewRefresh}
-        isReviewEndReached={isReviewEndReached}
-        onReviewEndReached={onReviewEndReached}
-        communityPostData={communityPostData}
-        isCommunityRefreshing={isCommunityRefreshing}
-        onCommunityRefresh={onCommunityRefresh}
-        isCommunityEndReached={isCommunityEndReached}
-        onCommunityEndReached={onCommunityEndReached}
-        currentUser={profile}
-        openModal={openModal}
-        moveToKeywordSearch={moveToKeywordSearch}
-        moveToCommunityDetail={moveToCommunityDetail}
-        moveToAnotherProfile={moveToAnotherProfile}
-        moveToReservationTabScreen={moveToReservationTabScreen}
-        moveToSavedHospitalTabScreen={moveToSavedHospitalTabScreen}
-        toggleSocialLike={toggleSocialLike}
-        toggleSocialScrap={toggleSocialScrap}
-        moveToReviewDetail={moveToReviewDetail}
-        moveToWriterProfile={moveToWriterProfile}
-        moveToDentalDetail={moveToDentalDetail}
-        reservationsNum={reservations.length}
-        savedHospitalsNum={savedHospitals.length}
-      />
-      <BottomSheet
-        ref={bottomSheetRef}
-        renderContent={renderBottomSheet}
-        visibleHeight={hp('55%')}
-      />
+    <ContainerView as={SafeAreaView}>
+      <HeaderContainerView>
+        <HeaderNicknameText>{'마이페이지'}</HeaderNicknameText>
+      </HeaderContainerView>
+      <BodyScrollView>
+        <ProfileContainerView>
+          <ProfileImage
+            source={
+              profile.profileImg
+                ? {
+                    uri: profile.img_thumbNail || profile.profileImg,
+                    cache: 'force-cache',
+                  }
+                : require('~/Assets/Images/MyPage/default_profileImg.png')
+            }
+          />
+          <ProfileContentView>
+            <ProfileTitleText>{profile.nickname}</ProfileTitleText>
+            <TouchableWithoutFeedback onPress={() => navigation.navigate('EditProfileStackScreen')}>
+            <ProfileSubTitleView>
+            <ProfileSubTitleText>{'내 정보 수정'}</ProfileSubTitleText>
+            <SectionImage source={sectionArrow} />
+            </ProfileSubTitleView>
+            </TouchableWithoutFeedback>
+          </ProfileContentView>
+        </ProfileContainerView>
+        <SectionPartitionView/>
+        {renderSection({
+          sectionTitle: '나의 활동',
+          sectionItems: myActivitys,
+        })}
+        <SectionPartitionView/>
+        {renderSection({
+          sectionTitle: '나의 관심 글',
+          sectionItems: myInterests,
+        })}
+        <SectionPartitionView/>
+        {renderSection({
+          sectionTitle: null,
+          sectionItems: generals,
+        })}
+      </BodyScrollView>
     </ContainerView>
   );
 };

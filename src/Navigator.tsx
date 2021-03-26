@@ -2,7 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, StatusBar, Image, Platform} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createStackNavigator, TransitionSpecs, CardStyleInterpolators} from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  TransitionSpecs,
+  CardStyleInterpolators,
+} from '@react-navigation/stack';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
 import {
   widthPercentageToDP as wp,
@@ -11,7 +15,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 // import DeviceInfo from 'react-native-device-info';
-import {hasNotch} from '~/method/deviceInfo'
+import {hasNotch} from '~/method/deviceInfo';
 import {enableScreens} from 'react-native-screens';
 import SplashScreen from 'react-native-splash-screen';
 
@@ -77,15 +81,15 @@ import LikedPostsTabScreen from '~/Components/Container/MyProfileScreen/LikedPos
 import ScrapedPostsTabScreen from '~/Components/Container/MyProfileScreen/ScrapedPostsTabScreen';
 import CommentedPostsTabScreen from '~/Components/Container/MyProfileScreen/CommentedPostsTabScreen';
 import DeveloperInfoScreen from '~/Components/Container/MyProfileScreen/DeveloperInfoScreen';
-
+import TermsAndPoliciesTabScreen from '~/Components/Container/MyProfileScreen/TermsAndPoliciesTabScreen';
 // Another Profile Stack Screen
 import AnotherProfileScreen from '~/Components/Container/AnotherProfileScreen';
 
 // Setting Stack Screen
 import SettingScreen from '~/Components/Container/SettingScreen';
-import TermsOfServiceScreen from '~/Components/Container/MyProfileScreen/GeneralSettingTabScreen/TermsOfServiceScreen';
-import LocationInfoTermsOfUseScreen from '~/Components/Container/MyProfileScreen/GeneralSettingTabScreen/LocationInfoTermsOfUseScreen';
-import PrivacyPolicyScreen from '~/Components/Container/MyProfileScreen/GeneralSettingTabScreen/PrivacyPolicyScreen';
+import TermsOfServiceScreen from '~/Components/Container/MyProfileScreen/TermsAndPoliciesTabScreen/TermsOfServiceScreen';
+import LocationInfoTermsOfUseScreen from '~/Components/Container/MyProfileScreen/TermsAndPoliciesTabScreen/LocationInfoTermsOfUseScreen';
+import PrivacyPolicyScreen from '~/Components/Container/MyProfileScreen/TermsAndPoliciesTabScreen/PrivacyPolicyScreen';
 
 // Community Stack Screen
 import CommunityListScreen from '~/Components/Container/CommunityListScreen';
@@ -123,6 +127,7 @@ import TotalKeywordSearchScreen from '~/Components/Container/TotalKeywordSearchS
 
 // Notification Stack Screen
 import NotificationListScreen from '~/Components/Container/NotificationListScreen';
+import MyPostsTabScreen from './Components/Container/MyProfileScreen/MyPostsTabScreen';
 
 const Tab = createBottomTabNavigator();
 const AuthStack = createStackNavigator();
@@ -167,8 +172,8 @@ function AuthStackScreen() {
         }}
       />
       <AuthStack.Screen
-        name="LoginScreen" 
-        component={LoginScreen} 
+        name="LoginScreen"
+        component={LoginScreen}
         options={{
           gestureEnabled: false,
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
@@ -189,7 +194,7 @@ function AuthStackScreen() {
           gestureEnabled: false,
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
-        />
+      />
       <AuthStack.Screen
         name="HometownSearchScreen"
         component={HometownSearchScreen}
@@ -205,7 +210,7 @@ function AuthStackScreen() {
           gestureEnabled: false,
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
-        />
+      />
 
       <AuthStack.Screen
         name="TermsOfServiceScreen"
@@ -232,12 +237,9 @@ function AuthStackScreen() {
   );
 }
 
-
 function ReviewStackScreen() {
   return (
-    <ReviewStack.Navigator
-      headerMode="none"
-      >
+    <ReviewStack.Navigator headerMode="none">
       <ReviewStack.Screen
         name="ReviewListScreen"
         component={ReviewListScreen}
@@ -248,7 +250,6 @@ function ReviewStackScreen() {
       <ReviewStack.Screen
         name="ReviewDetailScreen"
         component={ReviewDetailScreen}
-        
       />
       <ReviewStack.Screen
         name="FullImagesScreen"
@@ -340,9 +341,10 @@ function HomeStackScreen() {
     <HomeStack.Navigator
       headerMode="none"
       screenOptions={({route}) => ({
-        gestureEnabled: route.state && route.state.routes[route.state.index].name !== 'ImageDetailScreen'
-      })}
-      >
+        gestureEnabled:
+          route.state &&
+          route.state.routes[route.state.index].name !== 'ImageDetailScreen',
+      })}>
       <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
       <HomeStack.Screen
         name="CommunityStackScreen"
@@ -587,7 +589,6 @@ function DentalClinicStackScreen() {
         name="ReviewStackScreen"
         component={ReviewStackScreen}
       />
-      
     </DentalClinicStack.Navigator>
   );
 }
@@ -631,9 +632,8 @@ function TeethCareStackScreen() {
 
 function ReviewUploadCardStackScreen() {
   return (
-    <ReviewUploadCardStack.Navigator
-      headerMode="none">
-        <ReviewUploadCardStack.Screen
+    <ReviewUploadCardStack.Navigator headerMode="none">
+      <ReviewUploadCardStack.Screen
         name="ReviewMetaDataScreen"
         component={ReviewMetaDataScreen}
         options={{
@@ -647,8 +647,8 @@ function ReviewUploadCardStackScreen() {
           gestureEnabled: false,
         }}
       />
-      </ReviewUploadCardStack.Navigator>
-  )
+    </ReviewUploadCardStack.Navigator>
+  );
 }
 
 function ReviewUploadStackScreen() {
@@ -692,12 +692,12 @@ function ReviewUploadStackScreen() {
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
-      <ReviewUploadStack.Screen 
-      name="RatingScreen"
-      component={RatingScreen}
-      options={{
-        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-      }}
+      <ReviewUploadStack.Screen
+        name="RatingScreen"
+        component={RatingScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
       />
       <ReviewUploadStack.Screen
         name="ImageSelectStackScreen"
@@ -760,7 +760,8 @@ function ReviewUploadStackScreen() {
         component={ProofImageEventScreen}
         options={{
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-        }}/>
+        }}
+      />
     </ReviewUploadStack.Navigator>
   );
 }
@@ -856,6 +857,10 @@ function MyProfileStackScreen() {
         component={MyProfileScreen}
       />
       <MyProfileStack.Screen
+        name="MyPostsTabScreen"
+        component={MyPostsTabScreen}
+      />
+      <MyProfileStack.Screen
         name="EditProfileStackScreen"
         component={EditProfileStackScreen}
         options={({route}: any) => {
@@ -873,84 +878,84 @@ function MyProfileStackScreen() {
         name="GeneralSettingTabScreen"
         component={GeneralSettingTabScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
         name="ReservationTabScreen"
         component={ReservationTabScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
         name="SavedHospitalTabScreen"
         component={SavedHospitalTabScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
         name="LikedPostsTabScreen"
         component={LikedPostsTabScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
         name="ScrapedPostsTabScreen"
         component={ScrapedPostsTabScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
         name="CommentedPostsTabScreen"
         component={CommentedPostsTabScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
         name="PhoneVerifyScreen"
         component={PhoneVerifyScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
         name="CommunityStackScreen"
         component={CommunityStackScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
         name="ReviewStackScreen"
         component={ReviewStackScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
         name="DentalClinicStackScreen"
         component={DentalClinicStackScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
         name="HometownSearchScreen"
         component={HometownSearchScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
         name="HometownSettingScreen"
         component={HometownSettingScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <ReviewStack.Screen
@@ -958,42 +963,46 @@ function MyProfileStackScreen() {
         component={ReviewUploadStackScreen}
         options={{
           gestureEnabled: false,
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
         name="AnotherProfileStackScreen"
         component={AnotherProfileStackScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
         name="DeveloperInfoScreen"
         component={DeveloperInfoScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
+      />
+      <MyProfileStack.Screen
+        name="TermsAndPoliciesTabScreen"
+        component={TermsAndPoliciesTabScreen}
       />
       <MyProfileStack.Screen
         name="TermsOfServiceScreen"
         component={TermsOfServiceScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
         name="LocationInfoTermsOfUseScreen"
         component={LocationInfoTermsOfUseScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
         name="PrivacyPolicyScreen"
         component={PrivacyPolicyScreen}
         options={{
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <MyProfileStack.Screen
@@ -1332,7 +1341,9 @@ function BottomTab() {
       routeName.name === 'HometownSettingScreen' ||
       routeName.name === 'HometownSearchScreen' ||
       routeName.name === 'DentalClinicStackScreen' ||
-      routeName.name === 'ReviewUploadStackScreen'
+      routeName.name === 'ReviewUploadStackScreen' ||
+      routeName.name === 'MyPostsTabScreen' ||
+      routeName.name === 'TermsAndPoliciesTabScreen'
     ) {
       return false;
     }
@@ -1371,7 +1382,7 @@ function BottomTab() {
     if (routeName.name === 'AccuseScreen') {
       return false;
     }
-    if (routeName.name === 'TotalKeywordSearchStackScreen'){
+    if (routeName.name === 'TotalKeywordSearchStackScreen') {
       return false;
     }
     if (
@@ -1534,17 +1545,23 @@ const Navigator = () => {
   return (
     <NavigationContainer>
       <StatusBar barStyle="dark-content" />
-      {(currentUser.loggedIn === true) ? <BottomTab /> : (
-      (currentUser.loggedIn === false) && (
-        <AuthStackScreen />
-      ))}
+      {currentUser.loggedIn === true ? (
+        <BottomTab />
+      ) : (
+        currentUser.loggedIn === false && <AuthStackScreen />
+      )}
     </NavigationContainer>
   );
 };
 
 const styles = StyleSheet.create({
   tabBar: {
-    height: Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%'),
+    height:
+      Platform.OS === 'ios'
+        ? hasNotch()
+          ? hp('10.59%')
+          : hp('7.2%')
+        : hp('7.2%'),
     paddingHorizontal: 0,
     position: 'absolute',
     shadowOffset: {

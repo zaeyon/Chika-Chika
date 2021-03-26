@@ -206,9 +206,6 @@ const CommunityPostList = ({
       }
       keyExtractor={getItemKey}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{
-        paddingBottom: isIphoneX() ? wp('13%') : wp('15%'),
-      }}
       renderItem={initialize ? renderPostSkeleton : renderPost}
       scrollEventThrottle={16}
       onEndReached={onEndReached}

@@ -13,7 +13,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import allActions from '~/actions';
 // Method
 // Routes
-import GETUserScrapedPosts from '~/Routes/User/GETUserScrapedPosts';
+import GETUserReviewPosts from '~/Routes/Community/showPosts/GETUserReviewPosts';
 
 const ContainerView = Styled.View`
   flex: 1;
@@ -50,47 +50,57 @@ interface Props {
   route: any;
 }
 
-const ScrapedReviewScreen = ({navigation, route}: Props) => {
+const MyReviewScreen = ({navigation, route}: Props) => {
   const limit = 10;
+  const [order, setOrder] = useState('createdAt')
   const [isInitializing, setIsInitializing] = useState(true);
   const [isDataFinish, setIsDataFinish] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
 
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
-
-  const postData = useSelector((state: any) => state.reviewList.ScrapedReviews);
+  const profile = useSelector((state: any) => state.currentUser.profile);
+  const postData = useSelector((state: any) => state.reviewList.MyReviews);
 
   const dispatch = useDispatch();
 
-  const fetchScrapedPosts = useCallback(
+  const fetchMyReviews = useCallback(
     (form: any, callback: any) => {
-      GETUserScrapedPosts(jwtToken, form).then((response: any) => {
+        GETUserReviewPosts(jwtToken, profile.id, form).then((response: any) => {
         callback(response);
       });
     },
-    [jwtToken],
+    [jwtToken, profile],
   );
 
   const onRefresh = useCallback(() => {
     console.log('refresh');
     const form = {
-      type: 'review',
+      type: 'All',
       limit: limit,
       offset: 0,
+      order: order,
     };
     setIsRefreshing(true);
-    fetchScrapedPosts(form, (response: any) => {
+    fetchMyReviews(form, (response: any) => {
       setIsDataFinish(false);
-      
-        console.log('commented post diff');
+      if (
+        JSON.stringify(response).replace(
+          /"createdDiff\(second\)\"\:\d*\,/gi,
+          '',
+        ) !==
+        JSON.stringify(postData).replace(
+          /"createdDiff\(second\)\"\:\d*\,/gi,
+          '',
+        )
+      ) {
+        console.log('liked post diff');
 
-        dispatch(allActions.reviewListActions.setScrapedReviews(response));
-    
-
+        dispatch(allActions.reviewListActions.setMyReviews(response));
+      }
       setIsRefreshing(false);
     });
-  }, []);
+  }, [order]);
 
   const onEndReached = useCallback(() => {
     if (!isEndReached && !isDataFinish) {
@@ -98,18 +108,19 @@ const ScrapedReviewScreen = ({navigation, route}: Props) => {
       const pageIndex = Math.floor(postData.length / 10) + 1;
 
       const form = {
-        type: 'review',
+        type: 'All',
         limit: limit,
         offset: pageIndex * limit,
+        order: order,
       };
-      fetchScrapedPosts(form, (response: any) => {
+      fetchMyReviews(form, (response: any) => {
         if (response.length === 0) {
           setIsDataFinish(true);
           setIsEndReached(false);
           return;
         }
         dispatch(
-          allActions.reviewListActions.setScrapedReviews([
+          allActions.reviewListActions.setMyReviews([
             ...postData,
             ...response,
           ]),
@@ -117,7 +128,7 @@ const ScrapedReviewScreen = ({navigation, route}: Props) => {
         setIsEndReached(false);
       });
     }
-  }, [isEndReached, postData]);
+  }, [isEndReached, postData, order]);
 
   const moveToAnotherProfile = useCallback(() => {
     navigation.navigate('AnotherProfileScreen');
@@ -172,29 +183,32 @@ const ScrapedReviewScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     const form = {
-      type: 'review',
+      type: 'All',
       limit,
       offset: 0,
+      order: order,
     };
-    fetchScrapedPosts(form, (response: any) => {
+    fetchMyReviews(form, (response: any) => {
+      console.log('liked post diff');
       LayoutAnimation.configureNext(
         LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
       );
       setIsInitializing(false);
-      dispatch(allActions.reviewListActions.setScrapedReviews(response));
+      dispatch(allActions.reviewListActions.setMyReviews(response));
     });
 
     return function cleanup() {
       const form = {
-        type: 'review',
+        type: 'All',
         limit,
         offset: 0,
+        order: order,
       };
-      fetchScrapedPosts(form, (response: any) => {
-        dispatch(allActions.reviewListActions.setScrapedReviews(response));
+      fetchMyReviews(form, (response: any) => {
+        dispatch(allActions.reviewListActions.setMyReviews(response));
       });
     };
-  }, []);
+  }, [order, limit]);
 
   const renderHeaderComponent = useCallback(
     () =>
@@ -203,7 +217,7 @@ const ScrapedReviewScreen = ({navigation, route}: Props) => {
           <EmptyContentImage
             source={require('~/Assets/Images/Comment/ic_noComment.png')}
           />
-          <EmptyContentText>{'스크랩한 후기가 없습니다.'}</EmptyContentText>
+          <EmptyContentText>{'좋아요한 후기가 없습니다.'}</EmptyContentText>
         </EmptyContainerView>
       ) : null,
     [postData],
@@ -215,7 +229,7 @@ const ScrapedReviewScreen = ({navigation, route}: Props) => {
         <ActivityIndicator />
       ) : (
         <ReviewList
-        navigation={navigation}
+          navigation={navigation}
           renderHeaderComponent={renderHeaderComponent}
           reviewList={postData}
           loadingMoreReview={isEndReached}
@@ -228,4 +242,4 @@ const ScrapedReviewScreen = ({navigation, route}: Props) => {
   );
 };
 
-export default ScrapedReviewScreen;
+export default MyReviewScreen;
