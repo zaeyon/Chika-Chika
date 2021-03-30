@@ -63,7 +63,6 @@ padding: 20px 16px 15px 16px;
 background: #FFFFFF;
 align-items: center;
 z-index: 2;
-border-bottom-width: 1px;
 border-color: #F5F7F9;
 
 `;
@@ -301,11 +300,8 @@ const HomeScreen = ({navigation, route}: Props) => {
         tagFilterItems.map(async (tagItem) => {
           const form = {
             jwtToken,
-            searchQuery: tagItem.name,
-            inputQuery: tagItem.name,
-            category: tagItem.category,
+            query: tagItem.name,
             pathType: 'review',
-            tagId: tagItem?.id,
             limit: '10',
             offset: '0',
             order: 'createdAt',

@@ -1,21 +1,16 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import Styled from 'styled-components/native';
 import {
-  TouchableWithoutFeedback,
-  FlatList,
-  View,
-  TouchableOpacity,
-  Text,
+  Platform,
   RefreshControl,
   ActivityIndicator,
-  Animated,
 } from 'react-native';
 import {useScrollToTop} from '@react-navigation/native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
+import {hasNotch} from '~/method/deviceInfo';
 
 //Local Component
 import PostItem from '~/Components/Presentational/PostItem';
@@ -129,6 +124,7 @@ interface PostData {
 }
 
 interface Props {
+  tabBarVisible?: boolean;
   initialize: boolean;
   postData: Array<PostData>;
   refreshing: boolean;
@@ -143,6 +139,7 @@ interface Props {
   renderHeaderComponent?: () => any;
 }
 const CommunityPostList = ({
+  tabBarVisible=false,
   initialize,
   postData,
   refreshing,
@@ -205,6 +202,9 @@ const CommunityPostList = ({
         />
       }
       keyExtractor={getItemKey}
+      contentContainerStyle={{
+        paddingBottom: tabBarVisible ? (Platform.OS === 'ios' ? (hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%')) : 0
+      }}
       showsVerticalScrollIndicator={false}
       renderItem={initialize ? renderPostSkeleton : renderPost}
       scrollEventThrottle={16}

@@ -329,10 +329,8 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
 
   const moveToKeywordSearch = useCallback((
     {
-      keyword,
-      searchQuery = '',
+      query,
       category,
-      tagId,
     }
   ) => {
     navigation.navigate('TotalKeywordSearchStackScreen', {
@@ -340,10 +338,8 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
       params: {
         redirected: true,
         redirectionBody: {
-          keyword,
-          searchQuery,
+          query,
           category,
-          tagId,
         }
       }
     })
@@ -479,6 +475,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   return (
     <ContainerView>
       <CommunityPostList
+      tabBarVisible={true}
         initialize={initialize}
         postData={postData}
         refreshing={refreshing}

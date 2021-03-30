@@ -90,10 +90,8 @@ interface Props {
 }
 
 const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
-  const [inputQuery, setInputQuery] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [query, setQuery] = useState('');
   const [category, setCategory] = useState('');
-  const [tagId, setTagId] = useState('');
   const [autoCompletedKeywordArr, setAutoCompletedKeywordArr] = useState([]);
   const [
     isVisibleAutoCompletedKeyword,
@@ -130,15 +128,14 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   useEffect(() => {
     async function fetchData() {
       const incompleteKorean = /[ㄱ-ㅎ|ㅏ-ㅣ]/;
-      if (!incompleteKorean.test(inputQuery)) {
-        if (inputQuery !== '') {
+      if (!incompleteKorean.test(query)) {
+        if (query !== '') {
           const response: any = await GETAllTagSearch(
             jwtToken,
-            inputQuery,
-            'keywordSearch',
+            query,
           );
-          setInputQuery((prev) => {
-            if (prev !== inputQuery) {
+          setQuery((prev) => {
+            if (prev !== query) {
               console.log('diff');
             } else {
               console.log('GETAllTagSearch response', response);
@@ -152,7 +149,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
       }
     }
     fetchData();
-  }, [inputQuery]);
+  }, [query]);
 
   const fetchSearchResult = useCallback(
     (
@@ -160,7 +157,6 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
         lat,
         long,
         pathType,
-        communityType,
         region,
         cityId,
         order,
@@ -169,18 +165,13 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
       },
       callback = () => console.log('callback'),
     ) => {
-      console.log('searchQuery:', searchQuery);
 
       GETTotalSearch({
         lat,
         long,
         jwtToken,
-        searchQuery,
-        inputQuery,
-        category,
-        tagId,
+        query,
         pathType,
-        communityType,
         limit: String(limit),
         offset: String(offset),
         order,
@@ -193,9 +184,10 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
         })
         .catch((e) => {
           console.log('fetch search result error', e);
+          callback([])
         });
     },
-    [jwtToken, searchQuery, inputQuery, category, tagId, route],
+    [jwtToken, query],
   );
 
   const deleteAllSearchRecord = () => {
@@ -221,33 +213,24 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
 
   const searchTotalKeyword = useCallback(
     ({
-      keyword,
-      searchQuery = '',
+      query,
       category,
-      tagId,
     }: {
-      keyword: string;
-      searchQuery?: string;
+      query: string;
       category: string;
-      tagId: string;
     }) => {
-      console.log('keyword', keyword, 'category', category, 'tagId', tagId);
-      // if (inputQuery.trim() === '') {
+      // if (query.trim() === '') {
       // } else {
 
-      setInputQuery(keyword);
-      setSearchQuery(searchQuery);
+      setQuery(query);
       setCategory(category);
-      setTagId(tagId);
       searchInputRef.current.blur();
       setIsVisibleAutoCompletedKeyword(false);
       if (!route?.params?.redirected) {
       POSTSearchRecord({
         jwtToken,
         tagCategory: category,
-        targetId: category === 'city' ? '' : tagId,
-        sq: searchQuery,
-        iq: keyword,
+        query,
       }).then((response: any) => {
         GETSearchRecord({jwtToken, isUnified: true})
           .then((response: any) => {
@@ -271,7 +254,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
   };
 
   const clearTextInput = useCallback(() => {
-    setInputQuery('');
+    setQuery('');
     searchInputRef.current.clear();
     searchInputRef.current.focus();
   }, []);
@@ -297,16 +280,16 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
             placeholder="검색어를 입력해주세요."
             placeholderTextColor="#E2E6ED"
             selectionColor="#131F3C"
-            value={inputQuery}
+            value={query}
             onChangeText={(text) => {
-              setInputQuery(text);
+              setQuery(text);
             }}
             autoCorrect={false}
             autoFocus={!(route?.params?.redirected)}
-            onSubmitEditing={() => searchInputRef.current.blur()}
+            onSubmitEditing={() => searchTotalKeyword({query, category: 'text'})}
             onFocus={() => onFocusSearchKeywordInput()}
           />
-          {inputQuery.length > 0 && (
+          {query.length > 0 && (
             <TouchableWithoutFeedback onPress={() => clearTextInput()}>
               <ClearTextButtonContainer>
                 <ClearTextIcon
@@ -321,7 +304,7 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
         {isVisibleAutoCompletedKeyword ? (
           <AutoCompletedTotalKeywordFlatList
             searchRecordArray={searchRecordArray}
-            inputQuery={inputQuery}
+            inputQuery={query}
             autoCompletedKeywordArr={autoCompletedKeywordArr}
             deleteAllSearchRecord={deleteAllSearchRecord}
             deleteSingleSearchRecord={deleteSingleSearchRecord}

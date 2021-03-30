@@ -169,13 +169,13 @@ const SuggestionBarView = ({
   const renderHashTagItemView = useCallback(
     ({item, index}: {item: Tag; index: number}) => {
       console.log(item);
-      if (item.category === 'city' && item.cityName?.includes(searchQuery)) {
+      if (item.category === 'city' && item.locationName?.includes(searchQuery)) {
         return (
           <TouchableHighlight
             activeOpacity={1}
             underlayColor="#EEEEEE"
             onPress={() => {
-              completeCurrentHashTag(item.cityName);
+              completeCurrentHashTag(item.locationName);
             }}>
             <HashTagItemView style={{borderTopWidth: index === 0 ? 0.5 : 0}}>
               <HashTagItemIconImage source={iconDic[item.category]} />
@@ -186,21 +186,18 @@ const SuggestionBarView = ({
                   }}>
                   {searchQuery}
                 </HashTagItemNameText>
-                {item.emdName?.slice(searchQuery.length)}
+                {item.locationName?.slice(searchQuery.length)}
               </HashTagItemNameText>
-              <HashTagItemLocationText>
-                {item.fullAddress}
-              </HashTagItemLocationText>
             </HashTagItemView>
           </TouchableHighlight>
         );
-      } else if (item.category !== 'city' && item.name?.includes(searchQuery)) {
+      } else if (item.category === 'clinic' && item.originalName?.includes(searchQuery)) {
         return (
           <TouchableHighlight
             activeOpacity={1}
             underlayColor="#EEEEEE"
             onPress={() => {
-              completeCurrentHashTag(item.name);
+              completeCurrentHashTag(item.originalName);
             }}>
             <HashTagItemView style={{borderTopWidth: index === 0 ? 0.5 : 0}}>
               <HashTagItemIconImage source={iconDic[item.category]} />
@@ -211,15 +208,12 @@ const SuggestionBarView = ({
                   }}>
                   {searchQuery}
                 </HashTagItemNameText>
-                {item.name?.slice(searchQuery.length)}
+                {item.originalName?.slice(searchQuery.length)}
               </HashTagItemNameText>
-              <HashTagItemLocationText>
-                {item.address?.split(' ').slice(0, 2).join(' ')}
-              </HashTagItemLocationText>
             </HashTagItemView>
           </TouchableHighlight>
         );
-      } else {
+      } else if (item.category === 'treatment' && item.usualName?.includes(searchQuery)){
         return (
           <TouchableHighlight
             activeOpacity={1}
@@ -263,6 +257,29 @@ const SuggestionBarView = ({
           </TouchableHighlight>
         );
       }
+      else  {
+        return (
+          <TouchableHighlight
+            activeOpacity={1}
+            underlayColor="#EEEEEE"
+            onPress={() => {
+              completeCurrentHashTag(item.name);
+            }}>
+            <HashTagItemView style={{borderTopWidth: index === 0 ? 0.5 : 0}}>
+              <HashTagItemIconImage source={iconDic[item.category]} />
+              <HashTagItemNameText>
+                <HashTagItemNameText
+                  style={{
+                    color: '#00D1FF',
+                  }}>
+                  {searchQuery}
+                </HashTagItemNameText>
+                {item.name?.slice(searchQuery.length)}
+              </HashTagItemNameText>
+            </HashTagItemView>
+          </TouchableHighlight>
+        );
+      } 
     },
     [searchQuery, iconDic],
   );

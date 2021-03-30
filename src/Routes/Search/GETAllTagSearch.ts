@@ -3,10 +3,10 @@ import serverConfig from '../server.config';
 
 const baseUri = serverConfig.baseUri
 
-const GETAllTagSearch = (jwtToken: string, query: string, purpose: string) => {
+const GETAllTagSearch = (jwtToken: string, query: string) => {
 
     const uri = baseUri + "/search/allTagItems";
-    const formattedQuery = `/${purpose}?q=${query}&limit=30&offset=0`
+    const formattedQuery = `?q=${query}&limit=30&offset=0`
 
     return new Promise(function(resolve, reject) {
 
@@ -16,6 +16,7 @@ const GETAllTagSearch = (jwtToken: string, query: string, purpose: string) => {
             },
         })
         .then(function(response) {
+            console.log(response.data)
             resolve(response.data);
             
         })
