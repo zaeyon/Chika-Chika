@@ -123,6 +123,30 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
         switch (result) {
           case RESULTS.UNAVAILABLE:
             console.log('This feature is not available (on this device / in this context)');
+            CameraRoll.getPhotos({
+              first: 89,
+              groupTypes: 'init',
+              groupName: 'init',
+            }).then((photos) => {
+              setSelectedAlbum(photos.edges[0].node.group_name);
+              const result = {
+                title: photos.edges[0].node.group_name,
+                type: 2,
+                photos: photos.edges,
+                page_info: photos.page_info,
+              };
+              setRecentlyAdded(result);
+            });
+        
+            CameraRoll.getAlbums({
+              assetType: 'Photos',
+            }).then((albumInfos: Album[]) => {
+              const filteredAlbums: Album[] = albumInfos.filter(
+                (album) => !uselessAlbums.includes(album.title),
+              );
+              setAlbumInfos(filteredAlbums);
+              fetchGalleryData(filteredAlbums);
+            });
             break;
           case RESULTS.DENIED:
             console.log('The permission has not been requested / is denied but requestable');
@@ -282,7 +306,7 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
   const goBack = useCallback(() => navigation.goBack(), [navigation]);
 
   const onSubmit = useCallback(() => {
-    if (route.params.requestScreen === 'ContentPostScreen') {
+    if (route.params.requestScreen === 'BraceReviewContentPostScreen') {
       navigation.navigate('BraceReviewContentPostScreen', {
         selectedImages,
         startIndex: route.params.startIndex,

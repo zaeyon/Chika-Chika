@@ -29,6 +29,7 @@ import ShowingRating from '~/Components/Presentational/ShowingRating';
 import RatingReport from '~/Components/Presentational/RatingReport';
 import WeeklyTreatmentTimeInfo from '~/Components/Presentational/DentalDetailScreen/WeeklyTreatmentTimeInfo'
 import RatingStarList from '~/Components/Presentational/RatingStarList';
+import DentalEvaluation from '~/Components/Presentational/DentalEvaluation';
 
 const ratingStarImage = require('~/Assets/Images/Indicator/ic_ratingStar.png');
 const Container = Styled.View`
@@ -439,6 +440,40 @@ flex-direction: row;
 align-items: center;
 `;
 
+const EvaluationContainer = Styled.View`
+margin-top: 11px;
+flex-direction: row;
+align-items: center;
+`;
+
+const RecommendIcon = Styled.Image`
+width: ${wp('5%')}px;
+height: ${wp('5%')}px;
+`;
+
+const RecommendCountText = Styled.Text`
+margin-left: 3.5px;
+font-weight: 700;
+font-size: 14px;
+line-height: 18px;
+color: #00D1FF;
+`;
+
+const VerticalDividerBar = Styled.View`
+margin-left: 4px;
+margin-right: 4px;
+width: 0.9px;
+height: ${hp('1.1%')}px;
+background-color: #E2E6ED;
+`;
+
+const ReviewCountText = Styled.Text`
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+color: #9AA2A9;
+`;
+
 const RatingStarListContainer = Styled.View`
 margin-top: 11px;
 flex-direction: row;
@@ -489,6 +524,10 @@ position: absolute;
 border-radius: 100px;
 width: ${wp('8%')}px;
 height: ${wp('8%')}px;
+`;
+
+const DentalEvaluationContainer = Styled.View`
+margin-top: 11px;
 `;
 
 
@@ -873,11 +912,16 @@ const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalI
                 source={require('~/Assets/Images/Dental/ic_addressMarker.png')}/>
                 <DentalAddressText>{getCuttedAddress(basicInfo.address)}</DentalAddressText>
                 </AddressContainer>
-                <RatingContainer>
+                {/* <RatingContainer>
                   <RatingStarList
                   reviewCount={basicInfo?.reviewNum}
                   ratingValue={basicInfo?.reviewAVGStarRate?.all?.toFixed(1)}/>
-                </RatingContainer>
+                </RatingContainer> */}
+                <DentalEvaluationContainer>
+                <DentalEvaluation
+                recommendCount={basicInfo?.recommendNum}
+                reviewCount={basicInfo?.reviewNum}/>
+                </DentalEvaluationContainer>
             </BasicInfoContainer>
             </CollapsibleContainer>
       </Animated.View>

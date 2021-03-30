@@ -746,7 +746,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }, []);
 
   useEffect(() => {
-    if(dentalObj.originalName && treatmentArray.length > 0 && ratingObj.serviceRating &&  treatmentDateObj.treatmentDate !== '') {
+    if(dentalObj.originalName && treatmentDateObj.treatmentDate !== '') {
       setIsActivatedNext(true)
     } else {
       setIsActivatedNext(false);
@@ -969,6 +969,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
         description: "",
       },],
       reviewId: route.params?.reviewId,
+      isRecommendDental: isRecommendDental,
     })
   }
 
@@ -1173,15 +1174,16 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   );
 
   const renderYearPickerItem = useCallback(() => {
-    const startYear = 1900;
-    const currentYear = new Date(Date.now()).getFullYear();
+    //const startYear = 1900;
+    //const currentYear = new Date(Date.now()).getFullYear();
+    const yearArr = [0, 1, 2, 3, 4, 5];
     const result = [];
-    for (let i = 0; i <= currentYear - startYear; i++) {
+    for (let i = 0; i < yearArr.length; i++) {
       result.push(
         <Picker.Item
-          key={String(startYear + i)}
-          label={String(startYear + i)}
-          value={String(startYear + i)}
+          key={String(yearArr[i])}
+          label={String(yearArr[i])}
+          value={String(yearArr[i])}
         />,
       );
     }
@@ -1189,27 +1191,27 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }, []);
 
   const renderMonthPickerItem = useCallback(() => {
-    const currentDate = new Date(Date.now());
-    const result = [];
-    if (parseInt(selectedTreatmentYear) === currentDate.getFullYear()) {
-      for (let i = 1; i <= currentDate.getMonth() + 1; i++) {
-        result.push(
-        <Picker.Item
-        key={String(i)}
-        label={String(i)}
-        value={String(i)} />
-        );
-      }
-    } else {
-      for (let i = 1; i <= 12; i++) {
-        result.push(
-        <Picker.Item
-        key={String(i)}
-        label={String(i)}
-        value={String(i)} />);
-      }
-    }
-    return result;
+    // const currentDate = new Date(Date.now());
+    // const result = [];
+    // if (parseInt(selectedTreatmentYear) === currentDate.getFullYear()) {
+    //   for (let i = 1; i <= currentDate.getMonth() + 1; i++) {
+    //     result.push(
+    //     <Picker.Item
+    //     key={String(i)}
+    //     label={String(i)}
+    //     value={String(i)} />
+    //     );
+    //   }
+    // } else {
+    //   for (let i = 1; i <= 12; i++) {
+    //     result.push(
+    //     <Picker.Item
+    //     key={String(i)}
+    //     label={String(i)}
+    //     value={String(i)} />);
+    //   }
+    // }
+    // return result;
   }, [selectedTreatmentYear]);
 
   const renderDayPickerItem = useCallback(() => {
@@ -1293,8 +1295,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
         onScroll={(event: any) => {
           scrollY.current = event.nativeEvent.contentOffset.y
         }}
-        scrollEventThrottle={16}
-        >
+        scrollEventThrottle={16}>
           <TouchableWithoutFeedback onPress={() => onPressBackground()}>
           <ScrollViewInnerContainer>
             <TouchableWithoutFeedback onPress={() => moveToProofImageEvent()}>
@@ -1309,11 +1310,11 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
             <MetaDataLabelContainer>
               <MetaDataLabelText>{"진료인증 자료 첨부하기"}</MetaDataLabelText>
             </MetaDataLabelContainer>
-            <RightArrowIconContainer>
+            {/* <RightArrowIconContainer>
               <MetaDataLabelText>{"가이드라인"}</MetaDataLabelText>
               <RightArrowIcon
               source={require('~/Assets/Images/Upload/ic_rightArrow.png')}/>
-            </RightArrowIconContainer>
+            </RightArrowIconContainer> */}
           </MetaDataHeaderContainer>
           <ProofImageDescripText>{"종이 영수증, 온라인 영수증, 카드내역 전체화면중 한가지를 첨부해주세요."}</ProofImageDescripText>
           {!selectedProofImage.uri && (
@@ -1473,14 +1474,14 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
           <MetaDataItemContainer>
           <MetaDataHeaderContainer>
           <MetaDataLabelContainer>
-            <MetaDataLabelText>{"교정 경과일"}</MetaDataLabelText>
+            <MetaDataLabelText>{"교정 기간"}</MetaDataLabelText>
             <AsteriskText>{"*"}</AsteriskText>
           </MetaDataLabelContainer>
           </MetaDataHeaderContainer>
           <TouchableWithoutFeedback onPress={() => onPressBraceElapsedDate()}>
             <MetaDataValueContainer>
             {treatmentDateObj?.displayTreatmentDate === "" && (
-            <MetaDataPlaceholderText>{"현재 교정 개월 수를 알려주세요."}</MetaDataPlaceholderText>
+            <MetaDataPlaceholderText>{"교정 기간을 알려주세요."}</MetaDataPlaceholderText>
             )}
             {treatmentDateObj?.displayTreatmentDate !== "" && (
             <MetaDataText>{treatmentDateObj?.displayTreatmentDate}</MetaDataText>
@@ -1586,7 +1587,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
           transform: [{translateY: braceElapsedDatePickerY}]
         }}>
             <DetailFilterHeaderContainer>
-              <DetailFilterTitleText>{'교정 경과일 설정'}</DetailFilterTitleText>
+              <DetailFilterTitleText>{'교정 기간 설정'}</DetailFilterTitleText>
             </DetailFilterHeaderContainer>
             <TimeFilterModalContainer>
             <TimePickerContainer>
@@ -1633,7 +1634,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
               <DetailFilterFooterContainer>
                 <TouchableWithoutFeedback onPress={() => initializeTreatmentDate()}>
                 <InitializeFilterContainer>
-                  <InitializeFilterText>{"방문일 초기화"}</InitializeFilterText>
+                  <InitializeFilterText>{"교정 기간 초기화"}</InitializeFilterText>
                   <InitializeFilterIcon
                   source={require('~/Assets/Images/Map/ic_initialize.png')}/>
                 </InitializeFilterContainer>

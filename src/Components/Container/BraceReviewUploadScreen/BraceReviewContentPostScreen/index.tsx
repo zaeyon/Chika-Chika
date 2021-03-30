@@ -16,6 +16,7 @@ import {
   Alert,
   View,
   ActivityIndicator,
+  Animated,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -29,12 +30,13 @@ import ActionSheet from 'react-native-actionsheet';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {BlurView} from '@react-native-community/blur';
 import {hasNotch} from '~/method/deviceInfo';
+import {Picker} from '@react-native-picker/picker';
 
 import {uploadImageToS3} from '~/method/uploadImageToS3';
 
 // Local Components
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
-import ParagraphItem from '~/Components/Presentational/ReviewUploadScreen/ParagraphItem';
+import ParagraphItem from '~/Components/Presentational/BraceReviewUploadScreen/ParagraphItem';
 import TouchBlockIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 import ToastMessage from '~/Components/Presentational/ToastMessage';
 
@@ -320,6 +322,113 @@ background-color: #ffffff;
 padding: 16px;
 `;
 
+const ImageDatePickerModal = Styled.Modal`
+`;
+
+const ImageDatePickerModalBackground = Styled.View`
+background-color: #000000;
+position: absolute;
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
+`;
+
+const ImageDatePickerContainer = Styled.View`
+width: ${wp('100%')}px;
+background-color: #ffffff;
+border-top-left-radius: 20px;
+border-top-right-radius: 20px;
+position: absolute;
+bottom: 0;
+`;
+
+
+const DetailFilterHeaderContainer = Styled.View`
+flex-direction: row;
+padding-top: 16px;
+padding-bottom: 16px;
+padding-left: 16px;
+align-items: center;
+border-bottom-width: 1px;
+border-color: #F5F7F9;
+`;
+
+const DetailFilterTitleText = Styled.Text`
+font-weight: 700;
+font-size: 14px;
+line-height: 19px;
+color: #000000;
+`;
+
+const TimeFilterModalContainer = Styled.View`
+`;
+
+const TimePickerContainer = Styled.View`
+align-items: center;
+padding-left: 25px;
+padding-right: 25px;
+justify-content: space-between;
+flex-direction: row;
+border-bottom-width: 1px;
+border-color: #F5F7F9;
+`;
+
+const FilterDividingText = Styled.Text`
+font-weight: normal;
+font-size: 18px;
+line-height: 24px;
+color: #131F3C;
+`;
+
+
+const DetailFilterFooterContainer = Styled.View`
+padding-top: 16px;
+padding-left: 0px;
+padding-right: 16px;
+padding-bottom: 32px;
+flex-direction: row;
+align-items: center;
+justify-content: space-between;
+`;
+
+const InitializeFilterContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 16px;
+padding-right: 16px;
+`;
+
+const InitializeFilterText = Styled.Text`
+font-weight: 400;
+font-size: 12px;
+line-height: 16px;
+color: #9AA2A9;
+`;
+
+const InitializeFilterIcon = Styled.Image`
+margin-left: 4px;
+width: ${wp('2.66%')}px;
+height: ${wp('2.66%')}px;
+`;
+
+const RegisterFilterButton = Styled.View`
+width: ${wp('55.46%')}px;
+align-items: center;
+border-radius: 4px;
+background-color: #131F3C;
+padding-top: 12px;
+padding-bottom: 12px;
+`;
+
+const RegisterFilterText = Styled.Text`
+font-weight: 700;
+font-size: 14px;
+line-height: 24px;
+color: #ffffff;
+`;
+
+
 interface Props {
   navigation: any;
   route: any;
@@ -327,13 +436,19 @@ interface Props {
 
 var selectedParaIndex: number;
 
-const ContentPostScreen = ({navigation, route}: Props) => {
+const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
   const [certifiedBill, setCertifiedBill] = useState<boolean>(false);
   const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
   const [isActivatedUpload, setIsActivatedUpload] = useState<boolean>(false);
   const [isVisibleDescripModal, setIsVisibleDescripModal] = useState<boolean>(
     false,
   );
+
+  const [selectedImageDateYear, setSelectedImageDateYear] = useState<any>(`${new Date().getFullYear()}`);
+  const [selectedImageDateMonth, setSelectedImageDateMonth] = useState<any>(`${new Date().getMonth() + 1}`);
+  const [selectedImageDateDay, setSelectedImageDateDay] = useState<any>(`${new Date().getDate()}`);
+
+  const [isVisibleImageDatePickerModal, setIsVisibleImageDatePickerModal] = useState<boolean>(false)
 
   const totalPriceInputRef = useRef();
   const scrollViewRef = useRef<any>();
@@ -351,21 +466,23 @@ const ContentPostScreen = ({navigation, route}: Props) => {
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
   let reviewId = route.params?.reviewId;
 
+  const imageDatePickerModalY = useRef(new Animated.Value(hp('50%'))).current;
+
   const insertedImageActionSheetRef = createRef<any>();
+  const paraActionSheetRef = createRef<any>();
   const paraFlatListRef = useRef<any>();
 
   useEffect(() => {
-    console.log('ContentPostScreen route', route);
+      console.log("route.params.isRecommendDental", route.params?.isRecommendDental);
+  }, [route.params?.isRecommendDental])
+
+  useEffect(() => {
+    console.log('BraceReviewContentPostScreen route', route);
   }, [route]);
 
   useEffect(() => {
     if (route.params.requestType === 'revise') {
-      // console.log(
-      //   '리뷰 수정 요청 route.params.paragraphArray',
-      //   route.params.paragraphArray,
-      // );
-      // const tmpParagraphArray = route.params.paragraphArray;
-      // setParagraphArray(tmpParagraphArray);
+
       reviewId = route.params?.reviewId;
     }
   }, []);
@@ -387,6 +504,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
               paraObj = tmpParagraphArray[route.params?.startIndex];
               paraObj.image = item;
               paraObj.order = 'before';
+              paraObj.imgDate = null;
               tmpParagraphArray[route.params?.startIndex] = paraObj;
             } else {
               paraObj = {
@@ -394,6 +512,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
                 image: item,
                 description: '',
                 order: 'before',
+                imgDate: null,
               };
               tmpParagraphArray.push(paraObj);
             }
@@ -409,13 +528,16 @@ const ContentPostScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     if (route.params?.selectedImage) {
-      let tmpParagraphArray = paragraphArray.slice();
+    
+      console.log("route.params?.selectedIndex", route.params.selectedIndex);
 
+      let tmpParagraphArray = paragraphArray.slice();
       const paraObj = {
         index: route.params.selectedIndex,
         image: route.params.selectedImage,
-        description: paragraphArray[route.params.selectedIndex].description,
-        order: paragraphArray[route.params.selectedIndex].order,
+        description: paragraphArray[route.params.selectedIndex]?.description,
+        order: paragraphArray[route.params.selectedIndex]?.order,
+        imgDate: paragraphArray[route.params.selectedIndex]?.imgDate,
       };
 
       tmpParagraphArray[route.params.selectedIndex] = paraObj;
@@ -457,7 +579,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     navigation.navigate('ImageSelectStackScreen', {
       screen: 'ImageSelectScreen',
       params: {
-        requestScreen: 'ContentPostScreen',
+        requestScreen: 'BraceReviewContentPostScreen',
         startIndex: index,
         selectedImages: [],
       },
@@ -514,6 +636,19 @@ const ContentPostScreen = ({navigation, route}: Props) => {
 
     setParagraphArray(tmpParagraphArray);
   };
+
+  const onPressImageDate = (index: number) => {
+    console.log("onPressImageDate index", index);
+    setIsVisibleImageDatePickerModal(true);
+    selectedParaIndex = index;
+
+    Animated.spring(imageDatePickerModalY, {
+      toValue: 0,
+      friction: 17,
+      tension: 68,
+      useNativeDriver: true,
+    }).start();
+  }
 
   const onFocusParaDescripInput = (index: number) => {
     console.log('onFocusParaDescripInput index', index);
@@ -762,6 +897,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
               size: item.image.size,
               description: item.description ? item.description : null,
               imgBeforeAfter: item.order,
+              imgDate: item.imgDate,
               width: item.image.width,
               height: item.image.height,
             };
@@ -779,6 +915,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
               size: result.size,
               description: item.description ? item.description : null,
               imgBeforeAfter: item.order,
+              imgDate: item.imgDate,
               width: result.width,
               height: result.height,
             };
@@ -795,6 +932,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
             originalName: null,
             size: null,
             imgBeforeAfters: null,
+            imgDate: null,
             width: null,
             height: null,
           };
@@ -856,7 +994,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
     if (index === 1) {
       navigation.navigate('ImageSelectOneStackScreen', {
         screen: 'ImageSelectOneScreen',
-        requestScreen: 'ContentPostScreen',
+        requestScreen: 'BraceReviewContentPostScreen',
         selectedIndex: selectedParaIndex,
       });
     } else if (index === 2) {
@@ -868,10 +1006,79 @@ const ContentPostScreen = ({navigation, route}: Props) => {
       delete tmpParagraphArray[selectedParaIndex].image;
       delete tmpParagraphArray[selectedParaIndex].order;
       delete tmpParagraphArray[selectedParaIndex].isPreExis;
+      delete tmpParagraphArray[selectedParaIndex].imgDate;
 
       setParagraphArray(tmpParagraphArray);
     }
   };
+
+  const onPressParaActionSheet = (index: number) => {
+    console.log("index", index);
+
+    if(index === 1) {
+      if(paragraphArray.length === 1) {
+        ToastMessage.show("더이상 문단을 삭제 할 수 없습니다.")
+      } else {
+        let tmpParagraphArray = paragraphArray.slice();
+
+        tmpParagraphArray.splice(selectedParaIndex, 1);
+
+        setParagraphArray(tmpParagraphArray);
+      }
+    }
+
+  }
+
+  const cancelImageDatePickerModal = useCallback(() => {
+    Animated.timing(imageDatePickerModalY, {
+      toValue: hp('50%'),
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => setIsVisibleImageDatePickerModal(false));
+  }, [])
+
+
+  const initializeImageDate = () => {
+    cancelImageDatePickerModal();
+
+    let tmpParagraphArray = paragraphArray.slice();
+    tmpParagraphArray[selectedParaIndex].imgDate = null;
+
+    setParagraphArray(tmpParagraphArray);
+  }
+
+  const registerImageDate = () => {
+    cancelImageDatePickerModal();
+
+    console.log("registerImageDate year month day", selectedImageDateYear, selectedImageDateMonth, selectedImageDateDay);
+
+    const tmpYear = `${selectedImageDateYear.charAt(2)}` + `${selectedImageDateYear.charAt(3)}`;
+
+    const tmpMonth = (selectedImageDateMonth < 10) ? ('0' + selectedImageDateMonth) : `${selectedImageDateMonth}`;
+
+    const tmpDay = (selectedImageDateDay < 10) ? ('0' + selectedImageDateDay) : `${selectedImageDateDay}`;
+
+    const tmpImageDateDisplay = `${tmpYear}.${tmpMonth}.${tmpDay}`;
+    const tmpImageDateValue = new Date(selectedImageDateYear, selectedImageDateMonth - 1, Number(selectedImageDateDay) + 1);
+
+    console.log("tmpImageDateValue", tmpImageDateValue);
+
+    const tmpImageDate = {
+      imageDateDisplay: tmpImageDateDisplay,
+      imageDateValue: tmpImageDateValue,
+    }
+
+
+    let tmpParagraphArray = paragraphArray.slice();
+    tmpParagraphArray[selectedParaIndex].imgDate = tmpImageDate;
+
+    setParagraphArray(tmpParagraphArray);
+  }
+
+  const onLongPressParaItem = (index: number) => {
+    selectedParaIndex = index;
+    paraActionSheetRef.current.show();
+  }
 
   const renderParaUnitItem = ({item, index}: any) => {
     return (
@@ -885,9 +1092,117 @@ const ContentPostScreen = ({navigation, route}: Props) => {
         onFocusParaDescripInput={onFocusParaDescripInput}
         onPressAddImage={onPressAddImage}
         descripInputRef={descripInputRef}
+        onPressImageDate={onPressImageDate}
+        onLongPressPara={onLongPressParaItem}
       />
     );
   };
+
+
+ 
+  const renderYearPickerItem = useCallback(() => {
+    const startYear = 1900;
+    const currentYear = new Date(Date.now()).getFullYear();
+    const result = [];
+    for (let i = 0; i <= currentYear - startYear; i++) {
+      result.push(
+        <Picker.Item
+          key={String(startYear + i)}
+          label={String(startYear + i)}
+          value={String(startYear + i)}
+        />,
+      );
+    }
+    return result;
+  }, []);
+
+  const renderMonthPickerItem = useCallback(() => {
+    const currentDate = new Date(Date.now());
+    const result = [];
+    if (parseInt(selectedImageDateYear) === currentDate.getFullYear()) {
+      for (let i = 1; i <= currentDate.getMonth() + 1; i++) {
+        result.push(
+        <Picker.Item
+        key={String(i)}
+        label={String(i)}
+        value={String(i)} />
+        );
+      }
+    } else {
+      for (let i = 1; i <= 12; i++) {
+        result.push(
+        <Picker.Item
+        key={String(i)}
+        label={String(i)}
+        value={String(i)} />);
+      }
+    }
+    return result;
+  }, [selectedImageDateYear]);
+
+  const renderDayPickerItem = useCallback(() => {
+    const currentDate = new Date(Date.now());
+    const result = [];
+    if (
+      parseInt(selectedImageDateYear) === currentDate.getFullYear() &&
+      parseInt(selectedImageDateMonth) === currentDate.getMonth() + 1
+    ) {
+      for (let i = 1; i <= currentDate.getDate(); i++) {
+        result.push(
+        <Picker.Item 
+        key={String(i)}
+        label={String(i)}
+        value={String(i)} />
+        );
+      }
+    } else {
+      if (selectedImageDateMonth === '2') {
+        if (
+          (parseInt(selectedImageDateYear) % 4) +
+            (parseInt(selectedImageDateYear) % 100) +
+            (parseInt(selectedImageDateYear) % 400) ===
+          0
+        ) {
+          for (let i = 1; i <= 29; i++) {
+            result.push(
+            <Picker.Item
+            key={String(i)}
+            label={String(i)}
+            value={String(i)} />
+            );
+          }
+        } else {
+          for (let i = 1; i <= 28; i++) {
+            result.push(
+            <Picker.Item
+            key={String(i)}
+            label={String(i)}
+            value={String(i)} />
+            );
+          }
+        }
+      } else if (
+        [1, 3, 5, 7, 8, 10, 12].includes(parseInt(selectedImageDateMonth))
+      ) {
+        for (let i = 1; i <= 31; i++) {
+          result.push(
+          <Picker.Item
+          key={String(i)}
+          label={String(i)}
+          value={String(i)} />);
+        }
+      } else {
+        for (let i = 1; i <= 30; i++) {
+          result.push(
+          <Picker.Item
+          key={String(i)}
+          label={String(i)}
+          value={String(i)}/>);
+        }
+      }
+    }
+    return result;
+  }, [selectedImageDateMonth, selectedImageDateMonth]);
 
   const renderAddParaUnitItem = useCallback(() => {
     return (
@@ -956,6 +1271,7 @@ const ContentPostScreen = ({navigation, route}: Props) => {
             data={paragraphArray}
             renderItem={renderParaUnitItem}
             ListFooterComponent={renderAddParaUnitItem}
+            keyExtractor={(item, index) => `${index}`}
           />
         </ContentContainer>
       </BodyContainer>
@@ -966,13 +1282,103 @@ const ContentPostScreen = ({navigation, route}: Props) => {
         destructiveButtonIndex={2}
         onPress={(index: any) => onPressInsertedImageActionSheet(index)}
       />
+      <ActionSheet
+        ref={paraActionSheetRef}
+        options={['취소', '문단 삭제']}
+        cancelButtonIndex={0}
+        destructiveButtonIndex={1}
+        onPress={(index: any) => onPressParaActionSheet(index)}
+      />
       {isVisibleDescripModal && renderDescripModal()}
       <TouchBlockIndicatorCover loading={loadingUpload} />
+      <ImageDatePickerModal
+        visible={isVisibleImageDatePickerModal}
+        transparent={true}
+        animationType="none">
+          <TouchableWithoutFeedback onPress={() => cancelImageDatePickerModal()}>
+            <ImageDatePickerModalBackground
+            as={Animated.View}
+            style={{
+              opacity: imageDatePickerModalY.interpolate({
+                inputRange: [0, hp('50%')],
+                outputRange: [0.3, 0],
+                extrapolate: 'clamp',
+              })
+            }}>
+            </ImageDatePickerModalBackground>
+          </TouchableWithoutFeedback>
+        <ImageDatePickerContainer
+        as={Animated.View}
+        style={{
+          transform: [{translateY: imageDatePickerModalY}]
+        }}>
+            <DetailFilterHeaderContainer>
+              <DetailFilterTitleText>{'촬영 날짜 설정'}</DetailFilterTitleText>
+            </DetailFilterHeaderContainer>
+            <TimeFilterModalContainer>
+            <TimePickerContainer>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                style={{width: wp('20%'), height: '100%'}}
+                onValueChange={(itemValue: any) => setSelectedImageDateYear(itemValue)}
+                selectedValue={selectedImageDateYear}>
+                {renderYearPickerItem()}
+              </Picker>
+              <FilterDividingText>{'년'}</FilterDividingText>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                selectedValue={selectedImageDateMonth}
+                onValueChange={(itemValue: any) => setSelectedImageDateMonth(itemValue)}
+                style={{width: wp('20%'), height: '100%'}}>
+                {renderMonthPickerItem()}
+              </Picker>
+              <FilterDividingText>{'월'}</FilterDividingText>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                style={{width: wp('20%'), height: '100%'}}
+                onValueChange={(itemValue: any) => setSelectedImageDateDay(itemValue)}
+                selectedValue={selectedImageDateDay}>
+                {renderDayPickerItem()}
+              </Picker>
+              <FilterDividingText>{'일'}</FilterDividingText>
+            </TimePickerContainer>
+              <DetailFilterFooterContainer>
+                <TouchableWithoutFeedback onPress={() => initializeImageDate()}>
+                <InitializeFilterContainer>
+                  <InitializeFilterText>{"촬영 날짜 초기화"}</InitializeFilterText>
+                  <InitializeFilterIcon
+                  source={require('~/Assets/Images/Map/ic_initialize.png')}/>
+                </InitializeFilterContainer>
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => registerImageDate()}>
+                <RegisterFilterButton>
+                  <RegisterFilterText>{"적용하기"}</RegisterFilterText>
+                </RegisterFilterButton>
+                </TouchableWithoutFeedback>
+              </DetailFilterFooterContainer>
+              </TimeFilterModalContainer>
+          </ImageDatePickerContainer>
+        </ImageDatePickerModal>
     </Container>
   );
 };
 
-export default ContentPostScreen;
+export default BraceReviewContentPostScreen;
 
 const styles = StyleSheet.create({
   paragraphUnitShadow: {

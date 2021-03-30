@@ -8,6 +8,7 @@ import {
 
 // Local Components
 import RatingStarList from '~/Components/Presentational/RatingStarList';
+import DentalEvaluation from '~/Components/Presentational/DentalEvaluation';
 
 const Container = Styled.View`
 width: ${wp('100%')}px;
@@ -79,7 +80,7 @@ font-weight: 400;
 color: #00D1FF;
 `;
 
-const ReviewRatingContainer = Styled.View`
+const DentalEvaluationContainer = Styled.View`
 margin-top: 8px;
 flex-direction: row;
 align-items: center;
@@ -231,12 +232,12 @@ const DentalListItem = ({
                 )}
               </CurrentStatusContainer>
             </HeaderContainer>
-            <ReviewRatingContainer>
-              <RatingStarList
-                ratingValue={reviewCount > 0 ? rating.toFixed(1) : 0}
+            <DentalEvaluationContainer>
+              <DentalEvaluation
+                recommendCount={dentalObj.recommendNum}
                 reviewCount={reviewCount}
               />
-            </ReviewRatingContainer>
+            </DentalEvaluationContainer>
             <FooterContainer>
               <DentalAddressText>{address}</DentalAddressText>
               <VerticalDivider />
