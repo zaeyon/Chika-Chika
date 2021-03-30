@@ -182,7 +182,7 @@ const CommunityPostUploadScreen = ({navigation, route}: Props) => {
     if (!incompleteKorean.test(searchQuery)) {
       if (searchQuery !== '') {
         setSuggestionList([]);
-        GETAllTagSearch(jwtToken, searchQuery, 'autoComplete')
+        GETAllTagSearch(jwtToken, searchQuery,)
           .then((response: any) => {
             console.log(response);
             setSearchQuery((prev) => {

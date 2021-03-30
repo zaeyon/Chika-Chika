@@ -23,7 +23,6 @@ import allActions from '~/actions';
 const ContainerView = Styled.View`
  flex: 1;
  background: white;
- padding-bottom: ${Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%')}
 `;
 
 const HeaderContainerView = Styled.View`

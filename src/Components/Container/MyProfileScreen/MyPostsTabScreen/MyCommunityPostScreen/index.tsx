@@ -207,10 +207,8 @@ const MyCommunityPostScreen = ({navigation, route}: Props) => {
 
   const moveToKeywordSearch = useCallback((
     {
-      keyword,
-      searchQuery = '',
+      query,
       category,
-      tagId,
     }
   ) => {
     navigation.navigate('TotalKeywordSearchStackScreen', {
@@ -218,10 +216,8 @@ const MyCommunityPostScreen = ({navigation, route}: Props) => {
       params: {
         redirected: true,
         redirectionBody: {
-          keyword,
-          searchQuery,
+          query,
           category,
-          tagId,
         }
       }
     })

@@ -177,12 +177,12 @@ font-weight: 500;
 font-size: 12px;
 line-height: 16px;
 color: #9AA2A9;
-margin-right: 4px;
+margin-right: 2px;
 `;
 
 interface Props {
   data: any;
-  moveToKeywordSearch: ({keyword, searchQuery, category, tagId}: any) => void;
+  moveToKeywordSearch: ({query,  category}: any) => void;
   moveToCommunityDetail: any;
   moveToAnotherProfile: any;
   toggleSocialLike: any;
@@ -355,20 +355,18 @@ const PostItem = ({
         <HashTagIconView key={String(item.id)} onPress={() => {
           console.log(item)
           moveToKeywordSearch({
-            keyword: item.originalName || item.name || item.emdName || item.usualName,
-            searchQuery: item.originalName || item.name || item.usualName || item.fullCityName,
+            query: item.originalName || item.name || item.usualName || item.tagName,
             category: [
               'clinic',
               'general',
               'treatment',
               'city',
             ][categoryIndex],
-            tagId: item.id
           })
         }}>
           <HashTagText>{'#'}</HashTagText>
           <HashTagIconText>
-            {item.originalName || item.name || item.emdName || item.usualName}
+            {item.originalName || item.name || item.tagName || item.usualName}
           </HashTagIconText>
         </HashTagIconView>
       );

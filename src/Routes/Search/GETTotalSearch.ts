@@ -5,23 +5,20 @@ interface Params {
     lat?: string,
     long?: string,
     jwtToken: string,
-    searchQuery: string,
-    inputQuery: string,
-    category: string,
-    tagId: string,
+    query: string,
     pathType: string,
-    communityType?: string | undefined;
     limit: string,
     offset: string,
     order: string,
     region: string,
     cityId: string,
     isUnified?: boolean | undefined,
+    communityType?: string | undefined,
 }
 
-const GETTotalSearch = ({lat='0', long='0', jwtToken, searchQuery, inputQuery, category, tagId='-1', pathType, communityType="All", limit, offset, order, region, cityId, isUnified=false}: Params) => {
+const GETTotalSearch = ({lat='0', long='0', jwtToken, query, pathType, limit, offset, order, region, cityId, isUnified=false, communityType='Question'}: Params) => {
 
-    const uri = serverConfig.baseUri + `/search/${pathType}?sq=${searchQuery}&lat=${lat}&long=${long}&tagCategory=${category}&tagId=${tagId}&type=${communityType}&limit=${limit}&offset=${offset}&order=${order}&region=${region}&cityId=${cityId}&unifiedSearch=${String(isUnified)}&iq=${inputQuery}`
+    const uri = serverConfig.baseUri + `/search/${pathType}?query=${query}&lat=${lat}&long=${long}&limit=${limit}&offset=${offset}&order=${order}&region=${region}&cityId=${cityId}&unifiedSearch=${String(isUnified)}&communityType=${communityType}`
 
     console.log(uri)
     return new Promise((resolve, reject) => {
