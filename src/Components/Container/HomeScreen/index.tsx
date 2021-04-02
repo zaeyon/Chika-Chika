@@ -87,7 +87,7 @@ const FloatingButtonView = Styled.View`
 position: absolute;
 elevation: 2;
 align-self: center;
-bottom: ${24 + (Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%'))}px;
+bottom: ${24 + (Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('6.92%')) : hp('6.92%'))}px;
 padding: 8px 24px;
 background: #131F3C;
 box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
@@ -521,12 +521,6 @@ const HomeScreen = ({navigation, route}: Props) => {
           reviewData={reviewData}
           moveToReviewDetail={moveToReviewDetail}
         />
-        <HomeCommunityContent
-          selectedHometown={selectedHometown?.emdName}
-          postData={postData}
-          moveToCommunityDetail={moveToCommunityDetail}
-          moveToAnotherProfile={moveToAnotherProfile}
-        />
       </ContentScrollView>
       <FloatingButtonView
         as={Animated.View}
@@ -536,7 +530,7 @@ const HomeScreen = ({navigation, route}: Props) => {
               translateY: floatY.interpolate({
                 inputRange: [0, 1],
                 outputRange: [
-                  64 + (Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%')),
+                  64 + (Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('6.92%')) : hp('6.92%')),
                   0,
                 ],
                 extrapolate: 'clamp',

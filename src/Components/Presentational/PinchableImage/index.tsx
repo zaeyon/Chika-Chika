@@ -614,13 +614,7 @@ const PinchableImage = ({
                   <TapGestureHandler
                   onGestureEvent={onTapGestureEvent}
                   onHandlerStateChange={onTapHandlerStateChange}
-                  waitFor={doubleTapRef}
                   >
-                <TapGestureHandler
-                ref={doubleTapRef}
-                  onGestureEvent={onDoubleTapGestureEvent}
-                  onHandlerStateChange={onDoubleTapHandlerStateChange}
-                  numberOfTaps={2}>
                   <ContentView as={Animated.View}>
                     {image.img_url ? 
                     <FastImage
@@ -658,7 +652,6 @@ const PinchableImage = ({
                     }}
                     /> }
                   </ContentView>
-                </TapGestureHandler>
                 </TapGestureHandler>
               </ContentView>
             </PanGestureHandler>

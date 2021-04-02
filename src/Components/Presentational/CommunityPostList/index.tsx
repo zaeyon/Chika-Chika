@@ -203,7 +203,7 @@ const CommunityPostList = ({
       }
       keyExtractor={getItemKey}
       contentContainerStyle={{
-        paddingBottom: tabBarVisible ? (Platform.OS === 'ios' ? (hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%')) : 0
+        paddingBottom: tabBarVisible ? (Platform.OS === 'ios' ? (hasNotch() ? hp('10.59%') : hp('6.92%')) : hp('6.92%')) : 0
       }}
       showsVerticalScrollIndicator={false}
       renderItem={initialize ? renderPostSkeleton : renderPost}

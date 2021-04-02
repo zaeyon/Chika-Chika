@@ -413,7 +413,7 @@ background-color: #FFFFFF;
 position: absolute;
 bottom: 0px;
 width: ${wp('100%')}px;
-height: ${Platform.OS === 'ios' ? (hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%')
+height: ${Platform.OS === 'ios' ? (hasNotch() ? hp('10.59%') : hp('6.92%')) : hp('6.92%')
 }px;
 `;
 
@@ -434,7 +434,7 @@ const TEST_COORDINATE = {
 
 let sort = 'distance';
 
-const bottomTabheight = Platform.OS === 'ios' ? (hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%');
+const bottomTabheight = Platform.OS === 'ios' ? (hasNotch() ? hp('10.59%') : hp('6.92%')) : hp('6.92%');
 
 const mapHeight = hp('100%') - bottomTabheight;
 

@@ -36,7 +36,7 @@ const DentalLocationMapScreen = ({navigation, route}: Props) => {
             style={{flex: 1}}
             minZoomLevel={6}
             compass={false}
-            showsMyLocationButton={true}
+            showsMyLocationButton={false}
             >
                 <Marker
                     coordinate={route.params.coordinate}

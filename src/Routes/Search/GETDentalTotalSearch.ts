@@ -3,8 +3,7 @@ import serverConfig from '../server.config';
 
 interface params {
     jwtToken: string,
-    iq: string,
-    sq: string,
+    query: string,
     offset: number,
     limit: number,
     lat: number,
@@ -17,14 +16,12 @@ interface params {
     parkingFilter?: string,
 }
 
-const GETDentalTotalSearch = ({jwtToken,iq, sq, offset, limit, lat, long, category, sort, dayFilter, timeFilter, holidayFilter, parkingFilter}: params) => {
+const GETDentalTotalSearch = ({jwtToken, query, offset, limit, lat, long, category, sort, dayFilter, timeFilter, holidayFilter, parkingFilter}: params) => {
 
     console.log('GETDentalTotalSearch category', category);
 
-    const uri = serverConfig.baseUri + `/clinics?lat=${lat}&long=${long}&iq=${iq}&sq=${sq}&sort=${sort}&days=${dayFilter}&time=${timeFilter}&wantParking=${parkingFilter}&holiday=${holidayFilter}&limit=${limit}&offset=${offset}&tagCategory=${category}`;
+    const uri = serverConfig.baseUri + `/clinics?lat=${lat}&long=${long}&query=${query}&sort=${sort}&days=${dayFilter}&time=${timeFilter}&wantParking=${parkingFilter}&holiday=${holidayFilter}&limit=${limit}&offset=${offset}&tagCategory=${category}`;
 
-    console.log("GETDentalTotalSearch iq", iq);
-    console.log("GETDentalTotalSearch sq", sq);
 
     console.log("GETDentalTotalSearch jwtToken", jwtToken);
     console.log("GETDentalTotalSearch offset", offset);
