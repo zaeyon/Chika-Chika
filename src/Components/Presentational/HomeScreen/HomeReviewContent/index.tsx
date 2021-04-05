@@ -17,17 +17,29 @@ import ReviewThumbnail from '~/Components/Presentational/HomeScreen/HomeReviewCo
 const ContainerView = Styled.View`
 width: 100%;
 flex: 1;
-padding: 16px 0px 8px 0px;
+padding: 21px 0px 8px 0px;
 margin-bottom: 16px;
 `;
 
-const ContentTitleText = Styled.Text`
+const ContentTitleView = Styled.View`
+width: auto;
+flex-direction: row;
+align-items: center;
 margin: 0px 16px;
+margin-bottom: 21px;
+`;
+
+const ContentTitleText = Styled.Text`
+font-style: normal;
 font-weight: bold;
-font-size: 16px;
+font-size: 18px;
 line-height: 24px;
 color: #131F3C;
-margin-bottom: 16px;
+`;
+
+const ContentTitleImage = Styled.Image`
+margin-left: auto;
+margin-right: 12px;
 `;
 
 const TagFilterContainerView = Styled.View`
@@ -136,7 +148,12 @@ const HomeReviewContent = ({
 
   return (
     <ContainerView>
-      <ContentTitleText>{`최근 올라온 ${selectedHometown} 치과 후기`}</ContentTitleText>
+      <TouchableWithoutFeedback>
+      <ContentTitleView>
+        <ContentTitleText>{`최근 올라온 치아교정 리뷰`}</ContentTitleText>
+        <ContentTitleImage source={require('~/Assets/Images/Home/메인/ic_review_more.png')}/>
+      </ContentTitleView>
+      </TouchableWithoutFeedback>
       <ReviewThumbnailFlatlist
         ref={flatlistRef}
         contentContainerStyle={{

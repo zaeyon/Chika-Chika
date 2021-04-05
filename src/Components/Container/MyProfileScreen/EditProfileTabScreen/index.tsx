@@ -164,6 +164,12 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
     });
   }, []);
 
+  const moveToHomeTownSearch = useCallback(() => {
+    navigation.navigate('HometownSearchScreen', {
+      requestType: 'initialize'
+    });
+  }, []);
+
   const moveToHomeTownSetting = useCallback(() => {
     navigation.navigate('HometownSettingScreen', {
       profile: profile,
@@ -184,6 +190,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
         moveToEditNickname={moveToEditNickname}
         moveToGallery={moveToGallery}
         moveToHomeTownSetting={moveToHomeTownSetting}
+        moveToHomeTownSearch={moveToHomeTownSearch}
         moveToPhoneVerify={moveToPhoneVerify}
         profile={profile}
         hometown={hometown}

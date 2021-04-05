@@ -208,7 +208,8 @@ const MyProfileScreen = ({navigation, route}: Props) => {
             <TouchableWithoutFeedback onPress={() => navigation.navigate('EditProfileStackScreen')}>
             <ProfileSubTitleView>
             <ProfileSubTitleText>{'내 정보 수정'}</ProfileSubTitleText>
-            <SectionImage source={sectionArrow} />
+            <SectionImage style={{
+              marginLeft: 0}} source={sectionArrow} />
             </ProfileSubTitleView>
             </TouchableWithoutFeedback>
           </ProfileContentView>

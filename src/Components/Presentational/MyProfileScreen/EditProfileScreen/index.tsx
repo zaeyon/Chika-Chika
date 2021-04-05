@@ -224,6 +224,7 @@ interface Props {
   moveToEditNickname: any;
   moveToGallery: any;
   moveToHomeTownSetting: any;
+  moveToHomeTownSearch: any;
   moveToPhoneVerify: any;
   profile: any;
   hometown: any;
@@ -237,6 +238,7 @@ const EditProfileScreen = ({
   moveToEditNickname,
   moveToGallery,
   moveToHomeTownSetting,
+  moveToHomeTownSearch,
   moveToPhoneVerify,
   hometown,
   profile,
@@ -341,6 +343,7 @@ const EditProfileScreen = ({
   }, [selectedBirthYear, selectedBirthMonth, selectedBirthDay]);
 
   const renderResidences = useCallback(() => {
+    const placeHolder = '동네를 설정해주세요.'
     let result = '';
     hometown.map((item: any, index: number) => {
       if (index === 0) {
@@ -349,7 +352,7 @@ const EditProfileScreen = ({
         result += `, ${item.emdName}`;
       }
     });
-    return result;
+    return result === '' ? placeHolder : result;
   }, [hometown]);
 
   const formatProvider = useCallback((provider: string) => {
@@ -484,7 +487,7 @@ const EditProfileScreen = ({
         <TouchableHighlight
           activeOpacity={0.9}
           underlayColor="black"
-          onPress={() => moveToHomeTownSetting()}>
+          onPress={() => hometown.length === 0 ? moveToHomeTownSearch() : moveToHomeTownSetting()}>
           <SectionContentView>
             <SectionContentTitleText>{'우리동네'}</SectionContentTitleText>
             <SectionContentText>{renderResidences()}</SectionContentText>

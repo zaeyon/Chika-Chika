@@ -117,6 +117,7 @@ const LocationSelection = ({
         <HometownSettingFloatView style={style}>
           {hometown.map((item: any, index: number) => (
             <HometownItemContainerView key={index}>
+              {index ? <VerticalPartition key={'bar' + String(index)} /> : null}
               <TouchableWithoutFeedback
                 key={String(item.id)}
                 onPress={() => {
@@ -140,7 +141,6 @@ const LocationSelection = ({
                   )}
                 </HometownSetttingContentView>
               </TouchableWithoutFeedback>
-              <VerticalPartition key={'bar' + String(index)} />
             </HometownItemContainerView>
           ))}
           {manageMode ? (

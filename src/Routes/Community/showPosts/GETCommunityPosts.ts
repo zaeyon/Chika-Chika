@@ -14,7 +14,7 @@ interface Props {
 const GETCommunityPosts = (jwtToken: string, cityId: string, {type, limit, offset, order, region}: Props) => {
     const uri = baseUri + `/api/v1/communities/lists?region=${region}&cityId=${cityId}&type=${type}&limit=${limit}&offset=${offset}&order=${order}`;
     return new Promise(function(resolve, reject) {
-
+console.log(uri)
         axios.get(uri, {
             headers: {
               'Authorization': jwtToken,

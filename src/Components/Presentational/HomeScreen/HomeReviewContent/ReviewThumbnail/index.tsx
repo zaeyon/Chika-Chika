@@ -21,7 +21,7 @@ width: ${wp('79%')}px;
 flex: 1;
 border-radius: 8px;
 margin-right: 16px;
-padding: 16px;
+padding: 20px 16px;
 background: #FFFFFF;
 box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
 `;
@@ -32,8 +32,9 @@ align-items:center;
 `;
 
 const ReviewTitleText = Styled.Text`
-font-weight: 600;
-font-size: 13.5px;
+font-style: normal;
+font-weight: bold;
+font-size: 15px;
 line-height: 16px;
 color: #131F3C;
 `;
@@ -52,6 +53,7 @@ color: #131F3C;`;
 const ReviewContentView = Styled.View`
 flex-direction: row;
 flex: 1;
+margin-top: 8px;
 `;
 
 const ReviewContentDescriptionView= Styled.View`
@@ -72,32 +74,22 @@ margin-left: auto;
 border-radius: 8px;
 `;
 
-const ReviewThumbnailHeaderImage = Styled.Image`
-width: 28px;
-height: 28px;
-background: #F5F7F9;
-border-radius: 100px;
-margin-right: 8px;
-`;
-const ReviewThumbnailHeaderText = Styled.Text`
-font-size: 13.5px;
-line-height: 16px;
-font-weight: 500;
-color: #FFFFFF;
-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.9);
+const ReviewRecommendationView = Styled.View`
+margin-left: auto;
+flex-direction: row;
+align-items: center;
 `;
 
-const ReviewThumbnailHeaderTimeText = Styled.Text`
-font-style: normal;
-font-weight: 400;
-font-size: 13.5px;
-line-height: 16px;
-color: #FFFFFF;
-margin-left: auto;
-box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.9);
+const ReviewRecommendationImage = Styled.Image`
+margin-right: 3px;
 `;
-const ReviewThumbnailContentView = Styled.View`
-padding: 0px 8px 16px 8px;
+
+const ReviewRecommendationText = Styled.Text`
+font-style: normal;
+font-weight: bold;
+font-size: 12px;
+line-height: 18px;
+color: #131F3C;
 `;
 
 const HashTagContainerView = Styled.View`
@@ -105,7 +97,6 @@ width: 100%;
 height: auto;
 padding: 12px 0px;
 flex-direction: row;
-
 `;
 
 const HashTagIconView = Styled.TouchableOpacity`
@@ -185,7 +176,7 @@ const ReviewThumbnail = ({review, moveToReviewDetail}: Props) => {
   const renderHashTagItem = useCallback(
     (item: string) => (
       <HashTagIconView key={String(item)}>
-        <HashTagIconText>{'#' + item + ' '}</HashTagIconText>
+        <HashTagIconText>{'#' + item.usualName + ' '}</HashTagIconText>
       </HashTagIconView>
     ),
     [],
@@ -230,6 +221,7 @@ const ReviewThumbnail = ({review, moveToReviewDetail}: Props) => {
     }
   }, []);
 
+  console.log(review)
   return (
     <TouchableWithoutFeedback
       onPressIn={() => {
@@ -262,17 +254,16 @@ const ReviewThumbnail = ({review, moveToReviewDetail}: Props) => {
             <ReviewTitleText>
               {review.dental_clinic.originalName}
             </ReviewTitleText>
-            <ReviewRatingView>
-              <Image style={{
-                backgroundColor: '#00D1FF'
-              }} source={require('~/Assets/Images/Review/ic_ratingStar_swipe.png')}/>
-              <ReviewRatingText>
-                {review.AVGStarRate.toFixed(1)}
-              </ReviewRatingText>
-            </ReviewRatingView>
+            {review.recommend ? 
+            <ReviewRecommendationView>
+              <ReviewRecommendationImage source={require('~/Assets/Images/Review/ic_recommend.png')} />
+              <ReviewRecommendationText>{"추천"}</ReviewRecommendationText>
+            </ReviewRecommendationView>
+            : null}
           </ReviewHeaderView>
           <HashTagContainerView>
-            {review.reviewTreatmentTags.map(renderHashTagItem)}
+            {review.TreatmentItems.map(renderHashTagItem)}
+            {review.DiseaseItems.map(renderHashTagItem)}
           </HashTagContainerView>
           <ReviewContentView>
             <ReviewContentDescriptionView>
