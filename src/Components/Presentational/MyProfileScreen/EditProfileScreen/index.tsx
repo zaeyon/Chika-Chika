@@ -463,7 +463,11 @@ const EditProfileScreen = ({
                 source={require('~/Assets/Images/MyPage/EditProfile/ProfileImg/ic_edit_profileImg.png')}
               />
             </ProfileImageMaskView>
-            <ProfileImage source={{uri: profile.img_thumbNail}} />
+            <ProfileImage source={
+              profile.img_thumbNail
+              ? {uri: profile.img_thumbNail}
+              : require('~/Assets/Images/MyPage/default_profileImg.png')
+              } />
           </ProfileImageContentView>
         </TouchableWithoutFeedback>
       </ProfileImageContainerView>

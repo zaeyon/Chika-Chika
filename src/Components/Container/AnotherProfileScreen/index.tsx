@@ -117,6 +117,7 @@ const AnotherProfileScreen = ({navigation, route}: Props) => {
             LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
           );
           dispatch(allActions.reviewListActions.setOpponentReviews(response));
+          console.log("AnotherProfileScreen response", response);
           return false;
         });
       },

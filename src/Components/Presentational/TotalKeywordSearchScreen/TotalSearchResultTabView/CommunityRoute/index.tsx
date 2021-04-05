@@ -79,12 +79,12 @@ const CommunityRoute = ({
     setPageIndex(1);
     dispatch(allActions.communityActions.setPosts([]));
     setOrder('createdAt');
-    setRegion(selectedHometown.id === -1 ? 'all' : 'residence');
+    setRegion(selectedHometown?.id === -1 ? 'all' : 'residence');
     const form = {
       pathType: 'community',
       communityType: 'All',
-      region: selectedHometown.id === -1 ? 'all' : 'residence',
-      cityId: String(selectedHometown.id),
+      region: selectedHometown?.id === -1 ? 'all' : 'residence',
+      cityId: String(selectedHometown?.id),
       order: 'createdAt',
       offset: 0,
       limit: 10,
@@ -110,7 +110,7 @@ const CommunityRoute = ({
     const form = {
       pathType: 'community',
       communityType: 'All',
-      cityId: String(selectedHometown.id),
+      cityId: String(selectedHometown?.id),
       offset: 0,
       limit: 10,
       order,
@@ -164,7 +164,7 @@ const CommunityRoute = ({
           pathType: 'community',
           communityType: 'All',
           region,
-          cityId: String(selectedHometown.id),
+          cityId: String(selectedHometown?.id),
           order,
           offset: pageIndex * limit,
           limit,
@@ -203,7 +203,7 @@ const CommunityRoute = ({
         pathType: 'community',
         communityType: 'All',
         region,
-        cityId: String(selectedHometown.id),
+        cityId: String(selectedHometown?.id),
         order,
         offset: 0,
         limit,
@@ -245,7 +245,7 @@ const CommunityRoute = ({
         pathType: 'community',
         communityType: 'All',
         region,
-        cityId: String(selectedHometown.id),
+        cityId: String(selectedHometown?.id),
         order: searchOrder,
         offset: 0,
         limit,

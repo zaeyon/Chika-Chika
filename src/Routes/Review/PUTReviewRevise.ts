@@ -7,15 +7,19 @@ interface params {
     starRate_cost: number,
     starRate_treatment: number,
     starRate_service: number,
-    formatedTreatmentArray: Array<object>,
+    formattedTreatmentArray: Array<object>,
+    formattedDiseaseArray: Array<object>,
     dentalClinicId: number,
-    formatedParagraphArray: Array<object>,
+    formattedParagraphArray: Array<object>,
     formattedProofImage: any,
     totalPrice: number,
     treatmentDate: Date,
+    recommend: boolean,
+    correctionStartDate: any,
+    correctionEndDate: any,
 }
 
-const PUTReviewRevise = ({jwtToken, reviewId, starRate_cost, starRate_treatment, starRate_service, formatedParagraphArray, dentalClinicId, formatedTreatmentArray, formattedProofImage, totalPrice, treatmentDate}: params) => {
+const PUTReviewRevise = ({jwtToken, reviewId, starRate_cost, starRate_treatment, starRate_service, formattedParagraphArray, dentalClinicId, formattedTreatmentArray, formattedDiseaseArray=[], formattedProofImage, totalPrice, treatmentDate, recommend, correctionStartDate, correctionEndDate}: params) => {
 
     const uri = serverConfig.baseUri + `/api/v1/reviews?reviewId=${reviewId}`
 
@@ -24,22 +28,41 @@ const PUTReviewRevise = ({jwtToken, reviewId, starRate_cost, starRate_treatment,
     console.log("PUTReviewRevise starRate_cost", starRate_cost);
     console.log("PUTReviewRevise starRate_treatment", starRate_treatment);
     console.log("PUTReviewRevise starRate_service", starRate_service);
-    console.log("PUTReviewRevise treatments", formatedTreatmentArray);
+    console.log("PUTReviewRevise treatments", formattedTreatmentArray);
     console.log("PUTReviewRevise dentalClinicId", dentalClinicId);
-    console.log("리뷰 수정 PUTReviewRevise paragraphs", formatedParagraphArray);
+    console.log("리뷰 수정 PUTReviewRevise paragraphs", formattedParagraphArray);
     console.log("PUTReviewRevise totalCost", totalPrice);
 
+    console.log("PUTReviewRevise recommend", recommend);
+    console.log("PUTReviewRevise correctionStarDate", correctionStartDate);
+    console.log("PUTReviewRevise correctionEndDate", correctionEndDate);
+
+    if(!totalPrice) {
+        totalPrice = null
+    }
+
+     // const body = `{
+    //     "starRate_cost":${starRate_cost},
+    //     "starRate_treatment":${starRate_treatment},
+    //     "starRate_service":${starRate_service},
+    //     "treatments":${JSON.stringify(formattedTreatmentArray)},
+    //     "diseases":${JSON.stringify(formattedDiseaseArray)},
+    //     "dentalClinicId":${dentalClinicId},
+    //     "totalCost":${totalPrice},
+    //     "treatmentDate":"${treatmentDate}"
+    // }`
+
     const body = `{
-        "starRate_cost":${starRate_cost},
-        "starRate_treatment":${starRate_treatment},
-        "starRate_service":${starRate_service},
-        "treatments":${JSON.stringify(formatedTreatmentArray)},
+        "recommend":${recommend},
+        "treatments":${JSON.stringify(formattedTreatmentArray)},
+        "diseases":${JSON.stringify(formattedDiseaseArray)},
         "dentalClinicId":${dentalClinicId},
         "totalCost":${totalPrice},
-        "treatmentDate":"${treatmentDate}"
+        "correctionStartDate": ${JSON.stringify(correctionStartDate)},
+        "correctionEndDate": ${JSON.stringify(correctionEndDate)}
     }`
 
-    const stringfiedPara = JSON.stringify(formatedParagraphArray); 
+    const stringfiedPara = JSON.stringify(formattedParagraphArray); 
     const stringfiedProofImage = JSON.stringify(formattedProofImage);
 
     console.log("body", body);

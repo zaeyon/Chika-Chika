@@ -284,7 +284,7 @@ const HomeScreen = ({navigation, route}: Props) => {
     (selectedHometown, callback = () => console.log('fetchLocalInfo')) => {
       GETLocalClinicAndReviewCount({
         jwtToken,
-        cityId: String(selectedHometown.id),
+        cityId: String(selectedHometown?.id),
       }).then((response: any) => {
         setLocalClinicCount(response.residenceClinicsNum);
         setLocalReviewCount(response.residenceReviewsNum);
@@ -306,7 +306,7 @@ const HomeScreen = ({navigation, route}: Props) => {
             offset: '0',
             order: 'createdAt',
             region: 'residence',
-            cityId: String(selectedHometown.id),
+            cityId: String(selectedHometown?.id),
             isUnified: false,
           };
           const data = await GETTotalSearch(form);
@@ -330,7 +330,7 @@ const HomeScreen = ({navigation, route}: Props) => {
         order: 'createdAt',
         region: 'residence',
       };
-      GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
+      GETCommunityPosts(jwtToken, String(selectedHometown?.id), form).then(
         (response: any) => {
           setPostData(response);
         },
@@ -339,10 +339,10 @@ const HomeScreen = ({navigation, route}: Props) => {
     [jwtToken],
   );
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    fetchLocalInfo(selectedHometown, () => setRefreshing(false));
-    fetchRecentReviews(selectedHometown);
-    fetchRecentCommunityPosts(selectedHometown);
+    // setRefreshing(true);
+    // fetchLocalInfo(selectedHometown, () => setRefreshing(false));
+    // fetchRecentReviews(selectedHometown);
+    // fetchRecentCommunityPosts(selectedHometown);
   }, [
     selectedHometown,
     fetchLocalInfo,

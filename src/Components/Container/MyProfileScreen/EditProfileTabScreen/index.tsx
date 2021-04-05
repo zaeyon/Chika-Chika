@@ -164,8 +164,8 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
     });
   }, []);
 
-  const moveToHomeTownSetting = useCallback(() => {
-    navigation.navigate('HometownSettingScreen', {
+  const moveToHometownSearch = useCallback(() => {
+    navigation.navigate('HometownSearchScreen', {
       profile: profile,
     });
   }, []);
@@ -183,7 +183,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
         capturePhoto={capturePhoto}
         moveToEditNickname={moveToEditNickname}
         moveToGallery={moveToGallery}
-        moveToHomeTownSetting={moveToHomeTownSetting}
+        moveToHomeTownSetting={moveToHometownSearch}
         moveToPhoneVerify={moveToPhoneVerify}
         profile={profile}
         hometown={hometown}

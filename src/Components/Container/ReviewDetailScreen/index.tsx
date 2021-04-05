@@ -171,9 +171,10 @@ interface RatingObj {
 
 interface metaInfoObj {
   dentalObj: DentalObj;
-  ratingObj: RatingObj;
   treatmentDateObj: any;
   totalPriceObj: any;
+  isDentalRecommend: boolean;
+  bracePeriodObj: any;
 }
 
 let selectedCommentId: number;
@@ -214,9 +215,14 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       originalName: "",
       profileImages: []
     },
-    ratingObj: route.params?.ratingObj,
     totalPriceObj: {},
-    treatmentDateObj: {},
+    isDentalRecommend: false,
+    bracePeriodObj: {
+      period: "",
+      periodDate: "",
+      startDate: "",
+      finishDate: "",
+    }
   });
 
   const [treatmentDate, setTreatmentDate] = useState<any>({});
@@ -262,6 +268,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
   const scrollViewRef = useRef<any>();
   const reviewScrollViewRef = useRef<any>(null);
+  const isBraceFinished = useRef<boolean>(false);
 
   const ownCommentActionSheetRef = createRef<any>();
   const otherCommentActionSheetRef = createRef<any>();
@@ -280,18 +287,6 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   const createdDate = route.params?.createdAt;
   const isVisibleElapsedTime = route.params?.visibleElapsedTime;
 
-  //const imageArray = route.params?.imageArray;
-  //const isOwnReview = route.params?.writer?.userId === userProfile?.id;
-
-  // console.log('route.params?.reviewId', route.params?.reviewId);
-  // console.log('route.params?.imageArray', route.params?.imageArray);
-  // console.log('route.params?.writer', route.params?.writer);
-  // console.log('route.params?.writer.userId', route.params?.writer?.userId);
-  // console.log('userProfile.id', userProfile?.id);
-  // console.log('route.params?.ratingObj', route.params?.ratingObj);
-  // console.log('route.params?.dentalObj', route.params?.dentalObj);
-  // console.log('route.params?.treatmentDate', route.params?.treatmentDate);
-  // console.log('route.params?.elapsedTime', route.params?.elapsedTime);
 
   useEffect(() => {
     startTime = new Date();
@@ -322,27 +317,50 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     if (route.params?.isRevised) {
+      console.log("리뷰 수정 route.params?.paragraphArray22", route.params?.paragraphArray);
       route.params.isRevised = !route.params.isRevised;
       reviewScrollViewRef.current.scrollTo({x: 0, y: 0, animated: false});
 
-      const tmpTreatmentDate = new Date(
-        route.params?.treatmentDateObj.treatDate,
-      );
-      const splitedTreatmentDate = route.params?.treatmentDateObj.displayTreatDate.split(
-        '-',
-      );
+      if(route.params?.braceFinishDate === "0000-00-00") {
+        isBraceFinished.current = false
+      } else {
+        isBraceFinished.current = true
+      }
 
-      const tmpDisplayTreatDate =
-        splitedTreatmentDate[0] +
-        '.' +
-        splitedTreatmentDate[1] +
-        '.' +
-        splitedTreatmentDate[2];
+      const tmpParagraphArray = route.params?.paragraphArray.map(
+        (item: any, index: number) => {
+          let paraObj = new Object();
 
-      const tmpTreatmentDateObj = {
-        displayTreatmentDate: tmpDisplayTreatDate,
-        treatmentDate: tmpTreatmentDate,
-      };
+          if (item.img_url) {
+            console.log('리뷰 이미지 문단 item', item);
+            paraObj = {
+              id: item.id,
+              index: item.index,
+              image: {
+                uri: item.img_url,
+                name: item.img_name,
+                size: item.img_size,
+                mimeType: item.mime_type,
+                width: item.img_width,
+                height: item.img_height,
+              },
+              imgDate: item.imgDate === null ? null : formatImageDate(item.imgDate),
+              description: item.description,
+              order: item.img_before_after,
+              isPreExis: true,
+            };
+            return paraObj;
+          } else {
+            paraObj = {
+              id: item.id,
+              index: item.index,
+              description: item.description,
+            };
+          }
+
+          return paraObj;
+        },
+      );
 
       const tmpTreatPriceObj = {
         displayTreatPrice: route.params.totalPrice.toLocaleString() + '원',
@@ -358,17 +376,26 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       const tmpDentalObj = route.params.dentalObj;
       tmpDentalObj.profileImages = [];
 
+      const tmpBracePeriodObj = {
+        period: getBracePeriod(route.params?.braceStartDate, route.params?.braceFinishDate, route.params?.createdDate),
+        periodDate: getBracePeriodDate(route.params?.braceStartDate, route.params?.braceFinishDate, route.params?.createdDate),
+        startDate: new Date(route.params?.braceStartDate),
+        finishDate: route.params?.braceFinishDate === "0000-00-00" ? null :new Date(route.params?.braceFinishDate),
+      }
+
       getRevisedImageArray();
+      setParagraphArray(tmpParagraphArray);
       setParagraphArrayDisplay(route.params.paragraphArray);
       setTreatmentArrayDisplay(route.params.treatmentArray);
 
       const tmpMetaInfoObj = {
         dentalObj: tmpDentalObj,
-        ratingObj: route.params.ratingObj,
         totalPriceObj: tmpTreatPriceObj,
-        treatmentDateObj: tmpTreatmentDateObj,
+        isDentalRecommend: route.params?.isDentalRecommend,
+        bracePeriodObj: tmpBracePeriodObj,
       };
 
+      console.log("tmpMetaInfoObj", tmpMetaInfoObj);
       setMetaInfoObj(tmpMetaInfoObj);
     }
   }, [
@@ -461,21 +488,112 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
     }
   }, []);
 
+  const formatImageDate = (tmpImageDate: string) => {
+
+    const imageDateArray = tmpImageDate.split("-");
+
+    const tmpImageDateObj ={
+      imageDateDisplay: imageDateArray[0].substr(2, 3) + "." + imageDateArray[1] + "." + imageDateArray[2],
+      imageDateValue: new Date(Number(imageDateArray[0]), Number(imageDateArray[1]), Number(imageDateArray[2]))
+    }
+
+    return tmpImageDateObj
+  }
+
+
+  const getBracePeriod = (startDate: string, finishDate: string, createdDate: string) => {
+    const splitedCreatedDate = createdDate.split(" ");
+    const braceStartDate = new Date(startDate);
+    const braceEndDate = finishDate === "0000-00-00" ? new Date(splitedCreatedDate[0]) : new Date(finishDate);
+
+    const dateDiff = Math.ceil(braceEndDate.getTime() - braceStartDate.getTime());
+
+    const braceElapsedDay = dateDiff/(1000 * 60 * 60 * 24) + 1;
+    let braceElapsedRemainderYear: any;
+    let braceElapsedRemainderMonth: any;
+    let braceElapsedRemainderDay: any;
+    let braceElapsedDateText = "";
+  
+    if(braceElapsedDay >= 365) {
+      braceElapsedRemainderYear = Math.floor(braceElapsedDay / 365);
+      if((braceElapsedDay % 365) >= 30) {
+        
+        braceElapsedRemainderMonth = Math.floor((braceElapsedDay % 365) / 30);
+
+        braceElapsedDateText = braceElapsedRemainderYear + "년 " + braceElapsedRemainderMonth + "개월";
+
+        //return braceElapsedDateText;
+
+      } else {
+          braceElapsedDateText = braceElapsedRemainderYear + "년";
+
+          //return braceElapsedDateText;
+        }
+    } else {
+      if(braceElapsedDay >= 30) {
+        braceElapsedRemainderMonth = Math.floor(braceElapsedDay / 30);
+
+        if(braceElapsedDay % 30 >= 1) {
+          braceElapsedRemainderDay = braceElapsedDay % 30;
+
+          braceElapsedDateText = braceElapsedRemainderMonth + "개월 " + braceElapsedRemainderDay + "일";
+
+          //eturn braceElapsedDateText;
+
+        } else {
+          braceElapsedDateText = braceElapsedRemainderMonth + "개월";
+
+          //return braceElapsedDateText;
+        }
+      } else {
+        braceElapsedDateText = braceElapsedDay + "일";
+
+        //return braceElapsedDateText;
+      }
+    }
+
+    if(finishDate === "0000-00-00") {
+      return braceElapsedDateText + "(진행중)"
+    } else {
+      return braceElapsedDateText + "(교정완료)"
+    }
+  }
+
+  const getBracePeriodDate = (startDate: string, finishDate: string, createdDate: string) => {
+    const splitedCreatedDate = createdDate.split(" ");
+    const startDateArray = startDate.split("-");
+    const finishDateArray = finishDate === "0000-00-00" ? splitedCreatedDate[0].split("-") : finishDate.split("-");
+
+    console.log("finishDateArray", finishDateArray);
+
+    let periodDate = ""
+
+    if(finishDate === "0000-00-00") {
+      periodDate = `시작 ${startDateArray[0]}.${startDateArray[1]}.${startDateArray[2]} ~ `
+    } else {
+      periodDate = `시작 ${startDateArray[0]}.${startDateArray[1]}.${startDateArray[2]} ~ 종료 ${finishDateArray[0]}.${finishDateArray[1]}.${finishDateArray[2]}`
+    }
+
+
+    return periodDate;
+  }
+
   const getReviewDetail = () => {
     GETReviewDetail(jwtToken, reviewId)
       .then((response: any) => {
         console.log('GETReviewDetail response', response);
+        console.log('GETReviewDetail response.reviewBody.TreatmentItems', response.reviewBody.TreatmentItems);
         setLoadingReviewDetail(false);
         setRefreshingReviewDetail(false);
-
-        console.log(
-          'GETReviewDetail response.reviewBody.certifiedBill',
-          response.reviewBody.certifiedBill,
-        );
+      
         setIsCertifiedReceipt(response.reviewBody.certifiedBill);
 
-        console.log("response.reviewBody.user.userId", response.reviewBody.userId);
-        console.log("userProfile.id", userProfile.id);
+
+        if(response.reviewBody.correctionEndDate === "0000-00-00") {
+          isBraceFinished.current = false
+        } else {
+          isBraceFinished.current = true
+        }
 
         if(response.reviewBody.userId === userProfile.id) {
           setIsOwnReview(true);
@@ -515,23 +633,11 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         if (response.reviewBody.userId === userProfile.id) {
           const tmpTreatmentArray = response.reviewBody.TreatmentItems.map(
             (item: any, index: number) => {
-              let tmpTreatmentObj;
-              if (item.review_treatment_item.cost !== null) {
-                tmpTreatmentObj = {
-                  name: item.name,
-                  price: item.review_treatment_item.cost,
-                  displayPrice:
-                    Number(item.review_treatment_item.cost).toLocaleString() +
-                    '원',
+              const tmpTreatmentObj = {
+                  usualName: item.usualName,
                   id: item.id,
                 };
-              } else {
-                tmpTreatmentObj = {
-                  name: item.name,
-                  id: item.id,
-                };
-              }
-
+            
               return tmpTreatmentObj;
             },
           );
@@ -572,6 +678,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
                   width: item.img_width,
                   height: item.img_height,
                 },
+                imgDate: item.imgDate === null ? null : formatImageDate(item.imgDate),
                 description: item.description,
                 order: item.img_before_after,
                 isPreExis: true,
@@ -605,18 +712,27 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           profileImages: response.reviewBody.dental_clinic.dentalClinicProfileImgs,
         };
 
+       
+
+        const tmpBracePeriodObj = {
+          period: getBracePeriod(response.reviewBody.correctionStartDate, response.reviewBody.correctionEndDate, response.reviewBody.createdAt),
+          periodDate: getBracePeriodDate(response.reviewBody.correctionStartDate, response.reviewBody.correctionEndDate, response.reviewBody.createdAt),
+          startDate: new Date(response.reviewBody.correctionStartDate),
+          finishDate: response.reviewBody.correctionEndDate === "0000-00-00" ? null :new Date(response.reviewBody.correctionEndDate),
+        }
+
         if (response.viewerLikeReview) {
           setIsCurUserLike(true);
         } else {
           setIsCurUserLike(false);
         }
 
-        const tmpRatingObj = {
-          avgRating: response.reviewBody.AVGStarRate,
-          serviceRating: response.reviewBody.starRate_service,
-          priceRating: response.reviewBody.starRate_cost,
-          treatmentRating: response.reviewBody.starRate_treatment,
-        };
+        // const tmpRatingObj = {
+        //   avgRating: response.reviewBody.AVGStarRate,
+        //   serviceRating: response.reviewBody.starRate_service,
+        //   priceRating: response.reviewBody.starRate_cost,
+        //   treatmentRating: response.reviewBody.starRate_treatment,
+        // };
 
         const tmpTreatPriceObj = {
           displayTreatPrice:
@@ -624,28 +740,30 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           treatPrice: response.reviewBody.totalCost,
         };
 
-        const tmpTreatmentDate = new Date(response.reviewBody.treatmentDate);
-        const splitedTreatmentDate = response.reviewBody.treatmentDate.split(
-          '-',
-        );
-        const tmpDisplayTreatDate =
-          splitedTreatmentDate[0] +
-          '.' +
-          splitedTreatmentDate[1] +
-          '.' +
-          splitedTreatmentDate[2];
+        // const tmpTreatmentDate = new Date(response.reviewBody.treatmentDate);
+        // const splitedTreatmentDate = response.reviewBody.treatmentDate.split(
+        //   '-',
+        // );
+        // const tmpDisplayTreatDate =
+        //   splitedTreatmentDate[0] +
+        //   '.' +
+        //   splitedTreatmentDate[1] +
+        //   '.' +
+        //   splitedTreatmentDate[2];
 
-        const treatmentDateObj = {
-          displayTreatmentDate: tmpDisplayTreatDate,
-          treatmentDate: tmpTreatmentDate,
-        };
+        // const treatmentDateObj = {
+        //   displayTreatmentDate: tmpDisplayTreatDate,
+        //   treatmentDate: tmpTreatmentDate,
+        // };
 
         const tmpMetaInfoObj = {
           dentalObj: dentalObj,
-          ratingObj: tmpRatingObj,
           totalPriceObj: tmpTreatPriceObj,
-          treatmentDateObj: treatmentDateObj,
+          isDentalRecommend: response.reviewBody.recommend,
+          bracePeriodObj: tmpBracePeriodObj,
         };
+
+        console.log("getReviewDetail tmpMetaInfoObj", tmpMetaInfoObj);
 
         setImageArray(tmpImageArray);
         setLikeCount(response.reviewLikeNum);
@@ -793,9 +911,10 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
 
     const submitParagraphArray = paragraphArray;
     console.log('submitParagraphArray', submitParagraphArray);
+    console.log("metaInfoObj.bracePeriodObj", metaInfoObj.bracePeriodObj)
 
-    navigation.navigate('ReviewUploadStack', {
-      screen: 'ReviewMetaDataScreen',
+    navigation.navigate('BraceReviewUploadStack', {
+      screen: 'BraceReviewMetaDataScreen',
       params: {
         requestType: 'revise',
         paragraphArray: submitParagraphArray,
@@ -804,21 +923,23 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           address: metaInfoObj.dentalObj.address,
           id: metaInfoObj.dentalObj.id,
         },
-        treatmentDateObj: {
-          displayTreatmentDate:
-            metaInfoObj.treatmentDateObj.displayTreatmentDate,
-          treatmentDate: metaInfoObj.treatmentDateObj.treatmentDate,
-        },
+        // treatmentDateObj: {
+        //   displayTreatmentDate:
+        //     metaInfoObj.treatmentDateObj.displayTreatmentDate,
+        //   treatmentDate: metaInfoObj.treatmentDateObj.treatmentDate,
+        // },
         selectedTreatmentArray: treatmentArray,
-        ratingObj: {
-          avgRating: metaInfoObj.ratingObj.avgRating,
-          priceRating: metaInfoObj.ratingObj.priceRating,
-          serviceRating: metaInfoObj.ratingObj.serviceRating,
-          treatmentRating: metaInfoObj.ratingObj.treatmentRating,
-        },
+        // ratingObj: {
+        //   avgRating: metaInfoObj.ratingObj.avgRating,
+        //   priceRating: metaInfoObj.ratingObj.priceRating,
+        //   serviceRating: metaInfoObj.ratingObj.serviceRating,
+        //   treatmentRating: metaInfoObj.ratingObj.treatmentRating,
+        // },
         totalPriceObj: metaInfoObj.totalPriceObj,
         reviewId: reviewId,
-        treatPrice: totalPrice,
+        isDentalRecommend: metaInfoObj.isDentalRecommend,
+        bracePeriodObj: metaInfoObj.bracePeriodObj,
+        isBraceFinished: isBraceFinished.current,
       },
     });
   };
@@ -1032,7 +1153,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       <Container as={SafeAreaView} forceInset={{top: 'always'}}>
         <NavigationHeader
         inSafeAreaView={true}
-          headerLeftProps={{type: 'arrow', onPress: goBack, text: '리얼리뷰'}}
+          headerLeftProps={{type: 'arrow', onPress: goBack, text: '교정 리뷰'}}
           headerRightProps={{type: 'viewMore', onPress: clickMoreView}}
         />
         <ScrollView

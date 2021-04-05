@@ -64,7 +64,7 @@ justify-content: center;
 
 const ProfileTitleText = Styled.Text`
 font-weight: 800;
-font-size: 22px;
+font-size: 20px;
 line-height: 24px;
 color: #000000;
 `;
@@ -124,6 +124,10 @@ background: #F5F7F9;
 
 const SectionImage = Styled.Image`
 margin-left: auto;
+`;
+
+
+const ProfileSectionImage = Styled.Image`
 `;
 
 interface Props {
@@ -227,7 +231,7 @@ const MyProfileScreen = ({navigation, route}: Props) => {
             <TouchableWithoutFeedback onPress={() => navigation.navigate('EditProfileStackScreen')}>
             <ProfileSubTitleView>
             <ProfileSubTitleText>{'내 정보 수정'}</ProfileSubTitleText>
-            <SectionImage source={sectionArrow} />
+            <ProfileSectionImage source={sectionArrow} />
             </ProfileSubTitleView>
             </TouchableWithoutFeedback>
           </ProfileContentView>

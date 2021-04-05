@@ -216,11 +216,11 @@ const ReplyItem = ({
           onPress={() => moveToAnotherProfile(userId, nickname, profileImage)}>
           <ProfileImageContainer>
             <ProfileImage
-              source={{
-                uri: img_thumbNail
-                ? img_thumbNail:
-                  profileImage
-              }}
+              source={
+              img_thumbNail
+              ? {uri: img_thumbNail}
+              : require('~/Assets/Images/MyPage/default_profileImg.png')
+              }
             />
           </ProfileImageContainer>
         </TouchableWithoutFeedback>

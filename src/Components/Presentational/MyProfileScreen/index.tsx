@@ -437,6 +437,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
 
     return (
       <ReviewItem
+        reviewObj={item}
         reviewId={item.id}
         writer={writer}
         createdAt={item.createdAt}

@@ -425,6 +425,8 @@ const ContentPostScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     let descriptions = '';
+    let isExistImage: boolean;
+
     paragraphArray.forEach((item: any, index: number) => {
       if (item.description !== null) {
         if (item.description.length > 0) {

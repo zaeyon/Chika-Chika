@@ -1112,12 +1112,6 @@ const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalI
                   {(dentistInfo.generalDentist == 0 && dentistInfo.specialistDentist == 0) && (
                     <DetailInfoDescripText>{'-'}</DetailInfoDescripText>
                   )}
-                  {/* {dentistInfo.resident !== null && (
-                    <DetailInfoDescripText>{`레지던트 ${dentistInfo.resident}명`}</DetailInfoDescripText>
-                  )}
-                  {dentistInfo.intern !== null && (
-                    <DetailInfoDescripText>{`인턴 ${dentistInfo.intern}명`}</DetailInfoDescripText>
-                  )} */}
                 </DentistInfoListContainer>
               </DetailInfoItemContainer>
               <DetailInfoItemContainer style={{borderWidth: 0}}>
@@ -1234,7 +1228,7 @@ const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalI
                     </PostReviewButton>
                     </TouchableWithoutFeedback>
                   </PostReviewContainer>
-                  {dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate.all && (
+                  {/* {dentalDetailInfo.clinicInfoHeader.reviewAVGStarRate.all && (
                     <RatingReportContainer>
                       <RatingReport
                         avgRating={
@@ -1255,7 +1249,7 @@ const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalI
                         }
                       />
                     </RatingReportContainer>
-                  )}
+                  )} */}
                   <ReviewListContainer>
                   <ReviewList
                   navigation={navigation}

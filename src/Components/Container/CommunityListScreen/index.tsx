@@ -157,8 +157,8 @@ const CommunityListScreen = ({navigation, route}: Props) => {
       region: 'all',
     };
 
-    if(hometown[0].id) {
-      GETCommunityPosts(jwtToken, String(hometown[0].id), questionform).then(
+    if(hometown[0]?.id) {
+      GETCommunityPosts(jwtToken, String(hometown[0]?.id), questionform).then(
         (response: any) => {
           const data = {
             type: 'Question',
@@ -168,7 +168,7 @@ const CommunityListScreen = ({navigation, route}: Props) => {
           console.log('res', response.length);
         },
       );
-      GETCommunityPosts(jwtToken, String(hometown[0].id), freetalkform).then(
+      GETCommunityPosts(jwtToken, String(hometown[0]?.id), freetalkform).then(
         (response: any) => {
           const data = {
             type: 'FreeTalk',

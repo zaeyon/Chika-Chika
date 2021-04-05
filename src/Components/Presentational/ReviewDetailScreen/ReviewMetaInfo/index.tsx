@@ -19,7 +19,6 @@ border-radius: 16px;
 
 const PriceInfoContainer = Styled.View`
 padding: 16px 16px 16px 16px;
-background-color: #ffffff;
 `;
 
 const InfoLabelText = Styled.Text`
@@ -36,11 +35,18 @@ align-items: center;
 justify-content: space-between;
 `;
 
-const InfoValueText = Styled.View`
+const InfoValueText = Styled.Text`
 font-weight: 400;
-font-size: 12px;
+font-size: 14px;
 line-height: 16px;
 color: #000000;
+`;
+
+const InfoDescripText = Styled.Text`
+font-weight: 400; 
+font-size: 12px;
+line-height: 16px;
+color: #4E525D;
 `;
 
 const ReceiptCertificationContainer = Styled.View`
@@ -77,7 +83,6 @@ border-color: #9AA2A9;
 `;
 
 const SectionDevider = Styled.View`
-flex: 1;
 margin-left: 16px;
 margin-right: 16px;
 height: 0.5px;
@@ -141,7 +146,6 @@ padding: 24px 16px 16px 16px;
 flex-direction: row;
 align-items: center;
 justify-content: space-between;
-
 `;
 
 const DentalNameAddressContainer = Styled.View`
@@ -155,7 +159,7 @@ line-height: 16px;
 `;
 
 const DentalAddressContainer = Styled.View`
-margin-top: 4px;
+margin-top: 6px;
 width: ${wp('65%')}px;
 flex-direction: row;
 align-items: center;
@@ -229,11 +233,45 @@ height: ${hp('0.738%')}px;
 background-color: #9AA2A9; 
 `;
 
+const BracePeriodInfoContainer = Styled.View`
+flex: 1;
+padding: 14px 16px 16px 16px;
+`;
+
+const DentalNameContainer = Styled.View`
+flex-direction: row;
+align-items: center;
+`;
+
+const DentalRecommendBedge = Styled.View`
+margin-left: 7px;
+flex-direction: row;
+align-items: center;
+padding: 2px 6.5px 2px 6.5px;
+background-color: #00D1FF;
+border-radius: 30px;
+`;
+
+const RecommendIcon = Styled.Image`
+width: ${wp('4%')}px;
+height: ${wp('4%')}px;
+`;
+
+const RecommendText = Styled.Text`
+margin-left: 3px;
+font-weight: 700;
+font-size: 10px;
+color: #FFFFFF;
+line-height: 16px;
+`;
+
 interface MetaInfoObj {
   dentalObj: any;
   ratingObj: any;
   treatmentDateObj: any;
   totalPriceObj: any;
+  isDentalRecommend: boolean;
+  bracePeriodObj: any;
 }
 
 interface Props {
@@ -256,17 +294,8 @@ const ReviewMetaInfo = ({
   let formattedAddress = '';
 
   if (metaInfoObj.dentalObj?.address) {
-    splitedAddress = metaInfoObj.dentalObj.address.split(' ');
-    formattedAddress =
-      splitedAddress[0] +
-      ' ' +
-      splitedAddress[1] +
-      ' ' +
-      splitedAddress[2] +
-      ' ' +
-      splitedAddress[3] +
-      ' ' +
-      splitedAddress[4];
+    splitedAddress = metaInfoObj.dentalObj.address.split(' (');
+    formattedAddress = splitedAddress[0]
   }
 
   return (
@@ -275,53 +304,37 @@ const ReviewMetaInfo = ({
         onPress={() => moveToDentalDetail(metaInfoObj.dentalObj.id)}>
         <DentalInfoContainer>
           <DentalNameAddressContainer>
-            <DentalNameText>{metaInfoObj.dentalObj?.originalName}</DentalNameText>
+            <DentalNameContainer>
+            <DentalNameText>{metaInfoObj.dentalObj?.originalName}
+            </DentalNameText>
+            {metaInfoObj.isDentalRecommend && (
+            <DentalRecommendBedge>
+              <RecommendIcon
+              style={{tintColor: "#FFFFFF"}}
+              source={require('~/Assets/Images/Dental/ic_recommend.png')}/>
+              <RecommendText>{"추천"}</RecommendText>
+            </DentalRecommendBedge>
+            )}
+            </DentalNameContainer>
             <DentalAddressContainer>
               <DentalAddressText>{formattedAddress}</DentalAddressText>
             </DentalAddressContainer>
           </DentalNameAddressContainer>
-          <DentalImageContainer>
-            <DentalImage
-            source={{uri: metaInfoObj.dentalObj.profileImages.length > 0 ? metaInfoObj.dentalObj.profileImages[0] : ''}}/>
-          </DentalImageContainer>
         </DentalInfoContainer>
       </TouchableWithoutFeedback>
-      <SectionDevider />
-      <RatingInfoContainer>
-        <InfoLabelText>{'회원님의 병원 만족도'}</InfoLabelText>
-        <RatingValueContainer>
-          <AvgRatingValueContainer>
-            <Rating
-              type={'custom'}
-              ratingImage={require('~/Assets/Images/Review/ic_ratingStar_swipe.png')}
-              ratingColor={'#00D1FF'}
-              ratingBackgroundColor={'#E2E6ED'}
-              imageSize={wp('4.26%')}
-              ratingCount={5}
-              startingValue={metaInfoObj.ratingObj?.avgRating}
-              readonly={true}
-            />
-            <AvgRatingValueText>{metaInfoObj.ratingObj?.avgRating}</AvgRatingValueText>
-          </AvgRatingValueContainer>
-          <DetailRatingContainer>
-            <DetailRatingTypeText>{'시술'}</DetailRatingTypeText>
-            <DetailRatingValueText>
-              {metaInfoObj.ratingObj?.treatmentRating}
-            </DetailRatingValueText>
-            <DetailRatingDivider />
-            <DetailRatingTypeText>{'서비스'}</DetailRatingTypeText>
-            <DetailRatingValueText>
-              {metaInfoObj.ratingObj?.serviceRating}
-            </DetailRatingValueText>
-            <DetailRatingDivider />
-            <DetailRatingTypeText>{'가격'}</DetailRatingTypeText>
-            <DetailRatingValueText>
-              {metaInfoObj.ratingObj?.priceRating}
-            </DetailRatingValueText>
-          </DetailRatingContainer>
-        </RatingValueContainer>
-      </RatingInfoContainer>
-      <SectionDevider />
+      <SectionDevider/>
+      <BracePeriodInfoContainer
+      style={metaInfoObj.totalPriceObj?.treatPrice === 0 && {paddingBottom: 24}}>
+        <InfoLabelText>{"교정 기간"}</InfoLabelText>
+        <InfoValueText
+        style={{marginTop: 8}}>{`${metaInfoObj.bracePeriodObj?.period}`}</InfoValueText>
+        <InfoDescripText
+        style={{marginTop: 9}}>{`${metaInfoObj.bracePeriodObj?.periodDate}`}</InfoDescripText>
+      </BracePeriodInfoContainer>
+      {metaInfoObj.totalPriceObj.treatPrice !== 0 && (
+      <View>
+      <SectionDevider
+      style={{height: 0.7}}/>
       <PriceInfoContainer>
         <InfoLabelText>{'전체 시술 비용'}</InfoLabelText>
         <PriceItemContainer>
@@ -334,15 +347,12 @@ const ReviewMetaInfo = ({
             </ReceiptCertificationContainer>
             )}
             <TotalPriceText
-            style={!isCertifiedReceipt && {marginLeft: 0}}>{metaInfoObj.totalPriceObj.displayTreatPrice}</TotalPriceText>
+            style={!isCertifiedReceipt && {marginLeft: 0}}>{metaInfoObj.totalPriceObj?.displayTreatPrice}</TotalPriceText>
           </View>
         </PriceItemContainer>
       </PriceInfoContainer>
-      <SectionDevider />
-      <TreatmentDateInfoContainer>
-        <InfoLabelText>{'방문 일자'}</InfoLabelText>
-        <TreatmentDateText>{metaInfoObj.treatmentDateObj.displayTreatmentDate}</TreatmentDateText>
-      </TreatmentDateInfoContainer>
+      </View>
+      )}
     </Container>
   );
 };

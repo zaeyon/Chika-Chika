@@ -217,7 +217,7 @@ const MyReviewScreen = ({navigation, route}: Props) => {
           <EmptyContentImage
             source={require('~/Assets/Images/Comment/ic_noComment.png')}
           />
-          <EmptyContentText>{'좋아요한 후기가 없습니다.'}</EmptyContentText>
+          <EmptyContentText>{'작성한 후기가 없습니다.'}</EmptyContentText>
         </EmptyContainerView>
       ) : null,
     [postData],

@@ -114,15 +114,15 @@ const ClinicRoute = ({
 
   useEffect(() => {
     console.log('clinic request');
-    setRegion(selectedHometown.id === -1 ? 'all' : 'residence');
+    setRegion(selectedHometown?.id === -1 ? 'all' : 'residence');
 
     getUserCurrentLocation(({lat, long}: any) => {
       const form = {
         lat,
         long,
         pathType: 'clinic',
-        region: selectedHometown.id === -1 ? 'all' : 'residence',
-        cityId: String(selectedHometown.id),
+        region: selectedHometown?.id === -1 ? 'all' : 'residence',
+        cityId: String(selectedHometown?.id),
         order: 'distance',
         offset: 0,
         limit: 10,
@@ -146,8 +146,8 @@ const ClinicRoute = ({
         lat,
         long,
         pathType: 'clinic',
-        region: selectedHometown.id === -1 ? 'all' : 'residence',
-        cityId: String(selectedHometown.id),
+        region: selectedHometown?.id === -1 ? 'all' : 'residence',
+        cityId: String(selectedHometown?.id),
         order,
         offset: 0,
         limit: 10,
@@ -177,8 +177,8 @@ const ClinicRoute = ({
             lat,
             long,
             pathType: 'clinic',
-            region: selectedHometown.id === -1 ? 'all' : 'residence',
-            cityId: String(selectedHometown.id),
+            region: selectedHometown?.id === -1 ? 'all' : 'residence',
+            cityId: String(selectedHometown?.id),
             order,
             offset: pageIndex * limit,
             limit,
@@ -305,8 +305,8 @@ const ClinicRoute = ({
           lat,
           long,
           pathType: 'clinic',
-          region: selectedHometown.id === -1 ? 'all' : 'residence',
-          cityId: String(selectedHometown.id),
+          region: selectedHometown?.id === -1 ? 'all' : 'residence',
+          cityId: String(selectedHometown?.id),
           order,
           offset: 0,
           limit: 10,

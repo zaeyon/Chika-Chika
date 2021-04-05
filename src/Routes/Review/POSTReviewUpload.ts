@@ -13,9 +13,12 @@ interface params {
     formattedProofImage: Object,
     totalPrice?: any,
     treatmentDate: string,
+    recommend: boolean,
+    correctionStartDate: any,
+    correctionEndDate: any,
 } 
 
-const POSTReviewUpload = ({jwtToken, starRate_cost, starRate_treatment, starRate_service, formattedParagraphArray, dentalClinicId, formattedTreatmentArray=[], formattedDiseaseArray=[], totalPrice, treatmentDate, formattedProofImage}: params) => {
+const POSTReviewUpload = ({jwtToken, starRate_cost, starRate_treatment, starRate_service, formattedParagraphArray, dentalClinicId, formattedTreatmentArray=[], formattedDiseaseArray=[], totalPrice, treatmentDate, formattedProofImage, recommend, correctionStartDate, correctionEndDate}: params) => {
     const uri = serverConfig.baseUri + "/api/v1/reviews"
 
     console.log("POSTReviewUpload starRate_cost", starRate_cost);
@@ -28,20 +31,36 @@ const POSTReviewUpload = ({jwtToken, starRate_cost, starRate_treatment, starRate
     console.log("POSTReviewUpload treatmentDate", treatmentDate);
     console.log("POSTReviewUpload formattedProofImage", formattedProofImage);
 
+    console.log("POSTReviewUpload recommend", recommend);
+    console.log("POSTReviewUpload correctionStarDate", correctionStartDate);
+    console.log("POSTReviewUpload correctionEndDate", correctionEndDate);
+
+
     if(!totalPrice) {
         totalPrice = null
     } 
 
+    // const body = `{
+    //     "starRate_cost":${starRate_cost},
+    //     "starRate_treatment":${starRate_treatment},
+    //     "starRate_service":${starRate_service},
+    //     "treatments":${JSON.stringify(formattedTreatmentArray)},
+    //     "diseases":${JSON.stringify(formattedDiseaseArray)},
+    //     "dentalClinicId":${dentalClinicId},
+    //     "totalCost":${totalPrice},
+    //     "treatmentDate":"${treatmentDate}"
+    // }`
+
     const body = `{
-        "starRate_cost":${starRate_cost},
-        "starRate_treatment":${starRate_treatment},
-        "starRate_service":${starRate_service},
+        "recommend":${recommend},
         "treatments":${JSON.stringify(formattedTreatmentArray)},
         "diseases":${JSON.stringify(formattedDiseaseArray)},
         "dentalClinicId":${dentalClinicId},
         "totalCost":${totalPrice},
-        "treatmentDate":"${treatmentDate}"
+        "correctionStartDate": ${JSON.stringify(correctionStartDate)},
+        "correctionEndDate": ${JSON.stringify(correctionEndDate)}
     }`
+
     let formData = new FormData();
 
     const stringfiedPara = JSON.stringify(formattedParagraphArray);

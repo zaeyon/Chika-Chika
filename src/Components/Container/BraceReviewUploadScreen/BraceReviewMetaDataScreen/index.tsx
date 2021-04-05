@@ -621,6 +621,32 @@ const RecommendLeftContainer = Styled.View`
 flex-direction: column;
 `;
 
+const BraceStepButtonContainer = Styled.View`
+flex-direction: row;
+flex: 1;
+`;
+
+const BraceStepButton = Styled.View`
+padding-top: 4px;
+padding-bottom: 4px;
+flex: 1;
+background-color: #FFFFFF;
+border-radius: 14.5px;
+border-width: 1px;
+border-color: #E2E6ED;
+align-items: center;
+justify-content: center;
+`;
+
+const BraceStepText = Styled.Text`
+font-weight: 400;
+font-size: 14px;
+line-height: 24px;
+color: #131F3C;
+`;
+
+
+
 
 interface Props {
   navigation: any;
@@ -655,16 +681,36 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     priceRating: null,
   });
 
-  const [displayPrice, setDisplayPrice] = useState<any>();
+  const [displayPrice, setDisplayPrice] = useState<any>('');
 
   const [isActivatedNext, setIsActivatedNext] = useState<boolean>(false);
   const [isVisibleDatePicker, setIsVisibleDatePicker] = useState<boolean>(false);
-  const [isVisibleBraceElapsedDatePicker, setIsVisibleBraceElapsedDatePicker] = useState<boolean>(false);
+  const [isVisibleBraceStartDatePicker, setIsVisibleBraceStartDatePicker] = useState<boolean>(false);
+  const [isVisibleBraceFinishDatePicker, setIsVisibleBraceFinishDatePicker] = useState<boolean>(false);
   const [isFocusedTotalPriceInput, setIsFocusedTotalPriceInput] = useState<boolean>(false);
 
   const [selectedTreatmentYear, setSelectedTreatmentYear] = useState<any>(`${new Date().getFullYear()}`);
   const [selectedTreatmentMonth, setSelectedTreatmentMonth] = useState<any>(`${new Date().getMonth() + 1}`);
   const [selectedTreatmentDay, setSelectedTreatmentDay] = useState<any>(`${new Date().getDate()}`);
+
+  const [isBraceFinished, setIsBraceFinished] = useState<boolean>(false);
+
+  const [braceStartDateObj, setBraceStartDateObj] = useState<any>({
+    display: "",
+    value: "",
+  });
+  const [selectedBraceStartDateYear, setSelectedBraceStartDateYear] = useState<any>(`${new Date().getFullYear()}`);
+  const [selectedBraceStartDateMonth, setSelectedBraceStartDateMonth] = useState<any>(`${new Date().getMonth() + 1}`);
+  const [selectedBraceStartDateDay, setSelectedBraceStartDateDay] = useState<any>(`${new Date().getDate()}`);
+
+
+  const [braceFinishDateObj, setBraceFinishDateObj] = useState<any>({
+    display: "",
+    value: "",
+  });
+  const [selectedBraceFinishDateYear, setSelectedBraceFinishDateYear] = useState<any>(`${new Date().getFullYear()}`);
+  const [selectedBraceFinishDateMonth, setSelectedBraceFinishDateMonth] = useState<any>(`${new Date().getMonth() + 1}`);
+  const [selectedBraceFinishDateDay, setSelectedBraceFinishDateDay] = useState<any>(`${new Date().getDate()}`);
 
   const [selectedProofImage, setSelectedProofImage] = useState<Object>({});
   const [selectedDentalImages, setSelectedDentalImages] = useState<Array<any>>([]);
@@ -676,7 +722,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     braceElapsedDate: '',
   })
 
-  const [isRecommendDental, setIsRecommendDental] = useState<boolean>(false);
+  const [isDentalRecommend, setIsDentalRecommend] = useState<boolean>(false);
 
   const actionSheetItemList = ['취소', '촬영', '앨범'];
 
@@ -688,7 +734,8 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   const actionSheetRefByDental = useRef() as any;
 
   const modalContentY = useRef(new Animated.Value(hp('50%'))).current;
-  const braceElapsedDatePickerY = useRef(new Animated.Value(hp('50%'))).current;
+  const braceStartDatePickerY = useRef(new Animated.Value(hp('50%'))).current;
+  const braceFinishDatePickerY = useRef(new Animated.Value(hp('50%'))).current;
   
   console.log("ReviewMetaDataScreen route.params?", route);
   
@@ -735,6 +782,64 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     }
   }, [route.params?.treatmentDateObj])
 
+
+  useEffect(() => {
+    if(route.params?.bracePeriodObj) {
+      console.log("route.params?.bracePeriodObj", route.params?.bracePeriodObj);
+
+      const tmpBraceStartDate = new Date(route.params.bracePeriodObj.startDate);
+
+      const tmpBraceStartYear = tmpBraceStartDate.getFullYear();
+      const tmpBraceStartMonth = (tmpBraceStartDate.getMonth() + 1);
+      const tmpBraceStartDay = tmpBraceStartDate.getDate();
+
+
+      const tmpMonth = tmpBraceStartMonth < 10 ? '0' + tmpBraceStartMonth : tmpBraceStartMonth;
+      const tmpDay = tmpBraceStartDay < 10 ? '0' + tmpBraceStartDay : tmpBraceStartDay;
+
+      const tmpBraceStartDateObj = {
+        display: tmpBraceStartYear + '.' + tmpMonth + "." + tmpDay,
+        value: tmpBraceStartDate
+      }
+
+      setBraceStartDateObj(tmpBraceStartDateObj)
+
+      if(route.params?.isBraceFinished) {
+        const tmpBraceFinishDate = new Date(route.params.bracePeriodObj.finishDate);
+
+        const tmpBraceFinishYear = tmpBraceFinishDate.getFullYear();
+        const tmpBraceFinishMonth = (tmpBraceFinishDate.getMonth() + 1);
+        const tmpBraceFinishDay = tmpBraceFinishDate.getDate();
+
+
+      const tmpMonth = tmpBraceFinishMonth < 10 ? '0' + tmpBraceFinishMonth : tmpBraceFinishMonth;
+      const tmpDay = tmpBraceFinishDay < 10 ? '0' + tmpBraceFinishDay : tmpBraceFinishDay;
+
+        const tmpBraceFinishDateObj = {
+          display: tmpBraceFinishYear + '.' + tmpMonth + "." + tmpDay,
+          value: tmpBraceFinishDate
+        }
+
+        setBraceFinishDateObj(tmpBraceFinishDateObj)
+      }
+    }
+  }, [route.params?.bracePeriodObj])
+
+  useEffect(() => {
+    console.log("route.params?.isBraceFinished", route.params?.isBraceFinished);
+    setIsBraceFinished(route.params?.isBraceFinished)
+  }, [route.params?.isBraceFinished])
+
+  useEffect(() => {
+    if(route.params?.isDentalRecommend == true) {
+      setIsDentalRecommend(true)
+    } else if(route.params?.isDentalRecommend == false) {
+      setIsDentalRecommend(false)
+    }
+  }, [route.params?.isDentalRecommend])
+  
+  
+
   useEffect(() => {
     Keyboard.addListener('keyboardWillShow', _keyboardWillShow);
     Keyboard.addListener("keyboardWillHide", _keyboardWillHide);
@@ -746,18 +851,31 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }, []);
 
   useEffect(() => {
-    if(dentalObj.originalName && treatmentDateObj.treatmentDate !== '') {
-      setIsActivatedNext(true)
+    if(dentalObj.originalName && braceStartDateObj.display !== '' && braceStartDateObj.value !== '' && treatmentArray.length > 0) {
+      if(isBraceFinished) {
+        if(braceFinishDateObj.display !== '' && braceFinishDateObj.value !== '') {
+          setIsActivatedNext(true)
+        } else {
+          setIsActivatedNext(false)
+        } 
+      } else {
+        setIsActivatedNext(true)
+      }
     } else {
       setIsActivatedNext(false);
     }
-  }, [dentalObj, treatmentArray, ratingObj, treatmentDateObj])
+  }, [dentalObj, treatmentArray, braceStartDateObj, braceFinishDateObj, isBraceFinished])
 
   useEffect(() => {
     if(route.params?.totalPriceObj) {
       console.log("route.params?.totalPriceObj", route.params?.totalPriceObj);
-      setDisplayPrice(route.params?.totalPriceObj.displayTreatPrice);
-      setTotalPrice(route.params?.totalPriceObj.treatPrice);
+      if(route.params?.totalPriceObj.treatPrice == 0) {
+        setDisplayPrice('');
+        setTotalPrice('');
+      } else {
+        setDisplayPrice(route.params?.totalPriceObj.displayTreatPrice);
+        setTotalPrice(route.params?.totalPriceObj.treatPrice);
+      }
     }
   }, [route.params?.totalPriceObj])
 
@@ -847,6 +965,32 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
       useNativeDriver: true,
     }).start();
   }
+
+
+  const onPressBraceStartDate = () => {
+    setIsVisibleBraceStartDatePicker(true);
+    priceInputRef.current.blur();
+    Animated.spring(braceStartDatePickerY, {
+      toValue: 0,
+      friction: 17,
+      tension: 68,
+      useNativeDriver: true,
+    }).start();
+  }
+
+
+  const onPressBraceFinishDate = () => {
+    setIsVisibleBraceFinishDatePicker(true);
+    priceInputRef.current.blur();
+    Animated.spring(braceFinishDatePickerY, {
+      toValue: 0,
+      friction: 17,
+      tension: 68,
+      useNativeDriver: true,
+    }).start();
+  }
+
+
 
   const onPressTotalPrice = () => {
 
@@ -969,7 +1113,9 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
         description: "",
       },],
       reviewId: route.params?.reviewId,
-      isRecommendDental: isRecommendDental,
+      isDentalRecommend: isDentalRecommend,
+      braceStartDate: braceStartDateObj.value,
+      braceFinishDate: braceFinishDateObj.value,
     })
   }
 
@@ -1009,7 +1155,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   );
 
   const onPressRecommendDental = () => {
-    setIsRecommendDental(!isRecommendDental);
+    setIsDentalRecommend(!isDentalRecommend);
   }
 
   const navigateToCameraByProof = useCallback(() => {
@@ -1069,21 +1215,21 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     });
   }, [])
 
-  const cancelTreatmentDateModal = useCallback(() => {
-    Animated.timing(modalContentY, {
+  const cancelBraceStartDateModal = useCallback(() => {
+    Animated.timing(braceStartDatePickerY, {
       toValue: hp('50%'),
       duration: 250,
       useNativeDriver: true,
-    }).start(() => setIsVisibleDatePicker(false));
+    }).start(() => setIsVisibleBraceStartDatePicker(false));
   }, []);
 
-  const cancelBraceElapsedDateModal = useCallback(() => {
-    Animated.timing(braceElapsedDatePickerY, {
+  const cancelBraceFinishDateModal = useCallback(() => {
+    Animated.timing(braceFinishDatePickerY, {
       toValue: hp('50%'),
       duration: 250,
       useNativeDriver: true,
-    }).start(() => setIsVisibleBraceElapsedDatePicker(false));
-  }, []);
+    }).start(() => setIsVisibleBraceFinishDatePicker(false));
+  }, [])
 
 
   const deleteTreatItem = (treat: object) => {
@@ -1094,24 +1240,53 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     setTreatmentArray(tmpTreatmentArray);
   };
 
-  const initializeTreatmentDate = () => {
-    setIsVisibleDatePicker(false);
-    setTreatmentDateObj({
-      displayTreatmentDate: '',
-      treatmentDate: ''
+  const initializeBraceStartDate = () => {
+    setIsVisibleBraceStartDatePicker(false);
+    setBraceStartDateObj({
+      display: '',
+      value: ''
     });
   }
 
-  const registerBraceElapsedDate = () => {
+  const initializeBraceFinishDate = () => {
+    setIsVisibleBraceFinishDatePicker(false);
+    setBraceFinishDateObj({
+      display: '',
+      value: '',
+    });
+  }
 
-    const tmpTreatmentDate = {
-      displayTreatmentDate: selectedTreatmentYear + '.' + selectedTreatmentMonth + '.' + selectedTreatmentDay,
-      treatmentDate: selectedTreatmentYear + '-' + selectedTreatmentMonth + '-' + selectedTreatmentDay
+  const registerBraceStartDate = () => {
+
+    const tmpMonth = selectedBraceStartDateMonth < 10 ? '0' + selectedBraceStartDateMonth : selectedBraceStartDateMonth;
+    const tmpDay = selectedBraceStartDateDay < 10 ? '0' + selectedBraceStartDateDay : selectedBraceStartDateDay;
+
+    const tmpBraceStartDate = {
+      display: selectedBraceStartDateYear + '.' + tmpMonth + '.' + tmpDay,
+      value: new Date(selectedBraceStartDateYear, selectedBraceStartDateMonth - 1, Number(selectedBraceStartDateDay)),
     }
 
-    setTreatmentDateObj(tmpTreatmentDate);
-    cancelBraceElapsedDateModal()
+    console.log("tmpBraceStartDate", tmpBraceStartDate)
+
+    setBraceStartDateObj(tmpBraceStartDate);
+    cancelBraceStartDateModal()
   };
+
+  const registerBraceFinishDate = () => {
+
+    const tmpMonth = selectedBraceFinishDateMonth < 10 ? '0' + selectedBraceFinishDateMonth : selectedBraceFinishDateMonth;
+    const tmpDay = selectedBraceFinishDateDay < 10 ? '0' + selectedBraceFinishDateDay : selectedBraceFinishDateDay;
+
+    const tmpBraceFinishDate = {
+      display: selectedBraceFinishDateYear + '.' + tmpMonth + '.' + tmpDay,
+      value: new Date(selectedBraceFinishDateYear, selectedBraceFinishDateMonth - 1, Number(selectedBraceFinishDateDay)),
+    }
+
+    setBraceFinishDateObj(tmpBraceFinishDate);
+    cancelBraceFinishDateModal();
+  }
+
+
 
   const moveToSelectProofImage = () => {
     if(selectedProofImage.uri) {
@@ -1129,6 +1304,21 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
   const deleteSelectedProofImage = () => {
     setSelectedProofImage({});
+  }
+
+  const changeBraceStep = (isFinished: boolean) => {
+
+    if(isFinished === false) {
+      setBraceFinishDateObj({
+        display: '',
+        value: ''
+      });
+    }
+
+    if(isBraceFinished !== isFinished) {
+      setIsBraceFinished(isFinished);
+    }
+
   }
 
   const renderDentalImageListHeader = useCallback(
@@ -1173,53 +1363,181 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     [],
   );
 
-  const renderYearPickerItem = useCallback(() => {
-    //const startYear = 1900;
-    //const currentYear = new Date(Date.now()).getFullYear();
-    const yearArr = [0, 1, 2, 3, 4, 5];
+
+  const onValueChangeStartYearPicker = (yearValue: number) => {
+    setSelectedBraceStartDateYear(yearValue);
+
+    const currentDate = new Date(Date.now());
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentDay = currentDate.getDate();
+
+    if(yearValue == currentYear) {
+      if(selectedBraceStartDateMonth > currentMonth) {
+        setSelectedBraceStartDateMonth(1);
+      }
+
+      if(selectedBraceStartDateDay > currentDay) {
+        setSelectedBraceStartDateDay(1);
+      }
+    }
+  }
+
+  const onValueChangeStartMonthPicker = (monthValue: number) => {
+    setSelectedBraceStartDateMonth(monthValue);
+
+    const currentDate = new Date(Date.now());
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentDay = currentDate.getDate();
+
+    console.log("currentMonth", currentMonth);
+    console.log("monthValue", monthValue);
+
+    if(monthValue == currentMonth && selectedBraceStartDateYear == currentYear) {
+      console.log("currentDay", currentDay);
+      if(selectedBraceStartDateDay > currentDay) {
+        setSelectedBraceStartDateDay(1);
+      }
+    }
+
+  }
+
+  const onValueChangeStartDayPicker = (dayValue: number) => {
+    setSelectedBraceStartDateDay(dayValue);
+  }
+
+
+  const onValueChangeFinishYearPicker = (yearValue: number) => {
+    setSelectedBraceFinishDateYear(yearValue);
+
+    const currentDate = new Date(Date.now());
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentDay = currentDate.getDate();
+
+    if(yearValue == currentYear) {
+      if(selectedBraceFinishDateMonth > currentMonth) {
+        setSelectedBraceFinishDateMonth(1);
+      }
+
+      if(selectedBraceFinishDateDay > currentDay) {
+        setSelectedBraceFinishDateDay(1);
+      }
+    }
+  }
+
+  const onValueChangeFinishMonthPicker = (monthValue: number) => {
+    setSelectedBraceFinishDateMonth(monthValue);
+
+    const currentDate = new Date(Date.now());
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentDay = currentDate.getDate();
+
+    console.log("currentMonth", currentMonth);
+    console.log("monthValue", monthValue);
+
+    if(monthValue == currentMonth && selectedBraceFinishDateYear == currentYear) {
+      console.log("currentDay", currentDay);
+      if(selectedBraceFinishDateDay > currentDay) {
+        setSelectedBraceFinishDateDay(1);
+      }
+    }
+
+  }
+
+  const onValueChangeFinishDayPicker = (dayValue: number) => {
+    setSelectedBraceFinishDateDay(dayValue);
+  }
+
+
+  const renderBraceStartYearPickerItem = useCallback(() => {
+    const startYear = 1900;
+    const currentYear = new Date(Date.now()).getFullYear();
     const result = [];
-    for (let i = 0; i < yearArr.length; i++) {
+    for (let i = 0; i <= currentYear - startYear; i++) {
       result.push(
         <Picker.Item
-          key={String(yearArr[i])}
-          label={String(yearArr[i])}
-          value={String(yearArr[i])}
+          key={String(startYear + i)}
+          label={String(startYear + i)}
+          value={String(startYear + i)}
         />,
       );
     }
     return result;
   }, []);
 
-  const renderMonthPickerItem = useCallback(() => {
-    // const currentDate = new Date(Date.now());
-    // const result = [];
-    // if (parseInt(selectedTreatmentYear) === currentDate.getFullYear()) {
-    //   for (let i = 1; i <= currentDate.getMonth() + 1; i++) {
-    //     result.push(
-    //     <Picker.Item
-    //     key={String(i)}
-    //     label={String(i)}
-    //     value={String(i)} />
-    //     );
-    //   }
-    // } else {
-    //   for (let i = 1; i <= 12; i++) {
-    //     result.push(
-    //     <Picker.Item
-    //     key={String(i)}
-    //     label={String(i)}
-    //     value={String(i)} />);
-    //   }
-    // }
-    // return result;
-  }, [selectedTreatmentYear]);
+  const renderBraceFinishYearPickerItem = useCallback(() => {
+    const startYear = 1900;
+    const currentYear = new Date(Date.now()).getFullYear();
+    const result = [];
+    for (let i = 0; i <= currentYear - startYear; i++) {
+      result.push(
+        <Picker.Item
+          key={String(startYear + i)}
+          label={String(startYear + i)}
+          value={String(startYear + i)}
+        />,
+      );
+    }
+    return result;
+  }, []);
 
-  const renderDayPickerItem = useCallback(() => {
+  const renderBraceStartMonthPickerItem = useCallback(() => {
+    const currentDate = new Date(Date.now());
+    const result = [];
+    if (parseInt(selectedBraceStartDateYear) === currentDate.getFullYear()) {
+      for (let i = 1; i <= currentDate.getMonth() + 1; i++) {
+        result.push(
+        <Picker.Item
+        key={String(i)}
+        label={String(i)}
+        value={String(i)} />
+        );
+      }
+    } else {
+      for (let i = 1; i <= 12; i++) {
+        result.push(
+        <Picker.Item
+        key={String(i)}
+        label={String(i)}
+        value={String(i)} />);
+      }
+    }
+    return result;
+  }, [selectedBraceStartDateYear]);
+
+  const renderBraceFinishMonthPickerItem = useCallback(() => {
+    const currentDate = new Date(Date.now());
+    const result = [];
+    if (parseInt(selectedBraceFinishDateYear) === currentDate.getFullYear()) {
+      for (let i = 1; i <= currentDate.getMonth() + 1; i++) {
+        result.push(
+        <Picker.Item
+        key={String(i)}
+        label={String(i)}
+        value={String(i)} />
+        );
+      }
+    } else {
+      for (let i = 1; i <= 12; i++) {
+        result.push(
+        <Picker.Item
+        key={String(i)}
+        label={String(i)}
+        value={String(i)} />);
+      }
+    }
+    return result;
+  }, [selectedBraceFinishDateYear]);
+
+  const renderBraceStartDayPickerItem = useCallback(() => {
     const currentDate = new Date(Date.now());
     const result = [];
     if (
-      parseInt(selectedTreatmentYear) === currentDate.getFullYear() &&
-      parseInt(selectedTreatmentMonth) === currentDate.getMonth() + 1
+      parseInt(selectedBraceStartDateYear) === currentDate.getFullYear() &&
+      parseInt(selectedBraceStartDateMonth) === currentDate.getMonth() + 1
     ) {
       for (let i = 1; i <= currentDate.getDate(); i++) {
         result.push(
@@ -1230,11 +1548,11 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
         );
       }
     } else {
-      if (selectedTreatmentMonth === '2') {
+      if (selectedBraceStartDateMonth === '2') {
         if (
-          (parseInt(selectedTreatmentYear) % 4) +
-            (parseInt(selectedTreatmentYear) % 100) +
-            (parseInt(selectedTreatmentYear) % 400) ===
+          (parseInt(selectedBraceStartDateYear) % 4) +
+            (parseInt(selectedBraceStartDateYear) % 100) +
+            (parseInt(selectedBraceStartDateYear) % 400) ===
           0
         ) {
           for (let i = 1; i <= 29; i++) {
@@ -1256,7 +1574,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
           }
         }
       } else if (
-        [1, 3, 5, 7, 8, 10, 12].includes(parseInt(selectedTreatmentMonth))
+        [1, 3, 5, 7, 8, 10, 12].includes(parseInt(selectedBraceStartDateMonth))
       ) {
         for (let i = 1; i <= 31; i++) {
           result.push(
@@ -1276,7 +1594,72 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
       }
     }
     return result;
-  }, [selectedTreatmentMonth, selectedTreatmentYear]);
+  }, [selectedBraceStartDateYear, selectedBraceStartDateMonth]);
+
+
+  const renderBraceFinishDayPickerItem = useCallback(() => {
+    const currentDate = new Date(Date.now());
+    const result = [];
+    if (
+      parseInt(selectedBraceFinishDateYear) === currentDate.getFullYear() &&
+      parseInt(selectedBraceFinishDateMonth) === currentDate.getMonth() + 1
+    ) {
+      for (let i = 1; i <= currentDate.getDate(); i++) {
+        result.push(
+        <Picker.Item 
+        key={String(i)}
+        label={String(i)}
+        value={String(i)} />
+        );
+      }
+    } else {
+      if (selectedBraceFinishDateMonth === '2') {
+        if (
+          (parseInt(selectedBraceFinishDateYear) % 4) +
+            (parseInt(selectedBraceFinishDateYear) % 100) +
+            (parseInt(selectedBraceFinishDateYear) % 400) ===
+          0
+        ) {
+          for (let i = 1; i <= 29; i++) {
+            result.push(
+            <Picker.Item
+            key={String(i)}
+            label={String(i)}
+            value={String(i)} />
+            );
+          }
+        } else {
+          for (let i = 1; i <= 28; i++) {
+            result.push(
+            <Picker.Item
+            key={String(i)}
+            label={String(i)}
+            value={String(i)} />
+            );
+          }
+        }
+      } else if (
+        [1, 3, 5, 7, 8, 10, 12].includes(parseInt(selectedBraceFinishDateMonth))
+      ) {
+        for (let i = 1; i <= 31; i++) {
+          result.push(
+          <Picker.Item
+          key={String(i)}
+          label={String(i)}
+          value={String(i)} />);
+        }
+      } else {
+        for (let i = 1; i <= 30; i++) {
+          result.push(
+          <Picker.Item
+          key={String(i)}
+          label={String(i)}
+          value={String(i)}/>);
+        }
+      }
+    }
+    return result;
+  }, [selectedBraceFinishDateYear, selectedBraceFinishDateMonth]);
 
   return (
       <Container>
@@ -1360,10 +1743,10 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
             </RightArrowIconContainer> */}
           </MetaDataHeaderContainer>
             <MetaDataValueContainer>
-            {!dentalObj.originalName && (
+            {!dentalObj?.originalName && (
               <MetaDataPlaceholderText>{"방문한 병원의 이름을 선택하세요."}</MetaDataPlaceholderText>
             )}
-            {dentalObj.originalName && (
+            {dentalObj?.originalName && (
               <SelectedDentalItemContainer>
                 <SelectedDentalNameText>{dentalObj.originalName}</SelectedDentalNameText>
               </SelectedDentalItemContainer>
@@ -1412,83 +1795,6 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
             </MetaDataValueContainer>
           </MetaDataItemContainer>
           </TouchableWithoutFeedback>
-          {/* <TouchableWithoutFeedback onPress={() => moveToRatingScreen()}>
-          <MetaDataItemContainer>
-          <MetaDataHeaderContainer>
-          <MetaDataLabelContainer>
-          <MetaDataLabelText>{"병원 만족도"}</MetaDataLabelText>
-          <AsteriskText>{"*"}</AsteriskText>
-          </MetaDataLabelContainer>
-          <RightArrowIconContainer>
-            <RightArrowIcon
-            source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
-          </RightArrowIconContainer>
-          </MetaDataHeaderContainer>
-            <MetaDataValueContainer>
-            {!ratingObj.serviceRating && (
-              <MetaDataPlaceholderText>{"병원 만족도를 알려주세요."}</MetaDataPlaceholderText>
-            )}
-            {ratingObj.serviceRating && (
-              <RatingContainer>
-                <RatingItemContainer
-                style={{marginLeft: 0}}>
-                  <RatingLabelText>{"진료"}</RatingLabelText>
-                  <RatingHorizontalDivider/>
-                  <RatingValueText>{ratingObj.treatmentRating.toFixed(1)}</RatingValueText>
-                </RatingItemContainer>
-                <RatingItemContainer
-                style={{marginLeft: 8}}>
-                  <RatingLabelText>{"비용"}</RatingLabelText>
-                  <RatingHorizontalDivider/>
-                  <RatingValueText>{ratingObj.priceRating.toFixed(1)}</RatingValueText>
-                </RatingItemContainer>
-                <RatingItemContainer
-                style={{marginLeft: 8}}>
-                  <RatingLabelText>{"서비스"}</RatingLabelText>
-                  <RatingHorizontalDivider/>
-                  <RatingValueText>{ratingObj.serviceRating.toFixed(1)}</RatingValueText>
-                </RatingItemContainer>
-              </RatingContainer>
-            )}
-            </MetaDataValueContainer>
-          </MetaDataItemContainer>
-          </TouchableWithoutFeedback> */}
-          {/* <MetaDataItemContainer>
-          <MetaDataHeaderContainer>
-          <MetaDataLabelContainer>
-            <MetaDataLabelText>{"방문 일자ㄱ"}</MetaDataLabelText>
-            <AsteriskText>{"*"}</AsteriskText>
-          </MetaDataLabelContainer>
-          </MetaDataHeaderContainer>
-          <TouchableWithoutFeedback onPress={() => onPressTreatmentDate()}>
-            <MetaDataValueContainer>
-            {treatmentDateObj?.displayTreatmentDate === "" && (
-            <MetaDataPlaceholderText>{"방문일을 알려주세요."}</MetaDataPlaceholderText>
-            )}
-            {treatmentDateObj?.displayTreatmentDate !== "" && (
-            <MetaDataText>{treatmentDateObj?.displayTreatmentDate}</MetaDataText>
-            )}
-            </MetaDataValueContainer>
-          </TouchableWithoutFeedback>
-          </MetaDataItemContainer> */}
-          <MetaDataItemContainer>
-          <MetaDataHeaderContainer>
-          <MetaDataLabelContainer>
-            <MetaDataLabelText>{"교정 기간"}</MetaDataLabelText>
-            <AsteriskText>{"*"}</AsteriskText>
-          </MetaDataLabelContainer>
-          </MetaDataHeaderContainer>
-          <TouchableWithoutFeedback onPress={() => onPressBraceElapsedDate()}>
-            <MetaDataValueContainer>
-            {treatmentDateObj?.displayTreatmentDate === "" && (
-            <MetaDataPlaceholderText>{"교정 기간을 알려주세요."}</MetaDataPlaceholderText>
-            )}
-            {treatmentDateObj?.displayTreatmentDate !== "" && (
-            <MetaDataText>{treatmentDateObj?.displayTreatmentDate}</MetaDataText>
-            )}
-            </MetaDataValueContainer>
-          </TouchableWithoutFeedback>
-          </MetaDataItemContainer>
           <MetaDataItemContainer
           onLayout={(event) => {
             console.log("전체치료비용 onLayout event.nativeEvent", event.nativeEvent);
@@ -1509,12 +1815,79 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                 onFocus={() => onFocusTotalPriceInput()}
                 caretHidden={true}
               />
+              {displayPrice !== '' && (
               <DisplayPriceContainer>
                 <DisplayPriceText>{displayPrice}</DisplayPriceText>
               </DisplayPriceContainer>
+              )}
             </MetaDataValueContainer>
           </TouchableWithoutFeedback>
           </MetaDataItemContainer>
+          <MetaDataItemContainer
+          style={{marginTop: 8}}>
+          <MetaDataHeaderContainer>
+          <MetaDataLabelContainer>
+            <MetaDataLabelText>{"교정 진행 여부"}</MetaDataLabelText>
+            <AsteriskText>{"*"}</AsteriskText>
+          </MetaDataLabelContainer>
+          </MetaDataHeaderContainer>
+            <MetaDataValueContainer>
+            <BraceStepButtonContainer>
+            <TouchableWithoutFeedback onPress={() => changeBraceStep(false)}>
+            <BraceStepButton
+            style={!isBraceFinished && {backgroundColor: "#00D1FF", borderColor: "#00D1FF"}}>
+            <BraceStepText
+            style={!isBraceFinished && {color: "#FFFFFF", fontWeight: '700'}}>{"진행중"}</BraceStepText>
+            </BraceStepButton>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => changeBraceStep(true)}>
+            <BraceStepButton
+            style={[{marginLeft: 7}, isBraceFinished && {backgroundColor: "#00D1FF", borderColor: "#00D1FF"}]}>
+            <BraceStepText
+            style={isBraceFinished && {color: "#FFFFFF", fontWeight: '700'}}>{"완료"}</BraceStepText>
+            </BraceStepButton>
+            </TouchableWithoutFeedback>
+            </BraceStepButtonContainer>
+            </MetaDataValueContainer>
+          </MetaDataItemContainer>
+          <MetaDataItemContainer>
+          <MetaDataHeaderContainer>
+          <MetaDataLabelContainer>
+            <MetaDataLabelText>{"교정 시작 날짜"}</MetaDataLabelText>
+            <AsteriskText>{"*"}</AsteriskText>
+          </MetaDataLabelContainer>
+          </MetaDataHeaderContainer>
+          <TouchableWithoutFeedback onPress={() => onPressBraceStartDate()}>
+            <MetaDataValueContainer>
+            {braceStartDateObj.display === "" && (
+            <MetaDataPlaceholderText>{"교정 시작 날짜를 알려주세요."}</MetaDataPlaceholderText>
+            )}
+            {braceStartDateObj.display !== "" && (
+            <MetaDataText>{braceStartDateObj.display}</MetaDataText>
+            )}
+            </MetaDataValueContainer>
+          </TouchableWithoutFeedback>
+          </MetaDataItemContainer>
+          {isBraceFinished && (
+          <MetaDataItemContainer>
+          <MetaDataHeaderContainer>
+          <MetaDataLabelContainer>
+            <MetaDataLabelText>{"교정 종료 날짜"}</MetaDataLabelText>
+            <AsteriskText>{"*"}</AsteriskText>
+          </MetaDataLabelContainer>
+          </MetaDataHeaderContainer>
+          <TouchableWithoutFeedback onPress={() => onPressBraceFinishDate()}>
+            <MetaDataValueContainer>
+            {braceFinishDateObj.display === "" && (
+            <MetaDataPlaceholderText>{"교정 종료 날짜를 알려주세요."}</MetaDataPlaceholderText>
+            )}
+            {braceFinishDateObj.display !== "" && (
+            <MetaDataText>{braceFinishDateObj.display}</MetaDataText>
+            )}
+            </MetaDataValueContainer>
+          </TouchableWithoutFeedback>
+          </MetaDataItemContainer>
+          )}
           <RecommendItemContainer
           style={{marginTop: 8}}>
             <RecommendLeftContainer>
@@ -1530,7 +1903,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
           <RecommendIconContainer>
             <RecommendIcon
             source={
-              isRecommendDental 
+              isDentalRecommend 
               ? require('~/Assets/Images/Upload/ic_recommend_selected.png')
               : require('~/Assets/Images/Upload/ic_recommend_unselected.png')}/>
           </RecommendIconContainer>
@@ -1566,14 +1939,14 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
           </TouchableWithoutFeedback>
         </BodyContainer>
         <TreatmentDateModal
-        visible={isVisibleBraceElapsedDatePicker}
+        visible={isVisibleBraceStartDatePicker}
         transparent={true}
         animationType="none">
-          <TouchableWithoutFeedback onPress={() => cancelBraceElapsedDateModal()}>
+          <TouchableWithoutFeedback onPress={() => cancelBraceStartDateModal()}>
             <TreatmentDateModalBackground
             as={Animated.View}
             style={{
-              opacity: braceElapsedDatePickerY.interpolate({
+              opacity: braceStartDatePickerY.interpolate({
                 inputRange: [0, hp('50%')],
                 outputRange: [0.3, 0],
                 extrapolate: 'clamp',
@@ -1584,10 +1957,10 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
         <TreatmentDateModalContainer
         as={Animated.View}
         style={{
-          transform: [{translateY: braceElapsedDatePickerY}]
+          transform: [{translateY: braceStartDatePickerY}]
         }}>
             <DetailFilterHeaderContainer>
-              <DetailFilterTitleText>{'교정 기간 설정'}</DetailFilterTitleText>
+              <DetailFilterTitleText>{'교정 시작 날짜 설정'}</DetailFilterTitleText>
             </DetailFilterHeaderContainer>
             <TimeFilterModalContainer>
             <TimePickerContainer>
@@ -1599,9 +1972,9 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                   color: '#131F3C',
                 }}
                 style={{width: wp('20%'), height: '100%'}}
-                onValueChange={(itemValue: any) => setSelectedTreatmentYear(itemValue)}
-                selectedValue={selectedTreatmentYear}>
-                {renderYearPickerItem()}
+                onValueChange={(itemValue: any) => onValueChangeStartYearPicker(itemValue)}
+                selectedValue={selectedBraceStartDateYear}>
+                {renderBraceStartYearPickerItem()}
               </Picker>
               <FilterDividingText>{'년'}</FilterDividingText>
               <Picker
@@ -1611,10 +1984,10 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                   lineHeight: 24,
                   color: '#131F3C',
                 }}
-                selectedValue={selectedTreatmentMonth}
-                onValueChange={(itemValue: any) => setSelectedTreatmentMonth(itemValue)}
+                selectedValue={selectedBraceStartDateMonth}
+                onValueChange={(itemValue: any) => onValueChangeStartMonthPicker(itemValue)}
                 style={{width: wp('20%'), height: '100%'}}>
-                {renderMonthPickerItem()}
+                {renderBraceStartMonthPickerItem()}
               </Picker>
               <FilterDividingText>{'월'}</FilterDividingText>
               <Picker
@@ -1625,21 +1998,21 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                   color: '#131F3C',
                 }}
                 style={{width: wp('20%'), height: '100%'}}
-                onValueChange={(itemValue: any) => setSelectedTreatmentDay(itemValue)}
-                selectedValue={selectedTreatmentDay}>
-                {renderDayPickerItem()}
+                onValueChange={(itemValue: any) => onValueChangeStartDayPicker(itemValue)}
+                selectedValue={selectedBraceStartDateDay}>
+                {renderBraceStartDayPickerItem()}
               </Picker>
               <FilterDividingText>{'일'}</FilterDividingText>
             </TimePickerContainer>
               <DetailFilterFooterContainer>
-                <TouchableWithoutFeedback onPress={() => initializeTreatmentDate()}>
+                <TouchableWithoutFeedback onPress={() => initializeBraceStartDate()}>
                 <InitializeFilterContainer>
-                  <InitializeFilterText>{"교정 기간 초기화"}</InitializeFilterText>
+                  <InitializeFilterText>{"교정 시작 날짜 초기화"}</InitializeFilterText>
                   <InitializeFilterIcon
                   source={require('~/Assets/Images/Map/ic_initialize.png')}/>
                 </InitializeFilterContainer>
                 </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => registerBraceElapsedDate()}>
+                <TouchableWithoutFeedback onPress={() => registerBraceStartDate()}>
                 <RegisterFilterButton>
                   <RegisterFilterText>{"적용하기"}</RegisterFilterText>
                 </RegisterFilterButton>
@@ -1648,18 +2021,89 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
               </TimeFilterModalContainer>
           </TreatmentDateModalContainer>
         </TreatmentDateModal>
-        {/* {isFocusedTotalPriceInput && (
-          <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <ModalHeaderContainer>
-              <TouchableWithoutFeedback onPress={() => finishTotalPriceInput()}>
-                <ModalFinishContainer>
-                  <ModalFinishText>완료</ModalFinishText>
-                </ModalFinishContainer>
-              </TouchableWithoutFeedback>
-            </ModalHeaderContainer>
-          </KeyboardAvoidingView>
-        )} */}
+        <TreatmentDateModal
+        visible={isVisibleBraceFinishDatePicker}
+        transparent={true}
+        animationType="none">
+          <TouchableWithoutFeedback onPress={() => cancelBraceFinishDateModal()}>
+            <TreatmentDateModalBackground
+            as={Animated.View}
+            style={{
+              opacity: braceFinishDatePickerY.interpolate({
+                inputRange: [0, hp('50%')],
+                outputRange: [0.3, 0],
+                extrapolate: 'clamp',
+              })
+            }}>
+            </TreatmentDateModalBackground>
+          </TouchableWithoutFeedback>
+        <TreatmentDateModalContainer
+        as={Animated.View}
+        style={{
+          transform: [{translateY: braceFinishDatePickerY}]
+        }}>
+            <DetailFilterHeaderContainer>
+              <DetailFilterTitleText>{'교정 종료 날짜 설정'}</DetailFilterTitleText>
+            </DetailFilterHeaderContainer>
+            <TimeFilterModalContainer>
+            <TimePickerContainer>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                style={{width: wp('20%'), height: '100%'}}
+                onValueChange={(itemValue: any) => onValueChangeFinishYearPicker(itemValue)}
+                selectedValue={selectedBraceFinishDateYear}>
+                {renderBraceFinishYearPickerItem()}
+              </Picker>
+              <FilterDividingText>{'년'}</FilterDividingText>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                selectedValue={selectedBraceFinishDateMonth}
+                onValueChange={(itemValue: any) => onValueChangeFinishMonthPicker(itemValue)}
+                style={{width: wp('20%'), height: '100%'}}>
+                {renderBraceFinishMonthPickerItem()}
+              </Picker>
+              <FilterDividingText>{'월'}</FilterDividingText>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                style={{width: wp('20%'), height: '100%'}}
+                onValueChange={(itemValue: any) => onValueChangeFinishDayPicker(itemValue)}
+                selectedValue={selectedBraceFinishDateDay}>
+                {renderBraceFinishDayPickerItem()}
+              </Picker>
+              <FilterDividingText>{'일'}</FilterDividingText>
+            </TimePickerContainer>
+              <DetailFilterFooterContainer>
+                <TouchableWithoutFeedback onPress={() => initializeBraceFinishDate()}>
+                <InitializeFilterContainer>
+                  <InitializeFilterText>{"교정 종료 날짜 초기화"}</InitializeFilterText>
+                  <InitializeFilterIcon
+                  source={require('~/Assets/Images/Map/ic_initialize.png')}/>
+                </InitializeFilterContainer>
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => registerBraceFinishDate()}>
+                <RegisterFilterButton>
+                  <RegisterFilterText>{"적용하기"}</RegisterFilterText>
+                </RegisterFilterButton>
+                </TouchableWithoutFeedback>
+              </DetailFilterFooterContainer>
+              </TimeFilterModalContainer>
+          </TreatmentDateModalContainer>
+        </TreatmentDateModal>
         <ActionSheet
           ref={actionSheetRefByProof}
           options={actionSheetItemList}
@@ -1822,3 +2266,65 @@ style={{
   </TreatmentDateModalContainer>
 </TreatmentDateModal>
 */
+
+
+
+          {/* <TouchableWithoutFeedback onPress={() => moveToRatingScreen()}>
+          <MetaDataItemContainer>
+          <MetaDataHeaderContainer>
+          <MetaDataLabelContainer>
+          <MetaDataLabelText>{"병원 만족도"}</MetaDataLabelText>
+          <AsteriskText>{"*"}</AsteriskText>
+          </MetaDataLabelContainer>
+          <RightArrowIconContainer>
+            <RightArrowIcon
+            source={require('~/Assets/Images/Arrow/ic_rightArrow.png')}/>
+          </RightArrowIconContainer>
+          </MetaDataHeaderContainer>
+            <MetaDataValueContainer>
+            {!ratingObj.serviceRating && (
+              <MetaDataPlaceholderText>{"병원 만족도를 알려주세요."}</MetaDataPlaceholderText>
+            )}
+            {ratingObj.serviceRating && (
+              <RatingContainer>
+                <RatingItemContainer
+                style={{marginLeft: 0}}>
+                  <RatingLabelText>{"진료"}</RatingLabelText>
+                  <RatingHorizontalDivider/>
+                  <RatingValueText>{ratingObj.treatmentRating.toFixed(1)}</RatingValueText>
+                </RatingItemContainer>
+                <RatingItemContainer
+                style={{marginLeft: 8}}>
+                  <RatingLabelText>{"비용"}</RatingLabelText>
+                  <RatingHorizontalDivider/>
+                  <RatingValueText>{ratingObj.priceRating.toFixed(1)}</RatingValueText>
+                </RatingItemContainer>
+                <RatingItemContainer
+                style={{marginLeft: 8}}>
+                  <RatingLabelText>{"서비스"}</RatingLabelText>
+                  <RatingHorizontalDivider/>
+                  <RatingValueText>{ratingObj.serviceRating.toFixed(1)}</RatingValueText>
+                </RatingItemContainer>
+              </RatingContainer>
+            )}
+            </MetaDataValueContainer>
+          </MetaDataItemContainer>
+          </TouchableWithoutFeedback> */}
+          {/* <MetaDataItemContainer>
+          <MetaDataHeaderContainer>
+          <MetaDataLabelContainer>
+            <MetaDataLabelText>{"방문 일자ㄱ"}</MetaDataLabelText>
+            <AsteriskText>{"*"}</AsteriskText>
+          </MetaDataLabelContainer>
+          </MetaDataHeaderContainer>
+          <TouchableWithoutFeedback onPress={() => onPressTreatmentDate()}>
+            <MetaDataValueContainer>
+            {treatmentDateObj?.displayTreatmentDate === "" && (
+            <MetaDataPlaceholderText>{"방문일을 알려주세요."}</MetaDataPlaceholderText>
+            )}
+            {treatmentDateObj?.displayTreatmentDate !== "" && (
+            <MetaDataText>{treatmentDateObj?.displayTreatmentDate}</MetaDataText>
+            )}
+            </MetaDataValueContainer>
+          </TouchableWithoutFeedback>
+          </MetaDataItemContainer> */}

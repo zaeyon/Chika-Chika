@@ -472,9 +472,6 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
   const paraActionSheetRef = createRef<any>();
   const paraFlatListRef = useRef<any>();
 
-  useEffect(() => {
-      console.log("route.params.isRecommendDental", route.params?.isRecommendDental);
-  }, [route.params?.isRecommendDental])
 
   useEffect(() => {
     console.log('BraceReviewContentPostScreen route', route);
@@ -486,6 +483,12 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
       reviewId = route.params?.reviewId;
     }
   }, []);
+
+  useEffect(() => {
+    if(route.params?.paragraphArray) {
+      console.log("route.params?.paragraphArray", route.params.paragraphArray);
+    }
+  }, [route.params?.paragraphArray])
 
   useEffect(() => {
     if (route.params?.selectedImages) {
@@ -548,15 +551,23 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     let descriptions = '';
+    let isExistImage: boolean;
+
     paragraphArray.forEach((item: any, index: number) => {
       if (item.description !== null) {
         if (item.description.length > 0) {
           descriptions = descriptions + item.description;
         }
       }
+
+      if(item.image?.uri) {
+        isExistImage = true;
+      }
     });
 
-    if (descriptions.length > 0) {
+
+
+    if (descriptions.length > 0 && isExistImage) {
       setIsActivatedUpload(true);
     } else {
       setIsActivatedUpload(false);
@@ -721,6 +732,13 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
     const starRate_treatment = route.params?.ratingObj.treatmentRating;
     const starRate_service = route.params?.ratingObj.serviceRating;
 
+    // 병원 추천 여부
+    const recommend = route.params?.isDentalRecommend;
+    
+    // 교정 기간 정보
+    const correctionStartDate = route.params?.braceStartDate;
+    const correctionEndDate = route.params?.braceFinishDate;
+  
     // 병원 정보
     const dentalClinicId = route.params?.dentalObj.id;
 
@@ -737,6 +755,8 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
       formattedProofImage = await formatProofImage(tmpSelectedProofImage);
     }
 
+    const formattedDiseaseArray = [];
+
     console.log('uploadReview formatedParagraph', formattedParagraphArray);
     console.log('uploadReview formatedTreatment', formattedTreatmentArray);
 
@@ -746,11 +766,15 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
       starRate_treatment,
       starRate_service,
       formattedTreatmentArray,
+      formattedDiseaseArray,
       dentalClinicId,
       formattedParagraphArray,
       formattedProofImage,
       totalPrice,
       treatmentDate,
+      recommend,
+      correctionStartDate,
+      correctionEndDate,
     })
       .then((response) => {
         setLoadingUpload(false);
@@ -799,6 +823,15 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
     // 전체 가격 정보
     const totalPrice = route.params?.totalPrice;
 
+    // 병원 추천 여부
+    const recommend = route.params?.isDentalRecommend;
+    
+    // 교정 기간 정보
+    const correctionStartDate = route.params?.braceStartDate;
+    const correctionEndDate = route.params?.braceFinishDate;
+
+    const formattedDiseaseArray = [];
+
     const formattedParagraphArray = await formatParagraph(tmpParagraphArray);
     const formattedTreatmentArray = await formatTreatment(tmpTreatmentArray);
     let formattedProofImage = {};
@@ -815,11 +848,15 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
       starRate_treatment,
       starRate_service,
       formattedTreatmentArray,
+      formattedDiseaseArray,
       dentalClinicId,
       formattedParagraphArray,
       formattedProofImage,
       totalPrice,
       treatmentDate,
+      recommend,
+      correctionStartDate,
+      correctionEndDate,
     })
       .then((response: any) => {
         setLoadingUpload(false);
@@ -872,6 +909,10 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
           ratingObj: tmpRating,
           dentalObj: dentalObj,
           treatmentDateObj: treatmentDateObj,
+          braceStartDate: response.updateReview.reviewBody.correctionStartDate,
+          braceFinishDate: response.updateReview.reviewBody.correctionEndDate,
+          isDentalRecommend: response.updateReview.reviewBody.recommend,
+          createdDate: response.updateReview.reviewBody.createdAt,
         });
       })
       .catch((error) => {
@@ -897,7 +938,8 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
               size: item.image.size,
               description: item.description ? item.description : null,
               imgBeforeAfter: item.order,
-              imgDate: item.imgDate,
+              imgDate: item.imgDate?.imageDateValue ? item.imgDate.imageDateValue :
+              null,
               width: item.image.width,
               height: item.image.height,
             };
@@ -915,7 +957,7 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
               size: result.size,
               description: item.description ? item.description : null,
               imgBeforeAfter: item.order,
-              imgDate: item.imgDate,
+              imgDate: item.imgDate.imageDateValue,
               width: result.width,
               height: result.height,
             };
@@ -1057,9 +1099,9 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
     const tmpMonth = (selectedImageDateMonth < 10) ? ('0' + selectedImageDateMonth) : `${selectedImageDateMonth}`;
 
     const tmpDay = (selectedImageDateDay < 10) ? ('0' + selectedImageDateDay) : `${selectedImageDateDay}`;
-
+    
     const tmpImageDateDisplay = `${tmpYear}.${tmpMonth}.${tmpDay}`;
-    const tmpImageDateValue = new Date(selectedImageDateYear, selectedImageDateMonth - 1, Number(selectedImageDateDay) + 1);
+    const tmpImageDateValue = new Date(selectedImageDateYear, selectedImageDateMonth - 1, Number(selectedImageDateDay));
 
     console.log("tmpImageDateValue", tmpImageDateValue);
 
@@ -1078,6 +1120,50 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
   const onLongPressParaItem = (index: number) => {
     selectedParaIndex = index;
     paraActionSheetRef.current.show();
+  }
+
+  const onValueChangeYearPicker = (yearValue: number) => {
+    setSelectedImageDateYear(yearValue);
+
+    const currentDate = new Date(Date.now());
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentDay = currentDate.getDate();
+
+    if(yearValue == currentYear) {
+      if(selectedImageDateMonth > currentMonth) {
+        setSelectedImageDateMonth(1);
+      }
+
+      if(selectedImageDateDay > currentDay) {
+        setSelectedImageDateDay(1);
+      }
+    }
+  }
+
+  const onValueChangeMonthPicker = (monthValue: number) => {
+    setSelectedImageDateMonth(monthValue);
+
+    const currentDate = new Date(Date.now());
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentDay = currentDate.getDate();
+
+    console.log("currentMonth", currentMonth);
+    console.log("monthValue", monthValue);
+
+    if(monthValue == currentMonth && selectedImageDateYear == currentYear) {
+      console.log("currentDay", currentDay);
+      if(selectedImageDateDay > currentDay) {
+        setSelectedImageDateDay(1);
+      }
+    }
+
+  }
+
+  const onValueChangeDayPicker = (dayValue: number) => {
+    setSelectedImageDateDay(dayValue);
+
   }
 
   const renderParaUnitItem = ({item, index}: any) => {
@@ -1202,7 +1288,7 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
       }
     }
     return result;
-  }, [selectedImageDateMonth, selectedImageDateMonth]);
+  }, [selectedImageDateMonth, selectedImageDateYear]);
 
   const renderAddParaUnitItem = useCallback(() => {
     return (
@@ -1325,7 +1411,7 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
                   color: '#131F3C',
                 }}
                 style={{width: wp('20%'), height: '100%'}}
-                onValueChange={(itemValue: any) => setSelectedImageDateYear(itemValue)}
+                onValueChange={(itemValue: any) => onValueChangeYearPicker(itemValue)}
                 selectedValue={selectedImageDateYear}>
                 {renderYearPickerItem()}
               </Picker>
@@ -1338,7 +1424,7 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
                   color: '#131F3C',
                 }}
                 selectedValue={selectedImageDateMonth}
-                onValueChange={(itemValue: any) => setSelectedImageDateMonth(itemValue)}
+                onValueChange={(itemValue: any) => onValueChangeMonthPicker(itemValue)}
                 style={{width: wp('20%'), height: '100%'}}>
                 {renderMonthPickerItem()}
               </Picker>
@@ -1351,7 +1437,7 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
                   color: '#131F3C',
                 }}
                 style={{width: wp('20%'), height: '100%'}}
-                onValueChange={(itemValue: any) => setSelectedImageDateDay(itemValue)}
+                onValueChange={(itemValue: any) => onValueChangeDayPicker(itemValue)}
                 selectedValue={selectedImageDateDay}>
                 {renderDayPickerItem()}
               </Picker>

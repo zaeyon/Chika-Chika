@@ -1167,6 +1167,18 @@ const NearDentalMap = ({navigation, route}: Props) => {
     }
   };
 
+  const changeOrthodonticsSpecialistFilter = () => {
+    
+  }
+
+  const changeNightCareFilter = () => {
+    
+  }
+
+  const changeGoodDoctorFilter = () => {
+
+  }
+
   const initializeDayFilter = () => {
     if (selectedDayList.length > 0) {
       const tmpDayFilter = new Array([]);
@@ -1245,47 +1257,83 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   const registerDayFilter = () => {
-    console.log('dayFilter', dayFilter);
-    console.log('selectedDayFilter', selectedDayList);
+    setVisibleDayFilterModal(false);
 
-    var tmpDayList = dayList;
+    if (timeSlotPickerValue === '오전') {
+      const formattedHourPickerValue =
+        hourPickerValue < 10 ? '0' + hourPickerValue : hourPickerValue;
+      const formattedTime =
+        formattedHourPickerValue + ':' + minutePickerValue + ':00';
 
-    var tmpSelectedDayList = new Array();
-    var tmpDayFilter = new Array();
+      var tmpDayList = dayList;
+      var tmpSelectedDayList = new Array();
+      var tmpDayFilter = new Array();
 
-    tmpDayList.forEach((item: any, index: number) => {
-      if (item.selected) {
-        tmpDayFilter.push(item.value);
-        tmpSelectedDayList.push(item);
-      }
-    });
+      tmpDayList.forEach((item: any, index: number) => {
+        if (item.selected) {
+          tmpDayFilter.push(item.value);
+          tmpSelectedDayList.push(item);
+        }
+      });
 
-    console.log('tmpSelectedDayList', tmpSelectedDayList);
+        dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
+        dispatch(allActions.dentalFilterActions.setDayFilter(tmpDayList));
 
-    if (JSON.stringify(tmpDayFilter) !== JSON.stringify(dayFilter)) {
-      dispatch(allActions.dentalFilterActions.setDayFilter(tmpDayFilter));
-      dispatch(
-        allActions.dentalFilterActions.setSelectedDayList(tmpSelectedDayList),
-      );
+        if(JSON.stringify(tmpDayFilter) !== JSON.stringify(dayFilter) || timeFilter !== formattedTime) {
+          if (isNearDentalList.current) {
+            filterNearDental(
+              tmpDayFilter,
+              formattedTime,
+              parkingFilter,
+              holidayFilter,
+            );
+          } else {
+            filterSearchedDental(
+              searchedKeyword,
+              tmpDayFilter,
+              formattedTime,
+              parkingFilter,
+              holidayFilter,
+            );
+          }
+        }
+    } else if (timeSlotPickerValue == '오후') {
+      const formattedTime =
+        Number(hourPickerValue) + 12 + ':' + minutePickerValue + ':00';
 
-      if (isNearDentalList.current) {
-        filterNearDental(
-          tmpDayFilter,
-          timeFilter,
-          parkingFilter,
-          holidayFilter,
-        );
-      } else {
-        filterSearchedDental(
-          searchedKeyword,
-          tmpDayFilter,
-          timeFilter,
-          parkingFilter,
-          holidayFilter,
-        );
+        
+        var tmpDayList = dayList;
+        var tmpSelectedDayList = new Array();
+        var tmpDayFilter = new Array();
+
+        tmpDayList.forEach((item: any, index: number) => {
+          if (item.selected) {
+            tmpDayFilter.push(item.value);
+            tmpSelectedDayList.push(item);
+          }
+        });
+
+      if (JSON.stringify(tmpDayFilter) !== JSON.stringify(dayFilter) || timeFilter !== formattedTime) {
+        dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
+
+        if (isNearDentalList.current) {
+          filterNearDental(
+            dayFilter,
+            formattedTime,
+            parkingFilter,
+            holidayFilter,
+          );
+        } else {
+          filterSearchedDental(
+            searchedKeyword,
+            dayFilter,
+            formattedTime,
+            parkingFilter,
+            holidayFilter,
+          );
+        }
       }
     }
-    setVisibleDayFilterModal(false);
   };
 
   const selectDayFilterItem = (day: object, index: number) => {
@@ -1523,11 +1571,43 @@ const NearDentalMap = ({navigation, route}: Props) => {
               contentContainerStyle={{paddingTop: 12, paddingBottom: 12}}
               horizontal={true}
               showsHorizontalScrollIndicator={false}>
+               <TouchableWithoutFeedback onPress={() => changeParkingFilter()}>
+                <FilterItemContainer
+                  style={[
+                    {marginLeft: 16},
+                    parkingFilter === 'y' && {
+                      backgroundColor: '#ffffff',
+                      borderColor: '#131F3C',
+                    },
+                    styles.filterItemShadow,
+                  ]}>
+                  <FilterItemText
+                    style={parkingFilter === 'y' && {color: '#131F3C'}}>
+                    {'교정 전문의'}
+                  </FilterItemText>
+                </FilterItemContainer>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback onPress={() => changeParkingFilter()}>
+                <FilterItemContainer
+                  style={[
+                    {marginLeft: 8},
+                    parkingFilter === 'y' && {
+                      backgroundColor: '#ffffff',
+                      borderColor: '#131F3C',
+                    },
+                    styles.filterItemShadow,
+                  ]}>
+                  <FilterItemText
+                    style={parkingFilter === 'y' && {color: '#131F3C'}}>
+                    {'착한 의사'}
+                  </FilterItemText>
+                </FilterItemContainer>
+              </TouchableWithoutFeedback>
               {selectedDayList.length === 0 && (
                 <TouchableWithoutFeedback onPress={() => clickDayFilter()}>
                   <FilterItemContainer
-                    style={[{marginLeft: 16}, styles.filterItemShadow]}>
-                    <FilterItemText>{'방문일'}</FilterItemText>
+                    style={[{marginLeft: 8}, styles.filterItemShadow]}>
+                    <FilterItemText>{'방문 날짜 및 시간'}</FilterItemText>
                   </FilterItemContainer>
                 </TouchableWithoutFeedback>
               )}
@@ -1581,41 +1661,10 @@ const NearDentalMap = ({navigation, route}: Props) => {
                   </FilterItemContainer>
                 </TouchableWithoutFeedback>
               )}
-              <TouchableWithoutFeedback onPress={() => clickTimeFilter()}>
-                <FilterItemContainer
-                  style={[
-                    {marginLeft: 8},
-                    timeFilter !== '' && {
-                      backgroundColor: '#ffffff',
-                      borderColor: '#131F3C',
-                    },
-                    styles.filterItemShadow,
-                  ]}>
-                  <FilterItemText
-                    style={timeFilter !== '' && {color: '#131F3C'}}>
-                    {timeFilter ? timeFilter.slice(0, 5) : '방문시간'}
-                  </FilterItemText>
-                </FilterItemContainer>
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback onPress={() => changeHolidayFilter()}>
-                <FilterItemContainer
-                  style={[
-                    {marginLeft: 8},
-                    holidayFilter && {
-                      backgroundColor: '#ffffff',
-                      borderColor: '#131F3C',
-                    },
-                    styles.filterItemShadow,
-                  ]}>
-                  <FilterItemText style={holidayFilter && {color: '#131F3C'}}>
-                    {'일요일･공휴일 진료'}
-                  </FilterItemText>
-                </FilterItemContainer>
-              </TouchableWithoutFeedback>
               <TouchableWithoutFeedback onPress={() => changeParkingFilter()}>
                 <FilterItemContainer
                   style={[
-                    {marginLeft: 8, marginRight: 16},
+                    {marginLeft: 8},
                     parkingFilter === 'y' && {
                       backgroundColor: '#ffffff',
                       borderColor: '#131F3C',
@@ -1625,6 +1674,21 @@ const NearDentalMap = ({navigation, route}: Props) => {
                   <FilterItemText
                     style={parkingFilter === 'y' && {color: '#131F3C'}}>
                     {'주차가능'}
+                  </FilterItemText>
+                </FilterItemContainer>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback onPress={() => changeHolidayFilter()}>
+                <FilterItemContainer
+                  style={[
+                    {marginLeft: 8, marginRight: 16},
+                    holidayFilter && {
+                      backgroundColor: '#ffffff',
+                      borderColor: '#131F3C',
+                    },
+                    styles.filterItemShadow,
+                  ]}>
+                  <FilterItemText style={holidayFilter && {color: '#131F3C'}}>
+                    {'일요일･공휴일 진료'}
                   </FilterItemText>
                 </FilterItemContainer>
               </TouchableWithoutFeedback>
@@ -1713,17 +1777,15 @@ const NearDentalMap = ({navigation, route}: Props) => {
         isVisible={visibleDayFilterModal}
         style={styles.dayFilterModalView}
         onBackdropPress={() => cancelDayFilter()}
-        swipeDirection={['down']}
-        onSwipeComplete={() => setVisibleDayFilterModal(false)}
         backdropOpacity={0.25}>
         <DetailFilterModalContainer>
           <DetailFilterHeaderContainer>
-            <DetailFilterTitleText>{'방문일 설정'}</DetailFilterTitleText>
+            <DetailFilterTitleText>{'방문날짜 및 시간 설정'}</DetailFilterTitleText>
           </DetailFilterHeaderContainer>
           <DetailFilterListContainer>
             <FlatList
               contentContainerStyle={{
-                paddingBottom: 16,
+                paddingBottom: 30,
                 paddingLeft: 16,
                 paddingRight: 16,
               }}
@@ -1736,11 +1798,71 @@ const NearDentalMap = ({navigation, route}: Props) => {
               numColumns={5}
               renderItem={renderDayFilterItem}
             />
+            <TimePickerContainer>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                style={{width: wp('20%'), height: hp('26%')}}
+                onValueChange={(itemValue, itemIndex) =>
+                  onValueChangeTimeSlotPicker(itemValue, itemIndex)
+                }
+                selectedValue={timeSlotPickerValue}>
+                <Picker.Item label={'오전'} value="오전" />
+                <Picker.Item label={'오후'} value="오후" />
+              </Picker>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                selectedValue={hourPickerValue}
+                onValueChange={(itemValue, itemIndex) =>
+                  onValueChangeHourPicker(itemValue, itemIndex)
+                }
+                style={{width: wp('20%'), height: hp('26%')}}>
+                <Picker.Item label={'1'} value="1" />
+                <Picker.Item label={'2'} value="2" />
+                <Picker.Item label={'3'} value="3" />
+                <Picker.Item label={'4'} value="4" />
+                <Picker.Item label={'5'} value="5" />
+                <Picker.Item label={'6'} value="6" />
+                <Picker.Item label={'7'} value="7" />
+                <Picker.Item label={'8'} value="8" />
+                <Picker.Item label={'9'} value="9" />
+                <Picker.Item label={'10'} value="10" />
+                <Picker.Item label={'11'} value="11" />
+                <Picker.Item label={'12'} value="12" />
+              </Picker>
+              <TimePickerLabelText>{':'}</TimePickerLabelText>
+              <Picker
+                itemStyle={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  lineHeight: 24,
+                  color: '#131F3C',
+                }}
+                style={{width: wp('20%'), height: hp('26%')}}
+                onValueChange={(itemValue, itemIndex) =>
+                  onValueChangeMinutePicker(itemValue, itemIndex)
+                }
+                selectedValue={minutePickerValue}>
+                <Picker.Item label={'00'} value="00" />
+                <Picker.Item label={'15'} value="15" />
+                <Picker.Item label={'30'} value="30" />
+                <Picker.Item label={'45'} value="45" />
+              </Picker>
+            </TimePickerContainer>
           </DetailFilterListContainer>
           <DetailFilterFooterContainer>
             <TouchableWithoutFeedback onPress={() => initializeDayFilter()}>
               <InitializeFilterContainer>
-                <InitializeFilterText>{'방문일 초기화'}</InitializeFilterText>
+                <InitializeFilterText>{'방문날짜 및 시간 초기화'}</InitializeFilterText>
                 <InitializeFilterIcon
                   source={require('~/Assets/Images/Map/ic_initialize.png')}
                 />

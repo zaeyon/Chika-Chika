@@ -82,11 +82,11 @@ const ReviewRoute = ({
     console.log(selectedHometown);
     setOrder('createdAt');
 
-    setRegion(selectedHometown.id === -1 ? 'all' : 'residence');
+    setRegion(selectedHometown?.id === -1 ? 'all' : 'residence');
     const form = {
       pathType: 'review',
-      region: selectedHometown.id === -1 ? 'all' : 'residence',
-      cityId: String(selectedHometown.id),
+      region: selectedHometown?.id === -1 ? 'all' : 'residence',
+      cityId: String(selectedHometown?.id),
       order: 'createdAt',
       offset: 0,
       limit: 10,
@@ -109,7 +109,7 @@ const ReviewRoute = ({
     const form = {
       pathType: 'review',
       region,
-      cityId: String(selectedHometown.id),
+      cityId: String(selectedHometown?.id),
       order,
       offset: 0,
       limit,
@@ -130,7 +130,7 @@ const ReviewRoute = ({
     const form = {
       pathType: 'review',
       region,
-      cityId: String(selectedHometown.id),
+      cityId: String(selectedHometown?.id),
       order,
       offset: pageIndex * 10,
       limit,
@@ -177,7 +177,7 @@ const ReviewRoute = ({
       const form = {
         pathType: 'review',
         region,
-        cityId: String(selectedHometown.id),
+        cityId: String(selectedHometown?.id),
         order: searchOrder,
         offset: 0,
         limit,

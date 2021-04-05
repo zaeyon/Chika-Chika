@@ -129,7 +129,7 @@ const LocationSelection = ({
                   setFloatVisible(false);
                 }}>
                 <HometownSetttingContentView key={item.emdName}>
-                  {item.id === selectedHometown.id ? (
+                  {item.id === selectedHometown?.id ? (
                     <HometownSettingContentSelectedText>
                       {item.emdName}
                     </HometownSettingContentSelectedText>

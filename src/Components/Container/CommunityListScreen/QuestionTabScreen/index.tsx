@@ -120,16 +120,16 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     setOrder('createdAt');
-    setRegion(selectedHometown.id === -1 ? 'all' : 'residence');
+    setRegion(selectedHometown?.id === -1 ? 'all' : 'residence');
     !initialize && setIsRegionChanging(true);
     const form = {
       type,
       limit: 10,
       offset: 0,
       order: 'createdAt',
-      region: selectedHometown.id === -1 ? 'all' : 'residence',
+      region: selectedHometown?.id === -1 ? 'all' : 'residence',
     };
-    GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
+    GETCommunityPosts(jwtToken, String(selectedHometown?.id), form).then(
       (response: any) => {
         const data = {
           type,
@@ -159,7 +159,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         order: 'createdAt',
         region,
       };
-      GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
+      GETCommunityPosts(jwtToken, String(selectedHometown?.id), form).then(
         (response: any) => {
           const data = {
             type,
@@ -186,7 +186,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
       region,
     };
     setRefreshing(true);
-    GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
+    GETCommunityPosts(jwtToken, String(selectedHometown?.id), form).then(
       (response: any) => {
         setIsDataFinish(false);
         const data = {
@@ -233,7 +233,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
           order,
           region,
         };
-        GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
+        GETCommunityPosts(jwtToken, String(selectedHometown?.id), form).then(
           (response: any) => {
             if (response.length === 0) {
               setIsDataFinish(true);
@@ -261,7 +261,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         region,
       };
       setRefreshing(true);
-      GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
+      GETCommunityPosts(jwtToken, String(selectedHometown?.id), form).then(
         (response: any) => {
           setIsDataFinish(false);
           const data = {
@@ -294,7 +294,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
         order,
         region,
       };
-      GETCommunityPosts(jwtToken, String(selectedHometown.id), form).then(
+      GETCommunityPosts(jwtToken, String(selectedHometown?.id), form).then(
         (response: any) => {
           setIsDataFinish(false);
           const data = {
