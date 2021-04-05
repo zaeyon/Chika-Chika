@@ -519,7 +519,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         }
         style={{
           flex: 1,
-          marginBottom: -getBottomSpace() + (hasNotch() ? hp('10.59%') : hp('7.2%')),
+          marginBottom: -getBottomSpace() + (hasNotch() ? hp('10.59%') : hp('6.92%')),
           overflow: 'visible',
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
@@ -528,7 +528,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           minHeight:
             hp('100%') -
             HEADERHEIGHT -
-            (hasNotch() ? hp('6.5%') : hp('7.2%')) +
+            (hasNotch() ? hp('6.5%') : hp('6.92%')) +
             PROFILEHEIGHT,
           paddingTop: PROFILEHEIGHT + TABBARHEIGHT,
         }}
@@ -601,7 +601,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
         }
         style={{
           flex: 1,
-          marginBottom: -getBottomSpace() + (hasNotch() ? hp('10.59%') : hp('7.2%')),
+          marginBottom: -getBottomSpace() + (hasNotch() ? hp('10.59%') : hp('6.92%')),
           overflow: 'visible',
         }}
         scrollIndicatorInsets={{top: PROFILEHEIGHT + TABBARHEIGHT}}
@@ -610,7 +610,7 @@ export default class MyProfile extends React.PureComponent<Props, State> {
           minHeight:
             hp('100%') -
             HEADERHEIGHT -
-            (hasNotch() ? hp('6.5%') : hp('7.2%')) +
+            (hasNotch() ? hp('6.5%') : hp('6.92%')) +
             PROFILEHEIGHT,
           paddingTop: PROFILEHEIGHT + TABBARHEIGHT,
         }}

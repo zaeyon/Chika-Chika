@@ -137,50 +137,6 @@ const CommunityListScreen = ({navigation, route}: Props) => {
     }
   }, [onMessage]);
 
-  useEffect(() => {
-
-    console.log('question initialize');
-
-    const questionform = {
-      type: 'Question',
-      limit: 20,
-      offset: 0,
-      order: 'createdAt',
-      region: 'all',
-    };
-
-    const freetalkform = {
-      type: 'FreeTalk',
-      limit: 20,
-      offset: 0,
-      order: 'createdAt',
-      region: 'all',
-    };
-
-    if(hometown[0]?.id) {
-      GETCommunityPosts(jwtToken, String(hometown[0]?.id), questionform).then(
-        (response: any) => {
-          const data = {
-            type: 'Question',
-            posts: response,
-          };
-          dispatch(allActions.communityActions.setPosts(data));
-          console.log('res', response.length);
-        },
-      );
-      GETCommunityPosts(jwtToken, String(hometown[0]?.id), freetalkform).then(
-        (response: any) => {
-          const data = {
-            type: 'FreeTalk',
-            posts: response,
-          };
-          dispatch(allActions.communityActions.setPosts(data));
-          console.log('res', response.length);
-        },
-      );
-    }
-    
-  }, []);
 
   return (
     <ContainerView as={SafeAreaView} forceInset={{top: 'always'}}>

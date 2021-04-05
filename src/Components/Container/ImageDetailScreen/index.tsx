@@ -18,10 +18,12 @@ const HeaderConatinerView = Styled.View`
 width: ${wp('100%')}px;
 height: auto;
 position: absolute;
-top: ${getStatusBarHeight()}
+top: 0;
+padding-top: ${getStatusBarHeight()};
 z-index: 1;
 flex-direction: row;
 align-items: center;
+background: #00000080;
 `;
 
 const HeaderCancelView = Styled.View`
@@ -208,26 +210,7 @@ const ImageDetailScreen = ({navigation, route}: Props) => {
           }),
         }}
       />
-      <TopMaskView
-        as={Animated.View}
-        style={{
-          opacity: dragY.interpolate({
-            inputRange: [-hp('100%'), 0, 1, hp('100%')],
-            outputRange: [1, 1, 0, 0],
-            extrapolate: 'clamp',
-          }),
-        }}
-      />
-      <BottomMaskView
-        as={Animated.View}
-        style={{
-          opacity: dragY.interpolate({
-            inputRange: [-hp('100%'), 0, 1, hp('100%')],
-            outputRange: [1, 1, 0, 0],
-            extrapolate: 'clamp',
-          }),
-        }}
-      />
+
 
     </ContainerView>
   );

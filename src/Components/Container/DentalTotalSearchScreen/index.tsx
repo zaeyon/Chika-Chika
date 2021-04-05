@@ -591,7 +591,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     if (keyword.trim() !== '') {
       searchQueryRef.current = keyword;
       setIsFocusedSearchInput(false);
-      searchDental(keyword, keyword, '');
+      searchDental(query, 'text');
     }
   };
 
@@ -612,8 +612,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   const searchDental = (
-    searchQuery: string,
-    inputQuery: string,
+    query: string,
     category: string,
   ) => {
     setLoadingSearchDental(true);
@@ -621,13 +620,9 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     const offset = offsetRef.current;
     const limit = limitRef.current;
 
-    const iq = inputQuery;
-    const sq = searchQuery;
-
     GETDentalTotalSearch({
       jwtToken,
-      iq,
-      sq,
+      query,
       offset,
       limit,
       lat,
@@ -640,11 +635,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       parkingFilter,
     })
       .then((response: any) => {
-        console.log('GETDentalTotalSearch response', response);
-        console.log('GETDentalTotalSearch iq', iq);
-        console.log('GETDentalTotalSearch sq', sq);
         setLoadingSearchDental(false);
-        dispatch(allActions.dentalMapActions.setSearchedKeyword(iq));
+        dispatch(allActions.dentalMapActions.setSearchedKeyword(query));
 
         if (response.length > 0) {
           dispatch(
@@ -664,7 +656,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       })
       .catch((error: any) => {
         setLoadingSearchDental(false);
-        dispatch(allActions.dentalMapActions.setSearchedKeyword(iq));
+        dispatch(allActions.dentalMapActions.setSearchedKeyword(query));
         console.log('GETDentalTotalSearch error', error);
       });
   };
@@ -689,8 +681,6 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   ) => {
     setLoadingSearchDental(true);
 
-    const iq = '';
-    const sq = searchQueryRef.current;
 
     const dayFilter = tmpDayFilter;
     const timeFilter = tmpTimeFilter;
@@ -703,8 +693,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
 
     GETDentalTotalSearch({
       jwtToken,
-      iq,
-      sq,
+      query,
       offset,
       limit,
       lat,
@@ -1097,13 +1086,11 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     const offset = offsetRef.current;
     const limit = limitRef.current;
 
-    const iq = '';
-    const sq = searchQueryRef.current;
+    const query = searchQueryRef.current;
 
     GETDentalTotalSearch({
       jwtToken,
-      iq,
-      sq,
+      query,
       offset,
       limit,
       lat,
@@ -1191,8 +1178,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     const mapLong = route.params?.currentMapLongitude;
     const category = keywordRef?.current?.category;
 
-    const iq = '';
-    const sq = searchQueryRef.current;
+    const query = searchQueryRef.current;
 
     if (isNearDentalList.current) {
       const sort = 'd';
@@ -1224,8 +1210,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     } else {
       GETDentalTotalSearch({
         jwtToken,
-        iq,
-        sq,
+        query,
         offset,
         limit,
         lat,
@@ -1266,34 +1251,26 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   const searchTotalKeyword = ({
-    keyword,
-    searchQuery = '',
+    query,
     category,
-    tagId,
   }: {
-    keyword: string;
-    searchQuery?: string;
+    query: string;
     category: string;
-    tagId: string;
   }) => {
-    console.log('searchTotalKeyword keyword', keyword);
-    console.log('searchTotalKeyword searchQuery', searchQuery);
-    console.log('searchTotalKeyword category', category);
-    console.log('searchTotalKeyword tagId', tagId);
 
     isNearDentalList.current = false;
     offsetRef.current = 0;
     Keyboard.dismiss();
     setIsFocusedSearchInput(false);
-    searchQueryRef.current = searchQuery;
-    inputingText = keyword;
+    searchQueryRef.current = query;
+    inputingText = query;
 
-    getAutoCompleteKeyword(keyword);
-    setQuery(keyword);
-    searchDental(searchQuery, keyword, category);
+    getAutoCompleteKeyword(query);
+    setQuery(query);
+    searchDental(query, category);
 
     keywordRef.current = {
-      name: searchQuery,
+      name: query,
       category: category,
     };
   };
@@ -1423,7 +1400,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
       <HeaderBar>
         <BackIconTouchableWithoutFeedback
           onPress={() => {
-            goBack();
+            moveToDentalMap()
           }}>
           <BackIconView>
             <BackIconImage

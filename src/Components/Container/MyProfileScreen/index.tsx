@@ -14,7 +14,7 @@ const ContainerView = Styled.View`
 flex: 1;
 background: #FFFFFF;
 padding-bottom: ${
-  Platform.OS === 'ios' ? (hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%')
+  Platform.OS === 'ios' ? (hasNotch() ? hp('10.59%') : hp('6.92%')) : hp('6.92%')
 }
 `;
 

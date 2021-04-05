@@ -1361,7 +1361,8 @@ function BottomTab() {
       routeName.name === 'DentalDetailScreen' ||
       routeName.name === 'ReviewStackScreen' ||
       routeName.name === 'ReviewUploadStackScreen' ||
-      routeName.name === 'DentalInfoEditRequestScreen'
+      routeName.name === 'DentalInfoEditRequestScreen' || 
+      routeName.name === 'DentalLocationMapScreen'
     ) {
       return false;
     }
@@ -1505,18 +1506,25 @@ function BottomTab() {
       lazy={true}
       initialRouteName="홈"
       tabBarOptions={{
-        showLabel: false,
         style: styles.tabBar,
         tabStyle: {
           borderTopWidth: 0.5,
           borderTopColor: '#E2E6ED',
         },
+        activeTintColor: '#131F3C',
+        inactiveTintColor: '#9AA2A9',
+        labelStyle: {
+          fontWeight: "bold",
+          fontSize: 10,
+          lineHeight: 12,
+        }
       }}>
       <Tab.Screen
         name="홈"
         component={HomeStackScreen}
         options={({route}) => ({
           gestureEnabled: false,
+          tabBarLabel: "홈",
           tabBarVisible: getHomeBottomTabBarVisibility(route),
           tabBarIcon: ({focused}: {focused: boolean}) => (
             <Image
@@ -1533,6 +1541,7 @@ function BottomTab() {
         name="지도"
         component={NearDentalMapStackScreen}
         options={({route}) => ({
+          tabBarLabel: "지도",
           tabBarVisible: getDentalBottomTabBarVisibility(route),
           tabBarIcon: ({focused}: {focused: boolean}) => (
             <Image
@@ -1567,6 +1576,7 @@ function BottomTab() {
         name="수다방"
         component={CommunityStackScreen}
         options={({route}) => ({
+          tabBarLabel: "커뮤니티",
           tabBarVisible: getCommunityBottomTabBarVisibility(route),
           tabBarIcon: ({focused}: {focused: boolean}) => (
             <Image
@@ -1583,6 +1593,7 @@ function BottomTab() {
         name="마이"
         component={MyProfileStackScreen}
         options={({route}) => ({
+          tabBarLabel: "마이페이지",
           tabBarVisible: getMyProfileBottomTabBarVisibility(route),
           tabBarIcon: ({focused}: {focused: boolean}) => (
             <Image
@@ -1665,8 +1676,8 @@ const styles = StyleSheet.create({
       Platform.OS === 'ios'
         ? hasNotch()
           ? hp('10.59%')
-          : hp('7.2%')
-        : hp('7.2%'),
+          : hp('6.92%')
+        : hp('6.92%'),
     paddingHorizontal: 0,
     position: 'absolute',
     shadowOffset: {

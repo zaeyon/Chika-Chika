@@ -36,6 +36,7 @@ import POSTSocialRegister from '~/Routes/Auth/POSTSocialRegister';
 import POSTReviewUpload from '~/Routes/Review/POSTReviewUpload';
 import GETCitySearch from '~/Routes/Search/GETCitySearch';
 import POSTUserHometown from '~/Routes/User/POSTUserHometown';
+import POSTMainHometownChange from '~/Routes/User/POSTMainHometownChange';
 import PUTUserHometown from '~/Routes/User/PUTUserHometown';
 
 const Container = Styled.View`
@@ -321,6 +322,8 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
       addSubHometown(item);
     } else if (route.params?.requestType === 'revise') {
       reviseHometown(item);
+    } else if (route.params?.requestType === 'initialize') {
+      addMainHometown(item);
     }
   };
 
@@ -421,6 +424,33 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
       });
   };
 
+  const addMainHometown = (item: any) => {
+    setLoadingAddCity(true);
+    POSTMainHometownChange({jwtToken, cityId: item.id}).then((response: any) => {
+      if (response.statusText === 'Accepted') {
+        setLoadingAddCity(false);
+
+        const hometownObj = {
+          UsersCities: {
+            now: true,
+          },
+          emdName: item.emdName,
+          id: item.id,
+          fullCityName: item.fullCityName,
+          sido: item.sido,
+          sigungu: item.sigungu,
+        };
+
+        dispatch(allActions.userActions.addHometown(hometownObj));
+        navigation.goBack();
+      }
+    }).catch((error) => {
+      setLoadingAddCity(false);
+      console.log('POSTMainUserHometownChange error', error);
+        Alert.alert("거주지 설정 실패", "다시 시도해 주세요");
+      
+    });
+  }
   const addSubHometown = (item: any) => {
     setLoadingAddCity(true);
     console.log('addSubHometown, item', item);

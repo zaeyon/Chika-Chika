@@ -2,7 +2,7 @@ import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {Image, Animated, TouchableOpacity, RefreshControl, Platform} from 'react-native';
+import {Image, Animated, TouchableOpacity, RefreshControl, Platform, TouchableWithoutFeedback, LayoutAnimation} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -20,10 +20,10 @@ import allActions from '~/actions';
 
 //Local Component
 import HomeInfoContent from '~/Components/Presentational/HomeScreen/HomeInfoContent';
-import HomeClinicContent from '~/Components/Presentational/HomeScreen/HomeClinicContent';
 import HomeReviewContent from '~/Components/Presentational/HomeScreen/HomeReviewContent';
-import HomeCommunityContent from '~/Components/Presentational/HomeScreen/HomeCommunityContent';
 import ToastMessage from '~/Components/Presentational/ToastMessage';
+import HomeElderClinicContent from '~/Components/Presentational/HomeScreen/HomeElderClinicContent'
+import HomeOpenedClinicContent from '~/Components/Presentational/HomeScreen/HomeOpenedClinicContent'
 
 // Routes
 import GETSearchRecord from '~/Routes/Search/GETSearchRecord';
@@ -52,9 +52,15 @@ height: 8px;
 background: #F5F7F9;
 margin-bottom: 16px;
 `;
+
 const ContentScrollView = Styled.ScrollView`
 flex: 1;
 `;
+
+const BodyContainerView = Styled.View`
+flex: 1;
+background: #F5F7F9;
+`
 
 const HeaderContainerView = Styled.View`
 width: 100%;
@@ -87,7 +93,7 @@ const FloatingButtonView = Styled.View`
 position: absolute;
 elevation: 2;
 align-self: center;
-bottom: ${24 + (Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%'))}px;
+bottom: ${24 + (Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('6.92%')) : hp('6.92%'))}px;
 padding: 8px 24px;
 background: #131F3C;
 box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
@@ -101,11 +107,47 @@ line-height: 24px;
 color: #FFFFFF;
 `;
 
-const BannerImage = Styled.Image`
-border-radius: 8px;
-width: ${wp('91.46%')}px;
-margin-bottom: 16px;
-margin: 0px 16px;
+const LocationContainerView = Styled.View`
+margin: 21px 16px 0px 16px;
+flex-direction: row;
+align-items: center;
+background: #FFFFFF;
+padding: 9px 21px;
+border-radius: 4px;
+box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
+`;
+
+const LocationImage = Styled.Image`
+margin-right: 8px;
+`;
+
+const LocationText = Styled.Text`
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+line-height: 24px;
+color: #000000;
+`;
+
+const LocationButtonView = Styled.View`
+background: #131F3C;
+border-radius: 100px;
+padding: 4px 10px;
+margin-left: auto;
+flex-direction: row;
+align-items: center;
+height: 100%;
+`;
+
+const LocationButtonImage = Styled.Image`
+margin-right: 4px;
+`;
+
+const LocationButtonText = Styled.Text`
+font-weight: 800;
+font-size: 12px;
+line-height: 24px;
+color: #FFFFFF;
 `;
 
 interface Props {
@@ -141,6 +183,8 @@ const HomeScreen = ({navigation, route}: Props) => {
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 
   const [isMainHomeChanged, setIsMainHomeChanged] = useState(true);
+
+  const [defaultHometown, setDefaultHometown] = useState({UsersCities: {now: false}, emdName: "압구정동", fullCityName: "서울특별시 강남구 압구정동", id: 824, sido: "서울특별시", sigungu: "강남구"})
   const selectedHometown = useSelector(
     (state: any) =>
       state.currentUser.hometown &&
@@ -149,16 +193,6 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   const dispatch = useDispatch();
 
-  const uploadFloatingShadowOpt = {
-    width: wp('37.6%'),
-    height: wp('10%'),
-    color: "#000000",
-    border: 15,
-    radius: 3,
-    opacity: 0.2,
-    x: 0,
-    y: 3,
-  }
 
   useEffect(() => {
     if (route.params?.isUploadReview) {
@@ -172,9 +206,9 @@ const HomeScreen = ({navigation, route}: Props) => {
       if (selectedHometown) {
         setIsMainHomeChanged((prev) => {
           if (prev) {
-            fetchLocalInfo(selectedHometown);
             fetchRecentReviews(selectedHometown);
-            fetchRecentCommunityPosts(selectedHometown);
+            // fetchLocalInfo(selectedHometown);
+            // fetchRecentCommunityPosts(selectedHometown);
           }
           return false;
         });
@@ -183,6 +217,9 @@ const HomeScreen = ({navigation, route}: Props) => {
   );
 
   useEffect(() => {
+    LayoutAnimation.configureNext(
+      LayoutAnimation.create(400, 'easeInEaseOut', 'opacity'),
+    );
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       setOnMessage(true);
     });
@@ -296,11 +333,12 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   const fetchRecentReviews = useCallback(
     async (selectedHometown: any) => {
+      console.log('fdfd')
       const result = await Promise.all(
         tagFilterItems.map(async (tagItem) => {
           const form = {
             jwtToken,
-            query: tagItem.name,
+            query: '',
             pathType: 'review',
             limit: '10',
             offset: '0',
@@ -339,10 +377,10 @@ const HomeScreen = ({navigation, route}: Props) => {
     [jwtToken],
   );
   const onRefresh = useCallback(() => {
-    // setRefreshing(true);
-    // fetchLocalInfo(selectedHometown, () => setRefreshing(false));
-    // fetchRecentReviews(selectedHometown);
-    // fetchRecentCommunityPosts(selectedHometown);
+    setRefreshing(true);
+    fetchLocalInfo(selectedHometown || defaultHometown, () => setRefreshing(false));
+    fetchRecentReviews(selectedHometown || defaultHometown);
+    fetchRecentCommunityPosts(selectedHometown || defaultHometown);
   }, [
     selectedHometown,
     fetchLocalInfo,
@@ -409,10 +447,16 @@ const HomeScreen = ({navigation, route}: Props) => {
     });
   }, []);
 
-  const moveToHomeTownSetting = useCallback(() => {
+  const moveToHometownSetting = useCallback(() => {
     navigation.navigate('HometownSettingScreen');
   }, []);
 
+  const moveToHometownSearch = useCallback(() => {
+    navigation.navigate('HometownSearchScreen', {
+      requestType: 'initialize'
+    });
+  }, [])
+  
   return (
     <ContainerView as={SafeAreaView}>
         <HeaderContainerView>
@@ -472,7 +516,7 @@ const HomeScreen = ({navigation, route}: Props) => {
         }
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: hp('9.1%'),
+          paddingBottom: hp('6.92%'),
         }}
         scrollEventThrottle={16}
         onScroll={(event) => {
@@ -506,27 +550,39 @@ const HomeScreen = ({navigation, route}: Props) => {
             }
           }
         }}>
-        <HomeInfoContent
-          isMainHomeChanged={isMainHomeChanged}
-          selectedHometown={selectedHometown}
-          localClinicCount={localClinicCount}
-          localReviewCount={localReviewCount}
-          moveToHomeTownSetting={moveToHomeTownSetting}
-        />
-        <PartitionView />
-
+        <HomeInfoContent/>
+      <BodyContainerView>
+        <LocationContainerView>
+          <LocationImage source={require('~/Assets/Images/Home/ic_location_info.png')}/>
+          <LocationText>
+            <LocationText style={{
+              fontWeight: 'bold'
+            }}>
+              {"다른지역"}
+            </LocationText>
+            {"의 치과가 궁금하세요?"}
+          </LocationText>
+          <TouchableWithoutFeedback onPress={() => selectedHometown ? moveToHometownSetting() : moveToHometownSearch()}>
+          <LocationButtonView>
+            <LocationButtonImage source={require('~/Assets/Images/Home/ic_location_focus.png')}/>
+            <LocationButtonText>
+              {selectedHometown?.emdName || defaultHometown?.emdName}
+            </LocationButtonText>
+          </LocationButtonView>
+          </TouchableWithoutFeedback>
+        </LocationContainerView>
         <HomeReviewContent
-          selectedHometown={selectedHometown?.emdName}
+          selectedHometown={selectedHometown?.emdName || defaultHometown?.emdName}
           tagFilterItems={tagFilterItems}
           reviewData={reviewData}
           moveToReviewDetail={moveToReviewDetail}
         />
-        <HomeCommunityContent
-          selectedHometown={selectedHometown?.emdName}
-          postData={postData}
-          moveToCommunityDetail={moveToCommunityDetail}
-          moveToAnotherProfile={moveToAnotherProfile}
-        />
+        <HomeElderClinicContent clinics={[{id: 1, originalName: 'gogogogo', reviewAVGStarRate: 1, reviewNum: 2,dentalTransparent: true,
+    surgeonNum: 3}]}/>
+        <HomeOpenedClinicContent clinics={[{id: 1, originalName: 'gogogogo', reviewAVGStarRate: 1, reviewNum: 2,dentalTransparent: true,
+    surgeonNum: 3}]}/>
+
+        </BodyContainerView>
       </ContentScrollView>
       <FloatingButtonView
         as={Animated.View}
@@ -536,7 +592,7 @@ const HomeScreen = ({navigation, route}: Props) => {
               translateY: floatY.interpolate({
                 inputRange: [0, 1],
                 outputRange: [
-                  64 + (Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('7.2%')) : hp('7.2%')),
+                  64 + (Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('6.92%')) : hp('6.92%')),
                   0,
                 ],
                 extrapolate: 'clamp',
@@ -552,6 +608,7 @@ const HomeScreen = ({navigation, route}: Props) => {
           <FloatingButtonText>{'리뷰 작성하기'}</FloatingButtonText>
         </TouchableOpacity>
       </FloatingButtonView>
+      
     </ContainerView>
   );
 };

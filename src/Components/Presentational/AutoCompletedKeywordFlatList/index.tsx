@@ -214,13 +214,6 @@ const AutoCompletedTotalKeywordFlatList = ({
             <AutoCompletedKeywordText>
               {item.query}
             </AutoCompletedKeywordText>
-            {item.category === 'city' && (
-              <AutoCompletedKeywordDescriptionView>
-                <AutoCompletedKeywordDescriptionText>
-                  {item.query}
-                </AutoCompletedKeywordDescriptionText>
-              </AutoCompletedKeywordDescriptionView>
-            )}
           </SearchRecordContentView>
           <TouchableWithoutFeedback
             onPress={() => deleteSingleSearchRecord(item.id, item.category)}>
@@ -282,12 +275,6 @@ const AutoCompletedTotalKeywordFlatList = ({
     },
     [inputQuery],
   );
-
-  // const renderFrequentTerms = useCallback(() => (
-
-  // ), [])
-
-  const renderListHeader = useCallback(() => {}, []);
 
   return (
     <ContinaerView>
