@@ -57,7 +57,7 @@ const HomeInfoContent = () => {
 
   const [iconCellList, setIconCellList] = useState([
     {
-      text: '교정전문의',
+      text: '전문의',
       source: require('~/Assets/Images/Home/ic_dental_specialist.png'),
     },
     {

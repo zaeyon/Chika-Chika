@@ -4,6 +4,32 @@ import {TouchableWithoutFeedback, LayoutAnimation} from 'react-native'
 //
 import HomeContentContainerView from '~/Components/Presentational/HomeScreen/HomeContentContainerView';
 
+const ContainerView = Styled.View`
+padding: 0px 16px;
+margin-bottom: 21px;
+`;
+
+const ContainerHeaderView = Styled.View`
+flex-direction: row;
+margin-bottom: 21px;
+`;
+
+const ContainerTitleText = Styled.Text`
+font-style: normal;
+font-weight: bold;
+font-size: 18px;
+line-height: 24px;
+color: #131F3C;
+`;
+
+const ContainerText = Styled.Text`
+font-style: normal;
+font-weight: normal;
+font-size: 13px;
+line-height: 24px;
+color: #9AA2A9;
+margin-left: auto;
+`;
 
 const LocalClinicInfoView = Styled.View`
 padding: 12px 16px;
@@ -23,7 +49,7 @@ color: #131F3C;
 `;
 
 const LocalClinicItemView = Styled.View`
-padding: 12px 0px;
+padding: 8px 0px;
 flex-direction: row;
 align-items: center;
 `;
@@ -48,7 +74,7 @@ border-radius: 100px;
 margin-right: 12px;
 `;
 const LocalClinicContentView = Styled.View`
-
+justify-content: space-around;
 `;
 
 const LocalClinicItemTitleText = Styled.Text`
@@ -110,10 +136,11 @@ border-radius: 4px;
 `;
 
 interface Props {
-    clinics: any
+    clinics: any;
+    moveToDetailMap: any;
 }
 
-const HomeElderClinicContent = ({clinics}: Props) => {
+const HomeElderClinicContent = ({clinics, moveToDetailMap}: Props) => {
 
     const renderLocalClinicItem = useCallback(() => {
         return clinics.map((item: any) => (
@@ -151,12 +178,18 @@ const HomeElderClinicContent = ({clinics}: Props) => {
         ));
       }, [clinics]);
 
-    return (
-        <HomeContentContainerView
-            title="개업한지 10년이상 된 우리동네 치과"
+      return (
+        <ContainerView>
+          <ContainerHeaderView>
+          <ContainerTitleText>
+            {"개업한지 5년이상 된 우리동네 치과"}
+          </ContainerTitleText>
+          </ContainerHeaderView>
+          <HomeContentContainerView
             renderContentItem={renderLocalClinicItem}
-        >
-        </HomeContentContainerView>
+            onPress={() => moveToDetailMap()}
+          />
+        </ContainerView>
     )
 }
 

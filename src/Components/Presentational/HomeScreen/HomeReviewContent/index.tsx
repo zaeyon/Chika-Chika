@@ -151,7 +151,6 @@ const HomeReviewContent = ({
       <TouchableWithoutFeedback>
       <ContentTitleView>
         <ContentTitleText>{`최근 올라온 치아교정 리뷰`}</ContentTitleText>
-        <ContentTitleImage source={require('~/Assets/Images/Home/메인/ic_review_more.png')}/>
       </ContentTitleView>
       </TouchableWithoutFeedback>
       <ReviewThumbnailFlatlist

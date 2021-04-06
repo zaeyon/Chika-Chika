@@ -9,10 +9,8 @@ import {
 } from 'react-native-responsive-screen';
 
 const ContainerView = Styled.View`
-margin: 0px 16px;
-margin-bottom: 21px;
 background: #FFFFFF;
-padding: 24px 16px;
+padding: 16px 16px 24px 16px;
 border-radius: 8px;
 box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
 width: auto;
@@ -51,16 +49,12 @@ const NavigatoinButtonImage = Styled.Image`
 
 interface Props {
     renderContentItem: any;
-    title: string;
     onPress: any;
 }
 
-const HomeContentContainerView = ({renderContentItem, title, onPress}: Props) => {
+const HomeContentContainerView = ({renderContentItem, onPress}: Props) => {
     return (
         <ContainerView>
-            <TitleText>
-                {title}
-            </TitleText>
             {renderContentItem()}
         <TouchableWithoutFeedback onPress={() => moveToCommunity()}>
           <NavigatoinButtonView>

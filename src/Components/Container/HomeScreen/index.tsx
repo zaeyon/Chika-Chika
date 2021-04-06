@@ -577,9 +577,11 @@ const HomeScreen = ({navigation, route}: Props) => {
           reviewData={reviewData}
           moveToReviewDetail={moveToReviewDetail}
         />
-        <HomeElderClinicContent clinics={[{id: 1, originalName: 'gogogogo', reviewAVGStarRate: 1, reviewNum: 2,dentalTransparent: true,
-    surgeonNum: 3}]}/>
         <HomeOpenedClinicContent clinics={[{id: 1, originalName: 'gogogogo', reviewAVGStarRate: 1, reviewNum: 2,dentalTransparent: true,
+    surgeonNum: 3}, {id: 2, originalName: 'gogogogo', reviewAVGStarRate: 1, reviewNum: 2,dentalTransparent: true,
+    surgeonNum: 3}, {id: 3, originalName: 'gogogogo', reviewAVGStarRate: 1, reviewNum: 2,dentalTransparent: true,
+    surgeonNum: 3}]}/>
+        <HomeElderClinicContent clinics={[{id: 1, originalName: 'gogogogo', reviewAVGStarRate: 1, reviewNum: 2,dentalTransparent: true,
     surgeonNum: 3}]}/>
 
         </BodyContainerView>
