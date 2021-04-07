@@ -17,7 +17,7 @@ import ReviewThumbnail from '~/Components/Presentational/HomeScreen/HomeReviewCo
 const ContainerView = Styled.View`
 width: 100%;
 flex: 1;
-padding: 21px 0px 8px 0px;
+padding: 21px 16px 8px 16px;
 margin-bottom: 16px;
 `;
 
@@ -25,7 +25,6 @@ const ContentTitleView = Styled.View`
 width: auto;
 flex-direction: row;
 align-items: center;
-margin: 0px 16px;
 margin-bottom: 21px;
 `;
 
@@ -85,6 +84,52 @@ flex-direction: row;
 overflow: visible;
 `;
 
+const PlaceHolderContainerView = Styled.View`
+width: auto;
+padding: 42px 65px;
+background: #FFFFFF;
+box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
+border-radius: 12px;
+`;
+
+const PlaceHolderContentView = Styled.View`
+align-items: center;
+justify-content: center;
+margin-bottom: 12px;
+`;
+
+const PlaceHolderImage = Styled.Image`
+margin-bottom: 5px;
+`;
+
+const PlaceHolderText = Styled.Text`
+font-style: normal;
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+color: #131F3C;
+`;
+
+const NavigationButtonView = Styled.View`
+border: 1px #E2E6ED;
+border-radius: 100px;
+padding: 12px 0px;
+justify-content: center;
+align-items: center;
+flex-direction: row;
+margin-top: 12px;
+background: #FFFFFF;
+`;
+
+const NavigationButtonText = Styled.Text`
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+line-height: 16px;
+`;
+
+const NavigationButtonImage = Styled.Image``;
+
 if (
   Platform.OS === 'android' &&
   UIManager.setLayoutAnimationEnabledExperimental
@@ -93,52 +138,49 @@ if (
 }
 
 interface Props {
+  initialized: boolean;
   selectedHometown: string;
-  tagFilterItems: any;
   reviewData: any;
   moveToReviewDetail: any;
+  moveToReviewUpload: any;
 }
 
 const HomeReviewContent = ({
+  initialized,
   selectedHometown,
-  tagFilterItems,
   reviewData,
   moveToReviewDetail,
+  moveToReviewUpload,
 }: Props) => {
-  const [selectedTagFilterItem, setSelectedTagFilterItem] = useState('스케일링');
   const flatlistRef: any = useRef();
 
-  const renderTagFilter = useCallback(() => {
-    return (
-      <TagFilterContainerView>
-        {tagFilterItems.map((item: any) => (
-          <TouchableWithoutFeedback
-            key={item.name}
-            onPress={() => {
-              ReactNativeHapticFeedback.trigger('selection');
-              setSelectedTagFilterItem(item.name);
-              flatlistRef.current.scrollToOffset({
-                offset: 0,
-                animated: false,
-              });
-            }}>
-            {selectedTagFilterItem === item.name ? (
-              <TagFilterSelectedContentView>
-                <TagFilterSelectedContentText>
-                  {`${item.name}`}
-                </TagFilterSelectedContentText>
-              </TagFilterSelectedContentView>
-            ) : (
-              <TagFilterContentView>
-                <TagFilterContentText>{`${item.name}`}</TagFilterContentText>
-              </TagFilterContentView>
-            )}
-          </TouchableWithoutFeedback>
-        ))}
-      </TagFilterContainerView>
-    );
-  }, [tagFilterItems, selectedTagFilterItem]);
-
+  const renderPlaceHolder = useCallback(() => (
+    <PlaceHolderContainerView>
+      <PlaceHolderContentView>
+        <PlaceHolderImage source={require('~/Assets/Images/Home/메인/ic_review_empty.png')}/>
+        <PlaceHolderText>
+          {"아직은 리뷰가 없네요"}
+        </PlaceHolderText>
+        </PlaceHolderContentView>
+        <TouchableWithoutFeedback onPress={() => moveToReviewUpload()}>
+        <NavigationButtonView>
+          <NavigationButtonText>
+              <NavigationButtonText
+                style={{
+                  color: '#00D1FF',
+                }}>
+                {'첫번째 리뷰 '}
+              </NavigationButtonText>
+              {'남기러 가기'}
+            </NavigationButtonText>
+            <NavigationButtonImage
+              source={require('~/Assets/Images/Arrow/common/gan/button_right_arrow.png')}
+            />
+        </NavigationButtonView>
+        </TouchableWithoutFeedback>
+      </PlaceHolderContainerView> 
+  ), []);
+  
   const renderReviewThumbnail = useCallback(
     ({item}: any) => (
       <ReviewThumbnail review={item} moveToReviewDetail={moveToReviewDetail} />
@@ -153,15 +195,11 @@ const HomeReviewContent = ({
         <ContentTitleText>{`최근 올라온 치아교정 리뷰`}</ContentTitleText>
       </ContentTitleView>
       </TouchableWithoutFeedback>
+      {initialized && !reviewData.length ? renderPlaceHolder():
       <ReviewThumbnailFlatlist
         ref={flatlistRef}
-        contentContainerStyle={{
-          paddingLeft: 16,
-        }}
         data={
-          reviewData &&
-          reviewData.find((data: any) => data.name === selectedTagFilterItem)
-            ?.data
+          reviewData
         }
         renderItem={renderReviewThumbnail}
         keyExtractor={(item: any) => String(item.id)}
@@ -171,7 +209,7 @@ const HomeReviewContent = ({
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
         
-      />
+      /> }
     </ContainerView>
   );
 };

@@ -134,16 +134,54 @@ margin-top: 4px;
 background: #F5F7F9;
 border-radius: 4px;
 `;
+const PlaceHolderContainerView = Styled.View`
+width: auto;
+padding: 59px 65px;
+background: #FFFFFF;
+box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
+border-radius: 12px;
+`;
+
+const PlaceHolderContentView = Styled.View`
+align-items: center;
+justify-content: center;
+margin-bottom: 12px;
+`;
+
+const PlaceHolderImage = Styled.Image`
+margin-bottom: 5px;
+`;
+
+const PlaceHolderText = Styled.Text`
+font-style: normal;
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+color: #131F3C;
+text-align: center;
+`;
 
 interface Props {
+    initialized: boolean;
     clinics: any;
     moveToDetailMap: any;
 }
 
-const HomeElderClinicContent = ({clinics, moveToDetailMap}: Props) => {
+const HomeElderClinicContent = ({initialized, clinics, moveToDetailMap}: Props) => {
+
+  const renderPlaceHolder = useCallback(() => (
+    <PlaceHolderContainerView>
+      <PlaceHolderContentView>
+        <PlaceHolderImage source={require('~/Assets/Images/Home/메인/ic_review_empty.png')}/>
+        <PlaceHolderText>
+          {"우리동네에 5년이상\n된 치과가 없네요"}
+        </PlaceHolderText>
+        </PlaceHolderContentView>
+      </PlaceHolderContainerView> 
+  ), []);
 
     const renderLocalClinicItem = useCallback(() => {
-        return clinics.map((item: any) => (
+        return clinics.slice(0, 4).map((item: any) => (
           <TouchableWithoutFeedback key={String(item.id)}>
             <LocalClinicItemView>
               <LocalClinicItemImage />
@@ -182,13 +220,17 @@ const HomeElderClinicContent = ({clinics, moveToDetailMap}: Props) => {
         <ContainerView>
           <ContainerHeaderView>
           <ContainerTitleText>
-            {"개업한지 5년이상 된 우리동네 치과"}
+            {"개업한지 10년이상 된 우리동네 치과"}
           </ContainerTitleText>
           </ContainerHeaderView>
+          {initialized && !clinics.length ? renderPlaceHolder() :
           <HomeContentContainerView
             renderContentItem={renderLocalClinicItem}
-            onPress={() => moveToDetailMap()}
-          />
+            onPress={() => moveToDetailMap({
+              title: "개업한지 10년이상 된 우리동네 치과",
+              clinics,
+            })}
+          />}
         </ContainerView>
     )
 }

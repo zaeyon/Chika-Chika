@@ -44,6 +44,7 @@ import InitialHometownSettingScreen from '~/Components/Container/SignupStack/Ini
 
 // Home Stack Screee
 import HomeScreen from '~/Components/Container/HomeScreen';
+import DetailMapScreen from '~/Components/Container/DetailMapScreen'
 
 // Review Stack Screen
 import ReviewListScreen from '~/Components/Container/ReviewListScreen';
@@ -406,6 +407,13 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name="HometownSearchScreen"
         component={HometownSearchScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <HomeStack.Screen
+        name="DetailMapScreen"
+        component={DetailMapScreen}
         options={{
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
@@ -1312,7 +1320,8 @@ function BottomTab() {
     if (
       routeName.name === 'ReviewStackScreen' ||
       routeName.name === 'ReviewUploadStackScreen' ||
-      routeName.name === 'BraceReviewUploadStackScreen'
+      routeName.name === 'BraceReviewUploadStackScreen' ||
+      routeName.name === 'DetailMapScreen'
     ) {
       return false;
     }

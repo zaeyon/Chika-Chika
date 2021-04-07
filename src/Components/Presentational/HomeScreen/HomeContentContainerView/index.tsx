@@ -25,7 +25,7 @@ color: #131F3C;
 margin-bottom: 12px;
 `
 
-const NavigatoinButtonView = Styled.View`
+const NavigationButtonView = Styled.View`
 border: 1px #E2E6ED;
 border-radius: 100px;
 padding: 12px 0px;
@@ -36,14 +36,14 @@ margin-top: 12px;
 background: #FFFFFF;
 `;
 
-const NavigatoinButtonText = Styled.Text`
+const NavigationButtonText = Styled.Text`
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
 line-height: 16px;
 `;
 
-const NavigatoinButtonImage = Styled.Image`
+const NavigationButtonImage = Styled.Image`
 `;
 
 
@@ -56,21 +56,21 @@ const HomeContentContainerView = ({renderContentItem, onPress}: Props) => {
     return (
         <ContainerView>
             {renderContentItem()}
-        <TouchableWithoutFeedback onPress={() => moveToCommunity()}>
-          <NavigatoinButtonView>
-            <NavigatoinButtonText>
-              <NavigatoinButtonText
+        <TouchableWithoutFeedback onPress={() => onPress()}>
+          <NavigationButtonView>
+            <NavigationButtonText>
+              <NavigationButtonText
                 style={{
                   color: '#00D1FF',
                 }}>
                 {'다른 병원도 '}
-              </NavigatoinButtonText>
+              </NavigationButtonText>
               {'궁금해요'}
-            </NavigatoinButtonText>
-            <NavigatoinButtonImage
+            </NavigationButtonText>
+            <NavigationButtonImage
               source={require('~/Assets/Images/Arrow/common/gan/button_right_arrow.png')}
             />
-          </NavigatoinButtonView>
+          </NavigationButtonView>
         </TouchableWithoutFeedback>
         </ContainerView>
     )

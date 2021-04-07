@@ -133,12 +133,40 @@ line-height: 12px;
 color: #00D1FF;
 `;
 
+const PlaceHolderContainerView = Styled.View`
+width: auto;
+padding: 59px 65px;
+background: #FFFFFF;
+box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
+border-radius: 12px;
+`;
+
+const PlaceHolderContentView = Styled.View`
+align-items: center;
+justify-content: center;
+margin-bottom: 12px;
+`;
+
+const PlaceHolderImage = Styled.Image`
+margin-bottom: 5px;
+`;
+
+const PlaceHolderText = Styled.Text`
+font-style: normal;
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+color: #131F3C;
+text-align: center;
+`;
+
 interface Props {
+    initialized: boolean;
     clinics: any;
     moveToDetailMap: any;
 }
 
-const HomeOpenedClinicContent = ({clinics, moveToDetailMap}: Props) => {
+const HomeOpenedClinicContent = ({initialized, clinics, moveToDetailMap}: Props) => {
 
   useEffect(() => {
     LayoutAnimation.configureNext(
@@ -151,6 +179,17 @@ const HomeOpenedClinicContent = ({clinics, moveToDetailMap}: Props) => {
     const hours = currentDate.getHours()
     return hours > 12 ? `오후 ${hours - 12}시 기준` : `오전 ${hours}시 기준`;
   }, []);
+
+  const renderPlaceHolder = useCallback(() => (
+    <PlaceHolderContainerView>
+      <PlaceHolderContentView>
+        <PlaceHolderImage source={require('~/Assets/Images/Home/메인/ic_openedClinic_empty.png')}/>
+        <PlaceHolderText>
+          {"우리동네에 지금\n진료중인 치과가 없네요"}
+        </PlaceHolderText>
+        </PlaceHolderContentView>
+      </PlaceHolderContainerView> 
+  ), []);
 
     const renderLocalClinicItem = useCallback(() => {
         return clinics.map((item: any) => (
@@ -185,9 +224,10 @@ const HomeOpenedClinicContent = ({clinics, moveToDetailMap}: Props) => {
             {getCurrentTime()}
           </ContainerText>  
           </ContainerHeaderView>
+          {initialized && !clinics.length ? renderPlaceHolder() : 
           <HomeContentContainerView
             onPress={() => moveToDetailMap()}
-            renderContentItem={renderLocalClinicItem}/>
+            renderContentItem={renderLocalClinicItem}/>}
         </ContainerView>
     )
 }
