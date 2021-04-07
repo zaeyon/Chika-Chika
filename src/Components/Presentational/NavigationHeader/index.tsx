@@ -130,7 +130,6 @@ const NavigationHeader = ({
   headerRightActiveColor = '#131F3C',
   headerTitle,
 }: Props) => {
-  console.log("getStatusBarHeight", getStatusBarHeight());
   
   const renderHeaderRightContent = useCallback(() => {
     if (headerRightProps) {

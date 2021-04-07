@@ -202,6 +202,8 @@ const ReviewList = ({
       visibleElapsedTime = false;
     }
 
+    const treatmentAndDiseaseArray = item.TreatmentItems.concat(item.DiseaseItems);
+
     return (
       <ReviewItem
         reviewObj={item}
@@ -210,7 +212,7 @@ const ReviewList = ({
         createdAt={item.createdAt}
         elapsedTimeText={elapsedTimeText}
         visibleElapsedTime={visibleElapsedTime}
-        treatmentArray={item.TreatmentItems}
+        treatmentArray={treatmentAndDiseaseArray}
         treatmentDate={item.treatmentDate ? item.treatmentDate : ''}
         dentalObj={item.dental_clinic}
         ratingObj={ratingObj}

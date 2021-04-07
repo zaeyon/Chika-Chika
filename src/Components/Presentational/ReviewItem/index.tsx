@@ -21,23 +21,21 @@ import DELETEReviewScrap from '~/Routes/Review/DELETEReviewScrap';
 
 const Container = Styled.View`
  padding-top: 8px;
- padding-left: 16px;
- padding-right: 16px;
  padding-bottom: 10px;
  width: ${wp('100')}px;
  background-color: #FFFFFF;
  flex-direction: column;
   margin-bottom: 8px;
- align-items: center;
+`;
+
+const BodyContainer = Styled.View`
 `;
 
 const ProfileContainer = Styled.View`
-width: ${wp('91.46%')}px;
  flex-direction: row;
- align-items: center;
  justify-content: space-between;
  background-color: #ffffff;
- padding: 8px 0px;
+ padding: 8px 16px;
 `;
 
 const ProfileLeftContainer = Styled.View`
@@ -80,18 +78,17 @@ color: #9AA2A9;
 `;
 
 const ImagesPreviewContainer = Styled.View`
-width: ${wp('91.46%')}px;
+padding-left: 16px;
+padding-right: 16px;
 padding-top: 9px;
 padding-bottom: 9px;
 `;
 
 const InfoContainer = Styled.View`
-width: ${wp('91.46%')}px;
 `;
 
 const TagListContainer = Styled.View`
-padding-top: 8px;
-padding-bottom: 8px;
+
 flex-direction: row;
 `;
 
@@ -121,6 +118,8 @@ align-items: center;
 `;
 
 const DateRatingContainer = Styled.View`
+padding-left: 16px;
+padding-right: 16px;
 margin-top: 4px;
 `;
 
@@ -157,6 +156,8 @@ color: #9AA2A9;
 
 const DescripContainer = Styled.View`
 padding-top: 6px;
+padding-left: 16px;
+padding-right: 16px;
 `;
 
 const DescripText = Styled.Text`
@@ -166,34 +167,12 @@ font-weight: 500;
  color: #000000;
 `;
 
-const MoreViewText = Styled.Text`
- margin-top: 4px;
- color: #888888;
-`;
-
-const SocialInfoContainer = Styled.View`
- margin-top: 16px;
- flex-direction: row;
- align-items: center;
-`;
-
-const SocialLabelText = Styled.Text`
-font-size: 12px;
-color: #888888;
-`;
-
-const SocialValueText = Styled.Text`
-font-size: 12px;
-color: #888888;
-margin-left: 4px;
-`;
-
 const ActionContainer = Styled.View`
-width: ${wp('91.46%')}px;
 margin-top: 16px;
+padding-left: 16px;
+padding-right: 16px;
 flex-direction: row;
 justify-content: space-between;
-align-items: center;
 `;
 
 const LikeCommentContainer = Styled.View`
@@ -569,7 +548,8 @@ const ReviewItem = ({
 
   const renderTreatmentItem = ({item, index}: any) => {
     return (
-      <TagBackground>
+      <TagBackground
+      style={index === treatmentArray.length - 1 && {marginRight: 0}}>
         <TagText>
           <HashText>{'# '}</HashText>
           {item.name || item.usualName}
@@ -579,26 +559,6 @@ const ReviewItem = ({
   };
 
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        console.log('moveToReviewDetail');
-        moveToReviewDetail(
-          reviewId,
-          writer,
-          formatedCreatedAtDate,
-          treatmentArray,
-          ratingObj,
-          formatedTreatmentDate,
-          imageArray,
-          isCurUserLikeProp,
-          likeCountProp,
-          commentCount,
-          isCurUserScrapProp,
-          dentalObj,
-          visibleElapsedTime,
-          elapsedTimeText,
-        );
-      }}>
       <Container>
         <ProfileContainer>
           <TouchableWithoutFeedback
@@ -637,18 +597,63 @@ const ReviewItem = ({
         </ProfileContainer>
         <InfoContainer>
           {imageArray.length > 0 && (
+          <TouchableWithoutFeedback
+          onPress={() => {
+            console.log('moveToReviewDetail');
+            moveToReviewDetail(
+              reviewId,
+              writer,
+              formatedCreatedAtDate,
+              treatmentArray,
+              ratingObj,
+              formatedTreatmentDate,
+              imageArray,
+              isCurUserLikeProp,
+              likeCountProp,
+              commentCount,
+              isCurUserScrapProp,
+              dentalObj,
+              visibleElapsedTime,
+              elapsedTimeText,
+            );
+          }}>
           <ImagesPreviewContainer>
             <BracePreviewImages sortedImageArray={imageArray} />
           </ImagesPreviewContainer>
+          </TouchableWithoutFeedback>
           )}
           <TagListContainer>
             <FlatList
+            contentContainerStyle={{paddingLeft: 16, paddingRight: 16, paddingTop:
+              6, paddingBottom: 8}}
               keyExtractor={(item, index) => `${index}`}
               horizontal={true}
               data={treatmentArray}
               renderItem={renderTreatmentItem}
+              showsHorizontalScrollIndicator={false}
             />
           </TagListContainer>
+          <TouchableWithoutFeedback
+          onPress={() => {
+          console.log('moveToReviewDetail');
+          moveToReviewDetail(
+          reviewId,
+          writer,
+          formatedCreatedAtDate,
+          treatmentArray,
+          ratingObj,
+          formatedTreatmentDate,
+          imageArray,
+          isCurUserLikeProp,
+          likeCountProp,
+          commentCount,
+          isCurUserScrapProp,
+          dentalObj,
+          visibleElapsedTime,
+          elapsedTimeText,
+          );
+          }}>
+          <BodyContainer>
           <DateRatingContainer>
             {/* <InfoItemContainer>
               <InfoLabelText>{'진료･치료시기'}</InfoLabelText>
@@ -665,10 +670,11 @@ const ReviewItem = ({
               <InfoValueText>{getBraceElapsedTime()}</InfoValueText>
             </InfoItemContainer>
           </DateRatingContainer> 
-          
           <DescripContainer>
             <DescripText>{formattedDescriptions}</DescripText>
           </DescripContainer>
+          </BodyContainer>
+          </TouchableWithoutFeedback>
         </InfoContainer>
         <ActionContainer>
           <LikeCommentContainer>
@@ -714,7 +720,6 @@ const ReviewItem = ({
           </TouchableWithoutFeedback>
         </ActionContainer>
       </Container>
-    </TouchableWithoutFeedback>
   );
 };
 

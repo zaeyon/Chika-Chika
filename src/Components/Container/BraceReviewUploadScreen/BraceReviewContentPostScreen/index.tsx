@@ -725,6 +725,7 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
 
     // 진료 & 질병 항목 정보
     const tmpTreatmentArray = route.params?.treatmentArray;
+    const tmpDiseaseArray = route.params?.diseaseArray;
     const tmpSelectedProofImage = route.params?.selectedProofImage;
 
     // 별점 정보
@@ -748,14 +749,14 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
     // 전체 가격 정보
     const totalPrice = route.params?.totalPrice;
 
-    const formattedParagraphArray = await formatParagraph(tmpParagraphArray);
-    const formattedTreatmentArray = await formatTreatment(tmpTreatmentArray);
+    const formattedParagraphArray = await formatParagraphArray(tmpParagraphArray);
+    const formattedTreatmentArray = await formatTreatmentArray(tmpTreatmentArray);
+    const formattedDiseaseArray = await formatDiseaseArray(tmpDiseaseArray);
+
     let formattedProofImage = {};
     if (tmpSelectedProofImage.uri) {
       formattedProofImage = await formatProofImage(tmpSelectedProofImage);
     }
-
-    const formattedDiseaseArray = [];
 
     console.log('uploadReview formatedParagraph', formattedParagraphArray);
     console.log('uploadReview formatedTreatment', formattedTreatmentArray);
@@ -806,6 +807,7 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
 
     // 진료 & 질병 항목 정보
     const tmpTreatmentArray = route.params?.treatmentArray;
+    const tmpDiseaseArray = route.params?.diseaseArray;
 
     // 별점 정보
     const starRate_cost = route.params?.ratingObj.priceRating;
@@ -830,10 +832,9 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
     const correctionStartDate = route.params?.braceStartDate;
     const correctionEndDate = route.params?.braceFinishDate;
 
-    const formattedDiseaseArray = [];
-
-    const formattedParagraphArray = await formatParagraph(tmpParagraphArray);
-    const formattedTreatmentArray = await formatTreatment(tmpTreatmentArray);
+    const formattedParagraphArray = await formatParagraphArray(tmpParagraphArray);
+    const formattedTreatmentArray = await formatTreatmentArray(tmpTreatmentArray);
+    const formattedDiseaseArray = await formatDiseaseArray(tmpDiseaseArray);
     let formattedProofImage = {};
     if (tmpSelectedProofImage.uri) {
       formattedProofImage = await formatProofImage(tmpSelectedProofImage);
@@ -905,7 +906,7 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
           isRevised: true,
           totalPrice: response.updateReview.reviewBody.totalCost,
           paragraphArray: response.updateReview.reviewBody.review_contents,
-          treatmentArray: response.updateReview.reviewBody.TreatmentItems,
+          treatmentArray: response.updateReview.reviewBody.TreatmentItems.concat(response.updateReview.reviewBody.DiseaseItems),
           ratingObj: tmpRating,
           dentalObj: dentalObj,
           treatmentDateObj: treatmentDateObj,
@@ -921,7 +922,7 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
       });
   };
 
-  const formatParagraph = async (paragraphArray: Array<any>) => {
+  const formatParagraphArray = async (paragraphArray: Array<any>) => {
     const tmpParagraphArray = await Promise.all(
       paragraphArray.map(async (item: any, index: number) => {
         if (item.image) {
@@ -957,7 +958,7 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
               size: result.size,
               description: item.description ? item.description : null,
               imgBeforeAfter: item.order,
-              imgDate: item.imgDate.imageDateValue,
+              imgDate: item.imgDate?.imageDateValue ? item.imgDate.imageDateValue : null,
               width: result.width,
               height: result.height,
             };
@@ -987,7 +988,7 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
     return tmpParagraphArray;
   };
 
-  const formatTreatment = async (treatmentArray: Array<any>) => {
+  const formatTreatmentArray = async (treatmentArray: Array<any>) => {
     const tmpTreatmentArray = treatmentArray.map((item: any, index) => {
       if (item.price) {
         const tmpObj = {
@@ -1008,6 +1009,18 @@ const BraceReviewContentPostScreen = ({navigation, route}: Props) => {
 
     return tmpTreatmentArray;
   };
+
+  const formatDiseaseArray = async (diseaseArray: Array<any>) => {
+    const tmpDiseaseArray = diseaseArray.map((item: any, index: number) => {
+      const tmpObj = {
+        id: item.id,
+      }
+
+      return tmpObj
+    })
+
+    return tmpDiseaseArray;
+  }
 
   const formatProofImage = async (selectedProofImage: any) => {
     const result: any = await uploadImageToS3(

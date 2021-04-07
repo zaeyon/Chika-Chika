@@ -12,7 +12,7 @@ import messaging from '@react-native-firebase/messaging';
 //import {appleAuth} from '@invertase/react-native-apple-authentication';
 import allActions from '~/actions';
 //import DeviceInfo from 'react-native-device-info';
-import {hasNotch} from '~/method/deviceInfo'
+import {hasNotch, getStatusBarHeight} from '~/method/deviceInfo'
 
 import createRandomNickname from '~/method/createRandomNickname';
 // route
@@ -27,14 +27,26 @@ import {storeUserInfo} from '~/storage/currentUser';
 const Container = Styled.View`
   width: ${wp('100%')}px;
   height: ${hp('100%')}px;
-  background-color: #F5F7F9;
+  background-color: #ffffff;
   flex: 1;
 `;
 
 const LogoContainer = Styled.View`
- flex: 3.85;
- padding-left: 32px;
+ flex: 1;
+ align-items: center;
  justify-content: center;
+`;
+
+const OnBoardingImageContainer = Styled.View`
+flex: 1.72;
+align-items: center;
+justify-content: space-between;
+`;
+
+const OnBoardingImage = Styled.Image`
+margin-top: 3px;
+width: ${wp('93%')}px;
+height: ${wp('67.15%')}px;
 `;
 
 const Icon = Styled.Image`
@@ -44,7 +56,7 @@ height: ${wp('24.26%')}px;
 `;
 
 const LogoImage = Styled.Image`
-margin-top: 6px;
+margin-top: ${getStatusBarHeight()}px;
 width: ${wp('44.53%')}px;
 height: ${wp('10.399%')}px;
 `;
@@ -56,10 +68,10 @@ const SocialContainer = Styled.View`
 `;
 
 const LocalContainer = Styled.View`
- flex: 0.9;
+ flex: ${hasNotch() ? 0.763 : 0.5};
  padding-left: 20px;
  padding-right: 20px;
- padding-top: ${hasNotch() ? hp('2%') : hp('5.5%')}px;
+ padding-top: ${hasNotch() ? hp('3%') : hp('5.5%')}px;
 `;
 
 const LocalLoginContainer = Styled.View`
@@ -163,7 +175,25 @@ justify-content: center;
 
 const TextBottomLine = Styled.View`
 width: 100px;
+`;
 
+const ServiceIntroContainer = Styled.View`
+width: ${wp('100%')}px;
+align-items: center;
+`;
+
+const ServiceMainIntroText = Styled.Text`
+font-weight: 900;
+font-size: 20px;
+line-height: 27.24px;
+color: #000000;
+`;
+
+const ServiceSubIntroText = Styled.Text`
+margin-top: 12px;
+font-size: 16px;
+line-height: 24px;
+color: #000000;
 `;
 
 interface Props {
@@ -213,13 +243,20 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
   return (
     <Container>
       <LogoContainer>
-        <Icon source={require('~/Assets/Images/Logo/ic_icon.png')} />
         <LogoImage source={require('~/Assets/Images/Logo/ic_logo.png')} />
       </LogoContainer>
+      <OnBoardingImageContainer>
+        <OnBoardingImage
+        source={require('~/Assets/Images/Logo/onBoardingImage.png')}/>
+        <ServiceIntroContainer>
+          <ServiceMainIntroText>{"우리동네 치과에서 특별한 경험"}</ServiceMainIntroText>
+          <ServiceSubIntroText>{"번호 인증하고 치과에 쉽게 다가가보세요!"}</ServiceSubIntroText>
+        </ServiceIntroContainer>
+      </OnBoardingImageContainer>
       <LocalContainer>
         <TouchableWithoutFeedback onPress={() => moveToLocalLogin()}>
             <LocalLoginButton>
-            <LocalLoginText>{'전화번호로 로그인'}</LocalLoginText>
+            <LocalLoginText>{'번호 인증하고 치과 정보 받기'}</LocalLoginText>
             </LocalLoginButton>
         </TouchableWithoutFeedback>
       </LocalContainer>

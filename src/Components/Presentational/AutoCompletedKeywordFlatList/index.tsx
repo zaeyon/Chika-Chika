@@ -194,7 +194,6 @@ const AutoCompletedTotalKeywordFlatList = ({
   };
 
   const renderSearchRecordItem = ({item, index}: any) => {
-    console.log('renderSearchRecordItem item', item);
     
     return (
       <TouchableHighlight

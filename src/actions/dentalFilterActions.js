@@ -53,6 +53,34 @@ const setParkingFilter = (parkingFilter) => {
     }
 }
 
+const setNightCareFilter = (nightCareFilter) => {
+    return {
+        type: "SET_NIGHT_CARE_FILTER",
+        payload: nightCareFilter,
+    }
+}
+
+const setSpecialistFilter = (specialistFilter) => {
+    return {
+        type: "SET_SPECIALIST_FILTER",
+        payload: specialistFilter,
+    }
+}
+
+const setGoodDentalFilter = (goodDentalFilter) => {
+    return {
+        type: "SET_GOOD_DENTAL_FILTER",
+        payload: goodDentalFilter,
+    }
+}
+
+const setHomeDentalFilter = (homeDentalFilter) => {
+    return {
+        type: "SET_HOME_DENTAL_FILTER", 
+        payload: homeDentalFilter,
+    }
+}
+
 export default {
     setDayList,
     setSelectedDayList,
@@ -62,4 +90,8 @@ export default {
     setHolidayFilter,
     setParkingFilter,
     initializeDayList,
+    setNightCareFilter,
+    setSpecialistFilter,
+    setGoodDentalFilter,
+    setHomeDentalFilter,
 }

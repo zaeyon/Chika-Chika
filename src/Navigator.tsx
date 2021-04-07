@@ -449,6 +449,9 @@ function HomeStackScreen() {
           },
         })}
       />
+      <HomeStack.Screen
+        name="NearDentalMapStack"
+        component={NearDentalMapStackScreen}/>
     </HomeStack.Navigator>
   );
 }

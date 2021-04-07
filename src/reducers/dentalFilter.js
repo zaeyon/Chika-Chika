@@ -5,6 +5,10 @@ const dentalFilter = (state = {
     timeFilter: "",
     holidayFilter: false,
     parkingFilter: "n",
+    nightCareFilter: 'f',
+    specialistFilter: "f",
+    goodDentalFilter: "f",
+    homeDentalFilterType: "",
 }, action) => {
     switch(action.type) {
         case "SET_DAY_LIST":
@@ -37,35 +41,85 @@ const dentalFilter = (state = {
                     dayList: initializedDayList,
                 }
             }
-        
         case "SET_SELECTED_DAY_LIST":
             return {
                 ...state,
                 selectedDayList: action.payload,
             }
-        
         case "SET_DAY_FILTER":
             return {
                 ...state,
                 dayFilter: action.payload,
             }
-
         case "SET_TIME_FILTER":
             return {
                 ...state,
                 timeFilter: action.payload,
             }
-        
         case "SET_HOLIDAY_FILTER":
             return {
                 ...state,
                 holidayFilter: action.payload,
             }
-
         case "SET_PARKING_FILTER":
             return {
                 ...state,
                 parkingFilter: action.payload,
+            }
+        case "SET_NIGHT_CARE_FILTER":
+            return {
+                ...state,
+                nightCareFilter: action.payload,
+            }
+        case "SET_SPECIALIST_FILTER":
+            return {
+                ...state,
+                specialistFilter: action.payload,
+            }
+        case "SET_GOOD_DENTAL_FILTER":
+            return {
+                ...state,
+                goodDentalFilter: action.payload,
+            }
+        case "SET_HOME_DENTAL_FILTER": 
+            {
+                if(action.payload === "specialist") {
+                    return {
+                        ...state,
+                        dayFilter: [],
+                        timeFilter: "",
+                        holidayFilter: false,
+                        parkingFilter: "n",
+                        nightCareFilter: 'f',
+                        specialistFilter: "t",
+                        goodDentalFilter: "f",
+                        homeDentalFilterType: "specialist",
+                    }
+                } else if(action.payload === "goodDental") {
+                    return {
+                        ...state,
+                        dayFilter: [],
+                        timeFilter: "",
+                        holidayFilter: false,
+                        parkingFilter: "n",
+                        nightCareFilter: 'f',
+                        specialistFilter: "f",
+                        goodDentalFilter: "t",
+                        homeDentalFilterType: "goodDental",
+                    }
+                } else if(action.payload === "nightCare") {
+                    return {
+                        ...state,
+                        dayFilter: [],
+                        timeFilter: "",
+                        holidayFilter: false,
+                        parkingFilter: "n",
+                        nightCareFilter: 't',
+                        specialistFilter: "f",
+                        goodDentalFilter: "f",
+                        homeDentalFilterType: "nightCare",
+                    }
+                }
             }
         default:
             return state

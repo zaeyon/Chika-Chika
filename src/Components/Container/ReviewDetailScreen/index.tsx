@@ -226,11 +226,14 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
   });
 
   const [treatmentDate, setTreatmentDate] = useState<any>({});
+
   const [treatmentArray, setTreatmentArray] = useState<Array<object>>([]);
+  const [diseaseArray, setDiseaseArray] = useState<Array<object>>([]);
+
+  const [treatmentAndDiseaseArray, setTreatmentAndDiseaseArray] = useState<Array<any>>([]); 
+
   const [rating, setRating] = useState<RatingObj>(route.params?.ratingObj);
   const [totalPrice, setTotalPrice] = useState<object>({});
-  const [detailPriceList, setDetailPriceList] = useState<Array<object>>([]);
-
   const [previewCommentArray, setPreviewCommentArray] = useState<Array<any>>(
     [],
   );
@@ -583,6 +586,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
       .then((response: any) => {
         console.log('GETReviewDetail response', response);
         console.log('GETReviewDetail response.reviewBody.TreatmentItems', response.reviewBody.TreatmentItems);
+        console.log("GETReviewDetail response.reviewBody.DiseaseItems", response.reviewBody.DiseaseItems);
         setLoadingReviewDetail(false);
         setRefreshingReviewDetail(false);
       
@@ -634,7 +638,8 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
           const tmpTreatmentArray = response.reviewBody.TreatmentItems.map(
             (item: any, index: number) => {
               const tmpTreatmentObj = {
-                  usualName: item.usualName,
+                  category: "treatment",
+                  name: item.usualName,
                   id: item.id,
                 };
             
@@ -642,19 +647,22 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
             },
           );
 
-          const tmpDetailPriceList = new Array();
-
-          response.reviewBody.TreatmentItems.forEach(
+          const tmpDiseaseArray = response.reviewBody.DiseaseItems.map(
             (item: any, index: number) => {
-              if (item.review_treatment_item.cost !== null) {
-                tmpDetailPriceList.push(item);
+              const tmpDiseaseArrayObj = {
+                category: "disease",
+                name: item.usualName,
+                id: item.id,
               }
-            },
-          );
+
+              return tmpDiseaseArrayObj;
+            }
+          )
 
           setTimeout(() => {
-            setDetailPriceList(tmpDetailPriceList);
+            setTreatmentAndDiseaseArray(tmpTreatmentArray.concat(tmpDiseaseArray));
             setTreatmentArray(tmpTreatmentArray);
+            setDiseaseArray(tmpDiseaseArray);
           }, 10);
         }
 
@@ -928,7 +936,7 @@ const ReviewDetailScreen = ({navigation, route}: Props) => {
         //     metaInfoObj.treatmentDateObj.displayTreatmentDate,
         //   treatmentDate: metaInfoObj.treatmentDateObj.treatmentDate,
         // },
-        selectedTreatmentArray: treatmentArray,
+        selectedTreatmentArray: treatmentAndDiseaseArray,
         // ratingObj: {
         //   avgRating: metaInfoObj.ratingObj.avgRating,
         //   priceRating: metaInfoObj.ratingObj.priceRating,
