@@ -213,9 +213,9 @@ const HomeScreen = ({navigation, route}: Props) => {
       if (selectedHometown) {
         setIsMainHomeChanged((prev) => {
           if (prev) {
-            fetchRecentReviews(selectedHometown);
+            fetchRecentReviews(selectedHometown || defaultHometown);
             fetchOpenedClinics()
-            fetchElderClinics()
+            fetchElderClinics(selectedHometown || defaultHometown)
 
             // fetchLocalInfo(selectedHometown);
             // fetchRecentCommunityPosts(selectedHometown);
@@ -327,18 +327,18 @@ const HomeScreen = ({navigation, route}: Props) => {
       });
   }, []);
 
-  async function getAndroidInitialNearDental() {
+  async function getAndroidLocaion(callback: any) {
     const permission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
     const hasLocationPermission = await PermissionsAndroid.check(permission);
     if (hasLocationPermission) {
       Geolocation.getCurrentPosition(
         (position) => {
           const userLocation = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
+            lat: position.coords.latitude,
+            long: position.coords.longitude,
           };
           dispatch(allActions.userActions.setCurrentUserLocation(userLocation));
-          return position;
+          callback(userLocation)
         },
         (error) => {
           ToastMessage.show('현재 위치를 불러오는데 실패했습니다ㅠㅠ');
@@ -346,8 +346,11 @@ const HomeScreen = ({navigation, route}: Props) => {
           // 서울 시청 좌표
           const lat = 37.566515657875435;
           const long = 126.9781164904998;
-
-          return false;
+          const userLocation = {
+            lat,
+            long
+          };
+          callback(userLocation)
         },
         {enableHighAccuracy: false, timeout: 10000, maximumAge: 10000},
       );
@@ -357,7 +360,7 @@ const HomeScreen = ({navigation, route}: Props) => {
     }
   }
 
-  async function getIosInitialNearDental(callback: any) {
+  async function getIosLocation(callback: any) {
     const hasLocationPermission = true;
     if (hasLocationPermission) {
       return Geolocation.getCurrentPosition(
@@ -422,8 +425,8 @@ const HomeScreen = ({navigation, route}: Props) => {
     setIsOpenedClinicInitialized(true);
   }, [jwtToken]);
 
-  const fetchElderClinics = useCallback(async () => {
-    getIosInitialNearDental((currentLocation: any) => {
+  const fetchElderClinics = useCallback(async (selectedHometown: any) => {
+    const handleLocationResponse = (currentLocation: any) => {
       const form = {
         jwtToken,
         limit: 30,
@@ -436,18 +439,23 @@ const HomeScreen = ({navigation, route}: Props) => {
         setElderClinicData(response);
         setIsElderClinicInitialized(true);
       })
-    })
+    }
+    Platform.select({
+      ios: () => getIosLocation(handleLocationResponse),
+      android: () => getAndroidLocaion(handleLocationResponse)
+    })();
     
-  }, [jwtToken, getIosInitialNearDental]);
+  }, [jwtToken, getIosLocation]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchLocalInfo(selectedHometown || defaultHometown, () => setRefreshing(false));
     fetchRecentReviews(selectedHometown || defaultHometown);
-    fetchOpenedClinics();
-    fetchElderClinics();
+    fetchOpenedClinics(selectedHometown || defaultHometown);
+    fetchElderClinics(selectedHometown || defaultHometown);
   }, [
     selectedHometown,
+    defaultHometown,
     fetchLocalInfo,
     fetchRecentReviews,
   ]);

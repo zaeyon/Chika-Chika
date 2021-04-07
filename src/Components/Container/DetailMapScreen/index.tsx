@@ -132,6 +132,7 @@ const DetailMapScreen = ({navigation, route}: Props) => {
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
         setInitialized(true);
+        setMapInitialized(true);
       });
   
       return () => task.cancel();
@@ -325,7 +326,6 @@ const DetailMapScreen = ({navigation, route}: Props) => {
         <ContentView>
           <MapContainerView>
             <NaverMapView
-              onInitialized={() => setMapInitialized(true)}
               showsMyLocationButton={false}
               zoomControl={true}
               center={{
