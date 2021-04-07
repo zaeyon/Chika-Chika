@@ -312,21 +312,12 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
 
   const selectHometownItem = (item: any) => {
     Keyboard.dismiss();
-    // if (route.params?.requestType === 'signUp') {
-    //   if (provider === 'local') {
-    //     moveToTermsOfServiceAgreeByLocal(item);
-    //   } else {
-    //     moveToTermsOfServiceAgreeBySocial(item);
-    //   }
-    // } else if (route.params?.requestType === 'add') {
-    //   addSubHometown(item);
-    // } else if (route.params?.requestType === 'revise') {
-    //   reviseHometown(item);
-    // } else if (route.params?.requestType === 'initialize') {
-    //   addMainHometown(item);
-    // }
-
-    addMainHometown(item);
+    
+    if (route.params?.requestType === 'add') {
+      addSubHometown(item);
+    } else if (route.params?.requestType === 'revise') {
+      reviseHometown(item);
+    } 
   };
 
   async function findAroundCites() {
@@ -477,7 +468,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
             sigungu: item.sigungu,
           };
 
-          dispatch(allActions.userActions.addHometown(hometownObj));
+          dispatch(allActions.userActions.setHometown([hometownObj]));
           navigation.goBack();
         }
       })
