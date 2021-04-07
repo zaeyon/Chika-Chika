@@ -9,10 +9,8 @@ import {
 } from 'react-native-responsive-screen';
 
 const ContainerView = Styled.View`
-margin: 0px 16px;
-margin-bottom: 21px;
 background: #FFFFFF;
-padding: 24px 16px;
+padding: 16px 16px 24px 16px;
 border-radius: 8px;
 box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
 width: auto;
@@ -27,7 +25,7 @@ color: #131F3C;
 margin-bottom: 12px;
 `
 
-const NavigatoinButtonView = Styled.View`
+const NavigationButtonView = Styled.View`
 border: 1px #E2E6ED;
 border-radius: 100px;
 padding: 12px 0px;
@@ -38,45 +36,41 @@ margin-top: 12px;
 background: #FFFFFF;
 `;
 
-const NavigatoinButtonText = Styled.Text`
+const NavigationButtonText = Styled.Text`
 font-style: normal;
 font-weight: bold;
 font-size: 14px;
 line-height: 16px;
 `;
 
-const NavigatoinButtonImage = Styled.Image`
+const NavigationButtonImage = Styled.Image`
 `;
 
 
 interface Props {
     renderContentItem: any;
-    title: string;
     onPress: any;
 }
 
-const HomeContentContainerView = ({renderContentItem, title, onPress}: Props) => {
+const HomeContentContainerView = ({renderContentItem, onPress}: Props) => {
     return (
         <ContainerView>
-            <TitleText>
-                {title}
-            </TitleText>
             {renderContentItem()}
-        <TouchableWithoutFeedback onPress={() => moveToCommunity()}>
-          <NavigatoinButtonView>
-            <NavigatoinButtonText>
-              <NavigatoinButtonText
+        <TouchableWithoutFeedback onPress={() => onPress()}>
+          <NavigationButtonView>
+            <NavigationButtonText>
+              <NavigationButtonText
                 style={{
                   color: '#00D1FF',
                 }}>
                 {'다른 병원도 '}
-              </NavigatoinButtonText>
+              </NavigationButtonText>
               {'궁금해요'}
-            </NavigatoinButtonText>
-            <NavigatoinButtonImage
+            </NavigationButtonText>
+            <NavigationButtonImage
               source={require('~/Assets/Images/Arrow/common/gan/button_right_arrow.png')}
             />
-          </NavigatoinButtonView>
+          </NavigationButtonView>
         </TouchableWithoutFeedback>
         </ContainerView>
     )

@@ -2,7 +2,7 @@ import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {Image, Animated, TouchableOpacity, RefreshControl, Platform, TouchableWithoutFeedback, LayoutAnimation} from 'react-native';
+import {Image, Animated, TouchableOpacity, RefreshControl, Platform, TouchableWithoutFeedback, LayoutAnimation, PermissionsAndroid, } from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -10,6 +10,7 @@ import {
 // import DeviceInfo from 'react-native-device-info';
 import {BoxShadow} from 'react-native-shadow';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import Geolocation from 'react-native-geolocation-service';
 
 // Firebase
 import messaging from '@react-native-firebase/messaging';
@@ -32,6 +33,7 @@ import GETTotalSearch from '~/Routes/Search/GETTotalSearch';
 import GETLocalClinicAndReviewCount from '~/Routes/Main/GETLocalClinicAndReviewCount';
 import GETLocalClinic from '~/Routes/Main/GETLocalClinic';
 import GETUserNotifications from '~/Routes/Notification/GETUserNotifications';
+import GETElderClinics from '~/Routes/Dental/GETElderClinics';
 
 import {hasNotch} from '~/method/deviceInfo'
 import { getStatusBarHeight } from 'react-native-status-bar-height';
@@ -161,9 +163,6 @@ interface ReviewData {
 }
 
 const HomeScreen = ({navigation, route}: Props) => {
-  const [localClinicCount, setLocalClinicCount] = useState<number>(0);
-  const [localReviewCount, setLocalReviewCount] = useState<number>(0);
-
   const [onMessage, setOnMessage] = useState(false);
   const alertScale = useRef(new Animated.Value(0)).current;
 
@@ -173,8 +172,14 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   const [reviewData, setReviewData] = useState([]);
   const [postData, setPostData] = useState<ReviewData[]>();
+  const [openedClinicData, setOpenedClinicData] = useState([]);
+  const [elderClinicData, setElderClinicData] = useState([]);
 
   const [refreshing, setRefreshing] = useState(false);
+
+  const [isReviewInitialized, setIsReviewInitialized] = useState(false);
+  const [isOpenedClinicInitialized, setIsOpenedClinicInitialized] = useState(false);
+  const [isElderClinicInitialized, setIsElderClinicInitialized] = useState(false);
 
   const [prevOffsetY, setPrevOffsetY] = useState(0);
   const [scrollDirection, setScrollDirection] = useState('up');
@@ -189,6 +194,9 @@ const HomeScreen = ({navigation, route}: Props) => {
     (state: any) =>
       state.currentUser.hometown &&
       state.currentUser.hometown.find((item) => item.UsersCities?.now === true),
+  );
+  const currentUserLocation = useSelector(
+    (state: any) => state.currentUser.currentUserLocation,
   );
 
   const dispatch = useDispatch();
@@ -206,6 +214,9 @@ const HomeScreen = ({navigation, route}: Props) => {
         setIsMainHomeChanged((prev) => {
           if (prev) {
             fetchRecentReviews(selectedHometown);
+            fetchOpenedClinics()
+            fetchElderClinics()
+
             // fetchLocalInfo(selectedHometown);
             // fetchRecentCommunityPosts(selectedHometown);
           }
@@ -316,14 +327,70 @@ const HomeScreen = ({navigation, route}: Props) => {
       });
   }, []);
 
+  async function getAndroidInitialNearDental() {
+    const permission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
+    const hasLocationPermission = await PermissionsAndroid.check(permission);
+    if (hasLocationPermission) {
+      Geolocation.getCurrentPosition(
+        (position) => {
+          const userLocation = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+          dispatch(allActions.userActions.setCurrentUserLocation(userLocation));
+          return position;
+        },
+        (error) => {
+          ToastMessage.show('현재 위치를 불러오는데 실패했습니다ㅠㅠ');
+
+          // 서울 시청 좌표
+          const lat = 37.566515657875435;
+          const long = 126.9781164904998;
+
+          return false;
+        },
+        {enableHighAccuracy: false, timeout: 10000, maximumAge: 10000},
+      );
+    } else {
+      const status = await PermissionsAndroid.request(permission);
+      return status === 'granted';
+    }
+  }
+
+  async function getIosInitialNearDental(callback: any) {
+    const hasLocationPermission = true;
+    if (hasLocationPermission) {
+      return Geolocation.getCurrentPosition(
+        (position) => {
+          const userLocation = {
+            lat: position.coords.latitude,
+            long: position.coords.longitude,
+          };
+          dispatch(allActions.userActions.setCurrentUserLocation(userLocation));
+          callback(userLocation)
+        },
+        (error) => {
+          ToastMessage.show('현재 위치를 불러오는데 실패했습니다ㅠㅠ');
+          // 서울 시청 좌표
+          const lat = 37.566515657875435;
+          const long = 126.9781164904998;
+          const userLocation = {
+            lat,
+            long
+          };
+          callback(userLocation)
+        },
+        {enableHighAccuracy: false, timeout: 10000, maximumAge: 10000},
+      );
+    }
+  }
+  
   const fetchLocalInfo = useCallback(
     (selectedHometown, callback = () => console.log('fetchLocalInfo')) => {
       GETLocalClinicAndReviewCount({
         jwtToken,
         cityId: String(selectedHometown?.id),
       }).then((response: any) => {
-        setLocalClinicCount(response.residenceClinicsNum);
-        setLocalReviewCount(response.residenceReviewsNum);
         callback();
       });
     },
@@ -332,60 +399,65 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   const fetchRecentReviews = useCallback(
     async (selectedHometown: any) => {
-      console.log('fdfd')
-      const result = await Promise.all(
-        tagFilterItems.map(async (tagItem) => {
-          const form = {
-            jwtToken,
-            query: '',
-            pathType: 'review',
-            limit: '10',
-            offset: '0',
-            order: 'createdAt',
-            region: 'residence',
-            cityId: String(selectedHometown?.id),
-            isUnified: false,
-          };
-          const data = await GETTotalSearch(form);
-          return {
-            name: tagItem.name,
-            data,
-          };
-        }),
-      );
-      setReviewData(result);
+      const form = {
+        jwtToken,
+        query: '',
+        pathType: 'review',
+        limit: '10',
+        offset: '0',
+        order: 'createdAt',
+        region: 'residence',
+        cityId: String(selectedHometown.id),
+        isUnified: false,
+      };
+      const data = await GETTotalSearch(form);
+      setIsReviewInitialized(true);
+      setReviewData(data);
     },
     [jwtToken, tagFilterItems],
   );
 
-  const fetchRecentCommunityPosts = useCallback(
-    (selectedHometown) => {
+  const fetchOpenedClinics = useCallback(() => {
+    // Call API
+    setIsOpenedClinicInitialized(true);
+  }, [jwtToken]);
+
+  const fetchElderClinics = useCallback(async () => {
+    getIosInitialNearDental((currentLocation: any) => {
       const form = {
-        type: 'All',
-        limit: 10,
+        jwtToken,
+        limit: 30,
         offset: 0,
-        order: 'createdAt',
-        region: 'residence',
+        cityId: selectedHometown.id,
+        lat: currentLocation.lat,
+        long: currentLocation.long
       };
-      GETCommunityPosts(jwtToken, String(selectedHometown?.id), form).then(
-        (response: any) => {
-          setPostData(response);
-        },
-      );
-    },
-    [jwtToken],
-  );
+      GETElderClinics(form).then((response: any) => {
+        setElderClinicData(response);
+        setIsElderClinicInitialized(true);
+      })
+    })
+    
+  }, [jwtToken, getIosInitialNearDental]);
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchLocalInfo(selectedHometown || defaultHometown, () => setRefreshing(false));
     fetchRecentReviews(selectedHometown || defaultHometown);
-    fetchRecentCommunityPosts(selectedHometown || defaultHometown);
+    fetchOpenedClinics();
+    fetchElderClinics();
   }, [
     selectedHometown,
     fetchLocalInfo,
     fetchRecentReviews,
-    fetchRecentCommunityPosts,
   ]);
+
+  const moveToDetailMap =  useCallback((params: {
+    title: string;
+    clinics: any;
+  }) => {
+    navigation.navigate('DetailMapScreen', params)
+  }, [])
 
   const moveToCommunityDetail = useCallback(
     (postId: number, postType: string) => {
@@ -427,6 +499,7 @@ const HomeScreen = ({navigation, route}: Props) => {
   };
 
   const moveToReviewUpload = useCallback(() => {
+    
     navigation.navigate('BraceReviewUploadStackScreen', {
       screen: 'BraceReviewMetaDataScreen',
       params: {
@@ -586,15 +659,14 @@ const HomeScreen = ({navigation, route}: Props) => {
           </TouchableWithoutFeedback>
         </LocationContainerView>
         <HomeReviewContent
+          initialized={isReviewInitialized}
           selectedHometown={selectedHometown?.emdName || defaultHometown?.emdName}
-          tagFilterItems={tagFilterItems}
           reviewData={reviewData}
+          moveToReviewUpload={moveToReviewUpload}
           moveToReviewDetail={moveToReviewDetail}
         />
-        <HomeElderClinicContent clinics={[{id: 1, originalName: 'gogogogo', reviewAVGStarRate: 1, reviewNum: 2,dentalTransparent: true,
-    surgeonNum: 3}]}/>
-        <HomeOpenedClinicContent clinics={[{id: 1, originalName: 'gogogogo', reviewAVGStarRate: 1, reviewNum: 2,dentalTransparent: true,
-    surgeonNum: 3}]}/>
+        <HomeOpenedClinicContent initialized={isOpenedClinicInitialized} clinics={openedClinicData} moveToDetailMap={moveToDetailMap}/>
+        <HomeElderClinicContent initialized={isElderClinicInitialized} clinics={elderClinicData} moveToDetailMap={moveToDetailMap}/>
 
         </BodyContainerView>
       </ContentScrollView>
