@@ -491,7 +491,7 @@ const EditProfileScreen = ({
         <TouchableHighlight
           activeOpacity={0.9}
           underlayColor="black"
-          onPress={() => hometown.length === 0 ? moveToHomeTownSearch() : moveToHomeTownSetting()}>
+          onPress={() => moveToHomeTownSearch()}>
           <SectionContentView>
             <SectionContentTitleText>{'우리동네'}</SectionContentTitleText>
             <SectionContentText>{renderResidences()}</SectionContentText>
