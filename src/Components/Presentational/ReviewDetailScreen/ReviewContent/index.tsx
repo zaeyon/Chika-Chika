@@ -60,19 +60,24 @@ interface Props {
 const ReviewContent = ({paragraphArray, moveToFullImages}: Props) => {
   console.log('paragraphArray', paragraphArray);
 
+  const getDisplayedImageDate = (imageDate: string) => {
+
+    const imageDateArray = imageDate.split("-");
+
+    return `${imageDateArray[0]}.${imageDateArray[1]}.${imageDateArray[2]}`
+  }
+
   const renderParagraphItem = ({item, index}: any) => {
     return (
       <View>
         <ParagraphContainer>
           {item.img_url && (
             <ImageContainer>
+              {item.imgDate && (
               <ReviewImageTypeText>
-                {item.img_before_after === 'before'
-                  ? 'Before'
-                  : item.img_before_after === 'after'
-                  ? 'After'
-                  : ''}
+                {getDisplayedImageDate(item.imgDate)}
               </ReviewImageTypeText>
+              )}
               <TouchableWithoutFeedback
                 onPress={() => moveToFullImages(item.img_url)}>
                 <ReviewImage source={{uri: item.img_url}} />

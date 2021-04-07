@@ -270,6 +270,13 @@ function ReviewStackScreen() {
         }}
       />
       <ReviewStack.Screen
+        name="BraceReviewUploadStack"
+        component={BraceReviewUploadStackScreen}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
+      <ReviewStack.Screen
         name="DentalClinicStack"
         component={DentalClinicStackScreen}
       />

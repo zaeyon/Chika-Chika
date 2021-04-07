@@ -310,7 +310,7 @@ const PlaceholderContent = ({navigation, title}: Props) => {
   );
 
   useEffect(() => {
-    GETCommunityPosts(jwtToken, selectedHometown.id, {
+    GETCommunityPosts(jwtToken, selectedHometown?.id, {
       type: 'FreeTalk',
       limit: 2,
       offset: 0,

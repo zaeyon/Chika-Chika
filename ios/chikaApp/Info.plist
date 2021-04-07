@@ -72,17 +72,18 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Use camera for take teeth picture</string>
+	<string>This permission is used to take pictures that you want to publish to your review.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Get user current location for near dentist</string>
+	<string>This allows us to use your location to provide you certain features like find your nearest dental clinics and recommend review about nearest dental clinics to you.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Get user current location for near dentist</string>
+	<string>This allows us to use your location to provide you certain features like find your nearest dental clinics and recommend review about nearest dental clinics to you.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Get user current location for near dentist</string>
+	<string>This allows us to use your location to provide you certain features like find your nearest dental clinics and recommend review about nearest dental clinics to you.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>For user take and save photos</string>
+	<string>This permission is used to store pictures taken by users for register to reviews in the gallery.
+</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>For user to register photos </string>
+	<string>This permission is used to register photo for dental clinic's review and commmunity post.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>NanumSquareExtraBold.ttf</string>

@@ -26,7 +26,6 @@ const ProfileImage = Styled.Image`
 width: ${wp('10.66%')}px;
 height: ${wp('10.66%')}px;
 border-radius: 100px;
-border-width: 0.5px;
 border-color: #9AA2A9
 `;
 
@@ -103,7 +102,11 @@ const WriterInfo = ({
           )
         }>
         <ProfileContainer>
-          <ProfileImage source={{uri: writerObj?.profileImage}} />
+          <ProfileImage source={
+            writerObj.profileImage 
+            ? {uri: writerObj?.profileImage}
+            : require('~/Assets/Images/MyPage/default_profileImg.png')
+            } />
           <ProfileRightContainer>
             <NicknameText>{writerObj?.nickname}</NicknameText>
             <ElapsedTimeText>{elapsedTime}</ElapsedTimeText>

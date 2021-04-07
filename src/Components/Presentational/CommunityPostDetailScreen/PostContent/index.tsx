@@ -45,7 +45,6 @@ const ProfileImage = Styled.Image<{source: any}>`
 width: 40px;
 height: 40px;
 background-color: #C4C4C4;
-border-width: 0.5px;
 border-color: #9AA2A9;
 border-radius: 100px;
 `;
@@ -289,10 +288,14 @@ const PostContent = ({
           }}>
           <ProfileContainerView>
             <ProfileImage
-              source={{
+              source={
+                user.img_thumbNail
+                ? {
                 url: user.img_thumbNail,
                 cache: 'force-cache',
-              }}
+                }
+                : require('~/Assets/Images/MyPage/default_profileImg.png')
+            }
             />
             <ProfileContentView>
               <SharedElement id="1">

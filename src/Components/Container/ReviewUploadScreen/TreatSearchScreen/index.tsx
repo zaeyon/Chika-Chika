@@ -288,7 +288,6 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
       <TreatItemContainer>
         <TreatBodyContainer>
           <TreatItemNameText>{'# ' + item.usualName}
-          <TechnicalNameText>{" " + item.technicalName}</TechnicalNameText>
           </TreatItemNameText>
           <TouchableWithoutFeedback
             onPress={() => selectTreatItem(item, index)}>

@@ -35,7 +35,7 @@ const FullImageScreen = ({navigation, route}: Props) => {
 
   const moveToRequestScreen = () => {
     console.log("route.params.requestScreen", route.params?.requestScreen);
-    if(route.params?.requestScreen === 'ContentPostScreen') {
+    if(route.params?.requestScreen === 'BraceReviewContentPostScreen') {
       navigation.navigate(route.params.requestScreen, {
         selectedImage: route.params.image,
         selectedIndex: route.params.selectedIndex,

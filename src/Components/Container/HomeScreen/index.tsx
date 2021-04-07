@@ -390,7 +390,7 @@ const HomeScreen = ({navigation, route}: Props) => {
     (selectedHometown, callback = () => console.log('fetchLocalInfo')) => {
       GETLocalClinicAndReviewCount({
         jwtToken,
-        cityId: String(selectedHometown.id),
+        cityId: String(selectedHometown?.id),
       }).then((response: any) => {
         callback();
       });

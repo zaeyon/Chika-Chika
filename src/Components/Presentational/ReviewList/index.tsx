@@ -204,6 +204,7 @@ const ReviewList = ({
 
     return (
       <ReviewItem
+        reviewObj={item}
         reviewId={item.id}
         writer={writer}
         createdAt={item.createdAt}
@@ -239,7 +240,7 @@ const ReviewList = ({
       refreshing={refreshingReviewList}
       onRefresh={onRefreshReviewList}
       horizontal={false}
-      showsVerticalScrollIndicator={true}
+      showsVerticalScrollIndicator={false}
       data={reviewList}
       renderItem={renderReviewItem}
       onEndReached={onEndReachedReviewList}

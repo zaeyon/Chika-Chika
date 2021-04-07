@@ -8,6 +8,7 @@ import {
 import {BoxShadow} from 'react-native-shadow';
 
 import RatingStarList from '~/Components/Presentational/RatingStarList';
+import DentalEvaluation from '~/Components/Presentational/DentalEvaluation';
 
 const Container = Styled.View`
 width: ${wp('91.46%')}px;
@@ -155,6 +156,10 @@ font-size: 14px;
 line-height: 18px;
 `;
 
+const DentalEvaluationContainer = Styled.View`
+margin-top: 8px;
+`;
+
 interface Props {
   dentalObj: any;
   isOpen: boolean;
@@ -182,6 +187,7 @@ const DentalCarouselItem = ({
   closeTime,
   clickDentalCallReservation,
 }: Props) => {
+  console.log("DentalCarouselItem dentalObj", dentalObj);
   let displayDistance: string;
   if (dentalObj['distance(km)'] >= 1) {
     displayDistance = dentalObj['distance(km)'] + 'km';
@@ -239,12 +245,11 @@ const DentalCarouselItem = ({
             )}
           </CurrentStatusContainer>
         </HeaderContainer>
-        <ReviewRatingContainer>
-          <RatingStarList
-            ratingValue={reviewCount > 0 ? rating.toFixed(1) : 0}
-            reviewCount={reviewCount}
-          />
-        </ReviewRatingContainer>
+        <DentalEvaluationContainer>
+          <DentalEvaluation
+          reviewCount={dentalObj.reviewNum}
+          recommendCount={dentalObj.recommendNum}/>
+        </DentalEvaluationContainer>
         <FooterContainer>
           <DentalAddressText>{address}</DentalAddressText>
           <VerticalDivider />

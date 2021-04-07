@@ -11,6 +11,7 @@ import allActions from '~/actions';
 
 // Local Component
 import PreviewImages from '~/Components/Presentational/ReviewItem/PreviewImages';
+import BracePreviewImages from '~/Components/Presentational/ReviewItem/BracePreviewImages';
 
 // Route
 import POSTReviewLike from '~/Routes/Review/POSTReviewLike';
@@ -148,7 +149,7 @@ font-size: 14px;
 
 const InfoValueText = Styled.Text`
 font-weight: 500;
-margin-left: 8px;
+margin-left: 4px;
 font-size: 14px;
 line-height: 16px;
 color: #9AA2A9;
@@ -292,6 +293,7 @@ interface DentalObj {
 }
 
 interface Props {
+  reviewObj: any;
   reviewId: number;
   writer: UserObj;
   createdAt: string;
@@ -336,6 +338,7 @@ interface Props {
 }
 
 const ReviewItem = ({
+  reviewObj,
   reviewId,
   writer,
   createdAt,
@@ -358,6 +361,9 @@ const ReviewItem = ({
   dentalObj,
   moveToDentalDetail,
 }: Props) => {
+
+  console.log("ReviewItem reviewObj", reviewObj);
+
   const [formattedDescriptions, setFormattedDescriptions] = useState<string>(
     '',
   );
@@ -368,24 +374,29 @@ const ReviewItem = ({
   const likeIconScale = useRef(new Animated.Value(1)).current;
   const scrapIconScale = useRef(new Animated.Value(1)).current;
 
+  
+
   let formatedCreatedAtDate = '';
   let formatedTreatmentDate = '';
 
   useEffect(() => {
-    imageArray.forEach((item, index) => {
-      if (item.img_before_after === 'after') {
-        const tmp = item;
-        imageArray.splice(index, 1);
-        imageArray.unshift(tmp);
-      }
-    });
+
+    // 시술후 사진을 이미지 배열의 앞부분으로 정렬하는 알고리즘
+    // imageArray.forEach((item, index) => {
+    //   if (item.img_before_after === 'after') {
+    //     const tmp = item;
+    //     imageArray.splice(index, 1);
+    //     imageArray.unshift(tmp);
+    //   }
+    // });
 
     if (descriptions.length > 100) {
       setFormattedDescriptions(descriptions.substr(0, 100) + ' ...');
     } else {
       setFormattedDescriptions(descriptions);
     }
-  }, [imageArray, descriptions]);
+
+  }, [descriptions]);
 
   const formatDate = useCallback(
     (createdAt: string) => {
@@ -413,6 +424,74 @@ const ReviewItem = ({
     formatedTreatmentDate = result;
     return result;
   };
+
+  const getBraceElapsedTime = () => {
+    console.log("교정 시작일 reviewObj.correctionStartDate", new Date(reviewObj.correctionStartDate));
+    const splitedCreatedDate = reviewObj.createdAt.split(" ");
+    console.log("리뷰 작성일 splitedCreatedDate[0]", splitedCreatedDate[0]);
+
+    const braceStartDate = new Date(reviewObj.correctionStartDate);
+    const braceEndDate = reviewObj.correctionEndDate === "0000-00-00" ? new Date(splitedCreatedDate[0]) : new Date(reviewObj.correctionEndDate);
+
+    const dateDiff = Math.ceil(braceEndDate.getTime() - braceStartDate.getTime());
+
+    const braceElapsedDay = dateDiff/(1000 * 60 * 60 * 24) + 1;
+    let braceElapsedRemainderYear: any;
+    let braceElapsedRemainderMonth: any;
+    let braceElapsedRemainderDay: any;
+
+    //const braceElapsedMonth = dateDiff/(1000 * 60 * 60 * 24 * 30);
+    //const braceElapsedYear = dateDiff/(1000 * 60 * 60 * 24 * 30 * 12);
+
+    let braceElapsedDateText = "";
+
+
+    console.log("교정 기간 일 차이 braceElapsedTime", braceElapsedDay);
+
+    if(braceElapsedDay >= 365) {
+      braceElapsedRemainderYear = Math.floor(braceElapsedDay / 365);
+      if((braceElapsedDay % 365) >= 30) {
+        
+        braceElapsedRemainderMonth = Math.floor((braceElapsedDay % 365) / 30);
+
+        braceElapsedDateText = braceElapsedRemainderYear + "년 " + braceElapsedRemainderMonth + "개월";
+
+        //return braceElapsedDateText;
+
+      } else {
+          braceElapsedDateText = braceElapsedRemainderYear + "년";
+
+          //return braceElapsedDateText;
+        }
+    } else {
+      if(braceElapsedDay >= 30) {
+        braceElapsedRemainderMonth = Math.floor(braceElapsedDay / 30);
+
+        if(braceElapsedDay % 30 >= 1) {
+          braceElapsedRemainderDay = braceElapsedDay % 30;
+
+          braceElapsedDateText = braceElapsedRemainderMonth + "개월 " + braceElapsedRemainderDay + "일";
+
+          //eturn braceElapsedDateText;
+
+        } else {
+          braceElapsedDateText = braceElapsedRemainderMonth + "개월";
+
+          //return braceElapsedDateText;
+        }
+      } else {
+        braceElapsedDateText = braceElapsedDay + "일";
+
+        //return braceElapsedDateText;
+      }
+    }
+
+    if(reviewObj.correctionEndDate === "0000-00-00") {
+      return braceElapsedDateText + "(진행중)"
+    } else {
+      return braceElapsedDateText + "(교정완료)"
+    }
+  }
 
   const clickLike = () => {
     console.log("clickLike isCurUserLikeProp", isCurUserLikeProp);
@@ -559,7 +638,7 @@ const ReviewItem = ({
         <InfoContainer>
           {imageArray.length > 0 && (
           <ImagesPreviewContainer>
-            <PreviewImages sortedImageArray={imageArray} />
+            <BracePreviewImages sortedImageArray={imageArray} />
           </ImagesPreviewContainer>
           )}
           <TagListContainer>
@@ -571,7 +650,7 @@ const ReviewItem = ({
             />
           </TagListContainer>
           <DateRatingContainer>
-            <InfoItemContainer>
+            {/* <InfoItemContainer>
               <InfoLabelText>{'진료･치료시기'}</InfoLabelText>
               <InfoValueText>
                 {formatTreatmentDate(treatmentDate)}
@@ -580,8 +659,13 @@ const ReviewItem = ({
             <InfoItemContainer style={{marginTop: 6}}>
               <InfoLabelText>만족도</InfoLabelText>
               <InfoValueText>{ratingObj.avgRating}</InfoValueText>
+            </InfoItemContainer> */}
+            <InfoItemContainer>
+              <InfoLabelText>교정기간</InfoLabelText>
+              <InfoValueText>{getBraceElapsedTime()}</InfoValueText>
             </InfoItemContainer>
-          </DateRatingContainer>
+          </DateRatingContainer> 
+          
           <DescripContainer>
             <DescripText>{formattedDescriptions}</DescripText>
           </DescripContainer>

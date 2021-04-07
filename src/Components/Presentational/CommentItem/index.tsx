@@ -145,6 +145,9 @@ const CommentItem = ({
   const containerRef: any = useRef();
   const [positionY, setPositionY] = useState(0);
 
+  console.log("CommentItem profileImage", profileImage);
+  console.log("CommentItem img_thumbNail", img_thumbNail);
+
   const getDateFormat = useCallback((createdAt: string) => {
     const currentYear = new Date(Date.now()).getFullYear();
 
@@ -195,11 +198,11 @@ const CommentItem = ({
           onPress={() => moveToAnotherProfile(userId, nickname, profileImage, img_thumbNail)}>
           <ProfileImageContainer>
             <ProfileImage
-              source={{
-                uri: img_thumbNail
-                  ? img_thumbNail
-                  : profileImage
-              }}
+              source={
+              img_thumbNail
+              ? {uri: img_thumbNail}
+              : require('~/Assets/Images/MyPage/default_profileImg.png')
+            }
             />
           </ProfileImageContainer>
         </TouchableWithoutFeedback>

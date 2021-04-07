@@ -64,7 +64,7 @@ justify-content: center;
 
 const ProfileTitleText = Styled.Text`
 font-weight: 800;
-font-size: 22px;
+font-size: 20px;
 line-height: 24px;
 color: #000000;
 `;
@@ -126,6 +126,10 @@ const SectionImage = Styled.Image`
 margin-left: auto;
 `;
 
+
+const ProfileSectionImage = Styled.Image`
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -165,24 +169,43 @@ const MyProfileScreen = ({navigation, route}: Props) => {
       {sectionTitle ? (
         <SectionTitleText>{sectionTitle}</SectionTitleText>
       ) : null}
-      {sectionItems.map((item: any, index: number) => (
-        <>
-          {index === 0 ? null : <SectionLineView />}
-          <TouchableHighlight
-            activeOpacity={0.9}
-            underlayColor="black"
-            onPress={
-              item.title === '이메일 문의'
-                ? () => openEmail()
-                : () => navigation.navigate(item.component)
-            }>
+      {sectionItems.map((item: any, index: number) => {
+        if(item.title === '버전정보') {
+          return (
+            <>
+            <SectionLineView />
             <SectionContentView>
               <SectionContentText>{item.title}</SectionContentText>
               {item.version ? <SectionContentText style={{marginLeft: 'auto'}}>{item.version}</SectionContentText> : <SectionImage source={sectionArrow} />}
             </SectionContentView>
-          </TouchableHighlight>
-        </>
-      ))}
+          </>
+          )
+        } else {
+          return (
+          <>
+            {index === 0 ? null : <SectionLineView />}
+            <TouchableHighlight
+              activeOpacity={0.9}
+              underlayColor="black"
+              onPress={
+                item.title === '이메일 문의'
+                  ? () => openEmail()
+                  : () => {
+                    if(item.component !== null) {
+                      navigation.navigate(item.component)
+                    }
+                  }
+              }>
+              <SectionContentView>
+                <SectionContentText>{item.title}</SectionContentText>
+                {item.version ? <SectionContentText style={{marginLeft: 'auto'}}>{item.version}</SectionContentText> : <SectionImage source={sectionArrow} />}
+              </SectionContentView>
+            </TouchableHighlight>
+          </>
+          )
+        }
+      }
+      )}
     </SectionContainerView>
   );
 
@@ -208,8 +231,7 @@ const MyProfileScreen = ({navigation, route}: Props) => {
             <TouchableWithoutFeedback onPress={() => navigation.navigate('EditProfileStackScreen')}>
             <ProfileSubTitleView>
             <ProfileSubTitleText>{'내 정보 수정'}</ProfileSubTitleText>
-            <SectionImage style={{
-              marginLeft: 0}} source={sectionArrow} />
+            <ProfileSectionImage source={sectionArrow} />
             </ProfileSubTitleView>
             </TouchableWithoutFeedback>
           </ProfileContentView>

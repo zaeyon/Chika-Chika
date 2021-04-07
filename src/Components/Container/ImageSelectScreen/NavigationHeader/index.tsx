@@ -46,6 +46,7 @@ const HeaderTitleContainer = Styled.View`
 width: 100%;
 position: absolute;
 height: 100%;
+top: ${getStatusBarHeight()}
 justify-content: center;
 align-items: center;
 z-index: -1;
