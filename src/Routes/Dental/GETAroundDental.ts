@@ -12,11 +12,14 @@ interface params {
     dayFilter?: any,
     holidayFilter: boolean,
     parkingFilter: string,
+    specialistFilter: string,
+    goodDentalFilter: string,
+    nightCareFilter: string,
     mapLat: number,
     mapLong: number,
 }
 
-const GETAroundDental = ({jwtToken, limit, offset, lat, long, sort, timeFilter, dayFilter, holidayFilter, parkingFilter, mapLat, mapLong}: params) => {
+const GETAroundDental = ({jwtToken, limit, offset, lat, long, sort, timeFilter, dayFilter, holidayFilter, parkingFilter, specialistFilter, goodDentalFilter, nightCareFilter, mapLat, mapLong}: params) => {
 
     console.log("GETAroundDental lat", lat);
     console.log("GETAroundDental long", long);
@@ -25,13 +28,18 @@ const GETAroundDental = ({jwtToken, limit, offset, lat, long, sort, timeFilter, 
     console.log("GETAroundDental dayFilter", dayFilter);
     console.log("GETAroundDental holiday", holidayFilter);
     console.log("GETAroundDental wantParking", parkingFilter);
+
+    console.log("GETAroundDental goodDentalFilter", goodDentalFilter);
+    console.log("GETAroundDental specialistFilter", specialistFilter);
+    console.log("GETAroundDental nightCareFilter", nightCareFilter);
+
     console.log("GETAroundDental limit", limit);
     console.log("GETAroundDental offset", offset);
 
     console.log("GETAroundDental maplat", mapLat);
     console.log("GETAroundDental maplong", mapLong);
 
-    const uri = serverConfig.baseUri + `/around/clinics?lat=${lat}&long=${long}&wantParking=${parkingFilter}&sort=${sort}&days=${dayFilter}&time=${timeFilter}&holiday=${holidayFilter}&limit=${limit}&offset=${offset}&maplat=${mapLat}&maplong=${mapLong}`;
+    const uri = serverConfig.baseUri + `/around/clinics?lat=${lat}&long=${long}&wantParking=${parkingFilter}&sort=${sort}&days=${dayFilter}&time=${timeFilter}&holiday=${holidayFilter}&night=${nightCareFilter}&surgeon=${specialistFilter}&transparent=${goodDentalFilter}&limit=${limit}&offset=${offset}&maplat=${mapLat}&maplong=${mapLong}`;
 
     console.log("GETAroundDental uri", uri);
 

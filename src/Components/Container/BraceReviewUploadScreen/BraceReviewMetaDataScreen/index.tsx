@@ -17,6 +17,9 @@ import {check, request, PERMISSIONS, RESULTS, openSettings} from 'react-native-p
 // Local Components
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
 
+// route
+import GETTreatmentSearch from '~/Routes/Search/GETTreatmentSearch';
+
 const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
@@ -264,6 +267,15 @@ line-height: 24px;
 color: #131F3C;
 `;
 
+const TreatmentAndDiseasesContainer = Styled.View`
+`;
+
+const TreatmentContainer = Styled.View`
+`;
+
+const DiseaseContainer = Styled.View`
+`;
+
 
 const SelectedTreatContainer = Styled.View`
 width: ${wp('100%')}px;
@@ -273,6 +285,7 @@ padding-right: 16px;
 flex-direction: row;
 flex-wrap: wrap;
 `;
+
 
 const SelectedTreatItemBackground = Styled.View`
 margin-bottom: 8px;
@@ -645,6 +658,13 @@ line-height: 24px;
 color: #131F3C;
 `;
 
+const SubLabelText = Styled.Text`
+color: #9AA2A9;
+font-weight: 400;
+font-size: 11px;
+line-height: 16px;
+`;
+
 
 
 
@@ -675,6 +695,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
   const [dentalObj, setDentalObj] = useState<object>({});
   const [treatmentArray, setTreatmentArray] = useState<Array<any>>([]);
+  const [diseaseArray, setDiseaseArray] = useState<Array<any>>([]);
   const [ratingObj, setRatingObj] = useState<RatingObj>({
     serviceRating: null,
     treatmentRating: null,
@@ -736,8 +757,22 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   const modalContentY = useRef(new Animated.Value(hp('50%'))).current;
   const braceStartDatePickerY = useRef(new Animated.Value(hp('50%'))).current;
   const braceFinishDatePickerY = useRef(new Animated.Value(hp('50%'))).current;
+
+  const allTreatmentAndDiseasesArray = useRef<any>([""]).current;
   
   console.log("ReviewMetaDataScreen route.params?", route);
+
+  useEffect(() => {
+    GETTreatmentSearch("")
+    .then(function (response: any) {
+      console.log("BraceReviewMetaDataScreen GETTreatmentSearch response", response);
+      allTreatmentAndDiseasesArray.current = response;
+    })
+    .catch(function (error: any) {
+      console.log("GETTreatmentSearch error", error); 
+    })
+
+  }, [])
   
   useEffect(() => {
     if(route.params?.selectedProofImage) {
@@ -757,7 +792,14 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   useEffect(() => {
     if(route.params?.selectedTreatmentArray) {
       console.log("route.params?.selectedTreatmentArray", route.params?.selectedTreatmentArray);
-      setTreatmentArray(route.params?.selectedTreatmentArray);
+
+      const tmpTreatmentArray = route.params?.selectedTreatmentArray.filter((item: any) => item.category === "treatment");
+
+      const tmpDiseaseArray = route.params?.selectedTreatmentArray.filter((item: any) => item.category === "disease");
+
+      setTreatmentArray(tmpTreatmentArray);
+      setDiseaseArray(tmpDiseaseArray);
+
     }      
   }, [route.params?.selectedTreatmentArray])
 
@@ -929,8 +971,13 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   };
 
   const moveToTreatmentSearch = () => {
+    const tmpTreatmentArray = treatmentArray.slice();
+    const tmpDiseaseArray = diseaseArray.slice();
+    const tmpSelectedTreatmentArray = tmpTreatmentArray.concat(tmpDiseaseArray);
+
     navigation.navigate('TreatSearchScreen', {
-      selectedTreatmentArray: treatmentArray
+      selectedTreatmentArray: tmpSelectedTreatmentArray,
+      allTreatmentAndDiseasesArray: allTreatmentAndDiseasesArray.current,
     });
   }
 
@@ -1100,6 +1147,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
     navigation.navigate('BraceReviewContentPostScreen', {
       dentalObj,
       treatmentArray,
+      diseaseArray,
       ratingObj,
       treatmentDate: treatmentDateObj.treatmentDate,
       totalPrice,
@@ -1238,6 +1286,15 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
     tmpTreatmentArray.splice(deleteIndex, 1);
     setTreatmentArray(tmpTreatmentArray);
+  };
+
+
+  const deleteDiseaseItem = (disease: object) => {
+    var tmpDiseaseArray = diseaseArray.slice();
+    var deleteIndex = tmpDiseaseArray.indexOf(disease);
+
+    tmpDiseaseArray.splice(deleteIndex, 1);
+    setDiseaseArray(tmpDiseaseArray);
   };
 
   const initializeBraceStartDate = () => {
@@ -1767,10 +1824,38 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
             </RightArrowIconContainer> */}
           </MetaDataHeaderContainer>
             <MetaDataValueContainer>
-            {treatmentArray.length === 0 && (
+            {(treatmentArray.length === 0 && diseaseArray.length === 0) && (
               <MetaDataPlaceholderText>{"질병 및 치료 항목을 선택하세요."}</MetaDataPlaceholderText>
             )}
-            {treatmentArray.length > 0 && (
+            <TreatmentAndDiseasesContainer>
+            {(diseaseArray.length > 0) && (
+            <DiseaseContainer>
+            <SubLabelText>{"질병 항목"}</SubLabelText>
+            <SelectedTreatContainer>
+            {diseaseArray.map((item: any, index: number) => {
+              return (
+                <SelectedTreatItemBackground 
+                key={index}
+                style={{marginRight: 8, backgroundColor: "#F5F7F9"}}>
+                  <SelectedTreatItemText>
+                    {'# ' + item.name}
+                  </SelectedTreatItemText>
+                  <TouchableWithoutFeedback onPress={() => deleteDiseaseItem(item)}>
+                    <DeleteTreatItemContainer>
+                      <TreatItemDeleteIcon
+                        source={require('~/Assets/Images/Upload/ic_delete.png')}
+                      />
+                    </DeleteTreatItemContainer>
+                  </TouchableWithoutFeedback>
+                </SelectedTreatItemBackground>
+              );
+          })}
+          </SelectedTreatContainer>
+          </DiseaseContainer>
+          )}
+          {(treatmentArray.length > 0) && (
+            <TreatmentContainer>
+            <SubLabelText>{"치료 항목"}</SubLabelText>
             <SelectedTreatContainer>
             {treatmentArray.map((item: any, index: number) => {
               return (
@@ -1778,7 +1863,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
                 key={index}
                 style={{marginRight: 8}}>
                   <SelectedTreatItemText>
-                    {'# ' + item.usualName}
+                    {'# ' + item.name}
                   </SelectedTreatItemText>
                   <TouchableWithoutFeedback onPress={() => deleteTreatItem(item)}>
                     <DeleteTreatItemContainer>
@@ -1791,7 +1876,9 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
               );
           })}
           </SelectedTreatContainer>
-            )}
+          </TreatmentContainer>
+          )}
+          </TreatmentAndDiseasesContainer>
             </MetaDataValueContainer>
           </MetaDataItemContainer>
           </TouchableWithoutFeedback>

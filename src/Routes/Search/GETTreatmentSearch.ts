@@ -5,7 +5,7 @@ const GETTreatmentSearch = (keyword: string) => {
 
     console.log("GETTreatmentSearch keyword", keyword);
 
-    const uri = serverCofig.baseUri + "/search/treatments?q=" + keyword
+    const uri = serverCofig.baseUri + "/search/treatmentsAndDiseases?q=" + keyword
 
     return new Promise(function(resolve, reject) {
         axios

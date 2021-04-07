@@ -35,11 +35,14 @@ width: ${wp('100%')}px;
 const IconCellContainerView = Styled.View`
 flex-direction: row;
 justify-content: space-around;
-margin: 21px 0px;
+margin: 11px 0px;
 padding: 22px 0px;
 `;
 
 const IconCellContentView = Styled.View`
+padding-top: 10px;
+width: ${wp('25%')}px;
+height: ${wp('25%')}px;
 align-items: center;
 `;
 
@@ -49,19 +52,25 @@ const IconCellText = Styled.Text`
 margin-top: 9px;
 `;
 
+interface Props {
+  navigation: any,
+  route: any,
+  moveToFilteredDentalMap: (filterType: string) => void,
+}
 
-const HomeInfoContent = () => {
+
+const HomeInfoContent = ({moveToFilteredDentalMap}: Props) => {
   const [bannerList, setBannerList] = useState([
     require('~/Assets/Images/Banner/home_banner.png')
   ])
 
   const [iconCellList, setIconCellList] = useState([
     {
-      text: '교정전문의',
+      text: '교정 전문의',
       source: require('~/Assets/Images/Home/ic_dental_specialist.png'),
     },
     {
-      text: '착한의사',
+      text: '좋은 치과',
       source: require('~/Assets/Images/Home/ic_good_dentist.png')
     },
     {
@@ -94,12 +103,14 @@ const HomeInfoContent = () => {
       />
       <IconCellContainerView>
         {iconCellList.map((item, index) => (
+          <TouchableWithoutFeedback onPress={() => moveToFilteredDentalMap(item.text)}>
           <IconCellContentView>
             <IconCellImage source={item.source}/>
             <IconCellText>
               {item.text}
             </IconCellText>
           </IconCellContentView>
+          </TouchableWithoutFeedback>
         ))}
       </IconCellContainerView>
       </ContentView>

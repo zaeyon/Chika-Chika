@@ -138,7 +138,7 @@ const HomeOpenedClinicContent = ({clinics}: Props) => {
                   {item.dentalTransparent ? (
                     <LocalClinicItemTagView>
                       <LocalClinicItemTagText>
-                        {`우리동네좋은치과`}
+                        {`우리동네 좋은 치과`}
                       </LocalClinicItemTagText>
                     </LocalClinicItemTagView>
                   ) : null}

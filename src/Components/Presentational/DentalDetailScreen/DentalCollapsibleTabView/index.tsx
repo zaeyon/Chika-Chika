@@ -961,7 +961,7 @@ const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalI
                   <IntroKeywordIcon
                   source={require('~/Assets/Images/Dental/ic_goodHospital.png')}/>
                   <IntroKeywordText>
-                  {'우리동네좋은치과 지정'}
+                  {'우리동네 좋은 치과 지정'}
                   </IntroKeywordText>
                 </IntroKeywordItemContainer>
             )
@@ -1388,6 +1388,9 @@ const DentalCollapsibleTabView = ({navigation, goBack, dentalDetailInfo, dentalI
         <TouchableWithoutFeedback onPress={() => goBack()}>
           <HeaderLeftContainer>
             <Animated.Image
+            style={{
+            marginTop: Platform.OS === 'ios' ? (hasNotch() ? 0 : getStatusBarHeight()) : 0,
+            }}
               source={require('~/Assets/Images/HeaderBar/ic_back.png')}
             />
           </HeaderLeftContainer>
@@ -1427,9 +1430,9 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'absolute',
-    paddingTop: hasNotch() ? getStatusBarHeight() : 0,
+    paddingTop: Platform.OS === 'ios' ? getStatusBarHeight() : 0,
     width: wp('100%'),
-    height: getStatusBarHeight() + hp('8%'),
+    height: hp('8%') + getStatusBarHeight(),
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',

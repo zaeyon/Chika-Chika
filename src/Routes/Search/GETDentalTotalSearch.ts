@@ -14,13 +14,16 @@ interface params {
     dayFilter?: string,
     holidayFilter?: boolean,
     parkingFilter?: string,
+    specialistFilter: string,
+    goodDentalFilter: string,
+    nightCareFilter: string,
 }
 
-const GETDentalTotalSearch = ({jwtToken, query, offset, limit, lat, long, category, sort, dayFilter, timeFilter, holidayFilter, parkingFilter}: params) => {
+const GETDentalTotalSearch = ({jwtToken, query, offset, limit, lat, long, category, sort, dayFilter, timeFilter, holidayFilter, parkingFilter, specialistFilter, goodDentalFilter, nightCareFilter}: params) => {
 
     console.log('GETDentalTotalSearch category', category);
 
-    const uri = serverConfig.baseUri + `/clinics?lat=${lat}&long=${long}&query=${query}&sort=${sort}&days=${dayFilter}&time=${timeFilter}&wantParking=${parkingFilter}&holiday=${holidayFilter}&limit=${limit}&offset=${offset}&tagCategory=${category}`;
+    const uri = serverConfig.baseUri + `/clinics?lat=${lat}&long=${long}&query=${query}&sort=${sort}&days=${dayFilter}&time=${timeFilter}&wantParking=${parkingFilter}&holiday=${holidayFilter}&night=${nightCareFilter}&surgeon=${specialistFilter}&transparent=${goodDentalFilter}&limit=${limit}&offset=${offset}&tagCategory=${category}`;
 
 
     console.log("GETDentalTotalSearch jwtToken", jwtToken);
@@ -29,6 +32,10 @@ const GETDentalTotalSearch = ({jwtToken, query, offset, limit, lat, long, catego
     console.log("GETDentalTotalSearch sort", sort);
     console.log("GETDentalTotalSearch long", long);
     console.log("GETDentalTotalSearch lat", lat);
+
+    console.log("GETDentalTotalSearch goodDentalFilter", goodDentalFilter);
+    console.log("GETDentalTotalSearch specialistFilter", specialistFilter);
+    console.log("GETDentalTotalSearch nightCareFilter", nightCareFilter);
 
     if(parkingFilter) console.log("GETDentalTotalSearch wantParking", parkingFilter);
     if(timeFilter) console.log("GETDentalTotalSearch time", timeFilter);

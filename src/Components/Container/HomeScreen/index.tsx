@@ -193,7 +193,6 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   const dispatch = useDispatch();
 
-
   useEffect(() => {
     if (route.params?.isUploadReview) {
       ToastMessage.show('리뷰작성이 완료되었습니다!');
@@ -456,6 +455,20 @@ const HomeScreen = ({navigation, route}: Props) => {
       requestType: 'initialize'
     });
   }, [])
+
+
+  const moveToFilteredDentalMap = useCallback((filterType: string) => {
+    if(filterType === "교정 전문의") {
+      dispatch(allActions.dentalFilterActions.setHomeDentalFilter("specialist"));
+      navigation.navigate("지도")
+    } else if(filterType === "좋은 치과") {
+      dispatch(allActions.dentalFilterActions.setHomeDentalFilter("goodDental"));
+      navigation.navigate("지도")
+    } else if(filterType === "야간진료") {
+      dispatch(allActions.dentalFilterActions.setHomeDentalFilter("nightCare"));
+      navigation.navigate("지도")
+    }
+  }, [])
   
   return (
     <ContainerView as={SafeAreaView}>
@@ -550,7 +563,8 @@ const HomeScreen = ({navigation, route}: Props) => {
             }
           }
         }}>
-        <HomeInfoContent/>
+        <HomeInfoContent
+        moveToFilteredDentalMap={moveToFilteredDentalMap}/>
       <BodyContainerView>
         <LocationContainerView>
           <LocationImage source={require('~/Assets/Images/Home/ic_location_info.png')}/>

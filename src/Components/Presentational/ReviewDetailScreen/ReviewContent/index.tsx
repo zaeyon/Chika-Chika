@@ -58,7 +58,6 @@ interface Props {
 }
 
 const ReviewContent = ({paragraphArray, moveToFullImages}: Props) => {
-  console.log('paragraphArray', paragraphArray);
 
   const getDisplayedImageDate = (imageDate: string) => {
 

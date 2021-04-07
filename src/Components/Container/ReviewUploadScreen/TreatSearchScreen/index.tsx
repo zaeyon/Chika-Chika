@@ -27,7 +27,6 @@ import GETTreatmentSearch from '~/Routes/Search/GETTreatmentSearch';
 const Container = Styled.View`
  flex: 1;
  background-color: #FFFFFF;
- align-items: center;
 `;
 
 const SearchContainer = Styled.View`
@@ -38,8 +37,7 @@ const SearchContainer = Styled.View`
 `;
 
 const BodyContainer = Styled.View`
-align-items: center;
-padding-bottom: ${hasNotch() ? hp('3%') : hp('14%')}px;
+flex: 1;
 `;
 
 const SearchInputContainer = Styled.View`
@@ -67,6 +65,7 @@ padding-bottom: 5px;
 `;
 
 const TreatListContainer = Styled.View`
+flex: 1;
 `;
 
 const TreatItemContainer = Styled.View`
@@ -199,6 +198,11 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
     autoCompletedTreatmentArray,
     setAutoCompletedTreatmentArray,
   ] = useState<Array<Treatment>>([]);
+
+  const [
+    allTreatmentAndDiseasesArray,
+    setAllTreatmentAndDiseasesArray
+  ] = useState<Array<any>>([]);
   const [isActivatedFinish, setIsActivatedFinish] = useState<boolean>(false);
 
   const treatmentSearchInputRef = useRef<any>();
@@ -217,6 +221,14 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
     }
   }, [selectedTreatmentArray]);
 
+  useEffect(() => {
+    if(route.params?.allTreatmentAndDiseasesArray) {
+      console.log("route.params?.allTreatmentAndDiseasesArray", route.params.allTreatmentAndDiseasesArray);
+      setAllTreatmentAndDiseasesArray(route.params?.allTreatmentAndDiseasesArray)
+      setAutoCompletedTreatmentArray(route.params?.allTreatmentAndDiseasesArray)
+    }
+  }, [route.params?.allTreatmentAndDiseasesArray])
+
   const selectTreatItem = (treat: object, index: number) => {
 
     console.log("selectTreatItem treat", treat);
@@ -225,7 +237,7 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
     treatmentSearchInputRef.current.clear();
     var tmpSelectedTreatmentArray = selectedTreatmentArray.slice();
 
-    const isExistIndex = tmpSelectedTreatmentArray.findIndex((item, index) => (treat.usualName === item.usualName))
+    const isExistIndex = tmpSelectedTreatmentArray.findIndex((item, index) => (treat.name === item.name))
 
     console.log("selectTreatItem isExistIndex", isExistIndex);
 
@@ -235,9 +247,9 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
       tmpSelectedTreatmentArray.push(treat);
       setSelectedTreatmentArray(tmpSelectedTreatmentArray);
   
-      var tmpAutoCompletedTreatmentArray = autoCompletedTreatmentArray.slice();
-      tmpAutoCompletedTreatmentArray.splice(index, 1);
-      setAutoCompletedTreatmentArray(tmpAutoCompletedTreatmentArray);
+      // var tmpAutoCompletedTreatmentArray = autoCompletedTreatmentArray.slice();
+      // tmpAutoCompletedTreatmentArray.splice(index, 1);
+      // setAutoCompletedTreatmentArray(tmpAutoCompletedTreatmentArray);
     }
   };
 
@@ -256,28 +268,42 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
   };
 
   const onChangeTreatInput = (text: string) => {
-    inputText = text;
+    // inputText = text;
 
-    if (text === '') {
-      setAutoCompletedTreatmentArray([]);
+    // if (text === '') {
+    //   setAutoCompletedTreatmentArray([]);
+    // } else {
+    //   GETTreatmentSearch(text)
+    //     .then(function (response: any) {
+    //       console.log('GETTreatmentSearch response', response);
+    //       // response.forEach((item: any, index: any) => {
+    //       //   console.log('item', item);
+    //       //   console.log('selectedTreatList', selectedTreatList);
+    //       // });
+
+    //       if (inputText === text) {
+    //         setAutoCompletedTreatmentArray(response);
+    //       }
+    //     })
+    //     .catch(function (error: any) {
+    //       console.log('GETTreatmentSearch error', error);
+    //     });
+    // }
+
+    if(text === '') {
+
     } else {
-      GETTreatmentSearch(text)
-        .then(function (response: any) {
-          console.log('GETTreatmentSearch response', response);
-          // response.forEach((item: any, index: any) => {
-          //   console.log('item', item);
-          //   console.log('selectedTreatList', selectedTreatList);
-          // });
-
-          if (inputText === text) {
-            setAutoCompletedTreatmentArray(response);
-          }
-        })
-        .catch(function (error: any) {
-          console.log('GETTreatmentSearch error', error);
-        });
+      const tmpAllTreatmentAndDiseasesArray = allTreatmentAndDiseasesArray.slice();
+      const result = tmpAllTreatmentAndDiseasesArray.filter(item => findMatchedItem(item.name, text))
+      setAutoCompletedTreatmentArray(result);
     }
   };
+
+  const findMatchedItem = (itemName: string, keyword: string) => {
+    console.log("findMAtchedItem itemName, keyword", itemName, keyword);
+
+    return itemName.includes(keyword);
+  }
 
   const goBack = () => {
     navigation.goBack();
@@ -287,7 +313,7 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
     return (
       <TreatItemContainer>
         <TreatBodyContainer>
-          <TreatItemNameText>{'# ' + item.usualName}
+          <TreatItemNameText>{'# ' + item.name}
           </TreatItemNameText>
           <TouchableWithoutFeedback
             onPress={() => selectTreatItem(item, index)}>
@@ -340,9 +366,9 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
               return (
                 <SelectedTreatItemBackground
                   key={index}
-                  style={{marginRight: 8}}>
+                  style={[{marginRight: 8}, item.category === "disease" && {backgroundColor: "#F5F7F9"}]}>
                   <SelectedTreatItemText>
-                    {'# ' + item.usualName}
+                    {'# ' + item.name}
                   </SelectedTreatItemText>
                   <TouchableWithoutFeedback
                     onPress={() => deleteTreatItem(item)}>
@@ -359,10 +385,13 @@ const TreatSearchScreen = ({navigation, route}: Props) => {
         )}
         <TreatListContainer>
           <FlatList
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{paddingBottom: hp('5%')}}
             keyboardDismissMode={'on-drag'}
             keyboardShouldPersistTaps={'always'}
             data={autoCompletedTreatmentArray}
             renderItem={renderTreatItem}
+            keyExtractor={(item: any, index: number) => `${index}`}
           />
         </TreatListContainer>
       </BodyContainer>

@@ -22,7 +22,6 @@ import {useSelector, useDispatch} from 'react-redux';
 // Local Components
 import DentalCollapsibleTabView from '~/Components/Presentational/DentalDetailScreen/DentalCollapsibleTabView';
 import DentalBottomBar from '~/Components/Presentational/DentalDetailScreen/DentalBottomBar';
-import ReviewItem from '~/Components/Presentational/ReviewItem';
 import ToastMessage from '~/Components/Presentational/ToastMessage';
 
 import callDentalPhoneNumber from '~/method/callDentalPhoneNumber';
