@@ -183,12 +183,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
         capturePhoto={capturePhoto}
         moveToEditNickname={moveToEditNickname}
         moveToGallery={moveToGallery}
-<<<<<<< HEAD
         moveToHomeTownSetting={moveToHometownSearch}
-=======
-        moveToHomeTownSetting={moveToHomeTownSetting}
-        moveToHomeTownSearch={moveToHomeTownSearch}
->>>>>>> b7c91dbe26d53a1534153257e6cea82247172118
         moveToPhoneVerify={moveToPhoneVerify}
         profile={profile}
         hometown={hometown}
