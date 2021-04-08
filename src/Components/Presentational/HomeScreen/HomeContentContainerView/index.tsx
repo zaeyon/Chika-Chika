@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import Styled from 'styled-components/native';
 import {
   TouchableWithoutFeedback,
+  Animated,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -53,10 +54,36 @@ interface Props {
 }
 
 const HomeContentContainerView = ({renderContentItem, onPress}: Props) => {
+  const viewScale = useRef(new Animated.Value(1)).current;
+
     return (
-        <ContainerView>
+        <ContainerView as={Animated.View}
+        style={{
+          transform: [
+            {
+              scale: viewScale,
+            },
+          ],
+        }}>
             {renderContentItem()}
-        <TouchableWithoutFeedback onPress={() => onPress()}>
+        <TouchableWithoutFeedback 
+        onPressIn={() => {
+          Animated.spring(viewScale, {
+            toValue: 0.97,
+            friction: 9,
+            tension: 78,
+            useNativeDriver: true,
+          }).start();
+        }}
+        onPressOut={() => {
+          Animated.spring(viewScale, {
+            toValue: 1,
+            friction: 9,
+            tension: 78,
+            useNativeDriver: true,
+          }).start();
+        }}
+        onPress={() => onPress()}>
           <NavigationButtonView>
             <NavigationButtonText>
               <NavigationButtonText

@@ -226,7 +226,7 @@ const ReviewThumbnail = ({review, moveToReviewDetail}: Props) => {
     <TouchableWithoutFeedback
       onPressIn={() => {
         Animated.spring(viewScale, {
-          toValue: 0.95,
+          toValue: 0.97,
           friction: 9,
           tension: 78,
           useNativeDriver: true,

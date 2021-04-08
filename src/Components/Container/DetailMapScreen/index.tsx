@@ -106,6 +106,24 @@ line-height: 20px;
 color: #ffffff;
 `;
 
+const MyLocationTrackingButton = Styled.View`
+elevation: 2;
+z-index: 2;
+width: 37px;
+height: 37px;
+border-radius: 3px;
+background-color: #ffffff;
+align-items: center;
+justify-content: center;
+box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);
+`;
+
+const TargetIcon = Styled.Image`
+width: ${wp('4.266%')}px;
+height: ${wp('4.266%')}px;
+tint-color: #131F3C;
+`;
+
 interface Props {
   navigation: any;
   route: {
@@ -121,8 +139,8 @@ const DetailMapScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 
-  const [centerLocation, setCenterLocation] = useState({
-  })
+  const mapRef = useRef();
+  const carouselRef = useRef();
   const [clinicListVisible, setClinicListVisible] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [mapInitialized, setMapInitialized] = useState(false);
@@ -136,19 +154,27 @@ const DetailMapScreen = ({navigation, route}: Props) => {
       const task = InteractionManager.runAfterInteractions(() => {
         setInitialized(true);
         setMapInitialized(true);
+        mapRef.current && mapRef.current?.setLocationTrackingMode(2);
+        mapRef.current && mapRef.current?.animateToCoordinate({
+          latitude: (Math.max(...clinics.map((item) => item.geographLat)) + Math.min(...clinics.map((item) => item.geographLat))) / 2,
+          longitude: (Math.max(...clinics.map((item) => item.geographLong)) + Math.min(...clinics.map((item) => item.geographLong))) / 2,
+          zoom: Math.max(Math.max(...clinics.map((item) => item.geographLat)) - Math.min(...clinics.map((item) => item.geographLat)), Math.max(...clinics.map((item) => item.geographLong)) + Math.min(...clinics.map((item) => item.geographLong))) / 23,
+        });
       });
   
       return () => task.cancel();
-    }, [])
+    }, [clinics])
   );
 
   useEffect(() => {
-    getCenterLocation(clinics);
     setFocusedClinic(clinics[0]);
     // route.params.getClinics((response: any) => {
     //   setClinics(response);
     //   setFocusedClinic(response[0]);
     // });
+    return () => {
+      mapRef.current && mapRef.current?.setLocationTrackingMode(0);
+    }
   }, []);
 
   const goBack = useCallback(() => {
@@ -172,8 +198,16 @@ const DetailMapScreen = ({navigation, route}: Props) => {
     });
   }, []);
 
+  const onMarkerPressed = useCallback((index: number) => {
+    setFocusedClinic(clinics[index])
+    carouselRef.current.scrollToIndex({
+      index,
+      animated: false,
+    })
+  }, [clinics])
+
   const renderMarkers = useCallback(() => {
-    return clinics.map((item) => (
+    return clinics.map((item, index) => (
       <Marker
         isHideCollidedSymbols={true}
         isHideCollidedCaptions={true}
@@ -181,6 +215,7 @@ const DetailMapScreen = ({navigation, route}: Props) => {
           latitude: parseFloat(item.geographLat),
           longitude: parseFloat(item.geographLong),
         }} // improvise
+        onClick={() => onMarkerPressed(index)}
         caption={{
           text: item.originalName, // improvise
         }}
@@ -192,7 +227,7 @@ const DetailMapScreen = ({navigation, route}: Props) => {
         }
       />
     ));
-  }, [clinics, focusedClinic]);
+  }, [clinics, focusedClinic, onMarkerPressed]);
 
   const renderCarouselItem = useCallback(
     ({item, index}: any) => {
@@ -316,19 +351,8 @@ const DetailMapScreen = ({navigation, route}: Props) => {
     [currentDay],
   );
 
-  const onViewableItemsChanged = useCallback(({viewableItems, changed}) => {
-    setFocusedClinic(viewableItems[0].item)
-  }, []);
 
-  const getCenterLocation = useCallback((clinics: [any]) => {
-    const centerLat = (Math.max(...clinics.map((item) => item.geographLat)) + Math.min(...clinics.map((item) => item.geographLat))) / 2;
-    const centerLong = (Math.max(...clinics.map((item) => item.geographLong)) + Math.min(...clinics.map((item) => item.geographLong))) / 2;
-    setCenterLocation({
-      latitute: centerLat,
-      longitute: centerLong,
-      zoom: 16,
-    })
-  }, []);
+
 
   return (
     <Container>
@@ -339,7 +363,23 @@ const DetailMapScreen = ({navigation, route}: Props) => {
   {initialized ? 
         <ContentView>
           <MapContainerView>
+            <TouchableHighlight
+              style={{
+                position: 'absolute',
+                top: hp('50%') - (hasNotch() ? hp('31%') : hp('29%')),
+                zIndex: 3,
+                right: 16,
+                borderRadius: 3}}
+              activeOpacity={0.85}
+              onPress={() => mapRef.current.setLocationTrackingMode(2)}>
+              <MyLocationTrackingButton>
+                <TargetIcon
+                  source={require('~/Assets/Images/Map/ic_target.png')}
+                />
+              </MyLocationTrackingButton>
+            </TouchableHighlight>
             <NaverMapView
+              ref={mapRef}
               showsMyLocationButton={false}
               zoomControl={true}
               center={{
@@ -364,8 +404,8 @@ const DetailMapScreen = ({navigation, route}: Props) => {
             </ViewDentalListButton>
             </TouchableWithoutFeedback>
             <CarouselFlatList
+              ref={carouselRef}
               horizontal
-              onViewableItemsChanged={onViewableItemsChanged}
               viewabilityConfig={{
                 itemVisiblePercentThreshold: 50
               }}
@@ -376,7 +416,15 @@ const DetailMapScreen = ({navigation, route}: Props) => {
               contentContainerStyle={{
                 paddingLeft: 28,
               }}
+              onMomentumScrollEnd={(e) => {
+                setFocusedClinic(clinics[Math.round(e.nativeEvent.contentOffset.x / (wp('100%') - 28))])
+              }}
               snapToInterval={wp('100%') - 28}
+              getItemLayout={(data, index) => ({
+                length: wp('100%') - 28,
+                offset: (wp('100%') - 28)* index,
+                index
+              })}
               decelerationRate="fast"
             />
           </CarouselContainerView>
