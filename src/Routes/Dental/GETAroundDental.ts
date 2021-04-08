@@ -23,6 +23,15 @@ const GETAroundDental = ({jwtToken, limit, offset, lat, long, sort, timeFilter, 
 
     console.log("GETAroundDental lat", lat);
     console.log("GETAroundDental long", long);
+
+    if(!lat) {
+        lat = mapLat
+    }
+
+    if(!long) {
+        long = mapLong
+    }
+    
     console.log("GETAroundDental sort", sort);
     console.log("GETAroundDental time", timeFilter);
     console.log("GETAroundDental dayFilter", dayFilter);

@@ -791,9 +791,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
           };
 
           dispatch(allActions.dentalMapActions.setMapLocation(location));
-          dispatch(
-            allActions.userActions.setCurrentUserLocation(currentUserLocation),
-          );
+          dispatch(allActions.userActions.setCurrentUserLocation(currentUserLocation));
 
           GETAroundDental({
             jwtToken,

@@ -56,6 +56,7 @@ position: absolute;
 width: 100%;
 height: 100%;
 background: #FFFFFF;
+
 `;
 
 const ClinicFlatList = Styled.FlatList``;
@@ -367,7 +368,7 @@ const DetailMapScreen = ({navigation, route}: Props) => {
             />
           </CarouselContainerView>
           <ClinicListContainerView style={{
-            zIndex: clinicListVisible ? 0 : -1
+            zIndex: clinicListVisible ? 0 : -1,
           }}>
               <ClinicFlatList
                 data={clinics}

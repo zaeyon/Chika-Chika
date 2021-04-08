@@ -42,8 +42,15 @@ const ContainerView = Styled(
   (SafeAreaView as unknown) as new () => SafeAreaView,
 )`
 flex: 1;
-background: #FFFFFF;
+background: #F5F7F9;
 padding-top: ${Platform.OS === 'ios' ? (hasNotch() ? getStatusBarHeight() : 0) : 0};
+`;
+
+const WriterBackground = Styled.View`
+position: absolute;
+width: ${wp('100%')}px;
+height: ${hp('55%')}px;
+background-color: #FFFFFF;
 `;
 
 const HomeLogoImage = Styled.Image``;
@@ -198,6 +205,8 @@ const HomeScreen = ({navigation, route}: Props) => {
     (state: any) => state.currentUser.currentUserLocation,
   );
 
+  const hometown = useSelector((state: any) => state.currentUser).hometown;
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -209,7 +218,6 @@ const HomeScreen = ({navigation, route}: Props) => {
   useFocusEffect(
     useCallback(() => {
       console.log('home focused');
-      if (selectedHometown) {
         setIsMainHomeChanged((prev) => {
           if (prev) {
             fetchRecentReviews(selectedHometown || defaultHometown);
@@ -221,7 +229,6 @@ const HomeScreen = ({navigation, route}: Props) => {
           }
           return false;
         });
-      }
     }, [selectedHometown]),
   );
 
@@ -531,8 +538,9 @@ const HomeScreen = ({navigation, route}: Props) => {
   }, []);
 
   const moveToHometownSearch = useCallback(() => {
+
     navigation.navigate('HometownSearchScreen', {
-      requestType: 'initialize'
+      requestType: hometown[0] ? 'revise' : 'add'
     });
   }, [])
 
@@ -552,6 +560,7 @@ const HomeScreen = ({navigation, route}: Props) => {
   
   return (
     <ContainerView as={SafeAreaView}>
+      <WriterBackground/>
         <HeaderContainerView>
           <HomeLogoImage
             source={require('~/Assets/Images/Logo/ic_home_logo.png')}
