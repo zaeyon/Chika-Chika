@@ -201,7 +201,6 @@ align-items: center;
 height: ${hp('7%')}px;
 padding-left: 16px;
 padding-right: 0px;
-padding-bottom: 8px;
 `;
 
 const ClearTextIcon = Styled.Image`

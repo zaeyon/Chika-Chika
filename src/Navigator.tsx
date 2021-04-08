@@ -422,6 +422,7 @@ function HomeStackScreen() {
         name="DetailMapScreen"
         component={DetailMapScreen}
         options={{
+          gestureEnabled: false,
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
