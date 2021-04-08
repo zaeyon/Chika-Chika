@@ -220,8 +220,6 @@ const PostItem = ({
   const likeButtonScale = useRef(new Animated.Value(1)).current;
   const scrapButtonScale = useRef(new Animated.Value(1)).current;
 
-
-
   const [isLiked, setIsLiked] = useState(viewerLikeCommunityPost);
   const [isScraped, setIsScraped] = useState(viewerScrapCommunityPost);
 

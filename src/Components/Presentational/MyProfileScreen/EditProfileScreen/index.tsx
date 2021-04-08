@@ -278,6 +278,9 @@ const EditProfileScreen = ({
     new Date(profile.birthdate || Date.now()),
   );
 
+  useEffect(() => {
+    initializeBirthDate()
+  }, [])
   const onChange = (event: Event, selectedDate?: Date) => {
     const currentDate = selectedDate || date;
     setDate(currentDate);

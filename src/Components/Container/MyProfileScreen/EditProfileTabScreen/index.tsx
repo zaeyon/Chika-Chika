@@ -104,6 +104,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
 
   const changeProfileBirthdate = useCallback(
     (birthdate: string) => {
+      console.log(birthdate)
       setIsLoading(true);
       const form = {
         birthdate,
