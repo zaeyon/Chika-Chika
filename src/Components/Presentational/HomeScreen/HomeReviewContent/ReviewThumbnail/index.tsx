@@ -175,7 +175,7 @@ const ReviewThumbnail = ({review, moveToReviewDetail}: Props) => {
 
   const renderHashTagItem = useCallback(
     (item: string) => (
-      <HashTagIconView key={String(item)}>
+      <HashTagIconView key={String(item.usualName)}>
         <HashTagIconText>{'#' + item.usualName + ' '}</HashTagIconText>
       </HashTagIconView>
     ),

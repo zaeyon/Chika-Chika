@@ -202,7 +202,7 @@ const HomeReviewContent = ({
           reviewData
         }
         renderItem={renderReviewThumbnail}
-        keyExtractor={(item: any) => String(item.id)}
+        keyExtractor={(item, index) => String(index)}
         horizontal
         snapToAlignment="start"
         snapToInterval={wp('79%') + 16}

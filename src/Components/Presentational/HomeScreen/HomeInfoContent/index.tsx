@@ -40,9 +40,6 @@ padding: 22px 0px;
 `;
 
 const IconCellContentView = Styled.View`
-padding-top: 10px;
-width: ${wp('25%')}px;
-height: ${wp('25%')}px;
 align-items: center;
 `;
 
@@ -103,7 +100,7 @@ const HomeInfoContent = ({moveToFilteredDentalMap}: Props) => {
       />
       <IconCellContainerView>
         {iconCellList.map((item, index) => (
-          <TouchableWithoutFeedback onPress={() => moveToFilteredDentalMap(item.text)}>
+          <TouchableWithoutFeedback  key={String(index)} onPress={() => moveToFilteredDentalMap(item.text)}>
           <IconCellContentView>
             <IconCellImage source={item.source}/>
             <IconCellText>

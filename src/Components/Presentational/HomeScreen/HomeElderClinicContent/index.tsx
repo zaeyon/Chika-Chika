@@ -220,14 +220,14 @@ const HomeElderClinicContent = ({initialized, clinics, moveToDetailMap}: Props) 
         <ContainerView>
           <ContainerHeaderView>
           <ContainerTitleText>
-            {"개업한지 10년이상 된 우리동네 치과"}
+            {"개업한지 10년이상된 치과"}
           </ContainerTitleText>
           </ContainerHeaderView>
           {initialized && !clinics.length ? renderPlaceHolder() :
           <HomeContentContainerView
             renderContentItem={renderLocalClinicItem}
             onPress={() => moveToDetailMap({
-              title: "개업한지 10년이상 된 우리동네 치과",
+              title: "개업한지 10년이상된 치과",
               clinics,
             })}
           />}
