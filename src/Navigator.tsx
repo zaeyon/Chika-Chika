@@ -1644,6 +1644,7 @@ const Navigator = () => {
         GETUserInfo(jwtToken)
           .then((response: any) => {
             console.log('profile', response);
+            console.log("profile.Residences", response.Residences)
 
             dispatch(
               allActions.userActions.setUser({jwtToken, profile: response}),

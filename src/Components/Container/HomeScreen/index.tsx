@@ -206,6 +206,8 @@ const HomeScreen = ({navigation, route}: Props) => {
     (state: any) => state.currentUser.currentUserLocation,
   );
 
+  const hometown = useSelector((state: any) => state.currentUser).hometown;
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -537,8 +539,9 @@ const HomeScreen = ({navigation, route}: Props) => {
   }, []);
 
   const moveToHometownSearch = useCallback(() => {
+
     navigation.navigate('HometownSearchScreen', {
-      requestType: 'initialize'
+      requestType: hometown[0] ? 'revise' : 'add'
     });
   }, [])
 
