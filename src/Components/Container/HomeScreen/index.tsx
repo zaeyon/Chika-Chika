@@ -205,8 +205,6 @@ const HomeScreen = ({navigation, route}: Props) => {
     (state: any) => state.currentUser.currentUserLocation,
   );
 
-  const hometown = useSelector((state: any) => state.currentUser).hometown;
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -215,22 +213,14 @@ const HomeScreen = ({navigation, route}: Props) => {
     }
   }, [route.params?.isUploadReview]);
 
-  useFocusEffect(
-    useCallback(() => {
-      console.log('home focused');
-        setIsMainHomeChanged((prev) => {
-          if (prev) {
+  useEffect(() => {
             fetchRecentReviews(selectedHometown || defaultHometown);
             fetchOpenedClinics()
             fetchElderClinics(selectedHometown || defaultHometown)
 
             // fetchLocalInfo(selectedHometown);
             // fetchRecentCommunityPosts(selectedHometown);
-          }
-          return false;
-        });
-    }, [selectedHometown]),
-  );
+    }, [selectedHometown]);
 
   useEffect(() => {
     LayoutAnimation.configureNext(
@@ -258,9 +248,6 @@ const HomeScreen = ({navigation, route}: Props) => {
       });
   }, []);
 
-  useEffect(() => {
-    setIsMainHomeChanged(true);
-  }, [selectedHometown]);
 
   useEffect(() => {
     if (onMessage) {
@@ -540,9 +527,9 @@ const HomeScreen = ({navigation, route}: Props) => {
   const moveToHometownSearch = useCallback(() => {
 
     navigation.navigate('HometownSearchScreen', {
-      requestType: hometown[0] ? 'revise' : 'add'
+      requestType: selectedHometown ? 'revise' : 'add'
     });
-  }, [])
+  }, [selectedHometown])
 
 
   const moveToFilteredDentalMap = useCallback((filterType: string) => {
@@ -665,7 +652,7 @@ const HomeScreen = ({navigation, route}: Props) => {
             </LocationText>
             {"의 치과가 궁금하세요?"}
           </LocationText>
-          <TouchableWithoutFeedback onPress={() => selectedHometown ? moveToHometownSetting() : moveToHometownSearch()}>
+          <TouchableWithoutFeedback onPress={() => moveToHometownSearch()}>
           <LocationButtonView>
             <LocationButtonImage source={require('~/Assets/Images/Home/ic_location_focus.png')}/>
             <LocationButtonText>

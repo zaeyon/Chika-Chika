@@ -121,6 +121,8 @@ const DetailMapScreen = ({navigation, route}: Props) => {
   const dispatch = useDispatch();
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 
+  const [centerLocation, setCenterLocation] = useState({
+  })
   const [clinicListVisible, setClinicListVisible] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [mapInitialized, setMapInitialized] = useState(false);
@@ -141,6 +143,7 @@ const DetailMapScreen = ({navigation, route}: Props) => {
   );
 
   useEffect(() => {
+    getCenterLocation(clinics);
     setFocusedClinic(clinics[0]);
     // route.params.getClinics((response: any) => {
     //   setClinics(response);
@@ -317,6 +320,16 @@ const DetailMapScreen = ({navigation, route}: Props) => {
     setFocusedClinic(viewableItems[0].item)
   }, []);
 
+  const getCenterLocation = useCallback((clinics: [any]) => {
+    const centerLat = (Math.max(...clinics.map((item) => item.geographLat)) + Math.min(...clinics.map((item) => item.geographLat))) / 2;
+    const centerLong = (Math.max(...clinics.map((item) => item.geographLong)) + Math.min(...clinics.map((item) => item.geographLong))) / 2;
+    setCenterLocation({
+      latitute: centerLat,
+      longitute: centerLong,
+      zoom: 16,
+    })
+  }, []);
+
   return (
     <Container>
       <NavigationHeader
@@ -330,12 +343,12 @@ const DetailMapScreen = ({navigation, route}: Props) => {
               showsMyLocationButton={false}
               zoomControl={true}
               center={{
-                latitude: parseFloat(clinics[0].geographLat),
-                longitude: parseFloat(clinics[0].geographLong),
-                zoom: 16,
+                latitude: (Math.max(...clinics.map((item) => item.geographLat)) + Math.min(...clinics.map((item) => item.geographLat))) / 2,
+                longitude: (Math.max(...clinics.map((item) => item.geographLong)) + Math.min(...clinics.map((item) => item.geographLong))) / 2,
+                zoom: Math.max(Math.max(...clinics.map((item) => item.geographLat)) - Math.min(...clinics.map((item) => item.geographLat)), Math.max(...clinics.map((item) => item.geographLong)) + Math.min(...clinics.map((item) => item.geographLong))) / 23,
               }}
               style={{flex: 1}}
-              minZoomLevel={6}
+
               compass={false}>
               {renderMarkers()}
             </NaverMapView>
