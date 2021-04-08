@@ -192,8 +192,7 @@ const HomeScreen = ({navigation, route}: Props) => {
   const [defaultHometown, setDefaultHometown] = useState({UsersCities: {now: false}, emdName: "압구정동", fullCityName: "서울특별시 강남구 압구정동", id: 824, sido: "서울특별시", sigungu: "강남구"})
   const selectedHometown = useSelector(
     (state: any) =>
-      state.currentUser.hometown &&
-      state.currentUser.hometown.find((item) => item.UsersCities?.now === true),
+      state.currentUser.hometown[0]
   );
   const currentUserLocation = useSelector(
     (state: any) => state.currentUser.currentUserLocation,
@@ -425,7 +424,7 @@ const HomeScreen = ({navigation, route}: Props) => {
     setIsOpenedClinicInitialized(true);
   }, [jwtToken]);
 
-  const fetchElderClinics = useCallback(async (selectedHometown: any) => {
+  const fetchElderClinics = useCallback((selectedHometown: any) => {
     const handleLocationResponse = (currentLocation: any) => {
       const form = {
         jwtToken,
@@ -445,7 +444,7 @@ const HomeScreen = ({navigation, route}: Props) => {
       android: () => getAndroidLocaion(handleLocationResponse)
     })();
     
-  }, [jwtToken, getIosLocation]);
+  }, [jwtToken, getIosLocation, getAndroidLocaion]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);

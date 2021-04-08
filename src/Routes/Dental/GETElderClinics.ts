@@ -15,7 +15,7 @@ interface Props {
 const GETElderClinics = ({jwtToken, limit, offset, lat, long, cityId, sort='d'}: Props) => {
 
     const uri = serverConfig.baseUri + `/clinic/old?cityId=${cityId}&lat=${lat}&long=${long}&sort=${sort}&limit=${limit}&offset=${offset}`
-
+    console.log('GETElderClinics uri: ', uri);
     return new Promise((resolve, reject) => {
         axios
         .get(uri, {
