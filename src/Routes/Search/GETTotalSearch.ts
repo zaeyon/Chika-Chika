@@ -20,6 +20,8 @@ const GETTotalSearch = ({lat='0', long='0', jwtToken, query, pathType, limit, of
 
     const uri = serverConfig.baseUri + `/search/${pathType}?query=${query}&lat=${lat}&long=${long}&limit=${limit}&offset=${offset}&order=${order}&region=${region}&cityId=${cityId}&unifiedSearch=${String(isUnified)}&communityType=${communityType}`
 
+    console.log("GETTotalSearch uri", uri);
+
     console.log(uri)
     return new Promise((resolve, reject) => {
         axios
@@ -32,7 +34,7 @@ const GETTotalSearch = ({lat='0', long='0', jwtToken, query, pathType, limit, of
             resolve(response.data);
         })
         .catch((error) => {
-            console.log('GETTotalSearch error', error)
+            console.log('GETTotalSearch error', error.response)
             reject(error.data);
         })
     })

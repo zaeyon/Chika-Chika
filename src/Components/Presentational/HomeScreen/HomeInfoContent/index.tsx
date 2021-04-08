@@ -53,15 +53,17 @@ margin-top: 9px;
 `;
 
 interface Props {
-  navigation: any,
-  route: any,
   moveToFilteredDentalMap: (filterType: string) => void,
+  moveToBannerDetail: (item: any) => void,
 }
 
 
-const HomeInfoContent = ({moveToFilteredDentalMap}: Props) => {
+const HomeInfoContent = ({moveToFilteredDentalMap, moveToBannerDetail}: Props) => {
   const [bannerList, setBannerList] = useState([
-    require('~/Assets/Images/Banner/home_banner.png')
+    {
+      type: "reviewPost",
+      url: require('~/Assets/Images/Banner/home_banner.png')
+    }
   ])
 
   const [iconCellList, setIconCellList] = useState([
@@ -82,11 +84,13 @@ const HomeInfoContent = ({moveToFilteredDentalMap}: Props) => {
 
   const renderBannerImage = useCallback(({item, index}) => {
     return (
+      <TouchableWithoutFeedback onPress={() => moveToBannerDetail(item.type)}>
       <BannerImage
       style={{
         resizeMode: 'cover'
       }}
-      source={item}/>
+      source={item.url}/>
+      </TouchableWithoutFeedback>
     )
   }, []);
 

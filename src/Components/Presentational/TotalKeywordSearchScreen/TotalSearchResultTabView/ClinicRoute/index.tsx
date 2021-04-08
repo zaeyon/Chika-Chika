@@ -89,8 +89,8 @@ const ClinicRoute = ({
   const type = 'SearchResult';
   const limit = 10;
   const orderList = [
-    {name: '거리순', data: 'distance'},
-    {name: '정확도순', data: 'accuracy'},
+    {name: '거리순', data: 'd'},
+    {name: '정확도순', data: 'a'},
   ];
   const [initialize, setInitialize] = useState(true);
   const [floatVisible, setFloatVisible] = useState(false);
@@ -99,7 +99,7 @@ const ClinicRoute = ({
   const [isFiltering, setIsFiltering] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
   const [region, setRegion] = useState('all');
-  const [order, setOrder] = useState('distance');
+  const [order, setOrder] = useState('d');
 
   const [clinics, setClinics] = useState([]);
 
@@ -123,7 +123,7 @@ const ClinicRoute = ({
         pathType: 'clinic',
         region: selectedHometown?.id === -1 ? 'all' : 'residence',
         cityId: String(selectedHometown?.id),
-        order: 'distance',
+        order: 'd',
         offset: 0,
         limit: 10,
       };

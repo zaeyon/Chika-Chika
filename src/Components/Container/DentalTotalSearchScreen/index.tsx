@@ -72,7 +72,6 @@ justify-content: center;
 const SearchInputContainer = Styled.View`
 flex: 1;
 background: #ffffff;
-padding-right: 16px;
 flex-direction: row;
 align-items: center;
 `;
@@ -267,8 +266,6 @@ font-size: 16px;
 `;
 
 const ClearTextButtonContainer = Styled.View`
-position: absolute;
-right: 0px;
 justify-content: center;
 height: ${hp('7%')}px;
 padding-left: 16px;

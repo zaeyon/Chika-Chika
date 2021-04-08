@@ -63,6 +63,7 @@ const AnotherProfileScreen = ({navigation, route}: Props) => {
   const [isReviewDataFinish, setIsReviewDataFinish] = useState(false);
   const [isReviewRefreshing, setIsReviewRefreshing] = useState(false);
   const [isReviewEndReached, setIsReviewEndReached] = useState(false);
+  const [loadingTargetUserProfile, setLoadingTargetUserProfile] = useState<boolean>(false);
 
   const reviewData = useSelector(
     (state: any) => state.reviewList.OpponentReviews,
@@ -77,11 +78,18 @@ const AnotherProfileScreen = ({navigation, route}: Props) => {
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 
   const fetchUserInfo = useCallback(() => {
-    GETUserInfoById(jwtToken, route.params.targetUser.userId).then(
+    setLoadingTargetUserProfile(true)
+    GETUserInfoById(jwtToken, route.params.targetUser.userId)
+    .then(
       (response) => {
         setTargetUserProfile(response);
-      },
-    );
+        setLoadingTargetUserProfile(false);
+    })
+    .catch((error) => {
+      setLoadingTargetUserProfile(false);
+      console.log("GETUserInfoById error", error);
+    })
+    
   }, [jwtToken, route]);
 
   useEffect(() => {
@@ -428,6 +436,7 @@ const AnotherProfileScreen = ({navigation, route}: Props) => {
         headerTitle={route.params.targetUser.nickname}
       />
       <AnotherProfile
+        loadingTargetUserProfile={loadingTargetUserProfile}
         navigation={navigation}
         route={route}
         isReviewInitializing={isReviewInitializing}

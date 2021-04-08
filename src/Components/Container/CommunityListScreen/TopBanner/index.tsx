@@ -1,5 +1,5 @@
 import React, {useState, useCallback} from 'react';
-import {Image} from 'react-native';
+import {Image, TouchableWithoutFeedback} from 'react-native';
 import Styled from 'styled-components/native';
 import {
   widthPercentageToDP as wp,
@@ -16,15 +16,17 @@ margin-top: 8px;
 
 interface Props {
   type: string;
+  moveToBannerDetail: () => void,
 }
 
 const images = {
-  question: require('~/Assets/Images/Home/banner_1.png'),
-  freetalk: require('~/Assets/Images/Home/banner_1.png'),
+  question: require('~/Assets/Images/Banner/banner_review_starbucks2.png'),
+  freetalk: require('~/Assets/Images/Banner/banner_review_starbucks2.png'),
 };
 
-const TopBanner = ({type}: Props) => {
+const TopBanner = ({type, moveToBannerDetail}: Props) => {
   return (
+    <TouchableWithoutFeedback onPress={() => moveToBannerDetail()}>
     <ContianerView>
       <Image
         source={images[type]}
@@ -35,6 +37,7 @@ const TopBanner = ({type}: Props) => {
         }}
       />
     </ContianerView>
+    </TouchableWithoutFeedback>
   );
 };
 

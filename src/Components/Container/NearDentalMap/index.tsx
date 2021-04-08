@@ -622,8 +622,10 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
   useEffect(() => {
     if(homeDentalFilterType === 'goodDental') {
+      dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
       filterScrollViewRef.current.scrollToEnd();
     } else if(homeDentalFilterType === 'nightCare' || homeDentalFilterType === 'specialist') {
+      dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
       filterScrollViewRef.current.scrollTo({x: 0});
     }
 

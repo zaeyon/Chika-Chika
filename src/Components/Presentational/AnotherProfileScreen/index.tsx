@@ -109,6 +109,14 @@ justify-content: center;
 padding: 0px 16px
 `;
 
+const ProfileInfoContainer = Styled.View`
+width: auto;
+height: auto;
+align-items: center;
+justify-content: center;
+padding: 0px 16px
+`;
+
 const ProfileReservationTitleText = Styled.Text`
 font-style: normal;
 font-weight: normal;
@@ -295,6 +303,7 @@ interface Props {
   toggleSocialScrap: any;
   moveToReviewDetail: any;
   moveToDentalDetail: any;
+  loadingTargetUserProfile: boolean,
 }
 
 interface State {
@@ -795,27 +804,29 @@ export default class AnotherProfile extends React.PureComponent<Props, State> {
                   }
                 />
               </ProfileImageView>
-              <ProfileReservationTouchableOpacity onPress={() => this.props.moveToReservationTabScreen()}>
+                {!this.props.loadingTargetUserProfile &&
+              <ProfileInfoContainer>
                 <ProfileReservationText>
-                  {(this.props.isMyProfile ? this.props.targetUser?.appointmentsNum : this.props.targetUser?.reviewsNum)}
+                  {this.props.targetUser?.reviewsNum}
                 </ProfileReservationText>
                 <ProfileReservationTitleText>
-                  {this.props.isMyProfile
-                    ? '예약 피드'
-                    : '리뷰 수'}
+                    {'리뷰 수'}
                 </ProfileReservationTitleText>
-              </ProfileReservationTouchableOpacity>
-              <VerticalPartitionView />
-              <ProfileReservationTouchableOpacity onPress={() => this.props.moveToSavedHospitalTabScreen()}>
+              </ProfileInfoContainer>
+                }
+                {!this.props.loadingTargetUserProfile && (
+                <VerticalPartitionView />
+                )}
+              {!this.props.loadingTargetUserProfile && (
+              <ProfileInfoContainer>
                 <ProfileReservationText>
-                    {(this.props.isMyProfile ? this.props.targetUser?.scrapClinicsNum :this.props.targetUser?.communitiesNum)}
+                    {this.props.targetUser?.communitiesNum}
                 </ProfileReservationText>
                 <ProfileReservationTitleText>
-                  {this.props.isMyProfile
-                    ? '찜한 병원'
-                    : '수다글 수'}
+                    {'수다글 수'}
                 </ProfileReservationTitleText>
-              </ProfileReservationTouchableOpacity>
+              </ProfileInfoContainer>
+              )}
             </ProfileContentView>
           </ProfileContainerView>
         </FloatingView>

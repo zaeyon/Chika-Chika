@@ -359,7 +359,10 @@ function HomeStackScreen() {
           route.state &&
           route.state.routes[route.state.index].name !== 'ImageDetailScreen',
       })}>
-      <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
+      <HomeStack.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        />
       <HomeStack.Screen
         name="CommunityStackScreen"
         component={CommunityStackScreen}
@@ -452,6 +455,12 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name="NearDentalMapStack"
         component={NearDentalMapStackScreen}/>
+      <HomeStack.Screen
+        name='DentalDetailScreen'
+        component={DentalDetailScreen}/>
+      <HomeStack.Screen
+        name="ProofImageEventScreen"
+        component={ProofImageEventScreen}/>
     </HomeStack.Navigator>
   );
 }
@@ -584,6 +593,14 @@ function NearDentalMapStackScreen() {
           },
         })}
       />
+      <NearDentalMapStack.Screen
+        name="BraceReviewUploadStackScreen"
+        component={BraceReviewUploadStackScreen} 
+        options={{
+          gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+        />
     </NearDentalMapStack.Navigator>
   );
 }
@@ -1268,7 +1285,13 @@ function CommunityStackScreen() {
         name="HometownSettingScreen"
         component={HometownSettingScreen}
       />
-      <CommunityStack.Screen name="AccuseScreen" component={AccuseScreen} />
+      <CommunityStack.Screen 
+      name="AccuseScreen"
+      component={AccuseScreen}/>
+      <CommunityStack.Screen
+      name="ProofImageEventScreen"
+      component={ProofImageEventScreen}
+      />
     </CommunityStack.Navigator>
   );
 }
@@ -1331,7 +1354,9 @@ function BottomTab() {
       routeName.name === 'ReviewStackScreen' ||
       routeName.name === 'ReviewUploadStackScreen' ||
       routeName.name === 'BraceReviewUploadStackScreen' ||
-      routeName.name === 'DetailMapScreen'
+      routeName.name === 'DetailMapScreen' ||
+      routeName.name === 'DentalDetailScreen' ||
+      routeName.name === 'ProofImageEventScreen'
     ) {
       return false;
     }
@@ -1374,7 +1399,8 @@ function BottomTab() {
       routeName.name === 'ReviewStackScreen' ||
       routeName.name === 'ReviewUploadStackScreen' ||
       routeName.name === 'DentalInfoEditRequestScreen' || 
-      routeName.name === 'DentalLocationMapScreen'
+      routeName.name === 'DentalLocationMapScreen' ||
+      routeName.name === 'BraceReviewUploadStackScreen'
     ) {
       return false;
     }
@@ -1390,7 +1416,8 @@ function BottomTab() {
       : '';
     if (
       stackRouteName === 'CommunityStackScreen' ||
-      routeName.name === 'CommunityPostUploadStackScreen'
+      routeName.name === 'CommunityPostUploadStackScreen' ||
+      routeName.name === "ProofImageEventScreen"
     ) {
       return false;
     }

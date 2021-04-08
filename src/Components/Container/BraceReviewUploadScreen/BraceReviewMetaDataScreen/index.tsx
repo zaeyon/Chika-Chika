@@ -1143,28 +1143,32 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
   }
 
   const moveToContentPost = () => {
-    console.log("route.params?.paragraphArray", route.params?.paragraphArray);
-    navigation.navigate('BraceReviewContentPostScreen', {
-      dentalObj,
-      treatmentArray,
-      diseaseArray,
-      ratingObj,
-      treatmentDate: treatmentDateObj.treatmentDate,
-      totalPrice,
-      selectedProofImage,
-      selectedDentalImages,
-      requestType: route.params?.requestType,
-      requestScreen: route.params?.requestScreen,
-      paragraphArray: route.params?.paragraphArray ? route.params?.paragraphArray : [{
-        index: 1,
-        image: null,
-        description: "",
-      },],
-      reviewId: route.params?.reviewId,
-      isDentalRecommend: isDentalRecommend,
-      braceStartDate: braceStartDateObj.value,
-      braceFinishDate: braceFinishDateObj.value,
-    })
+    if(selectedProofImage.uri && !totalPrice) {
+      Alert.alert("영수증 인증을 받기위해선 치료 비용정보를 입력하셔야 됩니다!")
+    } else {
+      console.log("route.params?.paragraphArray", route.params?.paragraphArray);
+      navigation.navigate('BraceReviewContentPostScreen', {
+        dentalObj,
+        treatmentArray,
+        diseaseArray,
+        ratingObj,
+        treatmentDate: treatmentDateObj.treatmentDate,
+        totalPrice,
+        selectedProofImage,
+        selectedDentalImages,
+        requestType: route.params?.requestType,
+        requestScreen: route.params?.requestScreen,
+        paragraphArray: route.params?.paragraphArray ? route.params?.paragraphArray : [{
+          index: 1,
+          image: null,
+          description: "",
+        },],
+        reviewId: route.params?.reviewId,
+        isDentalRecommend: isDentalRecommend,
+        braceStartDate: braceStartDateObj.value,
+        braceFinishDate: braceFinishDateObj.value,
+      })
+    }
   }
 
   const moveToFullProofImage = () => {
@@ -1887,7 +1891,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
             console.log("전체치료비용 onLayout event.nativeEvent", event.nativeEvent);
           }}>
           <MetaDataHeaderContainer>
-          <MetaDataLabelText>{"전체 치료 비용(선택)"}</MetaDataLabelText>
+          <MetaDataLabelText>{"전체 치료 비용"}</MetaDataLabelText>
           </MetaDataHeaderContainer>
           <TouchableWithoutFeedback onPress={() => onPressTotalPrice()}>
             <MetaDataValueContainer>

@@ -370,6 +370,10 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
     navigation.navigate('HometownSettingScreen');
   }, []);
 
+  const moveToBannerDetail = () => {
+    navigation.navigate("ProofImageEventScreen")
+  }
+
   const toggleSocialLike = useCallback(
     (postId: number, prevState: number, type: string) => {
       const form = {
@@ -419,7 +423,9 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   const renderHeaderComponent = useCallback(() => {
     return (
       <>
-        <TopBanner type="question" />
+        <TopBanner
+        type="question"
+        moveToBannerDetail={moveToBannerDetail}/>
         <FilteringHeader
           onFiltering={onFiltering}
           hometown={hometown}

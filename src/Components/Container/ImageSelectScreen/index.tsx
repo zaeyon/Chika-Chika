@@ -312,7 +312,7 @@ const ImageSelectScreen = ({navigation, route}: Props) => {
         startIndex: route.params.startIndex,
       });
     } else if (route.params.requestScreen === 'ReviewMetaDataScreen_DentalImage') {
-      navigation.navigate('ReviewMetaDataScreen', {
+      navigation.navigate('BraceReviewMetaDataScreen', {
         selectedDentalImages: selectedImages,
       });
     } else {

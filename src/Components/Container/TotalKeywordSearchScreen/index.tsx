@@ -180,6 +180,8 @@ const TotalKeywordSearchScreen = ({navigation, route}: Props) => {
         isUnified: true,
       })
         .then((response: any) => {
+          console.log("GETTotalSearch response", response);
+          
           callback(response);
         })
         .catch((e) => {

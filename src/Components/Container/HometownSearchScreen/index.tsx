@@ -190,15 +190,14 @@ color: #131F3C;
 `;
 
 const SearchInputContainer = Styled.View`
+flex-direction: row;
 flex: 1;
 `;
 
 const ClearTextButtonContainer = Styled.View`
-position: absolute;
-right: 0px;
 justify-content: center;
 align-items: center;
-height: ${hp('7%')}px;
+padding-top: 3px;
 padding-left: 16px;
 padding-right: 0px;
 padding-bottom: 8px;

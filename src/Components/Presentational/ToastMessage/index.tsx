@@ -62,7 +62,6 @@ class ToastMessage extends Component {
         <Container>
           <Animated.View
             style={{
-              opacity: positionY,
               transform: [
                 {
                   translateY: positionY.interpolate({

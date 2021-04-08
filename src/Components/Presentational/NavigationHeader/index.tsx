@@ -6,7 +6,6 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {hasNotch, getStatusBarHeight} from '~/method/deviceInfo';
-
 // padding-top: ${(props) => (hasNotch() ? (props.inSafeAreaView ? 0 : getStatusBarHeight()) : ((Platform.OS === 'ios') ? getStatusBarHeight() : 0))}px;
 
 const HeaderBar = Styled.View<{borderDisable: boolean, inSafeAreaView: boolean}>`

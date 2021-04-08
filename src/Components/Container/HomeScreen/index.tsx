@@ -213,6 +213,7 @@ const HomeScreen = ({navigation, route}: Props) => {
   useEffect(() => {
     if (route.params?.isUploadReview) {
       ToastMessage.show('리뷰작성이 완료되었습니다!');
+      navigation.setParams({isUploadReview: false})
     }
   }, [route.params?.isUploadReview]);
 
@@ -467,6 +468,22 @@ const HomeScreen = ({navigation, route}: Props) => {
     fetchRecentReviews,
   ]);
 
+  const moveToDentalDetail = (dentalId: number) => {
+    navigation.navigate("DentalDetailScreen", {
+      dentalId: dentalId,
+    })
+  }
+
+  const moveToBannerDetail = (type: any) => {
+    console.log("moveToBannerDetail type", type);
+
+    if(type === 'reviewPost') {
+      navigation.navigate("ProofImageEventScreen", {
+        requestScreen: "HomeScreen"
+      })
+    }
+  }
+
   const moveToDetailMap =  useCallback((params: {
     title: string;
     clinics: any;
@@ -539,7 +556,6 @@ const HomeScreen = ({navigation, route}: Props) => {
   }, []);
 
   const moveToHometownSearch = useCallback(() => {
-
     navigation.navigate('HometownSearchScreen', {
       requestType: hometown[0] ? 'revise' : 'add'
     });
@@ -654,6 +670,7 @@ const HomeScreen = ({navigation, route}: Props) => {
           }
         }}>
         <HomeInfoContent
+        moveToBannerDetail={moveToBannerDetail}
         moveToFilteredDentalMap={moveToFilteredDentalMap}/>
       <BodyContainerView>
         <LocationContainerView>
@@ -683,7 +700,11 @@ const HomeScreen = ({navigation, route}: Props) => {
           moveToReviewDetail={moveToReviewDetail}
         />
         <HomeOpenedClinicContent initialized={isOpenedClinicInitialized} clinics={openedClinicData} moveToDetailMap={moveToDetailMap}/>
-        <HomeElderClinicContent initialized={isElderClinicInitialized} clinics={elderClinicData} moveToDetailMap={moveToDetailMap}/>
+        <HomeElderClinicContent 
+        initialized={isElderClinicInitialized}
+        clinics={elderClinicData}
+        moveToDetailMap={moveToDetailMap}
+        moveToDentalDetail={moveToDentalDetail}/>
 
         </BodyContainerView>
       </ContentScrollView>

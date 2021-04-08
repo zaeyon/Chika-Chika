@@ -165,9 +165,10 @@ interface Props {
     initialized: boolean;
     clinics: any;
     moveToDetailMap: any;
+    moveToDentalDetail: (dentalId: number) => void,
 }
 
-const HomeElderClinicContent = ({initialized, clinics, moveToDetailMap}: Props) => {
+const HomeElderClinicContent = ({initialized, clinics, moveToDetailMap, moveToDentalDetail}: Props) => {
 
   const renderPlaceHolder = useCallback(() => (
     <PlaceHolderContainerView>
@@ -182,7 +183,7 @@ const HomeElderClinicContent = ({initialized, clinics, moveToDetailMap}: Props) 
 
     const renderLocalClinicItem = useCallback(() => {
         return clinics.slice(0, 4).map((item: any) => (
-          <TouchableWithoutFeedback key={String(item.id)}>
+          <TouchableWithoutFeedback key={String(item.id)} onPress={() => moveToDentalDetail(item.id)}>
             <LocalClinicItemView>
               <LocalClinicItemImage />
               <LocalClinicContentView>

@@ -103,7 +103,7 @@ const WriterInfo = ({
         }>
         <ProfileContainer>
           <ProfileImage source={
-            writerObj.profileImage 
+            writerObj?.profileImage 
             ? {uri: writerObj?.profileImage}
             : require('~/Assets/Images/MyPage/default_profileImg.png')
             } />

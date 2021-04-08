@@ -119,6 +119,11 @@ const dentalFilter = (state = {
                         goodDentalFilter: "f",
                         homeDentalFilterType: "nightCare",
                     }
+                } else if(action.payload === " ") {
+                    return {
+                        ...state,
+                        homeDentalFilterType: ""
+                    }
                 }
             }
         default:

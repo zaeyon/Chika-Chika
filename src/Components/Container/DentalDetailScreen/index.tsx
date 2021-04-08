@@ -208,12 +208,12 @@ const DentalDetailScreen = ({navigation, route}: Props) => {
       originalName: dentalDetailInfo.clinicInfoHeader.originalName,
     };
 
-    navigation.navigate('ReviewUploadStackScreen', {
-      screen: 'ReviewMetaDataScreen',
+    navigation.navigate('BraceReviewUploadStackScreen', {
+      screen: 'BraceReviewMetaDataScreen',
       params: {
         dentalObj: dentalObj,
         requestScreen: 'DentalDetailScreen',
-        requestType: 'post'
+        requestType: 'post',
       },
     });
   };
