@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react'
+import React, {useCallback, useEffect} from 'react'
 import Styled from 'styled-components/native'
 import {TouchableWithoutFeedback, LayoutAnimation} from 'react-native'
 //
@@ -96,7 +96,10 @@ font-style: normal;
 font-weight: normal;
 font-size: 13px;
 line-height: 24px;
-color: #9AA2A9;`;
+color: #9AA2A9;
+margin-top: 4px;
+`
+;
 
 const LocalClinicItemTextSkeletonView = Styled.View`
 width: 80px;
@@ -169,6 +172,13 @@ interface Props {
 
 const HomeElderClinicContent = ({initialized, clinics, moveToDetailMap}: Props) => {
 
+  useEffect(() => {
+
+    LayoutAnimation.configureNext(
+      LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+    );
+
+  }, [clinics])
   const renderPlaceHolder = useCallback(() => (
     <PlaceHolderContainerView>
       <PlaceHolderContentView>
@@ -179,6 +189,32 @@ const HomeElderClinicContent = ({initialized, clinics, moveToDetailMap}: Props) 
         </PlaceHolderContentView>
       </PlaceHolderContainerView> 
   ), []);
+
+    const renderLocalClinicItemSkeleton = useCallback(() => {
+      return (
+        [0, 1, 2, 3].map((item) => (
+        <LocalClinicItemView key={String(item)}>
+          <LocalClinicItemImage />
+              <LocalClinicContentView>
+                <LocalClinicItemTitleText style={{
+                  backgroundColor: '#F5F7F9',
+                  color: '#F5F7F9',
+                  marginRight: 'auto',
+                }}>
+                  {"치카치카치카병원"}
+                </LocalClinicItemTitleText>
+                <LocalClinicItemText style={{
+                  backgroundColor: '#F5F7F9',
+                  color: '#F5F7F9',
+                  marginRight: 'auto',
+                }}>
+                  {"리뷰 13개"}
+                </LocalClinicItemText>
+              </LocalClinicContentView>
+            </LocalClinicItemView>
+            ))
+      )
+    }, [])
 
     const renderLocalClinicItem = useCallback(() => {
         return clinics.slice(0, 4).map((item: any) => (
@@ -225,7 +261,7 @@ const HomeElderClinicContent = ({initialized, clinics, moveToDetailMap}: Props) 
           </ContainerHeaderView>
           {initialized && !clinics.length ? renderPlaceHolder() :
           <HomeContentContainerView
-            renderContentItem={renderLocalClinicItem}
+            renderContentItem={initialized ? renderLocalClinicItem : renderLocalClinicItemSkeleton}
             onPress={() => moveToDetailMap({
               title: "개업한지 10년이상된 치과",
               clinics,

@@ -271,10 +271,9 @@ const ReviewThumbnail = ({review, moveToReviewDetail}: Props) => {
               {review?.reviewDescriptions}
             </ReviewContentText>
             </ReviewContentDescriptionView>
-            {review?.review_contents[0]?.img_url ? 
             <ReviewContentImage source={{
-              uri: review?.review_contents[0]?.img_url,
-            }}/> : null}
+              uri: review?.review_contents[0]?.img_thumbNail || review?.review_contents[0]?.img_url,
+            }}/> 
           </ReviewContentView>
             
       </ReviewThumbnailContainerView>

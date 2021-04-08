@@ -201,9 +201,6 @@ const HomeScreen = ({navigation, route}: Props) => {
     (state: any) =>
       state.currentUser.hometown[0]
   );
-  const currentUserLocation = useSelector(
-    (state: any) => state.currentUser.currentUserLocation,
-  );
 
   const dispatch = useDispatch();
 
@@ -214,17 +211,20 @@ const HomeScreen = ({navigation, route}: Props) => {
   }, [route.params?.isUploadReview]);
 
   useEffect(() => {
+
+    if(selectedHometown) {
             fetchRecentReviews(selectedHometown || defaultHometown);
             fetchOpenedClinics()
             fetchElderClinics(selectedHometown || defaultHometown)
 
             // fetchLocalInfo(selectedHometown);
             // fetchRecentCommunityPosts(selectedHometown);
+    }
     }, [selectedHometown]);
 
   useEffect(() => {
     LayoutAnimation.configureNext(
-      LayoutAnimation.create(400, 'easeInEaseOut', 'opacity'),
+      LayoutAnimation.create(150, 'easeInEaseOut', 'opacity'),
     );
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       setOnMessage(true);
@@ -394,7 +394,7 @@ const HomeScreen = ({navigation, route}: Props) => {
   );
 
   const fetchRecentReviews = useCallback(
-    async (selectedHometown: any) => {
+     (selectedHometown: any) => {
       const form = {
         jwtToken,
         query: '',
@@ -406,9 +406,14 @@ const HomeScreen = ({navigation, route}: Props) => {
         cityId: String(selectedHometown.id),
         isUnified: false,
       };
-      const data = await GETTotalSearch(form);
-      setIsReviewInitialized(true);
-      setReviewData(data);
+      GETTotalSearch(form).then((response: any) => {
+
+      
+      setIsReviewInitialized(prev => {
+        setReviewData(response);
+        return true;
+      });
+    })
     },
     [jwtToken, tagFilterItems],
   );

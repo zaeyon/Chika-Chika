@@ -5,11 +5,9 @@ import {
 } from 'react-native-responsive-screen';
 import Styled from 'styled-components/native';
 import {
-  Image,
+  LayoutAnimation,
   TouchableOpacity,
-  Animated,
   TouchableWithoutFeedback,
-  Platform,
 } from 'react-native';
 
 const ContainerView = Styled.View`
@@ -47,6 +45,11 @@ const IconCellImage = Styled.Image``;
 
 const IconCellText = Styled.Text`
 margin-top: 9px;
+font-style: normal;
+font-weight: normal;
+font-size: 16px;
+line-height: 18px;
+color: #000000;
 `;
 
 interface Props {
@@ -80,6 +83,7 @@ const HomeInfoContent = ({moveToFilteredDentalMap}: Props) => {
   const renderBannerImage = useCallback(({item, index}) => {
     return (
       <BannerImage
+      
       style={{
         resizeMode: 'cover'
       }}
@@ -100,14 +104,20 @@ const HomeInfoContent = ({moveToFilteredDentalMap}: Props) => {
       />
       <IconCellContainerView>
         {iconCellList.map((item, index) => (
-          <TouchableWithoutFeedback  key={String(index)} onPress={() => moveToFilteredDentalMap(item.text)}>
+          <TouchableOpacity style={{
+            width: wp('20%'),
+            justifyContent: 'flex-end',
+          }}  key={String(index)} onPress={() => moveToFilteredDentalMap(item.text)}>
           <IconCellContentView>
-            <IconCellImage source={item.source}/>
+            <IconCellImage source={item.source} style={{
+              marginLeft: index === 1 ? 3: 0,
+              marginRight:  index === 0 ? 5: 0, 
+            }}/>
             <IconCellText>
               {item.text}
             </IconCellText>
           </IconCellContentView>
-          </TouchableWithoutFeedback>
+          </TouchableOpacity>
         ))}
       </IconCellContainerView>
       </ContentView>
