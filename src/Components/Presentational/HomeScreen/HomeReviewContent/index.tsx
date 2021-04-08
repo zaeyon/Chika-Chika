@@ -218,7 +218,7 @@ const HomeReviewContent = ({
 
   const renderReviewThumbnail = useCallback(({item}: any) => {
     LayoutAnimation.configureNext(
-      LayoutAnimation.create(150, 'easeInEaseOut', 'opacity'),
+      LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
     );
     return (
       <ReviewThumbnail review={item} moveToReviewDetail={moveToReviewDetail} />

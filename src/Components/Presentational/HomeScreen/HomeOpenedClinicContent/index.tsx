@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import Styled from 'styled-components/native'
 import {TouchableWithoutFeedback, LayoutAnimation} from 'react-native'
 //
@@ -163,22 +163,25 @@ text-align: center;
 interface Props {
     initialized: boolean;
     clinics: any;
-    moveToDetailMap: any;
+    moveToDentalMap: any;
 }
 
-const HomeOpenedClinicContent = ({initialized, clinics, moveToDetailMap}: Props) => {
+const HomeOpenedClinicContent = ({initialized, clinics, moveToDentalMap}: Props) => {
+
+  const [currentDate, setCurrentDate] = useState(new Date(Date.now()))
 
   useEffect(() => {
     LayoutAnimation.configureNext(
       LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
     );
-  }, []);
+  }, [clinics]);
 
   const getCurrentTime = useCallback(() => {
     const currentDate = new Date(Date.now())
     const hours = currentDate.getHours()
     return hours > 12 ? `오후 ${hours - 12}시 기준` : `오전 ${hours}시 기준`;
   }, []);
+
 
   const renderPlaceHolder = useCallback(() => (
     <PlaceHolderContainerView>
@@ -206,13 +209,47 @@ const HomeOpenedClinicContent = ({initialized, clinics, moveToDetailMap}: Props)
                   {item.originalName}
                 </LocalClinicItemTitleText>
                 <LocalClinicItemText>
-                  {'진료시간'}
+                  {`평일 ${item[`${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][currentDate.getDay()]}_Consulation_start_time`].slice(0, 5)}~${item[`${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][currentDate.getDay()]}_Consulation_end_time`].slice(0, 5)} 점심시간 ${item.weekday_TOL_start.slice(0, 5)}~${item.weekday_TOL_end.slice(0, 5)}`}
                 </LocalClinicItemText>
               </LocalClinicContentView>
             </LocalClinicItemView>
           </TouchableWithoutFeedback>
         ));
       }, [clinics]);
+
+      const renderLocalClinicItemSkeleton = useCallback(() => {
+        return [{id: 'skeleton1'}, {id: 'skeleton2'}, {id: 'skeleton3'}].map((item: any) => (
+          <TouchableWithoutFeedback key={String(item.id)}>
+            <LocalClinicItemView>
+              <LocalClinicItemImage />
+              <LocalClinicContentView>
+                <StatusBadgeView>
+                  <StatusBadgeText style={{
+                    backgroundColor: '#F5F7F9',
+                    color: '#F5F7F9',
+                  }}>
+                    {"지금 진료 중"}
+                  </StatusBadgeText>
+                </StatusBadgeView>
+                <LocalClinicItemTitleText style={{
+                    backgroundColor: '#F5F7F9',
+                    color: '#F5F7F9',
+                    lineHeight: 20,
+                  }}>
+                  {"치카치카치카병원"}
+                </LocalClinicItemTitleText>
+                <LocalClinicItemText style={{
+                    backgroundColor: '#F5F7F9',
+                    color: '#F5F7F9',
+                    lineHeight: 20,
+                  }}>
+                  {"치카치카치카치카치카"}
+                </LocalClinicItemText>
+              </LocalClinicContentView>
+            </LocalClinicItemView>
+          </TouchableWithoutFeedback>
+        ));
+      })
 
     return (
         <ContainerView>
@@ -226,8 +263,8 @@ const HomeOpenedClinicContent = ({initialized, clinics, moveToDetailMap}: Props)
           </ContainerHeaderView>
           {initialized && !clinics.length ? renderPlaceHolder() : 
           <HomeContentContainerView
-            onPress={() => moveToDetailMap()}
-            renderContentItem={renderLocalClinicItem}/>}
+            onPress={() => moveToDentalMap()}
+            renderContentItem={initialized ? renderLocalClinicItem : renderLocalClinicItemSkeleton}/>}
         </ContainerView>
     )
 }

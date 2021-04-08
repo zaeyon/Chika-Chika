@@ -173,12 +173,11 @@ interface Props {
 const HomeElderClinicContent = ({initialized, clinics, moveToDetailMap}: Props) => {
 
   useEffect(() => {
-
     LayoutAnimation.configureNext(
-      LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
+      LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
     );
-
   }, [clinics])
+
   const renderPlaceHolder = useCallback(() => (
     <PlaceHolderContainerView>
       <PlaceHolderContentView>
