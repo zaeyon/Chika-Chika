@@ -253,13 +253,13 @@ const EditProfileScreen = ({
   );
   console.log(profile);
   const [selectedBirthYear, setSelectedBirthYear] = useState(
-    profile.birthdate ? profile.birthdate.split('-')[0] : '',
+    profile.birthdate ? profile.birthdate.split('-')[0] : 1900,
   );
   const [selectedBirthMonth, setSelectedBirthMonth] = useState(
-    profile.birthdate ? String(parseInt(profile.birthdate.split('-')[1])) : '',
+    profile.birthdate ? String(parseInt(profile.birthdate.split('-')[1])) : 1,
   );
   const [selectedBirthDay, setSelectedBirthDay] = useState(
-    profile.birthdate ? String(parseInt(profile.birthdate.split('-')[2])) : '',
+    profile.birthdate ? String(parseInt(profile.birthdate.split('-')[2])) : 1,
   );
 
   const genderActionSheetRef: any = useRef();
@@ -278,6 +278,9 @@ const EditProfileScreen = ({
     new Date(profile.birthdate || Date.now()),
   );
 
+  useEffect(() => {
+    initializeBirthDate()
+  }, [])
   const onChange = (event: Event, selectedDate?: Date) => {
     const currentDate = selectedDate || date;
     setDate(currentDate);
@@ -337,6 +340,7 @@ const EditProfileScreen = ({
       duration: 250,
       useNativeDriver: true,
     }).start(() => setIsModalVisible(false));
+    console.log("selectedBirthYear selectedBirthMonth, selectedBirthDay", selectedBirthYear, selectedBirthMonth, selectedBirthDay)
     const formattedDate = `${selectedBirthYear}-${selectedBirthMonth}-${selectedBirthDay}`;
     console.log(formattedDate);
     changeProfileBirthdate(formattedDate);

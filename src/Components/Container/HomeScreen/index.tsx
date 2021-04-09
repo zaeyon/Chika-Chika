@@ -2,7 +2,16 @@ import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import Styled from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {Image, Animated, TouchableOpacity, RefreshControl, Platform, TouchableWithoutFeedback, LayoutAnimation, PermissionsAndroid, } from 'react-native';
+import {
+  Image,
+  Animated,
+  TouchableOpacity,
+  RefreshControl,
+  Platform,
+  TouchableWithoutFeedback,
+  LayoutAnimation,
+  PermissionsAndroid,
+} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -23,27 +32,29 @@ import allActions from '~/actions';
 import HomeInfoContent from '~/Components/Presentational/HomeScreen/HomeInfoContent';
 import HomeReviewContent from '~/Components/Presentational/HomeScreen/HomeReviewContent';
 import ToastMessage from '~/Components/Presentational/ToastMessage';
-import HomeElderClinicContent from '~/Components/Presentational/HomeScreen/HomeElderClinicContent'
-import HomeOpenedClinicContent from '~/Components/Presentational/HomeScreen/HomeOpenedClinicContent'
+import HomeElderClinicContent from '~/Components/Presentational/HomeScreen/HomeElderClinicContent';
+import HomeOpenedClinicContent from '~/Components/Presentational/HomeScreen/HomeOpenedClinicContent';
 
 // Routes
 import GETSearchRecord from '~/Routes/Search/GETSearchRecord';
 import GETCommunityPosts from '~/Routes/Community/showPosts/GETCommunityPosts';
 import GETTotalSearch from '~/Routes/Search/GETTotalSearch';
 import GETLocalClinicAndReviewCount from '~/Routes/Main/GETLocalClinicAndReviewCount';
-import GETLocalClinic from '~/Routes/Main/GETLocalClinic';
+import GETAroundDental from '~/Routes/Dental/GETAroundDental';
 import GETUserNotifications from '~/Routes/Notification/GETUserNotifications';
 import GETElderClinics from '~/Routes/Dental/GETElderClinics';
 
-import {hasNotch} from '~/method/deviceInfo'
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import {hasNotch} from '~/method/deviceInfo';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 const ContainerView = Styled(
   (SafeAreaView as unknown) as new () => SafeAreaView,
 )`
 flex: 1;
 background: #F5F7F9;
-padding-top: ${Platform.OS === 'ios' ? (hasNotch() ? getStatusBarHeight() : 0) : 0};
+padding-top: ${
+  Platform.OS === 'ios' ? (hasNotch() ? getStatusBarHeight() : 0) : 0
+};
 `;
 
 const WriterBackground = Styled.View`
@@ -69,7 +80,7 @@ flex: 1;
 const BodyContainerView = Styled.View`
 flex: 1;
 background: #F5F7F9;
-`
+`;
 
 const HeaderContainerView = Styled.View`
 width: 100%;
@@ -102,7 +113,14 @@ const FloatingButtonView = Styled.View`
 position: absolute;
 elevation: 2;
 align-self: center;
-bottom: ${24 + (Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('6.92%')) : hp('6.92%'))}px;
+bottom: ${
+  24 +
+  (Platform.OS === 'ios'
+    ? hasNotch()
+      ? hp('10.59%')
+      : hp('6.92%')
+    : hp('6.92%'))
+}px;
 padding: 8px 24px;
 background: #131F3C;
 box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
@@ -172,11 +190,6 @@ interface ReviewData {
 const HomeScreen = ({navigation, route}: Props) => {
   const [onMessage, setOnMessage] = useState(false);
   const alertScale = useRef(new Animated.Value(0)).current;
-
-  const [tagFilterItems, setTagFilterItems] = useState([
-    {name: '스케일링', category: 'treatment'},
-  ]);
-
   const [reviewData, setReviewData] = useState([]);
   const [postData, setPostData] = useState<ReviewData[]>();
   const [openedClinicData, setOpenedClinicData] = useState([]);
@@ -185,8 +198,12 @@ const HomeScreen = ({navigation, route}: Props) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const [isReviewInitialized, setIsReviewInitialized] = useState(false);
-  const [isOpenedClinicInitialized, setIsOpenedClinicInitialized] = useState(false);
-  const [isElderClinicInitialized, setIsElderClinicInitialized] = useState(false);
+  const [isOpenedClinicInitialized, setIsOpenedClinicInitialized] = useState(
+    false,
+  );
+  const [isElderClinicInitialized, setIsElderClinicInitialized] = useState(
+    false,
+  );
 
   const [prevOffsetY, setPrevOffsetY] = useState(0);
   const [scrollDirection, setScrollDirection] = useState('up');
@@ -194,49 +211,40 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 
-  const [isMainHomeChanged, setIsMainHomeChanged] = useState(true);
-
-  const [defaultHometown, setDefaultHometown] = useState({UsersCities: {now: false}, emdName: "압구정동", fullCityName: "서울특별시 강남구 압구정동", id: 824, sido: "서울특별시", sigungu: "강남구"})
-  const selectedHometown = useSelector(
-    (state: any) =>
-      state.currentUser.hometown &&
-      state.currentUser.hometown.find((item) => item.UsersCities?.now === true),
-  );
-  const currentUserLocation = useSelector(
-    (state: any) => state.currentUser.currentUserLocation,
-  );
-
-  const hometown = useSelector((state: any) => state.currentUser).hometown;
+  const [defaultHometown, setDefaultHometown] = useState({
+    UsersCities: {now: false},
+    emdName: '압구정동',
+    fullCityName: '서울특별시 강남구 압구정동',
+    id: 824,
+    sido: '서울특별시',
+    sigungu: '강남구',
+  });
+  const selectedHometown = useSelector((state: any) => state.currentUser).hometown[0];
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (route.params?.isUploadReview) {
       ToastMessage.show('리뷰작성이 완료되었습니다!');
-      navigation.setParams({isUploadReview: false})
     }
   }, [route.params?.isUploadReview]);
 
-  useFocusEffect(
-    useCallback(() => {
-      console.log('home focused');
-        setIsMainHomeChanged((prev) => {
-          if (prev) {
-            fetchRecentReviews(selectedHometown || defaultHometown);
-            fetchOpenedClinics()
-            fetchElderClinics(selectedHometown || defaultHometown)
+  useEffect(() => {
+    if (selectedHometown) {
+      fetchRecentReviews(selectedHometown || defaultHometown);
+      Platform.select({
+        ios: () => getIosLocation(handlerLocationRequest),
+        android: () => getAndroidLocaion(handlerLocationRequest),
+      })();
 
-            // fetchLocalInfo(selectedHometown);
-            // fetchRecentCommunityPosts(selectedHometown);
-          }
-          return false;
-        });
-    }, [selectedHometown]),
-  );
+      // fetchLocalInfo(selectedHometown);
+      // fetchRecentCommunityPosts(selectedHometown);
+    }
+  }, [selectedHometown]);
 
   useEffect(() => {
     LayoutAnimation.configureNext(
-      LayoutAnimation.create(400, 'easeInEaseOut', 'opacity'),
+      LayoutAnimation.create(150, 'easeInEaseOut', 'opacity'),
     );
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       setOnMessage(true);
@@ -259,10 +267,6 @@ const HomeScreen = ({navigation, route}: Props) => {
         console.log('GETUserNotifications error', error);
       });
   }, []);
-
-  useEffect(() => {
-    setIsMainHomeChanged(true);
-  }, [selectedHometown]);
 
   useEffect(() => {
     if (onMessage) {
@@ -346,7 +350,7 @@ const HomeScreen = ({navigation, route}: Props) => {
             long: position.coords.longitude,
           };
           dispatch(allActions.userActions.setCurrentUserLocation(userLocation));
-          callback(userLocation)
+          callback(userLocation);
         },
         (error) => {
           ToastMessage.show('현재 위치를 불러오는데 실패했습니다ㅠㅠ');
@@ -356,9 +360,9 @@ const HomeScreen = ({navigation, route}: Props) => {
           const long = 126.9781164904998;
           const userLocation = {
             lat,
-            long
+            long,
           };
-          callback(userLocation)
+          callback(userLocation);
         },
         {enableHighAccuracy: false, timeout: 10000, maximumAge: 10000},
       );
@@ -378,7 +382,7 @@ const HomeScreen = ({navigation, route}: Props) => {
             long: position.coords.longitude,
           };
           dispatch(allActions.userActions.setCurrentUserLocation(userLocation));
-          callback(userLocation)
+          callback(userLocation);
         },
         (error) => {
           ToastMessage.show('현재 위치를 불러오는데 실패했습니다ㅠㅠ');
@@ -387,15 +391,15 @@ const HomeScreen = ({navigation, route}: Props) => {
           const long = 126.9781164904998;
           const userLocation = {
             lat,
-            long
+            long,
           };
-          callback(userLocation)
+          callback(userLocation);
         },
         {enableHighAccuracy: false, timeout: 10000, maximumAge: 10000},
       );
     }
   }
-  
+
   const fetchLocalInfo = useCallback(
     (selectedHometown, callback = () => console.log('fetchLocalInfo')) => {
       GETLocalClinicAndReviewCount({
@@ -409,7 +413,7 @@ const HomeScreen = ({navigation, route}: Props) => {
   );
 
   const fetchRecentReviews = useCallback(
-    async (selectedHometown: any) => {
+    (selectedHometown: any) => {
       const form = {
         jwtToken,
         query: '',
@@ -421,52 +425,85 @@ const HomeScreen = ({navigation, route}: Props) => {
         cityId: String(selectedHometown.id),
         isUnified: false,
       };
-      const data = await GETTotalSearch(form);
-      setIsReviewInitialized(true);
-      setReviewData(data);
+      GETTotalSearch(form).then((response: any) => {
+        setIsReviewInitialized((prev) => {
+          setReviewData(response);
+          return true;
+        });
+      });
     },
-    [jwtToken, tagFilterItems],
+    [jwtToken],
   );
 
-  const fetchOpenedClinics = useCallback(() => {
-    // Call API
-    setIsOpenedClinicInitialized(true);
-  }, [jwtToken]);
+  const fetchOpenedClinics = useCallback(
+    (currentLocation: any) => {
+      console.log('fetchOpenedClinics');
+      const currentDate = new Date(Date.now());
+      const form = {
+        jwtToken,
+        nightCareFilter: 'f',
+        specialistFilter: 'f',
+        goodDentalFilter: 'f',
+        lat: currentLocation.lat,
+        long: currentLocation.long,
+        offset: 0,
+        limit: 4,
+        holidayFilter: 'false',
+        timeFilter: `${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`,
+        dayFilter: ['sun', 'mon', 'tus', 'wed', 'thu', 'fri', 'sat'][
+          currentDate.getDay()
+        ],
+        sort: 'd',
+        parkingFilter: 'n',
+        mapLat: currentLocation.lat,
+        mapLong: currentLocation.long,
+      };
+      GETAroundDental(form).then((response: any) => {
+        console.log(response);
+        setOpenedClinicData(response);
+        setIsOpenedClinicInitialized(true);
+      });
+    },
+    [jwtToken],
+  );
 
-  const fetchElderClinics = useCallback(async (selectedHometown: any) => {
-    const handleLocationResponse = (currentLocation: any) => {
+  const fetchElderClinics = useCallback(
+    (selectedHometown: any, currentLocation: any) => {
       const form = {
         jwtToken,
         limit: 30,
         offset: 0,
         cityId: selectedHometown.id,
         lat: currentLocation.lat,
-        long: currentLocation.long
+        long: currentLocation.long,
       };
       GETElderClinics(form).then((response: any) => {
         setElderClinicData(response);
         setIsElderClinicInitialized(true);
-      })
-    }
-    Platform.select({
-      ios: () => getIosLocation(handleLocationResponse),
-      android: () => getAndroidLocaion(handleLocationResponse)
-    })();
-    
-  }, [jwtToken, getIosLocation]);
+      });
+    },
+    [jwtToken],
+  );
+
+  const handlerLocationRequest = useCallback(
+    (currentLocation) => {
+      fetchOpenedClinics(currentLocation);
+      fetchElderClinics(selectedHometown || defaultHometown, currentLocation);
+    },
+    [fetchOpenedClinics, fetchElderClinics],
+  );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchLocalInfo(selectedHometown || defaultHometown, () => setRefreshing(false));
+    fetchLocalInfo(selectedHometown || defaultHometown, () =>
+      setRefreshing(false),
+    );
     fetchRecentReviews(selectedHometown || defaultHometown);
-    fetchOpenedClinics(selectedHometown || defaultHometown);
-    fetchElderClinics(selectedHometown || defaultHometown);
-  }, [
-    selectedHometown,
-    defaultHometown,
-    fetchLocalInfo,
-    fetchRecentReviews,
-  ]);
+    Platform.select({
+      ios: () => getIosLocation(handlerLocationRequest),
+      android: () => getAndroidLocaion(handlerLocationRequest),
+    })();
+  }, [selectedHometown, defaultHometown, fetchLocalInfo, fetchRecentReviews]);
 
   const moveToDentalDetail = (dentalId: number) => {
     navigation.navigate("DentalDetailScreen", {
@@ -484,35 +521,9 @@ const HomeScreen = ({navigation, route}: Props) => {
     }
   }
 
-  const moveToDetailMap =  useCallback((params: {
-    title: string;
-    clinics: any;
-  }) => {
-    navigation.navigate('DetailMapScreen', params)
-  }, [])
-
-  const moveToCommunityDetail = useCallback(
-    (postId: number, postType: string) => {
-      navigation.navigate('CommunityStackScreen', {
-        screen: 'CommunityDetailScreen',
-        params: {
-          id: postId,
-          type: postType,
-        },
-      });
-    },
-    [],
-  );
-
-  const moveToAnotherProfile = useCallback(
-    (userId: string, nickname: string, profileImageUri: string) => {
-      navigation.navigate('AnotherProfileStackScreen', {
-        targetUser: {
-          userId,
-          nickname,
-          profileImageUri,
-        },
-      });
+  const moveToDetailMap = useCallback(
+    (params: {title: string; clinics: any}) => {
+      navigation.navigate('DetailMapScreen', params);
     },
     [],
   );
@@ -531,7 +542,6 @@ const HomeScreen = ({navigation, route}: Props) => {
   };
 
   const moveToReviewUpload = useCallback(() => {
-    
     navigation.navigate('BraceReviewUploadStackScreen', {
       screen: 'BraceReviewMetaDataScreen',
       params: {
@@ -551,80 +561,87 @@ const HomeScreen = ({navigation, route}: Props) => {
     });
   }, []);
 
-  const moveToHometownSetting = useCallback(() => {
-    navigation.navigate('HometownSettingScreen');
-  }, []);
-
   const moveToHometownSearch = useCallback(() => {
     navigation.navigate('HometownSearchScreen', {
-      requestType: hometown[0] ? 'revise' : 'add'
+      requestType: selectedHometown ? 'revise' : 'add',
     });
-  }, [])
+  }, [selectedHometown]);
 
+  const moveToDentalMap = useCallback(() => {
+    // 시간 설정과 같이 지도 탭으로 이동.
+  }, []);
 
   const moveToFilteredDentalMap = useCallback((filterType: string) => {
-    if(filterType === "교정 전문의") {
-      dispatch(allActions.dentalFilterActions.setHomeDentalFilter("specialist"));
-      navigation.navigate("지도")
-    } else if(filterType === "좋은 치과") {
-      dispatch(allActions.dentalFilterActions.setHomeDentalFilter("goodDental"));
-      navigation.navigate("지도")
-    } else if(filterType === "야간진료") {
-      dispatch(allActions.dentalFilterActions.setHomeDentalFilter("nightCare"));
-      navigation.navigate("지도")
+    if (filterType === '교정 전문의') {
+      dispatch(
+        allActions.dentalFilterActions.setHomeDentalFilter('specialist'),
+      );
+      navigation.navigate('지도');
+    } else if (filterType === '좋은 치과') {
+      dispatch(
+        allActions.dentalFilterActions.setHomeDentalFilter('goodDental'),
+      );
+      navigation.navigate('지도');
+    } else if (filterType === '야간진료') {
+      dispatch(allActions.dentalFilterActions.setHomeDentalFilter('nightCare'));
+      navigation.navigate('지도');
+    } else if (filterType === '진료중') {
+      console.log("진료중")
+      dispatch(allActions.dentalFilterActions.setHomeDentalFilter("open"));
+      navigation.navigate('지도');
     }
-  }, [])
-  
+  }, []);
+
   return (
     <ContainerView as={SafeAreaView}>
-      <WriterBackground/>
-        <HeaderContainerView>
-          <HomeLogoImage
-            source={require('~/Assets/Images/Logo/ic_home_logo.png')}
-          />
-          <HeaderIconContainerView>
-            <HeaderIconTouchableOpacity
-              onPress={() => moveToTotalKeywordSearch()}>
-              <Image source={require('~/Assets/Images/TopTab/ic/search.png')} />
-            </HeaderIconTouchableOpacity>
-            <HeaderIconTouchableOpacity
-              onPress={() => {
-                setOnMessage(false);
-                moveToNotificationList();
-              }}>
-              <Animated.Image
-                style={{
-                  transform: [
-                    {
-                      rotate: alertScale.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['0deg', '15deg'],
-                        extrapolate: 'clamp',
-                      }),
-                    },
-                    {
-                      scale: alertScale.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 1.15],
-                        extrapolate: 'clamp',
-                      }),
-                    },
-                  ],
-                }}
-                source={
-                  onMessage
-                    ? require('~/Assets/Images/TopTab/ic/alarm/focus.png')
-                    : require('~/Assets/Images/TopTab/ic/alarm/unfocus.png')
-                }
-              />
-            </HeaderIconTouchableOpacity>
-            <HeaderIconTouchableOpacity onPress={() => moveToReviewUpload()}>
-              <Image
-                source={require('~/Assets/Images/TopTab/ic/write/black.png')}
-              />
-            </HeaderIconTouchableOpacity>
-          </HeaderIconContainerView>
-        </HeaderContainerView>
+      <WriterBackground />
+      <HeaderContainerView>
+        <HomeLogoImage
+          source={require('~/Assets/Images/Logo/ic_home_logo.png')}
+        />
+        <HeaderIconContainerView>
+          <HeaderIconTouchableOpacity
+            onPress={() => moveToTotalKeywordSearch()}>
+            <Image source={require('~/Assets/Images/TopTab/ic/search.png')} />
+          </HeaderIconTouchableOpacity>
+          <HeaderIconTouchableOpacity
+            onPress={() => {
+              setOnMessage(false);
+              moveToNotificationList();
+            }}>
+            <Animated.Image
+              style={{
+                transform: [
+                  {
+                    rotate: alertScale.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0deg', '15deg'],
+                      extrapolate: 'clamp',
+                    }),
+                  },
+                  {
+                    scale: alertScale.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [1, 1.15],
+                      extrapolate: 'clamp',
+                    }),
+                  },
+                ],
+              }}
+              source={
+                onMessage
+                  ? require('~/Assets/Images/TopTab/ic/alarm/focus.png')
+                  : require('~/Assets/Images/TopTab/ic/alarm/unfocus.png')
+              }
+            />
+          </HeaderIconTouchableOpacity>
+          <HeaderIconTouchableOpacity onPress={() => moveToReviewUpload()}>
+            <Image
+              source={require('~/Assets/Images/TopTab/ic/write/black.png')}
+            />
+          </HeaderIconTouchableOpacity>
+        </HeaderIconContainerView>
+      </HeaderContainerView>
       <ContentScrollView
         refreshControl={
           <RefreshControl
@@ -669,43 +686,55 @@ const HomeScreen = ({navigation, route}: Props) => {
             }
           }
         }}>
-        <HomeInfoContent
-        moveToBannerDetail={moveToBannerDetail}
-        moveToFilteredDentalMap={moveToFilteredDentalMap}/>
-      <BodyContainerView>
-        <LocationContainerView>
-          <LocationImage source={require('~/Assets/Images/Home/ic_location_info.png')}/>
-          <LocationText>
-            <LocationText style={{
-              fontWeight: 'bold'
-            }}>
-              {"다른지역"}
+        <HomeInfoContent 
+        moveToFilteredDentalMap={moveToFilteredDentalMap}
+        moveToBannerDetail={moveToBannerDetail}/>
+        <BodyContainerView>
+          <LocationContainerView>
+            <LocationImage
+              source={require('~/Assets/Images/Home/ic_location_info.png')}
+            />
+            <LocationText>
+              <LocationText
+                style={{
+                  fontWeight: 'bold',
+                }}>
+                {'다른지역'}
+              </LocationText>
+              {'의 치과가 궁금하세요?'}
             </LocationText>
-            {"의 치과가 궁금하세요?"}
-          </LocationText>
-          <TouchableWithoutFeedback onPress={() => selectedHometown ? moveToHometownSetting() : moveToHometownSearch()}>
-          <LocationButtonView>
-            <LocationButtonImage source={require('~/Assets/Images/Home/ic_location_focus.png')}/>
-            <LocationButtonText>
-              {selectedHometown?.emdName || defaultHometown?.emdName}
-            </LocationButtonText>
-          </LocationButtonView>
-          </TouchableWithoutFeedback>
-        </LocationContainerView>
-        <HomeReviewContent
-          initialized={isReviewInitialized}
-          selectedHometown={selectedHometown?.emdName || defaultHometown?.emdName}
-          reviewData={reviewData}
-          moveToReviewUpload={moveToReviewUpload}
-          moveToReviewDetail={moveToReviewDetail}
-        />
-        <HomeOpenedClinicContent initialized={isOpenedClinicInitialized} clinics={openedClinicData} moveToDetailMap={moveToDetailMap}/>
-        <HomeElderClinicContent 
-        initialized={isElderClinicInitialized}
-        clinics={elderClinicData}
-        moveToDetailMap={moveToDetailMap}
-        moveToDentalDetail={moveToDentalDetail}/>
-
+            <TouchableWithoutFeedback onPress={() => moveToHometownSearch()}>
+              <LocationButtonView>
+                <LocationButtonImage
+                  source={require('~/Assets/Images/Home/ic_location_focus.png')}
+                />
+                <LocationButtonText>
+                  {selectedHometown?.emdName || defaultHometown?.emdName}
+                </LocationButtonText>
+              </LocationButtonView>
+            </TouchableWithoutFeedback>
+          </LocationContainerView>
+          <HomeReviewContent
+            initialized={isReviewInitialized}
+            selectedHometown={
+              selectedHometown?.emdName || defaultHometown?.emdName
+            }
+            reviewData={reviewData}
+            moveToReviewUpload={moveToReviewUpload}
+            moveToReviewDetail={moveToReviewDetail}
+          />
+          <HomeOpenedClinicContent
+            initialized={isOpenedClinicInitialized}
+            clinics={openedClinicData}
+            moveToDentalMap={moveToFilteredDentalMap}
+            moveToDentalDetail={moveToDentalDetail}
+          />
+          <HomeElderClinicContent
+            initialized={isElderClinicInitialized}
+            clinics={elderClinicData}
+            moveToDetailMap={moveToDetailMap}
+            moveToDentalDetail={moveToDentalDetail}
+          />
         </BodyContainerView>
       </ContentScrollView>
       <FloatingButtonView
@@ -716,7 +745,12 @@ const HomeScreen = ({navigation, route}: Props) => {
               translateY: floatY.interpolate({
                 inputRange: [0, 1],
                 outputRange: [
-                  64 + (Platform.OS === 'ios' ? ( hasNotch() ? hp('10.59%') : hp('6.92%')) : hp('6.92%')),
+                  64 +
+                    (Platform.OS === 'ios'
+                      ? hasNotch()
+                        ? hp('10.59%')
+                        : hp('6.92%')
+                      : hp('6.92%')),
                   0,
                 ],
                 extrapolate: 'clamp',
@@ -732,7 +766,6 @@ const HomeScreen = ({navigation, route}: Props) => {
           <FloatingButtonText>{'리뷰 작성하기'}</FloatingButtonText>
         </TouchableOpacity>
       </FloatingButtonView>
-      
     </ContainerView>
   );
 };

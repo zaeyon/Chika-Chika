@@ -57,7 +57,6 @@ margin-right: 4px;
 `;
 
 const HashTagItemNameText = Styled.Text`
-margin-right: 4px;
 font-style: normal;
 font-weight: normal;
 font-size: 16px;
@@ -168,96 +167,9 @@ const SuggestionBarView = ({
 
   const renderHashTagItemView = useCallback(
     ({item, index}: {item: Tag; index: number}) => {
-      console.log(item);
-      if (item.category === 'city' && item.locationName?.includes(searchQuery)) {
-        return (
-          <TouchableHighlight
-            activeOpacity={1}
-            underlayColor="#EEEEEE"
-            onPress={() => {
-              completeCurrentHashTag(item.locationName);
-            }}>
-            <HashTagItemView style={{borderTopWidth: index === 0 ? 0.5 : 0}}>
-              <HashTagItemIconImage source={iconDic[item.category]} />
-              <HashTagItemNameText>
-                <HashTagItemNameText
-                  style={{
-                    color: '#00D1FF',
-                  }}>
-                  {searchQuery}
-                </HashTagItemNameText>
-                {item.locationName?.slice(searchQuery.length)}
-              </HashTagItemNameText>
-            </HashTagItemView>
-          </TouchableHighlight>
-        );
-      } else if (item.category === 'clinic' && item.originalName?.includes(searchQuery)) {
-        return (
-          <TouchableHighlight
-            activeOpacity={1}
-            underlayColor="#EEEEEE"
-            onPress={() => {
-              completeCurrentHashTag(item.originalName);
-            }}>
-            <HashTagItemView style={{borderTopWidth: index === 0 ? 0.5 : 0}}>
-              <HashTagItemIconImage source={iconDic[item.category]} />
-              <HashTagItemNameText>
-                <HashTagItemNameText
-                  style={{
-                    color: '#00D1FF',
-                  }}>
-                  {searchQuery}
-                </HashTagItemNameText>
-                {item.originalName?.slice(searchQuery.length)}
-              </HashTagItemNameText>
-            </HashTagItemView>
-          </TouchableHighlight>
-        );
-      } else if (item.category === 'treatment' && item.usualName?.includes(searchQuery)){
-        return (
-          <TouchableHighlight
-            activeOpacity={1}
-            underlayColor="#EEEEEE"
-            onPress={() => {
-              completeCurrentHashTag(item.usualName);
-            }}>
-            <HashTagItemView style={{borderTopWidth: index === 0 ? 0.5 : 0}}>
-              <HashTagItemIconImage source={iconDic[item.category]} />
-              <HashTagItemNameText>
-                {item.usualName?.includes(searchQuery) ? (
-                  <>
-                    <HashTagItemNameText
-                      style={{
-                        color: '#00D1FF',
-                      }}>
-                      {searchQuery}
-                    </HashTagItemNameText>
-                    {item.usualName?.slice(searchQuery.length)}{' '}
-                  </>
-                ) : (
-                  item.usualName
-                )}
-              </HashTagItemNameText>
-              <HashTagItemLocationText>
-                {item.technicalName?.includes(searchQuery) ? (
-                  <>
-                    <HashTagItemLocationText
-                      style={{
-                        color: '#00D1FF',
-                      }}>
-                      {searchQuery}
-                    </HashTagItemLocationText>
-                    {item.technicalName?.slice(searchQuery.length)}{' '}
-                  </>
-                ) : (
-                  item.technicalName
-                )}
-              </HashTagItemLocationText>
-            </HashTagItemView>
-          </TouchableHighlight>
-        );
-      }
-      else  {
+
+        const startIndex = item.name.indexOf(searchQuery);
+        const endIndex = startIndex + (searchQuery.length - 1);
         return (
           <TouchableHighlight
             activeOpacity={1}
@@ -267,19 +179,29 @@ const SuggestionBarView = ({
             }}>
             <HashTagItemView style={{borderTopWidth: index === 0 ? 0.5 : 0}}>
               <HashTagItemIconImage source={iconDic[item.category]} />
-              <HashTagItemNameText>
-                <HashTagItemNameText
-                  style={{
-                    color: '#00D1FF',
-                  }}>
-                  {searchQuery}
+              {startIndex !== -1 ? (
+                <>
+                  <HashTagItemNameText key={item.name + String(1)}>
+                    {item.name.slice(0, startIndex)}
+                  </HashTagItemNameText>
+                  <HashTagItemNameText
+                    key={item.name + String(2)}
+                    style={{color: '#00D1FF'}}>
+                    {item.name.slice(startIndex, endIndex + 1)}
+                  </HashTagItemNameText>
+                  <HashTagItemNameText key={item.name + String(3)}>
+                    {item.name.slice(endIndex + 1)}
+                  </HashTagItemNameText>
+                </>
+              ) : (
+                <HashTagItemNameText key={item.name + String(1)}>
+                  {item.name}
                 </HashTagItemNameText>
-                {item.name?.slice(searchQuery.length)}
-              </HashTagItemNameText>
+              )}
             </HashTagItemView>
           </TouchableHighlight>
         );
-      } 
+      
     },
     [searchQuery, iconDic],
   );

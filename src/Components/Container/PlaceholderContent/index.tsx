@@ -305,8 +305,7 @@ const PlaceholderContent = ({navigation, title}: Props) => {
 
   const selectedHometown = useSelector(
     (state: any) =>
-      state.currentUser.hometown &&
-      state.currentUser.hometown.find((item) => item.UsersCities?.now === true),
+      state.currentUser.hometown[0]
   );
 
   useEffect(() => {

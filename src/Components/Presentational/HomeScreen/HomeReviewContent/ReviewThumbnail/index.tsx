@@ -175,7 +175,7 @@ const ReviewThumbnail = ({review, moveToReviewDetail}: Props) => {
 
   const renderHashTagItem = useCallback(
     (item: string) => (
-      <HashTagIconView key={String(item)}>
+      <HashTagIconView key={String(item.usualName)}>
         <HashTagIconText>{'#' + item.usualName + ' '}</HashTagIconText>
       </HashTagIconView>
     ),
@@ -226,7 +226,7 @@ const ReviewThumbnail = ({review, moveToReviewDetail}: Props) => {
     <TouchableWithoutFeedback
       onPressIn={() => {
         Animated.spring(viewScale, {
-          toValue: 0.95,
+          toValue: 0.97,
           friction: 9,
           tension: 78,
           useNativeDriver: true,
@@ -271,10 +271,9 @@ const ReviewThumbnail = ({review, moveToReviewDetail}: Props) => {
               {review?.reviewDescriptions}
             </ReviewContentText>
             </ReviewContentDescriptionView>
-            {review?.review_contents[0]?.img_url ? 
             <ReviewContentImage source={{
-              uri: review?.review_contents[0]?.img_url,
-            }}/> : null}
+              uri: review?.review_contents[0]?.img_thumbNail || review?.review_contents[0]?.img_url,
+            }}/> 
           </ReviewContentView>
             
       </ReviewThumbnailContainerView>

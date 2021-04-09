@@ -50,6 +50,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
       message: string,
       callback: any = () => console.log('change profile...'),
     ) => {
+      console.log("updateUserProfile form", form)
       PUTEditProfile(jwtToken, form)
         .then((response: any) => {
           console.log('프로필 변경 성공', response.body.message);
@@ -104,6 +105,7 @@ const EditProfileTabScreen = ({navigation, route}: Props) => {
 
   const changeProfileBirthdate = useCallback(
     (birthdate: string) => {
+      console.log(birthdate)
       setIsLoading(true);
       const form = {
         birthdate,

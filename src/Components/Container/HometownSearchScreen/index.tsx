@@ -200,7 +200,6 @@ align-items: center;
 padding-top: 3px;
 padding-left: 16px;
 padding-right: 0px;
-padding-bottom: 8px;
 `;
 
 const ClearTextIcon = Styled.Image`
@@ -246,6 +245,11 @@ var offset = 0;
 var limit = 25;
 
 const HometownSearchScreen = ({navigation, route}: Props) => {
+
+  const selectedHometown = useSelector(
+    (state: any) =>
+      state.currentUser.hometown[0]
+  );
   const [loadingFindAroundCites, setLoadingFindAroundCites] = useState<boolean>(
     false,
   );
@@ -484,7 +488,7 @@ const HometownSearchScreen = ({navigation, route}: Props) => {
 
   const reviseHometown = (item: any) => {
     setLoadingAddCity(true);
-    const preCityId = route.params?.preCityId;
+    const preCityId = selectedHometown.id;
     const cityId = item.id;
 
     PUTUserHometown({jwtToken, preCityId, cityId})

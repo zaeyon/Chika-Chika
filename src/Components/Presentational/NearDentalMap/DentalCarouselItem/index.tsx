@@ -187,7 +187,6 @@ const DentalCarouselItem = ({
   closeTime,
   clickDentalCallReservation,
 }: Props) => {
-  console.log("DentalCarouselItem dentalObj", dentalObj);
   let displayDistance: string;
   if (dentalObj['distance(km)'] >= 1) {
     displayDistance = dentalObj['distance(km)'] + 'km';

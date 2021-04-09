@@ -425,6 +425,7 @@ function HomeStackScreen() {
         name="DetailMapScreen"
         component={DetailMapScreen}
         options={{
+          gestureEnabled: false,
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
@@ -1663,33 +1664,40 @@ const Navigator = () => {
   }, [currentUser]);
 
   useEffect(() => {
+
     //getFcmToken();
+
 
     getUserInfo()
       .then((jwtToken) => {
         console.log('getUserInfo response', jwtToken);
-        GETUserInfo(jwtToken)
-          .then((response: any) => {
-            console.log('profile', response);
-            console.log("profile.Residences", response.Residences)
-
-            dispatch(
-              allActions.userActions.setUser({jwtToken, profile: response}),
-            );
-            dispatch(allActions.userActions.setHometown(response.Residences));
-
-            GETUserReservations({jwtToken}).then((response: any) => {
-              dispatch(allActions.userActions.setReservations(response));
+        if(jwtToken === null) {
+          GETUserInfo(jwtToken)
+            .then((response: any) => {
+              console.log('profile', response);
+              console.log("profile.Residences", response.Residences)
+  
+              dispatch(
+                allActions.userActions.setUser({jwtToken, profile: response}),
+              );
+              dispatch(allActions.userActions.setHometown(response.Residences));
+  
+              GETUserReservations({jwtToken}).then((response: any) => {
+                dispatch(allActions.userActions.setReservations(response));
+              });
+              GETUserSavedHospitals({jwtToken}).then((response: any) => {
+                dispatch(allActions.userActions.setSavedHospitals(response));
+              });
+            })
+            .catch((error: any) => {
+              console.log('get user error', error);
+              dispatch(allActions.userActions.logOut());
+              SplashScreen.hide();
             });
-            GETUserSavedHospitals({jwtToken}).then((response: any) => {
-              dispatch(allActions.userActions.setSavedHospitals(response));
-            });
-          })
-          .catch((error: any) => {
-            console.log('get user error', error);
-            dispatch(allActions.userActions.logOut());
-            SplashScreen.hide();
-          });
+        } else {
+          dispatch(allActions.userActions.logOut());
+          SplashScreen.hide();
+        }
       })
       .catch((error) => {
         console.log('getUserInfo error', error);

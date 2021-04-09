@@ -119,6 +119,26 @@ const dentalFilter = (state = {
                         goodDentalFilter: "f",
                         homeDentalFilterType: "nightCare",
                     }
+                } else if(action.payload === 'open') {
+                    const currentDate = new Date(Date.now());
+                    const dayArray = ['sun', 'mon', 'tus', 'wed', 'thu', 'fri', 'sat'];
+                    
+                    const currentHour = currentDate.getHours();
+                    if(currentHour < 10) currentHour = '0' + currentHour;
+                    const currentMinute = currentDate.getMinutes();
+                    if(currentMinute < 10) currentMinute = '0' + currentMinute;
+                    
+                    return {
+                        ...state,
+                        dayFilter: [dayArray[currentDate.getDay()]],
+                        timeFilter: `${currentHour}:${currentMinute}`,
+                        holidayFilter: false,
+                        parkingFilter: "n",
+                        nightCareFilter: "f",
+                        specialistFilter: "f",
+                        goodDentalFilter: "f",
+                        homeDentalFilterType: "open",
+                    }
                 } else if(action.payload === " ") {
                     return {
                         ...state,

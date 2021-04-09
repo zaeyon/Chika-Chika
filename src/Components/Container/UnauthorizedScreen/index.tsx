@@ -27,20 +27,25 @@ import {storeUserInfo} from '~/storage/currentUser';
 const Container = Styled.View`
   width: ${wp('100%')}px;
   height: ${hp('100%')}px;
-  background-color: #ffffff;
+  background-color: #08D3FF;
   flex: 1;
 `;
 
 const LogoContainer = Styled.View`
+padding-top: ${hp('23%')}px;
+padding-left: 16px;
  flex: 1;
- align-items: center;
- justify-content: center;
+`;
+
+const CatchPhraseImage = Styled.Image`
+width: ${wp('52%')}px;
+height: ${wp('7%')}px;
 `;
 
 const OnBoardingImageContainer = Styled.View`
 flex: 1.72;
-align-items: center;
 justify-content: space-between;
+padding-left: 16px;
 `;
 
 const OnBoardingImage = Styled.Image`
@@ -56,7 +61,7 @@ height: ${wp('24.26%')}px;
 `;
 
 const LogoImage = Styled.Image`
-margin-top: ${getStatusBarHeight()}px;
+margin-top: 26px;
 width: ${wp('44.53%')}px;
 height: ${wp('10.399%')}px;
 `;
@@ -83,14 +88,14 @@ padding-right: 16px;
 const LocalLoginButton = Styled.View`
 padding-top: 16px;
 padding-bottom: 16px;
-background-color: #00D1FF;
+background-color: #ffffff;
 align-items: center;
 border-radius: 8px;
 `;
 
 const LocalLoginText = Styled.Text`
 font-weight: 700;
- color: #ffffff;
+ color: #08D3FF;
  font-size: 16px;
  line-height: 24px;
 `;
@@ -243,15 +248,13 @@ const UnauthorizedScreen = ({navigation, route}: Props) => {
   return (
     <Container>
       <LogoContainer>
-        <LogoImage source={require('~/Assets/Images/Logo/ic_logo.png')} />
+        <CatchPhraseImage
+        source={require('~/Assets/Images/Logo/txt_catchphrase.png')}/>
+        <LogoImage
+        style={{tintColor: "#FFFFFF"}}
+        source={require('~/Assets/Images/Logo/ic_logo.png')} />
       </LogoContainer>
       <OnBoardingImageContainer>
-        <OnBoardingImage
-        source={require('~/Assets/Images/Logo/onBoardingImage.png')}/>
-        <ServiceIntroContainer>
-          <ServiceMainIntroText>{"우리동네 치과에서 특별한 경험"}</ServiceMainIntroText>
-          <ServiceSubIntroText>{"번호 인증하고 치과에 쉽게 다가가보세요!"}</ServiceSubIntroText>
-        </ServiceIntroContainer>
       </OnBoardingImageContainer>
       <LocalContainer>
         <TouchableWithoutFeedback onPress={() => moveToLocalLogin()}>

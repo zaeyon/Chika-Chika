@@ -36,12 +36,11 @@ align-items: center;
 padding: 8px 0px 6px 0px;
 `;
 
-const HashTagContainerView = Styled.View`
+const HashTagContainerView = Styled.FlatList`
 width: 100%;
 height: auto;
 padding-left: 2px;
 margin: 6px 0px;
-flex-direction: row;
 `;
 
 const HashTagIconView = Styled.TouchableOpacity`
@@ -182,7 +181,7 @@ margin-right: 2px;
 
 interface Props {
   data: any;
-  moveToKeywordSearch: ({query,  category}: any) => void;
+  moveToKeywordSearch: ({query, category}: any) => void;
   moveToCommunityDetail: any;
   moveToAnotherProfile: any;
   toggleSocialLike: any;
@@ -209,22 +208,18 @@ const PostItem = ({
     viewerScrapCommunityPost,
     userId,
     user,
-    Clinics,
-    GeneralTags,
-    SymptomItems,
-    TreatmentItems,
-    CityTags,
+    tagArray,
     community_imgs,
   } = data;
 
+  console.log(data);
   const likeButtonScale = useRef(new Animated.Value(1)).current;
   const scrapButtonScale = useRef(new Animated.Value(1)).current;
-
-
 
   const [isLiked, setIsLiked] = useState(viewerLikeCommunityPost);
   const [isScraped, setIsScraped] = useState(viewerScrapCommunityPost);
 
+  const [viewableItemsCount, setViewableItemsCount] = useState(0);
   useEffect(() => {
     setIsLiked(viewerLikeCommunityPost);
     setIsScraped(viewerScrapCommunityPost);
@@ -341,45 +336,27 @@ const PostItem = ({
     [],
   );
 
-  const renderHashTag = useCallback(() => {
-    if (
-      Clinics.length +
-        GeneralTags.length +
-        TreatmentItems.length +
-        CityTags.length ===
-      0
-    ) {
-      return null;
-    } else {
-      const renderItem = (item: any, categoryIndex: number) => (
-        <HashTagIconView key={String(item.id)} onPress={() => {
-          console.log(item)
+  const renderHashTag = useCallback(
+    ({item, index}) => (
+      <HashTagIconView
+        key={String(item.id)}
+        onPress={() => {
           moveToKeywordSearch({
-            query: item.originalName || item.name || item.usualName || item.tagName,
-            category: [
-              'clinic',
-              'general',
-              'treatment',
-              'city',
-            ][categoryIndex],
-          })
+            query: item.name,
+            category: item.category,
+          });
         }}>
-          <HashTagText>{'#'}</HashTagText>
-          <HashTagIconText>
-            {item.originalName || item.name || item.tagName || item.usualName}
-          </HashTagIconText>
-        </HashTagIconView>
-      );
+        <HashTagText>{'#'}</HashTagText>
+        <HashTagIconText>{item.name}</HashTagIconText>
+      </HashTagIconView>
+    ),
+    [],
+  );
 
-      const result = [
-        Clinics,
-        GeneralTags,
-        TreatmentItems,
-        CityTags,
-      ].map((item, index) => item.map((item) => renderItem(item, index)));
-      return <HashTagContainerView>{result}</HashTagContainerView>;
-    }
-  }, [Clinics, GeneralTags, TreatmentItems, CityTags]);
+  const onViewableItemsChanged = useCallback(({viewableItems, changed}) => {
+    const viewableItemsCount = tagArray.tagArray.length - (viewableItems[viewableItems.length-1].index + 1)
+    setViewableItemsCount(viewableItemsCount)
+  }, [])
 
   return (
     <TouchableWithoutFeedback
@@ -390,7 +367,12 @@ const PostItem = ({
         <BodyContainerView>
           <TouchableWithoutFeedback
             onPress={() => {
-              moveToAnotherProfile(userId, user?.nickname, user?.profileImg, user?.img_thumbNail);
+              moveToAnotherProfile(
+                userId,
+                user?.nickname,
+                user?.profileImg,
+                user?.img_thumbNail,
+              );
             }}>
             <ProfileContainerView>
               <ProfileImage
@@ -420,7 +402,19 @@ const PostItem = ({
             </ProfileContainerView>
           </TouchableWithoutFeedback>
 
-          {renderHashTag()}
+          {tagArray?.tagArray.length > 0 && (
+            <HashTagContainerView
+              horizontal
+              alwaysBounceHorizontal={false}
+              showsHorizontalScrollIndicator={false}
+              data={tagArray.tagArray}
+              renderItem={renderHashTag}
+              viewabilityConfig={{
+                viewAreaCoveragePercentThreshold: 5,
+              }}
+              onViewableItemsChanged={onViewableItemsChanged}
+            />
+          )}
           {community_imgs.length > 0 ? (
             <ImageContainerView>
               <ImageFlatList
@@ -477,16 +471,16 @@ const PostItem = ({
             </TouchableWithoutFeedback>
           </SocialInfoContentView>
           <SocialInfoContentView>
-              <SocialInfoView>
-                <Image
-                  style={{
-                    width: 24,
-                    height: 24,
-                  }}
-                  source={require('~/Assets/Images/Community/bottomBar/comment.png')}
-                />
-                <SocialInfoText>{postCommentsNum}</SocialInfoText>
-              </SocialInfoView>
+            <SocialInfoView>
+              <Image
+                style={{
+                  width: 24,
+                  height: 24,
+                }}
+                source={require('~/Assets/Images/Community/bottomBar/comment.png')}
+              />
+              <SocialInfoText>{postCommentsNum}</SocialInfoText>
+            </SocialInfoView>
           </SocialInfoContentView>
 
           <TouchableWithoutFeedback

@@ -19,6 +19,7 @@ import {
   Keyboard,
   PanResponder,
   ActivityIndicator,
+  Animated,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -34,11 +35,8 @@ import {isIphoneX, getBottomSpace} from 'react-native-iphone-x-helper';
 import Geolocation from 'react-native-geolocation-service';
 // import DeviceInfo from 'react-native-device-info';
 
-import {hasNotch} from '~/method/deviceInfo'
+import {hasNotch, getStatusBarHeight} from '~/method/deviceInfo'
 
-import getStateBarHeight, {
-  getStatusBarHeight,
-} from 'react-native-status-bar-height';
 import Carousel from 'react-native-snap-carousel';
 import ActionSheet from 'react-native-actionsheet';
 import Modal from 'react-native-modal';
@@ -48,6 +46,8 @@ import DentalCarouselList from '~/Components/Presentational/NearDentalMap/Dental
 import TouchBloackIndicatorCover from '~/Components/Presentational/TouchBlockIndicatorCover';
 import DentalList from '~/Components/Presentational/DentalList';
 import ToastMessage from '~/Components/Presentational/ToastMessage';
+import DentalFilterDescripModal from '~/Components/Presentational/NearDentalMap/DentalFilterDescripModal';
+
 import callDentalPhoneNumber from '~/method/callDentalPhoneNumber';
 
 // Route
@@ -429,6 +429,82 @@ line-height: 19px;
 color: #000000;
 `;
 
+const TreatmentDateModal = Styled.Modal`
+`;
+
+const TreatmentDateModalContainer = Styled.View`
+`;
+
+const FilterDescripModal = Styled.Modal`
+`;
+
+const FilterDescripModalContainer = Styled.View`
+width: ${wp('100%')}px;
+background-color: #ffffff;
+padding: 30px 16px 32px 16px;
+border-top-left-radius: 24px;
+border-top-right-radius: 24px;
+align-items: center;
+justify-content: center;
+position: absolute;
+bottom: 0px;
+`;
+
+const LabelText = Styled.Text`
+font-size: 18px;
+font-weight: 800;
+line-height: 24px;
+color: #000000;
+`;
+
+const DescripText = Styled.Text`
+margin-top: 16px;
+font-size: 14px;
+font-weight: 400;
+line-height: 24px;
+color: #000000;
+`;
+
+const CancelIconContainer = Styled.View`
+position: absolute;
+top: 0px;
+right: 0px;
+padding-top: 24px;
+padding-right: 24px;
+`;
+
+const CancelIcon = Styled.Image`
+width: ${wp('6.4%')}px;
+height: ${wp('6.4%')}px;
+`;
+
+const DontLookAgainButton = Styled.View`
+margin-top: 17px;
+width: ${wp('82.9%')}px;
+height: ${wp('10.66%')}px;
+border-radius: 100px;
+background-color: #FFFFFF;
+border-width: 1px;
+border-color: #E2E6ED;
+align-items: center;
+justify-content: center;
+`;
+
+const DontLookAgainText = Styled.Text`
+font-weight: 800;
+color: #E2E6ED;
+line-height: 16px;
+font-size: 14px;
+`;
+
+
+const FilterDescripModalBackground = Styled.View`
+background: #000000;
+position: absolute;
+width: ${wp('100%')}px;
+height: ${hp('100%')}px;
+`;
+
 interface Props {
   navigation: any;
   route: any;
@@ -466,6 +542,10 @@ const NearDentalMap = ({navigation, route}: Props) => {
     false,
   );
 
+  const [isVisibleSpecialistDescripModal, setIsVisibleSpecialistDescripModal] = useState<boolean>(false);
+  const [isVisibleGoodDentalDescripModal, setIsVisibleGoodDentalDescripModal] = useState<boolean>(false);
+  const [isVisibleNightCareDescripModal, setIsVisibleNightCareDescripModal] = useState<boolean>(false);
+
   const [isOpenDentalList, setIsOpenDentalList] = useState<boolean>(false);
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState<number>(0);
 
@@ -486,6 +566,13 @@ const NearDentalMap = ({navigation, route}: Props) => {
   const dentalCarouselRef = useRef<any>(null);
   const timeTextInputRef = useRef<any>(null);
   const curCameraLocation = useRef<any>(TEST_COORDINATE);
+
+  const specialistDescripModalY = useRef(new Animated.Value(hp('50%'))).current;
+  const goodDentalDescripModalY = useRef(new Animated.Value(hp('50%'))).current;
+  const nightCareDescripModalY = useRef(new Animated.Value(hp('50%'))).current;
+  const treatmentDateModalY = useRef(new Animated.Value(hp('50%'))).current;
+
+
   const timeFilterActionSheet = createRef<any>();
   const dispatch = useDispatch();
 
@@ -622,15 +709,48 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
   useEffect(() => {
     if(homeDentalFilterType === 'goodDental') {
+      setIsVisibleGoodDentalDescripModal(true);
       dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
       filterScrollViewRef.current.scrollToEnd();
-    } else if(homeDentalFilterType === 'nightCare' || homeDentalFilterType === 'specialist') {
+
+      Animated.spring(goodDentalDescripModalY, {
+        toValue: 0,
+        friction: 17,
+        tension: 68,
+        useNativeDriver: true,
+      }).start();
+
+    } else if(homeDentalFilterType === 'nightCare') {
+      setIsVisibleNightCareDescripModal(true);
+      dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
+      filterScrollViewRef.current.scrollTo({x: 0});
+
+      Animated.spring(nightCareDescripModalY, {
+        toValue: 0,
+        friction: 17,
+        tension: 68,
+        useNativeDriver: true,
+      }).start();
+
+    }  else if(homeDentalFilterType === 'specialist') {
+      setIsVisibleSpecialistDescripModal(true)
+      dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
+      filterScrollViewRef.current.scrollTo({x: 0});
+
+      Animated.spring(specialistDescripModalY, {
+        toValue: 0,
+        friction: 17,
+        tension: 68,
+        useNativeDriver: true,
+      }).start();
+    }
+    else if(homeDentalFilterType === 'open') {
       dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
       filterScrollViewRef.current.scrollTo({x: 0});
     }
 
     getNearDental();
-  }, [specialistFilter, goodDentalFilter, nightCareFilter, homeDentalFilterType])
+  }, [specialistFilter, goodDentalFilter, nightCareFilter, homeDentalFilterType, timeFilter])
 
   async function getAndroidInitialNearDental() {
     const permission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
@@ -1068,6 +1188,13 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
   const clickDayFilter = () => {
     setVisibleDayFilterModal(true);
+
+    Animated.spring(treatmentDateModalY, {
+      toValue: 0,
+      friction: 17,
+      tension: 68,
+      useNativeDriver: true,
+    }).start();
   };
 
   const clickTimeFilter = () => {
@@ -1457,6 +1584,14 @@ const NearDentalMap = ({navigation, route}: Props) => {
   };
 
   const cancelDayFilter = () => {
+
+    
+    Animated.timing(treatmentDateModalY, {
+      toValue: hp('50%'),
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => setVisibleDayFilterModal(false))
+
     console.log('cancelDayFilter selectedDayFilter', selectDayFilterItem);
     console.log('cancelDayFilter dayList', dayList);
     var tmpDayList = dayList;
@@ -1475,8 +1610,6 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
     //setDayFilterList(preDayList);
     dispatch(allActions.dentalFilterActions.setDayList(preDayList));
-    //setSelectedDayFilter(preDayFilterList);
-    setVisibleDayFilterModal(false);
   };
 
   const registerDayFilter = () => {
@@ -1775,6 +1908,54 @@ const NearDentalMap = ({navigation, route}: Props) => {
       dispatch(allActions.dentalFilterActions.setTimeFilter(''));
     }
   };
+
+  const cancelSpecialistDescripModal = () => {
+    Animated.timing(specialistDescripModalY, {
+      toValue: hp('50%'),
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => setIsVisibleSpecialistDescripModal(false))
+  }
+
+  const cancelGoodDentalDescripModal = () => {
+    Animated.timing(goodDentalDescripModalY, {
+      toValue: hp('50%'),
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => setIsVisibleGoodDentalDescripModal(false))
+  }
+
+  const cancelNightCareDescripModal = () => {
+    Animated.timing(nightCareDescripModalY, {
+      toValue: hp('50%'),
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => setIsVisibleNightCareDescripModal(false))
+  }
+
+  const clickDontLookAgainSpecialistFilterDescrip = () => {
+    Animated.timing(specialistDescripModalY, {
+      toValue: hp('50%'),
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => setIsVisibleSpecialistDescripModal(false))
+  }
+
+  const clickDontLookAgainGoodDentalFilterDescrip = () => {
+    Animated.timing(goodDentalDescripModalY, {
+      toValue: hp('50%'),
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => setIsVisibleSpecialistDescripModal(false))
+  }
+
+  const clickDontLookAgainNightCareFilterDescrip = () => {
+    Animated.timing(nightCareDescripModalY, {
+      toValue: hp('50%'),
+      duration: 250,
+      useNativeDriver: true
+    }).start(() => setIsVisibleNightCareDescripModal(false))
+  }
 
   const renderDayFilterItem = ({item, index}: any) => {
     if (index < 7) {
@@ -2132,12 +2313,25 @@ const NearDentalMap = ({navigation, route}: Props) => {
           </LoadingGetNearDentalContainer>
         )}
       </MapContainer>
-      <Modal
-        isVisible={visibleDayFilterModal}
-        style={styles.dayFilterModalView}
-        onBackdropPress={() => cancelDayFilter()}
-        backdropOpacity={0.25}>
-        <DetailFilterModalContainer>
+        <TreatmentDateModal
+        visible={visibleDayFilterModal}
+        transparent={true}
+        animationType={"none"}>
+        <TouchableWithoutFeedback onPress={() => cancelDayFilter()}>
+        <FilterDescripModalBackground
+        as={Animated.View}
+        style={{
+          opacity: treatmentDateModalY.interpolate({
+            inputRange: [0, hp('50%')],
+            outputRange: [0.5, 0],
+            extrapolate: 'clamp'
+          })
+        }}>
+        </FilterDescripModalBackground>
+        </TouchableWithoutFeedback>
+        <DetailFilterModalContainer
+        as={Animated.View}
+        style={{transform: [{translateY: treatmentDateModalY}]}}>
           <DetailFilterHeaderContainer>
             <DetailFilterTitleText>{'방문일자 설정'}</DetailFilterTitleText>
           </DetailFilterHeaderContainer>
@@ -2240,97 +2434,118 @@ const NearDentalMap = ({navigation, route}: Props) => {
             </TouchableWithoutFeedback>
           </DetailFilterFooterContainer>
         </DetailFilterModalContainer>
-      </Modal>
-      <Modal
-        isVisible={visibleTimeFilterModal}
-        style={styles.timeFilterModalView}
-        onBackdropPress={() => cancelTimeFilter()}
-        backdropOpacity={0.25}>
-        <DetailFilterModalContainer>
-          <DetailFilterHeaderContainer>
-            <DetailFilterTitleText>{'방문시간 설정'}</DetailFilterTitleText>
-          </DetailFilterHeaderContainer>
-          <TimeFilterModalContainer>
-            <TimePickerContainer>
-              <Picker
-                itemStyle={{
-                  fontSize: 20,
-                  fontWeight: '700',
-                  lineHeight: 24,
-                  color: '#131F3C',
-                }}
-                style={{width: wp('20%'), height: hp('26%')}}
-                onValueChange={(itemValue, itemIndex) =>
-                  onValueChangeTimeSlotPicker(itemValue, itemIndex)
-                }
-                selectedValue={timeSlotPickerValue}>
-                <Picker.Item label={'오전'} value="오전" />
-                <Picker.Item label={'오후'} value="오후" />
-              </Picker>
-              <Picker
-                itemStyle={{
-                  fontSize: 20,
-                  fontWeight: '700',
-                  lineHeight: 24,
-                  color: '#131F3C',
-                }}
-                selectedValue={hourPickerValue}
-                onValueChange={(itemValue, itemIndex) =>
-                  onValueChangeHourPicker(itemValue, itemIndex)
-                }
-                style={{width: wp('20%'), height: hp('26%')}}>
-                <Picker.Item label={'1'} value="1" />
-                <Picker.Item label={'2'} value="2" />
-                <Picker.Item label={'3'} value="3" />
-                <Picker.Item label={'4'} value="4" />
-                <Picker.Item label={'5'} value="5" />
-                <Picker.Item label={'6'} value="6" />
-                <Picker.Item label={'7'} value="7" />
-                <Picker.Item label={'8'} value="8" />
-                <Picker.Item label={'9'} value="9" />
-                <Picker.Item label={'10'} value="10" />
-                <Picker.Item label={'11'} value="11" />
-                <Picker.Item label={'12'} value="12" />
-              </Picker>
-              <TimePickerLabelText>{':'}</TimePickerLabelText>
-              <Picker
-                itemStyle={{
-                  fontSize: 20,
-                  fontWeight: '700',
-                  lineHeight: 24,
-                  color: '#131F3C',
-                }}
-                style={{width: wp('20%'), height: hp('26%')}}
-                onValueChange={(itemValue, itemIndex) =>
-                  onValueChangeMinutePicker(itemValue, itemIndex)
-                }
-                selectedValue={minutePickerValue}>
-                <Picker.Item label={'00'} value="00" />
-                <Picker.Item label={'15'} value="15" />
-                <Picker.Item label={'30'} value="30" />
-                <Picker.Item label={'45'} value="45" />
-              </Picker>
-            </TimePickerContainer>
-            <DetailFilterFooterContainer>
-              <TouchableWithoutFeedback onPress={() => initializeTimeFilter()}>
-                <InitializeFilterContainer>
-                  <InitializeFilterText>
-                    {'방문시간 초기화'}
-                  </InitializeFilterText>
-                  <InitializeFilterIcon
-                    source={require('~/Assets/Images/Map/ic_initialize.png')}
-                  />
-                </InitializeFilterContainer>
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback onPress={() => registerTimeFilter()}>
-                <RegisterFilterButton>
-                  <RegisterFilterText>{'적용하기'}</RegisterFilterText>
-                </RegisterFilterButton>
-              </TouchableWithoutFeedback>
-            </DetailFilterFooterContainer>
-          </TimeFilterModalContainer>
-        </DetailFilterModalContainer>
-      </Modal>
+      </TreatmentDateModal>
+      <FilterDescripModal
+      visible={isVisibleSpecialistDescripModal}
+      transparent={true}
+      animationType={"none"}>
+        <TouchableWithoutFeedback onPress={() => cancelSpecialistDescripModal()}>
+          <FilterDescripModalBackground
+            as={Animated.View}
+            style={{
+              opacity: specialistDescripModalY.interpolate({
+                inputRange: [0, hp('50%')],
+                outputRange: [0.5, 0],
+                extrapolate: 'clamp',
+              })
+            }}>
+          </FilterDescripModalBackground>
+        </TouchableWithoutFeedback>
+        <FilterDescripModalContainer
+        as={Animated.View}
+        style={{
+          transform: [{translateY: specialistDescripModalY}]
+        }}>
+          <LabelText>{"교정 전문의란?"}</LabelText>
+          <DescripText
+          style={{textAlign: 'center'}}>{"교정 전문의는 치과교정과 전공과정을 이수한 후 보건복지부 주관 교정 전문의 시험을 합격한 의사입니다."}</DescripText>
+          <TouchableWithoutFeedback onPress={() => clickDontLookAgainSpecialistFilterDescrip()}>
+          <DontLookAgainButton>
+            <DontLookAgainText>{"다시 보지 않기"}</DontLookAgainText>
+          </DontLookAgainButton>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => cancelSpecialistDescripModal()}>
+          <CancelIconContainer>
+            <CancelIcon
+            source={require('~/Assets/Images/Modal/ic_cancel.png')}/>
+          </CancelIconContainer>
+          </TouchableWithoutFeedback>
+        </FilterDescripModalContainer>
+      </FilterDescripModal>
+      <FilterDescripModal
+      visible={isVisibleGoodDentalDescripModal}
+      transparent={true}
+      animationType={"none"}>
+        <TouchableWithoutFeedback onPress={() => cancelGoodDentalDescripModal()}>
+          <FilterDescripModalBackground
+            as={Animated.View}
+            style={{
+              opacity: goodDentalDescripModalY.interpolate({
+                inputRange: [0, hp('50%')],
+                outputRange: [0.5, 0],
+                extrapolate: 'clamp',
+              })
+            }}>
+          </FilterDescripModalBackground>
+        </TouchableWithoutFeedback>
+        <FilterDescripModalContainer
+        as={Animated.View}
+        style={{
+          transform: [{translateY: goodDentalDescripModalY}]
+        }}>
+          <LabelText>{"좋은 치과란?"}</LabelText>
+          <DescripText
+          style={{textAlign: 'center'}}>{"좋은치과는 대한치과의사협회의 공식 캠페인 '우리동네 좋은치과 캠페인'에 참여한 병원들 입니다."}</DescripText>
+          <TouchableWithoutFeedback onPress={() => clickDontLookAgainGoodDentalFilterDescrip()}>
+          <DontLookAgainButton>
+            <DontLookAgainText>{"다시 보지 않기"}</DontLookAgainText>
+          </DontLookAgainButton>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => cancelGoodDentalDescripModal()}>
+          <CancelIconContainer>
+            <CancelIcon
+            source={require('~/Assets/Images/Modal/ic_cancel.png')}/>
+          </CancelIconContainer>
+          </TouchableWithoutFeedback>
+        </FilterDescripModalContainer>
+      </FilterDescripModal>
+      <FilterDescripModal
+      visible={isVisibleNightCareDescripModal}
+      transparent={true}
+      animationType={"none"}>
+        <TouchableWithoutFeedback onPress={() => cancelNightCareDescripModal()}>
+          <FilterDescripModalBackground
+            as={Animated.View}
+            style={{
+              opacity: nightCareDescripModalY.interpolate({
+                inputRange: [0, hp('50%')],
+                outputRange: [0.5, 0],
+                extrapolate: 'clamp',
+              })
+            }}>
+          </FilterDescripModalBackground>
+        </TouchableWithoutFeedback>
+        <FilterDescripModalContainer
+        as={Animated.View}
+        style={{
+          transform: [{translateY: nightCareDescripModalY}]
+        }}>
+          <LabelText>{"야간 진료란?"}</LabelText>
+          <DescripText
+          style={{textAlign: 'center'}}>{`야간 진료는 18:00 이후에도 ${'\n'}계속 진료하는 병원을 뜻합니다.`}</DescripText>
+          <TouchableWithoutFeedback onPress={() => clickDontLookAgainNightCareFilterDescrip()}>
+          <DontLookAgainButton>
+            <DontLookAgainText>{"다시 보지 않기"}</DontLookAgainText>
+          </DontLookAgainButton>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => cancelNightCareDescripModal()}>
+          <CancelIconContainer>
+            <CancelIcon
+            source={require('~/Assets/Images/Modal/ic_cancel.png')}/>
+          </CancelIconContainer>
+          </TouchableWithoutFeedback>
+        </FilterDescripModalContainer>
+      </FilterDescripModal>
       <ActionSheet
         ref={timeFilterActionSheet}
         options={['취소', '수정하기', '삭제하기']}
@@ -2410,3 +2625,96 @@ const styles = StyleSheet.create({
 });
 
 export default NearDentalMap;
+
+
+
+// <Modal
+// isVisible={visibleTimeFilterModal}
+// style={styles.timeFilterModalView}
+// onBackdropPress={() => cancelTimeFilter()}
+// backdropOpacity={0.25}>
+// <DetailFilterModalContainer>
+//   <DetailFilterHeaderContainer>
+//     <DetailFilterTitleText>{'방문시간 설정'}</DetailFilterTitleText>
+//   </DetailFilterHeaderContainer>
+//   <TimeFilterModalContainer>
+//     <TimePickerContainer>
+//       <Picker
+//         itemStyle={{
+//           fontSize: 20,
+//           fontWeight: '700',
+//           lineHeight: 24,
+//           color: '#131F3C',
+//         }}
+//         style={{width: wp('20%'), height: hp('26%')}}
+//         onValueChange={(itemValue, itemIndex) =>
+//           onValueChangeTimeSlotPicker(itemValue, itemIndex)
+//         }
+//         selectedValue={timeSlotPickerValue}>
+//         <Picker.Item label={'오전'} value="오전" />
+//         <Picker.Item label={'오후'} value="오후" />
+//       </Picker>
+//       <Picker
+//         itemStyle={{
+//           fontSize: 20,
+//           fontWeight: '700',
+//           lineHeight: 24,
+//           color: '#131F3C',
+//         }}
+//         selectedValue={hourPickerValue}
+//         onValueChange={(itemValue, itemIndex) =>
+//           onValueChangeHourPicker(itemValue, itemIndex)
+//         }
+//         style={{width: wp('20%'), height: hp('26%')}}>
+//         <Picker.Item label={'1'} value="1" />
+//         <Picker.Item label={'2'} value="2" />
+//         <Picker.Item label={'3'} value="3" />
+//         <Picker.Item label={'4'} value="4" />
+//         <Picker.Item label={'5'} value="5" />
+//         <Picker.Item label={'6'} value="6" />
+//         <Picker.Item label={'7'} value="7" />
+//         <Picker.Item label={'8'} value="8" />
+//         <Picker.Item label={'9'} value="9" />
+//         <Picker.Item label={'10'} value="10" />
+//         <Picker.Item label={'11'} value="11" />
+//         <Picker.Item label={'12'} value="12" />
+//       </Picker>
+//       <TimePickerLabelText>{':'}</TimePickerLabelText>
+//       <Picker
+//         itemStyle={{
+//           fontSize: 20,
+//           fontWeight: '700',
+//           lineHeight: 24,
+//           color: '#131F3C',
+//         }}
+//         style={{width: wp('20%'), height: hp('26%')}}
+//         onValueChange={(itemValue, itemIndex) =>
+//           onValueChangeMinutePicker(itemValue, itemIndex)
+//         }
+//         selectedValue={minutePickerValue}>
+//         <Picker.Item label={'00'} value="00" />
+//         <Picker.Item label={'15'} value="15" />
+//         <Picker.Item label={'30'} value="30" />
+//         <Picker.Item label={'45'} value="45" />
+//       </Picker>
+//     </TimePickerContainer>
+//     <DetailFilterFooterContainer>
+//       <TouchableWithoutFeedback onPress={() => initializeTimeFilter()}>
+//         <InitializeFilterContainer>
+//           <InitializeFilterText>
+//             {'방문시간 초기화'}
+//           </InitializeFilterText>
+//           <InitializeFilterIcon
+//             source={require('~/Assets/Images/Map/ic_initialize.png')}
+//           />
+//         </InitializeFilterContainer>
+//       </TouchableWithoutFeedback>
+//       <TouchableWithoutFeedback onPress={() => registerTimeFilter()}>
+//         <RegisterFilterButton>
+//           <RegisterFilterText>{'적용하기'}</RegisterFilterText>
+//         </RegisterFilterButton>
+//       </TouchableWithoutFeedback>
+//     </DetailFilterFooterContainer>
+//   </TimeFilterModalContainer>
+// </DetailFilterModalContainer>
+// </Modal>

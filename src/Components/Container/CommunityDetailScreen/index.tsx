@@ -16,6 +16,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 import ActionSheet from 'react-native-actionsheet';
 // Local Components
@@ -302,6 +303,7 @@ const CommunityDetailScreen = ({navigation, route, key}: Props) => {
   }, [postData]);
 
   const onPressDeletePost = useCallback(() => {
+    ReactNativeHapticFeedback.trigger('notificationWarning');
     Alert.alert('게시글 삭제', '수다방 글을 삭제하시겠습니까?', [
       {
         text: '취소',
