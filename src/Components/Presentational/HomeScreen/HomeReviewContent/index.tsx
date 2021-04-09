@@ -186,8 +186,17 @@ const HomeReviewContent = ({
 }: Props) => {
   const flatlistRef: any = useRef();
 
+  useEffect(() => {
+    if(!initialized) {
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
+      );
+    }
+  }, [reviewData])
+
   const renderPlaceHolder = useCallback(
-    () => (
+    () => {
+      return(
       <PlaceHolderContainerView>
         <PlaceHolderContentView>
           <PlaceHolderImage
@@ -212,14 +221,11 @@ const HomeReviewContent = ({
           </NavigationButtonView>
         </TouchableWithoutFeedback>
       </PlaceHolderContainerView>
-    ),
+    )},
     [],
   );
 
   const renderReviewThumbnail = useCallback(({item}: any) => {
-    LayoutAnimation.configureNext(
-      LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
-    );
     return (
       <ReviewThumbnail review={item} moveToReviewDetail={moveToReviewDetail} />
     );

@@ -25,9 +25,16 @@ background: #FFFFFF;
 const BannerFlatList = Styled.FlatList`
 `;
 
+const BannerContainerView = Styled.View`
+width: ${wp('100%')}px;
+height: ${wp('50%')}px;
+padding: 16px 16px;
+flex: 1;
+`;
+
 const BannerImage = Styled.Image`
 flex: 1;
-width: ${wp('100%')}px;
+width: 100%;
 `;
 
 const IconCellContainerView = Styled.View`
@@ -53,15 +60,14 @@ color: #000000;
 `;
 
 interface Props {
-  navigation: any,
-  route: any,
+  moveToEventDetail: () => void,
   moveToFilteredDentalMap: (filterType: string) => void,
 }
 
 
-const HomeInfoContent = ({moveToFilteredDentalMap}: Props) => {
+const HomeInfoContent = ({moveToEventDetail, moveToFilteredDentalMap}: Props) => {
   const [bannerList, setBannerList] = useState([
-    require('~/Assets/Images/Banner/home_banner.png')
+    require('~/Assets/Images/Home/banner_01.png')
   ])
 
   const [iconCellList, setIconCellList] = useState([
@@ -82,12 +88,15 @@ const HomeInfoContent = ({moveToFilteredDentalMap}: Props) => {
 
   const renderBannerImage = useCallback(({item, index}) => {
     return (
+      <TouchableWithoutFeedback onPress={() => moveToEventDetail()}>
+      <BannerContainerView>
       <BannerImage
-      
-      style={{
-        resizeMode: 'cover'
-      }}
+        style={{
+          resizeMode: 'contain'
+        }}
       source={item}/>
+      </BannerContainerView>
+      </TouchableWithoutFeedback>
     )
   }, []);
 

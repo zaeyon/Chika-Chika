@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react'
 import Styled from 'styled-components/native'
-import {TouchableWithoutFeedback, LayoutAnimation} from 'react-native'
+import {TouchableWithoutFeedback, LayoutAnimation, Platform, UIManager} from 'react-native'
 //
 import HomeContentContainerView from '~/Components/Presentational/HomeScreen/HomeContentContainerView';
 
@@ -166,14 +166,23 @@ interface Props {
     moveToDentalMap: any;
 }
 
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 const HomeOpenedClinicContent = ({initialized, clinics, moveToDentalMap}: Props) => {
 
   const [currentDate, setCurrentDate] = useState(new Date(Date.now()))
 
   useEffect(() => {
-    LayoutAnimation.configureNext(
-      LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
-    );
+    if(!initialized) {
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
+        );
+      }
   }, [clinics]);
 
   const getCurrentTime = useCallback(() => {
@@ -198,7 +207,7 @@ const HomeOpenedClinicContent = ({initialized, clinics, moveToDentalMap}: Props)
         return clinics.map((item: any) => (
           <TouchableWithoutFeedback key={String(item.id)}>
             <LocalClinicItemView>
-              <LocalClinicItemImage />
+              <LocalClinicItemImage source={item.dentalClinicProfileImgs.length ? {uri: item.dentalClinicProfileImgs[0]} : require('~/Assets/Images/Dental/default_clinic.png')}/>
               <LocalClinicContentView>
                 <StatusBadgeView>
                   <StatusBadgeText>
@@ -249,7 +258,7 @@ const HomeOpenedClinicContent = ({initialized, clinics, moveToDentalMap}: Props)
             </LocalClinicItemView>
           </TouchableWithoutFeedback>
         ));
-      })
+      }, [])
 
     return (
         <ContainerView>
@@ -269,4 +278,4 @@ const HomeOpenedClinicContent = ({initialized, clinics, moveToDentalMap}: Props)
     )
 }
 
-export default HomeOpenedClinicContent
+export default React.memo(HomeOpenedClinicContent)
