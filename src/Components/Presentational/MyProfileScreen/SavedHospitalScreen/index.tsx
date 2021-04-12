@@ -165,9 +165,7 @@ const SavedHospitalScreen = ({
       <ContentContainerView>
         <ContentHorizontalView>
           <ContentImage
-            source={{
-              uri: item.dentalClinicProfileImgs[0],
-            }}
+            source={item.dentalClinicProfileImgs.length ? {uri: item.dentalClinicProfileImgs[0]} : require('~/Assets/Images/Dental/default_clinic.png')}
           />
           <ContentDescriptionView>
             <ContentTitleText>{item.originalName}</ContentTitleText>
