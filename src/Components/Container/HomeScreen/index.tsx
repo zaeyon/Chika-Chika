@@ -223,9 +223,8 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   const [defaultHometown, setDefaultHometown] = useState({
     UsersCities: {now: false},
-    emdName: '압구정동',
-    fullCityName: '서울특별시 강남구 압구정동',
-    id: 824,
+    emdName: '역삼동',
+    id: 834,
     sido: '서울특별시',
     sigungu: '강남구',
   });

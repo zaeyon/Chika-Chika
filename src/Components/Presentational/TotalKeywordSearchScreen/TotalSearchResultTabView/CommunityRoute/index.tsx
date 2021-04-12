@@ -112,7 +112,7 @@ const CommunityRoute = ({
       communityType: 'All',
       cityId: String(selectedHometown?.id),
       offset: 0,
-      limit: 10,
+      limit: 20,
       order,
       region,
     };
@@ -122,24 +122,13 @@ const CommunityRoute = ({
         type,
         posts: response,
       };
-      if (
-        postData &&
-        JSON.stringify(response).replace(
-          /"createdDiff\(second\)\"\:\d*\,/gi,
-          '',
-        ) !==
-          JSON.stringify(postData).replace(
-            /"createdDiff\(second\)\"\:\d*\,/gi,
-            '',
-          )
-      ) {
         console.log('liked post diff3');
         LayoutAnimation.configureNext(
           LayoutAnimation.create(300, 'easeInEaseOut', 'opacity'),
         );
 
         dispatch(allActions.communityActions.setPosts(data));
-      }
+      
       setRefreshing(false);
     });
   }, [
@@ -154,7 +143,7 @@ const CommunityRoute = ({
 
   const onEndReached = useCallback(
     (info: any) => {
-      if (isDataFinish || !postData.length || postData.length % limit !== 0) {
+      if (initialize || isDataFinish || !postData.length || postData.length % limit !== 0) {
         return;
       }
       if (!isEndReached) {
@@ -185,6 +174,7 @@ const CommunityRoute = ({
     },
     [
       isEndReached,
+      initialize,
       pageIndex,
       postData,
       order,

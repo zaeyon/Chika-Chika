@@ -1360,8 +1360,6 @@ function BottomTab() {
       ? routeName.state.routes[routeName.state.index].name
       : '';
 
-    console.log('getHomeBottomTabBarVisibility routeName', routeName);
-    console.log('getHomeBottomTabBarVisibility stackRouteName', stackRouteName);
 
     if (
       routeName.name === 'ReviewStackScreen' ||

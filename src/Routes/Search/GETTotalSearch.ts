@@ -19,10 +19,8 @@ interface Params {
 const GETTotalSearch = ({lat='0', long='0', jwtToken, query, pathType, limit, offset, order, region, cityId, isUnified=false, communityType='Question'}: Params) => {
 
     const uri = serverConfig.baseUri + `/search/${pathType}?query=${query}&lat=${lat}&long=${long}&limit=${limit}&offset=${offset}&order=${order}&region=${region}&cityId=${cityId}&unifiedSearch=${String(isUnified)}&communityType=${communityType}`
+    console.log('get total request', uri)
 
-    console.log("GETTotalSearch uri", uri);
-
-    console.log(uri)
     return new Promise((resolve, reject) => {
         axios
         .get(uri, {
