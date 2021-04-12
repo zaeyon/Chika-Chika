@@ -1684,7 +1684,7 @@ const Navigator = () => {
     getUserInfo()
       .then((jwtToken) => {
         console.log('getUserInfo response', jwtToken);
-        if(jwtToken === null) {
+        if(jwtToken !== null) {
           GETUserInfo(jwtToken)
             .then((response: any) => {
               console.log('profile', response);
