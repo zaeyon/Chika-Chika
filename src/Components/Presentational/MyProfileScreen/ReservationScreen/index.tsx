@@ -152,13 +152,33 @@ z-index: 3;
 const DeleteIconImage = Styled.Image`
 `;
 
+const EmptyIndicatorView = Styled.View`
+position: absolute;
+width: 100%;
+height: 100%;
+justify-content: center;
+align-items: center;
+background: #F5F7F9;
+z-index: -1;
+`;
+
+const EmptyIndicatorImage = Styled.Image`
+margin-bottom: 12px;
+`;
+
+const EmptyIndicatorText = Styled.Text`
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+color: #9AA2A9;
+`;
+
 const BannerImage = Styled.Image`
 width: ${wp('100%')}px;
 margin: 8px 0px;
 `;
 
 interface Props {
-  navigation: any;
   reservations: any;
   deleteReservation: (clinicId: string) => void;
   moveToDentalDetail: (dentalId: number) => void;
@@ -167,7 +187,6 @@ interface Props {
 }
 
 const ReservationScreen = ({
-  navigation,
   reservations,
   deleteReservation,
   moveToDentalDetail,
@@ -204,7 +223,7 @@ const ReservationScreen = ({
         </ReservationItemTitleView>
         <TouchableWithoutFeedback>
           <ReservationItemContentView>
-            <ReservationItemImage />
+            <ReservationItemImage source={item.dentalClinicProfileImgs.length ? {uri: item.dentalClinicProfileImgs[0]} : require('~/Assets/Images/Dental/default_clinic.png')}/>
             <ReservationItemDetailView>
               <ReservationItemDateText>
                 {`${item.time.slice(0, -3)} 전화`}
@@ -241,25 +260,24 @@ const ReservationScreen = ({
     );
   }, []);
 
-  const renderListHeader = useCallback(
-    () =>
-      reservations.length === 0 ? (
-        <PlaceholderContent
-          navigation={navigation}
-          title={'아직 병원 예약 내역이 없습니다.'}
-        />
-      ) : null,
-    [navigation, reservations],
-  );
   return (
     <ContainerView>
+      {reservations.length === 0 ? (
+        <>
+          <EmptyIndicatorView>
+            <EmptyIndicatorImage
+              source={require('~/Assets/Images/ic_noData.png')}
+            />
+            <EmptyIndicatorText>{'예약 내역이 없습니다.'}</EmptyIndicatorText>
+          </EmptyIndicatorView>
+        </>
+      ) : (
       <FlatList
         data={reservations}
         keyExtractor={(item) => item.id}
         alwaysBounceVertical={false}
         renderItem={renderReservationItemView}
-        ListHeaderComponent={renderListHeader}
-      />
+      />)}
     </ContainerView>
   );
 };

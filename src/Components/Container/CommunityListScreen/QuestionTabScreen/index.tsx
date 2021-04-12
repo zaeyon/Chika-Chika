@@ -372,7 +372,9 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   }, []);
 
   const moveToBannerDetail = () => {
-    navigation.navigate("ProofImageEventScreen")
+    navigation.navigate("ProofImageEventScreen", {
+      showRedirectButton: true,
+    })
   }
 
   const toggleSocialLike = useCallback(
@@ -435,6 +437,38 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
           order={order}
           moveToHomeTownSetting={moveToHomeTownSetting}
         />
+        {
+          initialize ? <ActivityIndicator style={{
+            marginTop: 100,}}/> : postData.length === 0 ? <EmptyIndicatorContainerView>
+          <EmptyIndicatorView>
+            <EmptyIndicatorImage
+              source={require('~/Assets/Images/ic_noData.png')}
+            />
+            <EmptyIndicatorText>{'게시글이 없습니다.'}</EmptyIndicatorText>
+            <TouchableWithoutFeedback onPress={() => moveToCreatePost()}>
+              <EmptyIndicatorButtonView>
+                <EmptyIndicatorButtonText>
+                  <EmptyIndicatorButtonText style={{color: '#00D1FF'}}>
+                    {'첫번째 질문글'}
+                  </EmptyIndicatorButtonText>
+                  {' 남기러 가기'}
+                </EmptyIndicatorButtonText>
+                <EmptyIndicatorButtonImage
+                  source={require('~/Assets/Images/Arrow/ic_postReviewArrow.png')}
+                />
+              </EmptyIndicatorButtonView>
+            </TouchableWithoutFeedback>
+          </EmptyIndicatorView>
+        </EmptyIndicatorContainerView> : <CarouselContent
+        initialize={initialize}
+            postData={postData}
+            titleText="💬 답변을 기다리는 질문"
+            moveToCommunityDetail={moveToCommunityDetail}
+            moveToAnotherProfile={moveToAnotherProfile}
+          />
+        }
+
+        {/* skeleton
         {initialize || postData.length !== 0 ? <CarouselContent
         initialize={initialize}
             postData={postData}
@@ -463,7 +497,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
               </TouchableWithoutFeedback>
             </EmptyIndicatorView>
           </EmptyIndicatorContainerView>
-        ) }
+        ) } */}
       </>
     );
   }, [profile, postData, order, region, hometown, selectedHometown, initialize]);
@@ -473,7 +507,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
       <CommunityPostList
       ref={listRef}
       tabBarVisible={true}
-        initialize={initialize}
+        initialize={false} // change false to initialize for activate skeleton
         postData={postData}
         refreshing={refreshing}
         onRefresh={onRefresh}
