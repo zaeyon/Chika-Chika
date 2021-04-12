@@ -151,6 +151,15 @@ const deleteSavedHospital = (id) => {
     payload: id,
   };
 };
+
+const setOpenModal = (openModal) => {
+  return {
+    type: 'SET_OPEN_MODAL',
+    payload: openModal
+  }
+}
+
+
 export default {
   setUser,
   logOut,
@@ -174,4 +183,5 @@ export default {
   deleteReservation,
   setSavedHospitals,
   deleteSavedHospital,
+  setOpenModal,
 };

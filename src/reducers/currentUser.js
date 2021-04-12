@@ -10,6 +10,11 @@ const currentUser = (
     savedHospitals: [],
     reservations: [],
     hometown: ['init'],
+    openModalInfo: {
+      isOpenSpecialistDescripModal: true,
+      isOpenNightCareDescripModal: true,
+      isOpenGoodDentalDescripModal: true,
+    }
   },
   action,
 ) => {
@@ -191,6 +196,13 @@ const currentUser = (
         ...state,
         savedHospitals: newSavedHospitals,
       };
+    }
+
+    case 'SET_OPEN_MODAL': {
+      return {
+        ...state,
+        openModalInfo: action.payload,
+      }
     }
     default:
       return state;

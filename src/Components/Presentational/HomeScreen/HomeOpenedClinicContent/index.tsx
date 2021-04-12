@@ -174,7 +174,7 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const HomeOpenedClinicContent = ({initialized, clinics, moveToDentalMap}: Props) => {
+const HomeOpenedClinicContent = ({initialized, clinics, moveToDentalMap, moveToDentalDetail}: Props) => {
 
   const [currentDate, setCurrentDate] = useState(new Date(Date.now()))
 

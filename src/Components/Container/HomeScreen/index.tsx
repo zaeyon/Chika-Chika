@@ -17,7 +17,9 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+
 // import DeviceInfo from 'react-native-device-info';
+
 import {BoxShadow} from 'react-native-shadow';
 import { useScrollToTop } from '@react-navigation/native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
@@ -48,6 +50,7 @@ import GETElderClinics from '~/Routes/Dental/GETElderClinics';
 
 import {hasNotch} from '~/method/deviceInfo';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
+import {getOpenModalInfo} from '~/storage/openModalInfo';
 
 const ContainerView = Styled(
   (SafeAreaView as unknown) as new () => SafeAreaView,
@@ -229,11 +232,23 @@ const HomeScreen = ({navigation, route}: Props) => {
     sido: '서울특별시',
     sigungu: '강남구',
   });
+
   const selectedHometown = useSelector((state: any) => state.currentUser).hometown[0];
 
   const dispatch = useDispatch();
 
   useScrollToTop(listRef);
+
+  useEffect(() => {
+    getOpenModalInfo()
+    .then((response: any) => {
+      console.log("getOpenModalInfo response", response)
+      dispatch(allActions.userActions.setOpenModal(response));
+    })
+    .catch((error: any) => {
+      console.log("getOpenModalInfo error", error);
+    })
+  }, [])
 
   useEffect(() => {
     if (route.params?.isUploadReview) {

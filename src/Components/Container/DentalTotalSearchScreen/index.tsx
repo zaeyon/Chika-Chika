@@ -733,7 +733,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         console.log('filterDental 실행');
         setLoadingSearchDental(false);
         console.log('GETDentalTotalSearch response', response);
-        searchedDentalFlatListRef.current.scrollToIndex({animated: false, index: 0})
+        //searchedDentalFlatListRef.current.scrollToIndex({animated: false, index: 0})
 
         if (response.length > 0) {
           dispatch(
@@ -938,82 +938,241 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   };
 
   const initializeDayFilter = () => {
-    if (selectedDayList.length > 0) {
-      const tmpDayFilter = new Array([]);
+    const tmpDayFilter = new Array([]);
+    const tmpTimeFilter = '';
+  
+    dispatch(allActions.dentalFilterActions.setTimeFilter(''));
+    dispatch(allActions.dentalFilterActions.initializeDayList());
+    dispatch(allActions.dentalFilterActions.setSelectedDayList([]));
 
-      dispatch(allActions.dentalFilterActions.initializeDayList());
-      dispatch(allActions.dentalFilterActions.setSelectedDayList([]));
-
-      if (isNearDentalList.current) {
-        filterNearDental(
-          tmpDayFilter,
-          timeFilter,
-          holidayFilter,
-          parkingFilter,
-          specialistFilter,
-          goodDentalFilter,
-          nightCareFilter,
-        );
-      } else {
-        filterDental(
-          query,
-          tmpDayFilter,
-          timeFilter,
-          holidayFilter,
-          parkingFilter,
-          specialistFilter,
-          goodDentalFilter,
-          nightCareFilter,
-        );
-      }
+    if (isNearDentalList.current) {
+      filterNearDental(
+        tmpDayFilter,
+        tmpTimeFilter,
+        parkingFilter,
+        holidayFilter,
+        specialistFilter,
+        goodDentalFilter,
+        nightCareFilter,
+      );
+    } else {
+      filterDental(
+        searchedKeyword,
+        tmpDayFilter,
+        tmpTimeFilter,
+        parkingFilter,
+        holidayFilter,
+        specialistFilter,
+        goodDentalFilter,
+        nightCareFilter,
+      );
     }
-
-    setVisibleDayFilterModal(false);
+  setVisibleDayFilterModal(false);
   };
 
   const registerDayFilter = () => {
-    var tmpDayList = dayList;
-    var tmpSelectedDayList = new Array();
-    var tmpDayFilter = new Array();
 
-    tmpDayList.forEach((item: any, index: number) => {
-      if (item.selected) {
-        tmpDayFilter.push(item.value);
-        tmpSelectedDayList.push(item);
-      }
-    });
 
-    if (JSON.stringify(tmpDayFilter) !== JSON.stringify(dayFilter)) {
-      dispatch(allActions.dentalFilterActions.setDayFilter(tmpDayFilter));
-      dispatch(allActions.dentalFilterActions.setSelectedDayList(tmpSelectedDayList));
 
-      offsetRef.current = 0;
+    // var tmpDayList = dayList;
+    // var tmpSelectedDayList = new Array();
+    // var tmpDayFilter = new Array();
 
-      if (isNearDentalList.current) {
-        filterNearDental(
-          tmpDayFilter,
-          timeFilter,
-          holidayFilter,
-          parkingFilter,
-          specialistFilter,
-          goodDentalFilter,
-          nightCareFilter
-        );
-      } else {
-        filterDental(
-          query,
-          tmpDayFilter,
-          timeFilter,
-          holidayFilter,
-          parkingFilter,
-          specialistFilter,
-          goodDentalFilter,
-          nightCareFilter
-        );
-      }
-    }
+    // tmpDayList.forEach((item: any, index: number) => {
+    //   if (item.selected) {
+    //     tmpDayFilter.push(item.value);
+    //     tmpSelectedDayList.push(item);
+    //   }
+    // });
+
+    // if (JSON.stringify(tmpDayFilter) !== JSON.stringify(dayFilter)) {
+    //   dispatch(allActions.dentalFilterActions.setDayFilter(tmpDayFilter));
+    //   dispatch(allActions.dentalFilterActions.setSelectedDayList(tmpSelectedDayList));
+
+    //   offsetRef.current = 0;
+
+    //   if (isNearDentalList.current) {
+    //     filterNearDental(
+    //       tmpDayFilter,
+    //       timeFilter,
+    //       holidayFilter,
+    //       parkingFilter,
+    //       specialistFilter,
+    //       goodDentalFilter,
+    //       nightCareFilter
+    //     );
+    //   } else {
+    //     filterDental(
+    //       query,
+    //       tmpDayFilter,
+    //       timeFilter,
+    //       holidayFilter,
+    //       parkingFilter,
+    //       specialistFilter,
+    //       goodDentalFilter,
+    //       nightCareFilter
+    //     );
+    //   }
+    // }
+
+    // setVisibleDayFilterModal(false);
 
     setVisibleDayFilterModal(false);
+
+    if (timeSlotPickerValue === '오전') {
+      const formattedHourPickerValue =
+        hourPickerValue < 10 ? '0' + hourPickerValue : hourPickerValue;
+      const formattedTime =
+        formattedHourPickerValue + ':' + minutePickerValue + ':00';
+
+      var tmpDayList = dayList;
+      var tmpSelectedDayList = new Array();
+      var tmpDayFilter = new Array();
+
+      tmpDayList.forEach((item: any, index: number) => {
+        if (item.selected) {
+          tmpDayFilter.push(item.value);
+          tmpSelectedDayList.push(item);
+        }
+      });
+
+
+        if(JSON.stringify(tmpDayFilter) !== JSON.stringify(dayFilter) || timeFilter !== formattedTime) {
+
+        dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
+        dispatch(allActions.dentalFilterActions.setDayFilter(tmpDayList));
+        dispatch(allActions.dentalFilterActions.setSelectedDayList(tmpSelectedDayList));
+
+        console.log("tmpSelectedDayList", tmpSelectedDayList);
+        if(tmpSelectedDayList.length === 0) {
+          const currentDate = new Date();
+          const weekArray = new Array('sun', 'mon', 'tus', 'wed', 'thu', 'fri', 'sat');
+          
+          if (isNearDentalList.current) {
+            filterNearDental(
+              [weekArray[currentDate.getDay()]],
+              formattedTime,
+              parkingFilter,
+              holidayFilter,
+              specialistFilter,
+              goodDentalFilter,
+              nightCareFilter,
+            );
+          } else {
+            filterDental(
+              searchedKeyword,
+              [weekArray[currentDate.getDay()]],
+              formattedTime,
+              parkingFilter,
+              holidayFilter,
+              specialistFilter,
+              goodDentalFilter,
+              nightCareFilter,
+            );
+          }
+        } else {
+          if (isNearDentalList.current) {
+            filterNearDental(
+              tmpDayFilter,
+              formattedTime,
+              parkingFilter,
+              holidayFilter,
+              specialistFilter,
+              goodDentalFilter,
+              nightCareFilter,
+            );
+          } else {
+            filterDental(
+              searchedKeyword,
+              tmpDayFilter,
+              formattedTime,
+              parkingFilter,
+              holidayFilter,
+              specialistFilter,
+              goodDentalFilter,
+              nightCareFilter,
+            );
+          }
+        }
+        }
+    } else if (timeSlotPickerValue == '오후') {
+
+      const formattedTime =
+        Number(hourPickerValue) + 12 + ':' + minutePickerValue + ':00';
+
+        
+        var tmpDayList = dayList;
+        var tmpSelectedDayList = new Array();
+        var tmpDayFilter = new Array();
+
+        tmpDayList.forEach((item: any, index: number) => {
+          if (item.selected) {
+            tmpDayFilter.push(item.value);
+            tmpSelectedDayList.push(item);
+          }
+        });
+
+      if (JSON.stringify(tmpDayFilter) !== JSON.stringify(dayFilter) || timeFilter !== formattedTime) {
+
+        dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
+        dispatch(allActions.dentalFilterActions.setDayFilter(tmpDayList));
+        dispatch(allActions.dentalFilterActions.setSelectedDayList(tmpSelectedDayList));
+
+        if(tmpSelectedDayList.length === 0) {
+          console.log("tmpSelectedDayList", tmpSelectedDayList);
+          const currentDate = new Date();
+          const weekArray = new Array('sun', 'mon', 'tus', 'wed', 'thu', 'fri', 'sat');
+        
+
+        if (isNearDentalList.current) {
+          filterNearDental(
+            [weekArray[currentDate.getDay()]],
+            formattedTime,
+            parkingFilter,
+            holidayFilter,
+            specialistFilter,
+            goodDentalFilter,
+            nightCareFilter,
+          );
+        } else {
+          filterDental(
+            searchedKeyword,
+            [weekArray[currentDate.getDay()]],
+            formattedTime,
+            parkingFilter,
+            holidayFilter,
+            specialistFilter,
+            goodDentalFilter,
+            nightCareFilter,
+          );
+        }
+      } else {
+        if (isNearDentalList.current) {
+          filterNearDental(
+            tmpDayFilter,
+            formattedTime,
+            parkingFilter,
+            holidayFilter,
+            specialistFilter,
+            goodDentalFilter,
+            nightCareFilter,
+          );
+        } else {
+          filterDental(
+            searchedKeyword,
+            tmpDayFilter,
+            formattedTime,
+            parkingFilter,
+            holidayFilter,
+            specialistFilter,
+            goodDentalFilter,
+            nightCareFilter,
+          );
+        }
+      }
+    }
+  }
+    
   };
 
   const cancelTimeFilter = () => {
@@ -1600,11 +1759,11 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                     style={[
                       {
                         marginLeft: 16,
-                        backgroundColor: '#ffffff',
-                        borderColor: '#131F3C',
+                        backgroundColor: '#00D1FF',
+                        borderColor: '#00D1FF',
                       },
                     ]}>
-                    <FilterItemText style={{color: '#131F3C'}}>
+                    <FilterItemText style={{color: '#ffffff'}}>
                       {selectedDayList[0].day + '요일 ' + timeFilter.slice(0, 5)}
                     </FilterItemText>
                   </FilterItemContainer>
@@ -1616,8 +1775,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                     style={[
                       {
                         marginLeft: 16,
-                        backgroundColor: '#ffffff',
-                        borderColor: '#131F3C',
+                        backgroundColor: '#00D1FF',
+                        borderColor: '#00D1FF',
                       },
                     ]}>
                     {selectedDayList.map((item: any, index: number) => {
@@ -1625,7 +1784,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                         return (
                           <FilterItemText
                             key={index}
-                            style={{color: '#131F3C'}}>
+                            style={{color: '#ffffff'}}>
                             {item.day}
                           </FilterItemText>
                         );
@@ -1633,7 +1792,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                         return (
                           <FilterItemText
                             key={index}
-                            style={{color: '#131F3C'}}>
+                            style={{color: '#ffffff'}}>
                             {', ' + item.day}
                           </FilterItemText>
                         );
@@ -1641,14 +1800,14 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                         return (
                           <FilterItemText
                           key={index}
-                          style={{color: "#131F3C"}}>
+                          style={{color: "#ffffff"}}>
                             {', ' + item.day}
                           </FilterItemText>
                         )
                       }
                     })}
                     <FilterItemText
-                    style={{color: "#131F3C"}}>
+                    style={{color: "#ffffff"}}>
                       {" " + timeFilter.slice(0, 5)}
                     </FilterItemText>
                   </FilterItemContainer>
@@ -1660,11 +1819,11 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                   style={[
                     {
                       marginLeft: 16,
-                      backgroundColor: '#ffffff',
-                      borderColor: '#131F3C',
+                      backgroundColor: '#00D1FF',
+                      borderColor: '#00D1FF',
                     },
                   ]}>
-                  <FilterItemText style={{color: '#131F3C'}}>
+                  <FilterItemText style={{color: '#ffffff'}}>
                     {'오늘 ' + timeFilter.slice(0, 5)}
                   </FilterItemText>
                 </FilterItemContainer>
@@ -1675,12 +1834,12 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                   style={[
                     {marginLeft: 8},
                     specialistFilter === 't' && {
-                      backgroundColor: '#ffffff',
-                      borderColor: '#131F3C',
+                      backgroundColor: '#00D1FF',
+                      borderColor: '#00D1FF',
                     },
                   ]}>
                   <FilterItemText
-                    style={specialistFilter === 't' && {color: '#131F3C'}}>
+                    style={specialistFilter === 't' && {color: '#ffffff'}}>
                     {'교정 전문의'}
                   </FilterItemText>
                 </FilterItemContainer>
@@ -1690,12 +1849,12 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                   style={[
                     {marginLeft: 8},
                     nightCareFilter === 't' && {
-                      backgroundColor: '#ffffff',
-                      borderColor: '#131F3C',
+                      backgroundColor: '#00D1FF',
+                      borderColor: '#00D1FF',
                     },
                   ]}>
                   <FilterItemText
-                    style={nightCareFilter === 't' && {color: '#131F3C'}}>
+                    style={nightCareFilter === 't' && {color: '#ffffff'}}>
                     {'야간 진료'}
                   </FilterItemText>
                 </FilterItemContainer>
@@ -1720,11 +1879,11 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                     style={[
                       {marginLeft: 8},
                       holidayFilter && {
-                        backgroundColor: '#ffffff',
-                        borderColor: '#131F3C',
+                        backgroundColor: '#00D1FF',
+                        borderColor: '#00D1FF',
                       },
                     ]}>
-                    <FilterItemText style={holidayFilter && {color: '#131F3C'}}>
+                    <FilterItemText style={holidayFilter && {color: '#ffffff'}}>
                       {'일요일･공휴일 진료'}
                     </FilterItemText>
                   </FilterItemContainer>
@@ -1734,12 +1893,12 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                   style={[
                     {marginLeft: 8},
                     goodDentalFilter === 't' && {
-                      backgroundColor: '#ffffff',
-                      borderColor: '#131F3C',
+                      backgroundColor: '#00D1FF',
+                      borderColor: '#00D1FF',
                     }
                   ]}>
                   <FilterItemText
-                    style={goodDentalFilter === 't' && {color: '#131F3C'}}>
+                    style={goodDentalFilter === 't' && {color: '#ffffff'}}>
                     {'좋은 치과 캠페인'}
                   </FilterItemText>
                 </FilterItemContainer>
@@ -1749,12 +1908,12 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
                     style={[
                       {marginLeft: 8, marginRight: 16},
                       parkingFilter === 'y' && {
-                        backgroundColor: '#ffffff',
-                        borderColor: '#131F3C',
+                        backgroundColor: '#00D1FF',
+                        borderColor: '#00D1FF',
                       },
                     ]}>
                     <FilterItemText
-                      style={parkingFilter === 'y' && {color: '#131F3C'}}>
+                      style={parkingFilter === 'y' && {color: '#ffffff'}}>
                       {'주차가능'}
                     </FilterItemText>
                   </FilterItemContainer>

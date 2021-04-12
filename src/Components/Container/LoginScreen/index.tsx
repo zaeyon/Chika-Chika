@@ -28,6 +28,7 @@ import {hasNotch, getStatusBarHeight} from '~/method/deviceInfo'
 
 // Async Storage
 import {storeUserInfo} from '~/storage/currentUser';
+import {storeOpenModalInfo} from '~/storage/openModalInfo';
 
 // Local Components
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
@@ -459,7 +460,14 @@ const LoginScreen = ({navigation, route}: Props) => {
             Residences: response.user.userResidences,
           };
 
+          const openModalInfo = {
+            isOpenSpecialistDescripModal: true,
+            isOpenNightCareDescripModal: true,
+            isOpenGoodDentalDescripModal: true,
+          }
+
           storeUserInfo(jwtToken);
+          storeOpenModalInfo(openModalInfo);
           
           dispatch(
             allActions.userActions.setUser({
@@ -512,7 +520,15 @@ const LoginScreen = ({navigation, route}: Props) => {
             Residences: response.user.userResidences,
           };
 
+          const openModalInfo = {
+            isOpenSpecialistDescripModal: true,
+            isOpenNightCareDescripModal: true,
+            isOpenGoodDentalDescripModal: true,
+          }
+
           storeUserInfo(jwtToken);
+          storeOpenModalInfo(openModalInfo);
+          
           dispatch(
             allActions.userActions.setUser({
               jwtToken,
