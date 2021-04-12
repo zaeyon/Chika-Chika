@@ -1,6 +1,6 @@
 import React from 'react';
 import Styled from 'styled-components/native';
-import {ScrollView} from 'react-native';
+import {TouchableWithoutFeedback} from 'react-native';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -8,9 +8,10 @@ import {
 
 // Presentational Components
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
-
+import SafeAreaView from 'react-native-safe-area-view'
 const Container = Styled.View`
 flex: 1;
+background: #FFFFFF;
 `;
 
 const BodyContainer = Styled.ScrollView`
@@ -19,13 +20,12 @@ background-color: #F5F7F9;
 `;
 
 const PosterImage = Styled.Image`
-margin-top: 9px;
 width: ${wp('100%')}px;
 height: ${wp('152%')}px;
 `;
 
 const InfoContainer = Styled.View`
-padding: 16px 16px 80px 16px;
+padding: 16px 16px 100px 16px;
 `;
 
 const InfoHeaderContainer = Styled.View`
@@ -59,9 +59,39 @@ line-height: 16px;
 color: #9AA2A9;
 `;
 
+const FloatingButtonView = Styled.View`
+width: ${wp('100%')}px;
+padding: 16px 0px;
+background: #FFFFFF;
+position: absolute;
+bottom: 0px;
+left: 0px;
+box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
+`;
+
+const FloatingButtonContentView = Styled.View`
+flex-direction: row;
+align-items: center;
+margin: auto;
+`
+const FloatingButtonText = Styled.Text`
+font-style: normal;
+font-weight: bold;
+font-size: 20px;
+color: #1CBFFC;
+`;
+const FloatingButtonImage = Styled.Image`
+margin-left: 8px;
+`;
+
+
 interface Props {
     navigation: any,
-    route: any,
+    route: {
+        params: {
+            showRedirectButton: boolean,
+        }
+    },
 }
 
 const ProofImageEventScreen = ({navigation, route}: Props) => {
@@ -70,9 +100,19 @@ const ProofImageEventScreen = ({navigation, route}: Props) => {
         navigation.goBack();
     }
 
+    const moveToReviewUpload = () => {
+        navigation.navigate('BraceReviewUploadStackScreen', {
+          screen: 'BraceReviewMetaDataScreen',
+          params: {
+            requestType: 'post',
+          },
+        });
+      }
+
     return (
-        <Container>
+        <Container as={SafeAreaView}>
             <NavigationHeader
+            inSafeAreaView={true}
             headerLeftProps={{type: 'arrow', onPress: goBack}}
             headerTitle={"이벤트"}
             />
@@ -102,6 +142,17 @@ const ProofImageEventScreen = ({navigation, route}: Props) => {
                     </InfoDescripContainer>
                 </InfoContainer>
             </BodyContainer>
+            {route.params?.showRedirectButton ? 
+            <TouchableWithoutFeedback onPress={() => moveToReviewUpload()}>
+            <FloatingButtonView>
+                <FloatingButtonContentView>
+                <FloatingButtonText>
+                    {"리뷰쓰고 쿠폰 받으러 갈까요?"}
+                </FloatingButtonText>
+                <FloatingButtonImage source={require('~/Assets/Images/Review/review_bill.png')}/>
+                </FloatingButtonContentView>
+            </FloatingButtonView>
+            </TouchableWithoutFeedback> : null}
         </Container>
     )
 }

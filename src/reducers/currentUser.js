@@ -9,7 +9,7 @@ const currentUser = (
     notificationArray: [],
     savedHospitals: [],
     reservations: [],
-    hometown: [],
+    hometown: ['init'],
   },
   action,
 ) => {

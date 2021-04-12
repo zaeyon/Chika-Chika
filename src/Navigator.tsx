@@ -430,6 +430,13 @@ function HomeStackScreen() {
         }}
       />
       <HomeStack.Screen
+        name="ProofImageEventScreen"
+        component={ProofImageEventScreen}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <HomeStack.Screen
         name="TotalKeywordSearchStackScreen"
         component={TotalKeywordSearchStackScreen}
         options={() => ({
@@ -459,9 +466,6 @@ function HomeStackScreen() {
       <HomeStack.Screen
         name='DentalDetailScreen'
         component={DentalDetailScreen}/>
-      <HomeStack.Screen
-        name="ProofImageEventScreen"
-        component={ProofImageEventScreen}/>
     </HomeStack.Navigator>
   );
 }
@@ -1543,7 +1547,7 @@ function BottomTab() {
   };
   return (
     <Tab.Navigator
-      lazy={true}
+
       initialRouteName="홈"
       tabBarOptions={{
         style: styles.tabBar,

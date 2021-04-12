@@ -1,6 +1,11 @@
-import React, {useCallback, useEffect} from 'react'
-import Styled from 'styled-components/native'
-import {TouchableWithoutFeedback, LayoutAnimation} from 'react-native'
+import React, {useCallback, useEffect} from 'react';
+import Styled from 'styled-components/native';
+import {
+  TouchableWithoutFeedback,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from 'react-native';
 //
 import HomeContentContainerView from '~/Components/Presentational/HomeScreen/HomeContentContainerView';
 
@@ -97,10 +102,7 @@ font-weight: normal;
 font-size: 13px;
 line-height: 24px;
 color: #9AA2A9;
-margin-top: 4px;
-`
-;
-
+`;
 const LocalClinicItemTextSkeletonView = Styled.View`
 width: 80px;
 height: 13px;
@@ -164,111 +166,160 @@ color: #131F3C;
 text-align: center;
 `;
 
+const ReviewStatusView = Styled.View`
+flex-direction: row;
+align-items: center;
+`;
+
+const ReviewStatusPartitionView = Styled.View`
+width: 1px;
+margin: 0px 4px;
+height: 8px;
+background: #E2E6ED;
+`;
+
+const RecommendImage = Styled.Image``;
+
 interface Props {
-    initialized: boolean;
-    clinics: any;
-    moveToDetailMap: any;
-    moveToDentalDetail: (dentalId: number) => void,
+  initialized: boolean;
+  clinics: any;
+  moveToDetailMap: any;
 }
 
-const HomeElderClinicContent = ({initialized, clinics, moveToDetailMap, moveToDentalDetail}: Props) => {
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
+const HomeElderClinicContent = ({
+  initialized,
+  clinics,
+  moveToDetailMap,
+}: Props) => {
   useEffect(() => {
-    LayoutAnimation.configureNext(
-      LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
-    );
-  }, [clinics])
+    if (!initialized) {
+      LayoutAnimation.configureNext(
+        LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
+      );
+    }
+  }, [clinics]);
 
-  const renderPlaceHolder = useCallback(() => (
-    <PlaceHolderContainerView>
-      <PlaceHolderContentView>
-        <PlaceHolderImage source={require('~/Assets/Images/Home/메인/ic_review_empty.png')}/>
-        <PlaceHolderText>
-          {"우리동네에 5년이상\n된 치과가 없네요"}
-        </PlaceHolderText>
+  const renderPlaceHolder = useCallback(
+    () => (
+      <PlaceHolderContainerView>
+        <PlaceHolderContentView>
+          <PlaceHolderImage
+            source={require('~/Assets/Images/Home/메인/ic_review_empty.png')}
+          />
+          <PlaceHolderText>
+            {'우리동네에 5년이상\n된 치과가 없네요'}
+          </PlaceHolderText>
         </PlaceHolderContentView>
-      </PlaceHolderContainerView> 
-  ), []);
+      </PlaceHolderContainerView>
+    ),
+    [],
+  );
 
-    const renderLocalClinicItemSkeleton = useCallback(() => {
-      return (
-        [0, 1, 2, 3].map((item) => (
-        <LocalClinicItemView key={String(item)}>
-          <LocalClinicItemImage />
-              <LocalClinicContentView>
-                <LocalClinicItemTitleText style={{
-                  backgroundColor: '#F5F7F9',
-                  color: '#F5F7F9',
-                  marginRight: 'auto',
-                }}>
-                  {"치카치카치카병원"}
-                </LocalClinicItemTitleText>
-                <LocalClinicItemText style={{
-                  backgroundColor: '#F5F7F9',
-                  color: '#F5F7F9',
-                  marginRight: 'auto',
-                }}>
-                  {"리뷰 13개"}
+  const renderLocalClinicItemSkeleton = useCallback(() => {
+    return [0, 1, 2, 3].map((item) => (
+      <LocalClinicItemView key={String(item)}>
+        <LocalClinicItemImage />
+        <LocalClinicContentView>
+          <LocalClinicItemTitleText
+            style={{
+              backgroundColor: '#F5F7F9',
+              color: '#F5F7F9',
+              marginRight: 'auto',
+            }}>
+            {'치카치카치카병원'}
+          </LocalClinicItemTitleText>
+          <LocalClinicItemText
+            style={{
+              backgroundColor: '#F5F7F9',
+              color: '#F5F7F9',
+              marginRight: 'auto',
+            }}>
+            {'리뷰 13개'}
+          </LocalClinicItemText>
+        </LocalClinicContentView>
+      </LocalClinicItemView>
+    ));
+  }, []);
+
+  const renderLocalClinicItem = useCallback(() => {
+    return clinics.slice(0, 4).map((item: any) => (
+      <TouchableWithoutFeedback key={String(item.id)}>
+        <LocalClinicItemView>
+          <LocalClinicItemImage source={item.dentalClinicProfileImgs.length ? {uri: item.dentalClinicProfileImgs[0]} : require('~/Assets/Images/Dental/default_clinic.png')}/>
+          <LocalClinicContentView>
+            <LocalClinicItemTitleText>
+              {item.originalName}
+            </LocalClinicItemTitleText>
+
+            {item.reviewNum ? (
+              <ReviewStatusView>
+                <RecommendImage
+                  source={require('~/Assets/Images/Dental/ic_recommend.png')}
+                />
+                <LocalClinicItemText
+                  style={{
+                    color: '#00D1FF',
+                  }}>{`추천 ${item.recommendNum}`}
                 </LocalClinicItemText>
-              </LocalClinicContentView>
-            </LocalClinicItemView>
-            ))
-      )
-    }, [])
-
-    const renderLocalClinicItem = useCallback(() => {
-        return clinics.slice(0, 4).map((item: any) => (
-          <TouchableWithoutFeedback key={String(item.id)} onPress={() => moveToDentalDetail(item.id)}>
-            <LocalClinicItemView>
-              <LocalClinicItemImage />
-              <LocalClinicContentView>
-                <LocalClinicItemTitleText>
-                  {item.originalName}
-                </LocalClinicItemTitleText>
+                <ReviewStatusPartitionView/>
                 <LocalClinicItemText>
-                  {item.reviewAVGStarRate
-                    ? `리뷰 ${item.reviewAVGStarRate}(${item.reviewNum})`
-                    : '리뷰가 아직 없어요.'}
+                  {`리뷰 ${item.reviewNum}`}
                 </LocalClinicItemText>
-                <LocalClinicItemTagContainerView>
-                  {item.dentalTransparent ? (
-                    <LocalClinicItemTagView>
-                      <LocalClinicItemTagText>
-                        {`우리동네 좋은 치과`}
-                      </LocalClinicItemTagText>
-                    </LocalClinicItemTagView>
-                  ) : null}
-                  {item.surgeonNum > 0 ? (
-                    <LocalClinicItemTagView>
-                      <LocalClinicItemTagText>
-                        {`전문의 ${item.surgeonNum}명`}
-                      </LocalClinicItemTagText>
-                    </LocalClinicItemTagView>
-                  ) : null}
-                </LocalClinicItemTagContainerView>
-              </LocalClinicContentView>
-            </LocalClinicItemView>
-          </TouchableWithoutFeedback>
-        ));
-      }, [clinics]);
+              </ReviewStatusView>
+            ) : (
+              <LocalClinicItemText>{'리뷰가 아직 없어요.'}</LocalClinicItemText>
+            )}
+            <LocalClinicItemTagContainerView>
+              {item.dentalTransparent ? (
+                <LocalClinicItemTagView>
+                  <LocalClinicItemTagText>
+                    {`우리동네 좋은 치과`}
+                  </LocalClinicItemTagText>
+                </LocalClinicItemTagView>
+              ) : null}
+              {item.surgeonNum > 0 ? (
+                <LocalClinicItemTagView>
+                  <LocalClinicItemTagText>
+                    {`전문의 ${item.surgeonNum}명`}
+                  </LocalClinicItemTagText>
+                </LocalClinicItemTagView>
+              ) : null}
+            </LocalClinicItemTagContainerView>
+          </LocalClinicContentView>
+        </LocalClinicItemView>
+      </TouchableWithoutFeedback>
+    ));
+  }, [clinics]);
 
-      return (
-        <ContainerView>
-          <ContainerHeaderView>
-          <ContainerTitleText>
-            {"개업한지 10년이상된 치과"}
-          </ContainerTitleText>
-          </ContainerHeaderView>
-          {initialized && !clinics.length ? renderPlaceHolder() :
-          <HomeContentContainerView
-            renderContentItem={initialized ? renderLocalClinicItem : renderLocalClinicItemSkeleton}
-            onPress={() => moveToDetailMap({
-              title: "개업한지 10년이상된 치과",
+  return (
+    <ContainerView>
+      <ContainerHeaderView>
+        <ContainerTitleText>{'개업한지 10년이상된 치과'}</ContainerTitleText>
+      </ContainerHeaderView>
+      {initialized && !clinics.length ? (
+        renderPlaceHolder()
+      ) : (
+        <HomeContentContainerView
+          renderContentItem={
+            initialized ? renderLocalClinicItem : renderLocalClinicItemSkeleton
+          }
+          onPress={() =>
+            moveToDetailMap({
+              title: '개업한지 10년이상된 치과',
               clinics,
-            })}
-          />}
-        </ContainerView>
-    )
-}
+            })
+          }
+        />
+      )}
+    </ContainerView>
+  );
+};
 
-export default HomeElderClinicContent
+export default React.memo(HomeElderClinicContent);

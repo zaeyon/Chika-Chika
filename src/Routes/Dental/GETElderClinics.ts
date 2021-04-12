@@ -12,7 +12,7 @@ interface Props {
     sort?: String;
 }
 
-const GETElderClinics = ({jwtToken, limit, offset, lat, long, cityId, sort='d'}: Props) => {
+const GETElderClinics = ({jwtToken, limit, offset, lat, long, cityId, sort='a'}: Props) => {
 
     const uri = serverConfig.baseUri + `/clinic/old?cityId=${cityId}&lat=${lat}&long=${long}&sort=${sort}&limit=${limit}&offset=${offset}`
     console.log('GETElderClinics uri: ', uri);

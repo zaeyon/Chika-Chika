@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   Platform,
+  UIManager,
   TouchableWithoutFeedback,
   LayoutAnimation,
   PermissionsAndroid,
@@ -18,6 +19,7 @@ import {
 } from 'react-native-responsive-screen';
 // import DeviceInfo from 'react-native-device-info';
 import {BoxShadow} from 'react-native-shadow';
+import { useScrollToTop } from '@react-navigation/native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import Geolocation from 'react-native-geolocation-service';
 
@@ -187,6 +189,13 @@ interface ReviewData {
   data: any;
 }
 
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 const HomeScreen = ({navigation, route}: Props) => {
   const [onMessage, setOnMessage] = useState(false);
   const alertScale = useRef(new Animated.Value(0)).current;
@@ -208,6 +217,7 @@ const HomeScreen = ({navigation, route}: Props) => {
   const [prevOffsetY, setPrevOffsetY] = useState(0);
   const [scrollDirection, setScrollDirection] = useState('up');
   const floatY = useRef(new Animated.Value(0)).current;
+  const listRef = useRef(null);
 
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
 
@@ -223,6 +233,8 @@ const HomeScreen = ({navigation, route}: Props) => {
 
   const dispatch = useDispatch();
 
+  useScrollToTop(listRef);
+
   useEffect(() => {
     if (route.params?.isUploadReview) {
       ToastMessage.show('리뷰작성이 완료되었습니다!');
@@ -230,7 +242,7 @@ const HomeScreen = ({navigation, route}: Props) => {
   }, [route.params?.isUploadReview]);
 
   useEffect(() => {
-    if (selectedHometown) {
+    if (selectedHometown !== 'init') {
       fetchRecentReviews(selectedHometown || defaultHometown);
       Platform.select({
         ios: () => getIosLocation(handlerLocationRequest),
@@ -426,10 +438,8 @@ const HomeScreen = ({navigation, route}: Props) => {
         isUnified: false,
       };
       GETTotalSearch(form).then((response: any) => {
-        setIsReviewInitialized((prev) => {
-          setReviewData(response);
-          return true;
-        });
+        setReviewData(response);
+        setIsReviewInitialized(true);
       });
     },
     [jwtToken],
@@ -441,6 +451,7 @@ const HomeScreen = ({navigation, route}: Props) => {
       const currentDate = new Date(Date.now());
       const form = {
         jwtToken,
+        cityName: selectedHometown ? `${selectedHometown.sigungu} ${selectedHometown.emdName}` : `${defaultHometown.sigungu} ${defaultHometown.emdName}`,
         nightCareFilter: 'f',
         specialistFilter: 'f',
         goodDentalFilter: 'f',
@@ -459,12 +470,11 @@ const HomeScreen = ({navigation, route}: Props) => {
         mapLong: currentLocation.long,
       };
       GETAroundDental(form).then((response: any) => {
-        console.log(response);
         setOpenedClinicData(response);
         setIsOpenedClinicInitialized(true);
       });
     },
-    [jwtToken],
+    [jwtToken, selectedHometown, defaultHometown],
   );
 
   const fetchElderClinics = useCallback(
@@ -480,6 +490,7 @@ const HomeScreen = ({navigation, route}: Props) => {
       GETElderClinics(form).then((response: any) => {
         setElderClinicData(response);
         setIsElderClinicInitialized(true);
+        setRefreshing(false);
       });
     },
     [jwtToken],
@@ -490,14 +501,11 @@ const HomeScreen = ({navigation, route}: Props) => {
       fetchOpenedClinics(currentLocation);
       fetchElderClinics(selectedHometown || defaultHometown, currentLocation);
     },
-    [fetchOpenedClinics, fetchElderClinics],
+    [fetchOpenedClinics, fetchElderClinics, selectedHometown, defaultHometown],
   );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchLocalInfo(selectedHometown || defaultHometown, () =>
-      setRefreshing(false),
-    );
     fetchRecentReviews(selectedHometown || defaultHometown);
     Platform.select({
       ios: () => getIosLocation(handlerLocationRequest),
@@ -567,6 +575,12 @@ const HomeScreen = ({navigation, route}: Props) => {
     });
   }, [selectedHometown]);
 
+  const moveToEventDetail = useCallback(() => {
+    navigation.navigate('ProofImageEventScreen', {
+      showRedirectButton: true,
+    })
+  }, [])
+  
   const moveToDentalMap = useCallback(() => {
     // 시간 설정과 같이 지도 탭으로 이동.
   }, []);
@@ -643,6 +657,7 @@ const HomeScreen = ({navigation, route}: Props) => {
         </HeaderIconContainerView>
       </HeaderContainerView>
       <ContentScrollView
+        ref={listRef}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -686,9 +701,7 @@ const HomeScreen = ({navigation, route}: Props) => {
             }
           }
         }}>
-        <HomeInfoContent 
-        moveToFilteredDentalMap={moveToFilteredDentalMap}
-        moveToBannerDetail={moveToBannerDetail}/>
+        <HomeInfoContent moveToEventDetail={moveToEventDetail} moveToFilteredDentalMap={moveToFilteredDentalMap} />
         <BodyContainerView>
           <LocationContainerView>
             <LocationImage

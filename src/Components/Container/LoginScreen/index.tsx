@@ -3,6 +3,7 @@ import Styled from 'styled-components/native';
 import {
   Text,
   TouchableWithoutFeedback,
+  TouchableOpacity,
   StyleSheet,
   Alert,
   ActivityIndicator,
@@ -21,6 +22,7 @@ import {
 } from 'react-native-responsive-screen';
 import messaging from '@react-native-firebase/messaging';
 import AboveKeyboard from 'react-native-above-keyboard';
+import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 //import DeviceInfo from 'react-native-device-info';
 import {hasNotch, getStatusBarHeight} from '~/method/deviceInfo'
 
@@ -82,7 +84,7 @@ font-weight: 700;
 line-height: 24px;
 `;
 
-const VerifyTextContainer = Styled.View`
+const VerifyTextContainer = Styled.TouchableOpacity`
 height: 50px;
 position: absolute;
 left: ${wp('73.46%')}px;
@@ -418,6 +420,7 @@ const LoginScreen = ({navigation, route}: Props) => {
   };
 
   const clickSendAuthCode = () => {
+    
     if (formattedNumber.length === 13) {
       setInvalidPhoneNumber(false);
       clearInterval(timeout);
@@ -435,37 +438,40 @@ const LoginScreen = ({navigation, route}: Props) => {
       POSTSendTokenToPhone(String(phoneNumber))
         .then(function (response: any) {
           console.log('POSTSendTokenToPhone response', response);
-
+          if(visibleAuthCodeInput){
+          Alert.alert('인증번호를 발송하였습니다.')
+          ReactNativeHapticFeedback.trigger('notificationSuccess');
+          }
           setIsUser(response.exist);
       
-          // if(phoneNumber === '01093664131') {
+          if(phoneNumber === '01093664131') {
 
-          // const jwtToken = response.token;
-          // const profile = {
-          //   phoneNumber: phoneNumber,
-          //   id: response.user.userId,
-          //   nickname: response.user.userNickname,
-          //   profileImg: response.user.userProfileImg,
-          //   img_thumbNail: response.user.img_thumbNail,
-          //   gender: response.user.userGender,
-          //   birthdate: response.user.userBirthdate,
-          //   provider: response.user.userProvider,
-          //   Residences: response.user.userResidences,
-          // };
+          const jwtToken = response.token;
+          const profile = {
+            phoneNumber: phoneNumber,
+            id: response.user.userId,
+            nickname: response.user.userNickname,
+            profileImg: response.user.userProfileImg,
+            img_thumbNail: response.user.img_thumbNail,
+            gender: response.user.userGender,
+            birthdate: response.user.userBirthdate,
+            provider: response.user.userProvider,
+            Residences: response.user.userResidences,
+          };
 
-          // storeUserInfo(jwtToken);
+          storeUserInfo(jwtToken);
           
-          // dispatch(
-          //   allActions.userActions.setUser({
-          //     jwtToken,
-          //     profile,
-          //   }),
-          // );
+          dispatch(
+            allActions.userActions.setUser({
+              jwtToken,
+              profile,
+            }),
+          );
 
-          // dispatch(
-          //   allActions.userActions.setHometown(response.user.userResidences),
-          // );
-          // }
+          dispatch(
+            allActions.userActions.setHometown(response.user.userResidences),
+          );
+          }
 
         })
         .catch(function (error) {
@@ -475,6 +481,7 @@ const LoginScreen = ({navigation, route}: Props) => {
       setInvalidPhoneNumber(true);
       clearInterval(timeout);
       Alert.alert('올바른 전화번호를 입력하세요!');
+      ReactNativeHapticFeedback.trigger('notificationSuccess');
     }
   };
 
@@ -568,8 +575,8 @@ const LoginScreen = ({navigation, route}: Props) => {
             onChangeText={(text) => onChangeTextNumberInput(text)}
             //onKeyPress={(event) => onKeyPressNumberInput(event)}
           />
-          <TouchableWithoutFeedback onPress={() => clickSendAuthCode()}>
             <VerifyTextContainer
+            onPress={() => clickSendAuthCode()}
               style={
                 visibleAuthCodeInput ? {paddingLeft: 10} : {paddingLeft: 20}
               }>
@@ -578,7 +585,6 @@ const LoginScreen = ({navigation, route}: Props) => {
                 {visibleAuthCodeInput ? '재전송' : '인증'}
               </VerifyText>
             </VerifyTextContainer>
-          </TouchableWithoutFeedback>
         </ItemContainer>
         {visibleAuthCodeInput && (
           <ItemContainer style={{marginTop: 16}}>

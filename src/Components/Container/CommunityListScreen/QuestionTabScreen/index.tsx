@@ -113,6 +113,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   const profile = useSelector((state: any) => state.currentUser.profile);
   const hometown = useSelector((state: any) => state.currentUser.hometown);
 
+  const listRef = useRef();
   const postData = useSelector(
     (state: any) => state.communityPostList.QuestionPosts,
   );
@@ -470,6 +471,7 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   return (
     <ContainerView>
       <CommunityPostList
+      ref={listRef}
       tabBarVisible={true}
         initialize={initialize}
         postData={postData}

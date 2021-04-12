@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import Styled from 'styled-components/native';
-import {LayoutAnimation} from 'react-native';
+import {LayoutAnimation, Platform, UIManager} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -47,6 +47,13 @@ interface Form {
   limit: number;
   offset: number;
   order: string;
+}
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
 const AnotherProfileScreen = ({navigation, route}: Props) => {

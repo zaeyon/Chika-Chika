@@ -4,7 +4,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {LayoutAnimation} from 'react-native';
 
 // Local Component
 import PostCardItem from '~/Components/Presentational/PostCardItem';

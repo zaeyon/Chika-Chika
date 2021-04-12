@@ -3,6 +3,7 @@ import serverConfig from '../server.config';
 
 interface params {
     jwtToken: string,
+    cityName?: string,
     limit: number,
     offset: number,
     lat: number,
@@ -19,7 +20,7 @@ interface params {
     mapLong: number,
 }
 
-const GETAroundDental = ({jwtToken, limit, offset, lat, long, sort, timeFilter, dayFilter, holidayFilter, parkingFilter, specialistFilter, goodDentalFilter, nightCareFilter, mapLat, mapLong}: params) => {
+const GETAroundDental = ({jwtToken, cityName='', limit, offset, lat, long, sort, timeFilter, dayFilter, holidayFilter, parkingFilter, specialistFilter, goodDentalFilter, nightCareFilter, mapLat, mapLong}: params) => {
 
     console.log("GETAroundDental lat", lat);
     console.log("GETAroundDental long", long);
@@ -48,7 +49,7 @@ const GETAroundDental = ({jwtToken, limit, offset, lat, long, sort, timeFilter, 
     console.log("GETAroundDental maplat", mapLat);
     console.log("GETAroundDental maplong", mapLong);
 
-    const uri = serverConfig.baseUri + `/around/clinics?lat=${lat}&long=${long}&wantParking=${parkingFilter}&sort=${sort}&days=${dayFilter}&time=${timeFilter}&holiday=${holidayFilter}&night=${nightCareFilter}&surgeon=${specialistFilter}&transparent=${goodDentalFilter}&limit=${limit}&offset=${offset}&maplat=${mapLat}&maplong=${mapLong}`;
+    const uri = serverConfig.baseUri + `/around/clinics?cityName=${cityName}&lat=${lat}&long=${long}&wantParking=${parkingFilter}&sort=${sort}&days=${dayFilter}&time=${timeFilter}&holiday=${holidayFilter}&night=${nightCareFilter}&surgeon=${specialistFilter}&transparent=${goodDentalFilter}&limit=${limit}&offset=${offset}&maplat=${mapLat}&maplong=${mapLong}`;
 
     console.log("GETAroundDental uri", uri);
 
