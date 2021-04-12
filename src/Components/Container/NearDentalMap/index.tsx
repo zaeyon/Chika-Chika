@@ -1612,7 +1612,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
     
     Animated.timing(treatmentDateModalY, {
       toValue: hp('50%'),
-      duration: 250,
+      duration: 100,
       useNativeDriver: true,
     }).start(() => setVisibleDayFilterModal(false))
 
