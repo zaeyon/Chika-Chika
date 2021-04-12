@@ -2,13 +2,13 @@ import React from 'react';
 import Styled from 'styled-components/native';
 import {TouchableWithoutFeedback} from 'react-native';
 import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
 // Presentational Components
 import NavigationHeader from '~/Components/Presentational/NavigationHeader';
-import SafeAreaView from 'react-native-safe-area-view'
+import SafeAreaView from 'react-native-safe-area-view';
 const Container = Styled.View`
 flex: 1;
 background: #FFFFFF;
@@ -73,7 +73,7 @@ const FloatingButtonContentView = Styled.View`
 flex-direction: row;
 align-items: center;
 margin: auto;
-`
+`;
 const FloatingButtonText = Styled.Text`
 font-style: normal;
 font-weight: bold;
@@ -84,77 +84,82 @@ const FloatingButtonImage = Styled.Image`
 margin-left: 8px;
 `;
 
-
 interface Props {
-    navigation: any,
-    route: {
-        params: {
-            showRedirectButton: boolean,
-        }
-    },
+  navigation: any;
+  route: {
+    params: {
+      showRedirectButton: boolean;
+    };
+  };
 }
 
 const ProofImageEventScreen = ({navigation, route}: Props) => {
+  const goBack = () => {
+    navigation.goBack();
+  };
 
-    const goBack = () => {
-        navigation.goBack();
-    }
+  const moveToReviewUpload = () => {
+    navigation.navigate('BraceReviewUploadStackScreen', {
+      screen: 'BraceReviewMetaDataScreen',
+      params: {
+        requestType: 'post',
+      },
+    });
+  };
 
-    const moveToReviewUpload = () => {
-        navigation.navigate('BraceReviewUploadStackScreen', {
-          screen: 'BraceReviewMetaDataScreen',
-          params: {
-            requestType: 'post',
-          },
-        });
-      }
-
-    return (
-        <Container as={SafeAreaView}>
-            <NavigationHeader
-            inSafeAreaView={true}
-            headerLeftProps={{type: 'arrow', onPress: goBack}}
-            headerTitle={"이벤트"}
-            />
-            <BodyContainer
-            showsVerticalScrollIndicator={false}>
-                <PosterImage
-                source={require('~/Assets/Images/Poster/poster_proofEvent.png')}/>
-                <InfoContainer>
-                    <InfoHeaderContainer>
-                        <InfoIcon
-                        source={require('~/Assets/Images/Mark/ic_info.png')}
-                        />
-                        <InfoLabelText>{"안내사항"}</InfoLabelText>
-                    </InfoHeaderContainer>
-                    <InfoDescripContainer>
-                        <InfoDescripText>
-                            {"1인이 여러 병･의원에 대해 횟수 제한 없이 이벤트에 참여할 수 있습니다. 단 동일 병･의원에 대한 리뷰는 상품 중복 지급이 불가합니다."}
-                        </InfoDescripText>
-                        <InfoDescripText
-                        style={{marginTop: 16}}>
-                            {"상품은 작성해주신 리뷰 검수 후, 7일(영업일 기준) 이내에 문자로 발송드립니다."}
-                        </InfoDescripText>
-                        <InfoDescripText
-                        style={{marginTop: 16}}>
-                            {"본 이벤트는 당사의 사정에 따라 사전고지 없이 변경 또는 종료될 수 있습니다."}
-                        </InfoDescripText>
-                    </InfoDescripContainer>
-                </InfoContainer>
-            </BodyContainer>
-            {route.params?.showRedirectButton ? 
-            <TouchableWithoutFeedback onPress={() => moveToReviewUpload()}>
-            <FloatingButtonView>
-                <FloatingButtonContentView>
-                <FloatingButtonText>
-                    {"리뷰쓰고 쿠폰 받으러 갈까요?"}
-                </FloatingButtonText>
-                <FloatingButtonImage source={require('~/Assets/Images/Review/review_bill.png')}/>
-                </FloatingButtonContentView>
-            </FloatingButtonView>
-            </TouchableWithoutFeedback> : null}
-        </Container>
-    )
-}
+  return (
+    <Container as={SafeAreaView}>
+      <NavigationHeader
+        inSafeAreaView={true}
+        headerLeftProps={{type: 'arrow', onPress: goBack}}
+        headerTitle={'이벤트'}
+      />
+      <BodyContainer showsVerticalScrollIndicator={false}>
+        <PosterImage
+          source={require('~/Assets/Images/Poster/poster_proofEvent.png')}
+        />
+        <InfoContainer style={{
+            paddingBottom: route.params?.showRedirectButton ? 100 : 50
+        }}>
+          <InfoHeaderContainer>
+            <InfoIcon source={require('~/Assets/Images/Mark/ic_info.png')} />
+            <InfoLabelText>{'안내사항'}</InfoLabelText>
+          </InfoHeaderContainer>
+          <InfoDescripContainer>
+            <InfoDescripText>
+              {
+                '1인이 여러 병･의원에 대해 횟수 제한 없이 이벤트에 참여할 수 있습니다. 단 동일 병･의원에 대한 리뷰는 상품 중복 지급이 불가합니다.'
+              }
+            </InfoDescripText>
+            <InfoDescripText style={{marginTop: 16}}>
+              {
+                '상품은 작성해주신 리뷰 검수 후, 7일(영업일 기준) 이내에 문자로 발송드립니다.'
+              }
+            </InfoDescripText>
+            <InfoDescripText style={{marginTop: 16}}>
+              {
+                '본 이벤트는 당사의 사정에 따라 사전고지 없이 변경 또는 종료될 수 있습니다.'
+              }
+            </InfoDescripText>
+          </InfoDescripContainer>
+        </InfoContainer>
+      </BodyContainer>
+      {route.params?.showRedirectButton ? (
+        <TouchableWithoutFeedback onPress={() => moveToReviewUpload()}>
+          <FloatingButtonView>
+            <FloatingButtonContentView>
+              <FloatingButtonText>
+                {'리뷰쓰고 쿠폰 받으러 갈까요?'}
+              </FloatingButtonText>
+              <FloatingButtonImage
+                source={require('~/Assets/Images/Review/review_bill.png')}
+              />
+            </FloatingButtonContentView>
+          </FloatingButtonView>
+        </TouchableWithoutFeedback>
+      ) : null}
+    </Container>
+  );
+};
 
 export default ProofImageEventScreen;

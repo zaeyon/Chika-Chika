@@ -372,7 +372,9 @@ const QuestionTabScreen = ({navigation, route}: Props) => {
   }, []);
 
   const moveToBannerDetail = () => {
-    navigation.navigate("ProofImageEventScreen")
+    navigation.navigate("ProofImageEventScreen", {
+      showRedirectButton: true,
+    })
   }
 
   const toggleSocialLike = useCallback(

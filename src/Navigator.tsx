@@ -1297,6 +1297,14 @@ function CommunityStackScreen() {
       name="ProofImageEventScreen"
       component={ProofImageEventScreen}
       />
+      <CommunityStack.Screen
+        name="BraceReviewUploadStackScreen"
+        component={BraceReviewUploadStackScreen} 
+        options={{
+          gestureEnabled: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+        />
     </CommunityStack.Navigator>
   );
 }
@@ -1422,7 +1430,8 @@ function BottomTab() {
     if (
       stackRouteName === 'CommunityStackScreen' ||
       routeName.name === 'CommunityPostUploadStackScreen' ||
-      routeName.name === "ProofImageEventScreen"
+      routeName.name === "ProofImageEventScreen" ||
+      routeName.name === 'BraceReviewUploadStackScreen'
     ) {
       return false;
     }
