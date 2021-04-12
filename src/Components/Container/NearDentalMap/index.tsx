@@ -505,6 +505,11 @@ width: ${wp('100%')}px;
 height: ${hp('100%')}px;
 `;
 
+const FilterEmoji = Styled.Image`
+width: ${wp('11.46%')}px;
+height: ${wp('11.46%')}px;
+`;
+
 interface Props {
   navigation: any;
   route: any;
