@@ -184,6 +184,7 @@ interface Props {
   initialized: boolean;
   clinics: any;
   moveToDetailMap: any;
+  moveToDentalDetail: any;
 }
 
 if (
@@ -197,6 +198,7 @@ const HomeElderClinicContent = ({
   initialized,
   clinics,
   moveToDetailMap,
+  moveToDentalDetail,
 }: Props) => {
   useEffect(() => {
     if (!initialized) {
@@ -250,7 +252,7 @@ const HomeElderClinicContent = ({
 
   const renderLocalClinicItem = useCallback(() => {
     return clinics.slice(0, 4).map((item: any) => (
-      <TouchableWithoutFeedback key={String(item.id)}>
+      <TouchableWithoutFeedback key={String(item.id)} onPress={() => moveToDentalDetail(item.id)}>
         <LocalClinicItemView>
           <LocalClinicItemImage source={item.dentalClinicProfileImgs.length ? {uri: item.dentalClinicProfileImgs[0]} : require('~/Assets/Images/Dental/default_clinic.png')}/>
           <LocalClinicContentView>

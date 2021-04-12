@@ -123,9 +123,9 @@ const dentalFilter = (state = {
                     const currentDate = new Date(Date.now());
                     const dayArray = ['sun', 'mon', 'tus', 'wed', 'thu', 'fri', 'sat'];
                     
-                    const currentHour = currentDate.getHours();
+                    let currentHour = currentDate.getHours();
                     if(currentHour < 10) currentHour = '0' + currentHour;
-                    const currentMinute = currentDate.getMinutes();
+                    let currentMinute = currentDate.getMinutes();
                     if(currentMinute < 10) currentMinute = '0' + currentMinute;
                     
                     return {

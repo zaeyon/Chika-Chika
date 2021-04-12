@@ -20,6 +20,7 @@ import {storeUserInfo} from '~/storage/currentUser';
 // Route
 import POSTRegister from '~/Routes/Auth/POSTRegister';
 import POSTSocialRegister from '~/Routes/Auth/POSTSocialRegister';
+import { storeOpenModalInfo } from '~/storage/openModalInfo';
 
 const Container = Styled.View`
 flex: 1;
@@ -218,11 +219,18 @@ const TermsAgreeScreen = ({navigation, route}: Props) => {
             profile,
             };
 
+            const openModalInfo = {
+              isOpenSpecialistDescripModal: true,
+              isOpenNightCareDescripModal: true,
+              isOpenGoodDentalDescripModal: true,
+            }
+
             storeUserInfo(response.token);
+            storeOpenModalInfo(openModalInfo);
+
             dispatch(allActions.userActions.setUser(userInfo));
-            dispatch(
-            allActions.userActions.setHometown(response.user.userResidences),
-            );
+            dispatch(allActions.userActions.setHometown(response.user.userResidences));
+            
         })
         .catch((error) => {
             setLoadingSignUp(false);
@@ -272,16 +280,24 @@ const TermsAgreeScreen = ({navigation, route}: Props) => {
           provider,
           Residences: response.user.userResidences,
         };
+
         const userInfo = {
           jwtToken: response.token,
           profile,
         };
 
+        const openModalInfo = {
+          isOpenSpecialistDescripModal: true,
+          isOpenNightCareDescripModal: true,
+          isOpenGoodDentalDescripModal: true,
+        }
+
         storeUserInfo(response.token);
+        storeOpenModalInfo(openModalInfo);
+
         dispatch(allActions.userActions.setUser(userInfo));
-        dispatch(
-          allActions.userActions.setHometown(response.user.userResidences),
-        );
+        dispatch(allActions.userActions.setHometown(response.user.userResidences));
+        
       })
       .catch((error: any) => {
         setLoadingSignUp(false);

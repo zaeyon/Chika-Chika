@@ -55,6 +55,8 @@ import GETAroundDental from '~/Routes/Dental/GETAroundDental';
 import GETDentalTotalSearch from '~/Routes/Search/GETDentalTotalSearch';
 import GETUserReservations from '~/Routes/User/GETUserReservations';
 
+import {getOpenModalInfo, storeOpenModalInfo} from '~/storage/openModalInfo';
+
 const Container = Styled.View`
 flex: 1;
 background-color: #FFFFFF;
@@ -451,6 +453,7 @@ bottom: 0px;
 `;
 
 const LabelText = Styled.Text`
+margin-top: 19px;
 font-size: 18px;
 font-weight: 800;
 line-height: 24px;
@@ -566,6 +569,10 @@ const NearDentalMap = ({navigation, route}: Props) => {
   const [selectedDentalIndex, setSelectedDentalIndex] = useState<number>(0);
 
   const [isVisibleReSearch, setIsVisibleReSearch] = useState<boolean>(false);
+
+  const openModalInfo = useSelector((state:any) => state.currentUser.openModalInfo);
+
+  console.log("NearDentalMap openModalInfo", openModalInfo);
 
   const mapRef = useRef<any>(null);
   const dentalCarouselRef = useRef<any>(null);
@@ -713,41 +720,53 @@ const NearDentalMap = ({navigation, route}: Props) => {
   ]);
 
   useEffect(() => {
+  
     if(homeDentalFilterType === 'goodDental') {
       setIsVisibleGoodDentalDescripModal(true);
       dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
       filterScrollViewRef.current.scrollToEnd();
 
-      Animated.spring(goodDentalDescripModalY, {
-        toValue: 0,
-        friction: 17,
-        tension: 68,
-        useNativeDriver: true,
-      }).start();
-
+      if(openModalInfo.isOpenGoodDentalDescripModal) {
+        Animated.spring(goodDentalDescripModalY, {
+          toValue: 0,
+          friction: 17,
+          tension: 68,
+          useNativeDriver: true,
+        }).start();
+      } else {
+        setIsVisibleGoodDentalDescripModal(false);
+      }
     } else if(homeDentalFilterType === 'nightCare') {
       setIsVisibleNightCareDescripModal(true);
       dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
       filterScrollViewRef.current.scrollTo({x: 0});
 
-      Animated.spring(nightCareDescripModalY, {
-        toValue: 0,
-        friction: 17,
-        tension: 68,
-        useNativeDriver: true,
-      }).start();
+      if(openModalInfo.isOpenNightCareDescripModal) {
+        Animated.spring(nightCareDescripModalY, {
+          toValue: 0,
+          friction: 17,
+          tension: 68,
+          useNativeDriver: true,
+        }).start();
+      } else {
+        setIsVisibleNightCareDescripModal(false);
+      }
 
     }  else if(homeDentalFilterType === 'specialist') {
       setIsVisibleSpecialistDescripModal(true)
       dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
       filterScrollViewRef.current.scrollTo({x: 0});
 
-      Animated.spring(specialistDescripModalY, {
-        toValue: 0,
-        friction: 17,
-        tension: 68,
-        useNativeDriver: true,
-      }).start();
+      if(openModalInfo.isOpenSpecialistDescripModal) {
+        Animated.spring(specialistDescripModalY, {
+          toValue: 0,
+          friction: 17,
+          tension: 68,
+          useNativeDriver: true,
+        }).start();
+      } else {
+        setIsVisibleSpecialistDescripModal(false);
+      }
     }
     else if(homeDentalFilterType === 'open') {
       dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
@@ -1593,7 +1612,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
     
     Animated.timing(treatmentDateModalY, {
       toValue: hp('50%'),
-      duration: 250,
+      duration: 100,
       useNativeDriver: true,
     }).start(() => setVisibleDayFilterModal(false))
 
@@ -1939,20 +1958,42 @@ const NearDentalMap = ({navigation, route}: Props) => {
   }
 
   const clickDontLookAgainSpecialistFilterDescrip = () => {
+
     Animated.timing(specialistDescripModalY, {
       toValue: hp('50%'),
       duration: 250,
       useNativeDriver: true,
     }).start(() => setIsVisibleSpecialistDescripModal(false))
+
+    const tmpOpenModalInfo = {
+      isOpenSpecialistDescripModal: false,
+      isOpenNightCareDescripModal: openModalInfo.isOpenNightCareDescripModal,
+      isOpenGoodDentalDescripModal: openModalInfo.isOpenGoodDentalDescripModal,
+    }
+
+    storeOpenModalInfo(tmpOpenModalInfo)
+    dispatch(allActions.userActions.setOpenModal(tmpOpenModalInfo));
   }
 
   const clickDontLookAgainGoodDentalFilterDescrip = () => {
+    
+  
     Animated.timing(goodDentalDescripModalY, {
       toValue: hp('50%'),
       duration: 250,
       useNativeDriver: true,
     }).start(() => setIsVisibleSpecialistDescripModal(false))
+
+    const tmpOpenModalInfo = {
+      isOpenSpecialistDescripModal: openModalInfo.isOpenSpecialistDescripModal,
+      isOpenNightCareDescripModal: openModalInfo.isOpenNightCareDescripModal,
+      isOpenGoodDentalDescripModal: false,
+    }
+
+    storeOpenModalInfo(tmpOpenModalInfo)
+    dispatch(allActions.userActions.setOpenModal(tmpOpenModalInfo));
   }
+
 
   const clickDontLookAgainNightCareFilterDescrip = () => {
     Animated.timing(nightCareDescripModalY, {
@@ -1960,6 +2001,15 @@ const NearDentalMap = ({navigation, route}: Props) => {
       duration: 250,
       useNativeDriver: true
     }).start(() => setIsVisibleNightCareDescripModal(false))
+
+    const tmpOpenModalInfo = {
+      isOpenSpecialistDescripModal: openModalInfo.isOpenSpecialistDescripModal,
+      isOpenNightCareDescripModal: false,
+      isOpenGoodDentalDescripModal: openModalInfo.isOpenGoodDentalDescripModal,
+    }
+
+    storeOpenModalInfo(tmpOpenModalInfo)
+    dispatch(allActions.userActions.setOpenModal(tmpOpenModalInfo));
   }
 
   const renderDayFilterItem = ({item, index}: any) => {
@@ -2085,12 +2135,12 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     style={[
                       {
                         marginLeft: 16,
-                        backgroundColor: '#ffffff',
-                        borderColor: '#131F3C',
+                        backgroundColor: '#00D1FF',
+                        borderColor: '#00D1FF',
                       },
                       styles.filterItemShadow,
                     ]}>
-                    <FilterItemText style={{color: '#131F3C'}}>
+                    <FilterItemText style={{color: '#ffffff'}}>
                       {selectedDayList[0].day + '요일 ' + timeFilter.slice(0, 5)}
                     </FilterItemText>
                   </FilterItemContainer>
@@ -2102,8 +2152,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
                     style={[
                       {
                         marginLeft: 16,
-                        backgroundColor: '#ffffff',
-                        borderColor: '#131F3C',
+                        backgroundColor: '#00D1FF',
+                        borderColor: '#00D1FF',
                       },
                       styles.filterItemShadow,
                     ]}>
@@ -2112,7 +2162,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
                         return (
                           <FilterItemText
                             key={index}
-                            style={{color: '#131F3C'}}>
+                            style={{color: '#ffffff'}}>
                             {item.day}
                           </FilterItemText>
                         );
@@ -2120,7 +2170,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
                         return (
                           <FilterItemText
                             key={index}
-                            style={{color: '#131F3C'}}>
+                            style={{color: '#ffffff'}}>
                             {', ' + item.day}
                           </FilterItemText>
                         );
@@ -2128,14 +2178,14 @@ const NearDentalMap = ({navigation, route}: Props) => {
                         return (
                           <FilterItemText
                           key={index}
-                          style={{color: "#131F3C"}}>
+                          style={{color: "#ffffff"}}>
                             {', ' + item.day}
                           </FilterItemText>
                         )
                       }
                     })}
                     <FilterItemText
-                    style={{color: "#131F3C"}}>
+                    style={{color: "#ffffff"}}>
                       {" " + timeFilter.slice(0, 5)}
                     </FilterItemText>
                   </FilterItemContainer>
@@ -2147,12 +2197,12 @@ const NearDentalMap = ({navigation, route}: Props) => {
                   style={[
                     {
                       marginLeft: 16,
-                      backgroundColor: '#ffffff',
-                      borderColor: '#131F3C',
+                      backgroundColor: '#00D1FF',
+                      borderColor: '#00D1FF',
                     },
                     styles.filterItemShadow,
                   ]}>
-                  <FilterItemText style={{color: '#131F3C'}}>
+                  <FilterItemText style={{color: '#ffffff'}}>
                     {'오늘 ' + timeFilter.slice(0, 5)}
                   </FilterItemText>
                 </FilterItemContainer>
@@ -2163,13 +2213,13 @@ const NearDentalMap = ({navigation, route}: Props) => {
                   style={[
                     {marginLeft: 8},
                     specialistFilter === 't' && {
-                      backgroundColor: '#ffffff',
-                      borderColor: '#131F3C',
+                      backgroundColor: '#00D1FF',
+                      borderColor: '#00D1FF',
                     },
                     styles.filterItemShadow,
                   ]}>
                   <FilterItemText
-                    style={specialistFilter === 't' && {color: '#131F3C'}}>
+                    style={specialistFilter === 't' && {color: '#ffffff'}}>
                     {'교정 전문의'}
                   </FilterItemText>
                 </FilterItemContainer>
@@ -2179,13 +2229,13 @@ const NearDentalMap = ({navigation, route}: Props) => {
                   style={[
                     {marginLeft: 8},
                     nightCareFilter === 't' && {
-                      backgroundColor: '#ffffff',
-                      borderColor: '#131F3C',
+                      backgroundColor: '#00D1FF',
+                      borderColor: '#00D1FF',
                     },
                     styles.filterItemShadow,
                   ]}>
                   <FilterItemText
-                    style={nightCareFilter === 't' && {color: '#131F3C'}}>
+                    style={nightCareFilter === 't' && {color: '#ffffff'}}>
                     {'야간 진료'}
                   </FilterItemText>
                 </FilterItemContainer>
@@ -2195,12 +2245,12 @@ const NearDentalMap = ({navigation, route}: Props) => {
                   style={[
                     {marginLeft: 8},
                     holidayFilter && {
-                      backgroundColor: '#ffffff',
-                      borderColor: '#131F3C',
+                      backgroundColor: '#00D1FF',
+                      borderColor: '#00D1FF',
                     },
                     styles.filterItemShadow,
                   ]}>
-                  <FilterItemText style={holidayFilter && {color: '#131F3C'}}>
+                  <FilterItemText style={holidayFilter && {color: '#ffffff'}}>
                     {'일요일･공휴일 진료'}
                   </FilterItemText>
                 </FilterItemContainer>
@@ -2210,13 +2260,13 @@ const NearDentalMap = ({navigation, route}: Props) => {
                   style={[
                     {marginLeft: 8},
                     goodDentalFilter === 't' && {
-                      backgroundColor: '#ffffff',
-                      borderColor: '#131F3C',
+                      backgroundColor: '#00D1FF',
+                      borderColor: '#00D1FF',
                     },
                     styles.filterItemShadow,
                   ]}>
                   <FilterItemText
-                    style={goodDentalFilter === 't' && {color: '#131F3C'}}>
+                    style={goodDentalFilter === 't' && {color: '#ffffff'}}>
                     {'좋은 치과 캠페인'}
                   </FilterItemText>
                 </FilterItemContainer>
@@ -2226,13 +2276,13 @@ const NearDentalMap = ({navigation, route}: Props) => {
                   style={[
                     {marginLeft: 8, marginRight: 16},
                     parkingFilter === 'y' && {
-                      backgroundColor: '#ffffff',
-                      borderColor: '#131F3C',
+                      backgroundColor: '#00D1FF',
+                      borderColor: '#00D1FF',
                     },
                     styles.filterItemShadow,
                   ]}>
                   <FilterItemText
-                    style={parkingFilter === 'y' && {color: '#131F3C'}}>
+                    style={parkingFilter === 'y' && {color: '#ffffff'}}>
                     {'주차가능'}
                   </FilterItemText>
                 </FilterItemContainer>
@@ -2461,6 +2511,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
         style={{
           transform: [{translateY: specialistDescripModalY}]
         }}>
+          <FilterEmoji
+          source={require('~/Assets/Images/Emoji/em_femaleDoctor.png')}/>
           <LabelText>{"교정 전문의란?"}</LabelText>
           <DescripText
           style={{textAlign: 'center'}}>{"교정 전문의는 치과교정과 전공과정을 이수한 후 보건복지부 주관 교정 전문의 시험을 합격한 의사입니다."}</DescripText>
@@ -2498,6 +2550,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
         style={{
           transform: [{translateY: goodDentalDescripModalY}]
         }}>
+          <FilterEmoji
+          source={require('~/Assets/Images/Emoji/em_maleDoctor.png')}/>
           <LabelText>{"좋은 치과란?"}</LabelText>
           <DescripText
           style={{textAlign: 'center'}}>{"좋은치과는 대한치과의사협회의 공식 캠페인 '우리동네 좋은치과 캠페인'에 참여한 병원들 입니다."}</DescripText>
@@ -2535,6 +2589,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
         style={{
           transform: [{translateY: nightCareDescripModalY}]
         }}>
+          <FilterEmoji
+          source={require('~/Assets/Images/Emoji/em_cresent.png')}/>
           <LabelText>{"야간 진료란?"}</LabelText>
           <DescripText
           style={{textAlign: 'center'}}>{`야간 진료는 18:00 이후에도 ${'\n'}계속 진료하는 병원을 뜻합니다.`}</DescripText>
