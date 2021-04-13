@@ -144,7 +144,7 @@ height: ${wp('5.866%')}px;
 
 const MapHeaderContainer = Styled.View`
 width: ${wp('100%')}px;
-padding-top: ${Platform.OS === 'ios' ? (getStatusBarHeight() + 5) : hp('2.58%')}
+padding-top: ${Platform.OS === 'ios' ? (getStatusBarHeight() + 5) : hp('2.58%')}px;
 position: absolute;
 top: 0;
 `;
@@ -528,7 +528,7 @@ const TEST_COORDINATE = {
   longitude: 126.9781164904998,
 };
 
-let sort = 'distance';
+let sort = 'd';
 
 const bottomTabheight = Platform.OS === 'ios' ? (hasNotch() ? hp('10.59%') : hp('6.92%')) : hp('6.92%');
 
@@ -679,7 +679,9 @@ const NearDentalMap = ({navigation, route}: Props) => {
       }
     };
 
-    getInitialNearDental();
+    if(homeDentalFilterType !== 'open') {
+      getInitialNearDental();
+    }
   }, []);
 
   useEffect(() => {
@@ -723,7 +725,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
   
     if(homeDentalFilterType === 'goodDental') {
       setIsVisibleGoodDentalDescripModal(true);
-      dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
+      //dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
       filterScrollViewRef.current.scrollToEnd();
 
       if(openModalInfo.isOpenGoodDentalDescripModal) {
@@ -738,7 +740,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
       }
     } else if(homeDentalFilterType === 'nightCare') {
       setIsVisibleNightCareDescripModal(true);
-      dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
+      //dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
       filterScrollViewRef.current.scrollTo({x: 0});
 
       if(openModalInfo.isOpenNightCareDescripModal) {
@@ -754,7 +756,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
     }  else if(homeDentalFilterType === 'specialist') {
       setIsVisibleSpecialistDescripModal(true)
-      dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
+      //dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
       filterScrollViewRef.current.scrollTo({x: 0});
 
       if(openModalInfo.isOpenSpecialistDescripModal) {
@@ -769,12 +771,18 @@ const NearDentalMap = ({navigation, route}: Props) => {
       }
     }
     else if(homeDentalFilterType === 'open') {
-      dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
+      console.log("지금 진료중 치과 mapLocation", mapLocation);
+      currentMapLocation.current = mapLocation;
+      //dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
       filterScrollViewRef.current.scrollTo({x: 0});
+      mapRef.current.animateToCoordinate({
+        longitude: mapLocation.longitude,
+        latitude: mapLocation.latitude,
+      });
     }
 
     getNearDental();
-  }, [specialistFilter, goodDentalFilter, nightCareFilter, homeDentalFilterType, timeFilter])
+  }, [homeDentalFilterType])
 
   async function getAndroidInitialNearDental() {
     const permission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
@@ -1056,7 +1064,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
     })
       .then((response: any) => {
         setIsVisibleReSearch(false);
-        console.log('GETAroundDental response in NearDentalMap', response);
+        console.log('GETAroundDental response in getNearDental', response);
         dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
         dispatch(allActions.dentalMapActions.setNearDentalArray(response));
       })
@@ -1118,7 +1126,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
       mapLong,
     })
       .then((response) => {
-        console.log('GETAroundDental response in NearDentalMap', response);
+        console.log('GETAroundDental response in filterNearDental', response);
         dispatch(allActions.dentalMapActions.setLoadingGetDental(false));
         dispatch(allActions.dentalMapActions.setNearDentalArray(response));
       })

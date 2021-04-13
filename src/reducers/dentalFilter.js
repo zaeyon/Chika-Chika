@@ -162,7 +162,7 @@ const DAY_LIST = [
     },
     {
         day: "화",
-        value: "tus",
+        value: "tue",
         selected: false
     },
     {

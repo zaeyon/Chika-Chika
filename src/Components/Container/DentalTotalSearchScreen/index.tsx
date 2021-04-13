@@ -409,7 +409,7 @@ interface Props {
 
 //let offset = 0;
 //let limit = 20;
-let sort = 'distance';
+let sort = 'd';
 
 let inputedKeyword = '';
 let inputingText = '';
@@ -451,9 +451,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const timeFilterActionSheet = createRef<any>();
   const searchInputRef = createRef<any>();
 
-  const currentUserLocation = useSelector(
-    (state: any) => state.currentUser.currentUserLocation,
-  );
+  const currentUserLocation = useSelector((state: any) => state.currentUser.currentUserLocation);
   const currentMapLocation = {
     latitude: route.params?.currentMapLatitude,
     longitude: route.params?.currentMapLongitude,

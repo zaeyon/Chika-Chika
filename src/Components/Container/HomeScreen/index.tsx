@@ -615,10 +615,21 @@ const HomeScreen = ({navigation, route}: Props) => {
       navigation.navigate('지도');
     } else if (filterType === '진료중') {
       console.log("진료중")
+      console.log("지금 진료중인 치과 모두 보기 ", openedClinicData);
       dispatch(allActions.dentalFilterActions.setHomeDentalFilter("open"));
+
+      const location = {
+        coordinate: {
+          latitude: Number(openedClinicData[0].geographLat),
+          longitude: Number(openedClinicData[0].geographLong),
+        },
+        zoom: 16,
+      };
+
+      dispatch(allActions.dentalMapActions.setMapLocation(location));
       navigation.navigate('지도');
     }
-  }, []);
+  }, [openedClinicData]);
 
   return (
     <ContainerView as={SafeAreaView}>
