@@ -205,6 +205,7 @@ const HomeOpenedClinicContent = ({initialized, clinics, moveToDentalMap, moveToD
   ), []);
 
     const renderLocalClinicItem = useCallback(() => {
+      console.log(clinics)
         return clinics.map((item: any) => (
           <TouchableWithoutFeedback
           key={String(item.id)}

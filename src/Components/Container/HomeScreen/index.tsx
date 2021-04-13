@@ -475,7 +475,7 @@ const HomeScreen = ({navigation, route}: Props) => {
         limit: 4,
         holidayFilter: 'false',
         timeFilter: `${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`,
-        dayFilter: ['sun', 'mon', 'tus', 'wed', 'thu', 'fri', 'sat'][
+        dayFilter: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][
           currentDate.getDay()
         ],
         sort: 'd',

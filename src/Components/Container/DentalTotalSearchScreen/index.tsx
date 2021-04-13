@@ -1046,7 +1046,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         console.log("tmpSelectedDayList", tmpSelectedDayList);
         if(tmpSelectedDayList.length === 0) {
           const currentDate = new Date();
-          const weekArray = new Array('sun', 'mon', 'tus', 'wed', 'thu', 'fri', 'sat');
+          const weekArray = new Array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');
           
           if (isNearDentalList.current) {
             filterNearDental(
@@ -1121,7 +1121,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         if(tmpSelectedDayList.length === 0) {
           console.log("tmpSelectedDayList", tmpSelectedDayList);
           const currentDate = new Date();
-          const weekArray = new Array('sun', 'mon', 'tus', 'wed', 'thu', 'fri', 'sat');
+          const weekArray = new Array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');
         
 
         if (isNearDentalList.current) {
