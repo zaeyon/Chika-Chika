@@ -102,6 +102,8 @@ font-weight: normal;
 font-size: 13px;
 line-height: 24px;
 color: #9AA2A9;
+margin-left: 2px;
+margin-right: 8px;
 `;
 const LocalClinicItemTextSkeletonView = Styled.View`
 width: 80px;
@@ -131,6 +133,8 @@ font-size: 12px;
 line-height: 16px;
 color: #9AA2A9;
 `;
+
+const LocalClinicIconImage = Styled.Image``;
 
 const LocalClinicItemTagViewSkeletonView = Styled.View`
 width: 90px;
@@ -178,7 +182,6 @@ height: 8px;
 background: #E2E6ED;
 `;
 
-const RecommendImage = Styled.Image``;
 
 interface Props {
   initialized: boolean;
@@ -262,17 +265,17 @@ const HomeElderClinicContent = ({
 
             {item.reviewNum ? (
               <ReviewStatusView>
-                <RecommendImage
-                  source={require('~/Assets/Images/Dental/ic_recommend.png')}
+                <LocalClinicIconImage
+                  source={require('~/Assets/Images/Review/ic_recommend_grey.png')}
                 />
-                <LocalClinicItemText
-                  style={{
-                    color: '#00D1FF',
-                  }}>{`추천 ${item.recommendNum}`}
-                </LocalClinicItemText>
-                <ReviewStatusPartitionView/>
                 <LocalClinicItemText>
-                  {`리뷰 ${item.reviewNum}`}
+                  {item.recommendNum}
+                </LocalClinicItemText>
+                <LocalClinicIconImage
+                  source={require('~/Assets/Images/Review/ic_review_grey.png')}
+                />
+                <LocalClinicItemText>
+                  {item.reviewNum}
                 </LocalClinicItemText>
               </ReviewStatusView>
             ) : (

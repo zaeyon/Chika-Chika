@@ -472,7 +472,7 @@ const HomeScreen = ({navigation, route}: Props) => {
         lat: currentLocation.lat,
         long: currentLocation.long,
         offset: 0,
-        limit: 4,
+        limit: 10,
         holidayFilter: 'false',
         timeFilter: `${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`,
         dayFilter: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][

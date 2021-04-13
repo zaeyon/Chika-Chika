@@ -120,27 +120,27 @@ const WeeklyTreatmentTimeInfo = ({todayIndex, treatmentTimeInfo}: Props) => {
   const isExistMonLunchTime =
     treatmentTimeInfo.weekday.mon.lunchTime[0] === '00:00:00' ? false : true;
 
-  const tusTreatStartTime = treatmentTimeInfo.weekday.tue.treatmentTime[0].slice(
+  const tueTreatStartTime = treatmentTimeInfo.weekday.tue.treatmentTime[0].slice(
     0,
     5,
   );
-  const tusTreatEndTime = treatmentTimeInfo.weekday.tue.treatmentTime[1].slice(
+  const tueTreatEndTime = treatmentTimeInfo.weekday.tue.treatmentTime[1].slice(
     0,
     5,
   );
-  const tusLunchStartTime = treatmentTimeInfo.weekday.tue.lunchTime[0].slice(
+  const tueLunchStartTime = treatmentTimeInfo.weekday.tue.lunchTime[0].slice(
     0,
     5,
   );
-  const tusLunchEndTime = treatmentTimeInfo.weekday.tue.lunchTime[1].slice(
+  const tueLunchEndTime = treatmentTimeInfo.weekday.tue.lunchTime[1].slice(
     0,
     5,
   );
-  const isExistTusTreatTime =
+  const isExistTueTreatTime =
     treatmentTimeInfo.weekday.tue.treatmentTime[0] === '00:00:00'
       ? false
       : true;
-  const isExistTusLunchTime =
+  const isExistTueLunchTime =
     treatmentTimeInfo.weekday.tue.lunchTime[0] === '00:00:00' ? false : true;
 
   const wedTreatStartTime = treatmentTimeInfo.weekday.wed.treatmentTime[0].slice(
@@ -266,19 +266,19 @@ const WeeklyTreatmentTimeInfo = ({todayIndex, treatmentTimeInfo}: Props) => {
     todayLunchStartTime = monLunchStartTime;
     todayLunchEndTime = monLunchEndTime;
 
-    isExistTodayTreatTime = isExistTusTreatTime;
+    isExistTodayTreatTime = isExistTueTreatTime;
     isExistTodayLunchTime =
       treatmentTimeInfo.weekday.mon.lunchTime[0] === '00:00:00' ? false : true;
   } else if (todayIndex === 2) {
     todayOfTheWeek = '화';
 
-    todayTreatStartTime = tusTreatStartTime;
-    todayTreatEndTime = tusTreatEndTime;
+    todayTreatStartTime = tueTreatStartTime;
+    todayTreatEndTime = tueTreatEndTime;
 
-    todayLunchStartTime = tusLunchStartTime;
-    todayLunchEndTime = tusLunchEndTime;
+    todayLunchStartTime = tueLunchStartTime;
+    todayLunchEndTime = tueLunchEndTime;
 
-    isExistTodayTreatTime = isExistTusTreatTime;
+    isExistTodayTreatTime = isExistTueTreatTime;
     isExistTodayLunchTime =
       treatmentTimeInfo.weekday.tue.lunchTime[0] === '00:00:00' ? false : true;
   } else if (todayIndex === 3) {
@@ -359,8 +359,8 @@ const WeeklyTreatmentTimeInfo = ({todayIndex, treatmentTimeInfo}: Props) => {
           <ItemContainer>
             <WeekdayText>{'화요일'}</WeekdayText>
             <TreatmentTimeText>
-              {isExistTusTreatTime === true
-                ? `${tusTreatStartTime} ~ ${tusTreatEndTime}`
+              {isExistTueTreatTime === true
+                ? `${tueTreatStartTime} ~ ${tueTreatEndTime}`
                 : '정보 없음'}
             </TreatmentTimeText>
           </ItemContainer>
