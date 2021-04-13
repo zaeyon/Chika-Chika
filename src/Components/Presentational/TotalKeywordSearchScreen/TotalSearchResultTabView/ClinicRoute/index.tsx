@@ -106,14 +106,12 @@ const ClinicRoute = ({
   const dispatch = useDispatch();
 
   const jwtToken = useSelector((state: any) => state.currentUser.jwtToken);
-  const hometown = useSelector((state: any) => state.currentUser.hometown);
   const [selectedHometown, setSelectedHometown] = useState({
     emdName: '전국',
     id: -1,
   });
 
   useEffect(() => {
-    console.log('clinic request');
     setRegion(selectedHometown?.id === -1 ? 'all' : 'residence');
 
     getUserCurrentLocation(({lat, long}: any) => {
@@ -125,11 +123,10 @@ const ClinicRoute = ({
         cityId: String(selectedHometown?.id),
         order: 'd',
         offset: 0,
-        limit: 10,
+        limit: 20,
       };
       fetchSearchResult(form, (response: any) => {
         setInitialize(false);
-        console.log('clinics', response);
         LayoutAnimation.configureNext(
           LayoutAnimation.create(100, 'easeInEaseOut', 'opacity'),
         );
@@ -165,7 +162,7 @@ const ClinicRoute = ({
 
   const onEndReached = useCallback(
     (info: any) => {
-      if (isDataFinish || !clinics.length || clinics.length % limit !== 0) {
+      if (initialize || isDataFinish || !clinics.length || clinics.length % limit !== 0) {
         return;
       }
       if (!isEndReached) {
@@ -196,6 +193,7 @@ const ClinicRoute = ({
     },
     [
       isEndReached,
+      initialize,
       clinics,
       order,
       limit,

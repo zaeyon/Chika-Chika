@@ -89,7 +89,7 @@ const ReviewRoute = ({
       cityId: String(selectedHometown?.id),
       order: 'createdAt',
       offset: 0,
-      limit: 10,
+      limit: 20,
     };
 
     fetchSearchResult(form, (response: any) => {
@@ -198,11 +198,14 @@ const ReviewRoute = ({
   }, [getInitialReviewList]);
 
   const onEndReachedReviewList = useCallback(() => {
+    if(initialize){
+      return;
+    }
     if (!noMoreReviewData && !loadingMoreReview) {
       setLoadingMoreReview(true);
       getMoreReviewList();
     }
-  }, [loadingMoreReview, noMoreReviewData, getMoreReviewList]);
+  }, [loadingMoreReview, noMoreReviewData, getMoreReviewList, initialize]);
 
   const moveToHomeTownSetting = useCallback(() => {
     navigation.navigate('HometownSettingScreen');
