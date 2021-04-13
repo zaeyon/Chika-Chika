@@ -409,7 +409,7 @@ interface Props {
 
 //let offset = 0;
 //let limit = 20;
-let sort = 'distance';
+let sort = 'd';
 
 let inputedKeyword = '';
 let inputingText = '';
@@ -451,9 +451,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const timeFilterActionSheet = createRef<any>();
   const searchInputRef = createRef<any>();
 
-  const currentUserLocation = useSelector(
-    (state: any) => state.currentUser.currentUserLocation,
-  );
+  const currentUserLocation = useSelector((state: any) => state.currentUser.currentUserLocation);
   const currentMapLocation = {
     latitude: route.params?.currentMapLatitude,
     longitude: route.params?.currentMapLongitude,
@@ -1046,7 +1044,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         console.log("tmpSelectedDayList", tmpSelectedDayList);
         if(tmpSelectedDayList.length === 0) {
           const currentDate = new Date();
-          const weekArray = new Array('sun', 'mon', 'tus', 'wed', 'thu', 'fri', 'sat');
+          const weekArray = new Array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');
           
           if (isNearDentalList.current) {
             filterNearDental(
@@ -1121,7 +1119,7 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
         if(tmpSelectedDayList.length === 0) {
           console.log("tmpSelectedDayList", tmpSelectedDayList);
           const currentDate = new Date();
-          const weekArray = new Array('sun', 'mon', 'tus', 'wed', 'thu', 'fri', 'sat');
+          const weekArray = new Array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');
         
 
         if (isNearDentalList.current) {

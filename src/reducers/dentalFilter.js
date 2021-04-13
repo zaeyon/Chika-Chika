@@ -121,7 +121,7 @@ const dentalFilter = (state = {
                     }
                 } else if(action.payload === 'open') {
                     const currentDate = new Date(Date.now());
-                    const dayArray = ['sun', 'mon', 'tus', 'wed', 'thu', 'fri', 'sat'];
+                    const dayArray = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
                     
                     let currentHour = currentDate.getHours();
                     if(currentHour < 10) currentHour = '0' + currentHour;
@@ -162,7 +162,7 @@ const DAY_LIST = [
     },
     {
         day: "화",
-        value: "tus",
+        value: "tue",
         selected: false
     },
     {
