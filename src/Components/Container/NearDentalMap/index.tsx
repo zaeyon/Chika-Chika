@@ -725,7 +725,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
   
     if(homeDentalFilterType === 'goodDental') {
       setIsVisibleGoodDentalDescripModal(true);
-      //dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
+      dispatch(allActions.dentalFilterActions.setHomeDentalFilter("setting"));
       filterScrollViewRef.current.scrollToEnd();
 
       if(openModalInfo.isOpenGoodDentalDescripModal) {
@@ -740,7 +740,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
       }
     } else if(homeDentalFilterType === 'nightCare') {
       setIsVisibleNightCareDescripModal(true);
-      //dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
+      dispatch(allActions.dentalFilterActions.setHomeDentalFilter("setting"));
       filterScrollViewRef.current.scrollTo({x: 0});
 
       if(openModalInfo.isOpenNightCareDescripModal) {
@@ -756,7 +756,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
 
     }  else if(homeDentalFilterType === 'specialist') {
       setIsVisibleSpecialistDescripModal(true)
-      //dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
+      dispatch(allActions.dentalFilterActions.setHomeDentalFilter("setting"));
       filterScrollViewRef.current.scrollTo({x: 0});
 
       if(openModalInfo.isOpenSpecialistDescripModal) {
@@ -773,7 +773,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
     else if(homeDentalFilterType === 'open') {
       console.log("지금 진료중 치과 mapLocation", mapLocation);
       currentMapLocation.current = mapLocation;
-      //dispatch(allActions.dentalFilterActions.setHomeDentalFilter(" "));
+      dispatch(allActions.dentalFilterActions.setHomeDentalFilter("setting"));
       filterScrollViewRef.current.scrollTo({x: 0});
       mapRef.current.animateToCoordinate({
         longitude: mapLocation.longitude,
@@ -781,7 +781,10 @@ const NearDentalMap = ({navigation, route}: Props) => {
       });
     }
 
-    getNearDental();
+    if(homeDentalFilterType !== "setting") {
+      getNearDental();
+    }
+
   }, [homeDentalFilterType])
 
   async function getAndroidInitialNearDental() {
@@ -1668,7 +1671,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
         if(JSON.stringify(tmpDayFilter) !== JSON.stringify(dayFilter) || timeFilter !== formattedTime) {
 
         dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
-        dispatch(allActions.dentalFilterActions.setDayFilter(tmpDayList));
+        dispatch(allActions.dentalFilterActions.setDayFilter(tmpDayFilter));
         dispatch(allActions.dentalFilterActions.setSelectedDayList(tmpSelectedDayList));
 
         console.log("tmpSelectedDayList", tmpSelectedDayList);
@@ -1743,7 +1746,7 @@ const NearDentalMap = ({navigation, route}: Props) => {
       if (JSON.stringify(tmpDayFilter) !== JSON.stringify(dayFilter) || timeFilter !== formattedTime) {
 
         dispatch(allActions.dentalFilterActions.setTimeFilter(formattedTime));
-        dispatch(allActions.dentalFilterActions.setDayFilter(tmpDayList));
+        dispatch(allActions.dentalFilterActions.setDayFilter(tmpDayFilter));
         dispatch(allActions.dentalFilterActions.setSelectedDayList(tmpSelectedDayList));
 
         if(tmpSelectedDayList.length === 0) {

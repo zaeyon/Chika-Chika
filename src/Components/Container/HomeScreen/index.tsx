@@ -206,7 +206,7 @@ const HomeScreen = ({navigation, route}: Props) => {
   const [postData, setPostData] = useState<ReviewData[]>();
   const [openedClinicData, setOpenedClinicData] = useState([]);
   const [elderClinicData, setElderClinicData] = useState([]);
-
+  const [userLocation, setUserLocation] = useState();
   const [refreshing, setRefreshing] = useState(false);
 
   const [isReviewInitialized, setIsReviewInitialized] = useState(false);
@@ -375,7 +375,7 @@ const HomeScreen = ({navigation, route}: Props) => {
             lat: position.coords.latitude,
             long: position.coords.longitude,
           };
-          dispatch(allActions.userActions.setCurrentUserLocation(userLocation));
+          setUserLocation(userLocation);
           callback(userLocation);
         },
         (error) => {
@@ -407,7 +407,7 @@ const HomeScreen = ({navigation, route}: Props) => {
             lat: position.coords.latitude,
             long: position.coords.longitude,
           };
-          dispatch(allActions.userActions.setCurrentUserLocation(userLocation));
+          setUserLocation(userLocation);
           callback(userLocation);
         },
         (error) => {
@@ -472,7 +472,7 @@ const HomeScreen = ({navigation, route}: Props) => {
         lat: currentLocation.lat,
         long: currentLocation.long,
         offset: 0,
-        limit: 4,
+        limit: 10,
         holidayFilter: 'false',
         timeFilter: `${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`,
         dayFilter: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][
@@ -620,8 +620,8 @@ const HomeScreen = ({navigation, route}: Props) => {
 
       const location = {
         coordinate: {
-          latitude: Number(openedClinicData[0].geographLat),
-          longitude: Number(openedClinicData[0].geographLong),
+          latitude: openedClinicData.length ? Number(openedClinicData[0].geographLat) : userLocation.lat,
+          longitude: openedClinicData.length ? Number(openedClinicData[0].geographLong) : userLocation.long,
         },
         zoom: 16,
       };
@@ -629,7 +629,7 @@ const HomeScreen = ({navigation, route}: Props) => {
       dispatch(allActions.dentalMapActions.setMapLocation(location));
       navigation.navigate('지도');
     }
-  }, [openedClinicData]);
+  }, [openedClinicData, userLocation]);
 
   return (
     <ContainerView as={SafeAreaView}>

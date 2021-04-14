@@ -140,10 +140,10 @@ const dentalFilter = (state = {
                         goodDentalFilter: "f",
                         homeDentalFilterType: "open",
                     }
-                } else if(action.payload === " ") {
+                } else if(action.payload === "setting") {
                     return {
                         ...state,
-                        homeDentalFilterType: ""
+                        homeDentalFilterType: "setting"
                     }
                 }
             }

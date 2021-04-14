@@ -33,9 +33,9 @@ align-items:center;
 
 const ReviewTitleText = Styled.Text`
 font-style: normal;
-font-weight: bold;
+font-weight: 600;
 font-size: 15px;
-line-height: 16px;
+line-height: 18px;
 color: #131F3C;
 `;
 
@@ -53,7 +53,6 @@ color: #131F3C;`;
 const ReviewContentView = Styled.View`
 flex-direction: row;
 flex: 1;
-margin-top: 8px;
 `;
 
 const ReviewContentDescriptionView= Styled.View`
@@ -63,7 +62,7 @@ margin-right: 8px;
 const ReviewContentText = Styled.Text`
 font-style: normal;
 font-weight: normal;
-font-size: 14px;
+font-size: 13px;
 line-height: 24px;
 `;
 
@@ -86,8 +85,8 @@ margin-right: 3px;
 
 const ReviewRecommendationText = Styled.Text`
 font-style: normal;
-font-weight: bold;
-font-size: 12px;
+font-weight: 600;
+font-size: 13px;
 line-height: 18px;
 color: #131F3C;
 `;
@@ -104,7 +103,7 @@ width: auto;
 height: auto;
 flex-direction: row;
 align-items: center;
-padding: 6px 10px;
+padding: 4px 6px;
 margin-right: 8px;
 border-radius: 4px;
 background-color: #F5F7F9;
@@ -115,7 +114,7 @@ font-weight: 500;
 font-size: 13px;
 line-height: 16px;
 text-align: center;
-color: #4E525D;
+color: #A8A3A3;
 `;
 
 const AvgRatingValueContainer = Styled.View`
