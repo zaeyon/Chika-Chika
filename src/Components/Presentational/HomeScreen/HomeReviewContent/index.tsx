@@ -200,7 +200,7 @@ const HomeReviewContent = ({
       <PlaceHolderContainerView>
         <PlaceHolderContentView>
           <PlaceHolderImage
-            source={require('~/Assets/Images/Home/메인/ic_review_empty.png')}
+            source={require('~/Assets/Images/Emoji/em_crying.png')}
           />
           <PlaceHolderText>{'아직은 리뷰가 없네요'}</PlaceHolderText>
         </PlaceHolderContentView>

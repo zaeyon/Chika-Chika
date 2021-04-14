@@ -1041,26 +1041,28 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
 
   const onPressTotalPrice = () => {
 
+    console.log("onPressTotalPrice scrollY.current", scrollY.current);
+    
     if (priceInputRef.current.isFocused()) priceInputRef.current.blur();
     else priceInputRef.current.focus();
 
-    if(treatmentArray.length === 0 && !ratingObj.serviceRating) {
-      if(scrollY.current < hp('6%')) {
-        scrollViewRef.current.scrollTo({y: hp('8%')})
-      }
-    } else if(treatmentArray.length > 0 && !ratingObj.serviceRating) {
-      if(scrollY.current < hp('8.5%')) {
-        scrollViewRef.current.scrollTo({y: hp('12%')})
-      }
-    } else if(treatmentArray.length === 0 && ratingObj.serviceRating) {
-      if(scrollY.current < hp('6.5%')) {
-        scrollViewRef.current.scrollTo({y: hp('10%')})
-      }
-    } else if(treatmentArray.length > 0 && ratingObj.serviceRating) {
-      if(scrollY.current < hp('10%')) {
-        scrollViewRef.current.scrollTo({y: hp('13.5%')})
-      }
-    }
+    // if(treatmentArray.length === 0) {
+    //   if(scrollY.current < hp('6%')) {
+    //     scrollViewRef.current.scrollTo({y: hp('25%')})
+    //   }
+    // } else if(treatmentArray.length > 0) {
+    //   if(scrollY.current < hp('8.5%')) {
+    //     scrollViewRef.current.scrollTo({y: hp('12%')})
+    //   }
+    // } else if(treatmentArray.length === 0) {
+    //   if(scrollY.current < hp('6.5%')) {
+    //     scrollViewRef.current.scrollTo({y: hp('10%')})
+    //   }
+    // } else if(treatmentArray.length > 0) {
+    //   if(scrollY.current < hp('10%')) {
+    //     scrollViewRef.current.scrollTo({y: hp('13.5%')})
+    //   }
+    // }
   };
 
 
@@ -1737,6 +1739,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 100}}
         onScroll={(event: any) => {
+          console.log("onScroll event.nativeEvent.contentOffset.y", event.nativeEvent.contentOffset.y);
           scrollY.current = event.nativeEvent.contentOffset.y
         }}
         scrollEventThrottle={16}>

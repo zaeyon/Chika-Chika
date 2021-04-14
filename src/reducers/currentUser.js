@@ -1,8 +1,8 @@
 const currentUser = (
   state = {
     currentUserLocation: {
-      latitude: 37.566515657875435,
-      longitude: 126.9781164904998,
+      lat: 37.566515657875435,
+      long: 126.9781164904998,
     },
     searchRecordArray: [],
     dentalSearchRecordArray: [],

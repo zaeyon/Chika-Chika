@@ -452,9 +452,12 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
   const searchInputRef = createRef<any>();
 
   const currentUserLocation = useSelector((state: any) => state.currentUser.currentUserLocation);
+
+  console.log("DentalTotalSearchScreen currentUserLocation", currentUserLocation);
+
   const currentMapLocation = {
-    latitude: route.params?.currentMapLatitude,
-    longitude: route.params?.currentMapLongitude,
+    lat: route.params?.currentMapLatitude,
+    long: route.params?.currentMapLongitude,
   };
 
   const dispatch = useDispatch();
@@ -462,8 +465,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
 
   const todayIndex = new Date().getDay();
 
-  const lat = currentUserLocation.latitude;
-  const long = currentUserLocation.longitude;
+  const lat = currentUserLocation.lat;
+  const long = currentUserLocation.long;
 
   const mapLat = currentMapLocation.latitude;
   const mapLong = currentMapLocation.longitude;
@@ -624,6 +627,8 @@ const DentalTotalSearchScreen = ({navigation, route}: Props) => {
     category: string,
   ) => {
     setLoadingSearchDental(true);
+
+    console.log("searchDental currentUserLocation", currentUserLocation);
 
     const offset = offsetRef.current;
     const limit = limitRef.current;

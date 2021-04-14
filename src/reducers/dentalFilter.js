@@ -120,6 +120,7 @@ const dentalFilter = (state = {
                         homeDentalFilterType: "nightCare",
                     }
                 } else if(action.payload === 'open') {
+                    
                     const currentDate = new Date(Date.now());
                     const dayArray = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
                     

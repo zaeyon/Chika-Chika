@@ -196,7 +196,7 @@ const HomeOpenedClinicContent = ({initialized, clinics, moveToDentalMap, moveToD
   const renderPlaceHolder = useCallback(() => (
     <PlaceHolderContainerView>
       <PlaceHolderContentView>
-        <PlaceHolderImage source={require('~/Assets/Images/Home/메인/ic_openedClinic_empty.png')}/>
+        <PlaceHolderImage source={require('~/Assets/Images/Emoji/em_fearful.png')}/>
         <PlaceHolderText>
           {"우리동네에 지금\n진료중인 치과가 없네요"}
         </PlaceHolderText>

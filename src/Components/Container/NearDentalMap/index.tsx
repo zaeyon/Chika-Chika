@@ -810,8 +810,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
           };
 
           const userLocation = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
+            lat: position.coords.latitude,
+            long: position.coords.longitude,
           };
 
           dispatch(allActions.dentalMapActions.setMapLocation(location));
@@ -940,8 +940,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
           };
 
           const currentUserLocation = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
+            lat: position.coords.latitude,
+            long: position.coords.longitude,
           };
 
           dispatch(allActions.dentalMapActions.setMapLocation(location));
@@ -1034,8 +1034,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const offset = offsetRef.current;
     const limit = limitRef.current;
 
-    const lat = currentUserLocation.latitude;
-    const long = currentUserLocation.longitude;
+    const lat = currentUserLocation.lat;
+    const long = currentUserLocation.long;
 
     const mapLat = currentMapLocation.current.latitude;
     const mapLong = currentMapLocation.current.longitude;
@@ -1088,8 +1088,8 @@ const NearDentalMap = ({navigation, route}: Props) => {
     const offset = offsetRef.current;
     const limit = limitRef.current;
 
-    const lat = currentUserLocation.latitude;
-    const long = currentUserLocation.longitude;
+    const lat = currentUserLocation.lat;
+    const long = currentUserLocation.long;
 
     const mapLat = currentMapLocation.current.latitude;
     const mapLong = currentMapLocation.current.longitude;
