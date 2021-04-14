@@ -116,7 +116,7 @@ const ProofImageEventScreen = ({navigation, route}: Props) => {
       />
       <BodyContainer showsVerticalScrollIndicator={false}>
         <PosterImage
-          source={require('~/Assets/Images/Poster/poster_proofEvent.png')}
+          source={require('~/Assets/Images/Poster/poster_proofEvent_spring.png')}
         />
         <InfoContainer style={{
             paddingBottom: route.params?.showRedirectButton ? 100 : 50
@@ -148,11 +148,13 @@ const ProofImageEventScreen = ({navigation, route}: Props) => {
         <TouchableWithoutFeedback onPress={() => moveToReviewUpload()}>
           <FloatingButtonView>
             <FloatingButtonContentView>
-              <FloatingButtonText>
+              <FloatingButtonText style={{
+                color: "#FF66C8" // spring mode
+              }}>
                 {'리뷰쓰고 쿠폰 받으러 갈까요?'}
               </FloatingButtonText>
               <FloatingButtonImage
-                source={require('~/Assets/Images/Review/review_bill.png')}
+                source={require('~/Assets/Images/Review/review_bill_spring.png')}
               />
             </FloatingButtonContentView>
           </FloatingButtonView>

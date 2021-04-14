@@ -20,8 +20,8 @@ interface Props {
 }
 
 const images = {
-  question: require('~/Assets/Images/Banner/banner_review_starbucks2.png'),
-  freetalk: require('~/Assets/Images/Banner/banner_review_starbucks2.png'),
+  question: require('~/Assets/Images/Banner/review_starbucks_spring.png'),
+  freetalk: require('~/Assets/Images/Banner/review_starbucks_spring.png'),
 };
 
 const TopBanner = ({type, moveToBannerDetail}: Props) => {

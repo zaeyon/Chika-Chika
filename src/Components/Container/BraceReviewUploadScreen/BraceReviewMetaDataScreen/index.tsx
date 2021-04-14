@@ -1745,7 +1745,7 @@ const ReviewMetaDataScreen = ({navigation, route}: Props) => {
             <TouchableWithoutFeedback onPress={() => moveToProofImageEvent()}>
             <EventBannerImageContainer>
               <EventBannerImage
-              source={require("~/Assets/Images/Banner/banner_review_starbucks2.png")}/>
+              source={require('~/Assets/Images/Banner/review_starbucks_spring.png')}/>
             </EventBannerImageContainer>
             </TouchableWithoutFeedback>
           <MetaDataItemContainer
