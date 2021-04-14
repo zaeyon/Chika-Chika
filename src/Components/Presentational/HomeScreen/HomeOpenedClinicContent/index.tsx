@@ -122,6 +122,14 @@ margin-left: 2px;
 margin-right: 16px;
 `;
 
+const ViewMoreView = Styled.View`
+padding: 8px 16px 8px 8px;
+margin: -8px -16px -8px auto;
+`;
+
+const ViewMoreImage = Styled.Image`
+`;
+
 const ReviewStatusImage = Styled.Image``;
 
 interface Props {
@@ -165,7 +173,7 @@ const HomeOpenedClinicContent = ({
       <PlaceHolderContainerView>
         <PlaceHolderContentView>
           <PlaceHolderImage
-            source={require('~/Assets/Images/Home/메인/ic_openedClinic_empty.png')}
+            source={require('~/Assets/Images/Home/ic_openedClinic_empty.png')}
           />
           <PlaceHolderText>
             {'우리동네에 지금\n진료중인 치과가 없네요'}
@@ -281,6 +289,11 @@ const HomeOpenedClinicContent = ({
     <ContainerView>
       <ContainerHeaderView>
         <ContainerTitleText>{'지금 진료중인 치과'}</ContainerTitleText>
+        <TouchableWithoutFeedback onPress={() => moveToDentalMap("진료중")}>
+          <ViewMoreView>
+          <ViewMoreImage source={require('~/Assets/Images/Home/ic_arrow_right.png')}/>
+          </ViewMoreView>
+        </TouchableWithoutFeedback>
       </ContainerHeaderView>
       {initialized && clinics.length === 0 ? renderPlaceHolder() : 
       <ContainerFlatList

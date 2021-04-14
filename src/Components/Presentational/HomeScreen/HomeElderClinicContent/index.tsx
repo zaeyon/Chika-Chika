@@ -216,7 +216,7 @@ const HomeElderClinicContent = ({
       <PlaceHolderContainerView>
         <PlaceHolderContentView>
           <PlaceHolderImage
-            source={require('~/Assets/Images/Home/메인/ic_review_empty.png')}
+            source={require('~/Assets/Images/Home/ic_elderClinic_empty.png')}
           />
           <PlaceHolderText>
             {'우리동네에 5년이상\n된 치과가 없네요'}
