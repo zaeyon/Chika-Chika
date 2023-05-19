@@ -1,7 +1,7 @@
 # 치카치카 - 개인 맞춤형 치과 서비스
 <div align="left">
-<img width="25%" src="./src/Assets/Images/pages/소개.jpg"/>
-<img width="25%" src="./src/Assets/Images/pages/소개2.jpg"/>
+<img width="35%" src="./src/Assets/Images/pages/소개.jpg"/>
+<img width="35%" src="./src/Assets/Images/pages/소개2.jpg"/>
 </div>
 
 ## 프로젝트 개요
