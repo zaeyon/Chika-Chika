@@ -40,24 +40,47 @@
 <b>• UI 라이브러리</b> - React-Native </br>
 <b>• CSS-In-JS 라이브러리</b> - styled-components </br>
 <b>• 전역상태 관리</b> - Redux </br>
+<b>• 디자인 패턴</b> - Container & Presentational Component </br>
 <b>• 지도</b> - Naver Map API
 
 <br/>
 
 ## 주요 기능
-### • 휴대폰 번호 회원가입/로그인
-사용자가 휴대폰 번호 문자 인증을 통해 회원가입을 하면 서버에서 jwtToken을 생성하여 응답합니다. </br>
+### 1. 휴대폰 번호 회원가입/로그인
+- 사용자가 휴대폰 번호 문자 인증을 통해 회원가입을 하면 서버에서 jwtToken을 생성하여 응답합니다. </br>
 응답받은 jwtToken은 클라이언트에 저장하여 사용자가 어플 재실행 시 자동 로그인 되도록 구현하였습니다. </br>
 <br/>
 <img width="30%" src="https://user-images.githubusercontent.com/49143255/239903233-d5945c64-1bf0-4071-9e84-353878f53b36.gif"/>
+<br/>
 
 
-### • 지도상 원하는 위치의 치과 검색
-네이버 지도 API를 연동하여 사용자는 주변 위치, 원하는 위치에서 치과를 검색할 수 있습니다. </br>
+### 2. 지도상 원하는 위치의 치과 검색
+- 네이버 지도 API를 연동하여 사용자는 주변 위치, 원하는 위치에서 치과를 검색할 수 있습니다. </br>
 또한 방문일자, 교정 전문의, 야간 진료, 일요일/공휴일 진료와 같은 상세한 필터링을 통해 사용자는 보다 자신에게 적합한 치과를 검색할 수 있습니다.
 
 <br/>
 <img width="30%" src="https://user-images.githubusercontent.com/49143255/239910004-b8eeb8e0-d562-432f-bae5-3ca4e768ace8.gif"/>
+<br/>
+
+
+### 3. 상세한 치과 리뷰 작성
+- 사용자는 리뷰를 작성할때 사진, 치과 이름, 질명 및 치료 항목, 치료 비용, 교정 시작/종료 날짜와 같은 정보를 추가할 수 있고 문단별로 사진/설명을 작성할 수 있어 보다 상세한 리뷰를 작성할 수 있습니다.
+
+<br/>
+<img width="30%" src="https://user-images.githubusercontent.com/49143255/239927504-834c4deb-d8c0-43c0-8383-d2aaede23d9c.gif"/>
+<br/>
+
+### 4. 작성한 게시글 목록
+- 사용자는 마이페이지를 통해 작성한 리뷰, 커뮤니티 게시글을 확인할 수 있습니다.
+
+<br/>
+<img width="30%" src="https://user-images.githubusercontent.com/49143255/239927671-1e839eda-159e-49bb-9c09-45b96f79ac8c.gif"/>
+<br/>
+
+### 5. 키워드를 통한 치과 검색 
+- 키워드를 통해서 원하는 치과를 
+<br/>ㄱ
+
 
 
 
