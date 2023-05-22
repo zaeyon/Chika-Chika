@@ -78,8 +78,12 @@
 <br/>
 
 ### 5. 키워드를 통한 치과 검색 
-- 키워드를 통해서 원하는 치과를 
-<br/>ㄱ
+- 키워드를 통해서 원하는 치과를 검색할 수 있습니다. </br>
+ 검색된 치과 
+
+<br/>
+<img width="30%" src="https://user-images.githubusercontent.com/49143255/239927718-84eaace8-a630-4cfc-b2a4-82f3bd6c3d86.gif"/>
+<br/>
 
 
 
