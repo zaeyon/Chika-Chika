@@ -1,4 +1,4 @@
-# 치카치카 - 개인 맞춤형 치과 서비스
+# 📱 치카치카 - 개인 맞춤형 치과 서비스
 <div align="left">
 <img width="40%" src="./src/Assets/Images/pages/소개.jpg"/>
 <img width="40%" src="./src/Assets/Images/pages/소개2.jpg"/>
