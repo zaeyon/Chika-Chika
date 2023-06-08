@@ -1,17 +1,23 @@
-# 📱 치카치카 - 개인 맞춤형 치과 서비스
+# 치카치카 - 개인 맞춤형 치과 서비스
 <div align="left">
 <img width="40%" src="./src/Assets/Images/pages/소개.jpg"/>
 <img width="40%" src="./src/Assets/Images/pages/소개2.jpg"/>
 </div>
 </br>
 
-## 프로젝트 개요
+## 📝 프로젝트 개요
 ### • 주제
 치카치카는 인터넷상 무분별한 치과 광고와 개인간의 입소문으로만 전해지는 정보에 의해 </br>
 나에게 맞고 믿을 수 있는 치과를 찾지 못하는 문제를 해결하기 위해 기획된 프로젝트입니다.</br>
 </br>
 ### • 기간
-2020.10 - 2021.03
+
+1. **서비스 기획 및 개발** <br/>
+2020.10 ~ 2021.02 
+2. **MVP 테스트 및 오류 개선** <br/>
+2021.02 ~ 2021.03
+3. **iOS, Android 스토어 출시 (현재 삭제됨)** <br/>
+2021.03
 </br>
 </br>
 
@@ -33,15 +39,43 @@
 |전윤정|디자인||
 <br/>
 
-## 기술 스택
+### • UX/UI 디자인 작업물
 
-<b>• Platform</b> - IOS, Android Mobild Application </br>
-<b>• 프로그래밍 언어</b> - JavaScript, TypeScript </br>
-<b>• UI 라이브러리</b> - React-Native </br>
-<b>• CSS-In-JS 라이브러리</b> - styled-components </br>
-<b>• 전역상태 관리</b> - Redux </br>
-<b>• 디자인 패턴</b> - Container & Presentational Component </br>
-<b>• 지도</b> - Naver Map API
+[https://www.figma.com/file/379hsp6EJLspQgODns9qjf/chikachika_iOS?type=design&node-id=1745-65052&t=Na9cDQTeIjVM9JH1-0](https://www.figma.com/file/379hsp6EJLspQgODns9qjf/chikachika_iOS?type=design&node-id=1745-65052&t=Na9cDQTeIjVM9JH1-0)
+
+## 🛠️ 기술 스택
+
+### • Platform - iOS, Android
+
+React-Native를 사용하여 iOS, Android를 모두 지원하는 하이브리드앱으로 개발하였습니다.
+
+### • 프로그래밍 언어 - JavaScript, TypeScript
+
+타입 에러를 방지하기 위해 TypeScript를 도입하여 기존의 JavaScript와 함께 사용하였습니다.
+
+### • UI 라이브러리 - React-Native
+
+빠른 개발과 테스트가 중요한 스타트업이므로 iOS, Android 앱을 한번에 만들 수 있는 React-Native를 선택하여 하이브리드 앱을 만들었습니다.
+
+### • CSS-In-JS 라이브러리 - styled-components
+
+styled-components를 사용하여 CSS 코드를 JS파일안에 작성함으로써 생산성을 높였습니다.
+
+### • HTTP 비동기 통신 라이브러리 - Axios
+
+Axios를 사용하여 비동기 API를 연동하였습니다.
+
+### • 전역 상태 관리 - Redux
+
+서비스에서 사용되는 사용자의 로그인 데이터, 치과 데이터와 같이 전역으로 사용되는 데이터를 관리하기 위해 Redux를 사용하였습니다.  
+
+### • 디자인 패턴 - Container & Presentational Component
+
+Container 컴포넌트에선 비즈니스 로직과 상태 관리, 라우팅에 대한 코드를 작성하고 사용자한테 보여지는 UI에 대한 코드는 Presentational 컴포넌트로 나눠서 작성하여 코드의 재사용성과 유지보수를 용이하게 하였습니다.
+
+### • 지도 - Naver Map API
+
+사용자가 치과의 위치를 보다 시각적으로 확인할 수 있게 네이버 지도 API를 연동하였습니다.
 
 <br/>
 
